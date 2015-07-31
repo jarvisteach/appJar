@@ -65,3 +65,6 @@ target/
 
 # editor swap files
 *.swp
+
+# MAC stuff
+.DS_Store
