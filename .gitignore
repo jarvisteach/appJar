@@ -1,6 +1,7 @@
 # Project specific ignores
 icons/*
 old_resources/*
+dev_*
 
 
 # Byte-compiled / optimized / DLL files

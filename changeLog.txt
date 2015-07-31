@@ -1,0 +1,82 @@
+Changes 260315:
+      stop() - will try to stop sounds, handles Exception
+      __getItems() - OPTION now returns n_optionVars
+      configureWidget - OPTION now adds trace instead of command
+      __makeFunc() - if discard now ignores *args, instead of single arg
+      __verifyItem() - added to generalise Exception throwing, not fully used yet
+      __bulidOptionBox() - updated to use __verifyItem()
+                         - accepts dict_Keys(converts to list)
+                         - persists optionBox in global var
+                         - configures justify/font/background
+      getOptionBox() - checks for existence, throws Exception if not found
+      changeOptionBox() - added to change list of options
+      setOptionsBox - finished, now selects option at specified index
+      addImage - now accepts None image, creates empty label
+      __getImage - now accepts None image, returns None
+      __soundWrap - default value (False) for isFile
+                  - now accepts None sound file, will play a None sound
+      stopSound - added will play a None sound file, to stop any current sounds
+      soundError() / soundWarning() - now don't pass isFile, use default as above
+      class ItemLookupError - added to be thrown by __verifyItem() as above
+
+Changes 270315:
+	setImage() - added update_idletasks() to make sure images are redrawn
+	__verifyItem() - fixed bug, changed name to item
+	getOptionBox()/changeOptionBox()/setOptionBox() - updated to use __verifyItem()
+	addNamedButton() - added, allows a name to be set for a button
+	__buildButton() - added extra parameter: name, to be used as above
+	__buildOptionBox() - fixed bugs, now uses self.buttonBgColour & self.optionFont
+	setPadX() & setPadY() - added to allow setting of variables
+	__positionWidget() - now uses self.padx/pady for padding
+			   - now builds a dictionary of values to pass to grid
+	NumDialog.validate() - fixed bug, now casts to int/float correctly
+	addMenuList() - accepts dict_Keys(converts to list)
+
+Changes 280315:
+	all entryFuncs - updated to use __verifyItem()
+	configureWidget - added support for cursor change
+			    - fixed entry command
+	__buildConfigFuncs - added support for cursor change & focus
+	all textEntry funcs - added support for text areas
+	openBox() & saveBox() & directoryBox() - added support for params, changed to auto return file object
+
+Changes 290315:
+	clearTextArea() - added new function
+	setLabelFont() - added support for TextArea
+	getFonts() - added new function
+
+Changes 230415:
+	options* - fixed option functions
+	setXXXAlign - fixed bug with Entry boxes alignment (added new vars LEFT/RIGHT)
+	addButtons - changed param name to column
+	textArea* - added functions to monitor changes to text area
+	tclError - removed reference to tclError
+
+Changes 270415:
+	bgImage - fixed issue with using label as a container & buttons not updating
+	setTransparency() - added function to make UI transparent
+	setGeom() & exitFulscreen() - can now set UI to be fullscreen (escape to exit)
+
+Changes 290415:
+	__initArarys() - moved array init to seperate function, so can redo when widgets removed
+	welcome* - removed all reference to a welcome window
+	all/hide/show/remove widget - added functions to hide/show/remove widgets
+	padx/y - updated GUI to use ipad instead of pad to remove grey padding
+	lab.hidden - added parameter to labels, and adjusted sizing
+	widget.hasLabel - added parameter to identify which widgets were in a labelled frame
+
+Changes 010515:
+	Meter - added support for progress meters
+	Link - added support for hyperlinkfs
+
+Changes 250715:
+	General merging of changes
+
+Changes 270715:
+	FlashLabel - added support for flashing labels
+
+Changes 290715:
+	JPG - added primitive support for JPEGs - VERY slow!
+
+Chnges 300715:
+	imageCache - adding image object caching, to make swapping pictures faster
