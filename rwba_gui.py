@@ -91,6 +91,7 @@ class gui:
             # configure geom
             self.escapeBindId = None # used to exit fullscreen
             self.setGeom(geom)
+
             # set the resize status - default to True
             self.setResizable(True)
 
@@ -485,7 +486,7 @@ class gui:
                   for widg in names:
                         self.configureWidget(kind, widg, option, value)
 
-      def configureWidget(self, kind, name, option, value):
+      def configureWidget(self, kind, name, option, value, key=None):
             items = self.__getItems(kind)
             self.__verifyItem(items, name)
 
@@ -520,6 +521,10 @@ class gui:
                               # need to trace the variable??
                               item.var.trace('w',  self.__makeFunc(value,name, True))
                         elif kind==self.ENTRY:
+                              if key is None: key =name 
+                              item.bind('<Return>', self.__makeFunc(value, key, True))
+                        elif kind==self.BUTTON:
+                              item.configure(command=self.__makeFunc(value, name))
                               item.bind('<Return>', self.__makeFunc(value, name, True))
                         else:
                               item.configure( command=self.__makeFunc(value,name) )
@@ -572,8 +577,8 @@ class gui:
                   exec("gui.set"+v+"Anchor=set" +v+ "Anchor")
                   exec("def set"+v+"Tooltip(self, name, val): self.configureWidget("+str(k)+", name, 'tooltip', val)")
                   exec("gui.set"+v+"Tooltip=set" +v+ "Tooltip")
-                  exec("def set"+v+"Command(self, name, val): self.configureWidget("+str(k)+", name, 'command', val)")
-                  exec("gui.set"+v+"Command=set" +v+ "Command")
+                  exec("def set"+v+"Function(self, name, val, key=None): self.configureWidget("+str(k)+", name, 'command', val, key)")
+                  exec("gui.set"+v+"Function=set" +v+ "Function")
                   # http://infohost.nmt.edu/tcc/help/pubs/tkinter/web/cursors.html
                   exec("def set"+v+"Cursor(self, name, val): self.configureWidget("+str(k)+", name, 'cursor', val)")
                   exec("gui.set"+v+"Cursor=set" +v+ "Cursor")
@@ -1315,12 +1320,14 @@ class gui:
             self.__verifyItem(self.n_buttons, name, True)
             but = Button(frame)
 
-            u = self.__makeFunc(func, title)
-            myF = self.__makeFunc(func, title, True)
+            but.configure( text=title, font=self.buttonFont, background=self.buttonBgColour )
 
-            but.configure( text=title, command=u, font=self.buttonFont, background=self.buttonBgColour )
-            # bind enter to submit this button
-            but.bind('<Return>', myF)
+            if func is not None:
+                  command = self.__makeFunc(func, title)
+                  bindCommand = self.__makeFunc(func, title, True)
+
+                  but.configure( command=command )
+                  but.bind('<Return>', bindCommand)
             
             if platform() == "Darwin":
                 but.configure(highlightbackground=self.labelBgColour)
@@ -1404,7 +1411,6 @@ class gui:
 #####################################
 ## FUNCTIONS for labels
 #####################################
-
       def __flash(self):
             if self.doFlash:
                   for lab in self.n_flashLabs:
@@ -1602,15 +1608,6 @@ class gui:
       def setFocus(self, name):
             self.__verifyItem(self.n_entries, name)
             self.n_entries[name].focus_set()
-
-      # will call the specified function when enter key is
-      def setEntryFunc(self, title, func, buttonName=None):
-            self.__verifyItem(self.n_entries, title)
-            if buttonName is None: buttonName = title
-
-            # for now discard the Event...
-            myF = self.__makeFunc(func, buttonName, True)
-            self.n_entries[title].bind('<Return>', myF)
 
 #####################################
 ## FUNCTIONS for progress bars (meters)
