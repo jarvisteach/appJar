@@ -638,7 +638,7 @@ class gui:
 
             if "in" in widget.grid_info():
                   widget.grid_remove()
-                  self.__updateLabelFrames(name)
+#                  self.__updateLabelFrames(name)
 
       def showWidget(self, kind, name):
             # get the dictionary of items, and find the item in it
@@ -653,7 +653,7 @@ class gui:
             # only show the widget, if it's not already showing
             if "in" not in widget.grid_info():
                   widget.grid()
-                  self.__updateLabelFrames(name)
+#                  self.__updateLabelFrames(name)
 
       def removeWidget(self, kind, name):
             # get the dictionary of items, and find the item in it
@@ -803,17 +803,17 @@ class gui:
                   self.labWidth = len(title)
                   #loop through other labels and resize
                   for na in self.n_frameLabs:
-                        self.n_frameLabs[na].configure(width=self.labWidth)
+#                        self.n_frameLabs[na].configure(width=self.labWidth)
+                        pass
 
             # next make the label
             lab = Label(frame)
             lab.hidden = False
             lab.inContainer = True
-            lab.configure( anchor=W,width=self.labWidth,text=title, justify=LEFT, font=self.labelFont, background=self.labelBgColour )
+            lab.configure( anchor=W,text=title, justify=LEFT, font=self.labelFont, background=self.labelBgColour )
+#            lab.configure( width=self.labWidth)
             self.n_labels[title]=lab
             self.n_frameLabs[title]=lab
-
-            print(lab.winfo_width(), lab.winfo_height())
 
             # now put the label in the frame
             lab.pack(side=LEFT, fill=Y)
