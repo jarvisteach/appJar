@@ -2,6 +2,7 @@
 icons/*
 old_resources/*
 dev_*
+*.docx
 
 
 # Byte-compiled / optimized / DLL files
