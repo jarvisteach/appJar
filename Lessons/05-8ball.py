@@ -11,7 +11,8 @@ def press ( btn ) :
     if len ( win.getEntry ( "Question" ) ) == 0:
         win.errorBox ( "Error", "You must ask a question" )
     else:
-        #win.playSound ( "buzz.wav" )
+        #try: win.playSound ( "buzz.wav" )
+        #except Exception: pass
         win.setLabel ( "Answer", random.choice ( answers ) )
         win.clearEntry("Question")
 
