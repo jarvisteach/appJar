@@ -579,6 +579,9 @@ class gui:
                   exec("gui.set"+v+"Tooltip=set" +v+ "Tooltip")
                   exec("def set"+v+"Function(self, name, val, key=None): self.configureWidget("+str(k)+", name, 'command', val, key)")
                   exec("gui.set"+v+"Function=set" +v+ "Function")
+# deprecated, but left in for backwards compatability
+                  exec("def set"+v+"Command(self, name, val, key=None): self.configureWidget("+str(k)+", name, 'command', val, key)")
+                  exec("gui.set"+v+"Command=set" +v+ "Command")
                   # http://infohost.nmt.edu/tcc/help/pubs/tkinter/web/cursors.html
                   exec("def set"+v+"Cursor(self, name, val): self.configureWidget("+str(k)+", name, 'cursor', val)")
                   exec("gui.set"+v+"Cursor=set" +v+ "Cursor")
