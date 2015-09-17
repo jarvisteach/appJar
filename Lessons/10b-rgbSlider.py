@@ -28,9 +28,9 @@ win.showScaleValue("Red")
 win.showScaleValue("Green")
 win.showScaleValue("Blue")
 
-win.setScaleCommand("Red", slide)
-win.setScaleCommand("Green", slide)
-win.setScaleCommand("Blue", slide)
+win.setScaleFunction("Red", slide)
+win.setScaleFunction("Green", slide)
+win.setScaleFunction("Blue", slide)
 
 win.addLabel('code', 'xxxxxx')
 
