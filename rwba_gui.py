@@ -12,7 +12,7 @@ from tkinter import colorchooser
 from tkinter import filedialog
 from tkinter import scrolledtext
 from tkinter import font
-import os, sys, re, socket, hashlib
+import os, sys, re, socket, hashlib, math
 from platform import system as platform
 import webbrowser
 
@@ -63,6 +63,25 @@ class gui:
       GROOVE=GROOVE
       RIDGE=RIDGE
       FLAT=FLAT
+
+      # music stuff
+      BASIC_NOTES = {"A":440, "B":493, "C":261, "D":293, "E":329, "F":349, "G":392 }
+      NOTES={'f8': 5587, 'c#6': 1108, 'f4': 349, 'c7': 2093, 'd#2': 77, 'g8': 6271,
+             'd4': 293, 'd7': 2349, 'd#7': 2489, 'g#4': 415, 'e7': 2637, 'd9': 9397,
+             'b8': 7902, 'a#4': 466, 'b5': 987, 'b2': 123, 'g#9': 13289, 'g9': 12543,
+             'f#2': 92, 'c4': 261, 'e1': 41, 'e6': 1318, 'a#8': 7458, 'c5': 523, 'd6': 1174,
+             'd3': 146, 'g7': 3135, 'd2': 73, 'd#3': 155, 'g#6': 1661, 'd#4': 311, 'a3': 219,
+             'g2': 97, 'c#5': 554, 'd#9': 9956, 'a8': 7040, 'a#5': 932, 'd#5': 622, 'a1': 54,
+             'g#8': 6644, 'a2': 109, 'g#5': 830, 'f3': 174, 'a6': 1760, 'e8': 5274, 'c#9': 8869,
+             'f5': 698, 'b1': 61, 'c#4': 277, 'f#9': 11839, 'e5': 659, 'f9': 11175, 'f#5': 739,
+             'a#1': 58, 'f#8': 5919, 'b7': 3951, 'c#8': 4434, 'g1': 48, 'c#3': 138, 'f#7': 2959,
+             'c6': 1046, 'c#2': 69, 'c#7': 2217, 'c3': 130, 'e9': 10548, 'c9': 8372, 'a#6': 1864,
+             'a#7': 3729, 'g#2': 103, 'f6': 1396, 'b3': 246, 'g#3': 207, 'b4': 493, 'a7': 3520,
+             'd#6': 1244, 'd#8': 4978, 'f2': 87, 'd5': 587, 'f7': 2793, 'f#6': 1479, 'g6': 1567,
+             'e3': 164, 'f#3': 184, 'g#1': 51, 'd8': 4698, 'f#4': 369, 'f1': 43, 'c8': 4186, 'g4': 391,
+             'g3': 195, 'a4': 440, 'a#3': 233, 'd#1': 38, 'e2': 82, 'e4': 329, 'a5': 880, 'a#2': 116,
+             'g5': 783, 'g#7': 3322, 'b6': 1975, 'c2': 65, 'f#1': 46}
+      DURATIONS={"BREVE":2000, "SEMIBREVE":1000, "MINIM":500, "CROTCHET":250,  "QUAVER":125,"SEMIQUAVER":63, "DEMISEMIQUAVER":32, "HEMIDEMISEMIQUAVER":16}
 
 #####################################
 ## CONSTRUCTOR - creates the GUI
@@ -1212,6 +1231,27 @@ class gui:
             self.__soundWrap("SystemHand")
       def soundWarning(self):
             self.__soundWrap("SystemAsterisk")
+
+      def playNote(self, note, duration=200):
+            if platform() in ["win32", "Windows"]:
+                  try:
+                        if isinstance(note, str): freq=self.NOTES[note]
+                        else: freq=note
+                  except KeyError:
+                        raise Exception("Error: cannot play note - "+ note)
+                  try:
+                        if isinstance(duration, str): length=self.DURATIONS[duration]
+                        else: length=duration
+                  except KeyError:
+                        raise Exception("Error: cannot play duration - " + duration)
+
+                  try:
+                        winsound.Beep(freq, length)
+                  except RuntimeError:
+                        raise Exception("Sound not available on this platform: " + platform() )
+            else:
+                  # sound not available at this time
+                  raise Exception("Sound not supported on this platform: " + platform() )
       
 #####################################
 ## FUNCTION for radio buttons
