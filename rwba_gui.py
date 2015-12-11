@@ -284,9 +284,18 @@ class gui:
 
       # will call the specified function when enter key is pressed
       def enableEnter(self, func):
+            self.bindKey("<Enter>", func)
+
+      def disableEnter(self):
+            self.unbindKey("<Enter>")
+
+      def bindKey(self, key, func):
             # for now discard the Event...
-            myF = self.__makeFunc(func, "<Enter>", True)
-            self.topLevel.bind('<Return>', myF)
+            myF = self.__makeFunc(func, key, True)
+            self.topLevel.bind(key, myF)
+
+      def unbindKey(self, key):
+            self.topLevel.unbind(key)
 
 #####################################
 ## FUNCTIONS for configuring GUI settings
