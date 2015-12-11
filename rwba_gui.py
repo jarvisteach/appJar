@@ -12,7 +12,7 @@ from tkinter import colorchooser
 from tkinter import filedialog
 from tkinter import scrolledtext
 from tkinter import font
-import os, sys, re, socket, hashlib, math
+import os, sys, re, socket, hashlib
 from platform import system as platform
 import webbrowser
 
