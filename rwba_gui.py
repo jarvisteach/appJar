@@ -1428,8 +1428,9 @@ class gui:
             for bRow in range(len(names)):
                   for i in range(len(names[bRow])):
                         t = names[bRow][i]
-                        if singleFunc is None: singleFunc = funcs[bRow][i]
-                        but = self.__buildButton(t, singleFunc, frame)
+                        if singleFunc is None: tempFunc = funcs[bRow][i]
+                        else: tempFunc = singleFunc
+                        but = self.__buildButton(t, tempFunc, frame)
 
                         but.grid ( row=bRow, column=i )
                         Grid.columnconfigure(frame, i, weight=1)
@@ -2122,6 +2123,8 @@ if __name__ == "__main__":
       progress = 0
       main = True
       meter = True
+      def a(btn): print("a")
+      def b(btn): print("b")
       def tb_press(name):
             global main, meter
             win.setStatus("TB Press:"+name)
@@ -2238,6 +2241,7 @@ if __name__ == "__main__":
 #      win.setButtonState("Resizable", "disabled")
       win.addButtons(["IncreaseB", "DecreaseB"], tb_press)
       win.addButtons(["IncreaseL", "DecreaseL"], tb_press)
+      win.addButtons(["a", "b"], [a,b])
       win.addLabels(["a", "b", "c", "d", "e"])
       win.addCheckBox("Click Me")
       win.setCbCommand("Click Me", tb_press)
