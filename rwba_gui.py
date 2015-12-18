@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-#"""rwba_gui.py: Provides a GUI class, for making simple tkinter GUIs."""
+"""rwba_gui.py: Provides a GUI class, for making simple tkinter GUIs."""
 # Nearly everything I learnt came from: http://effbot.org/tkinterbook/
 
 ##########
@@ -27,6 +27,12 @@ if platform() in [ "win32", "Windows"]:
 
 #class to allow simple creation of tkinter GUIs
 class gui:
+      """
+            Class to represent the GUI
+            - Create one of these
+            - add some widgets
+            - call the go() function
+      """
       built = False
       # used to identify widgets in component configurations
       WINDOW=0
@@ -187,6 +193,10 @@ class gui:
             #set up a minimum label width for label combos
             self.labWidth=1
 
+            # a validate function callback - used by numeric texts
+            # created first time a numeric text is used
+            self.validateNumeric = None
+
             # set up flash variable
             self.doFlash = False
 
@@ -224,6 +234,7 @@ class gui:
 ## Event Loop - must always be called at end
 #####################################
       def go(self):
+            """ Most important function! Start the GUI """
             # pack it all in & make sure it's drawn
             self.appWindow.pack(fill=BOTH)
             self.topLevel.update_idletasks()
@@ -248,9 +259,11 @@ class gui:
             self.topLevel.mainloop()
 
       def setStopFunction(self, function):
+            """ set a funciton to call when the GUI is quit. Must return True or False """
             self.__stopFunction = function
 
       def stop(self):
+            """ Closes the GUI. If a stop funciton is set, will only close the GUI if True """
             if self.__stopFunction is None or self.__stopFunction():
                   # stop any sounds, ignore error when not on Windows
                   try: self.stopSound()
@@ -262,10 +275,12 @@ class gui:
 #####################################
       #events will fire in order of being added, after sleeping for time
       def setPollTime(self, time):
+            """ Set a frequency for executing queueud functions """
             self.pollTime = time
 
       # register events to be called by the sleep timer
       def registerEvent(self, func):
+            """ Queue a function, to be executed every poll time """
             self.events.append(func)
 
       # internal function, called by 'after' function, after sleeping
@@ -284,17 +299,21 @@ class gui:
 
       # will call the specified function when enter key is pressed
       def enableEnter(self, func):
+            """ Binds <enter> to the specified function - all widgets """
             self.bindKey("<Enter>", func)
 
       def disableEnter(self):
+            """ unbinds <enter> from all widgets """
             self.unbindKey("<Enter>")
 
       def bindKey(self, key, func):
+            """ bind the specified key, to the specified function, for all widgets """
             # for now discard the Event...
             myF = self.__makeFunc(func, key, True)
             self.topLevel.bind(key, myF)
 
       def unbindKey(self, key):
+            """ unbinds the specified key from whatever functions it os bound to """
             self.topLevel.unbind(key)
 
 #####################################
@@ -1025,6 +1044,7 @@ class gui:
       def __addSpinBox(self, title, fromVal, toVal=None, row=None, column=0, colspan=0):
             spin = self.__buildSpinBox(self.window, title, fromVal, toVal)
             self.__positionWidget(spin, row, column, colspan)
+            self.setSpinBoxPos(title, 0)
 
       def addSpinBox(self, title, vals, row=None, column=0, colspan=0):
             self.__addSpinBox(title, vals, None, row, column, colspan)
@@ -1042,12 +1062,28 @@ class gui:
             spin = self.__verifyItem(self.n_spins, title)
             return spin.get()
 
-      # not finished
-      def setSpinBox(self, title, pos):
-            spin = self.__verifyItem(self.n_spins, title)
+      # expects a valid spin box widget, and a valid value
+      def __setSpinBoxVal(self, spin, val):
             var = StringVar(self.topLevel)
-            var.set("4")
+            var.set(val)
             spin.config(textvariable=var)
+
+      def setSpinBox(self, title, val):
+            spin = self.__verifyItem(self.n_spins, title)
+            vals = spin.cget("values").split()
+            val = str(val)
+            if val not in vals:
+                raise Exception("Invalid value: "+ val + ". Not in SpinBox: "+title+"=" + str(vals)) from None
+            self.__setSpinBoxVal(spin, val)
+
+      def setSpinBoxPos(self, title, pos):
+            spin = self.__verifyItem(self.n_spins, title)
+            vals = spin.cget("values").split()
+            pos=int(pos)
+            if pos <  0 or pos >= len(vals):
+                raise Exception("Invalid position: "+ val + ". No position in SpinBox: "+title+"=" + str(vals)) from None
+            val = vals[pos]
+            self.__setSpinBoxVal(spin, val)
 
 #####################################
 ## FUNCTION to add images
@@ -1628,6 +1664,39 @@ class gui:
       def addEntry(self, title, row=None, column=0, colspan=0, secret=False):
             ent = self.__buildEntry(title, self.window, secret)
             self.__positionWidget(ent, row, column, colspan)
+
+      def __validateNumericEntry(self, action, index, value_if_allowed, prior_value, text, validation_type, trigger_type, widget_name):
+            if action == "1":
+                if text in '0123456789.-+':
+                    try:
+                        float(value_if_allowed)
+                        return True
+                    except ValueError:
+                        return False
+                else:
+                    return False
+            else:
+                return True
+
+      def addNumericEntry(self, title, row=None, column=0, colspan=0, secret=False):
+            ent = self.__buildEntry(title, self.window, secret)
+            self.__positionWidget(ent, row, column, colspan)
+
+            if self.validateNumeric == None: self.validateNumeric = (self.window.register(self.__validateNumericEntry), '%d', '%i', '%P', '%s', '%S', '%v', '%V', '%W')
+
+            ent.configure(validate='key', validatecommand=self.validateNumeric)
+            self.setEntryTooltip(title, "Numeric data only.")
+
+      def addNumericLabelEntry(self, title, row=None, column=0, colspan=0, secret=False):
+            frame = self.__getLabelFrame(title)
+            ent = self.__buildEntry(title, frame, secret)
+            self.__packLabelFrame(frame, ent)
+            self.__positionWidget(frame, row, column, colspan)
+
+            if self.validateNumeric == None: self.validateNumeric = (self.window.register(self.__validateNumericEntry), '%d', '%i', '%P', '%s', '%S', '%v', '%V', '%W')
+
+            ent.configure(validate='key', validatecommand=self.validateNumeric)
+            self.setEntryTooltip(title, "Numeric data only.")
 
       def addSecretEntry(self, title, row=None, column=0, colspan=0):
             self.addEntry(title, row, column, colspan, True)
