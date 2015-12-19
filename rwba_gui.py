@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
 """rwba_gui.py: Provides a GUI class, for making simple tkinter GUIs."""
 # Nearly everything I learnt came from: http://effbot.org/tkinterbook/
+# with snippets from stackexchange.com
 
 ##########
 ## TO ADD: labelFrame, panedWindow
 # LAST CHANGE: see changeLog.txt
+# now under git
 
 from tkinter import *
 from tkinter import messagebox
@@ -1647,6 +1649,7 @@ class gui:
             ent = Entry(frame)
             ent.var = var
             ent.inContainer = False
+            ent.hasDefault = False
             ent.myTitle=title
             ent.configure(textvariable=var, font=self.entryFont)
             if secret: ent.configure(show="*")            
@@ -1712,11 +1715,40 @@ class gui:
 
       def getEntry(self, name):
             self.__verifyItem(self.n_entryVars, name)
-            return self.n_entryVars[name].get()
+            entry = self.__verifyItem(self.n_entries, name)
+            if entry.hasDefault: return ""
+            else: return self.n_entryVars[name].get()
 
       def setEntry(self, name, text):
             self.__verifyItem(self.n_entryVars, name)
             self.n_entryVars[name].set(text)
+
+      def __updateEntryDefault(self, name):
+            self.__verifyItem(self.n_entryVars, name)
+            entry = self.__verifyItem(self.n_entries, name)
+            current = self.n_entryVars[name].get()
+
+            if entry.hasDefault: #True when never clicked
+                  self.n_entryVars[name].set("")
+                  entry.hasDefault = False
+                  entry.configure(justify=entry.oldJustify, foreground=entry.oldFg)
+            elif current == "": #empty if they didn't type??
+                  self.n_entryVars[name].set(entry.default)
+                  entry.configure(justify='center', foreground='grey')
+                  entry.hasDefault = True
+
+      def setEntryDefault(self, name, text="default"):
+            entry = self.__verifyItem(self.n_entries, name)
+            self.__verifyItem(self.n_entryVars, name)
+            self.n_entryVars[name].set(text)
+            entry.default = text
+            entry.hasDefault = True
+            entry.oldJustify=entry.cget('justify')
+            entry.oldFg=entry.cget('foreground')
+            entry.configure(justify='center', foreground='grey')
+            command = self.__makeFunc(self.__updateEntryDefault, name, True)
+            entry.bind("<FocusIn>", command)
+            entry.bind("<FocusOut>", command)
 
       def clearEntry(self, name):
             self.__verifyItem(self.n_entryVars, name)
