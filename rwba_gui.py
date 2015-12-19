@@ -690,11 +690,7 @@ class gui:
 ## FUNCTION to hide/show/remove widgets
 #####################################
       def __widgetHasContainer(self, kind, item):
-            if kind == self.SCALE and item.inContainer: return True
-            elif kind == self.ENTRY and item.inContainer: return True
-            elif kind == self.SPIN and item.inContainer: return True
-            elif kind == self.OPTION and item.inContainer: return True
-            elif kind == self.LABEL and item.inContainer: return True
+            if kind in [self.SCALE, self.ENTRY, self.SPIN, self.OPTION, self.LABEL] and item.inContainer: return True
             else: return False
 
       def hideWidget(self, kind, name):
