@@ -544,64 +544,76 @@ class gui:
             else:
                   items = [items[name]]
             for item in items:
-                  if option == 'background': item.configure( background=value )
-                  elif option == 'foreground':
-                        if kind==self.ENTRY:
-                              if item.hasDefault: item.oldFg=value
+                  try:
+                        if option == 'background':
+                              if kind==self.METER:
+                                    item.setBg(value)
+                              else:
+                                    item.configure( background=value )
+                        elif option == 'foreground':
+                              if kind==self.ENTRY:
+                                    if item.hasDefault: item.oldFg=value
+                                    else:
+                                          item.configure( foreground=value )
+                                          item.oldFg=value
+                              elif kind==self.METER:
+                                    item.setFg(value)
                               else:
                                     item.configure( foreground=value )
-                                    item.oldFg=value
-                        else:
-                              item.configure( foreground=value )
-                  elif option == 'disabledforeground': item.configure( disabledforeground=value )
-                  elif option == 'width': item.configure( width=value )
-                  elif option == 'height': item.configure( height=value )
-                  elif option == 'state': item.configure( state=value )
-                  elif option == 'relief': item.configure( relief=value )
-                  elif option == 'align':
-                        if kind==self.ENTRY:
-                              if value == W or value == LEFT: value = LEFT
-                              elif value == E or value == RIGHT: value = RIGHT
-                              item.configure( justify=value )
-                        else:
-                              item.configure( anchor=value )
-                  elif option == 'anchor': item.configure( anchor=value )
-                  elif option == 'cursor': item.configure( cursor=value )
-                  elif option == 'tooltip': self.__addTooltip(item, value)
-                  elif option == "focus": item.focus_set()
-                  elif option == 'command':
-                        # this will discard the scale value, as default function can't handle it
-                        if kind==self.SCALE: 
-                              item.configure( command=self.__makeFunc(value,name, True) )
-                        elif kind==self.OPTION:
-                              # need to trace the variable??
-                              item.var.trace('w',  self.__makeFunc(value,name, True))
-                        elif kind==self.ENTRY:
-                              if key is None: key =name 
-                              item.bind('<Return>', self.__makeFunc(value, key, True))
-                        elif kind==self.BUTTON:
-                              item.configure(command=self.__makeFunc(value, name))
-                              item.bind('<Return>', self.__makeFunc(value, name, True))
-                        else:
-                              item.configure( command=self.__makeFunc(value,name) )
-                  elif option == 'sticky':
-                        info = {}
-                        # need to reposition the widget in its grid
-                        if self.__widgetHasContainer(kind, item):
-                              # pack uses LEFT & RIGHT & BOTH
-                              info["side"] = value
-                              if value.lower() == "both":
-                                    info["expand"] = 1
-                                    info["side"] = "right"
-                              else: info["expand"] = 0
-                        else:
-                              # grid uses E+W
-                              if value.lower() == "left": side = W
-                              elif value.lower() == "right": side = E
-                              elif value.lower() == "both": side = W+E
-                              else: side = value.upper()
-                              info["sticky"] = side
-                        self.__repackWidget(item, info)
+                        elif option == 'disabledforeground': item.configure( disabledforeground=value )
+                        elif option == 'width':
+                              if kind==self.METER: item.setWidth(value)
+                              else: item.configure( width=value )
+                        elif option == 'height': item.configure( height=value )
+                        elif option == 'state': item.configure( state=value )
+                        elif option == 'relief': item.configure( relief=value )
+                        elif option == 'align':
+                              if kind==self.ENTRY:
+                                    if value == W or value == LEFT: value = LEFT
+                                    elif value == E or value == RIGHT: value = RIGHT
+                                    item.configure( justify=value )
+                              else:
+                                    item.configure( anchor=value )
+                        elif option == 'anchor': item.configure( anchor=value )
+                        elif option == 'cursor': item.configure( cursor=value )
+                        elif option == 'tooltip': self.__addTooltip(item, value)
+                        elif option == "focus": item.focus_set()
+                        elif option == 'command':
+                              # this will discard the scale value, as default function can't handle it
+                              if kind==self.SCALE: 
+                                    item.configure( command=self.__makeFunc(value,name, True) )
+                              elif kind==self.OPTION:
+                                    # need to trace the variable??
+                                    item.var.trace('w',  self.__makeFunc(value,name, True))
+                              elif kind==self.ENTRY:
+                                    if key is None: key =name 
+                                    item.bind('<Return>', self.__makeFunc(value, key, True))
+                              elif kind==self.BUTTON:
+                                    item.configure(command=self.__makeFunc(value, name))
+                                    item.bind('<Return>', self.__makeFunc(value, name, True))
+                              else:
+                                    item.configure( command=self.__makeFunc(value,name) )
+                        elif option == 'sticky':
+                              info = {}
+                              # need to reposition the widget in its grid
+                              if self.__widgetHasContainer(kind, item):
+                                    # pack uses LEFT & RIGHT & BOTH
+                                    info["side"] = value
+                                    if value.lower() == "both":
+                                          info["expand"] = 1
+                                          info["side"] = "right"
+                                    else: info["expand"] = 0
+                              else:
+                                    # grid uses E+W
+                                    if value.lower() == "left": side = W
+                                    elif value.lower() == "right": side = E
+                                    elif value.lower() == "both": side = W+E
+                                    else: side = value.upper()
+                                    info["sticky"] = side
+                              self.__repackWidget(item, info)
+                  except TclError as e:
+                        #raise Exception("Error configuring: " + name + ": " + str(e))
+                        print("Error configuring " + name + ": " + str(e))
 
       def __buildConfigFuncs(self):
             # make a list of function names & params
@@ -1692,7 +1704,8 @@ class gui:
             ent = self.__buildEntry(title, self.window, secret)
             self.__positionWidget(ent, row, column, colspan)
 
-            if self.validateNumeric == None: self.validateNumeric = (self.window.register(self.__validateNumericEntry), '%d', '%i', '%P', '%s', '%S', '%v', '%V', '%W')
+            if self.validateNumeric == None:
+                  self.validateNumeric = (self.window.register(self.__validateNumericEntry), '%d', '%i', '%P', '%s', '%S', '%v', '%V', '%W')
 
             ent.configure(validate='key', validatecommand=self.validateNumeric)
             self.setEntryTooltip(title, "Numeric data only.")
@@ -1703,7 +1716,8 @@ class gui:
             self.__packLabelFrame(frame, ent)
             self.__positionWidget(frame, row, column, colspan)
 
-            if self.validateNumeric == None: self.validateNumeric = (self.window.register(self.__validateNumericEntry), '%d', '%i', '%P', '%s', '%S', '%v', '%V', '%W')
+            if self.validateNumeric == None:
+                  self.validateNumeric = (self.window.register(self.__validateNumericEntry), '%d', '%i', '%P', '%s', '%S', '%v', '%V', '%W')
 
             ent.configure(validate='key', validatecommand=self.validateNumeric)
             self.setEntryTooltip(title, "Numeric data only.")
@@ -1779,13 +1793,21 @@ class gui:
             self.n_meters[name] = meter
             self.__positionWidget(meter, row, column, colspan)
 
+      # update the value of the specified meter
+      # note: expects a value between 0 & 1, will repeatedly divide by 10 if > 1
       def setMeter(self, name, value=0.0, text=None):
             item = self.__verifyItem(self.n_meters, name)
+            while value > 1:
+                  value = value/10
             item.set(value, text) 
 
       def getMeter(self, name):
             item = self.__verifyItem(self.n_meters, name)
             return item.get()
+
+      def setMeterFill(self, name, colour):
+            item = self.__verifyItem(self.n_meters, name)
+            item.setFill(colour)
       
 #####################################
 ## FUNCTIONS for tool bar
@@ -1982,8 +2004,9 @@ class gui:
 ## from: http://tkinter.unpythonic.net/wiki/ProgressMeter
 #####################################
 class Meter(Frame):
-      def __init__(self, master, width=700, height=20, bg='white', fillcolor='orchid1', value=0.0, text=None, font=None, textcolor='black', *args, **kw):
-            Frame.__init__(self, master, bg=bg, width=width, height=height, *args, **kw)
+      def __init__(self, master, width=None, height=20, bg='white', fillcolor='orchid1', value=0.0, text=None, font=None, textcolor='black', *args, **kw):
+            if width is None: Frame.__init__(self, master, bg=bg, height=height, *args, **kw)
+            else: Frame.__init__(self, master, bg=bg, width=width, height=height, *args, **kw)
             self._value = value
             self.config(relief='ridge', bd=3)
 
@@ -1996,6 +2019,18 @@ class Meter(Frame):
 
             self.set(value, text)
             self.bind('<Configure>', self._update_coords)
+
+      def setFill(self, col):
+            self._canv.itemconfigure(self._rect, fill=col)
+
+      def setFg(self, col):
+            self._canv.itemconfigure(self._text, fill=col)
+
+      def setBg(self, col):
+            self._canv.configure(bg=col)
+
+      def setWidth(self, width):
+            self.configure(width=width)
 
       def _update_coords(self, event):
             '''Updates the position of the text and rectangle inside the canvas when the size of the widget gets changed.'''
@@ -2081,7 +2116,7 @@ class AutoScrollbar(Scrollbar):
 #################################
 ## Additional Dialog Classes
 #################################
-# the main daialog class to be extended
+# the main dialog class to be extended
 class Dialog(Toplevel):
     def __init__(self, parent, title = None):
         Toplevel.__init__(self, parent)
@@ -2197,7 +2232,7 @@ class TextDialog(SimpleEntryDialog):
             self.result = res
             return True
 
-# capture a number - must be a valid float
+# captures a number - must be a valid float
 class NumDialog(SimpleEntryDialog):
     def __init__(self, parent, title, question):
         super(NumDialog, self).__init__(parent, title, question)
