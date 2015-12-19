@@ -545,7 +545,14 @@ class gui:
                   items = [items[name]]
             for item in items:
                   if option == 'background': item.configure( background=value )
-                  elif option == 'foreground': item.configure( foreground=value )
+                  elif option == 'foreground':
+                        if kind==self.ENTRY:
+                              if item.hasDefault: item.oldFg=value
+                              else:
+                                    item.configure( foreground=value )
+                                    item.oldFg=value
+                        else:
+                              item.configure( foreground=value )
                   elif option == 'disabledforeground': item.configure( disabledforeground=value )
                   elif option == 'width': item.configure( width=value )
                   elif option == 'height': item.configure( height=value )
