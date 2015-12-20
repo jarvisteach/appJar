@@ -51,7 +51,7 @@ class gui:
       TEXTAREA=11
       LINK=12
       METER=13
-      CONTAINER=14
+      LABELFRAME=14
 
       # positioning
       N = N
@@ -75,7 +75,7 @@ class gui:
 
       # containers
       C_NORMAL='normal'
-      C_CONTAINER='container'
+      C_LABELFRAME='labelFrame'
 
       # music stuff
       BASIC_NOTES = {"A":440, "B":493, "C":261, "D":293, "E":329, "F":349, "G":392 }
@@ -196,8 +196,8 @@ class gui:
             # set up a row counter - used to auto add rows
             # breaks once user sets own row
             self.gridPositions = {
-                  self.C_NORMAL : {'emptyRow':0, 'colCount':1},
-                  self.C_CONTAINER : {'emptyRow':0, 'colCount':1}
+                  self.C_NORMAL : {'emptyRow':0, 'colCount':1, 'sticky':None},
+                  self.C_LABELFRAME : {'emptyRow':0, 'colCount':1, 'sticky':W}
             }
 
             self.containerMode = self.C_NORMAL
@@ -230,7 +230,7 @@ class gui:
             self.n_links={}
             self.n_meters={}
             self.n_toplevels={}
-            self.n_containers={}
+            self.n_labelFrames={}
             self.n_flashLabs = []
 
             # variables associated with widgets
@@ -386,7 +386,7 @@ class gui:
             self.taFont.configure (family=font, size=size)
             self.linkFont.configure (family=font, size=size)
             self.meterFont.configure (family=font, size=size)
-            self.containerFont.configure (family=font, size=size)
+            self.labelFrameFont.configure (family=font, size=size)
 
       def increaseFont(self):
            self.increaseLabelFont()
@@ -434,8 +434,8 @@ class gui:
                   na.configure(background=self.labelBgColour)
             for na in self.n_links:
                   self.n_links[na].configure(background=self.labelBgColour)
-            for na in self.n_containers:
-                  self.n_containers[na].configure(background=self.labelBgColour)
+            for na in self.n_labelFrames:
+                  self.n_labelFrames[na].configure(background=self.labelBgColour)
             #for na in self.n_options:
             #      self.n_options[na].configure(background=self.labelBgColour)
             #for na in self.n_spins:
@@ -817,11 +817,11 @@ class gui:
 
       def __getContainer(self):
             if self.containerMode == self.C_NORMAL: return self.window
-            elif self.containerMode == self.C_CONTAINER: return self.container
+            elif self.containerMode == self.C_LABELFRAME: return self.container
 
       def __getRCS(self, row, column, span, sticky):
-            if self.containerMode == self.C_CONTAINER:
-                  sticky=W
+            if self.gridPositions[self.containerMode]['sticky'] is not None:
+                  sticky=self.gridPositions[self.containerMode]['sticky']
 
             if row is None: row=self.getNextRow()
             else: self.gridPositions[self.containerMode]['emptyRow'] = row + 1
@@ -855,26 +855,26 @@ class gui:
             else: Grid.rowconfigure(container, row, weight=0)
 
 
-      def startContainer(self, title, row=None, column=0, colspan=0):
+      def startContainer(self, title, row=None, column=0, colspan=0, sticky=W):
             # prevent from putting containers in containers
-            if self.containerMode == self.C_CONTAINER:
-                  raise Exception ("Can't put a container inside another container")
+            if self.containerMode == self.C_LABELFRAME:
+                  raise Exception ("Can't put a label frame inside another label frame")
 
             # first, make a LabelFrame, and position it correctly
-            self.__verifyItem(self.n_containers, title, True)
+            self.__verifyItem(self.n_labelFrames, title, True)
             self.container = LabelFrame(self.window, text=title)
-            self.container.configure( background=self.labelBgColour, font=self.containerFont )
+            self.container.configure( background=self.labelBgColour, font=self.labelFrameFont )
             self.__positionWidget(self.container, row, column, colspan)
-            self.n_containers[title] = self.container
+            self.n_labelFrames[title] = self.container
 
             # now, start up container positioning
-            self.containerMode = self.C_CONTAINER
+            self.containerMode = self.C_LABELFRAME
 
-            self.gridPositions[self.C_CONTAINER]={'emptyRow':0, 'colCount':1}
+            self.gridPositions[self.C_LABELFRAME]={'emptyRow':0, 'colCount':1,'sticky':sticky}
 
       def stopContainer(self):
-            if self.containerMode != self.C_CONTAINER:
-                  raise Exception ("No container to finish")
+            if self.containerMode != self.C_LABELFRAME:
+                  raise Exception ("No label frame to finish")
 
             self.container = None
             self.containerMode = self.C_NORMAL
@@ -2503,7 +2503,7 @@ if __name__ == "__main__":
       win.setOptionBoxCommand("opt", tb_press)
       win.addLabelOptionBox("Option",["left", "right", "both"])
       win.addLabelOptionBox("opt2",["a","b","c"])
-      win.startContainer('spins')
+      win.startContainer('spins', sticky="ew")
       win.addSpinBox("spins1", (3,6,9,1,2,4))
       win.setSpinBoxPos("spins1", 3)
       win.addLabelSpinBoxRange("spins2", 1, 10)
