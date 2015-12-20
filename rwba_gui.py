@@ -4,7 +4,7 @@
 # with snippets from stackexchange.com
 
 ##########
-## TO ADD: labelFrame, panedWindow
+## TO ADD: panedWindow
 # LAST CHANGE: see changeLog.txt
 # now under git
 
@@ -51,6 +51,7 @@ class gui:
       TEXTAREA=11
       LINK=12
       METER=13
+      CONTAINER=14
 
       # positioning
       N = N
@@ -138,6 +139,7 @@ class gui:
             self.taFont = font.Font(family="Helvetica", size=12)
             self.meterFont = font.Font(family="Helvetica", size=12, weight='bold')
             self.linkFont = font.Font(family="Helvetica", size=12, weight='bold', underline=1)
+            self.containerFont = font.Font(family="Helvetica", size=12)
 
             # set up colours
             self.bgColour = self.topLevel.cget("bg")
@@ -223,6 +225,7 @@ class gui:
             self.n_links={}
             self.n_meters={}
             self.n_toplevels={}
+            self.n_containers={}
             self.n_flashLabs = []
 
             # variables associated with widgets
@@ -378,6 +381,7 @@ class gui:
             self.taFont.configure (family=font, size=size)
             self.linkFont.configure (family=font, size=size)
             self.meterFont.configure (family=font, size=size)
+            self.containerFont.configure (family=font, size=size)
 
       def increaseFont(self):
            self.increaseLabelFont()
@@ -425,6 +429,8 @@ class gui:
                   na.configure(background=self.labelBgColour)
             for na in self.n_links:
                   self.n_links[na].configure(background=self.labelBgColour)
+            for na in self.n_containers:
+                  self.n_containers[na].configure(background=self.labelBgColour)
             #for na in self.n_options:
             #      self.n_options[na].configure(background=self.labelBgColour)
             #for na in self.n_spins:
@@ -859,11 +865,14 @@ class gui:
       def startContainer(self, title, row=None, column=0, colspan=0):
             # prevent from putting containers in containers
             if self.inContainer:
-                  raise Exception ("Can't put container inside container")
+                  raise Exception ("Can't put a container inside another container")
 
             # first, make a LabelFrame, and position it correctly
+            self.__verifyItem(self.n_containers, title, True)
             self.container = LabelFrame(self.window, text=title)
+            self.container.configure( background=self.labelBgColour, font=self.containerFont )
             self.__positionWidget(self.container, row, column, colspan)
+            self.n_containers[title] = self.container
 
             # now, start up container positioning
             self.inContainer = True
