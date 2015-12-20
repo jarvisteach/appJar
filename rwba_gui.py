@@ -1389,18 +1389,50 @@ class gui:
 
             self.__positionWidget(frame, row, column, colspan)
 
+      # make the list single/multi select
+      # default is single
       def setListSingle(self, title, single=True):
             lb = self.__verifyItem(self.n_lbs, title)
             if single: lb.configure(selectmode=BROWSE)
             else: lb.configure(selectmode=EXTENDED)
 
+      # select the specified item in the list
+      def selectListItem(self, title, item):
+            lb = self.__verifyItem(self.n_lbs, title)
+
+            # clear any selection
+            items = lb.get(0, END)
+            if len(items) > 0:
+                  lb.selection_clear(lb.curselection())
+                  for pos in range(len(items)):
+                        print(items[pos], "->", item)
+                        if items[pos] == item:
+                              # show & select this item
+                              lb.see(pos)
+                              lb.activate(pos)
+                              lb.selection_set(pos)
+                              break
+
+      # replace the list items in the list box
+      def updateListItems(self, title, items):
+            self.clearListBox(title)
+            self.addListItems(title, items)
+
+      # add the items to the specified list box
+      def addListItems(self, title, items):
+            for i in items:
+                  self.addListItem(title, i)
+
       def addListItem(self, title, item):
             lb = self.__verifyItem(self.n_lbs, title)
+            # add it at the end
             lb.insert(END, item)
 
+            # clear any selection
             items = lb.curselection()
             if len(items) > 0: lb.selection_clear(items)
-
+            
+            # show & select the newly added item
             lb.see(END)
             lb.activate(lb.size()-1)
             lb.selection_set(lb.size()-1)
