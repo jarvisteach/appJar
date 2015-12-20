@@ -143,7 +143,7 @@ class gui:
             self.taFont = font.Font(family="Helvetica", size=12)
             self.meterFont = font.Font(family="Helvetica", size=12, weight='bold')
             self.linkFont = font.Font(family="Helvetica", size=12, weight='bold', underline=1)
-            self.containerFont = font.Font(family="Helvetica", size=12)
+            self.labelFrameFont = font.Font(family="Helvetica", size=12)
 
             # set up colours
             self.bgColour = self.topLevel.cget("bg")
@@ -168,6 +168,7 @@ class gui:
             #self.window = Label(self.appWindow) # made as a label, so we can set an image
             self.window.configure(padx=2, pady=2, background=self.labelBgColour)
             self.window.pack(fill=BOTH, expand=True)
+            self.gridPositions[self.C_NORMAL]['container'] = self.window
 
             # set up the bg label to store an image
             self.__configBg()
@@ -196,8 +197,8 @@ class gui:
             # set up a row counter - used to auto add rows
             # breaks once user sets own row
             self.gridPositions = {
-                  self.C_NORMAL : {'emptyRow':0, 'colCount':1, 'sticky':None},
-                  self.C_LABELFRAME : {'emptyRow':0, 'colCount':1, 'sticky':W}
+                  self.C_NORMAL : {'container':None,'emptyRow':0, 'colCount':1, 'sticky':None},
+                  self.C_LABELFRAME : {'container':None,'emptyRow':0, 'colCount':1, 'sticky':W}
             }
 
             self.containerMode = self.C_NORMAL
@@ -816,8 +817,7 @@ class gui:
                   raise Exception("Unknown geometry manager: " + widget.winfo_manager())
 
       def __getContainer(self):
-            if self.containerMode == self.C_NORMAL: return self.window
-            elif self.containerMode == self.C_LABELFRAME: return self.container
+            return self.gridPositions[self.containerMode]['container']
 
       def __getRCS(self, row, column, span, sticky):
             if self.gridPositions[self.containerMode]['sticky'] is not None:
@@ -855,29 +855,34 @@ class gui:
             else: Grid.rowconfigure(container, row, weight=0)
 
 
-      def startContainer(self, title, row=None, column=0, colspan=0, sticky=W):
-            # prevent from putting containers in containers
+      def startLabelFrame(self, title, row=None, column=0, colspan=0, sticky=W):
+            # prevent from putting LabelFrames in LabelFrames
             if self.containerMode == self.C_LABELFRAME:
                   raise Exception ("Can't put a label frame inside another label frame")
 
             # first, make a LabelFrame, and position it correctly
             self.__verifyItem(self.n_labelFrames, title, True)
-            self.container = LabelFrame(self.window, text=title)
-            self.container.configure( background=self.labelBgColour, font=self.labelFrameFont )
-            self.__positionWidget(self.container, row, column, colspan)
-            self.n_labelFrames[title] = self.container
+            container = LabelFrame(self.window, text=title)
+            container.configure( background=self.labelBgColour, font=self.labelFrameFont )
+            self.__positionWidget(container, row, column, colspan)
+            self.n_labelFrames[title] = container
 
             # now, start up container positioning
             self.containerMode = self.C_LABELFRAME
+            self.gridPositions[self.C_LABELFRAME]={'container':container,'emptyRow':0, 'colCount':1,'sticky':sticky}
 
-            self.gridPositions[self.C_LABELFRAME]={'emptyRow':0, 'colCount':1,'sticky':sticky}
-
-      def stopContainer(self):
+      def stopLabelFrame(self):
             if self.containerMode != self.C_LABELFRAME:
                   raise Exception ("No label frame to finish")
 
             self.container = None
+            self.gridPositions[self.C_LABELFRAME]['container']=None
             self.containerMode = self.C_NORMAL
+
+      # function to set position of title for label frame
+      def setLabelFrameAnchor(self, title, anchor):
+            frame = self.__verifyItem(self.n_labelFrames, title)
+            frame.config(labelanchor=anchor)
 
       def setSticky(self, on=True):
             self.sticky = on
@@ -1096,7 +1101,7 @@ class gui:
       def __buildSpinBox(self, frame, title, vals):
             self.__verifyItem(self.n_spins, title, True)
             if type(vals) not in [list, tuple]:
-                  raise Exception("Can't create SpinBox " + title + ". Invalid values: " + str(vals)) from None
+                  raise Exception("Can't create SpinBox " + title + ". Invalid values: " + str(vals)) 
 
             spin = Spinbox(frame)
             spin.inContainer = False
@@ -2482,11 +2487,11 @@ if __name__ == "__main__":
       win.setScaleCommand("Scale", tb_press)
       win.setScaleRange("Scale",0, 100, 100)
       #win.addImage("8ball.gif", win.getNextRow(), 0, 2)
-      win.startContainer("Radios")
+      win.startLabelFrame("Radios")
       win.addRadioButton("Test", "Oneeeeeeeeeeeeeeeeeeeee")
       win.addRadioButton("Test", "Two")
       win.addRadioButton("Test", "Three")
-      win.stopContainer()
+      win.stopLabelFrame()
       #win.addRadioButton("Test", "Four")
       win.setRbAlign("Test", win.SE)
       win.setRbCommand("Test", tb_press)
@@ -2503,14 +2508,14 @@ if __name__ == "__main__":
       win.setOptionBoxCommand("opt", tb_press)
       win.addLabelOptionBox("Option",["left", "right", "both"])
       win.addLabelOptionBox("opt2",["a","b","c"])
-      win.startContainer('spins', sticky="ew")
+      win.startLabelFrame('spins', sticky="ew")
       win.addSpinBox("spins1", (3,6,9,1,2,4))
       win.setSpinBoxPos("spins1", 3)
       win.addLabelSpinBoxRange("spins2", 1, 10)
       win.addLabelSpinBoxRange("superSpinsAre", 1, 10)
       win.setSpinBoxCommand("spins1", tb_press)
       win.setSpinBox("superSpinsAre", 4)
-      win.stopContainer()
+      win.stopLabelFrame()
       win.addLabelOptionBox("Widgets",[ "WINDOW", "LABEL", "ENTRY", "BUTTON", "CB", "SCALE", "RB", "LB", "MESSAGE", "SPIN", "OPTION", "TEXTAREA", "LINK", "METER"]) 
       win.addMeter("Meter")
       win.setPollTime(2000)
