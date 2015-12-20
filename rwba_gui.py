@@ -73,6 +73,10 @@ class gui:
       RIDGE=RIDGE
       FLAT=FLAT
 
+      # containers
+      C_NORMAL='normal'
+      C_CONTAINER='container'
+
       # music stuff
       BASIC_NOTES = {"A":440, "B":493, "C":261, "D":293, "E":329, "F":349, "G":392 }
       NOTES={'f8': 5587, 'c#6': 1108, 'f4': 349, 'c7': 2093, 'd#2': 77, 'g8': 6271,
@@ -194,8 +198,12 @@ class gui:
       def __initArrays(self):
             # set up a row counter - used to auto add rows
             # breaks once user sets own row
-            self.emptyRow = 0
-            self.colCount = 1
+            self.gridPositions = {
+                  self.C_NORMAL : {'emptyRow':0, 'colCount':1},
+                  self.C_CONTAINER : {'emptyRow':0, 'colCount':1}
+            }
+
+            self.containerMode = self.C_NORMAL
 
             #set up a minimum label width for label combos
             self.labWidth=1
@@ -791,17 +799,12 @@ class gui:
             elif newItem and item in items: raise ItemLookupError("Duplicate key: '"+item+"' already exists")
 
       def getRow(self):
-            return self.emptyRow
+            return self.gridPositions[self.containerMode]['emptyRow']
 
       def getNextRow(self):
-            if not self.inContainer:
-                  temp = self.emptyRow
-                  self.emptyRow += 1
-                  return temp
-            else:
-                  temp = self.containerEmptyRow
-                  self.containerEmptyRow += 1
-                  return temp
+            temp = self.gridPositions[self.containerMode]['emptyRow']
+            self.gridPositions[self.containerMode]['emptyRow'] = temp + 1
+            return temp
 
       def __repackWidget(self, widget, params):
             if widget.winfo_manager() == "grid":
@@ -821,18 +824,15 @@ class gui:
 
       def __getRCS(self, row, column, span, sticky):
             if not self.inContainer:
-                  if row is None: row=self.getNextRow()
-                  else: self.emptyRow = row + 1
-                  if column >= self.colCount: self.colCount = column + 1
-                  #if column == 0 and colspan == 0 and self.colCount > 1:
-                        #colspan = self.colCount
+                  pass
             else:
-                  if row is None: row=self.getNextRow()
-                  else: self.containerEmptyRow = row + 1
-                  if column >= self.containerColCount: self.containerColCount = column + 1
-                  #if column == 0 and colspan == 0 and self.colCount > 1:
-                        #colspan = self.colCount
                   sticky=W
+
+            if row is None: row=self.getNextRow()
+            else: self.gridPositions[self.containerMode]['emptyRow'] = row + 1
+            if column >= self.gridPositions[self.containerMode]['colCount']: self.gridPositions[self.containerMode]['colCount'] = column + 1
+            #if column == 0 and colspan == 0 and self.gridPositions[self.containerMode]['colCount'] > 1:
+            #      colspan = self.gridPositions[self.containerMode]['colCount']
 
             return row, column, span, sticky
 
@@ -876,8 +876,9 @@ class gui:
 
             # now, start up container positioning
             self.inContainer = True
-            self.containerEmptyRow = 0
-            self.containerColCount = 1
+            self.containerMode = self.C_CONTAINER
+
+            self.gridPositions[self.C_CONTAINER]={'emptyRow':0, 'colCount':1}
 
       def stopContainer(self):
             if not self.inContainer:
@@ -885,6 +886,7 @@ class gui:
 
             self.inContainer = False
             self.container = None
+            self.containerMode = self.C_NORMAL
 
       def setSticky(self, on=True):
             self.sticky = on
@@ -2510,12 +2512,14 @@ if __name__ == "__main__":
       win.setOptionBoxCommand("opt", tb_press)
       win.addLabelOptionBox("Option",["left", "right", "both"])
       win.addLabelOptionBox("opt2",["a","b","c"])
+      win.startContainer('spins')
       win.addSpinBox("spins1", (3,6,9,1,2,4))
       win.setSpinBoxPos("spins1", 3)
       win.addLabelSpinBoxRange("spins2", 1, 10)
       win.addLabelSpinBoxRange("superSpinsAre", 1, 10)
       win.setSpinBoxCommand("spins1", tb_press)
       win.setSpinBox("superSpinsAre", 4)
+      win.stopContainer()
       win.addLabelOptionBox("Widgets",[ "WINDOW", "LABEL", "ENTRY", "BUTTON", "CB", "SCALE", "RB", "LB", "MESSAGE", "SPIN", "OPTION", "TEXTAREA", "LINK", "METER"]) 
       win.addMeter("Meter")
       win.setPollTime(2000)
