@@ -804,20 +804,28 @@ class gui:
             else:
                   raise Exception("Unknown geometry manager: " + widget.winfo_manager())
 
-      # two important thigs here:
-      # grid - sticky: position of widget in its space (side or fill)
-      # row/columns configure - weight: how to grow with GUI
-      def __positionWidget(self, widget, row, column=0, colspan=0, sticky=W+E):
-            # allow item to be added to container
-            container = self.window
-            if self.inContainer:
-                  container = self.window
-
+      def __getRCS(self, row, column, span):
             if row is None: row=self.getNextRow()
             else: self.emptyRow = row + 1
             if column >= self.colCount: self.colCount = column + 1
             #if column == 0 and colspan == 0 and self.colCount > 1:
                   #colspan = self.colCount
+            return row, column, span
+
+      # two important thigs here:
+      # grid - sticky: position of widget in its space (side or fill)
+      # row/columns configure - weight: how to grow with GUI
+      def __positionWidget(self, widget, row, column=0, colspan=0, sticky=W+E):
+            # allow item to be added to container
+            if self.inContainer:
+                  print("ADDING to container")
+                  container = self.window
+            else:
+                  print("ADDING to self.window")
+                  container = self.window
+                  
+
+            row, column, span = self.__getRCS(row, column, colspan)
 
             # build a dictionary for the named params
             params = {"row":row, "column":column, "ipadx":self.padx, "ipady":self.pady}
@@ -834,6 +842,23 @@ class gui:
             if self.expand in ["ALL", "ROW"]: Grid.rowconfigure(container, row, weight=1)
             else: Grid.rowconfigure(container, row, weight=0)
 
+
+      def startContainer(self, title):
+            if self.inContainer:
+                  raise Exception ("Can't put container inside container")
+
+            print("STARTING container: ", title)
+            self.inContainer = True
+            self.containerRow = 0
+            self.containerColCount = 1
+
+
+      def stopContainer(self, title):
+            if not self.inContainer:
+                  raise Exception ("No container to finish")
+
+            print("STOPPING container: ", title)
+            self.inContainer = False
       def setSticky(self, on=True):
             self.sticky = on
 
