@@ -172,9 +172,6 @@ class gui:
             # set up the bg label to store an image
             self.__configBg()
 
-            # flag to declare if we are adding to main window or sub window
-            self.inContainer = False
-            
             # override close button
             self.__stopFunction = None
             self.topLevel.protocol("WM_DELETE_WINDOW", self.stop)
@@ -819,13 +816,11 @@ class gui:
                   raise Exception("Unknown geometry manager: " + widget.winfo_manager())
 
       def __getContainer(self):
-            if self.inContainer: return self.container
-            else: return self.window
+            if self.containerMode == self.C_NORMAL: return self.window
+            elif self.containerMode == self.C_CONTAINER: return self.container
 
       def __getRCS(self, row, column, span, sticky):
-            if not self.inContainer:
-                  pass
-            else:
+            if self.containerMode == self.C_CONTAINER:
                   sticky=W
 
             if row is None: row=self.getNextRow()
@@ -836,14 +831,12 @@ class gui:
 
             return row, column, span, sticky
 
-      # two important thigs here:
+      # two important things here:
       # grid - sticky: position of widget in its space (side or fill)
       # row/columns configure - weight: how to grow with GUI
       def __positionWidget(self, widget, row, column=0, colspan=0, sticky=W+E):
             # allow item to be added to container
-            if self.inContainer: container = self.container
-            else: container = self.window
-
+            container = self.__getContainer()
             row, column, span, sticky = self.__getRCS(row, column, colspan, sticky)
 
             # build a dictionary for the named params
@@ -864,7 +857,7 @@ class gui:
 
       def startContainer(self, title, row=None, column=0, colspan=0):
             # prevent from putting containers in containers
-            if self.inContainer:
+            if self.containerMode == self.C_CONTAINER:
                   raise Exception ("Can't put a container inside another container")
 
             # first, make a LabelFrame, and position it correctly
@@ -875,16 +868,14 @@ class gui:
             self.n_containers[title] = self.container
 
             # now, start up container positioning
-            self.inContainer = True
             self.containerMode = self.C_CONTAINER
 
             self.gridPositions[self.C_CONTAINER]={'emptyRow':0, 'colCount':1}
 
       def stopContainer(self):
-            if not self.inContainer:
+            if self.containerMode != self.C_CONTAINER:
                   raise Exception ("No container to finish")
 
-            self.inContainer = False
             self.container = None
             self.containerMode = self.C_NORMAL
 
