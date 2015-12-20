@@ -165,6 +165,9 @@ class gui:
 
             # set up the bg label to store an image
             self.__configBg()
+
+            # flag to declare if we are adding to main window or sub window
+            self.inContainer = False
             
             # override close button
             self.__stopFunction = None
@@ -805,6 +808,11 @@ class gui:
       # grid - sticky: position of widget in its space (side or fill)
       # row/columns configure - weight: how to grow with GUI
       def __positionWidget(self, widget, row, column=0, colspan=0, sticky=W+E):
+            # allow item to be added to container
+            container = self.window
+            if self.inContainer:
+                  container = self.window
+
             if row is None: row=self.getNextRow()
             else: self.emptyRow = row + 1
             if column >= self.colCount: self.colCount = column + 1
@@ -821,10 +829,10 @@ class gui:
             widget.grid (**params)
 
             # configure the row/column to expand equally
-            if self.expand in ["ALL", "COLUMN"]: Grid.columnconfigure(self.window, column, weight=1)
-            else: Grid.columnconfigure(self.window, column, weight=0)
-            if self.expand in ["ALL", "ROW"]: Grid.rowconfigure(self.window, row, weight=1)
-            else: Grid.rowconfigure(self.window, row, weight=0)
+            if self.expand in ["ALL", "COLUMN"]: Grid.columnconfigure(container, column, weight=1)
+            else: Grid.columnconfigure(container, column, weight=0)
+            if self.expand in ["ALL", "ROW"]: Grid.rowconfigure(container, row, weight=1)
+            else: Grid.rowconfigure(container, row, weight=0)
 
       def setSticky(self, on=True):
             self.sticky = on
@@ -1040,8 +1048,11 @@ class gui:
 #####################################
 ## FUNCTION to add spin boxes
 #####################################
-      def __buildSpinBox(self, frame, title, fromVal, toVal=None):
+      def __buildSpinBox(self, frame, title, vals):
             self.__verifyItem(self.n_spins, title, True)
+            if type(vals) not in [list, tuple]:
+                  raise Exception("Can't create SpinBox " + title + ". Invalid values: " + str(vals)) from None
+
             spin = Spinbox(frame)
             spin.inContainer = False
             spin.configure(font=self.entryFont, highlightbackground=self.labelBgColour, highlightthickness=0)
@@ -1052,28 +1063,33 @@ class gui:
             spin.bind("<Tab>", self.__focusNextWindow)
             spin.bind("<Shift-Tab>", self.__focusLastWindow)
 
-            if toVal is None: spin.config(values=fromVal)
-            else: spin.config(from_=fromVal, to=toVal)
+            spin.config(values=vals)
 
             self.n_spins[title] = spin
             return  spin
 
-      def __addSpinBox(self, title, fromVal, toVal=None, row=None, column=0, colspan=0):
-            spin = self.__buildSpinBox(self.window, title, fromVal, toVal)
+      def __addSpinBox(self, title, values,row=None, column=0, colspan=0):
+            spin = self.__buildSpinBox(self.window, title, values)
             self.__positionWidget(spin, row, column, colspan)
             self.setSpinBoxPos(title, 0)
 
       def addSpinBox(self, title, vals, row=None, column=0, colspan=0):
-            self.__addSpinBox(title, vals, None, row, column, colspan)
+            self.__addSpinBox(title, vals, row, column, colspan)
             
       def addSpinBoxRange(self, title, fromVal, toVal, row=None, column=0, colspan=0):
-            self.__addSpinBox(title, fromVal, toVal, row, column, colspan)
+            vals = list(range(fromVal, toVal+1))
+            self.__addSpinBox(title, vals, row, column, colspan)
 
-      def addLabelSpinBox(self, title, fromVal, toVal=None, row=None, column=0, colspan=0):
+      def addLabelSpinBoxRange(self, title, fromVal, toVal, row=None, column=0, colspan=0):
+            vals = list(range(fromVal, toVal+1))
+            self.addLabelSpinBox(title, vals, row, column, colspan)
+
+      def addLabelSpinBox(self, title, vals, row=None, column=0, colspan=0):
             frame = self.__getLabelFrame(title)
-            spin = self.__buildSpinBox(frame, title, fromVal, toVal)
+            spin = self.__buildSpinBox(frame, title, vals)
             self.__packLabelFrame(frame, spin)
             self.__positionWidget(frame, row, column, colspan)
+            self.setSpinBoxPos(title, 0)
 
       def getSpinBox(self, title):
             spin = self.__verifyItem(self.n_spins, title)
@@ -1090,7 +1106,7 @@ class gui:
             vals = spin.cget("values").split()
             val = str(val)
             if val not in vals:
-                raise Exception("Invalid value: "+ val + ". Not in SpinBox: "+title+"=" + str(vals)) from None
+                  raise Exception("Invalid value: "+ val + ". Not in SpinBox: "+title+"=" + str(vals)) from None
             self.__setSpinBoxVal(spin, val)
 
       def setSpinBoxPos(self, title, pos):
@@ -1098,7 +1114,7 @@ class gui:
             vals = spin.cget("values").split()
             pos=int(pos)
             if pos <  0 or pos >= len(vals):
-                raise Exception("Invalid position: "+ val + ". No position in SpinBox: "+title+"=" + str(vals)) from None
+                  raise Exception("Invalid position: "+ str(pos) + ". No position in SpinBox: "+title+"=" + str(vals)) from None
             val = vals[pos]
             self.__setSpinBoxVal(spin, val)
 
@@ -1405,7 +1421,6 @@ class gui:
             if len(items) > 0:
                   lb.selection_clear(lb.curselection())
                   for pos in range(len(items)):
-                        print(items[pos], "->", item)
                         if items[pos] == item:
                               # show & select this item
                               lb.see(pos)
@@ -2441,9 +2456,10 @@ if __name__ == "__main__":
       win.setOptionBoxCommand("opt", tb_press)
       win.addLabelOptionBox("Option",["left", "right", "both"])
       win.addLabelOptionBox("opt2",["a","b","c"])
-      win.addSpinBoxRange("spins1", 1, 10)
-      win.addLabelSpinBox("spins2", 1, 10)
-      win.addLabelSpinBox("superSpinsAre", 1, 10)
+      win.addSpinBox("spins1", (3,6,9,1,2,4))
+      win.setSpinBoxPos("spins1", 3)
+      win.addLabelSpinBoxRange("spins2", 1, 10)
+      win.addLabelSpinBoxRange("superSpinsAre", 1, 10)
       win.setSpinBoxCommand("spins1", tb_press)
       win.setSpinBox("superSpinsAre", 4)
       win.addLabelOptionBox("Widgets",[ "WINDOW", "LABEL", "ENTRY", "BUTTON", "CB", "SCALE", "RB", "LB", "MESSAGE", "SPIN", "OPTION", "TEXTAREA", "LINK", "METER"]) 
