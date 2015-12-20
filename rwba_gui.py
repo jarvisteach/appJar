@@ -813,7 +813,7 @@ class gui:
             if self.inContainer: return self.container
             else: return self.window
 
-      def __getRCS(self, row, column, span):
+      def __getRCS(self, row, column, span, sticky):
             if not self.inContainer:
                   if row is None: row=self.getNextRow()
                   else: self.emptyRow = row + 1
@@ -826,8 +826,9 @@ class gui:
                   if column >= self.containerColCount: self.containerColCount = column + 1
                   #if column == 0 and colspan == 0 and self.colCount > 1:
                         #colspan = self.colCount
+                  sticky=W
 
-            return row, column, span
+            return row, column, span, sticky
 
       # two important thigs here:
       # grid - sticky: position of widget in its space (side or fill)
@@ -837,7 +838,7 @@ class gui:
             if self.inContainer: container = self.container
             else: container = self.window
 
-            row, column, span = self.__getRCS(row, column, colspan)
+            row, column, span, sticky = self.__getRCS(row, column, colspan, sticky)
 
             # build a dictionary for the named params
             params = {"row":row, "column":column, "ipadx":self.padx, "ipady":self.pady}
