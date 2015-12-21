@@ -1277,29 +1277,30 @@ class gui:
             self.n_imageCache = {}
 
       # internal function to check/build image object
-      def __getImage(self, image):
+      def __getImage(self, image, cache=True):
             if image is None: return None
             if os.path.isfile(image):
                   if os.access(image, os.R_OK):
-                        if image in self.n_imageCache and self.n_imageCache[image] is not None:
-                              pass
+                        if cache and image in self.n_imageCache and self.n_imageCache[image] is not None:
+                              imgFile=self.n_imageCache[image]
                         elif image.endswith('.gif'):
-                              self.n_imageCache[image]=PhotoImage(file=image)
+                              imgFile=PhotoImage(file=image)
                         elif image.endswith('.png'):
                               png = PngImageTk(image)
                               png.convert()
-                              self.n_imageCache[image]=png.image
+                              imgFile=png.image
                         elif image.endswith('.ppm') or image.endswith('.pgm'):
-                              self.n_imageCache[image]=PhotoImage(file=image)
+                              imgFile=PhotoImage(file=image)
                         elif image.endswith('jpg'):
-                              self.n_imageCache[image]=self.convertJpgToBmp(image)
+                              imgFile=self.convertJpgToBmp(image)
                         else:
                               raise Exception("Invalid image type: "+ image) from None
                   else:
                         raise Exception("Can't read image: "+ image) from None
             else:
                   raise Exception("Image "+image+" does not exist") from None
-            return self.n_imageCache[image]
+            if cache: self.n_imageCache[image]=imgFile
+            return imgFile
 
       def convertJpgToBmp(self, image):
             # read the image into an array of bytes
@@ -1341,7 +1342,7 @@ class gui:
       # function to set a background image
       # make sure this is done before everything else, otherwise it will cover other widgets
       def setBgImage(self, image):
-            image = self.__getImage(image)
+            image = self.__getImage(image, False) # make sure it's not cached
             #self.containerStack[0]['container'].config(image=image) # window as a label doesn't work...
             self.bgLabel.config(image=image)
             self.containerStack[0]['container'].image = image # keep a reference!
@@ -1349,7 +1350,7 @@ class gui:
       def removeBgImage(self):
             self.bgLabel.config(image=None)
             #self.containerStack[0]['container'].config(image=None) # window as a label doesn't work...
-            self.containerStack[0]['container'].image = None # remove the reference
+            self.containerStack[0]['container'].image = None # remove the reference - shouldn't be cached
 
       def resizeBgImage(self):
             if self.containerStack[0]['container'].image == None: return
