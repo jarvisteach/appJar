@@ -206,9 +206,10 @@ class gui:
             #set up a minimum label width for label combos
             self.labWidth=1
 
-            # a validate function callback - used by numeric texts
-            # created first time a numeric text is used
+            # validate function callbacks - used by numeric texts
+            # created first time a widget is used
             self.validateNumeric = None
+            self.validateSpinBox = None
 
             # set up flash variable
             self.doFlash = False
@@ -1122,6 +1123,16 @@ class gui:
             spin = self.__buildSpinBox(self.__getContainer(), title, values)
             self.__positionWidget(spin, row, column, colspan)
             self.setSpinBoxPos(title, 0)
+            if self.validateSpinBox == None:
+                  self.validateSpinBox = (self.window.register(self.__validateSpinBox),'%P', '%S', '%W')
+
+            print("validising")
+            spin.configure(validate='all', validatecommand=self.validateSpinBox)
+
+      def __validateSpinBox(self, user_input, new_value, widget_name):
+            print("validating...", user_input)
+            self.window.bell()
+            return False
 
       def addSpinBox(self, title, vals, row=None, column=0, colspan=0):
             self.__addSpinBox(title, vals, row, column, colspan)
