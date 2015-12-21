@@ -1131,6 +1131,10 @@ class gui:
             spin.bind("<Shift-Tab>", self.__focusLastWindow)
 
             spin.config(values=vals)
+            if self.validateSpinBox == None:
+                  self.validateSpinBox = (self.window.register(self.__validateSpinBox),'%P', '%W')
+
+            spin.configure(validate='all', validatecommand=self.validateSpinBox)
 
             self.n_spins[title] = spin
             return  spin
@@ -1139,13 +1143,16 @@ class gui:
             spin = self.__buildSpinBox(self.__getContainer(), title, values)
             self.__positionWidget(spin, row, column, colspan)
             self.setSpinBoxPos(title, 0)
-            if self.validateSpinBox == None:
-                  self.validateSpinBox = (self.window.register(self.__validateSpinBox),'%P', '%S', '%W')
 
-            spin.configure(validate='all', validatecommand=self.validateSpinBox)
+      # validates that an item in the names spinbox starts with the user_input      
+      def __validateSpinBox(self, user_input, widget_name):
+            spin = self.containerStack[0]['container'].nametowidget(widget_name)
 
-      def __validateSpinBox(self, user_input, new_value, widget_name):
-            #self.window.bell()
+            vals = spin.cget("values").split()
+            for i in vals:
+                  if i.startswith(user_input): return True
+
+            self.containerStack[0]['container'].bell()
             return False
 
       def addSpinBox(self, title, vals, row=None, column=0, colspan=0):
@@ -1812,9 +1819,11 @@ class gui:
                         float(value_if_allowed)
                         return True
                     except ValueError:
+                        self.containerStack[0]['container'].bell()
                         return False
                 else:
-                    return False
+                        self.containerStack[0]['container'].bell()
+                        return False
             else:
                 return True
 
