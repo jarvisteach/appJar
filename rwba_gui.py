@@ -100,8 +100,8 @@ class gui:
 ## CONSTRUCTOR - creates the GUI
 #####################################
       def __init__(self, title="RWBA Tools", geom=None):
-            # dynamically create lot of functions for configuring stuff
             self.__initArrays()
+            # dynamically create lots of functions for configuring stuff
             self.__buildConfigFuncs()
 
             # set up some default path locations
@@ -353,6 +353,17 @@ class gui:
 
       def setPadY(self, y=0):
             self.containerStack[-1]['pady'] = y
+
+      # set an override sticky for this container
+      def setSticky(self, sticky):
+            self.containerStack[-1]['sticky'] = sticky
+
+      # this tells widgets what to do when GUI is resized
+      def setExpand(self, exp):
+            if exp.lower() == "none": self.containerStack[-1]['expand'] = "NONE"
+            elif exp.lower() == "row": self.containerStack[-1]['expand'] = "ROW"
+            elif exp.lower() == "column": self.containerStack[-1]['expand'] = "COLUMN"
+            else: self.containerStack[-1]['expand'] = "ALL"
 
       def getFonts(self): return list ( font.families() ). sort()
 
@@ -765,7 +776,7 @@ class gui:
       def removeAllWidgets(self):
             for child in self.containerStack[0]['container'].winfo_children():
                   child.destroy()
-            self.__configBg()
+            self.__configBg(self.containerStack[0]['container'])
             self.__initArrays()
 
 #####################################
@@ -900,17 +911,6 @@ class gui:
       def setLabelFrameAnchor(self, title, anchor):
             frame = self.__verifyItem(self.n_labelFrames, title)
             frame.config(labelanchor=anchor)
-
-      # set an override sticky for this container
-      def setSticky(self, sticky):
-            self.containerStack[-1]['sticky'] = sticky
-
-      # this tells widgets what to do when GUI is resized
-      def setExpand(self, exp):
-            if exp.lower() == "none": self.containerStack[-1]['expand'] = "NONE"
-            elif exp.lower() == "row": self.containerStack[-1]['expand'] = "ROW"
-            elif exp.lower() == "column": self.containerStack[-1]['expand'] = "COLUMN"
-            else: self.containerStack[-1]['expand'] = "ALL"
 
 #####################################
 ## FUNCTION to manage topLevels
@@ -1267,8 +1267,8 @@ class gui:
             label.config(anchor=CENTER, font=self.labelFont, background=self.labelBgColour)
             label.image = image # keep a reference!
 
-            h = image.height()
-            w = image.width()
+            #h = image.height()
+            #w = image.width()
             #label.config(height=h, width=w)
             self.topLevel.update_idletasks()
 
