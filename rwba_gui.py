@@ -155,19 +155,20 @@ class gui:
             self.hasMenu = False
             self.hasStatus = False
             self.hasTb = False
+
             # won't pack, if don't pack it here
             self.tb = Frame(self.appWindow, bd=1, relief=RAISED)
             self.tb.pack(side=TOP, fill=X)
 
-            # create the main frame - window
-            self.window = Frame(self.appWindow)
-            #self.window = Label(self.appWindow) # made as a label, so we can set an image
-            self.window.configure(padx=2, pady=2, background=self.labelBgColour)
-            self.window.pack(fill=BOTH, expand=True)
-            self.__addContainer( self.C_NORMAL, self.window, 0, 1)
+            # create the main container for this GUI
+            container = Frame(self.appWindow)
+            #container = Label(self.appWindow) # made as a label, so we can set an image
+            container.configure(padx=2, pady=2, background=self.labelBgColour)
+            container.pack(fill=BOTH, expand=True)
+            self.__addContainer(self.C_NORMAL, container, 0, 1)
 
-            # set up the bg label to store an image
-            self.__configBg()
+            # set up the main container to be able to host an image
+            self.__configBg(container)
 
             # override close button
             self.__stopFunction = None
@@ -178,13 +179,13 @@ class gui:
             self.pollTime = 250
             self.built = True
 
-      def __configBg(self):
+      def __configBg(self, container):
             # set up a background image holder
             # alternative to label option above, as label doesn't update widgets properly
-            self.bgLabel = Label(self.window)
+            self.bgLabel = Label(container)
             self.bgLabel.config(anchor=CENTER, font=self.labelFont, background=self.labelBgColour)
             self.bgLabel.place(x=0, y=0, relwidth=1, relheight=1)
-            self.window.image = None
+            container.image = None
 
 #####################################
 ## set the arrays we use to store everything
@@ -248,7 +249,7 @@ class gui:
             # set a minimum size
             self.topLevel.minsize(self.topLevel.winfo_width(), self.topLevel.winfo_height())
 
-            # put it in the middle
+            # put it in the middle of the screen
             x = (self.topLevel.winfo_screenwidth() - self.topLevel.winfo_reqwidth()) / 2
             y = (self.topLevel.winfo_screenheight() - self.topLevel.winfo_reqheight()) / 2
             self.topLevel.geometry("+%d+%d" % (x, y))
@@ -398,7 +399,7 @@ class gui:
             self.labelBgColour=colour
             self.topLevel.configure(background=self.labelBgColour)
             self.appWindow.configure(background=self.labelBgColour)
-            self.window.configure(background=self.labelBgColour)
+            self.containerStack[0]['container'].configure(background=self.labelBgColour)
             self.bgLabel.configure(background=self.labelBgColour)
 
             for na in self.n_labels:
@@ -762,7 +763,7 @@ class gui:
             items.pop(name)
             
       def removeAllWidgets(self):
-            for child in self.window.winfo_children():
+            for child in self.containerStack[0]['container'].winfo_children():
                   child.destroy()
             self.__configBg()
             self.__initArrays()
@@ -1132,7 +1133,7 @@ class gui:
 
             spin.config(values=vals)
             if self.validateSpinBox == None:
-                  self.validateSpinBox = (self.window.register(self.__validateSpinBox),'%P', '%W')
+                  self.validateSpinBox = (self.containerStack[0]['container'].register(self.__validateSpinBox),'%P', '%W')
 
             spin.configure(validate='all', validatecommand=self.validateSpinBox)
 
@@ -1341,17 +1342,17 @@ class gui:
       # make sure this is done before everything else, otherwise it will cover other widgets
       def setBgImage(self, image):
             image = self.__getImage(image)
-            #self.window.config(image=image) # window as a label doesn't work...
+            #self.containerStack[0]['container'].config(image=image) # window as a label doesn't work...
             self.bgLabel.config(image=image)
-            self.window.image = image # keep a reference!
+            self.containerStack[0]['container'].image = image # keep a reference!
 
       def removeBgImage(self):
             self.bgLabel.config(image=None)
-            #self.window.config(image=None) # window as a label doesn't work...
-            self.window.image = None # remove the reference
+            #self.containerStack[0]['container'].config(image=None) # window as a label doesn't work...
+            self.containerStack[0]['container'].image = None # remove the reference
 
       def resizeBgImage(self):
-            if self.window.image == None: return
+            if self.containerStack[0]['container'].image == None: return
             else:
                   pass
 
@@ -1832,7 +1833,7 @@ class gui:
             self.__positionWidget(ent, row, column, colspan)
 
             if self.validateNumeric == None:
-                  self.validateNumeric = (self.window.register(self.__validateNumericEntry), '%d', '%i', '%P', '%s', '%S', '%v', '%V', '%W')
+                  self.validateNumeric = (self.containerStack[0]['container'].register(self.__validateNumericEntry), '%d', '%i', '%P', '%s', '%S', '%v', '%V', '%W')
 
             ent.configure(validate='key', validatecommand=self.validateNumeric)
             self.setEntryTooltip(title, "Numeric data only.")
@@ -1844,7 +1845,7 @@ class gui:
             self.__positionWidget(frame, row, column, colspan)
 
             if self.validateNumeric == None:
-                  self.validateNumeric = (self.window.register(self.__validateNumericEntry), '%d', '%i', '%P', '%s', '%S', '%v', '%V', '%W')
+                  self.validateNumeric = (self.containerStack[0]['container'].register(self.__validateNumericEntry), '%d', '%i', '%P', '%s', '%S', '%v', '%V', '%W')
 
             ent.configure(validate='key', validatecommand=self.validateNumeric)
             self.setEntryTooltip(title, "Numeric data only.")
