@@ -150,10 +150,6 @@ class gui:
             self.buttonBgColour = self.topLevel.cget("bg")
             self.labelBgColour = self.topLevel.cget("bg")
 
-            self.padx = self.pady = 1
-            self.expand = "ALL"
-            self.sticky = True
-
             # create a menu bar - only shows if populated
             # now created in menu functions, as it generated a blank line...
             self.hasMenu = False
@@ -168,7 +164,7 @@ class gui:
             #self.window = Label(self.appWindow) # made as a label, so we can set an image
             self.window.configure(padx=2, pady=2, background=self.labelBgColour)
             self.window.pack(fill=BOTH, expand=True)
-            self.gridPositions[self.C_NORMAL]['container'] = self.window
+            self.__addContainer( self.C_NORMAL, self.window, 0, 1)
 
             # set up the bg label to store an image
             self.__configBg()
@@ -196,12 +192,7 @@ class gui:
       def __initArrays(self):
             # set up a row counter - used to auto add rows
             # breaks once user sets own row
-            self.gridPositions = {
-                  self.C_NORMAL : {'container':None,'emptyRow':0, 'colCount':1, 'sticky':None},
-                  self.C_LABELFRAME : {'container':None,'emptyRow':0, 'colCount':1, 'sticky':W}
-            }
-
-            self.containerMode = self.C_NORMAL
+            self.containerStack = []
 
             #set up a minimum label width for label combos
             self.labWidth=1
@@ -357,10 +348,10 @@ class gui:
             if self.escapeBindId is not None: self.topLevel.unbind('<Escape>', self.escapeBindId)
 
       def setPadX(self, x=0):
-            self.padx = x
+            self.containerStack[-1]['padx'] = x
 
       def setPadY(self, y=0):
-            self.pady = y
+            self.containerStack[-1]['pady'] = y
 
       def getFonts(self): return list ( font.families() ). sort()
 
@@ -539,6 +530,7 @@ class gui:
             elif kind == self.TEXTAREA: return self.n_textAreas
             elif kind == self.LINK: return self.n_links
             elif kind == self.METER: return self.n_meters
+            elif kind == self.LABELFRAME: return self.n_labelFrames
             else: raise Exception ("Unknown widget type: " + str(kind))
 
       def configureAllWidgets(self, kind, option, value):
@@ -636,7 +628,7 @@ class gui:
             widgets = { self.LABEL:"Label", self.MESSAGE:"Message", self.BUTTON:"Button",
                         self.ENTRY:"Entry", self.CB:"Cb", self.SCALE:"Scale", self.RB:"Rb",
                         self.LB:"Lb", self.SPIN:"SpinBox", self.OPTION:"OptionBox", self.TEXTAREA:"TextArea",
-                        self.LINK:"Link", self.METER:"Meter" }
+                        self.LINK:"Link", self.METER:"Meter", self.LABELFRAME:"LabelFrame" }
             # loop through array, and create the function
             for k, v in widgets.items():
                   exec("def set"+v+"Bg(self, name, val): self.configureWidgets("+str(k)+", name, 'background', val)")
@@ -798,39 +790,37 @@ class gui:
             elif newItem and item in items: raise ItemLookupError("Duplicate key: '"+item+"' already exists")
 
       def getRow(self):
-            return self.gridPositions[self.containerMode]['emptyRow']
+            return self.containerStack[-1]['emptyRow']
 
       def getNextRow(self):
-            temp = self.gridPositions[self.containerMode]['emptyRow']
-            self.gridPositions[self.containerMode]['emptyRow'] = temp + 1
+            temp = self.containerStack[-1]['emptyRow']
+            self.containerStack[-1]['emptyRow'] = temp + 1
             return temp
 
       def __repackWidget(self, widget, params):
             if widget.winfo_manager() == "grid":
                   ginfo = widget.grid_info()
                   ginfo.update(params)
-                  #widget.grid(pinfo)
+                  widget.grid(ginfo)
             elif widget.winfo_manager() == "pack":
                   pinfo = widget.pack_info()
                   pinfo.update(params)
-                  #widget.pack(pinfo)
+                  widget.pack(pinfo)
             else:
                   raise Exception("Unknown geometry manager: " + widget.winfo_manager())
 
       def __getContainer(self):
-            return self.gridPositions[self.containerMode]['container']
+            return self.containerStack[-1]['container']
 
-      def __getRCS(self, row, column, span, sticky):
-            if self.gridPositions[self.containerMode]['sticky'] is not None:
-                  sticky=self.gridPositions[self.containerMode]['sticky']
-
+      def __getRCS(self, row, column, span):
             if row is None: row=self.getNextRow()
-            else: self.gridPositions[self.containerMode]['emptyRow'] = row + 1
-            if column >= self.gridPositions[self.containerMode]['colCount']: self.gridPositions[self.containerMode]['colCount'] = column + 1
-            #if column == 0 and colspan == 0 and self.gridPositions[self.containerMode]['colCount'] > 1:
-            #      colspan = self.gridPositions[self.containerMode]['colCount']
+            else: self.containerStack[-1]['emptyRow'] = row + 1
 
-            return row, column, span, sticky
+            if column >= self.containerStack[-1]['colCount']: self.containerStack[-1]['colCount'] = column + 1
+            #if column == 0 and colspan == 0 and self.containerStack[-1]['colCount'] > 1:
+            #      colspan = self.containerStack[-1]['colCount']
+
+            return row, column, span
 
       # two important things here:
       # grid - sticky: position of widget in its space (side or fill)
@@ -838,62 +828,88 @@ class gui:
       def __positionWidget(self, widget, row, column=0, colspan=0, sticky=W+E):
             # allow item to be added to container
             container = self.__getContainer()
-            row, column, span, sticky = self.__getRCS(row, column, colspan, sticky)
+            row, column, colspan = self.__getRCS(row, column, colspan)
 
             # build a dictionary for the named params
-            params = {"row":row, "column":column, "ipadx":self.padx, "ipady":self.pady}
-            if not self.sticky: pass#params["sticky"] = "W"
-            elif self.sticky and sticky is not None: params["sticky"] = sticky
+            cX = self.containerStack[-1]['padx']
+            cY = self.containerStack[-1]['pady']
+            params = {"row":row, "column":column, "ipadx":cX, "ipady":cY}
+
+            # if we have a column span, apply it
             if colspan != 0 : params["columnspan"] = colspan
+
+            # 1) if param has sticky, use that
+            # 2) if container has sticky - overrirde
+            # 3) else, none
+            if self.containerStack[-1]["sticky"] is not None: params["sticky"] = self.containerStack[-1]["sticky"]
+            elif sticky is not None: params["sticky"] = sticky
+            else: pass
 
             # expand that dictionary out as we pass it as a value
             widget.grid (**params)
 
             # configure the row/column to expand equally
-            if self.expand in ["ALL", "COLUMN"]: Grid.columnconfigure(container, column, weight=1)
+            if self.containerStack[-1]['expand'] in ["ALL", "COLUMN"]: Grid.columnconfigure(container, column, weight=1)
             else: Grid.columnconfigure(container, column, weight=0)
-            if self.expand in ["ALL", "ROW"]: Grid.rowconfigure(container, row, weight=1)
+            if self.containerStack[-1]['expand'] in ["ALL", "ROW"]: Grid.rowconfigure(container, row, weight=1)
             else: Grid.rowconfigure(container, row, weight=0)
 
+#            self.containerStack[-1]['container'].columnconfigure(0, weight=1)
+#            self.containerStack[-1]['container'].rowconfigure(0, weight=1)
 
+      def __addContainer(self, cType, container, row, col, sticky=None):
+            self.containerStack.append(
+                  {'type':cType, 'container':container,'emptyRow':row, 'colCount':col,
+                  'sticky':sticky, 'padx':1, 'pady':1, 'expand':"ALL"}
+            )
+
+      def __removeContainer(self):
+            if len(self.containerStack) == 1:
+                  raise Exception("Can't remove container, already in root window.")
+
+            return self.containerStack.pop()
+
+      def startContainer(self, fType, title, row=None, column=0, colspan=0, sticky=None):
+            if fType == self.C_LABELFRAME:
+                  # first, make a LabelFrame, and position it correctly
+                  self.__verifyItem(self.n_labelFrames, title, True)
+                  container = LabelFrame(self.containerStack[-1]['container'], text=title)
+                  container.configure( background=self.labelBgColour, font=self.labelFrameFont )
+                  self.__positionWidget(container, row, column, colspan, "nsew")
+                  self.n_labelFrames[title] = container
+
+                  # now, add to top of stack
+                  self.__addContainer(self.C_LABELFRAME, container, 0, 1, sticky)
+            else:
+                  print("Unknown container:". fType)
+
+      def stopContainer(self):
+            self.__removeContainer()
+
+
+      # sticky is alignment inside frame
+      # frame will be added as other widgets
       def startLabelFrame(self, title, row=None, column=0, colspan=0, sticky=W):
-            # prevent from putting LabelFrames in LabelFrames
-            if self.containerMode == self.C_LABELFRAME:
-                  raise Exception ("Can't put a label frame inside another label frame")
-
-            # first, make a LabelFrame, and position it correctly
-            self.__verifyItem(self.n_labelFrames, title, True)
-            container = LabelFrame(self.window, text=title)
-            container.configure( background=self.labelBgColour, font=self.labelFrameFont )
-            self.__positionWidget(container, row, column, colspan)
-            self.n_labelFrames[title] = container
-
-            # now, start up container positioning
-            self.containerMode = self.C_LABELFRAME
-            self.gridPositions[self.C_LABELFRAME]={'container':container,'emptyRow':0, 'colCount':1,'sticky':sticky}
+            self.startContainer(self.C_LABELFRAME, title, row, column, colspan, sticky)
 
       def stopLabelFrame(self):
-            if self.containerMode != self.C_LABELFRAME:
-                  raise Exception ("No label frame to finish")
-
-            self.container = None
-            self.gridPositions[self.C_LABELFRAME]['container']=None
-            self.containerMode = self.C_NORMAL
+            self.stopContainer()
 
       # function to set position of title for label frame
       def setLabelFrameAnchor(self, title, anchor):
             frame = self.__verifyItem(self.n_labelFrames, title)
             frame.config(labelanchor=anchor)
 
-      def setSticky(self, on=True):
-            self.sticky = on
+      # set an override sticky for this container
+      def setSticky(self, sticky):
+            self.containerStack[-1]['sticky'] = sticky
 
       # this tells widgets what to do when GUI is resized
       def setExpand(self, exp):
-            if exp.lower() == "none": self.expand = "NONE"
-            elif exp.lower() == "row": self.expand = "ROW"
-            elif exp.lower() == "column": self.expand = "COLUMN"
-            else: self.expand = "ALL"
+            if exp.lower() == "none": self.containerStack[-1]['expand'] = "NONE"
+            elif exp.lower() == "row": self.containerStack[-1]['expand'] = "ROW"
+            elif exp.lower() == "column": self.containerStack[-1]['expand'] = "COLUMN"
+            else: self.containerStack[-1]['expand'] = "ALL"
 
 #####################################
 ## FUNCTION to manage topLevels
@@ -1126,12 +1142,10 @@ class gui:
             if self.validateSpinBox == None:
                   self.validateSpinBox = (self.window.register(self.__validateSpinBox),'%P', '%S', '%W')
 
-            print("validising")
             spin.configure(validate='all', validatecommand=self.validateSpinBox)
 
       def __validateSpinBox(self, user_input, new_value, widget_name):
-            print("validating...", user_input)
-            self.window.bell()
+            #self.window.bell()
             return False
 
       def addSpinBox(self, title, vals, row=None, column=0, colspan=0):
@@ -2468,7 +2482,7 @@ if __name__ == "__main__":
 
       print ( "Making GUI" )
       win = gui("Details")
-      win.setExpand("all")
+      #win.setExpand("all")
       #win.setSticky(False)
 #      win.addEntry("Empty")
 #      win.addLabelEntry("Name")
