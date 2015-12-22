@@ -2243,6 +2243,7 @@ class NoteBook(Frame):
             button.bind("<Return>", lambda Event:self.__changeTab(text))
             button.bind("<space>", lambda Event:self.__changeTab(text))
             button.bind("<FocusIn>", lambda Event:self.__focusIn(text))
+            button.bind("<FocusOut>", lambda Event:self.__focusOut(text))
             button.pack(side=LEFT,ipady=4,ipadx=4) 
 
             pane=Frame(self.panes,bg=self.paneBg)
@@ -2256,6 +2257,9 @@ class NoteBook(Frame):
       def __focusIn(self, tabName):
             self.__colourTabs("black", False)
             self.tabVars[tabName][0]['fg']='blue'
+
+      def __focusOut(self, tabName):
+            self.tabVars[tabName][0]['fg']='black'
 
       def __changeTab(self, tabName):
             self.selectedTab=tabName
@@ -2276,7 +2280,6 @@ class NoteBook(Frame):
       def setBg(self, bg):
             self.paneBg=bg
             for key in list(self.tabVars.keys()):
-                self.tabVars[key][1].config(bg=bg)
                 self.tabVars[key][1].config(bg=bg)
 
 #####################################
