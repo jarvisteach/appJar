@@ -76,6 +76,8 @@ class gui:
       # containers
       C_NORMAL='normal'
       C_LABELFRAME='labelFrame'
+      C_NOTEBOOK='noteBook'
+      C_NOTETAB='noteTab'
 
       # music stuff
       BASIC_NOTES = {"A":440, "B":493, "C":261, "D":293, "E":329, "F":349, "G":392 }
@@ -225,6 +227,7 @@ class gui:
             self.n_meters={}
             self.n_toplevels={}
             self.n_labelFrames={}
+            self.n_noteBooks={}
             self.n_flashLabs = []
 
             # variables associated with widgets
@@ -859,6 +862,7 @@ class gui:
 
             # expand that dictionary out as we pass it as a value
             widget.grid (**params)
+            self.containerStack[-1]['widgets']=True
 
             # configure the row/column to expand equally
             if self.containerStack[-1]['expand'] in ["ALL", "COLUMN"]: Grid.columnconfigure(container, column, weight=1)
@@ -872,14 +876,15 @@ class gui:
       def __addContainer(self, cType, container, row, col, sticky=None):
             self.containerStack.append(
                   {'type':cType, 'container':container,'emptyRow':row, 'colCount':col,
-                  'sticky':sticky, 'padx':1, 'pady':1, 'expand':"ALL"}
+                  'sticky':sticky, 'padx':1, 'pady':1, 'expand':"ALL", 'widgets':False}
             )
 
       def __removeContainer(self):
             if len(self.containerStack) == 1:
                   raise Exception("Can't remove container, already in root window.")
-
-            return self.containerStack.pop()
+            elif not self.containerStack[-1]['widgets']:
+                  raise Exception("Put something in the container, before removing it.")
+            else: return self.containerStack.pop()
 
       def startContainer(self, fType, title, row=None, column=0, colspan=0, sticky=None):
             if fType == self.C_LABELFRAME:
@@ -892,20 +897,37 @@ class gui:
 
                   # now, add to top of stack
                   self.__addContainer(self.C_LABELFRAME, container, 0, 1, sticky)
+
+            elif fType == self.C_NOTEBOOK:
+                  self.__verifyItem(self.n_noteBooks, title, True)
+                  notebook = NoteBook(self.containerStack[-1]['container'])
+                  self.__positionWidget(notebook, row, column, colspan)
+                  self.n_noteBooks[title] = notebook
+
+                  # now, add to top of stack
+                  self.__addContainer(self.C_NOTEBOOK, notebook, 0, 1, sticky)
+            elif fType == self.C_NOTETAB:
+                  # add to top of stack
+                  self.containerStack[-1]['widgets']=True
+                  self.__addContainer(self.C_NOTETAB, self.containerStack[-1]['container'].addTab(title), 0, 1, sticky)
             else:
-                  print("Unknown container:". fType)
+                  print("Unknown container:", fType)
 
-      def stopContainer(self):
-            self.__removeContainer()
+      def startNoteBook(self, title, row=None, column=0, colspan=0, sticky=NSEW):
+            self.startContainer(self.C_NOTEBOOK, title, row, column, colspan, sticky)
 
+      def startNoteTab(self, title, row=None, column=0, colspan=0, sticky=NSEW):
+            self.startContainer(self.C_NOTETAB, title, row, column, colspan, sticky)
 
       # sticky is alignment inside frame
       # frame will be added as other widgets
       def startLabelFrame(self, title, row=None, column=0, colspan=0, sticky=W):
             self.startContainer(self.C_LABELFRAME, title, row, column, colspan, sticky)
 
-      def stopLabelFrame(self):
-            self.stopContainer()
+      def stopContainer(self): self.__removeContainer()
+      def stopNoteBook(self): self.stopContainer()
+      def stopNoteTab(self): self.stopContainer()
+      def stopLabelFrame(self): self.stopContainer()
 
       # function to set position of title for label frame
       def setLabelFrameAnchor(self, title, anchor):
@@ -2184,6 +2206,49 @@ class Meter(Frame):
             self._canv.coords(self._rect, 0, 0, self._canv.winfo_width()*value, self._canv.winfo_height())
             self._canv.itemconfigure(self._text, text=text)
             self._canv.update_idletasks()
+
+#################################
+## NoteBook Class
+#################################
+class NoteBook(Frame):
+      def __init__(self, master, *args, **kwargs):
+            Frame.__init__(self, master)
+
+            self.buttons=Frame(self)
+            self.panes=Frame(self,relief=RAISED,bd=1,**kwargs)
+
+            #self.panes.grid_propagate(0)
+            #self.grid()
+
+            self.buttons.grid(row=0,sticky=W)
+            self.panes.grid(row=1,column=0,columnspan=27,sticky="NESW")
+
+            self.tabVars = {}
+            self.tabOne = None
+
+      def addTab(self, text, **kwargs):
+            if self.tabOne is None: self.tabOne=text
+
+            button=Label(self.buttons,text=text,relief=RIDGE,**kwargs)
+            button.bind("<Button-1>", lambda Event:self.__changeTab(text))
+            button.pack(side=LEFT,ipady=4,ipadx=4) 
+
+            pane=Frame(self.panes)
+            pane.grid(sticky="NESW")
+
+            self.tabVars[text]=[button, pane]
+            self.__changeTab(self.tabOne)
+
+            return pane
+
+      def __changeTab(self, tabName):
+            for key in list(self.tabVars.keys()):
+                  if key != tabName:
+                        self.tabVars[key][0]['fg']='grey'
+                        self.tabVars[key][1].grid_remove()
+                  else:
+                        self.tabVars[key][0]['fg']='black'
+                        self.tabVars[key][1].grid()
 
 #####################################
 ## Hyperlink Class
