@@ -52,6 +52,7 @@ class gui:
       LINK=12
       METER=13
       LABELFRAME=14
+      NOTEBOOK=15
 
       # positioning
       N = N
@@ -146,6 +147,7 @@ class gui:
             self.meterFont = font.Font(family="Helvetica", size=12, weight='bold')
             self.linkFont = font.Font(family="Helvetica", size=12, weight='bold', underline=1)
             self.labelFrameFont = font.Font(family="Helvetica", size=12)
+            self.noteBookFont = font.Font(family="Helvetica", size=12)
 
             # set up colours
             self.bgColour = self.topLevel.cget("bg")
@@ -395,6 +397,7 @@ class gui:
             self.linkFont.configure (family=font, size=size)
             self.meterFont.configure (family=font, size=size)
             self.labelFrameFont.configure (family=font, size=size)
+            self.noteBookFont.configure (family=font, size=size)
 
       def increaseFont(self):
            self.increaseLabelFont()
@@ -444,6 +447,8 @@ class gui:
                   self.n_links[na].configure(background=self.labelBgColour)
             for na in self.n_labelFrames:
                   self.n_labelFrames[na].configure(background=self.labelBgColour)
+            for na in self.n_noteBooks:
+                  self.n_noteBooks[na].configure(background=self.labelBgColour)
             #for na in self.n_options:
             #      self.n_options[na].configure(background=self.labelBgColour)
             #for na in self.n_spins:
@@ -546,6 +551,7 @@ class gui:
             elif kind == self.LINK: return self.n_links
             elif kind == self.METER: return self.n_meters
             elif kind == self.LABELFRAME: return self.n_labelFrames
+            elif kind == self.NOTEBOOK: return self.n_noteBooks
             else: raise Exception ("Unknown widget type: " + str(kind))
 
       def configureAllWidgets(self, kind, option, value):
@@ -570,6 +576,8 @@ class gui:
                   try:
                         if option == 'background':
                               if kind==self.METER:
+                                    item.setBg(value)
+                              elif kind==self.NOTEBOOK:
                                     item.setBg(value)
                               else:
                                     item.configure( background=value )
@@ -643,7 +651,7 @@ class gui:
             widgets = { self.LABEL:"Label", self.MESSAGE:"Message", self.BUTTON:"Button",
                         self.ENTRY:"Entry", self.CB:"Cb", self.SCALE:"Scale", self.RB:"Rb",
                         self.LB:"Lb", self.SPIN:"SpinBox", self.OPTION:"OptionBox", self.TEXTAREA:"TextArea",
-                        self.LINK:"Link", self.METER:"Meter", self.LABELFRAME:"LabelFrame" }
+                        self.LINK:"Link", self.METER:"Meter", self.LABELFRAME:"LabelFrame", self.NOTEBOOK:"NoteBook" }
             # loop through array, and create the function
             for k, v in widgets.items():
                   exec("def set"+v+"Bg(self, name, val): self.configureWidgets("+str(k)+", name, 'background', val)")
@@ -900,8 +908,8 @@ class gui:
 
             elif fType == self.C_NOTEBOOK:
                   self.__verifyItem(self.n_noteBooks, title, True)
-                  notebook = NoteBook(self.containerStack[-1]['container'])
-                  self.__positionWidget(notebook, row, column, colspan)
+                  notebook = NoteBook(self.containerStack[-1]['container'], bg=self.labelBgColour)
+                  self.__positionWidget(notebook, row, column, colspan, sticky=sticky)
                   self.n_noteBooks[title] = notebook
 
                   # now, add to top of stack
@@ -913,11 +921,11 @@ class gui:
             else:
                   print("Unknown container:", fType)
 
-      def startNoteBook(self, title, row=None, column=0, colspan=0, sticky=NSEW):
+      def startNoteBook(self, title, row=None, column=0, colspan=0, sticky="NSEW"):
             self.startContainer(self.C_NOTEBOOK, title, row, column, colspan, sticky)
 
-      def startNoteTab(self, title, row=None, column=0, colspan=0, sticky=NSEW):
-            self.startContainer(self.C_NOTETAB, title, row, column, colspan, sticky)
+      def startNoteTab(self, title):
+            self.startContainer(self.C_NOTETAB, title)
 
       # sticky is alignment inside frame
       # frame will be added as other widgets
@@ -2211,44 +2219,65 @@ class Meter(Frame):
 ## NoteBook Class
 #################################
 class NoteBook(Frame):
-      def __init__(self, master, *args, **kwargs):
-            Frame.__init__(self, master)
-
-            self.buttons=Frame(self)
-            self.panes=Frame(self,relief=RAISED,bd=1,**kwargs)
+      def __init__(self, master, bg, *args, **kwargs):
+            Frame.__init__(self, master, bg=bg)
+            self.buttons=Frame(self,bg=bg)
+            self.paneBg=bg
+            self.panes=Frame(self,relief=SUNKEN,bd=2,bg=self.paneBg,**kwargs)
 
             #self.panes.grid_propagate(0)
-            #self.grid()
 
-            self.buttons.grid(row=0,sticky=W)
-            self.panes.grid(row=1,column=0,columnspan=27,sticky="NESW")
+            self.buttons.grid(row=0, sticky=W)
+            Grid.columnconfigure(self, 0, weight=1)
+            self.panes.grid(row=1,sticky="NESW")
+            Grid.rowconfigure(self, 1, weight=1)
 
             self.tabVars = {}
-            self.tabOne = None
-
+            self.selectedTab = None
+      
       def addTab(self, text, **kwargs):
-            if self.tabOne is None: self.tabOne=text
+            if self.selectedTab is None: self.selectedTab=text
 
-            button=Label(self.buttons,text=text,relief=RIDGE,**kwargs)
+            button=Label(self.buttons,text=text,relief=RIDGE,takefocus=1,**kwargs)
             button.bind("<Button-1>", lambda Event:self.__changeTab(text))
+            button.bind("<Return>", lambda Event:self.__changeTab(text))
+            button.bind("<space>", lambda Event:self.__changeTab(text))
+            button.bind("<FocusIn>", lambda Event:self.__focusIn(text))
             button.pack(side=LEFT,ipady=4,ipadx=4) 
 
-            pane=Frame(self.panes)
+            pane=Frame(self.panes,bg=self.paneBg)
             pane.grid(sticky="NESW")
 
             self.tabVars[text]=[button, pane]
-            self.__changeTab(self.tabOne)
+            self.__changeTab(self.selectedTab)
 
             return pane
 
+      def __focusIn(self, tabName):
+            self.__colourTabs("black", False)
+            self.tabVars[tabName][0]['fg']='blue'
+
       def __changeTab(self, tabName):
+            self.selectedTab=tabName
+            self.tabVars[tabName][0].focus_set()
+            self.__colourTabs('blue')
+
+      def __colourTabs(self, colour, swap=True):
             for key in list(self.tabVars.keys()):
-                  if key != tabName:
-                        self.tabVars[key][0]['fg']='grey'
-                        self.tabVars[key][1].grid_remove()
-                  else:
+                  if key != self.selectedTab:
+                        self.tabVars[key][0]['bg']='grey'
                         self.tabVars[key][0]['fg']='black'
-                        self.tabVars[key][1].grid()
+                        if swap: self.tabVars[key][1].grid_remove()
+                  else:
+                        self.tabVars[key][0]['bg']='white'
+                        self.tabVars[key][0]['fg']=colour
+                        if swap: self.tabVars[key][1].grid()
+
+      def setBg(self, bg):
+            self.paneBg=bg
+            for key in list(self.tabVars.keys()):
+                self.tabVars[key][1].config(bg=bg)
+                self.tabVars[key][1].config(bg=bg)
 
 #####################################
 ## Hyperlink Class
