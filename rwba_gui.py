@@ -165,6 +165,7 @@ class gui:
             #container = Label(self.appWindow) # made as a label, so we can set an image
             container.configure(padx=2, pady=2, background=self.labelBgColour)
             container.pack(fill=BOTH, expand=True)
+            self.containerStack = []
             self.__addContainer(self.C_NORMAL, container, 0, 1)
 
             # set up the main container to be able to host an image
@@ -193,7 +194,6 @@ class gui:
       def __initArrays(self):
             # set up a row counter - used to auto add rows
             # breaks once user sets own row
-            self.containerStack = []
 
             #set up a minimum label width for label combos
             self.labWidth=1
