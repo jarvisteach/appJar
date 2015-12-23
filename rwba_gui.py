@@ -75,10 +75,17 @@ class gui:
       FLAT=FLAT
 
       # containers
-      C_NORMAL='normal'
+      C_ROOT='rootPage'
       C_LABELFRAME='labelFrame'
       C_NOTEBOOK='noteBook'
       C_NOTETAB='noteTab'
+
+      # names for each of the widgets defined above
+      # used for defining functions
+      WIDGETS = { LABEL:"Label", MESSAGE:"Message", BUTTON:"Button",
+                  ENTRY:"Entry", CB:"Cb", SCALE:"Scale", RB:"Rb",
+                  LB:"Lb", SPIN:"SpinBox", OPTION:"OptionBox", TEXTAREA:"TextArea",
+                  LINK:"Link", METER:"Meter", LABELFRAME:"LabelFrame", NOTEBOOK:"NoteBook" }
 
       # music stuff
       BASIC_NOTES = {"A":440, "B":493, "C":261, "D":293, "E":329, "F":349, "G":392 }
@@ -170,7 +177,7 @@ class gui:
             container.configure(padx=2, pady=2, background=self.labelBgColour)
             container.pack(fill=BOTH, expand=True)
             self.containerStack = []
-            self.__addContainer(self.C_NORMAL, container, 0, 1)
+            self.__addContainer(self.C_ROOT, container, 0, 1)
 
             # set up the main container to be able to host an image
             self.__configBg(container)
@@ -573,14 +580,19 @@ class gui:
                   for widg in names:
                         self.configureWidget(kind, widg, option, value)
 
-      def configureWidget(self, kind, name, option, value, key=None):
+      def configureWidget(self, kind, name, option, value, key=None, deprecated=False):
+
+            # warn about deprecated functions
+            if deprecated: print("Deprecated config function used for:", self.WIDGETS[kind], "->", name)
+            # get the list of items for this type, and validate the widgetis in the list
             items = self.__getItems(kind)
             self.__verifyItem(items, name)
 
-            if kind == self.RB:
-                  items = items[name]
-            else:
-                  items = [items[name]]
+            if kind == self.RB: items = items[name]
+            else: items = [items[name]]
+
+            # loop through each item, and try to reconfigure it
+            # this will often faile - widgets have varied config options
             for item in items:
                   try:
                         if option == 'background':
@@ -655,14 +667,11 @@ class gui:
                         #raise Exception("Error configuring: " + name + ": " + str(e))
                         print("Error configuring " + name + ": " + str(e))
 
+      # dynamic way to create the configuration functions
       def __buildConfigFuncs(self):
-            # make a list of function names & params
-            widgets = { self.LABEL:"Label", self.MESSAGE:"Message", self.BUTTON:"Button",
-                        self.ENTRY:"Entry", self.CB:"Cb", self.SCALE:"Scale", self.RB:"Rb",
-                        self.LB:"Lb", self.SPIN:"SpinBox", self.OPTION:"OptionBox", self.TEXTAREA:"TextArea",
-                        self.LINK:"Link", self.METER:"Meter", self.LABELFRAME:"LabelFrame", self.NOTEBOOK:"NoteBook" }
-            # loop through array, and create the function
-            for k, v in widgets.items():
+            # loop through all the available widgets
+            # and make all the below functons for each one
+            for k, v in self.WIDGETS.items():
                   exec("def set"+v+"Bg(self, name, val): self.configureWidgets("+str(k)+", name, 'background', val)")
                   exec("gui.set"+v+"Bg=set" +v+ "Bg")
                   exec("def set"+v+"Fg(self, name, val): self.configureWidgets("+str(k)+", name, 'foreground', val)")
@@ -688,9 +697,9 @@ class gui:
                   exec("def set"+v+"Function(self, name, val, key=None): self.configureWidget("+str(k)+", name, 'command', val, key)")
                   exec("gui.set"+v+"Function=set" +v+ "Function")
 # deprecated, but left in for backwards compatability
-                  exec("def set"+v+"Command(self, name, val, key=None): self.configureWidget("+str(k)+", name, 'command', val, key)")
+                  exec("def set"+v+"Command(self, name, val, key=None): self.configureWidget("+str(k)+", name, 'command', val, key, deprecated=True)")
                   exec("gui.set"+v+"Command=set" +v+ "Command")
-                  exec("def set"+v+"Func(self, name, val, key=None): self.configureWidget("+str(k)+", name, 'command', val, key)")
+                  exec("def set"+v+"Func(self, name, val, key=None): self.configureWidget("+str(k)+", name, 'command', val, key, deprecated=True)")
                   exec("gui.set"+v+"Func=set" +v+ "Func")
 # end deprecated
                   # http://infohost.nmt.edu/tcc/help/pubs/tkinter/web/cursors.html
