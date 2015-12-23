@@ -112,6 +112,7 @@ class gui:
 ## CONSTRUCTOR - creates the GUI
 #####################################
       def __init__(self, title="RWBA Tools", geom=None):
+            self.WARN = True
             self.__initArrays()
             # dynamically create lots of functions for configuring stuff
             self.__buildConfigFuncs()
@@ -252,6 +253,13 @@ class gui:
             self.n_imageCache={}    # image file objects
             self.n_taHashes={}      # for monitoring textAreas
 
+      # function to generate warning messages
+      def warn(self, message):
+            if self.WARN: print(message)
+      # function to turn off warning messages
+      def disableWarnings(self):
+            self.WARN=False
+
 #####################################
 ## Event Loop - must always be called at end
 #####################################
@@ -260,11 +268,11 @@ class gui:
 
             # check the congainers have all been stopped
             if len(self.containerStack) > 1:
-                  print("Warning - you didn't stop all containers")
+                  self.warn("Warning - you didn't stop all containers")
                   for i in range(len(self.containerStack)-1, 0, -1):
                         kind = self.containerStack[i]['type']
                         if kind not in [self.C_PANEDFRAME]:
-                              print("-- Stop:", kind)
+                              self.warn("-- Stop: "+kind)
 
             # pack it all in & make sure it's drawn
             self.appWindow.pack(fill=BOTH)
@@ -595,7 +603,7 @@ class gui:
       def configureWidget(self, kind, name, option, value, key=None, deprecated=False):
 
             # warn about deprecated functions
-            if deprecated: print("Deprecated config function used for:", self.WIDGETS[kind], "->", name)
+            if deprecated: self.warn("Warning - deprecated config function used for: "+self.WIDGETS[kind]+"->"+name)
             # get the list of items for this type, and validate the widgetis in the list
             items = self.__getItems(kind)
             self.__verifyItem(items, name)
@@ -676,8 +684,7 @@ class gui:
                                     info["sticky"] = side
                               self.__repackWidget(item, info)
                   except TclError as e:
-                        #raise Exception("Error configuring: " + name + ": " + str(e))
-                        print("Error configuring " + name + ": " + str(e))
+                        self.warn("Warning - error configuring " + name + ": " + str(e))
 
       # dynamic way to create the configuration functions
       def __buildConfigFuncs(self):
@@ -988,7 +995,7 @@ class gui:
                   # now, add to top of stack
                   self.__addContainer(self.C_PANEDFRAME, frame, 0, 1, sticky)
             else:
-                  print("Unknown container:", fType)
+                  raise Exception("Unknown container: " + fType)
 
       def startNoteBook(self, title, row=None, column=0, colspan=0, sticky="NSEW"):
             self.startContainer(self.C_NOTEBOOK, title, row, column, colspan, sticky)
@@ -1000,7 +1007,7 @@ class gui:
       def startNoteTab(self, title):
             # auto close the previous NOTETAB - keep it?
             if self.containerStack[-1]['type'] == self.C_NOTETAB:
-                  print("Warning - you didn't STOP the previous NOTETAB")
+                  self.warn("Warning - you didn't STOP the previous NOTETAB")
                   self.stopContainer()
             elif self.containerStack[-1]['type'] != self.C_NOTEBOOK:
                   raise Exception("Can't add a Tab to the current container: ", self.containerStack[-1]['type'])
@@ -1019,7 +1026,7 @@ class gui:
       def stopNoteBook(self):
             # auto close the existing TAB - keep it?
             if self.containerStack[-1]['type'] == self.C_NOTETAB:
-                  print("Warning - you didn't STOP the previous NOTETAB")
+                  self.warn("Warning - you didn't STOP the previous NOTETAB")
                   self.stopContainer()
             self.stopContainer()
 
@@ -1051,7 +1058,7 @@ class gui:
 
       def __getattr__(self,name):
             def handlerFunction(*args,**kwargs):
-                  print("Unknown function:", name,args,kwargs)
+                  self.warn("Warning: unknown function:"+name+" "+str(args)+" "+str(kwargs))
             return handlerFunction
 
       def __setattr__(self, name, value):
