@@ -79,6 +79,8 @@ class gui:
       C_LABELFRAME='labelFrame'
       C_NOTEBOOK='noteBook'
       C_NOTETAB='noteTab'
+      C_PANEDWINDOW="panedWindow"
+      C_PANEDFRAME="panedFrame"
 
       # names for each of the widgets defined above
       # used for defining functions
@@ -237,6 +239,7 @@ class gui:
             self.n_toplevels={}
             self.n_labelFrames={}
             self.n_noteBooks={}
+            self.n_panedWindows={}
             self.n_flashLabs = []
 
             # variables associated with widgets
@@ -254,6 +257,15 @@ class gui:
 #####################################
       def go(self):
             """ Most important function! Start the GUI """
+
+            # check the congainers have all been stopped
+            if len(self.containerStack) > 1:
+                  print("Warning - you didn't stop all containers")
+                  for i in range(len(self.containerStack)-1, 0, -1):
+                        kind = self.containerStack[i]['type']
+                        if kind not in [self.C_PANEDFRAME]:
+                              print("-- Stop:", kind)
+
             # pack it all in & make sure it's drawn
             self.appWindow.pack(fill=BOTH)
             self.topLevel.update_idletasks()
@@ -872,6 +884,14 @@ class gui:
       def __positionWidget(self, widget, row, column=0, colspan=0, sticky=W+E):
             # allow item to be added to container
             container = self.__getContainer()
+
+            # alpha paned window placement
+            if self.containerStack[-1]['type'] ==self.C_PANEDWINDOW:
+                  container.add(widget)
+                  self.containerStack[-1]['widgets']=True
+                  return
+
+            # else, add to grid
             row, column, colspan = self.__getRCS(row, column, colspan)
 
             # build a dictionary for the named params
@@ -892,6 +912,9 @@ class gui:
             # expand that dictionary out as we pass it as a value
             widget.grid (**params)
             self.containerStack[-1]['widgets']=True
+            # if we're in a PANEDWINDOW - we need to set parent...
+            if self.containerStack[-1]['type'] ==self.C_PANEDFRAME:
+                  self.containerStack[-2]['widgets']=True
 
             # configure the row/column to expand equally
             if self.containerStack[-1]['expand'] in ["ALL", "COLUMN"]: Grid.columnconfigure(container, column, weight=1)
@@ -913,7 +936,8 @@ class gui:
                   raise Exception("Can't remove container, already in root window.")
             elif not self.containerStack[-1]['widgets']:
                   raise Exception("Put something in the container, before removing it.")
-            else: return self.containerStack.pop()
+            else:
+                  return self.containerStack.pop()
 
       def startContainer(self, fType, title, row=None, column=0, colspan=0, sticky=None):
             if fType == self.C_LABELFRAME:
@@ -939,14 +963,51 @@ class gui:
                   # add to top of stack
                   self.containerStack[-1]['widgets']=True
                   self.__addContainer(self.C_NOTETAB, self.containerStack[-1]['container'].addTab(title), 0, 1, sticky)
+            elif fType == self.C_PANEDWINDOW:
+                  # if we previously put a frame for widgets
+                  # remove it
+                  if self.containerStack[-1]['type'] == self.C_PANEDFRAME:
+                        self.stopContainer()
+
+                  # now, add the new pane
+                  self.__verifyItem(self.n_panedWindows, title, True)
+                  pane = PanedWindow(self.containerStack[-1]['container'], showhandle=True, sashrelief="groove")
+                  self.__positionWidget(pane, row, column, colspan, sticky=sticky)
+                  self.n_panedWindows[title] = pane
+
+                  # now, add to top of stack
+                  self.__addContainer(self.C_PANEDWINDOW, pane, 0, 1, sticky)
+
+                  # now, add a frame to the pane
+                  self.startContainer(self.C_PANEDFRAME, title)
+            elif fType == self.C_PANEDFRAME:
+                  # create a frame, and add it to the pane
+                  frame = Frame(self.containerStack[-1]['container'])
+                  self.containerStack[-1]['container'].add(frame)
+
+                  # now, add to top of stack
+                  self.__addContainer(self.C_PANEDFRAME, frame, 0, 1, sticky)
             else:
                   print("Unknown container:", fType)
 
       def startNoteBook(self, title, row=None, column=0, colspan=0, sticky="NSEW"):
             self.startContainer(self.C_NOTEBOOK, title, row, column, colspan, sticky)
 
+      def setPanedWindowVertical(self, window):
+            pane = self.__verifyItem(self.n_panedWindows, window )
+            pane.config(orient=VERTICAL)
+
       def startNoteTab(self, title):
+            # auto close the previous NOTETAB - keep it?
+            if self.containerStack[-1]['type'] == self.C_NOTETAB:
+                  print("Warning - you didn't STOP the previous NOTETAB")
+                  self.stopContainer()
+            elif self.containerStack[-1]['type'] != self.C_NOTEBOOK:
+                  raise Exception("Can't add a Tab to the current container: ", self.containerStack[-1]['type'])
             self.startContainer(self.C_NOTETAB, title)
+
+      def startPanedWindow(self, title, row=None, column=0, colspan=0, sticky="NSEW"):
+            self.startContainer(self.C_PANEDWINDOW, title, row, column, colspan, sticky)
 
       # sticky is alignment inside frame
       # frame will be added as other widgets
@@ -954,9 +1015,30 @@ class gui:
             self.startContainer(self.C_LABELFRAME, title, row, column, colspan, sticky)
 
       def stopContainer(self): self.__removeContainer()
-      def stopNoteBook(self): self.stopContainer()
-      def stopNoteTab(self): self.stopContainer()
-      def stopLabelFrame(self): self.stopContainer()
+
+      def stopNoteBook(self):
+            # auto close the existing TAB - keep it?
+            if self.containerStack[-1]['type'] == self.C_NOTETAB:
+                  print("Warning - you didn't STOP the previous NOTETAB")
+                  self.stopContainer()
+            self.stopContainer()
+
+      def stopNoteTab(self):
+            if self.containerStack[-1]['type'] != self.C_NOTETAB:
+                  raise Exception("Can't stop a NOTETAB, currently in:", self.containerStack[-1]['type'])
+            self.stopContainer()
+
+      def stopLabelFrame(self):
+            if self.containerStack[-1]['type'] != self.C_LABELFRAME:
+                  raise Exception("Can't stop a LABELFRAME, currently in:", self.containerStack[-1]['type'])
+            self.stopContainer()
+
+      def stopPanedWindow(self):
+            if self.containerStack[-1]['type'] == self.C_PANEDFRAME:
+                  self.stopContainer()
+            if self.containerStack[-1]['type'] != self.C_PANEDWINDOW:
+                  raise Exception("Can't stop a PANEDWINDOW, currently in:", self.containerStack[-1]['type'])
+            self.stopContainer()
 
       # function to set position of title for label frame
       def setLabelFrameAnchor(self, title, anchor):
