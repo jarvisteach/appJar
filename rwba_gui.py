@@ -111,8 +111,8 @@ class gui:
 #####################################
 ## CONSTRUCTOR - creates the GUI
 #####################################
-      def __init__(self, title="RWBA Tools", geom=None):
-            self.WARN = True
+      def __init__(self, title="RWBA Tools", geom=None, warn=True):
+            self.WARN = warn
             self.__initArrays()
             # dynamically create lots of functions for configuring stuff
             self.__buildConfigFuncs()
