@@ -252,7 +252,16 @@ class gui:
             self.topLevel.update_idletasks()
 
             # set a minimum size
-            self.topLevel.minsize(self.topLevel.winfo_width(), self.topLevel.winfo_height())
+            w1=self.topLevel.winfo_width()
+            h1=self.topLevel.winfo_height()
+
+            w2=self.topLevel.winfo_reqwidth()
+            h2=self.topLevel.winfo_reqheight()
+
+            if w2>w1: w1=w2
+            if h2>h1: h1=h2
+
+            self.topLevel.minsize(w1, h1)
 
             # put it in the middle of the screen
             x = (self.topLevel.winfo_screenwidth() - self.topLevel.winfo_reqwidth()) / 2
@@ -681,6 +690,9 @@ class gui:
 # deprecated, but left in for backwards compatability
                   exec("def set"+v+"Command(self, name, val, key=None): self.configureWidget("+str(k)+", name, 'command', val, key)")
                   exec("gui.set"+v+"Command=set" +v+ "Command")
+                  exec("def set"+v+"Func(self, name, val, key=None): self.configureWidget("+str(k)+", name, 'command', val, key)")
+                  exec("gui.set"+v+"Func=set" +v+ "Func")
+# end deprecated
                   # http://infohost.nmt.edu/tcc/help/pubs/tkinter/web/cursors.html
                   exec("def set"+v+"Cursor(self, name, val): self.configureWidget("+str(k)+", name, 'cursor', val)")
                   exec("gui.set"+v+"Cursor=set" +v+ "Cursor")
@@ -899,7 +911,7 @@ class gui:
                   # first, make a LabelFrame, and position it correctly
                   self.__verifyItem(self.n_labelFrames, title, True)
                   container = LabelFrame(self.containerStack[-1]['container'], text=title)
-                  container.configure( background=self.labelBgColour, font=self.labelFrameFont )
+                  container.configure(background=self.labelBgColour, font=self.labelFrameFont, relief="groove")
                   self.__positionWidget(container, row, column, colspan, "nsew")
                   self.n_labelFrames[title] = container
 
@@ -2238,7 +2250,7 @@ class NoteBook(Frame):
       def addTab(self, text, **kwargs):
             if self.selectedTab is None: self.selectedTab=text
 
-            button=Label(self.buttons,text=text,relief=RIDGE,takefocus=1,**kwargs)
+            button=Label(self.buttons,text=text,relief=RIDGE,cursor="hand2",takefocus=1,**kwargs)
             button.bind("<Button-1>", lambda Event:self.__changeTab(text))
             button.bind("<Return>", lambda Event:self.__changeTab(text))
             button.bind("<space>", lambda Event:self.__changeTab(text))
