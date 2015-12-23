@@ -1,9 +1,6 @@
 # import the library
 from rwbatools import gui
 
-# create the list of users
-myList = loadDetails()
-
 def loadDetails(theFile="myFile.txt"):
       with open ( theFile, "r") as inFile :
             data = inFile.read ( ) # read the file into data
@@ -61,6 +58,9 @@ def press(btn):
             else:
                   win.setStatus("Error")
                   win.errorBox("Error", "Invalid password")
+
+# create the list of users
+myList = loadDetails()
 
 # create the GUI
 win = gui("Login")
