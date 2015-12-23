@@ -53,6 +53,7 @@ class gui:
       METER=13
       LABELFRAME=14
       NOTEBOOK=15
+      PANEDWINDOW=16
 
       # positioning
       N = N
@@ -84,10 +85,9 @@ class gui:
 
       # names for each of the widgets defined above
       # used for defining functions
-      WIDGETS = { LABEL:"Label", MESSAGE:"Message", BUTTON:"Button",
-                  ENTRY:"Entry", CB:"Cb", SCALE:"Scale", RB:"Rb",
-                  LB:"Lb", SPIN:"SpinBox", OPTION:"OptionBox", TEXTAREA:"TextArea",
-                  LINK:"Link", METER:"Meter", LABELFRAME:"LabelFrame", NOTEBOOK:"NoteBook" }
+      WIDGETS = { LABEL:"Label", MESSAGE:"Message", BUTTON:"Button", ENTRY:"Entry", CB:"Cb", SCALE:"Scale", RB:"Rb",
+                  LB:"Lb", SPIN:"SpinBox", OPTION:"OptionBox", TEXTAREA:"TextArea", LINK:"Link", METER:"Meter",
+                  LABELFRAME:"LabelFrame", NOTEBOOK:"NoteBook", PANEDWINDOW:"PanedWindow" }
 
       # music stuff
       BASIC_NOTES = {"A":440, "B":493, "C":261, "D":293, "E":329, "F":349, "G":392 }
@@ -111,8 +111,9 @@ class gui:
 #####################################
 ## CONSTRUCTOR - creates the GUI
 #####################################
-      def __init__(self, title="RWBA Tools", geom=None, warn=True):
+      def __init__(self, title="RWBA Tools", geom=None, warn=True, debug=False):
             self.WARN = warn
+            self.DEBUG = debug
             self.__initArrays()
             # dynamically create lots of functions for configuring stuff
             self.__buildConfigFuncs()
@@ -241,6 +242,7 @@ class gui:
             self.n_labelFrames={}
             self.n_noteBooks={}
             self.n_panedWindows={}
+            self.n_panedFrames={}
             self.n_flashLabs = []
 
             # variables associated with widgets
@@ -257,8 +259,13 @@ class gui:
       def warn(self, message):
             if self.WARN: print(message)
       # function to turn off warning messages
-      def disableWarnings(self):
-            self.WARN=False
+      def disableWarnings(self): self.WARN=False
+
+      # function to generate warning messages
+      def debug(self, message):
+            if self.DEBUG: print(message)
+      # function to turn off warning messages
+      def enableDebug(self): self.DEBUG=True
 
 #####################################
 ## Event Loop - must always be called at end
@@ -344,6 +351,7 @@ class gui:
       def __windowEvent(self, event):
             new_width = self.topLevel.winfo_width()
             new_height = self.topLevel.winfo_height()
+            self.debug("Window resized: " + str(new_width)+"x"+str(new_height))
 
       # will call the specified function when enter key is pressed
       def enableEnter(self, func):
@@ -588,6 +596,7 @@ class gui:
             elif kind == self.METER: return self.n_meters
             elif kind == self.LABELFRAME: return self.n_labelFrames
             elif kind == self.NOTEBOOK: return self.n_noteBooks
+            elif kind == self.PANEDWINDOW: return self.n_panedFrames
             else: raise Exception ("Unknown widget type: " + str(kind))
 
       def configureAllWidgets(self, kind, option, value):
@@ -991,6 +1000,7 @@ class gui:
                   # create a frame, and add it to the pane
                   frame = Frame(self.containerStack[-1]['container'])
                   self.containerStack[-1]['container'].add(frame)
+                  self.n_panedFrames[title] = frame
 
                   # now, add to top of stack
                   self.__addContainer(self.C_PANEDFRAME, frame, 0, 1, sticky)
