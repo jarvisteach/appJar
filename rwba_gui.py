@@ -179,7 +179,7 @@ class gui:
             # create the main container for this GUI
             container = Frame(self.appWindow)
             #container = Label(self.appWindow) # made as a label, so we can set an image
-            container.configure(padx=2, pady=2, background=self.labelBgColour)
+            container.config(padx=2, pady=2, background=self.labelBgColour)
             container.pack(fill=BOTH, expand=True)
             self.containerStack = []
             self.__addContainer(self.C_ROOT, container, 0, 1)
@@ -422,28 +422,28 @@ class gui:
 
       def setButtonFont(self, size, font=None):
             if font == None: font = self.buttonFont['family']
-            self.buttonFont.configure (family=font, size=size)
+            self.buttonFont.config(family=font, size=size)
 
       def increaseLabelFont(self): self.setLabelFont(self.labelFont['size'] + 1 )
       def decreaseLabelFont(self): self.setLabelFont(self.labelFont['size'] -1 )
 
       def setLabelFont(self, size, font=None):
             if font == None: font = self.labelFont['family']
-            self.labelFont.configure (family=font, size=size)
-            self.entryFont.configure (family=font, size=size)
-            self.rbFont.configure (family=font, size=size)
-            self.cbFont.configure (family=font, size=size)
-            self.scaleFont.configure (family=font, size=size)
-            self.messageFont.configure (family=font, size=size)
-            self.spinFont.configure (family=font, size=size)
-            self.optionFont.configure (family=font, size=size)
-            self.lbFont.configure (family=font, size=size)
-            self.taFont.configure (family=font, size=size)
-            self.linkFont.configure (family=font, size=size)
-            self.meterFont.configure (family=font, size=size)
-            self.labelFrameFont.configure (family=font, size=size)
-            self.noteBookFont.configure (family=font, size=size)
-            self.panedWindowFont.configure (family=font, size=size)
+            self.labelFont.config(family=font, size=size)
+            self.entryFont.config(family=font, size=size)
+            self.rbFont.config(family=font, size=size)
+            self.cbFont.config(family=font, size=size)
+            self.scaleFont.config(family=font, size=size)
+            self.messageFont.config(family=font, size=size)
+            self.spinFont.config(family=font, size=size)
+            self.optionFont.config(family=font, size=size)
+            self.lbFont.config(family=font, size=size)
+            self.taFont.config(family=font, size=size)
+            self.linkFont.config(family=font, size=size)
+            self.meterFont.config(family=font, size=size)
+            self.labelFrameFont.config(family=font, size=size)
+            self.noteBookFont.config(family=font, size=size)
+            self.panedWindowFont.config(family=font, size=size)
 
       def increaseFont(self):
            self.increaseLabelFont()
@@ -460,47 +460,47 @@ class gui:
       def setBg(self, colour=None):
             if colour is None: colour = self.labelBgColour
             self.labelBgColour=colour
-            self.topLevel.configure(background=self.labelBgColour)
-            self.appWindow.configure(background=self.labelBgColour)
-            self.containerStack[0]['container'].configure(background=self.labelBgColour)
-            self.bgLabel.configure(background=self.labelBgColour)
+            self.topLevel.config(background=self.labelBgColour)
+            self.appWindow.config(background=self.labelBgColour)
+            self.containerStack[0]['container'].config(background=self.labelBgColour)
+            self.bgLabel.config(background=self.labelBgColour)
 
             for na in self.n_labels:
-                  self.n_labels[na].configure(background=self.labelBgColour)
+                  self.n_labels[na].config(background=self.labelBgColour)
             for na in self.n_messages:
-                  self.n_messages[na].configure(background=self.labelBgColour)
+                  self.n_messages[na].config(background=self.labelBgColour)
 
             if platform() == "Darwin":
                   for na in self.n_entries:
-                        self.n_entries[na].configure(highlightbackground=self.labelBgColour)
+                        self.n_entries[na].config(highlightbackground=self.labelBgColour)
                   for na in self.n_buttons:
-                        self.n_buttons[na].configure(highlightbackground=self.labelBgColour)
+                        self.n_buttons[na].config(highlightbackground=self.labelBgColour)
                   for na in self.n_spins:
-                        self.n_spins[na].configure(highlightbackground=self.labelBgColour)
+                        self.n_spins[na].config(highlightbackground=self.labelBgColour)
                   for na in self.n_options:
-                        self.n_options[na].configure(background=self.labelBgColour, highlightbackground=self.labelBgColour)
+                        self.n_options[na].config(background=self.labelBgColour, highlightbackground=self.labelBgColour)
 
             for na in self.n_scales:
-                  self.n_scales[na].configure(background=self.labelBgColour)
+                  self.n_scales[na].config(background=self.labelBgColour)
             for na in self.n_cbs:
-                  self.n_cbs[na].configure(background=self.labelBgColour, activebackground=self.labelBgColour)
+                  self.n_cbs[na].config(background=self.labelBgColour, activebackground=self.labelBgColour)
             for gr in self.n_rbs:
                   for na in self.n_rbs[gr]:
-                      na.configure(background=self.labelBgColour, activebackground=self.labelBgColour)
+                      na.config(background=self.labelBgColour, activebackground=self.labelBgColour)
             for na in self.n_frames:
-                  na.configure(background=self.labelBgColour)
+                  na.config(background=self.labelBgColour)
             for na in self.n_links:
-                  self.n_links[na].configure(background=self.labelBgColour)
+                  self.n_links[na].config(background=self.labelBgColour)
             for na in self.n_labelFrames:
-                  self.n_labelFrames[na].configure(background=self.labelBgColour)
+                  self.n_labelFrames[na].config(background=self.labelBgColour)
             for na in self.n_noteBooks:
-                  self.n_noteBooks[na].configure(background=self.labelBgColour)
+                  self.n_noteBooks[na].config(background=self.labelBgColour)
             for na in self.n_panedFrames:
-                  self.n_panedFrames[na].configure(background=self.labelBgColour)
+                  self.n_panedFrames[na].config(background=self.labelBgColour)
             #for na in self.n_options:
-            #      self.n_options[na].configure(background=self.labelBgColour)
+            #      self.n_options[na].config(background=self.labelBgColour)
             #for na in self.n_spins:
-            #      self.n_spins[na].configure(background=self.labelBgColour)
+            #      self.n_spins[na].config(background=self.labelBgColour)
 
       def setResizable(self, canResize=True):
             self.resizable = canResize
@@ -634,39 +634,39 @@ class gui:
                               elif kind==self.NOTEBOOK:
                                     item.setBg(value)
                               else:
-                                    item.configure( background=value )
+                                    item.config(background=value)
                         elif option == 'foreground':
                               if kind==self.ENTRY:
                                     if item.hasDefault: item.oldFg=value
                                     else:
-                                          item.configure( foreground=value )
+                                          item.config(foreground=value)
                                           item.oldFg=value
                               elif kind==self.METER:
                                     item.setFg(value)
                               else:
-                                    item.configure( foreground=value )
-                        elif option == 'disabledforeground': item.configure( disabledforeground=value )
+                                    item.config(foreground=value)
+                        elif option == 'disabledforeground': item.config( disabledforeground=value )
                         elif option == 'width':
                               if kind==self.METER: item.setWidth(value)
-                              else: item.configure( width=value )
-                        elif option == 'height': item.configure( height=value )
-                        elif option == 'state': item.configure( state=value )
-                        elif option == 'relief': item.configure( relief=value )
+                              else: item.config( width=value )
+                        elif option == 'height': item.config( height=value )
+                        elif option == 'state': item.config( state=value )
+                        elif option == 'relief': item.config( relief=value )
                         elif option == 'align':
                               if kind==self.ENTRY:
                                     if value == W or value == LEFT: value = LEFT
                                     elif value == E or value == RIGHT: value = RIGHT
-                                    item.configure( justify=value )
+                                    item.config( justify=value )
                               else:
-                                    item.configure( anchor=value )
-                        elif option == 'anchor': item.configure( anchor=value )
-                        elif option == 'cursor': item.configure( cursor=value )
+                                    item.config( anchor=value )
+                        elif option == 'anchor': item.config( anchor=value )
+                        elif option == 'cursor': item.config( cursor=value )
                         elif option == 'tooltip': self.__addTooltip(item, value)
                         elif option == "focus": item.focus_set()
                         elif option == 'command':
                               # this will discard the scale value, as default function can't handle it
                               if kind==self.SCALE: 
-                                    item.configure( command=self.__makeFunc(value,name, True) )
+                                    item.config( command=self.__makeFunc(value,name, True) )
                               elif kind==self.OPTION:
                                     # need to trace the variable??
                                     item.var.trace('w',  self.__makeFunc(value,name, True))
@@ -674,10 +674,10 @@ class gui:
                                     if key is None: key =name 
                                     item.bind('<Return>', self.__makeFunc(value, key, True))
                               elif kind==self.BUTTON:
-                                    item.configure(command=self.__makeFunc(value, name))
+                                    item.config(command=self.__makeFunc(value, name))
                                     item.bind('<Return>', self.__makeFunc(value, name, True))
                               else:
-                                    item.configure( command=self.__makeFunc(value,name) )
+                                    item.config( command=self.__makeFunc(value,name) )
                         elif option == 'sticky':
                               info = {}
                               # need to reposition the widget in its grid
@@ -965,7 +965,7 @@ class gui:
                   # first, make a LabelFrame, and position it correctly
                   self.__verifyItem(self.n_labelFrames, title, True)
                   container = LabelFrame(self.containerStack[-1]['container'], text=title)
-                  container.configure(background=self.labelBgColour, font=self.labelFrameFont, relief="groove")
+                  container.config(background=self.labelBgColour, font=self.labelFrameFont, relief="groove")
                   self.__positionWidget(container, row, column, colspan, "nsew")
                   self.n_labelFrames[title] = container
 
@@ -1103,7 +1103,7 @@ class gui:
 
             # first, make a frame
             frame = Frame(self.__getContainer())
-            frame.configure( background=self.labelBgColour )
+            frame.config( background=self.labelBgColour )
             self.n_frames.append(frame)
 
             # if this is a big label, update the others to match...
@@ -1111,15 +1111,15 @@ class gui:
                   self.labWidth = len(title)
                   #loop through other labels and resize
                   for na in self.n_frameLabs:
-#                        self.n_frameLabs[na].configure(width=self.labWidth)
+#                        self.n_frameLabs[na].config(width=self.labWidth)
                         pass
 
             # next make the label
             lab = Label(frame)
             lab.hidden = False
             lab.inContainer = True
-            lab.configure( anchor=W,text=title, justify=LEFT, font=self.labelFont, background=self.labelBgColour )
-#            lab.configure( width=self.labWidth)
+            lab.config( anchor=W,text=title, justify=LEFT, font=self.labelFont, background=self.labelBgColour )
+#            lab.config( width=self.labWidth)
             self.n_labels[title]=lab
             self.n_frameLabs[title]=lab
 
@@ -1148,7 +1148,7 @@ class gui:
                         size = len ( self.n_frameLabs[na].cget("text") )
                         if not self.n_frameLabs[na].hidden and size > self.labWidth: self.labWidth = size
                   for na in self.n_frameLabs:
-                        self.n_frameLabs[na].configure(width=self.labWidth)
+                        self.n_frameLabs[na].config(width=self.labWidth)
             
 #####################################
 ## FUNCTION for check boxes
@@ -1157,7 +1157,7 @@ class gui:
             self.__verifyItem(self.n_cbs, title, True)
             var=IntVar(self.topLevel)
             cb = Checkbutton(self.__getContainer())
-            cb.configure(text=title, variable=var, font=self.cbFont, background=self.labelBgColour, activebackground=self.labelBgColour)
+            cb.config(text=title, variable=var, font=self.cbFont, background=self.labelBgColour, activebackground=self.labelBgColour)
             self.n_cbs[title]=cb
             self.n_boxVars[title]=var
             self.__positionWidget(cb, row, column, colspan, None)
@@ -1180,7 +1180,7 @@ class gui:
             frame = self.__getLabelFrame(title)
 
             scale = Scale(frame)
-            scale.configure(orient=HORIZONTAL, showvalue=False, highlightthickness=0)
+            scale.config(orient=HORIZONTAL, showvalue=False, highlightthickness=0)
             self.n_scales[title] = scale
             self.__packLabelFrame(frame, scale)
             self.__positionWidget(frame, row, column, colspan)
@@ -1196,17 +1196,17 @@ class gui:
       # this will make the scale show its value
       def showScaleValue(self, title, show=True):
             sc = self.__verifyItem(self.n_scales, title)
-            sc.configure(showvalue=show)
+            sc.config(showvalue=show)
 
       # change the orientation (Hor or Vert)
       def orientScaleHor(self, title, hor=True):
             sc = self.__verifyItem(self.n_scales, title)
-            if hor: sc.configure(orient=HORIZONTAL)
-            else: sc.configure(orient=VERTICAL)
+            if hor: sc.config(orient=HORIZONTAL)
+            else: sc.config(orient=VERTICAL)
 
       def setScaleRange(self, title, start, end, curr=0):
             sc = self.__verifyItem(self.n_scales, title)
-            sc.configure(from_=start, to=end)
+            sc.config(from_=start, to=end)
             self.setScale(title, curr)
 
 #####################################
@@ -1225,15 +1225,15 @@ class gui:
             if len(options) > 0: option = OptionMenu(frame,var,*options)
             else: option = OptionMenu(frame,var,[])
             option.inContainer = False
-            option.configure(justify=LEFT, font=self.optionFont, background=self.labelBgColour, highlightthickness=0)
+            option.config(justify=LEFT, font=self.optionFont, background=self.labelBgColour, highlightthickness=0)
             # compare on windows & mac
-            #option.configure(justify=LEFT, font=self.optionFont, background=self.labelBgColour, highlightthickness=12, bd=0, highlightbackground=self.labelBgColour)
+            #option.config(justify=LEFT, font=self.optionFont, background=self.labelBgColour, highlightthickness=12, bd=0, highlightbackground=self.labelBgColour)
 
             option.var = var
             self.n_options[title]=option
 
             if platform() == "Darwin":
-                  option.configure(highlightbackground=self.labelBgColour)
+                  option.config(highlightbackground=self.labelBgColour)
 
             option.bind("<Tab>", self.__focusNextWindow)
             option.bind("<Shift-Tab>", self.__focusLastWindow)
@@ -1283,10 +1283,10 @@ class gui:
 
             spin = Spinbox(frame)
             spin.inContainer = False
-            spin.configure(font=self.entryFont, highlightbackground=self.labelBgColour, highlightthickness=0)
+            spin.config(font=self.entryFont, highlightbackground=self.labelBgColour, highlightthickness=0)
 
             if platform() == "Darwin":
-                  spin.configure(highlightbackground=self.labelBgColour)
+                  spin.config(highlightbackground=self.labelBgColour)
 
             spin.bind("<Tab>", self.__focusNextWindow)
             spin.bind("<Shift-Tab>", self.__focusLastWindow)
@@ -1295,7 +1295,7 @@ class gui:
             if self.validateSpinBox == None:
                   self.validateSpinBox = (self.containerStack[0]['container'].register(self.__validateSpinBox),'%P', '%W')
 
-            spin.configure(validate='all', validatecommand=self.validateSpinBox)
+            spin.config(validate='all', validatecommand=self.validateSpinBox)
 
             self.n_spins[title] = spin
             return  spin
@@ -1593,7 +1593,7 @@ class gui:
                   self.n_rbVals[title]=vals
                   newRb = True
             rb = Radiobutton(self.__getContainer())
-            rb.configure(text=name, variable=var, value=name, background=self.labelBgColour, activebackground=self.labelBgColour, font=self.rbFont, indicatoron=1)
+            rb.config(text=name, variable=var, value=name, background=self.labelBgColour, activebackground=self.labelBgColour, font=self.rbFont, indicatoron=1)
             if (title in self.n_rbs): self.n_rbs[title].append(rb)
             else: self.n_rbs[title]=[rb]
             #rb.bind("<Tab>", self.__focusNextWindow)
@@ -1615,8 +1615,8 @@ class gui:
       def setRadioTick(self, title, tick=True):
             radios = self.__verifyItem(self.n_rbs, title)
             for rb in radios:
-                  if tick: rb.configure(indicatoron=1)
-                  else: rb.configure(indicatoron=0)
+                  if tick: rb.config(indicatoron=1)
+                  else: rb.config(indicatoron=0)
                   
 #####################################
 ## FUNCTION for list box
@@ -1640,7 +1640,7 @@ class gui:
             vscrollbar.config( command = lb.yview )
             hscrollbar.config( command = lb.xview )
 
-            lb.configure( font=self.lbFont )
+            lb.config( font=self.lbFont )
             self.n_lbs[name] = lb
 
             if values is not None:
@@ -1653,8 +1653,8 @@ class gui:
       # default is single
       def setListSingle(self, title, single=True):
             lb = self.__verifyItem(self.n_lbs, title)
-            if single: lb.configure(selectmode=BROWSE)
-            else: lb.configure(selectmode=EXTENDED)
+            if single: lb.config(selectmode=BROWSE)
+            else: lb.config(selectmode=EXTENDED)
 
       # select the specified item in the list
       def selectListItem(self, title, item):
@@ -1716,17 +1716,17 @@ class gui:
             self.__verifyItem(self.n_buttons, name, True)
             but = Button(frame)
 
-            but.configure( text=title, font=self.buttonFont, background=self.buttonBgColour )
+            but.config( text=title, font=self.buttonFont, background=self.buttonBgColour )
 
             if func is not None:
                   command = self.__makeFunc(func, title)
                   bindCommand = self.__makeFunc(func, title, True)
 
-                  but.configure( command=command )
+                  but.config( command=command )
                   but.bind('<Return>', bindCommand)
             
             if platform() == "Darwin":
-                but.configure(highlightbackground=self.labelBgColour)
+                but.config(highlightbackground=self.labelBgColour)
             #but.bind("<Tab>", self.__focusNextWindow)
             #but.bind("<Shift-Tab>", self.__focusLastWindow)
             self.n_buttons[name]=but
@@ -1743,12 +1743,12 @@ class gui:
 
       def setButton(self, name, text):
             but = self.__verifyItem(self.n_buttons, name)
-            but.configure(text=text)
+            but.config(text=text)
 
       def setButtonImage(self, name, imgFile):
             but = self.__verifyItem(self.n_buttons, name)
             image = self.__getImage( imgFile )
-            but.configure(image=image)
+            but.config(image=image)
             but.image = image
 
       # adds a set of buttons, in the row, spannning specified columns
@@ -1761,7 +1761,7 @@ class gui:
             singleFunc = self.__checkFunc(names, funcs)
             
             frame = Frame(self.__getContainer())
-            frame.configure( background=self.labelBgColour )
+            frame.config( background=self.labelBgColour )
 
             # make them into a 2D array, if not already
             if not isinstance(names[0], list):
@@ -1788,7 +1788,7 @@ class gui:
 #####################################
       def __buildLink(self, title):
             link = Link(self.__getContainer())
-            link.configure(text=title, font=self.linkFont, background=self.labelBgColour)
+            link.config(text=title, font=self.linkFont, background=self.labelBgColour)
             self.n_links[title]=link
             return link
 
@@ -1813,7 +1813,7 @@ class gui:
                   for lab in self.n_flashLabs:
                         bg = lab.cget("background")
                         fg = lab.cget("foreground")
-                        lab.configure(background=fg, foreground=bg)
+                        lab.config(background=fg, foreground=bg)
             self.topLevel.after(250, self.__flash)
 
       def addFlashLabel(self, title, text=None, row=None, column=0, colspan=0):
@@ -1825,8 +1825,8 @@ class gui:
             self.__verifyItem(self.n_labels, title, True)
             lab = Label(self.__getContainer())
             lab.inContainer=False
-            if text is not None: lab.configure ( text=text )
-            lab.configure( justify=LEFT, font=self.labelFont, background=self.labelBgColour )
+            if text is not None: lab.config ( text=text )
+            lab.config( justify=LEFT, font=self.labelFont, background=self.labelBgColour )
             self.n_labels[title]=lab
 
             self.__positionWidget(lab, row, column, colspan)
@@ -1837,11 +1837,11 @@ class gui:
       # adds a set of labels, in the row, spannning specified columns
       def addLabels(self, names, row=None, colspan=0):
             frame = Frame(self.__getContainer())
-            frame.configure( background=self.labelBgColour )
+            frame.config( background=self.labelBgColour )
             for i in range(len(names)):
                   self.__verifyItem(self.n_labels, names[i], True)
                   lab = Label(frame)
-                  lab.configure( text=names[i], font=self.labelFont, justify=LEFT, background=self.labelBgColour )
+                  lab.config( text=names[i], font=self.labelFont, justify=LEFT, background=self.labelBgColour )
                   lab.inContainer=False
                   
                   self.n_labels[names[i]]=lab
@@ -1854,7 +1854,7 @@ class gui:
 
       def setLabel(self, name, text):
             lab = self.__verifyItem(self.n_labels, name)
-            lab.configure(text=text)
+            lab.config(text=text)
 
       def getLabel(self, name):
             lab = self.__verifyItem(self.n_labels, name)
@@ -1870,10 +1870,10 @@ class gui:
             self.__verifyItem(self.n_textAreas, title, True)
             if scrollable: text = scrolledtext.ScrolledText(frame)
             else: text = Text(frame)
-            text.configure(font=self.taFont)
+            text.config(font=self.taFont)
 
             if platform() == "Darwin":
-                text.configure(highlightbackground=self.labelBgColour)
+                text.config(highlightbackground=self.labelBgColour)
             text.bind("<Tab>", self.__focusNextWindow)
             text.bind("<Shift-Tab>", self.__focusLastWindow)
 
@@ -1925,26 +1925,26 @@ class gui:
       def addMessage(self, title, text, row=None, column=0, colspan=0):
             if (title in self.n_messages): raise Exception("Invalid name:", title, "already exists")
             mess = Message(self.__getContainer()) 
-            mess.configure(font=self.messageFont)
-            mess.configure( justify=LEFT, background=self.labelBgColour )
-            if text is not None: mess.configure(text=text)
+            mess.config(font=self.messageFont)
+            mess.config( justify=LEFT, background=self.labelBgColour )
+            if text is not None: mess.config(text=text)
             if platform() == "Darwin":
-                mess.configure(highlightbackground=self.labelBgColour)
+                mess.config(highlightbackground=self.labelBgColour)
             self.n_messages[title]=mess
 
             self.__positionWidget(mess, row, column, colspan)
-#            mess.bind("<Configure>", lambda e: mess.configure(width=e.width-10))
+#            mess.bind("<Configure>", lambda e: mess.config(width=e.width-10))
 
       def addEmptyMessage(self, title, row=None, column=0, colspan=0):
             self.addMessage(title, None, row, column, colspan)
             
       def setMessage(self, title, text):
             if (title not in self.n_messages): raise Exception("Invalid message:", title)
-            self.n_messages[title].configure(text=text)
+            self.n_messages[title].config(text=text)
 
       def clearMessage(self, title ):
             if (title not in self.n_messages): raise Exception("Invalid message:", title)
-            self.n_messages[title].configure(text="")
+            self.n_messages[title].config(text="")
 
 #####################################
 ## FUNCTIONS for entry boxes
@@ -1957,10 +1957,10 @@ class gui:
             ent.inContainer = False
             ent.hasDefault = False
             ent.myTitle=title
-            ent.configure(textvariable=var, font=self.entryFont)
-            if secret: ent.configure(show="*")            
+            ent.config(textvariable=var, font=self.entryFont)
+            if secret: ent.config(show="*")            
             if platform() == "Darwin":
-                ent.configure(highlightbackground=self.labelBgColour)
+                ent.config(highlightbackground=self.labelBgColour)
             ent.bind("<Tab>", self.__focusNextWindow)
             ent.bind("<Shift-Tab>", self.__focusLastWindow)
 
@@ -1996,7 +1996,7 @@ class gui:
             if self.validateNumeric == None:
                   self.validateNumeric = (self.containerStack[0]['container'].register(self.__validateNumericEntry), '%d', '%i', '%P', '%s', '%S', '%v', '%V', '%W')
 
-            ent.configure(validate='key', validatecommand=self.validateNumeric)
+            ent.config(validate='key', validatecommand=self.validateNumeric)
             self.setEntryTooltip(title, "Numeric data only.")
 
       def addNumericLabelEntry(self, title, row=None, column=0, colspan=0, secret=False):
@@ -2008,7 +2008,7 @@ class gui:
             if self.validateNumeric == None:
                   self.validateNumeric = (self.containerStack[0]['container'].register(self.__validateNumericEntry), '%d', '%i', '%P', '%s', '%S', '%v', '%V', '%W')
 
-            ent.configure(validate='key', validatecommand=self.validateNumeric)
+            ent.config(validate='key', validatecommand=self.validateNumeric)
             self.setEntryTooltip(title, "Numeric data only.")
 
       def addSecretEntry(self, title, row=None, column=0, colspan=0):
@@ -2041,10 +2041,10 @@ class gui:
             if entry.hasDefault: #True when never clicked
                   self.n_entryVars[name].set("")
                   entry.hasDefault = False
-                  entry.configure(justify=entry.oldJustify, foreground=entry.oldFg)
+                  entry.config(justify=entry.oldJustify, foreground=entry.oldFg)
             elif current == "": #empty if they didn't type??
                   self.n_entryVars[name].set(entry.default)
-                  entry.configure(justify='center', foreground='grey')
+                  entry.config(justify='center', foreground='grey')
                   entry.hasDefault = True
 
       def setEntryDefault(self, name, text="default"):
@@ -2055,7 +2055,7 @@ class gui:
             entry.hasDefault = True
             entry.oldJustify=entry.cget('justify')
             entry.oldFg=entry.cget('foreground')
-            entry.configure(justify='center', foreground='grey')
+            entry.config(justify='center', foreground='grey')
             command = self.__makeFunc(self.__updateEntryDefault, name, True)
             entry.bind("<FocusIn>", command)
             entry.bind("<FocusOut>", command)
@@ -2125,17 +2125,17 @@ class gui:
                   else:
                         u = self.__makeFunc(funcs[i], t)
 
-                  but.configure( text=t, command=u, relief=FLAT, font=self.tbFont )
+                  but.config( text=t, command=u, relief=FLAT, font=self.tbFont )
                   if image is not None:
                         but.image = image
-                        but.configure(image=image)
+                        but.config(image=image)
                   but.pack (side=LEFT, padx=2, pady=2)
                   self.__addTooltip(but, t)
 
       def setToolbarImage(self, name, imgFile):
             if (name not in self.n_tbButts): raise Exception("Unknown toolbar name: " + name)
             image = self.__getImage( imgFile )
-            self.n_tbButts[name].configure(image=image)
+            self.n_tbButts[name].config(image=image)
             self.n_tbButts[name].image = image
 
 #####################################
@@ -2183,24 +2183,24 @@ class gui:
 ## FUNCTIONS for status bar
 #####################################
       def setStatusBg(self, colour=None):
-            if colour is not None: self.status.configure(background=colour)
+            if colour is not None: self.status.config(background=colour)
 
       def setStatusFg(self, colour=None):
-            if colour is not None: self.status.configure(foreground=colour)
+            if colour is not None: self.status.config(foreground=colour)
 
       def addStatus(self, header=""):
             self.hasStatus = True
             self.header=header
             self.status = Label(self.appWindow)
-            self.status.configure( bd=1, relief=SUNKEN, anchor=W, font=self.statusFont)
+            self.status.config( bd=1, relief=SUNKEN, anchor=W, font=self.statusFont)
             self.__addTooltip(self.status, "Status bar")
             self.status.pack(side=BOTTOM, fill=X, anchor=S)
 
       def setStatus(self, text):
-            if self.hasStatus: self.status.configure(text=self.__getFormatStatus(text))
+            if self.hasStatus: self.status.config(text=self.__getFormatStatus(text))
 
       def clearStatus(self):
-            if self.hasStatus: self.status.configure(text=self.__getFormatStatus(""))
+            if self.hasStatus: self.status.config(text=self.__getFormatStatus(""))
             
       # formats the string shown in the status bar
       def __getFormatStatus(self, text):
@@ -2316,10 +2316,10 @@ class Meter(Frame):
             self._canv.itemconfigure(self._text, fill=col)
 
       def setBg(self, col):
-            self._canv.configure(bg=col)
+            self._canv.config(bg=col)
 
       def setWidth(self, width):
-            self.configure(width=width)
+            self.config(width=width)
 
       def _update_coords(self, event):
             '''Updates the position of the text and rectangle inside the canvas when the size of the widget gets changed.'''
@@ -2354,6 +2354,7 @@ class NoteBook(Frame):
             self.tabs=Frame(self,bg=bg)
             self.paneBg=bg
             self.panes=Frame(self,relief=SUNKEN,bd=2,bg=self.paneBg,**kwargs)
+            self.panes["bg"]="red"
 
             self.tabs.grid(row=0, sticky=W)
             Grid.columnconfigure(self, 0, weight=1)
@@ -2365,11 +2366,11 @@ class NoteBook(Frame):
             self.highlightedTab = None
 
       def addTab(self, text, **kwargs):
-            # log the first tab as the elected tab
+            # log the first tab as the selected tab
             if self.selectedTab is None: self.selectedTab=text
             if self.highlightedTab is None: self.highlightedTab=text
 
-            # create a the tab, bind events, pack it in
+            # create the tab, bind events, pack it in
             tab=Label(self.tabs,text=text,relief=RIDGE,cursor="hand2",takefocus=1,**kwargs)
             tab.bind("<Button-1>", lambda Event:self.__changeTab(text))
             tab.bind("<Return>", lambda Event:self.__changeTab(text))
@@ -2380,7 +2381,7 @@ class NoteBook(Frame):
 
             # create the pane
             pane=Frame(self.panes,bg=self.paneBg)
-            pane.grid(sticky="NESW")
+            pane.grid(sticky="nsew", row=0, column=0)
             self.panes.grid_columnconfigure(0, weight=1)
             self.panes.grid_rowconfigure(0, weight=1)
 
@@ -2430,13 +2431,13 @@ class NoteBook(Frame):
 class Link(Label):
       def __init__(self, *args, **kwargs):
             Label.__init__(self, *args, **kwargs)
-            self.configure(fg="blue")
+            self.config(fg="blue")
             self.page=""
 
             if platform() == "Darwin":
-                  self.configure(cursor="pointinghand")
+                  self.config(cursor="pointinghand")
             elif platform() in [ "win32", "Windows"]:
-                  self.configure(cursor="hand2")
+                  self.config(cursor="hand2")
 
       def registerCallback(self, callback):
             self.bind("<Button-1>", callback)
@@ -2569,11 +2570,11 @@ class SimpleEntryDialog(Dialog):
     def clearError(self, e):
         if self.error:
             self.error = False
-            self.l1.configure(text="")
+            self.l1.config(text="")
 
     def setError(self, message):
         self.error = True
-        self.l1.configure(text=message)
+        self.l1.config(text=message)
 
     # a label for the question, an entry for the answer
     # a label for an error message
