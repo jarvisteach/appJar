@@ -159,6 +159,7 @@ class gui:
             self.linkFont = font.Font(family="Helvetica", size=12, weight='bold', underline=1)
             self.labelFrameFont = font.Font(family="Helvetica", size=12)
             self.noteBookFont = font.Font(family="Helvetica", size=12)
+            self.panedWindowFont = font.Font(family="Helvetica", size=12)
 
             # set up colours
             self.bgColour = self.topLevel.cget("bg")
@@ -442,6 +443,7 @@ class gui:
             self.meterFont.configure (family=font, size=size)
             self.labelFrameFont.configure (family=font, size=size)
             self.noteBookFont.configure (family=font, size=size)
+            self.panedWindowFont.configure (family=font, size=size)
 
       def increaseFont(self):
            self.increaseLabelFont()
@@ -493,6 +495,8 @@ class gui:
                   self.n_labelFrames[na].configure(background=self.labelBgColour)
             for na in self.n_noteBooks:
                   self.n_noteBooks[na].configure(background=self.labelBgColour)
+            for na in self.n_panedFrames:
+                  self.n_panedFrames[na].configure(background=self.labelBgColour)
             #for na in self.n_options:
             #      self.n_options[na].configure(background=self.labelBgColour)
             #for na in self.n_spins:
@@ -900,6 +904,7 @@ class gui:
       def __positionWidget(self, widget, row, column=0, colspan=0, sticky=W+E):
             # allow item to be added to container
             container = self.__getContainer()
+            widget["bg"]=container["bg"]
 
             # alpha paned window placement
             if self.containerStack[-1]['type'] ==self.C_PANEDWINDOW:
@@ -987,7 +992,7 @@ class gui:
 
                   # now, add the new pane
                   self.__verifyItem(self.n_panedWindows, title, True)
-                  pane = PanedWindow(self.containerStack[-1]['container'], showhandle=True, sashrelief="groove")
+                  pane = PanedWindow(self.containerStack[-1]['container'], showhandle=True, sashrelief="groove", bg=self.labelBgColour)
                   self.__positionWidget(pane, row, column, colspan, sticky=sticky)
                   self.n_panedWindows[title] = pane
 
@@ -998,7 +1003,7 @@ class gui:
                   self.startContainer(self.C_PANEDFRAME, title)
             elif fType == self.C_PANEDFRAME:
                   # create a frame, and add it to the pane
-                  frame = Frame(self.containerStack[-1]['container'])
+                  frame = Frame(self.containerStack[-1]['container'], bg=self.labelBgColour)
                   self.containerStack[-1]['container'].add(frame)
                   self.n_panedFrames[title] = frame
 
@@ -1061,6 +1066,11 @@ class gui:
       def setLabelFrameAnchor(self, title, anchor):
             frame = self.__verifyItem(self.n_labelFrames, title)
             frame.config(labelanchor=anchor)
+
+      # function to set position of title for label frame
+      def setNoteTabBg(self, note, tab, bg):
+            myNote = self.__verifyItem(self.n_noteBooks, note)
+            myNote.setTabBg(tab, bg)
 
 #####################################
 ## FUNCTION to manage topLevels
@@ -2341,66 +2351,78 @@ class Meter(Frame):
 class NoteBook(Frame):
       def __init__(self, master, bg, *args, **kwargs):
             Frame.__init__(self, master, bg=bg)
-            self.buttons=Frame(self,bg=bg)
+            self.tabs=Frame(self,bg=bg)
             self.paneBg=bg
             self.panes=Frame(self,relief=SUNKEN,bd=2,bg=self.paneBg,**kwargs)
 
-            #self.panes.grid_propagate(0)
-
-            self.buttons.grid(row=0, sticky=W)
+            self.tabs.grid(row=0, sticky=W)
             Grid.columnconfigure(self, 0, weight=1)
             self.panes.grid(row=1,sticky="NESW")
             Grid.rowconfigure(self, 1, weight=1)
 
             self.tabVars = {}
             self.selectedTab = None
-      
+            self.highlightedTab = None
+
       def addTab(self, text, **kwargs):
+            # log the first tab as the elected tab
             if self.selectedTab is None: self.selectedTab=text
+            if self.highlightedTab is None: self.highlightedTab=text
 
-            button=Label(self.buttons,text=text,relief=RIDGE,cursor="hand2",takefocus=1,**kwargs)
-            button.bind("<Button-1>", lambda Event:self.__changeTab(text))
-            button.bind("<Return>", lambda Event:self.__changeTab(text))
-            button.bind("<space>", lambda Event:self.__changeTab(text))
-            button.bind("<FocusIn>", lambda Event:self.__focusIn(text))
-            button.bind("<FocusOut>", lambda Event:self.__focusOut(text))
-            button.pack(side=LEFT,ipady=4,ipadx=4) 
+            # create a the tab, bind events, pack it in
+            tab=Label(self.tabs,text=text,relief=RIDGE,cursor="hand2",takefocus=1,**kwargs)
+            tab.bind("<Button-1>", lambda Event:self.__changeTab(text))
+            tab.bind("<Return>", lambda Event:self.__changeTab(text))
+            tab.bind("<space>", lambda Event:self.__changeTab(text))
+            tab.bind("<FocusIn>", lambda Event:self.__focusIn(text))
+            tab.bind("<FocusOut>", lambda Event:self.__focusOut(text))
+            tab.pack(side=LEFT,ipady=4,ipadx=4) 
 
+            # create the pane
             pane=Frame(self.panes,bg=self.paneBg)
             pane.grid(sticky="NESW")
+            self.panes.grid_columnconfigure(0, weight=1)
+            self.panes.grid_rowconfigure(0, weight=1)
 
-            self.tabVars[text]=[button, pane]
-            self.__changeTab(self.selectedTab)
+            self.tabVars[text]=[tab, pane]
+            self.__colourTabs(self.selectedTab)
 
             return pane
 
       def __focusIn(self, tabName):
-            self.__colourTabs("black", False)
-            self.tabVars[tabName][0]['fg']='blue'
+            self.highlightedTab = tabName
+            self.__colourTabs(False)
 
       def __focusOut(self, tabName):
             self.tabVars[tabName][0]['fg']='black'
 
       def __changeTab(self, tabName):
-            self.selectedTab=tabName
             self.tabVars[tabName][0].focus_set()
-            self.__colourTabs('blue')
+            self.highlightedTab = tabName
+            if tabName != self.selectedTab:
+                  self.selectedTab=tabName
+                  self.__colourTabs()
 
-      def __colourTabs(self, colour, swap=True):
+      def __colourTabs(self, swap=True):
+            # clear all tabs & remove if necessary
             for key in list(self.tabVars.keys()):
-                  if key != self.selectedTab:
-                        self.tabVars[key][0]['bg']='grey'
-                        self.tabVars[key][0]['fg']='black'
-                        if swap: self.tabVars[key][1].grid_remove()
-                  else:
-                        self.tabVars[key][0]['bg']='white'
-                        self.tabVars[key][0]['fg']=colour
-                        if swap: self.tabVars[key][1].grid()
+                  self.tabVars[key][0]['bg']='grey'
+                  self.tabVars[key][0]['fg']='black'
+                  if swap: self.tabVars[key][1].grid_remove()
+
+            # now decorate the active tab 
+            self.tabVars[self.selectedTab][0]['bg']='white'
+            self.tabVars[self.highlightedTab][0]['fg']='blue'
+            # and grid it if necessary
+            if swap: self.tabVars[self.selectedTab][1].grid()
 
       def setBg(self, bg):
             self.paneBg=bg
             for key in list(self.tabVars.keys()):
-                self.tabVars[key][1].config(bg=bg)
+                self.tabVars[key][1]['bg']=bg
+
+      def setTabBg(self, tab, bg):
+            self.tabVars[tab][1].config(bg=bg)
 
 #####################################
 ## Hyperlink Class
