@@ -2361,6 +2361,11 @@ class NoteBook(Frame):
             self.panes.grid(row=1,sticky="NESW")
             Grid.rowconfigure(self, 1, weight=1)
 
+            self.activeFg="blue"
+            self.inactiveFg="black"
+            self.activeBg="white"
+            self.inactiveBg="grey"
+
             self.tabVars = {}
             self.selectedTab = None
             self.highlightedTab = None
@@ -2407,13 +2412,13 @@ class NoteBook(Frame):
       def __colourTabs(self, swap=True):
             # clear all tabs & remove if necessary
             for key in list(self.tabVars.keys()):
-                  self.tabVars[key][0]['bg']='grey'
-                  self.tabVars[key][0]['fg']='black'
+                  self.tabVars[key][0]['bg']=self.inactiveBg
+                  self.tabVars[key][0]['fg']=self.inactiveFg
                   if swap: self.tabVars[key][1].grid_remove()
 
             # now decorate the active tab 
-            self.tabVars[self.selectedTab][0]['bg']='white'
-            self.tabVars[self.highlightedTab][0]['fg']='blue'
+            self.tabVars[self.selectedTab][0]['bg']=self.activeBg
+            self.tabVars[self.highlightedTab][0]['fg']=self.activeFg
             # and grid it if necessary
             if swap: self.tabVars[self.selectedTab][1].grid()
 
@@ -2424,6 +2429,16 @@ class NoteBook(Frame):
 
       def setTabBg(self, tab, bg):
             self.tabVars[tab][1].config(bg=bg)
+
+      def setFg(self, activeFg, inactiveFg):
+            self.activeFg = activeFg
+            self.inactiveFg = inactiveFg
+            self.__colourTabs(False)
+
+      def setBg(self, activeBg, inactiveBg):
+            self.activeBg = activeBg
+            self.inactiveBg = inactiveBg
+            self.__colourTabs(False)
 
 #####################################
 ## Hyperlink Class
