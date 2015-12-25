@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
 """rwba_gui.py: Provides a GUI class, for making simple tkinter GUIs."""
 # Nearly everything I learnt came from: http://effbot.org/tkinterbook/
+# with help from: http://infohost.nmt.edu/tcc/help/pubs/tkinter/web/index.html
 # with snippets from stackexchange.com
 
 ##########
-## TO ADD: panedWindow
 # LAST CHANGE: see changeLog.txt
 # now under git
+##########
 
 from tkinter import *
 from tkinter import messagebox
@@ -87,7 +88,8 @@ class gui:
       # used for defining functions
       WIDGETS = { LABEL:"Label", MESSAGE:"Message", BUTTON:"Button", ENTRY:"Entry", CB:"Cb", SCALE:"Scale", RB:"Rb",
                   LB:"Lb", SPIN:"SpinBox", OPTION:"OptionBox", TEXTAREA:"TextArea", LINK:"Link", METER:"Meter",
-                  LABELFRAME:"LabelFrame", NOTEBOOK:"NoteBook", PANEDWINDOW:"PanedWindow" }
+                  #LABELFRAME:"LabelFrame", NOTEBOOK:"NoteBook", PANEDWINDOW:"PanedWindow" }
+                  LABELFRAME:"LabelFrame", PANEDWINDOW:"PanedWindow" }
 
       # music stuff
       BASIC_NOTES = {"A":440, "B":493, "C":261, "D":293, "E":329, "F":349, "G":392 }
@@ -1075,6 +1077,14 @@ class gui:
       def setNoteTab(self, note, tab):
             myNote = self.__verifyItem(self.n_noteBooks, note)
             myNote.changeTab(tab)
+
+      def setNoteBookFg(self, note, active, inactive):
+            myNote = self.__verifyItem(self.n_noteBooks, note)
+            myNote.setFg(active, inactive)
+
+      def setNoteBookBg(self, note, active, inactive):
+            myNote = self.__verifyItem(self.n_noteBooks, note)
+            myNote.setBg(active, inactive)
 
 #####################################
 ## FUNCTION to manage topLevels
