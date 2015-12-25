@@ -1072,6 +1072,10 @@ class gui:
             myNote = self.__verifyItem(self.n_noteBooks, note)
             myNote.setTabBg(tab, bg)
 
+      def setNoteTab(self, note, tab):
+            myNote = self.__verifyItem(self.n_noteBooks, note)
+            myNote.changeTab(tab)
+
 #####################################
 ## FUNCTION to manage topLevels
 #####################################
@@ -2354,7 +2358,6 @@ class NoteBook(Frame):
             self.tabs=Frame(self,bg=bg)
             self.paneBg=bg
             self.panes=Frame(self,relief=SUNKEN,bd=2,bg=self.paneBg,**kwargs)
-            self.panes["bg"]="red"
 
             self.tabs.grid(row=0, sticky=W)
             Grid.columnconfigure(self, 0, weight=1)
@@ -2377,9 +2380,9 @@ class NoteBook(Frame):
 
             # create the tab, bind events, pack it in
             tab=Label(self.tabs,text=text,relief=RIDGE,cursor="hand2",takefocus=1,**kwargs)
-            tab.bind("<Button-1>", lambda Event:self.__changeTab(text))
-            tab.bind("<Return>", lambda Event:self.__changeTab(text))
-            tab.bind("<space>", lambda Event:self.__changeTab(text))
+            tab.bind("<Button-1>", lambda Event:self.changeTab(text))
+            tab.bind("<Return>", lambda Event:self.changeTab(text))
+            tab.bind("<space>", lambda Event:self.changeTab(text))
             tab.bind("<FocusIn>", lambda Event:self.__focusIn(text))
             tab.bind("<FocusOut>", lambda Event:self.__focusOut(text))
             tab.pack(side=LEFT,ipady=4,ipadx=4) 
@@ -2402,7 +2405,7 @@ class NoteBook(Frame):
       def __focusOut(self, tabName):
             self.tabVars[tabName][0]['fg']='black'
 
-      def __changeTab(self, tabName):
+      def changeTab(self, tabName):
             self.tabVars[tabName][0].focus_set()
             self.highlightedTab = tabName
             if tabName != self.selectedTab:
