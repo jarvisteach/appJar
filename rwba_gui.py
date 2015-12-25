@@ -83,6 +83,7 @@ class gui:
       C_NOTETAB='noteTab'
       C_PANEDWINDOW="panedWindow"
       C_PANEDFRAME="panedFrame"
+      C_TOPLEVEL="topLevel"
 
       # names for each of the widgets defined above
       # used for defining functions
@@ -1033,6 +1034,23 @@ class gui:
       def startPanedWindow(self, title, row=None, column=0, colspan=0, sticky="NSEW"):
             self.startContainer(self.C_PANEDWINDOW, title, row, column, colspan, sticky)
 
+      def startTopLevel(self, name, title=None):
+            self.__verifyItem(self.n_toplevels, name, True)
+            if title == None: title = name
+            top = GuiChild()
+            top.title(title)
+            top.win = self
+            self.n_toplevels[name] = top
+
+            def on_closing():
+                if messagebox.askokcancel("Quit", "Do you want to quit?"):
+                    top.destroy()
+
+            top.protocol("WM_DELETE_WINDOW", on_closing)
+
+            # now, add to top of stack
+            self.__addContainer(self.C_TOPLEVEL, top, 0, 1, "")
+
       # sticky is alignment inside frame
       # frame will be added as other widgets
       def startLabelFrame(self, title, row=None, column=0, colspan=0, sticky=W):
@@ -1087,7 +1105,7 @@ class gui:
             myNote.setBg(active, inactive)
 
 #####################################
-## FUNCTION to manage topLevels
+## warn when bad functions called...
 #####################################
 
       def __getattr__(self,name):
@@ -1099,14 +1117,6 @@ class gui:
             if self.built == True and not hasattr(self, name): # would this create a new attribute?
                   raise AttributeError("Creating new attributes is not allowed!")
             super(gui, self).__setattr__(name, value)
-
-      def addTopLevel(self, name, title=None):
-            self.__verifyItem(self.n_toplevels, name, True)
-            if title == None: title = name
-            top = GuiChild()
-            top.title(title)
-            top.win = self
-            self.n_toplevels[name] = top
 
 #####################################
 ## FUNCTION to add labels before a widget
