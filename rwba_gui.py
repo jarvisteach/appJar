@@ -319,24 +319,18 @@ class gui:
       def setStopFunction(self, function):
             """ set a funciton to call when the GUI is quit. Must return True or False """
             if self.containerStack[-1]['type'] == self.C_TOPLEVEL:
-                self.containerStack[-1]['stopFunction'] = function
+                self.containerStack[-1]['container'].stopFunction = function
             else:
                 self.containerStack[0]['stopFunction'] = function
-                #self.__stopFunction = function
 
-      def stop(self, container=None):
+      def stop(self, event=None):
             """ Closes the GUI. If a stop funciton is set, will only close the GUI if True """
-            if container is not None:
-                container.withdraw()
-            else:
-                container=self.topLevel
-
-                theFunc = self.containerStack[0]['stopFunction']
-                if theFunc is None or theFunc():
-                    # stop any sounds, ignore error when not on Windows
-                    try: self.stopSound()
-                    except: pass
-                    container.destroy()
+            theFunc = self.containerStack[0]['stopFunction']
+            if theFunc is None or theFunc():
+                # stop any sounds, ignore error when not on Windows
+                try: self.stopSound()
+                except: pass
+                self.topLevel.destroy()
 
 #####################################
 ## Functions for configuring polling events
@@ -1060,13 +1054,19 @@ class gui:
             if title == None: title = name
             top = GuiChild()
             top.title(title)
-            top.protocol("WM_DELETE_WINDOW", self.__makeFunc(self.stop, top, True))
+            top.protocol("WM_DELETE_WINDOW", self.__makeFunc(self.destroyTopLevel, name))
             top.withdraw()
             top.win = self
             self.n_topLevels[name] = top
 
             # now, add to top of stack
             self.__addContainer(self.C_TOPLEVEL, top, 0, 1, "")
+
+      def stopTopLevel(self):
+            if self.containerStack[-1]['type'] == self.C_TOPLEVEL:
+                  self.stopContainer()
+            else:
+                  raise Exception("Can't stop a TOPLEVEL, currently in:", self.containerStack[-1]['type'])
 
       def showTopLevel(self, title):
             self.__verifyItem(self.n_topLevels, title).deiconify()
@@ -1075,7 +1075,12 @@ class gui:
             self.__verifyItem(self.n_topLevels, title).withdraw()
 
       def destroyTopLevel(self, title):
-            self.__verifyItem(self.n_topLevels, title).destroy()
+            topLevel = self.__verifyItem(self.n_topLevels, title)
+            theFunc = topLevel.stopFunction
+            if theFunc is None or theFunc():
+                # stop any sounds, ignore error when not on Windows
+                topLevel.destroy()
+                del self.n_topLevels[title]
 
       # sticky is alignment inside frame
       # frame will be added as other widgets
@@ -2686,7 +2691,8 @@ class NumDialog(SimpleEntryDialog):
 class GuiChild(Toplevel):
       def __init__(self):
             Toplevel.__init__(self)
-            self.topLevel.escapeBindId = None # used to exit fullscreen
+            self.escapeBindId = None # used to exit fullscreen
+            self.stopFunction = None # used to stop
 
       def __getattr__(self,name):
             def handlerFunction(*args,**kwargs):
