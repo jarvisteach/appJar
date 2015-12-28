@@ -4,11 +4,6 @@
 # with help from: http://infohost.nmt.edu/tcc/help/pubs/tkinter/web/index.html
 # with snippets from stackexchange.com
 
-##########
-# LAST CHANGE: see changeLog.txt
-# now under git
-##########
-
 from tkinter import *
 from tkinter import messagebox
 from tkinter import colorchooser
@@ -16,6 +11,7 @@ from tkinter import filedialog
 from tkinter import scrolledtext
 from tkinter import font
 import os, sys, re, socket, hashlib
+import __main__ as main
 from platform import system as platform
 import webbrowser
 
@@ -114,7 +110,7 @@ class gui:
 #####################################
 ## CONSTRUCTOR - creates the GUI
 #####################################
-      def __init__(self, title="RWBA Tools", geom=None, warn=True, debug=False):
+      def __init__(self, title=None, geom=None, warn=True, debug=False):
             self.WARN = warn
             self.DEBUG = debug
             self.__initArrays()
@@ -123,6 +119,7 @@ class gui:
 
             # set up some default path locations
             self.lib_file = os.path.abspath(__file__)
+            self.exe_file = main.__file__
             self.lib_path = os.path.dirname(self.lib_file)
             self.icon_path = os.path.join(self.lib_path,"icons")
             self.sound_path = os.path.join(self.lib_path,"sounds")
@@ -130,15 +127,19 @@ class gui:
             # create the main window - topLevel
             self.topLevel = Tk()
             self.topLevel.bind('<Configure>', self.__windowEvent)
+            # override close button
+            self.topLevel.protocol("WM_DELETE_WINDOW", self.stop)
             # temporarily hide it
             self.topLevel.withdraw()
 
             self.appWindow = Frame(self.topLevel)
             self.appWindow.pack(fill=BOTH, expand=True)
 
+            if title is None: title = self.exe_file
             self.setTitle(title)
+
             # configure geom
-            self.escapeBindId = None # used to exit fullscreen
+            self.topLevel.escapeBindId = None # used to exit fullscreen
             self.setGeom(geom)
 
             # set the resize status - default to True
@@ -184,15 +185,10 @@ class gui:
             #container = Label(self.appWindow) # made as a label, so we can set an image
             container.config(padx=2, pady=2, background=self.labelBgColour)
             container.pack(fill=BOTH, expand=True)
-            self.containerStack = []
             self.__addContainer(self.C_ROOT, container, 0, 1)
 
             # set up the main container to be able to host an image
             self.__configBg(container)
-
-            # override close button
-            self.__stopFunction = None
-            self.topLevel.protocol("WM_DELETE_WINDOW", self.stop)
 
             # an array to hold any threaded events....
             self.events = []
@@ -213,6 +209,9 @@ class gui:
       def __initArrays(self):
             # set up a row counter - used to auto add rows
             # breaks once user sets own row
+
+            # a stack to hold containers as being built
+            self.containerStack = []
 
             #set up a minimum label width for label combos
             self.labWidth=1
@@ -242,7 +241,7 @@ class gui:
             self.n_textAreas={}
             self.n_links={}
             self.n_meters={}
-            self.n_toplevels={}
+            self.n_topLevels={}
             self.n_labelFrames={}
             self.n_noteBooks={}
             self.n_panedWindows={}
@@ -319,15 +318,25 @@ class gui:
 
       def setStopFunction(self, function):
             """ set a funciton to call when the GUI is quit. Must return True or False """
-            self.__stopFunction = function
+            if self.containerStack[-1]['type'] == self.C_TOPLEVEL:
+                self.containerStack[-1]['stopFunction'] = function
+            else:
+                self.containerStack[0]['stopFunction'] = function
+                #self.__stopFunction = function
 
-      def stop(self):
+      def stop(self, container=None):
             """ Closes the GUI. If a stop funciton is set, will only close the GUI if True """
-            if self.__stopFunction is None or self.__stopFunction():
-                  # stop any sounds, ignore error when not on Windows
-                  try: self.stopSound()
-                  except: pass
-                  self.topLevel.destroy()
+            if container is not None:
+                container.withdraw()
+            else:
+                container=self.topLevel
+
+                theFunc = self.containerStack[0]['stopFunction']
+                if theFunc is None or theFunc():
+                    # stop any sounds, ignore error when not on Windows
+                    try: self.stopSound()
+                    except: pass
+                    container.destroy()
 
 #####################################
 ## Functions for configuring polling events
@@ -381,13 +390,14 @@ class gui:
 #####################################
       # called to update screen geometry
       def setGeom(self, geom):
-            self.mainGeom = geom
-            if self.mainGeom == "fullscreen":
-                  self.topLevel.attributes('-fullscreen', True)
-                  self.escapeBindId = self.topLevel.bind('<Escape>', self.exitFullscreen, "+")
+            container = self.getTopLevel()
+            container.mainGeom = geom
+            if container.mainGeom == "fullscreen":
+                  container.attributes('-fullscreen', True)
+                  container.escapeBindId = container.bind('<Escape>', self.__makeFunc(self.exitFullscreen, container, True), "+")
             else:
                   self.exitFullscreen()
-                  if self.mainGeom is not None: self.topLevel.geometry(self.mainGeom)
+                  if container.mainGeom is not None: container.geometry(container.mainGeom)
 
       # called to make sure this window is on top
       def __bringToFront(self):
@@ -397,9 +407,10 @@ class gui:
                   self.topLevel.lift()
 
       # function to turn off fullscreen mode
-      def exitFullscreen(self, event=None):
-            self.topLevel.attributes('-fullscreen', False)
-            if self.escapeBindId is not None: self.topLevel.unbind('<Escape>', self.escapeBindId)
+      def exitFullscreen(self, container=None):
+            if container is None: container = self.getTopLevel()
+            container.attributes('-fullscreen', False)
+            if container.escapeBindId is not None: container.unbind('<Escape>', container.escapeBindId)
 
       def setPadX(self, x=0):
             self.containerStack[-1]['padx'] = x
@@ -506,28 +517,35 @@ class gui:
             #      self.n_spins[na].config(background=self.labelBgColour)
 
       def setResizable(self, canResize=True):
-            self.resizable = canResize
-            if self.resizable: self.topLevel.resizable(True, True)
-            else: self.topLevel.resizable(False, False)
+            self.getTopLevel().isResizable = canResize
+            if self.getTopLevel().isResizable: self.getTopLevel().resizable(True, True)
+            else: self.getTopLevel().resizable(False, False)
 
       def getResizable(self):
-            return self.resizable
+            return self.getTopLevel().isResizable
 
       # function to set the window's title
       def setTitle(self, title):
-            self.topLevel.title(title)
+            self.getTopLevel().title(title)
 
       # set an icon
       def setIcon(self, image):
+            container = self.getTopLevel()
             if image.endswith('.ico'):
-                  self.topLevel.wm_iconbitmap(image)
+                  container.wm_iconbitmap(image)
             else:
-                  self.icon = self.__getImage(image)
-                  self.topLevel.iconphoto(True, self.icon)
+                  icon = self.__getImage(image)
+                  container.iconphoto(True, icon)
+
+      def getTopLevel(self):
+            if len(self.containerStack) > 1 and self.containerStack[-1]['type'] == self.C_TOPLEVEL:
+                return self.containerStack[-1]['container']
+            else:
+                return self.topLevel
 
       # make the window transparent (between 0 & 1)
       def setTransparency(self, percentage):
-            self.topLevel.attributes("-alpha", percentage)
+            self.getTopLevel().attributes("-alpha", percentage)
 
 ##############################
 ## funcitons to deal with tabbing and right clicking
@@ -849,6 +867,8 @@ class gui:
 #####################################
 ## FUNCTION for managing commands
 #####################################
+      # funcion to wrap up lambda
+      # if the thing calling this generates parameters - then set discard=True
       def __makeFunc(self, funcName, param, discard=False):
             if discard: return lambda *args: funcName(param)
             else: return lambda: funcName(param)
@@ -952,7 +972,8 @@ class gui:
       def __addContainer(self, cType, container, row, col, sticky=None):
             self.containerStack.append(
                   {'type':cType, 'container':container,'emptyRow':row, 'colCount':col,
-                  'sticky':sticky, 'padx':1, 'pady':1, 'expand':"ALL", 'widgets':False}
+                  'sticky':sticky, 'padx':1, 'pady':1, 'expand':"ALL", 'widgets':False,
+                  'stopFunction':None}
             )
 
       def __removeContainer(self):
@@ -1035,21 +1056,26 @@ class gui:
             self.startContainer(self.C_PANEDWINDOW, title, row, column, colspan, sticky)
 
       def startTopLevel(self, name, title=None):
-            self.__verifyItem(self.n_toplevels, name, True)
+            self.__verifyItem(self.n_topLevels, name, True)
             if title == None: title = name
             top = GuiChild()
             top.title(title)
+            top.protocol("WM_DELETE_WINDOW", self.__makeFunc(self.stop, top, True))
+            top.withdraw()
             top.win = self
-            self.n_toplevels[name] = top
-
-            def on_closing():
-                if messagebox.askokcancel("Quit", "Do you want to quit?"):
-                    top.destroy()
-
-            top.protocol("WM_DELETE_WINDOW", on_closing)
+            self.n_topLevels[name] = top
 
             # now, add to top of stack
             self.__addContainer(self.C_TOPLEVEL, top, 0, 1, "")
+
+      def showTopLevel(self, title):
+            self.__verifyItem(self.n_topLevels, title).deiconify()
+
+      def hideTopLevel(self, title):
+            self.__verifyItem(self.n_topLevels, title).withdraw()
+
+      def destroyTopLevel(self, title):
+            self.__verifyItem(self.n_topLevels, title).destroy()
 
       # sticky is alignment inside frame
       # frame will be added as other widgets
@@ -2400,11 +2426,11 @@ class NoteBook(Frame):
 
             # create the tab, bind events, pack it in
             tab=Label(self.tabs,text=text,relief=RIDGE,cursor="hand2",takefocus=1,**kwargs)
-            tab.bind("<Button-1>", lambda Event:self.changeTab(text))
-            tab.bind("<Return>", lambda Event:self.changeTab(text))
-            tab.bind("<space>", lambda Event:self.changeTab(text))
-            tab.bind("<FocusIn>", lambda Event:self.__focusIn(text))
-            tab.bind("<FocusOut>", lambda Event:self.__focusOut(text))
+            tab.bind("<Button-1>", lambda *args:self.changeTab(text))
+            tab.bind("<Return>", lambda *args:self.changeTab(text))
+            tab.bind("<space>", lambda *args:self.changeTab(text))
+            tab.bind("<FocusIn>", lambda *args:self.__focusIn(text))
+            tab.bind("<FocusOut>", lambda *args:self.__focusOut(text))
             tab.pack(side=LEFT,ipady=4,ipadx=4) 
 
             # create the pane
@@ -2660,6 +2686,7 @@ class NumDialog(SimpleEntryDialog):
 class GuiChild(Toplevel):
       def __init__(self):
             Toplevel.__init__(self)
+            self.topLevel.escapeBindId = None # used to exit fullscreen
 
       def __getattr__(self,name):
             def handlerFunction(*args,**kwargs):
