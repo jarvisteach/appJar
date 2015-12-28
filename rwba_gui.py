@@ -79,7 +79,7 @@ class gui:
       C_NOTETAB='noteTab'
       C_PANEDWINDOW="panedWindow"
       C_PANEDFRAME="panedFrame"
-      C_TOPLEVEL="topLevel"
+      C_SUBWINDOW="subWindow"
 
       # names for each of the widgets defined above
       # used for defining functions
@@ -241,7 +241,7 @@ class gui:
             self.n_textAreas={}
             self.n_links={}
             self.n_meters={}
-            self.n_topLevels={}
+            self.n_subWindows={}
             self.n_labelFrames={}
             self.n_noteBooks={}
             self.n_panedWindows={}
@@ -318,7 +318,7 @@ class gui:
 
       def setStopFunction(self, function):
             """ set a funciton to call when the GUI is quit. Must return True or False """
-            if self.containerStack[-1]['type'] == self.C_TOPLEVEL:
+            if self.containerStack[-1]['type'] == self.C_SUBWINDOW:
                 self.containerStack[-1]['container'].stopFunction = function
             else:
                 self.containerStack[0]['stopFunction'] = function
@@ -532,7 +532,7 @@ class gui:
                   container.iconphoto(True, icon)
 
       def getTopLevel(self):
-            if len(self.containerStack) > 1 and self.containerStack[-1]['type'] == self.C_TOPLEVEL:
+            if len(self.containerStack) > 1 and self.containerStack[-1]['type'] == self.C_SUBWINDOW:
                 return self.containerStack[-1]['container']
             else:
                 return self.topLevel
@@ -1049,38 +1049,38 @@ class gui:
       def startPanedWindow(self, title, row=None, column=0, colspan=0, sticky="NSEW"):
             self.startContainer(self.C_PANEDWINDOW, title, row, column, colspan, sticky)
 
-      def startTopLevel(self, name, title=None):
-            self.__verifyItem(self.n_topLevels, name, True)
+      def startSubWindow(self, name, title=None):
+            self.__verifyItem(self.n_subWindows, name, True)
             if title == None: title = name
-            top = GuiChild()
+            top = SubWindow()
             top.title(title)
-            top.protocol("WM_DELETE_WINDOW", self.__makeFunc(self.destroyTopLevel, name))
+            top.protocol("WM_DELETE_WINDOW", self.__makeFunc(self.destroySubWindow, name))
             top.withdraw()
             top.win = self
-            self.n_topLevels[name] = top
+            self.n_subWindows[name] = top
 
             # now, add to top of stack
-            self.__addContainer(self.C_TOPLEVEL, top, 0, 1, "")
+            self.__addContainer(self.C_SUBWINDOW, top, 0, 1, "")
 
-      def stopTopLevel(self):
-            if self.containerStack[-1]['type'] == self.C_TOPLEVEL:
+      def stopSubWindow(self):
+            if self.containerStack[-1]['type'] == self.C_SUBWINDOW:
                   self.stopContainer()
             else:
-                  raise Exception("Can't stop a TOPLEVEL, currently in:", self.containerStack[-1]['type'])
+                  raise Exception("Can't stop a SUBWINDOW, currently in:", self.containerStack[-1]['type'])
 
-      def showTopLevel(self, title):
-            self.__verifyItem(self.n_topLevels, title).deiconify()
+      def showSubWindow(self, title):
+            self.__verifyItem(self.n_subWindows, title).deiconify()
 
-      def hideTopLevel(self, title):
-            self.__verifyItem(self.n_topLevels, title).withdraw()
+      def hideSubWindow(self, title):
+            self.__verifyItem(self.n_subWindows, title).withdraw()
 
-      def destroyTopLevel(self, title):
-            topLevel = self.__verifyItem(self.n_topLevels, title)
+      def destroySubWindow(self, title):
+            topLevel = self.__verifyItem(self.n_subWindows, title)
             theFunc = topLevel.stopFunction
             if theFunc is None or theFunc():
                 # stop any sounds, ignore error when not on Windows
                 topLevel.destroy()
-                del self.n_topLevels[title]
+                del self.n_subWindows[title]
 
       # sticky is alignment inside frame
       # frame will be added as other widgets
@@ -2688,7 +2688,7 @@ class NumDialog(SimpleEntryDialog):
 #####################################
 ## Toplevel Stuff
 #####################################
-class GuiChild(Toplevel):
+class SubWindow(Toplevel):
       def __init__(self):
             Toplevel.__init__(self)
             self.escapeBindId = None # used to exit fullscreen
