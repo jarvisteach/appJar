@@ -362,29 +362,29 @@ class gui:
 
       # will call the specified function when enter key is pressed
       def enableEnter(self, func):
-            """ Binds <enter> to the specified function - all widgets """
-            self.bindKey("<Enter>", func)
+            """ Binds <Return> to the specified function - all widgets """
+            self.bindKey("<Return>", func)
 
       def disableEnter(self):
             """ unbinds <enter> from all widgets """
-            self.unbindKey("<Enter>")
+            self.unbindKey("<Return>")
 
       def bindKey(self, key, func):
             """ bind the specified key, to the specified function, for all widgets """
             # for now discard the Event...
             myF = self.__makeFunc(func, key, True)
-            self.topLevel.bind(key, myF)
+            self.__getTopLevel().bind(key, myF)
 
       def unbindKey(self, key):
             """ unbinds the specified key from whatever functions it os bound to """
-            self.topLevel.unbind(key)
+            self.__getTopLevel().unbind(key)
 
 #####################################
 ## FUNCTIONS for configuring GUI settings
 #####################################
       # called to update screen geometry
       def setGeom(self, geom):
-            container = self.getTopLevel()
+            container = self.__getTopLevel()
             container.mainGeom = geom
             if container.mainGeom == "fullscreen":
                   container.attributes('-fullscreen', True)
@@ -392,6 +392,10 @@ class gui:
             else:
                   self.exitFullscreen()
                   if container.mainGeom is not None: container.geometry(container.mainGeom)
+
+      # called to set screen position
+      def setLocation(self, x, y):
+            self.__getTopLevel().geometry("+"+str(x)+"+"+str(y))
 
       # called to make sure this window is on top
       def __bringToFront(self):
@@ -402,7 +406,7 @@ class gui:
 
       # function to turn off fullscreen mode
       def exitFullscreen(self, container=None):
-            if container is None: container = self.getTopLevel()
+            if container is None: container = self.__getTopLevel()
             container.attributes('-fullscreen', False)
             if container.escapeBindId is not None: container.unbind('<Escape>', container.escapeBindId)
 
@@ -511,27 +515,27 @@ class gui:
             #      self.n_spins[na].config(background=self.labelBgColour)
 
       def setResizable(self, canResize=True):
-            self.getTopLevel().isResizable = canResize
-            if self.getTopLevel().isResizable: self.getTopLevel().resizable(True, True)
-            else: self.getTopLevel().resizable(False, False)
+            self.__getTopLevel().isResizable = canResize
+            if self.__getTopLevel().isResizable: self.__getTopLevel().resizable(True, True)
+            else: self.__getTopLevel().resizable(False, False)
 
       def getResizable(self):
-            return self.getTopLevel().isResizable
+            return self.__getTopLevel().isResizable
 
       # function to set the window's title
       def setTitle(self, title):
-            self.getTopLevel().title(title)
+            self.__getTopLevel().title(title)
 
       # set an icon
       def setIcon(self, image):
-            container = self.getTopLevel()
+            container = self.__getTopLevel()
             if image.endswith('.ico'):
                   container.wm_iconbitmap(image)
             else:
                   icon = self.__getImage(image)
                   container.iconphoto(True, icon)
 
-      def getTopLevel(self):
+      def __getTopLevel(self):
             if len(self.containerStack) > 1 and self.containerStack[-1]['type'] == self.C_SUBWINDOW:
                 return self.containerStack[-1]['container']
             else:
@@ -539,7 +543,8 @@ class gui:
 
       # make the window transparent (between 0 & 1)
       def setTransparency(self, percentage):
-            self.getTopLevel().attributes("-alpha", percentage)
+            if percentage>1: percentage = percentage/100
+            self.__getTopLevel().attributes("-alpha", percentage)
 
 ##############################
 ## funcitons to deal with tabbing and right clicking
