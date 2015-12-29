@@ -1069,7 +1069,9 @@ class gui:
                   raise Exception("Can't stop a SUBWINDOW, currently in:", self.containerStack[-1]['type'])
 
       def showSubWindow(self, title):
-            self.__verifyItem(self.n_subWindows, title).deiconify()
+            tl = self.__verifyItem(self.n_subWindows, title)
+            tl.deiconify()
+            tl.config(takefocus=True)
 
       def hideSubWindow(self, title):
             self.__verifyItem(self.n_subWindows, title).withdraw()
