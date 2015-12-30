@@ -2572,7 +2572,7 @@ class Separator(Frame):
       def __init__(self, *args, **kwargs):
             Frame.__init__(self, *args, **kwargs)
             self.line = Frame(self)
-            self.line.config(relief="ridge", height=2, bg="black")
+            self.line.config(relief="ridge", height=2, borderwidth=1)
             self.line.pack(padx=5, pady=5, fill="x")
       
       def setFg(self, colour):
