@@ -131,6 +131,7 @@ class gui:
             self.topLevel.protocol("WM_DELETE_WINDOW", self.stop)
             # temporarily hide it
             self.topLevel.withdraw()
+            self.locationSet = False
 
             self.appWindow = Frame(self.topLevel)
             self.appWindow.pack(fill=BOTH, expand=True)
@@ -273,6 +274,7 @@ class gui:
 #####################################
 ## Event Loop - must always be called at end
 #####################################
+
       def go(self):
             """ Most important function! Start the GUI """
 
@@ -288,22 +290,8 @@ class gui:
             self.appWindow.pack(fill=BOTH)
             self.topLevel.update_idletasks()
 
-            # set a minimum size
-            w1=self.topLevel.winfo_width()
-            h1=self.topLevel.winfo_height()
-
-            w2=self.topLevel.winfo_reqwidth()
-            h2=self.topLevel.winfo_reqheight()
-
-            if w2>w1: w1=w2
-            if h2>h1: h1=h2
-
-            self.topLevel.minsize(w1, h1)
-
-            # put it in the middle of the screen
-            x = (self.topLevel.winfo_screenwidth() - self.topLevel.winfo_reqwidth()) / 2
-            y = (self.topLevel.winfo_screenheight() - self.topLevel.winfo_reqheight()) / 2
-            self.topLevel.geometry("+%d+%d" % (x, y))
+            # check geom is set and set a minimum size, also positions the window if necessary
+            self.__dimensionWindow()
 
             # bring to front
             self.topLevel.deiconify()
@@ -382,20 +370,57 @@ class gui:
 #####################################
 ## FUNCTIONS for configuring GUI settings
 #####################################
+      # set a minimum size
+      def __dimensionWindow(self):
+            # get the apps requested width & height
+            r_width=self.__getTopLevel().winfo_reqwidth()
+            r_heigth=self.__getTopLevel().winfo_reqheight()
+
+            # if a geom has not ben set
+            if self.__getTopLevel().geom is None:
+                # determine a minimum geom
+                width=self.__getTopLevel().winfo_width()
+                height=self.__getTopLevel().winfo_height()
+
+                if r_width>width: width=r_width
+                if r_heigth>height: height=r_heigth
+
+                # store it in the app's geom
+                self.__getTopLevel().geom = str(width)+"x"+str(height)
+
+            # now split the app's geom
+            width = int(self.__getTopLevel().geom.lower().split("x")[0])
+            height = int(self.__getTopLevel().geom.lower().split("x")[1])
+
+            # and set it as the minimum size
+            self.__getTopLevel().minsize(width, height)
+
+            # warn the user that their geom is not big enough
+            if width < r_width or height < r_heigth:
+                self.warn("Specified dimensions ("+self.__getTopLevel().geom+"), less than requested dimensions ("+str(r_width)+"x"+str(r_heigth)+")")
+
+            # if the window hasn't been positioned by the user, put it in the middle
+            if not self.locationSet: 
+                x = (self.topLevel.winfo_screenwidth() - width) / 2
+                y = (self.topLevel.winfo_screenheight() - height) / 2
+                self.setLocation(x,y)
+
       # called to update screen geometry
-      def setGeom(self, geom):
+      def setGeom(self, geom, height=None):
+            if height is not None: geom = str(geom)+"x"+str(height)
             container = self.__getTopLevel()
-            container.mainGeom = geom
-            if container.mainGeom == "fullscreen":
+            container.geom = geom
+            if container.geom == "fullscreen":
                   container.attributes('-fullscreen', True)
                   container.escapeBindId = container.bind('<Escape>', self.__makeFunc(self.exitFullscreen, container, True), "+")
             else:
                   self.exitFullscreen()
-                  if container.mainGeom is not None: container.geometry(container.mainGeom)
+                  if container.geom is not None: container.geometry(container.geom)
 
       # called to set screen position
       def setLocation(self, x, y):
-            self.__getTopLevel().geometry("+"+str(x)+"+"+str(y))
+            self.locationSet = True
+            self.__getTopLevel().geometry("+%d+%d" % (x, y))
 
       # called to make sure this window is on top
       def __bringToFront(self):
