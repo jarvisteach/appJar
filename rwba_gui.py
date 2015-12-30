@@ -113,7 +113,10 @@ class gui:
       def __init__(self, title=None, geom=None, warn=True, debug=False):
             self.WARN = warn
             self.DEBUG = debug
+
+            # first up, set up all the data stores
             self.__initArrays()
+
             # dynamically create lots of functions for configuring stuff
             self.__buildConfigFuncs()
 
@@ -133,13 +136,15 @@ class gui:
             self.topLevel.withdraw()
             self.locationSet = False
 
+            # create a frame to store all the widgets
             self.appWindow = Frame(self.topLevel)
             self.appWindow.pack(fill=BOTH, expand=True)
 
+            # set the windows title
             if title is None: title = self.exe_file
             self.setTitle(title)
 
-            # configure geom
+            # configure the geometry of the window
             self.topLevel.escapeBindId = None # used to exit fullscreen
             self.setGeom(geom)
 
@@ -274,7 +279,6 @@ class gui:
 #####################################
 ## Event Loop - must always be called at end
 #####################################
-
       def go(self):
             """ Most important function! Start the GUI """
 
@@ -2186,6 +2190,13 @@ class gui:
             item.setFill(colour)
       
 #####################################
+## FUNCTIONS for seperators
+#####################################
+      def addSeparator(self, row=None, column=0, colspan=0):
+            sep = Separator(self.__getContainer())
+            self.__positionWidget(sep, row, column, colspan)
+
+#####################################
 ## FUNCTIONS for tool bar
 #####################################
       # adds a list of buttons along the top - like a tool bar...
@@ -2553,6 +2564,22 @@ class Link(Label):
 
             self.page = page
             self.bind("<Button-1>", self.launchBrowser)
+
+#####################################
+## Simple Separator
+#####################################
+class Separator(Frame):
+      def __init__(self, *args, **kwargs):
+            Frame.__init__(self, *args, **kwargs)
+            self.line = Frame(self)
+            self.line.config(relief="ridge", height=2, bg="black")
+            self.line.pack(padx=5, pady=5, fill="x")
+      
+      def setFg(self, colour):
+            self.line.config(bg=colour)
+
+      def setBg(self, colour):
+            self.line.config(bg=colour)
 
 #####################################
 ## errors
