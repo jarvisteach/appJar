@@ -273,7 +273,7 @@ class gui:
       # function to generate warning messages
       def debug(self, message):
             if self.DEBUG: print(message)
-      # function to turn off warning messages
+      # function to turn on debug messages
       def enableDebug(self): self.DEBUG=True
 
 #####################################
