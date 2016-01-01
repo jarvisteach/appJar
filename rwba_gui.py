@@ -939,9 +939,7 @@ class gui:
             else:
                   raise Exception("Unknown geometry manager: " + widget.winfo_manager())
 
-      def __getContainer(self):
-            return self.containerStack[-1]['container']
-
+      # convenience function to set RCS, referencing the current container's settings
       def __getRCS(self, row, column, span):
             if row is None: row=self.getNextRow()
             else: self.containerStack[-1]['emptyRow'] = row + 1
@@ -1000,13 +998,22 @@ class gui:
 #            self.containerStack[-1]['container'].columnconfigure(0, weight=1)
 #            self.containerStack[-1]['container'].rowconfigure(0, weight=1)
 
+#####################################
+## FUNCTION to manage containers
+#####################################
+      # adds the container to the container stack - makes this the current working container
       def __addContainer(self, cType, container, row, col, sticky=None):
-            self.containerStack.append(
+            self.containerStack.append (
                   {'type':cType, 'container':container,'emptyRow':row, 'colCount':col,
                   'sticky':sticky, 'padx':1, 'pady':1, 'expand':"ALL", 'widgets':False,
                   'stopFunction':None}
             )
 
+      # returns the current working container
+      def __getContainer(self):
+            return self.containerStack[-1]['container']
+
+      # if possible, removes the current container
       def __removeContainer(self):
             if len(self.containerStack) == 1:
                   raise Exception("Can't remove container, already in root window.")
@@ -1015,6 +1022,7 @@ class gui:
             else:
                   return self.containerStack.pop()
 
+      # functions to start the various containers
       def startContainer(self, fType, title, row=None, column=0, colspan=0, sticky=None):
             if fType == self.C_LABELFRAME:
                   # first, make a LabelFrame, and position it correctly
@@ -1026,7 +1034,6 @@ class gui:
 
                   # now, add to top of stack
                   self.__addContainer(self.C_LABELFRAME, container, 0, 1, sticky)
-
             elif fType == self.C_NOTEBOOK:
                   self.__verifyItem(self.n_noteBooks, title, True)
                   notebook = NoteBook(self.containerStack[-1]['container'], bg=self.labelBgColour)
@@ -1070,10 +1077,6 @@ class gui:
       def startNoteBook(self, title, row=None, column=0, colspan=0, sticky="NSEW"):
             self.startContainer(self.C_NOTEBOOK, title, row, column, colspan, sticky)
 
-      def setPanedWindowVertical(self, window):
-            pane = self.__verifyItem(self.n_panedWindows, window )
-            pane.config(orient=VERTICAL)
-
       def startNoteTab(self, title):
             # auto close the previous NOTETAB - keep it?
             if self.containerStack[-1]['type'] == self.C_NOTETAB:
@@ -1088,7 +1091,7 @@ class gui:
 
       def startSubWindow(self, name, title=None):
             self.__verifyItem(self.n_subWindows, name, True)
-            if title == None: title = name
+            if title == None: title=name
             top = SubWindow()
             top.title(title)
             top.protocol("WM_DELETE_WINDOW", self.__makeFunc(self.destroySubWindow, name))
@@ -1099,34 +1102,19 @@ class gui:
             # now, add to top of stack
             self.__addContainer(self.C_SUBWINDOW, top, 0, 1, "")
 
-      def stopSubWindow(self):
-            if self.containerStack[-1]['type'] == self.C_SUBWINDOW:
-                  self.stopContainer()
-            else:
-                  raise Exception("Can't stop a SUBWINDOW, currently in:", self.containerStack[-1]['type'])
-
-      def showSubWindow(self, title):
-            tl = self.__verifyItem(self.n_subWindows, title)
-            tl.deiconify()
-            tl.config(takefocus=True)
-
-      def hideSubWindow(self, title):
-            self.__verifyItem(self.n_subWindows, title).withdraw()
-
-      def destroySubWindow(self, title):
-            topLevel = self.__verifyItem(self.n_subWindows, title)
-            theFunc = topLevel.stopFunction
-            if theFunc is None or theFunc():
-                # stop any sounds, ignore error when not on Windows
-                topLevel.destroy()
-                del self.n_subWindows[title]
-
       # sticky is alignment inside frame
       # frame will be added as other widgets
       def startLabelFrame(self, title, row=None, column=0, colspan=0, sticky=W):
             self.startContainer(self.C_LABELFRAME, title, row, column, colspan, sticky)
 
+      # functions to stop the various containers
       def stopContainer(self): self.__removeContainer()
+
+      def stopSubWindow(self):
+            if self.containerStack[-1]['type'] == self.C_SUBWINDOW:
+                  self.stopContainer()
+            else:
+                  raise Exception("Can't stop a SUBWINDOW, currently in:", self.containerStack[-1]['type'])
 
       def stopNoteBook(self):
             # auto close the existing TAB - keep it?
@@ -1152,12 +1140,35 @@ class gui:
                   raise Exception("Can't stop a PANEDWINDOW, currently in:", self.containerStack[-1]['type'])
             self.stopContainer()
 
+      # functions to show/hide/destroy SubWindows
+      def showSubWindow(self, title):
+            tl = self.__verifyItem(self.n_subWindows, title)
+            tl.deiconify()
+            tl.config(takefocus=True)
+
+      def hideSubWindow(self, title):
+            self.__verifyItem(self.n_subWindows, title).withdraw()
+
+      def destroySubWindow(self, title):
+            topLevel = self.__verifyItem(self.n_subWindows, title)
+            theFunc = topLevel.stopFunction
+            if theFunc is None or theFunc():
+                # stop any sounds, ignore error when not on Windows
+                topLevel.destroy()
+                del self.n_subWindows[title]
+
+      # make a PanedWindow align vertically
+      def setPanedWindowVertical(self, window):
+            pane = self.__verifyItem(self.n_panedWindows, window )
+            pane.config(orient=VERTICAL)
+
+
       # function to set position of title for label frame
       def setLabelFrameAnchor(self, title, anchor):
             frame = self.__verifyItem(self.n_labelFrames, title)
             frame.config(labelanchor=anchor)
 
-      # function to set position of title for label frame
+      # functions to change colours of NoteBooks
       def setNoteTabBg(self, note, tab, bg):
             myNote = self.__verifyItem(self.n_noteBooks, note)
             myNote.setTabBg(tab, bg)
