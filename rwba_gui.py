@@ -14,6 +14,8 @@ import os, sys, re, socket, hashlib
 import __main__ as main
 from platform import system as platform
 import webbrowser
+from idlelib.TreeWidget import TreeItem, TreeNode
+from xml.dom.minidom import parseString
 
 # import borrowed libraries
 from rwbatools.lib.tooltip import ToolTip
@@ -252,6 +254,7 @@ class gui:
             self.n_noteBooks={}
             self.n_panedWindows={}
             self.n_panedFrames={}
+            self.n_trees={}
             self.n_flashLabs = []
 
             # variables associated with widgets
@@ -2011,6 +2014,31 @@ class gui:
             return md5
 
 #####################################
+## FUNCTIONS to add Tree Widgets
+#####################################
+      def addTree(self, title, data, row=None, column=0, colspan=0):
+            self.__verifyItem(self.n_trees, title, True)
+            canvas = Canvas(self.__getContainer()) 
+            self.__positionWidget(canvas, row, column, colspan)
+            canvas.config(bg="white")
+            dom=parseString(data)
+            item=TreeWidget(dom.documentElement)
+            node=TreeNode(canvas, None, item)
+            node.update()
+            node.expand()
+            self.n_trees[title]=item
+
+      def addTreeFunction(self, title, func):
+            if func is not None:
+                  tree = self.__verifyItem(self.n_trees, title)
+                  command = self.__makeFunc(func, title)
+                  tree.registerDblClick(command)
+
+      def getTree(self, title):
+            tree = self.__verifyItem(self.n_trees, title)
+            return tree.getSelected()
+
+#####################################
 ## FUNCTIONS to add Message Box
 #####################################
       def addMessage(self, title, text, row=None, column=0, colspan=0):
@@ -2580,6 +2608,49 @@ class Separator(Frame):
 
       def setBg(self, colour):
             self.line.config(bg=colour)
+
+#####################################
+## Tree Widget Class
+#####################################
+class TreeWidget(TreeItem):
+      def __init__(self, node):
+            self.node = node
+            self.dblClickFunc = None
+            self.selectedNode = None
+
+      def GetText(self):
+            node = self.node
+            if node.nodeType == node.ELEMENT_NODE:
+                  return node.nodeName
+            elif node.nodeType == node.TEXT_NODE:
+                  return node.nodeValue
+
+      def IsExpandable(self):
+            node = self.node
+            return node.hasChildNodes()
+
+      def GetSubList(self):
+            parent = self.node
+            children = parent.childNodes
+            prelist = [TreeWidget(node) for node in children]
+            itemlist = [item for item in prelist if item.GetText().strip()]
+            return itemlist
+
+      def registerDblClick(self, func):
+            self.dblClickFunc = func
+
+      def OnDoubleClick(self):
+            self.selectedNode = self.GetText()
+            if self.dblClickFunc is not None:
+                  self.selectedNode = self.GetText()
+                  self.dblClickFunc()
+
+      def GetSelectedIconName(self):
+            self.selectedNode = self.GetText()
+
+      def getSelected(self):
+            return self.selectedNode
+            
 
 #####################################
 ## errors
