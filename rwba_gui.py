@@ -1140,6 +1140,11 @@ class gui:
                   raise Exception("Can't stop a PANEDWINDOW, currently in:", self.containerStack[-1]['type'])
             self.stopContainer()
 
+      def stopAllPanedWindows(self):
+            while True:
+                  try: self.stopPanedWindow()
+                  except: break
+
       # functions to show/hide/destroy SubWindows
       def showSubWindow(self, title):
             tl = self.__verifyItem(self.n_subWindows, title)
@@ -1188,7 +1193,6 @@ class gui:
 #####################################
 ## warn when bad functions called...
 #####################################
-
       def __getattr__(self,name):
             def handlerFunction(*args,**kwargs):
                   self.warn("Warning: unknown function:"+name+" "+str(args)+" "+str(kwargs))
