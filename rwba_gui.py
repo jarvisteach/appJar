@@ -116,6 +116,10 @@ class gui:
             self.WARN = warn
             self.DEBUG = debug
 
+            # a stack to hold containers as being built
+            # done here, as initArrays is called elsewhere - to reset the gubbins
+            self.containerStack = []
+
             # first up, set up all the data stores
             self.__initArrays()
 
@@ -217,9 +221,6 @@ class gui:
       def __initArrays(self):
             # set up a row counter - used to auto add rows
             # breaks once user sets own row
-
-            # a stack to hold containers as being built
-            self.containerStack = []
 
             #set up a minimum label width for label combos
             self.labWidth=1
