@@ -81,3 +81,8 @@ class net:
 
 if __name__ == "__main__":
       print("Testing NET Class")
+      myNet = net(777)
+      print("Connected to myself: ", myNet.getIPAddress())
+      print("Listening on port: ", myNet.port)
+      while True:
+            print(myNet.getMessage())
