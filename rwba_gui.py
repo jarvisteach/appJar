@@ -53,6 +53,7 @@ class gui:
       LABELFRAME=14
       NOTEBOOK=15
       PANEDWINDOW=16
+      IMAGE=17
 
       # positioning
       N = N
@@ -86,7 +87,7 @@ class gui:
       # names for each of the widgets defined above
       # used for defining functions
       WIDGETS = { LABEL:"Label", MESSAGE:"Message", BUTTON:"Button", ENTRY:"Entry", CB:"Cb", SCALE:"Scale", RB:"Rb",
-                  LB:"Lb", SPIN:"SpinBox", OPTION:"OptionBox", TEXTAREA:"TextArea", LINK:"Link", METER:"Meter",
+                  LB:"Lb", SPIN:"SpinBox", OPTION:"OptionBox", TEXTAREA:"TextArea", LINK:"Link", METER:"Meter", IMAGE:"Image",
                   #LABELFRAME:"LabelFrame", NOTEBOOK:"NoteBook", PANEDWINDOW:"PanedWindow" }
                   LABELFRAME:"LabelFrame", PANEDWINDOW:"PanedWindow" }
 
@@ -380,38 +381,39 @@ class gui:
 #####################################
       # set a minimum size
       def __dimensionWindow(self):
-            # get the apps requested width & height
-            r_width=self.__getTopLevel().winfo_reqwidth()
-            r_heigth=self.__getTopLevel().winfo_reqheight()
+            if self.__getTopLevel().geom != "fullscreen":
+                # get the apps requested width & height
+                r_width=self.__getTopLevel().winfo_reqwidth()
+                r_heigth=self.__getTopLevel().winfo_reqheight()
 
-            # if a geom has not ben set
-            if self.__getTopLevel().geom is None:
-                # determine a minimum geom
-                width=self.__getTopLevel().winfo_width()
-                height=self.__getTopLevel().winfo_height()
+                # if a geom has not ben set
+                if self.__getTopLevel().geom is None:
+                    # determine a minimum geom
+                    width=self.__getTopLevel().winfo_width()
+                    height=self.__getTopLevel().winfo_height()
 
-                if r_width>width: width=r_width
-                if r_heigth>height: height=r_heigth
+                    if r_width>width: width=r_width
+                    if r_heigth>height: height=r_heigth
 
-                # store it in the app's geom
-                self.__getTopLevel().geom = str(width)+"x"+str(height)
+                    # store it in the app's geom
+                    self.__getTopLevel().geom = str(width)+"x"+str(height)
 
-            # now split the app's geom
-            width = int(self.__getTopLevel().geom.lower().split("x")[0])
-            height = int(self.__getTopLevel().geom.lower().split("x")[1])
+                # now split the app's geom
+                width = int(self.__getTopLevel().geom.lower().split("x")[0])
+                height = int(self.__getTopLevel().geom.lower().split("x")[1])
 
-            # and set it as the minimum size
-            self.__getTopLevel().minsize(width, height)
+                # and set it as the minimum size
+                self.__getTopLevel().minsize(width, height)
 
-            # warn the user that their geom is not big enough
-            if width < r_width or height < r_heigth:
-                self.warn("Specified dimensions ("+self.__getTopLevel().geom+"), less than requested dimensions ("+str(r_width)+"x"+str(r_heigth)+")")
+                # warn the user that their geom is not big enough
+                if width < r_width or height < r_heigth:
+                    self.warn("Specified dimensions ("+self.__getTopLevel().geom+"), less than requested dimensions ("+str(r_width)+"x"+str(r_heigth)+")")
 
-            # if the window hasn't been positioned by the user, put it in the middle
-            if not self.locationSet: 
-                x = (self.topLevel.winfo_screenwidth() - width) / 2
-                y = (self.topLevel.winfo_screenheight() - height) / 2
-                self.setLocation(x,y)
+                # if the window hasn't been positioned by the user, put it in the middle
+                if not self.locationSet: 
+                    x = (self.topLevel.winfo_screenwidth() - width) / 2
+                    y = (self.topLevel.winfo_screenheight() - height) / 2
+                    self.setLocation(x,y)
 
       # called to update screen geometry
       def setGeom(self, geom, height=None):
@@ -654,6 +656,7 @@ class gui:
             elif kind == self.LABELFRAME: return self.n_labelFrames
             elif kind == self.NOTEBOOK: return self.n_noteBooks
             elif kind == self.PANEDWINDOW: return self.n_panedFrames
+            elif kind == self.IMAGE: return self.n_images
             else: raise Exception ("Unknown widget type: " + str(kind))
 
       def configureAllWidgets(self, kind, option, value):
