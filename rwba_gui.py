@@ -672,7 +672,7 @@ class gui:
       def configureWidget(self, kind, name, option, value, key=None, deprecated=False):
 
             # warn about deprecated functions
-            if deprecated: self.warn("Warning - deprecated config function used for: "+self.WIDGETS[kind]+"->"+name)
+            if deprecated: self.warn("Warning - deprecated config function ("+option+") used for: "+self.WIDGETS[kind]+"->"+name)
             # get the list of items for this type, and validate the widgetis in the list
             items = self.__getItems(kind)
             self.__verifyItem(items, name)
@@ -732,6 +732,20 @@ class gui:
                               elif kind==self.BUTTON:
                                     item.config(command=self.__makeFunc(value, name))
                                     item.bind('<Return>', self.__makeFunc(value, name, True))
+                              # make labels clickable, add a cursor, and change the look
+                              elif kind==self.LABEL:
+                                    if platform() == "Darwin":
+                                          item.config(cursor="pointinghand")
+                                    elif platform() in [ "win32", "Windows"]:
+                                          item.config(cursor="hand2")
+
+                                    item.bind("<Button-1>",self.__makeFunc(value, name, True), add="+")
+                                    # these look good, but break when dialogs take focus
+                                    #up = item.cget("relief").lower()
+                                    #down="sunken"
+                                    # make it look like it's pressed
+                                    #item.bind("<Button-1>",lambda e: item.config(relief=down), add="+")
+                                    #item.bind("<ButtonRelease-1>",lambda e: item.config(relief=up))
                               else:
                                     item.config( command=self.__makeFunc(value,name) )
                         elif option == 'sticky':
