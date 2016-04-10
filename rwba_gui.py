@@ -936,6 +936,7 @@ class gui:
                   child.destroy()
             self.__configBg(self.containerStack[0]['container'])
             self.__initArrays()
+            self.setGeom(None)
 
 #####################################
 ## FUNCTION for managing commands
