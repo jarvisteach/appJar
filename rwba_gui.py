@@ -2612,7 +2612,7 @@ class gui:
       def retryBox(self, title, message):
             return messagebox.askretrycancel(title, message)
 
-      def openBox(self, title=None, fileName=None, dirName=None, fileExt=".txt", fileTypes=None, asFile=True):
+      def openBox(self, title=None, fileName=None, dirName=None, fileExt=".txt", fileTypes=None, asFile=False):
             if fileTypes is None: fileTypes = [('all files', '.*'), ('text files', '.txt')]
             # define options for opening
             options = {}
@@ -2626,7 +2626,7 @@ class gui:
             # will return "" if cancelled
             else:return filedialog.askopenfilename(**options)
 
-      def saveBox(self, title=None, fileName=None, dirName=None, fileExt=".txt", fileTypes=None, asFile=True):
+      def saveBox(self, title=None, fileName=None, dirName=None, fileExt=".txt", fileTypes=None, asFile=False):
             if fileTypes is None: fileTypes = [('all files', '.*'), ('text files', '.txt')]
             # define options for opening
             options = {}
