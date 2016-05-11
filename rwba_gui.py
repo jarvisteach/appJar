@@ -1861,7 +1861,7 @@ class gui:
 ## FUNCTION to play sounds
 #####################################
       # internal function to manage sound availability
-      def __soundWrap(self, sound, isFile=False, repeat=False):
+      def __soundWrap(self, sound, isFile=False, repeat=False, wait=False):
             if platform() in ["win32", "Windows"]:
                   if isFile:
                         if False== os.path.isfile(sound): raise Exception("Can't find sound: "+ sound)
@@ -1871,7 +1871,8 @@ class gui:
                         if sound is None:
                               kind = winsound.SND_FILENAME
                         else:
-                              kind = winsound.SND_ALIAS | winsound.SND_ASYNC
+                              kind = winsound.SND_ALIAS
+                              if not wait: kind = kind | winsound.SND_ASYNC
 
                   if repeat: kind = kind | winsound.SND_LOOP
 
@@ -1880,8 +1881,8 @@ class gui:
                   # sound not available at this time
                   raise Exception("Sound not supported on this platform: " + platform() )
 
-      def playSound(self, sound):
-            self.__soundWrap(sound, True)
+      def playSound(self, sound, wait=False):
+            self.__soundWrap(sound, True, False, wait)
 
       def stopSound(self):
             self.__soundWrap(None)
@@ -2448,11 +2449,10 @@ class gui:
             self.__positionWidget(meter, row, column, colspan)
 
       # update the value of the specified meter
-      # note: expects a value between 0 & 1, will repeatedly divide by 10 if > 1
+      # note: expects a value between 0 & 100
       def setMeter(self, name, value=0.0, text=None):
             item = self.__verifyItem(self.n_meters, name)
-            while value > 1:
-                  value = value/10
+            value = value/100
             item.set(value, text) 
 
       def getMeter(self, name):
