@@ -1721,6 +1721,18 @@ class gui:
                   img.image.cached=True
                   self.__animateImage(name)
 
+      def __preloadAnimatedImage(self, name):
+            img = self.__verifyItem(self.n_images, name)
+            if img.image.cached: return
+            try:
+                  pic = PhotoImage(file=img.image.anim_path, format="gif - {}".format(img.image.anim_pos))
+                  img.image.pics.append(pic)
+                  img.image.anim_pos += 1
+                  self.topLevel.after(0, self.__preloadAnimatedImage, name)
+            except:
+                  img.image.anim_pos=0
+                  img.image.cached=True
+
       def setAnimationSpeed(self, name, speed):
             img = self.__verifyItem(self.n_images, name).image
             img.anim_speed=speed
@@ -1739,6 +1751,7 @@ class gui:
             self.addImage(name, imageFile, row, column, colspan)
             img = self.__verifyItem(self.n_images, name).image
             self.__configAnimatedImage(img, name, imageFile)
+            self.__preloadAnimatedImage(name)
 
       def __configAnimatedImage(self, img, name, path):
             img.isAnimated=True
