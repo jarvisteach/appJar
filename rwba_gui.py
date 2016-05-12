@@ -757,7 +757,7 @@ class gui:
                                     item.config(command=self.__makeFunc(value, name))
                                     item.bind('<Return>', self.__makeFunc(value, name, True))
                               # make labels clickable, add a cursor, and change the look
-                              elif kind==self.LABEL:
+                              elif kind==self.LABEL or kind==self.IMAGE:
                                     if platform() == "Darwin":
                                           item.config(cursor="pointinghand")
                                     elif platform() in [ "win32", "Windows"]:
@@ -1704,11 +1704,59 @@ class gui:
 #####################################
 ## FUNCTION to add images
 #####################################
+      def __animateImage(self, name):
+            img = self.__verifyItem(self.n_images, name)
+            if not img.image.animating: return
+            try:
+                  if img.image.cached:
+                        pic =img.image.pics[img.image.anim_pos]
+                  else:
+                        pic = PhotoImage(file=img.image.anim_path, format="gif - {}".format(img.image.anim_pos))
+                        img.image.pics.append(pic)
+                  img.image.anim_pos += 1
+                  img.config(image=pic)
+                  self.topLevel.after(img.image.anim_speed, self.__animateImage, name)
+            except:
+                  img.image.anim_pos=0
+                  img.image.cached=True
+                  self.__animateImage(name)
+
+      def setAnimationSpeed(self, name, speed):
+            img = self.__verifyItem(self.n_images, name).image
+            img.anim_speed=speed
+
+      def stopAnimation(self, name):
+            img = self.__verifyItem(self.n_images, name).image
+            img.animating=False
+
+      def startAnimation(self, name):
+            img = self.__verifyItem(self.n_images, name).image
+            if not img.animating:
+                  img.animating=True
+                  self.topLevel.after(img.anim_speed, self.__animateImage, name)
+
+      def addAnimatedImage(self, name, imageFile, row=None, column=0, colspan=0):
+            self.addImage(name, imageFile, row, column, colspan)
+            img = self.__verifyItem(self.n_images, name).image
+            self.__configAnimatedImage(img, name, imageFile)
+
+      def __configAnimatedImage(self, img, name, path):
+            img.isAnimated=True
+            img.pics=[]
+            img.cached=False
+            img.anim_pos=0
+            img.anim_speed=150
+            img.anim_path=path
+            img.animating=True
+            self.topLevel.after(img.anim_speed, self.__animateImage, name)
+            return img
+
       # must be GIF or PNG
       def addImage(self, name, imageFile, row=None, column=0, colspan=0):
             #image = re.escape(image)
             self.__verifyItem(self.n_images, name, True)
             img = self.__getImage(imageFile)
+            img.isAnimated=False
 
             label = Label(self.__getContainer())
             label.config(anchor=CENTER, font=self.labelFont, background=self.labelBgColour)
@@ -1759,9 +1807,12 @@ class gui:
             label.config(width=image.width(), height=image.height()) 
 
       # replace the current image, with a new one
-      def setImage(self, name, image):
+      def setImage(self, name, imageFile):
             label = self.__verifyItem(self.n_images, name)
-            image = self.__getImage(image)
+            oldImage = label.image
+            image = self.__getImage(imageFile)
+            if oldImage.isAnimated:
+                  self.__configAnimatedImage(image, name, imageFile)
             
             label.config(image=image)
             label.config(anchor=CENTER, font=self.labelFont, background=self.labelBgColour)
@@ -2089,7 +2140,7 @@ class gui:
       def setButtonImage(self, name, imgFile):
             but = self.__verifyItem(self.n_buttons, name)
             image = self.__getImage( imgFile )
-            but.config(image=image)
+            but.config(image=image, compound=None, text="")
             but.image = image
 
       # adds a set of buttons, in the row, spannning specified columns
