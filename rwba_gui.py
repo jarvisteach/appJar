@@ -449,7 +449,7 @@ class gui:
       # called to make sure this window is on top
       def __bringToFront(self):
             if platform() == "Darwin":
-                  os.system('''/usr/bin/osascript -e 'tell app "Finder" to set frontmost of process "Python" to true' ''')
+                  os.system('''/usr/bin/osascript -e 'tell app "Finder" to set frontmost of process "python3" to true' ''')
             else:
                   self.topLevel.lift()
 
@@ -2387,6 +2387,7 @@ class gui:
             ent.inContainer = False
             ent.hasDefault = False
             ent.myTitle=title
+            ent.isNumeric=False
             ent.config(textvariable=var, font=self.entryFont)
             if secret: ent.config(show="*")            
             if platform() == "Darwin":
@@ -2426,6 +2427,7 @@ class gui:
             if self.validateNumeric == None:
                   self.validateNumeric = (self.containerStack[0]['container'].register(self.__validateNumericEntry), '%d', '%i', '%P', '%s', '%S', '%v', '%V', '%W')
 
+            ent.isNumeric=True
             ent.config(validate='key', validatecommand=self.validateNumeric)
             self.setEntryTooltip(title, "Numeric data only.")
 
@@ -2456,8 +2458,14 @@ class gui:
       def getEntry(self, name):
             self.__verifyItem(self.n_entryVars, name)
             entry = self.__verifyItem(self.n_entries, name)
-            if entry.hasDefault: return ""
-            else: return self.n_entryVars[name].get()
+            if entry.hasDefault:
+                  return ""
+            else:
+                  val = self.n_entryVars[name].get()
+                  if entry.isNumeric:
+                        if len(val) == 0: return 0
+                        else: return float(val)
+                  else: return val
 
       def setEntry(self, name, text):
             self.__verifyItem(self.n_entryVars, name)
@@ -2624,7 +2632,8 @@ class gui:
       def setStatusFg(self, colour=None):
             if colour is not None: self.status.config(foreground=colour)
 
-      def addStatus(self, header=""):
+      # TO DO - make multi fielded
+      def addStatus(self, header="", fields=1):
             self.hasStatus = True
             self.header=header
             self.status = Label(self.appWindow)
@@ -2632,10 +2641,10 @@ class gui:
             self.__addTooltip(self.status, "Status bar")
             self.status.pack(side=BOTTOM, fill=X, anchor=S)
 
-      def setStatus(self, text):
+      def setStatus(self, text, field=0):
             if self.hasStatus: self.status.config(text=self.__getFormatStatus(text))
 
-      def clearStatus(self):
+      def clearStatus(self, field=0):
             if self.hasStatus: self.status.config(text=self.__getFormatStatus(""))
             
       # formats the string shown in the status bar
