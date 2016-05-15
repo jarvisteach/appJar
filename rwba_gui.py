@@ -301,7 +301,7 @@ class gui:
       def go(self):
             """ Most important function! Start the GUI """
 
-            # check the congainers have all been stopped
+            # check the containers have all been stopped
             if len(self.containerStack) > 1:
                   self.warn("Warning - you didn't stop all containers")
                   for i in range(len(self.containerStack)-1, 0, -1):
@@ -459,7 +459,7 @@ class gui:
       # called to make sure this window is on top
       def __bringToFront(self):
             if platform() == "Darwin":
-                  os.system('''/usr/bin/osascript -e 'tell app "Finder" to set frontmost of process "python3" to true' ''')
+                  val=os.system('''/usr/bin/osascript -e 'tell app "Finder" to set frontmost of process "python3" to true' ''')
             else:
                   self.topLevel.lift()
 
@@ -753,6 +753,11 @@ class gui:
                         elif option == 'cursor': item.config( cursor=value )
                         elif option == 'tooltip': self.__addTooltip(item, value)
                         elif option == "focus": item.focus_set()
+                        elif option == 'over':
+                              if kind==self.LABEL:
+                                    item.bind("<Enter>",self.__makeFunc(value[0], name, True), add="+")
+                                    item.bind("<Leave>",self.__makeFunc(value[1], name, True), add="+")
+                                    #item.bind("<B1-Motion>",self.__makeFunc(value[0], name, True), add="+")
                         elif option == 'drag':
                               if kind==self.LABEL:
                                     if platform() == "Darwin":
@@ -850,6 +855,8 @@ class gui:
                   exec("gui.set"+v+"Function=set" +v+ "Function")
                   exec("def set"+v+"DragFunction(self, name, val, key=None): self.configureWidget("+str(k)+", name, 'drag', val, key)")
                   exec("gui.set"+v+"DragFunction=set" +v+ "DragFunction")
+                  exec("def set"+v+"OverFunction(self, name, val, key=None): self.configureWidget("+str(k)+", name, 'over', val, key)")
+                  exec("gui.set"+v+"OverFunction=set" +v+ "OverFunction")
 # deprecated, but left in for backwards compatability
                   exec("def set"+v+"Command(self, name, val, key=None): self.configureWidget("+str(k)+", name, 'command', val, key, deprecated='Function')")
                   exec("gui.set"+v+"Command=set" +v+ "Command")
@@ -2693,27 +2700,38 @@ class gui:
 ## FUNCTIONS to show pop-up dialogs
 #####################################
       def infoBox(self, title, message):
+            self.topLevel.update_idletasks()
             messagebox.showinfo(title, message)
+            self.__bringToFront()
 
       def errorBox(self, title, message):
+            self.topLevel.update_idletasks()
             messagebox.showerror(title, message)
+            self.__bringToFront()
 
       def warningBox(self, title, message):
+            self.topLevel.update_idletasks()
             messagebox.showwarning(title, message)
+            self.__bringToFront()
 
       def yesNoBox(self, title, message):
+            self.topLevel.update_idletasks()
             return messagebox.askyesno(title, message)
 
       def questionBox(self, title, message):
+            self.topLevel.update_idletasks()
             return messagebox.askquestion(title, message)
 
       def okBox(self, title, message):
+            self.topLevel.update_idletasks()
             return messagebox.askokcancel(title, message)
 
       def retryBox(self, title, message):
+            self.topLevel.update_idletasks()
             return messagebox.askretrycancel(title, message)
 
       def openBox(self, title=None, fileName=None, dirName=None, fileExt=".txt", fileTypes=None, asFile=False):
+            self.topLevel.update_idletasks()
             if fileTypes is None: fileTypes = [('all files', '.*'), ('text files', '.txt')]
             # define options for opening
             options = {}
@@ -2728,6 +2746,7 @@ class gui:
             else:return filedialog.askopenfilename(**options)
 
       def saveBox(self, title=None, fileName=None, dirName=None, fileExt=".txt", fileTypes=None, asFile=False):
+            self.topLevel.update_idletasks()
             if fileTypes is None: fileTypes = [('all files', '.*'), ('text files', '.txt')]
             # define options for opening
             options = {}
@@ -2742,6 +2761,7 @@ class gui:
             else: return filedialog.asksaveasfilename(**options)
 
       def directoryBox(self, title=None, dirName=None):
+            self.topLevel.update_idletasks()
             options = {}
             options['initialdir'] = dirName
             options['title'] = title
@@ -2751,14 +2771,17 @@ class gui:
             else: return file
 
       def colourBox(self, colour='#ff0000'):
+            self.topLevel.update_idletasks()
             col = colorchooser.askcolor(colour)
             if col[1] is None: return None
             else: return col[1]
 
       def textBox(self, title, question):
+            self.topLevel.update_idletasks()
             return TextDialog(self.topLevel, title, question).result
 
       def numBox(self, title, question):
+            self.topLevel.update_idletasks()
             return NumDialog(self.topLevel, title, question).result
 
 #####################################
