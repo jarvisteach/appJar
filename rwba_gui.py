@@ -390,6 +390,16 @@ class gui:
             """ unbinds the specified key from whatever functions it os bound to """
             self.__getTopLevel().unbind(key)
 
+      # helper - will see if the mouse is in the specified widget
+      def __isMouseInWidget(self, w):
+            l_x = w.winfo_rootx()
+            l_y = w.winfo_rooty()
+
+            if l_x <= w.winfo_pointerx() <= l_x+w.winfo_width() and l_y <= w.winfo_pointery() <= l_y+w.winfo_height():
+                  return True
+            else:
+                  return False
+
 #####################################
 ## FUNCTIONS for configuring GUI settings
 #####################################
@@ -696,7 +706,7 @@ class gui:
       def configureWidget(self, kind, name, option, value, key=None, deprecated=False):
 
             # warn about deprecated functions
-            if deprecated: self.warn("Warning - deprecated config function ("+option+") used for: "+self.WIDGETS[kind]+"->"+name)
+            if deprecated: self.warn("Warning - deprecated config function ("+option+") used for: "+self.WIDGETS[kind]+"->"+name+" use "+deprecated+" instead")
             # get the list of items for this type, and validate the widgetis in the list
             items = self.__getItems(kind)
             self.__verifyItem(items, name)
@@ -743,6 +753,22 @@ class gui:
                         elif option == 'cursor': item.config( cursor=value )
                         elif option == 'tooltip': self.__addTooltip(item, value)
                         elif option == "focus": item.focus_set()
+                        elif option == 'drag':
+                              if kind==self.LABEL:
+                                    if platform() == "Darwin":
+                                          item.config(cursor="pointinghand")
+                                    elif platform() in [ "win32", "Windows"]:
+                                          item.config(cursor="hand2")
+
+                                    def getWidget(f):
+                                          # loop through all labels
+                                          for key, value in self.n_labels.items():
+                                                if self.__isMouseInWidget(value):
+                                                      f(key)
+                                                      return
+
+                                    item.bind("<ButtonPress-1>", self.__makeFunc(value[0], name, True) , add="+")
+                                    item.bind("<ButtonRelease-1>", self.__makeFunc(getWidget, value[1], True) , add="+")
                         elif option == 'command':
                               # this will discard the scale value, as default function can't handle it
                               if kind==self.SCALE: 
@@ -822,10 +848,12 @@ class gui:
                   exec("gui.set"+v+"Tooltip=set" +v+ "Tooltip")
                   exec("def set"+v+"Function(self, name, val, key=None): self.configureWidget("+str(k)+", name, 'command', val, key)")
                   exec("gui.set"+v+"Function=set" +v+ "Function")
+                  exec("def set"+v+"DragFunction(self, name, val, key=None): self.configureWidget("+str(k)+", name, 'drag', val, key)")
+                  exec("gui.set"+v+"DragFunction=set" +v+ "DragFunction")
 # deprecated, but left in for backwards compatability
-                  exec("def set"+v+"Command(self, name, val, key=None): self.configureWidget("+str(k)+", name, 'command', val, key, deprecated=True)")
+                  exec("def set"+v+"Command(self, name, val, key=None): self.configureWidget("+str(k)+", name, 'command', val, key, deprecated='Function')")
                   exec("gui.set"+v+"Command=set" +v+ "Command")
-                  exec("def set"+v+"Func(self, name, val, key=None): self.configureWidget("+str(k)+", name, 'command', val, key, deprecated=True)")
+                  exec("def set"+v+"Func(self, name, val, key=None): self.configureWidget("+str(k)+", name, 'command', val, key, deprecated='Function')")
                   exec("gui.set"+v+"Func=set" +v+ "Func")
 # end deprecated
                   # http://infohost.nmt.edu/tcc/help/pubs/tkinter/web/cursors.html
