@@ -1819,7 +1819,6 @@ class gui:
             #image = re.escape(image)
             self.__verifyItem(self.n_images, name, True)
             img = self.__getImage(imageFile)
-            img.isAnimated=False
 
             label = Label(self.__getContainer())
             label.config(anchor=CENTER, font=self.labelFont, background=self.labelBgColour)
@@ -1874,11 +1873,8 @@ class gui:
             label = self.__verifyItem(self.n_images, name)
             oldImage = label.image
             image = self.__getImage(imageFile)
-            # this is broken somewhere - need to find where!
-            try:
-                  if oldImage.isAnimated:
-                        self.__configAnimatedImage(image, name, imageFile)
-            except: pass
+            if oldImage.isAnimated:
+                  self.__configAnimatedImage(image, name, imageFile)
             
             label.config(image=image)
             label.config(anchor=CENTER, font=self.labelFont, background=self.labelBgColour)
@@ -1917,6 +1913,7 @@ class gui:
                         raise Exception("Can't read image: "+ image) from None
             else:
                   raise Exception("Image "+image+" does not exist") from None
+            imgFile.isAnimated=False
             if cache: self.n_imageCache[image]=imgFile
             return imgFile
 
