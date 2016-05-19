@@ -26,6 +26,17 @@ from rwbatools.lib import nanojpeg
 if platform() in [ "win32", "Windows"]:
       import winsound
 
+# details
+__author__ = "Richard Jarvis"
+__copyright__ = "Copyright 2016, Richard Jarvis"
+__credits__ = ["Graham Turner", "Sarah Murch"]
+__license__ = "GPL"
+__version__ = "0.1"
+__maintainer__ = "Richard Jarvis"
+__email__ = "jarvisteach@gmail.com"
+__status__ = "Development"
+
+
 #class to allow simple creation of tkinter GUIs
 class gui:
       """
@@ -754,11 +765,15 @@ class gui:
                         elif option == 'tooltip': self.__addTooltip(item, value)
                         elif option == "focus": item.focus_set()
                         elif option == 'over':
+                              if len(value) != 2:
+                                    raise Exception("Invalid arguments, an array of 2 functions must be passed to set<widget>OverFunction") 
                               if kind==self.LABEL:
                                     item.bind("<Enter>",self.__makeFunc(value[0], name, True), add="+")
                                     item.bind("<Leave>",self.__makeFunc(value[1], name, True), add="+")
                                     #item.bind("<B1-Motion>",self.__makeFunc(value[0], name, True), add="+")
                         elif option == 'drag':
+                              if len(value) != 2:
+                                    raise Exception("Invalid arguments, an array of 2 functions must be passed to set<widget>OverFunction") 
                               if kind==self.LABEL:
                                     if platform() == "Darwin":
                                           item.config(cursor="pointinghand")
@@ -2144,6 +2159,16 @@ class gui:
                 values.append ( lb.get(items[loop]) )
             return values
 
+      # remove a specific item from the listBox
+      # will only remove the first item that matches the String
+      def removeListItem(self, title, item):
+            lb = self.__verifyItem(self.n_lbs, title)
+            items = lb.get(0, END)
+            for pos, val in enumerate(items):
+                  if val == item:
+                        lb.delete(pos)
+
+
       def clearListBox(self, title):
             lb = self.__verifyItem(self.n_lbs, title)
             lb.delete(0, END) # clear
@@ -2188,7 +2213,9 @@ class gui:
       def setButtonImage(self, name, imgFile):
             but = self.__verifyItem(self.n_buttons, name)
             image = self.__getImage( imgFile )
-            but.config(image=image, compound=None, text="")
+            but.config(image=image, compound=TOP, text="", justify=LEFT) # works on Mac
+            #but.config(image=image, compound=None, text="") # works on Windows, not Mac
+
             but.image = image
 
       # adds a set of buttons, in the row, spannning specified columns
