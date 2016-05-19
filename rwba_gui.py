@@ -1874,8 +1874,11 @@ class gui:
             label = self.__verifyItem(self.n_images, name)
             oldImage = label.image
             image = self.__getImage(imageFile)
-            if oldImage.isAnimated:
-                  self.__configAnimatedImage(image, name, imageFile)
+            # this is broken somewhere - need to find where!
+            try:
+                  if oldImage.isAnimated:
+                        self.__configAnimatedImage(image, name, imageFile)
+            except: pass
             
             label.config(image=image)
             label.config(anchor=CENTER, font=self.labelFont, background=self.labelBgColour)
@@ -1900,6 +1903,7 @@ class gui:
                         elif image.endswith('.gif'):
                               imgFile=PhotoImage(file=image)
                         elif image.endswith('.png'):
+                              # known issue here, some PNGs lack IDAT chunks
                               png = PngImageTk(image)
                               png.convert()
                               imgFile=png.image
@@ -2137,6 +2141,7 @@ class gui:
             for i in items:
                   self.addListItem(title, i)
 
+      # add the item to the end of the list box
       def addListItem(self, title, item):
             lb = self.__verifyItem(self.n_lbs, title)
             # add it at the end
@@ -2151,6 +2156,8 @@ class gui:
             lb.activate(lb.size()-1)
             lb.selection_set(lb.size()-1)
 
+      # returns a list containing 0 or more elements
+      # all that are in the selected range
       def getListItems(self, title):
             lb = self.__verifyItem(self.n_lbs, title)
             items = lb.curselection()
@@ -3064,8 +3071,8 @@ class InvalidURLError(ValueError):
 ## scrollable frame...
 #####################################
 class AutoScrollbar(Scrollbar):
-      # a scrollbar that hides itself if it's not needed.  only
-      # works if you use the grid geometry manager.
+      # a scrollbar that hides itself if it's not needed
+      # only works if you use the grid geometry manager
       def set(self, lo, hi):
             if float(lo) <= 0.0 and float(hi) >= 1.0:
                   # grid_remove is currently missing from Tkinter!
