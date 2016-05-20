@@ -36,7 +36,6 @@ __maintainer__ = "Richard Jarvis"
 __email__ = "jarvisteach@gmail.com"
 __status__ = "Development"
 
-
 #class to allow simple creation of tkinter GUIs
 class gui:
       """
@@ -51,10 +50,13 @@ class gui:
       LABEL=1
       ENTRY=2
       BUTTON=3
-      CB=4
+      CB=40
+      CHECKBOX=4
       SCALE=5
-      RB=6
-      LB=7
+      RB=60
+      RADIOBUTTON=6
+      LB=70
+      LISTBOX=7
       MESSAGE=8
       SPIN=9
       OPTION=10
@@ -99,6 +101,7 @@ class gui:
       # used for defining functions
       WIDGETS = { LABEL:"Label", MESSAGE:"Message", BUTTON:"Button", ENTRY:"Entry", CB:"Cb", SCALE:"Scale", RB:"Rb",
                   LB:"Lb", SPIN:"SpinBox", OPTION:"OptionBox", TEXTAREA:"TextArea", LINK:"Link", METER:"Meter", IMAGE:"Image",
+                  RADIOBUTTON:"RadioButton", CHECKBOX:"CheckBox",LISTBOX:"ListBox",
                   #LABELFRAME:"LabelFrame", NOTEBOOK:"NoteBook", PANEDWINDOW:"PanedWindow" }
                   LABELFRAME:"LabelFrame", PANEDWINDOW:"PanedWindow" }
 
@@ -689,10 +692,10 @@ class gui:
             elif kind == self.MESSAGE: return self.n_messages
             elif kind == self.BUTTON: return self.n_buttons
             elif kind == self.ENTRY: return self.n_entries
-            elif kind == self.CB: return self.n_cbs
+            elif kind in [self.CB, self.CHECKBOX]: return self.n_cbs
             elif kind == self.SCALE: return self.n_scales
-            elif kind == self.RB: return self.n_rbs
-            elif kind == self.LB: return self.n_lbs
+            elif kind in [self.RB, self.RADIOBUTTON]: return self.n_rbs
+            elif kind in [self.LB, self.LISTBOX]: return self.n_lbs
             elif kind == self.SPIN: return self.n_spins
             elif kind == self.OPTION: return self.n_options
             elif kind == self.TEXTAREA: return self.n_textAreas
@@ -717,12 +720,17 @@ class gui:
       def configureWidget(self, kind, name, option, value, key=None, deprecated=False):
 
             # warn about deprecated functions
-            if deprecated: self.warn("Warning - deprecated config function ("+option+") used for: "+self.WIDGETS[kind]+"->"+name+" use "+deprecated+" instead")
+            if deprecated:
+                  self.warn("Warning - deprecated config function ("+option+") used for: "
+                              +self.WIDGETS[kind]+"->"+name+" use "+deprecated+" instead")
+            if kind in [self.RB, self.LB, self.CB]:
+                  self.warn("Warning - deprecated config function ("+option+") used for: "
+                              +self.WIDGETS[kind]+"->"+name+" use "+self.WIDGETS[kind/10]+" instead")
             # get the list of items for this type, and validate the widgetis in the list
             items = self.__getItems(kind)
             self.__verifyItem(items, name)
 
-            if kind == self.RB: items = items[name]
+            if kind in [self.RB, self.RADIOBUTTON]: items = items[name]
             else: items = [items[name]]
 
             # loop through each item, and try to reconfigure it
@@ -750,7 +758,9 @@ class gui:
                         elif option == 'width':
                               if kind==self.METER: item.setWidth(value)
                               else: item.config( width=value )
-                        elif option == 'height': item.config( height=value )
+                        elif option == 'height':
+                              if kind==self.METER: item.setHeight(value)
+                              else: item.config( height=value )
                         elif option == 'state': item.config( state=value )
                         elif option == 'relief': item.config( relief=value )
                         elif option == 'align':
@@ -930,7 +940,7 @@ class gui:
                   widget = item.master
                   self.n_frameLabs[name].hidden = True
             else:
-                  if kind == self.RB:
+                  if kind in [self.RB, self.RADIOBUTTON]:
                         for rb in item:
                               if rb.text == name:
                                     widget = rb
@@ -2580,6 +2590,33 @@ class gui:
 #####################################
 ## FUNCTIONS for progress bars (meters)
 #####################################
+      ##############
+      # SPLIT METERS
+      ##############
+      def addSplitMeter(self, name, row=None, column=0, colspan=0):
+            self.__verifyItem(self.n_meters, name, True)
+            meter = SplitMeter(self.__getContainer(), font=self.meterFont)
+            self.n_meters[name] = meter
+            self.__positionWidget(meter, row, column, colspan)
+
+      # update the value of the specified meter
+      # note: expects a value between -100 & 100
+      def setSplitMeter(self, name, value=0.0, text=None):
+            item = self.__verifyItem(self.n_meters, name)
+            value = value/100
+            item.set(value, text) 
+
+      def getSplitMeter(self, name):
+            item = self.__verifyItem(self.n_meters, name)
+            return item.get()
+
+      def setSplitMeterFill(self, name, colours):
+            item = self.__verifyItem(self.n_meters, name)
+            item.setFill(colours)
+
+      ########
+      # METERS
+      ########
       def addMeter(self, name, row=None, column=0, colspan=0):
             self.__verifyItem(self.n_meters, name, True)
             meter = Meter(self.__getContainer(), font=self.meterFont)
@@ -2848,8 +2885,14 @@ class Meter(Frame):
       def setWidth(self, width):
             self.config(width=width)
 
+      def setHeight(self, height):
+            self.config(height=height)
+
       def _update_coords(self, event):
             '''Updates the position of the text and rectangle inside the canvas when the size of the widget gets changed.'''
+            self._setCanvas()
+
+      def _setCanvas(self):
             # looks like we have to call update_idletasks() twice to make sure
             # to get the results we expect
             self._canv.update_idletasks()
@@ -2871,6 +2914,61 @@ class Meter(Frame):
             self._canv.coords(self._rect, 0, 0, self._canv.winfo_width()*value, self._canv.winfo_height())
             self._canv.itemconfigure(self._text, text=text)
             self._canv.update_idletasks()
+
+class SplitMeter(Meter):
+      def __init__(self, master, width=None, height=20, bg='white', leftfillcolor='red', rightfillcolor='blue', value=0.0, text=None, font=None, textcolor='black', *args, **kw):
+            if width is None: Frame.__init__(self, master, bg=bg, height=height, *args, **kw)
+            else: Frame.__init__(self, master, bg=bg, width=width, height=height, *args, **kw)
+            self._value = value
+            self.config(relief='ridge', bd=3)
+
+            self._leftFill=leftfillcolor
+            self._rightFill=rightfillcolor
+            self._midFill=textcolor
+
+            self._canv = Canvas(self, bg=self['bg'], width=self['width'], height=self['height'], highlightthickness=0, relief='flat', bd=0)
+            self._canv.pack(fill='both', expand=1)
+            self._rect = self._canv.create_rectangle(self._canv.winfo_reqwidth()/2, 0, self._canv.winfo_reqwidth()/2, self._canv.winfo_reqheight(), fill=self._midFill, width=0)
+            self.bind('<Configure>', self._update_coords)
+
+      def _update_coords(self, event):
+            '''Updates the position of the text and rectangle inside the canvas when the size of the widget gets changed.'''
+            # looks like we have to call update_idletasks() twice to make sure
+            # to get the results we expect
+            self._setCanvas()
+
+      def setBg(self, col):
+            self._leftFill = col[0]
+            self._rightFill = col[0]
+            self._setCanvas()
+
+      def _setCanvas(self):
+            width=self._canv.winfo_width()
+            mid=width/2
+            adj=mid+(mid*self._value)
+            height=self._canv.winfo_height()
+
+            if self._value == 0:
+                  col = self._midFill
+            elif self._value < 0:
+                  col = self._leftFill
+            else:
+                  col = self._rightFill
+
+            print(width, height, mid, adj)
+
+            self._canv.update_idletasks()
+            self._canv.itemconfigure(self._rect, fill=col)
+            self._canv.coords(self._rect, mid, 0, adj, self._canv.winfo_height())
+            self._canv.update_idletasks()
+
+      def set(self, value=0.0, text=None):
+            #make the value failsafe:
+            if value < -1: value = -1.0
+            elif value > 1.0: value = 1.0
+            self._value = value
+            self._setCanvas()
+
 
 #################################
 ## NoteBook Class
