@@ -15,10 +15,10 @@ And give it a twirl.
 
 Example:
 
-  from rwbatools import gui
-  app = gui("Example")
-  app.addLabel("label1", "Hello World")
-  app.go()
+  from rwbatools import gui  
+  app = gui("Example")  
+  app.addLabel("label1", "Hello World")  
+  app.go()  
 
 Reasoning:
  - Designed to be as easy as possible, yet still provide a lot of tkinter functionality
@@ -38,9 +38,9 @@ Reasoning:
      - Michael Lange's ToolTip
      - Johann C. Rocholl's tkinter_png support
      - Martin J. Fiedler's NanoKPEG library
- - I've tried to get as much functionality into this library as possible, without requireing any other modules
+ - I've tried to get as much functionality into this library as possible, without requiring any other modules
 
-Caveats.
+Caveats:
  - Although an experienced developer, I knew nothing of Python when I started this
  - Built for Python3
  - Built under a Windows environment (at school)
