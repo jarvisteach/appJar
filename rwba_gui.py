@@ -2857,7 +2857,7 @@ class gui:
 ## from: http://tkinter.unpythonic.net/wiki/ProgressMeter
 #####################################
 class Meter(Frame):
-      def __init__(self, master, width=None, height=20, bg='white', fillcolor='orchid1', value=0.0, text=None, font=None, textcolor='black', *args, **kw):
+      def __init__(self, master, width=None, height=20, bg='white', fillColour='orchid1', value=0.0, text=None, font=None, textColour='black', *args, **kw):
             if width is None: Frame.__init__(self, master, bg=bg, height=height, *args, **kw)
             else: Frame.__init__(self, master, bg=bg, width=width, height=height, *args, **kw)
             self._value = value
@@ -2866,8 +2866,8 @@ class Meter(Frame):
 #            self._canv = Canvas(self, bg=self['bg'], height=self['height'], highlightthickness=0, relief='flat', bd=0)
             self._canv = Canvas(self, bg=self['bg'], width=self['width'], height=self['height'], highlightthickness=0, relief='flat', bd=0)
             self._canv.pack(fill='both', expand=1)
-            self._rect = self._canv.create_rectangle(0, 0, 0, self._canv.winfo_reqheight(), fill=fillcolor, width=0)
-            self._text = self._canv.create_text(self._canv.winfo_reqwidth()/2, self._canv.winfo_reqheight()/2, text='', fill=textcolor)
+            self._rect = self._canv.create_rectangle(0, 0, 0, self._canv.winfo_reqheight(), fill=fillColour, width=0)
+            self._text = self._canv.create_text(self._canv.winfo_reqwidth()/2, self._canv.winfo_reqheight()/2, text='', fill=textColour)
             if font: self._canv.itemconfigure(self._text, font=font)
 
             self.set(value, text)
@@ -2915,26 +2915,33 @@ class Meter(Frame):
             self._canv.itemconfigure(self._text, text=text)
             self._canv.update_idletasks()
 
+#####################################
+## SplitMeter Class extends the Meter above
+## Used to allow bi-directional metering, starting from a mid point
+## Two colours should be provided - left & right fill
+## A gradient fill will be applied to the Meter
+#####################################
 class SplitMeter(Meter):
-      def __init__(self, master, width=None, height=20, bg='white', leftfillcolor='red', rightfillcolor='blue', value=0.0, text=None, font=None, textcolor='black', *args, **kw):
+      def __init__(self, master, width=None, height=20, bg='white', leftfillColour='red',
+                  rightfillColour='blue', value=0.0, text=None, font=None, textColour='white', *args, **kw):
+
             if width is None: Frame.__init__(self, master, bg=bg, height=height, *args, **kw)
             else: Frame.__init__(self, master, bg=bg, width=width, height=height, *args, **kw)
+
             self._value = value
             self.config(relief='ridge', bd=3)
 
-            self._leftFill=leftfillcolor
-            self._rightFill=rightfillcolor
-            self._midFill=textcolor
+            self._leftFill=leftfillColour
+            self._rightFill=rightfillColour
+            self._midFill=textColour
 
             self._canv = Canvas(self, bg=self['bg'], width=self['width'], height=self['height'], highlightthickness=0, relief='flat', bd=0)
             self._canv.pack(fill='both', expand=1)
-            self._rect = self._canv.create_rectangle(self._canv.winfo_reqwidth()/2, 0, self._canv.winfo_reqwidth()/2, self._canv.winfo_reqheight(), fill=self._midFill, width=0)
+
             self.bind('<Configure>', self._update_coords)
 
       def _update_coords(self, event):
             '''Updates the position of the text and rectangle inside the canvas when the size of the widget gets changed.'''
-            # looks like we have to call update_idletasks() twice to make sure
-            # to get the results we expect
             self._setCanvas()
 
       def setFill(self, cols):
@@ -2947,24 +2954,69 @@ class SplitMeter(Meter):
             self._setCanvas()
 
       def _setCanvas(self):
+            self._canv.update_idletasks()
+            self.drawLines()
+            self._canv.update_idletasks()
+
+      def drawLines(self):
+            '''Draw a gradient'''
+            # http://stackoverflow.com/questions/26178869/is-it-possible-to-apply-gradient-colours-to-bg-of-tkinter-python-widgets
+
+            self._canv.delete("gradient")
+            self._canv.delete("midline")
+
+            # get range to draw lines
             width=self._canv.winfo_width()
-            mid=width/2
-            adj=mid+(mid*self._value)
-            height=self._canv.winfo_height()
+            height = self._canv.winfo_height()
+            start=width/2
+            fin=start+(start*self._value)
 
-            if self._value == 0:
-                  col = self._midFill
-            elif self._value < 0:
-                  col = self._leftFill
+            # determine start & end colour
+            if self._value == 0: col = self._midFill
+            elif self._value < 0: col = self._leftFill
+            else: col = self._rightFill
+            (r1,g1,b1) = self.tint(col,-30000)
+            (r2,g2,b2) = self.tint(col,30000)
+
+            # determine a direction & range
+            if self._value<0:
+                  direction=-1
+                  limit=int(start-fin)
             else:
-                  col = self._rightFill
+                  direction=1
+                  limit=int(fin-start)
 
-            print(width, height, mid, adj)
+            # if no lines to draw, end it here - with a midline
+            if limit==0:
+                  self._canv.create_line(start, 0, start, height, fill=self._midFill, tags=("midline",))
+                  return
 
-            self._canv.update_idletasks()
-            self._canv.itemconfigure(self._rect, fill=col)
-            self._canv.coords(self._rect, mid, 0, adj, self._canv.winfo_height())
-            self._canv.update_idletasks()
+            # work out the ratios
+            r_ratio = float(r2-r1) / limit
+            g_ratio = float(g2-g1) / limit
+            b_ratio = float(b2-b1) / limit
+            
+            # loop through the range of lines, in the right direction
+            modder = 0
+            for i in range(int(start),int(fin),direction):
+                  nr = int(r1 + (r_ratio * modder))
+                  ng = int(g1 + (g_ratio * modder))
+                  nb = int(b1 + (b_ratio * modder))
+
+                  colour = "#%4.4x%4.4x%4.4x" % (nr,ng,nb)
+                  self._canv.create_line(i,0,i,height, tags=("gradient",), fill=colour)
+                  modder += 1
+
+            self._canv.lower("gradient")
+            self._canv.create_line(start, 0, start, height, fill=self._midFill, tags=("midline",))
+
+      def tint(self, col, brightness_offset=1):
+            ''' dim or brighten the specified colour by the specified offset '''
+            # http://chase-seibert.github.io/blog/2011/07/29/python-calculate-lighterdarker-rgb-colors.html
+            rgb_hex = self._canv.winfo_rgb(col)
+            new_rgb_int = [hex_value + brightness_offset for hex_value in rgb_hex]
+            new_rgb_int = [min([65535, max([0, i])]) for i in new_rgb_int] # make sure new values are between 0 and 65535
+            return new_rgb_int
 
       def set(self, value=0.0, text=None):
             #make the value failsafe:
@@ -2972,53 +3024,6 @@ class SplitMeter(Meter):
             elif value > 1.0: value = 1.0
             self._value = value
             self._setCanvas()
-
-#################################
-# A Canvas with a Gradient Fill
-#################################
-class GradientFrame(Canvas):
-      '''A gradient frame which uses a canvas to draw the background'''
-      ''' http://stackoverflow.com/questions/26178869/is-it-possible-to-apply-gradient-colours-to-bg-of-tkinter-python-widgets '''
-      def __init__(self, parent, colour, direction):
-            Canvas.__init__(self, parent, borderwidth=1, relief="sunken")
-            self._color = colour
-            self._direction=direction
-            self.bind("<Configure>", self._draw_gradient)
-
-      def setDirection(direction):
-            self._direction=direction
-
-      def _draw_gradient(self, event=None):
-            '''Draw the gradient'''
-            self.delete("gradient")
-            width = self.winfo_width()
-            height = self.winfo_height()
-            limit = width
-            if self._direction=="left":
-                  (r1,g1,b1) = self.tint(30000)
-                  (r2,g2,b2) = self.tint(-30000)
-            else:
-                  (r1,g1,b1) = self.tint(-30000)
-                  (r2,g2,b2) = self.tint(30000)
-            r_ratio = float(r2-r1) / limit
-            g_ratio = float(g2-g1) / limit
-            b_ratio = float(b2-b1) / limit
-            
-            for i in range(limit):
-                  nr = int(r1 + (r_ratio * i))
-                  ng = int(g1 + (g_ratio * i))
-                  nb = int(b1 + (b_ratio * i))
-                  color = "#%4.4x%4.4x%4.4x" % (nr,ng,nb)
-                  self.create_line(i,0,i,height, tags=("gradient",), fill=color)
-
-            self.lower("gradient")
-
-      def tint(self, brightness_offset=1):
-            ''' http://chase-seibert.github.io/blog/2011/07/29/python-calculate-lighterdarker-rgb-colors.html '''
-            rgb_hex = self.winfo_rgb(self._color)
-            new_rgb_int = [hex_value + brightness_offset for hex_value in rgb_hex]
-            new_rgb_int = [min([65535, max([0, i])]) for i in new_rgb_int] # make sure new values are between 0 and 65535
-            return new_rgb_int
 
 #################################
 ## NoteBook Class
