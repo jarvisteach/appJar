@@ -3177,7 +3177,10 @@ class Separator(Frame):
 #####################################
 class PieChart(Canvas):
       # constant for available colours
-      COLOURS=["red", "green", "blue", "yellow", "purple", "orange", "indigo", "black"]
+      COLOURS=[ "#023fa5", "#7d87b9", "#bec1d4", "#d6bcc0", "#bb7784", "#8e063b",
+                  "#4a6fe3", "#8595e1", "#b5bbe3", "#e6afb9", "#e07b91", "#d33f6a",
+                  "#11c638", "#8dd593", "#c6dec7", "#ead3c6", "#f0b98d", "#ef9708",
+                  "#0fcfc0", "#9cded6", "#d5eae7", "#f3e1eb", "#f6c4e1", "#f79cd4"]
 
       def __init__(self, container, fracs, size):
             Canvas.__init__(self,container, width=size, height=size)
@@ -3185,7 +3188,9 @@ class PieChart(Canvas):
             col = 0
             for val in fracs:
                   sliceId="slice"+str(col)
-                  arc=self.create_arc((size*.05,size*.05,size*.95,size*.95), fill=self.COLOURS[col%len(self.COLOURS)], start=self.frac(pos,fracs), extent=self.frac(val,fracs), activedash=(3,5), activeoutline="grey", activewidth=3, tag=(sliceId,), width=1)
+                  arc=self.create_arc((size*.05,size*.05,size*.95,size*.95), fill=self.COLOURS[col%len(self.COLOURS)],
+                                    start=self.frac(pos,fracs), extent=self.frac(val,fracs), activedash=(3,5),
+                                    activeoutline="grey", activewidth=3, tag=(sliceId,), width=1)
                   self.tag_bind(sliceId,'<Button>',func=self.pieEvent)
                   self.tag_bind(sliceId,'<Enter>',func=self.pieEvent)
                   self.tag_bind(sliceId,'<Leave>',func=self.pieEvent)
