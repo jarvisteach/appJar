@@ -1924,6 +1924,7 @@ class gui:
             else:
                   raise Exception("Image "+image+" does not exist") from None
             imgFile.isAnimated=False
+            imgFile.animating=False
             if cache: self.n_imageCache[image]=imgFile
             return imgFile
 
@@ -2516,6 +2517,7 @@ class gui:
             if self.validateNumeric == None:
                   self.validateNumeric = (self.containerStack[0]['container'].register(self.__validateNumericEntry), '%d', '%i', '%P', '%s', '%S', '%v', '%V', '%W')
 
+            ent.isNumeric=True
             ent.config(validate='key', validatecommand=self.validateNumeric)
             self.setEntryTooltip(title, "Numeric data only.")
 
