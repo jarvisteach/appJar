@@ -2648,6 +2648,13 @@ class gui:
             self.__positionWidget(sep, row, column, colspan)
 
 #####################################
+## FUNCTIONS for pie charts
+#####################################
+      def addPieChart(self, fracs, size=100, row=None, column=0, colspan=0):
+            pie = PieChart(self.__getContainer(), fracs, size)
+            self.__positionWidget(pie, row, column, colspan)
+
+#####################################
 ## FUNCTIONS for tool bar
 #####################################
       # adds a list of buttons along the top - like a tool bar...
@@ -3164,6 +3171,51 @@ class Separator(Frame):
 
       def setBg(self, colour):
             self.line.config(bg=colour)
+
+#####################################
+## Pie Chart Class
+#####################################
+class PieChart(Canvas):
+      # constant for available colours
+      COLOURS=["red", "green", "blue", "yellow", "purple", "orange", "indigo", "black"]
+
+      def __init__(self, container, fracs, size):
+            Canvas.__init__(self,container, width=size, height=size)
+            pos = 0
+            col = 0
+            for val in fracs:
+                  sliceId="slice"+str(col)
+                  arc=self.create_arc((size*.05,size*.05,size*.95,size*.95), fill=self.COLOURS[col%len(self.COLOURS)], start=self.frac(pos,fracs), extent=self.frac(val,fracs), activedash=(3,5), activeoutline="grey", activewidth=3, tag=(sliceId,), width=1)
+                  self.tag_bind(sliceId,'<Button>',func=self.pieEvent)
+                  self.tag_bind(sliceId,'<Enter>',func=self.pieEvent)
+                  self.tag_bind(sliceId,'<Leave>',func=self.pieEvent)
+                  pos += val
+                  col+=1
+
+      def frac(self, curr, nums):
+            return 360. * curr / sum(nums)
+
+      def pieEvent(self,event):
+            widg=str(event.widget.find_withtag("current")[0])
+            if event.type=="7": # enter
+                  self.delete("text")
+                  bb = self.bbox(widg)
+                  print(bb)
+                  x = bb[0] + ((bb[2]-bb[0])/2)
+                  y = bb[1] + ((bb[3]-bb[1])/2)
+                  print("Mid:",x,y)
+                  print("Mouse", event.x, event.y)
+                  if not x-10<=event.x<=x+10 and not y-10<=event.y<=y+10:
+                        print("safe")
+                        self.create_text(x,y,text="ID"+widg, tag=("text"))
+                  else:
+                        print("not safe")
+                        self.create_text(x+20,y+20,text="ID"+widg, tag=("text"))
+                        print("Entered", widg)
+            elif event.type=="4": # click
+                  print("Clicked", widg)
+            elif event.type=="8": # leave
+                  self.delete("text")
 
 #####################################
 ## Tree Widget Class
