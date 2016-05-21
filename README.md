@@ -34,7 +34,7 @@ Reasoning:
  - Provides loads of extra bits and pieces outside of core tkinter
    - Some of this was from the excellent resources @ http://effbot.org
    - Some of this was from slashdot examples of how to solve common problems
-   - Some of this has been incorporated from other people's modeules:
+   - Some of this has been incorporated from other people's modules:
      - Michael Lange's ToolTip
      - Johann C. Rocholl's tkinter_png support
      - Martin J. Fiedler's NanoKPEG library
