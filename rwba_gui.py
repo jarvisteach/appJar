@@ -1256,6 +1256,10 @@ class gui:
             tl.deiconify()
             tl.config(takefocus=True)
 
+      def setSubWindowLocation(self, title, x, y):
+            tl = self.__verifyItem(self.n_subWindows, title)
+            tl.geometry("+%d+%d" % (x, y))
+
       def hideSubWindow(self, title):
             self.__verifyItem(self.n_subWindows, title).withdraw()
 
@@ -1849,8 +1853,8 @@ class gui:
             img = self.__verifyItem(self.n_images, name)
             img.config(height=height, width=width)
 
-      def rotateImage(self, name, image):
-            img = self.__verifyItem(self.n_images, name)
+#      def rotateImage(self, name, image):
+#            img = self.__verifyItem(self.n_images, name)
 
       #if +ve then grow, else shrink...
       def zoomImage(self, name, x, y=''):
@@ -2117,6 +2121,11 @@ class gui:
                         lb.insert(END, name)
 
             self.__positionWidget(frame, row, column, colspan)
+
+      # set how many rows to display
+      def setListBoxRows(self, name, rows):
+            lb = self.__verifyItem(self.n_lbs, name)
+            lb.config(height=rows)
 
       # make the list single/multi select
       # default is single
@@ -2595,6 +2604,30 @@ class gui:
 ## FUNCTIONS for progress bars (meters)
 #####################################
       ##############
+      # DUAL METERS
+      ##############
+      def addDualMeter(self, name, row=None, column=0, colspan=0):
+            self.__verifyItem(self.n_meters, name, True)
+            meter = DualMeter(self.__getContainer(), font=self.meterFont)
+            self.n_meters[name] = meter
+            self.__positionWidget(meter, row, column, colspan)
+
+      # update the value of the specified meter
+      # note: expects a value between -100 & 100
+      def setDualMeter(self, name, value=0.0, text=None):
+            item = self.__verifyItem(self.n_meters, name)
+            value = value/100
+            item.set(value, text) 
+
+      def getDualMeter(self, name):
+            item = self.__verifyItem(self.n_meters, name)
+            return item.get()
+
+      def setDualMeterFill(self, name, colours):
+            item = self.__verifyItem(self.n_meters, name)
+            item.setFill(colours)
+
+      ##############
       # SPLIT METERS
       ##############
       def addSplitMeter(self, name, row=None, column=0, colspan=0):
@@ -3037,6 +3070,45 @@ class SplitMeter(Meter):
             elif value > 1.0: value = 1.0
             self._value = value
             self._setCanvas()
+
+class DualMeter(SplitMeter):
+      def __init__(self, master, width=None, height=20, bg='white', leftfillColour='pink',
+                  rightfillColour='green', value=0.5, text=None, font=None, textColour='white', *args, **kw):
+
+            if width is None: Frame.__init__(self, master, bg=bg, height=height, *args, **kw)
+            else: Frame.__init__(self, master, bg=bg, width=width, height=height, *args, **kw)
+
+            self._value = value
+            self.config(relief='ridge', bd=3)
+
+            self._leftFill=leftfillColour
+            self._rightFill=rightfillColour
+            self._midFill=textColour
+
+            self._canv = Canvas(self, bg=self['bg'], width=self['width'], height=self['height'], highlightthickness=0, relief='flat', bd=0)
+            width = self._canv.winfo_width()
+            mid = width * self._value
+            self._r_rect = self._canv.create_rectangle(0, 0, width, self._canv.winfo_reqheight(), fill=self._rightFill, width=0)
+            self._l_rect = self._canv.create_rectangle(0, 0, mid, self._canv.winfo_reqheight(), fill=self._leftFill, width=0)
+            self._canv.pack(fill='both', expand=1)
+
+            self.bind('<Configure>', self._update_coords)
+
+      def set(self, value=0.0, text=None):
+            #make the value failsafe:
+            if value < 0.0: value = 0.0
+            elif value > 1.0: value = 1.0
+            self._value = value
+            self._setCanvas()
+
+
+      def drawLines(self):
+            width = self._canv.winfo_width()
+            mid = width * self._value
+            print("Draw: 0 -", mid, "@", self._leftFill)
+            self._canv.coords(self._l_rect, 0, 0, mid, self._canv.winfo_height())
+            self._canv.coords(self._r_rect, 0, 0, width, self._canv.winfo_height())
+
 
 #################################
 ## NoteBook Class
