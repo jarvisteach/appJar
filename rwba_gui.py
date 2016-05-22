@@ -1623,6 +1623,8 @@ class gui:
 
             # deal with a dict_keys object - messy!!!!
             if not isinstance(options, list): options = list(options)
+            # get the longest string length
+            maxSize = len(max(options, key=len))
 
             var=StringVar(self.topLevel)
             if len(options) > 0: var.set(options[0])
@@ -1632,6 +1634,8 @@ class gui:
             else: option = OptionMenu(frame,var,[])
             option.inContainer = False
             option.config(justify=LEFT, font=self.optionFont, background=self.labelBgColour, highlightthickness=0)
+            # set the size, based off the longest item
+            option.config(width=maxSize)
             # compare on windows & mac
             #option.config(justify=LEFT, font=self.optionFont, background=self.labelBgColour, highlightthickness=12, bd=0, highlightbackground=self.labelBgColour)
 
@@ -3661,9 +3665,6 @@ if __name__ == "__main__":
       #win.addImage("8ball.gif", win.getNextRow(), 0, 2)
       win.startLabelFrame("Radios")
       win.addRadioButton("Test", "Oneeeeeeeeeeeeeeeeeeeee")
-      win.addRadioButton("Test", "Two")
-      win.addRadioButton("Test", "Three")
-      win.stopLabelFrame()
       #win.addRadioButton("Test", "Four")
       win.setRbAlign("Test", win.SE)
       win.setRbCommand("Test", tb_press)
