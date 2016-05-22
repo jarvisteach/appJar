@@ -1598,7 +1598,7 @@ class gui:
             # add a row of entry boxes...
             if addRow==True:
                   for cellNum in range(maxSize):
-                        name = "GR"+data[0][cellNum]
+                        name = "GR"+str(cellNum)
                         #widg = Label(gridFrame)
                         #widg.configure( relief=RIDGE )
                         #entry = self.__buildEntry(name, widg)
