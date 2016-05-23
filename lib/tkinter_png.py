@@ -86,9 +86,9 @@ class PngImageTk(object):
 
 	# Convert pixeldata into a PhotoImage object
 	def convert(self):
+            alphapixels = []
 		if self.meta["alpha"] == True:
 			values = 4
-			alphapixels = []
 			a_append = alphapixels.append
 		else:
 			values = 3
