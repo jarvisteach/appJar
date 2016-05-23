@@ -325,6 +325,10 @@ class gui:
                         if kind not in [self.C_PANEDFRAME]:
                               self.warn("-- Stop: "+kind)
 
+            # only add the menu bar at the end...
+            if self.hasMenu:
+                  self.topLevel.config(menu=self.menuBar)
+
             # pack it all in & make sure it's drawn
             self.appWindow.pack(fill=BOTH)
             self.topLevel.update_idletasks()
@@ -1011,7 +1015,8 @@ class gui:
 
       def __checkFunc(self, names, funcs):
             singleFunc = None
-            if callable(funcs) : singleFunc = funcs
+            if funcs is None: return None
+            elif callable(funcs) : singleFunc = funcs
             elif len(names) != len(funcs): raise Exception("List sizes don't match")
             return singleFunc
 
@@ -2264,12 +2269,13 @@ class gui:
             if not isinstance(names[0], list):
                   names = [names]
                   # won't be used if single func
-                  funcs = [funcs]
+                  if funcs is not None: funcs = [funcs]
 
             for bRow in range(len(names)):
                   for i in range(len(names[bRow])):
                         t = names[bRow][i]
-                        if singleFunc is None: tempFunc = funcs[bRow][i]
+                        if funcs is None: tempFunc = None
+                        elif singleFunc is None:tempFunc = funcs[bRow][i]
                         else: tempFunc = singleFunc
                         but = self.__buildButton(t, tempFunc, frame)
 
@@ -2738,16 +2744,14 @@ class gui:
 #####################################
 ## FUNCTIONS for menu bar
 #####################################
-      def addMenuList(self, menuName, names, funcs, tearable=False):
 
+# BIG CHANGES need to be made here
+# keep a list of menu, so items can be added
+
+      def addMenuList(self, menuName, names, funcs, tearable=False):
+            self.__makeMenu()
             # deal with a dict_keys object - messy!!!!
             if not isinstance(names, list): names = list(names)
-
-            # create a menu bar - only shows if populated
-            if not self.hasMenu:
-                  self.hasMenu = True
-                  self.menuBar = Menu(self.appWindow)
-                  self.topLevel.config(menu=self.menuBar)
 
             singleFunc = self.__checkFunc(names, funcs)
             menu = Menu(self.menuBar, tearoff=tearable)
@@ -2765,16 +2769,28 @@ class gui:
 
             self.menuBar.add_cascade(label=menuName,menu=menu)
 
-      # add a single entry for a menu
-      def addMenu(self, name, func):
+      def __makeMenu(self):
             # create a menu bar - only shows if populated
             if not self.hasMenu:
                   self.hasMenu = True
                   self.menuBar = Menu(self.topLevel)
-                  self.topLevel.config(menu=self.menuBar)
 
+      # add a single entry for a menu
+      def addMenu(self, name, func):
+            # may not be supported on MAC
+            self.__makeMenu()
             u = self.__makeFunc(func, name, True)
             self.menuBar.add_command(label=name, command=u)
+
+      def addMenuCheckBox(self, name):
+            self.__makeMenu()
+            #check=StringVar()
+            #menu.add_checkbutton(label=name, variable=check, onvalue=1, offvalue=0)
+
+      def addMenuRadioButton(self, name, value):
+            self.__makeMenu()
+            #radio=StringVar()
+            #menu.add_radiobutton(label=name, variable=radio, value=value)
 
 #####################################
 ## FUNCTIONS for status bar
