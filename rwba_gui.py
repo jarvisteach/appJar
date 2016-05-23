@@ -144,7 +144,7 @@ class gui:
 
             # set up some default path locations
             self.lib_file = os.path.abspath(__file__)
-            self.exe_file = main.__file__
+            self.exe_file = os.path.basename(main.__file__)
             self.lib_path = os.path.dirname(self.lib_file)
             self.icon_path = os.path.join(self.lib_path,"icons")
             self.sound_path = os.path.join(self.lib_path,"sounds")
@@ -1912,7 +1912,7 @@ class gui:
       # internal function to check/build image object
       def __getImage(self, image, cache=True):
             if image is None: return None
-            if os.path.isfile(image):
+            if os.path.isfile(image) or os.path.isfile(image):
                   if os.access(image, os.R_OK):
                         if cache and image in self.n_imageCache and self.n_imageCache[image] is not None:
                               imgFile=self.n_imageCache[image]
@@ -2243,7 +2243,7 @@ class gui:
       def setButtonImage(self, name, imgFile):
             but = self.__verifyItem(self.n_buttons, name)
             image = self.__getImage( imgFile )
-            but.config(image=image, compound=TOP, text="", justify=LEFT) # works on Mac
+            but.config(image=image, compound=TOP, text="", justify=LEFT) # works on Mac & Windows :)
             #but.config(image=image, compound=None, text="") # works on Windows, not Mac
 
             but.image = image
