@@ -299,6 +299,10 @@ class gui:
             # for simple grids
             self.n_grids= {}
 
+            # menu stuff
+            self.n_menus={}
+            self.n_menuVars={}
+
       # function to generate warning messages
       def warn(self, message):
             if self.WARN: print(message)
@@ -480,6 +484,12 @@ class gui:
       def __bringToFront(self):
             if platform() == "Darwin":
                   val=os.system('''/usr/bin/osascript -e 'tell app "Finder" to set frontmost of process "python3" to true' ''')
+#                  val=os.system('''/usr/bin/osascript -e 'tell app "System Events" to tell process "python3" perform action "AXRaise" of window ' ''')
+#                  self.topLevel.lift()
+#                  self.topLevel.call('wm', 'attributes', '.', '-topmost', True)
+#                  self.topLevel.call('wm', 'focusmodel', '.', 'active')
+#                  self.topLevel.call('wm', 'deiconify', '.')
+#                  self.topLevel.after_idle(self.topLevel.call, 'wm', 'attributes', '.', '-topmost', True)
             else:
                   self.topLevel.lift()
 
@@ -1644,6 +1654,12 @@ class gui:
             # compare on windows & mac
             #option.config(justify=LEFT, font=self.optionFont, background=self.labelBgColour, highlightthickness=12, bd=0, highlightbackground=self.labelBgColour)
 
+            # configure the drop-down too
+            dropDown = option.nametowidget(option.menuname)
+            dropDown.configure(font=self.optionFont)
+#            dropDown.configure(background=self.labelBgColour)
+
+
             option.var = var
             self.n_options[title]=option
 
@@ -2782,15 +2798,78 @@ class gui:
             u = self.__makeFunc(func, name, True)
             self.menuBar.add_command(label=name, command=u)
 
-      def addMenuCheckBox(self, name):
+      def createMenu(self, title, tearable=False):
+            self.__verifyItem(self.n_menus, title, True)
             self.__makeMenu()
-            #check=StringVar()
-            #menu.add_checkbutton(label=name, variable=check, onvalue=1, offvalue=0)
+            menu = Menu(self.menuBar, tearoff=tearable)
+            self.menuBar.add_cascade(label=title,menu=menu)
+            self.n_menus[title]=menu
 
-      def addMenuRadioButton(self, name, value):
-            self.__makeMenu()
-            #radio=StringVar()
-            #menu.add_radiobutton(label=name, variable=radio, value=value)
+      def addMenuItem(self, menu, name, func=None, kind=None):
+            menu = self.__verifyItem(self.n_menus, menu)
+            var = None
+            if name == "-" or kind=="separator":
+                  menu.add_separator()
+            elif kind == "rb":
+                  varName = "rb"+name
+                  if (varName in self.n_menuVars):
+                        var = self.n_menuVars[varName]
+                  else:
+                        var = StringVar(self.topLevel)
+                        self.n_menuVars[varName]=var
+                  menu.add_radiobutton(label=func, variable=var, value=func)
+            elif kind == "cb":
+                  varName = "cb"+name
+                  if (varName in self.n_menuVars):
+                        var = self.n_menuVars[varName]
+                  else:
+                        var = StringVar(self.topLevel)
+                        self.n_menuVars[varName]=var
+                  menu.add_checkbutton(label=name, variable=var, onvalue=1, offvalue=0)
+            else:
+                  u = self.__makeFunc(func, name, True)
+                  menu.add_command(label="name", command=u)
+
+      def __getMenu(self, menu, title, kind):
+            title=kind+title
+            var = self.__verifyItem(self.n_menuVars, title)
+            print("--",var.get(),"--")
+            if kind=="rb":
+                  return var.get()
+            elif kind=="cb":
+                  if var.get() == "1": return True
+                  else: return False
+
+      def getMenuCheckBox(self, menu, title):
+            return self.__getMenu(menu, title, "cb")
+
+      def getMenuRadioButton(self, menu, title):
+            return self.__getMenu(menu, title, "rb")
+
+      #################
+
+      def addMenuSeparator(self, menu):
+            self.addMenuItem(menu, "-")
+
+      def addMenuCheckBox(self, menu, name):
+            self.addMenuItem(menu, name, kind="cb")
+
+      def addMenuRadioButton(self, menu, name, value):
+            self.addMenuItem(menu, name, value, kind="rb")
+
+      #################
+
+      def addMenuPreferences(self, func):
+            self.topLevel.createcommand('tk::mac::ShowPreferences', func)
+            self.topLevel.createcommand('tk::mac::ShowHelp', func)
+
+      def addMenuHelp(self, func):
+            helpMenu = Menu(self.menuBar, name='help')
+            self.topLevel.createcommand('tk::mac::ShowHelp', func)
+
+      def addMenuWindow(self, func):
+            windowmenu = Menu(self.menuBar, name='window')
+            self.menuBar.add_cascade(menu=windowmenu, label='Window')
 
 #####################################
 ## FUNCTIONS for status bar
