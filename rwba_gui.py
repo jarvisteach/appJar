@@ -1937,16 +1937,16 @@ class gui:
                   if os.access(image, os.R_OK):
                         if cache and image in self.n_imageCache and self.n_imageCache[image] is not None:
                               imgFile=self.n_imageCache[image]
-                        elif image.endswith('.gif'):
+                        elif image.lower().endswith('.gif'):
                               imgFile=PhotoImage(file=image)
-                        elif image.endswith('.png'):
+                        elif image.lower().endswith('.png'):
                               # known issue here, some PNGs lack IDAT chunks
                               png = PngImageTk(image)
                               png.convert()
                               imgFile=png.image
-                        elif image.endswith('.ppm') or image.endswith('.pgm'):
+                        elif image.lower().endswith('.ppm') or image.lower().endswith('.pgm'):
                               imgFile=PhotoImage(file=image)
-                        elif image.endswith('jpg'):
+                        elif image.lower().endswith('jpg'):
                               imgFile=self.convertJpgToBmp(image)
                         else:
                               raise Exception("Invalid image type: "+ image) from None
