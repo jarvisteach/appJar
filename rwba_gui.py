@@ -68,6 +68,7 @@ class gui:
       PANEDWINDOW=16
       IMAGE=17
       PIECHART=18
+      SCROLLPANE=19
 
       # positioning
       N = N
@@ -97,6 +98,7 @@ class gui:
       C_PANEDWINDOW="panedWindow"
       C_PANEDFRAME="panedFrame"
       C_SUBWINDOW="subWindow"
+      C_SCROLLPANE="scrollPane"
 
       # names for each of the widgets defined above
       # used for defining functions
@@ -192,6 +194,7 @@ class gui:
             self.labelFrameFont = font.Font(family="Helvetica", size=12)
             self.noteBookFont = font.Font(family="Helvetica", size=12)
             self.panedWindowFont = font.Font(family="Helvetica", size=12)
+            self.scrollPaneFont = font.Font(family="Helvetica", size=12)
 
             # for simple grids - RETHINK
             self.gdFont = font.Font(family="Helvetica", size=12)
@@ -282,6 +285,7 @@ class gui:
             self.n_noteBooks={}
             self.n_panedWindows={}
             self.n_panedFrames={}
+            self.n_scrollPanes={}
             self.n_trees={}
             self.n_flashLabs = []
             self.n_pieCharts={}
@@ -545,6 +549,7 @@ class gui:
             self.labelFrameFont.config(family=font, size=size)
             self.noteBookFont.config(family=font, size=size)
             self.panedWindowFont.config(family=font, size=size)
+            self.scrollPaneFont.config(family=font, size=size)
 
             # for simple grids - RETHINK
             self.lbFont.configure (family=font, size=size)
@@ -604,6 +609,8 @@ class gui:
                   self.n_noteBooks[na].config(background=self.labelBgColour)
             for na in self.n_panedFrames:
                   self.n_panedFrames[na].config(background=self.labelBgColour)
+            for na in self.n_scrollPanes:
+                  self.n_scrollPanes[na].config(background=self.labelBgColour)
             #for na in self.n_options:
             #      self.n_options[na].config(background=self.labelBgColour)
             #for na in self.n_spins:
@@ -720,6 +727,7 @@ class gui:
             elif kind == self.LABELFRAME: return self.n_labelFrames
             elif kind == self.NOTEBOOK: return self.n_noteBooks
             elif kind == self.PANEDWINDOW: return self.n_panedFrames
+            elif kind == self.SCROLLPANE: return self.n_scrollPanes
             elif kind == self.IMAGE: return self.n_images
             else: raise Exception ("Unknown widget type: " + str(kind))
 
@@ -1191,6 +1199,13 @@ class gui:
 
                   # now, add to top of stack
                   self.__addContainer(self.C_PANEDFRAME, frame, 0, 1, sticky)
+            elif fType == self.C_SCROLLPANE:
+                  scrollPane = ScrollPane(self.containerStack[-1]['container'], bg=self.labelBgColour)
+                  self.containerStack[-1]['container'].add(scrollPane)
+                  self.n_scrollPane[title] = scrollPane
+
+                  # now, add to top of stack
+                  self.__addContainer(self.C_SCROLLPANE, scrollPane, 0, 1, sticky)
             else:
                   raise Exception("Unknown container: " + fType)
 
@@ -1259,6 +1274,14 @@ class gui:
             if self.containerStack[-1]['type'] != self.C_PANEDWINDOW:
                   raise Exception("Can't stop a PANEDWINDOW, currently in:", self.containerStack[-1]['type'])
             self.stopContainer()
+
+      def startScrollPane(self, title, row=None, column=0, colspan=0, sticky="NSEW"):
+            self.startContainer(self.C_SCROLLPANE, title, row, column, colspan, sticky)
+
+      def stopScrollPane(self):
+            if self.containerStack[-1]['type'] != self.C_SCROLLPANE:
+                  raise Exception("Can't stop a SCROLLPANE, currently in:", self.containerStack[-1]['type'])
+                  self.stopContainer()
 
       def stopAllPanedWindows(self):
             while True:
@@ -1639,7 +1662,8 @@ class gui:
             # deal with a dict_keys object - messy!!!!
             if not isinstance(options, list): options = list(options)
             # get the longest string length
-            maxSize = len(max(options, key=len))
+            try: maxSize = len(str(max(options, key=len)))
+            except: maxSize = len(str(max(options)))
 
             var=StringVar(self.topLevel)
             if len(options) > 0: var.set(options[0])
@@ -2765,7 +2789,7 @@ class gui:
 # keep a list of menu, so items can be added
 
       def addMenuList(self, menuName, names, funcs, tearable=False):
-            self.__makeMenu()
+            self.__initMenu()
             # deal with a dict_keys object - messy!!!!
             if not isinstance(names, list): names = list(names)
 
@@ -2785,7 +2809,7 @@ class gui:
 
             self.menuBar.add_cascade(label=menuName,menu=menu)
 
-      def __makeMenu(self):
+      def __initMenu(self):
             # create a menu bar - only shows if populated
             if not self.hasMenu:
                   self.hasMenu = True
@@ -2794,13 +2818,13 @@ class gui:
       # add a single entry for a menu
       def addMenu(self, name, func):
             # may not be supported on MAC
-            self.__makeMenu()
+            self.__initMenu()
             u = self.__makeFunc(func, name, True)
             self.menuBar.add_command(label=name, command=u)
 
       def createMenu(self, title, tearable=False):
             self.__verifyItem(self.n_menus, title, True)
-            self.__makeMenu()
+            self.__initMenu()
             menu = Menu(self.menuBar, tearoff=tearable)
             self.menuBar.add_cascade(label=title,menu=menu)
             self.n_menus[title]=menu
@@ -2874,26 +2898,37 @@ class gui:
 #####################################
 ## FUNCTIONS for status bar
 #####################################
-      def setStatusBg(self, colour=None):
-            if colour is not None: self.status.config(background=colour)
+      def setStatusBg(self, colour=None, field=0):
+            if colour is not None: self.status[field].config(background=colour)
 
-      def setStatusFg(self, colour=None):
-            if colour is not None: self.status.config(foreground=colour)
+      def setStatusFg(self, colour=None, field=0):
+            if colour is not None: self.status[field].config(foreground=colour)
 
       # TO DO - make multi fielded
-      def addStatus(self, header="", fields=1):
+      def addStatus(self, header="", fields=1, side="LEFT"):
             self.hasStatus = True
             self.header=header
-            self.status = Label(self.appWindow)
-            self.status.config( bd=1, relief=SUNKEN, anchor=W, font=self.statusFont)
-            self.__addTooltip(self.status, "Status bar")
-            self.status.pack(side=BOTTOM, fill=X, anchor=S)
+            self.statusFrame = Frame(self.appWindow)
+            self.statusFrame.config( bd=1, relief=SUNKEN)
+            self.statusFrame.pack(side=BOTTOM, fill=X, anchor=S)
+
+            self.status=[]
+            for i in range(fields):
+                self.status.append(Label(self.statusFrame))
+                self.status[i].config( bd=1, relief=SUNKEN, anchor=W, font=self.statusFont, width=10)
+                self.__addTooltip(self.status[i], "Status bar")
+                if side=="LEFT": self.status[i].pack(side=LEFT)
+                elif side=="RIGHT": self.status[i].pack(side=RIGHT)
+                else: self.status[i].pack(side=BOTH, expand=1, fill=BOTH)
 
       def setStatus(self, text, field=0):
-            if self.hasStatus: self.status.config(text=self.__getFormatStatus(text))
+            if self.hasStatus: self.status[field].config(text=self.__getFormatStatus(text))
+
+      def setStatusWidth(self, width, field=0):
+            if self.hasStatus: self.status[field].config(width=width)
 
       def clearStatus(self, field=0):
-            if self.hasStatus: self.status.config(text=self.__getFormatStatus(""))
+            if self.hasStatus: self.status[field].config(text=self.__getFormatStatus(""))
             
       # formats the string shown in the status bar
       def __getFormatStatus(self, text):
@@ -3474,6 +3509,29 @@ class AutoScrollbar(Scrollbar):
             raise Exception("cannot use pack with this widget")
       def place(self, **kw):
             raise Exception("cannot use place with this widget")
+
+class ScrollPane(Frame):
+    def __init__(self, parent, *args, **kw):
+        vscrollbar = AutoScrollbar(self)
+        vscrollbar.grid(row=0, column=1, sticky=N+S)
+        hscrollbar = AutoScrollbar(self, orient=HORIZONTAL)
+        hscrollbar.grid(row=1, column=0, sticky=E+W)
+
+        self.canvas = Canvas(self, yscrollcommand=vscrollbar.set, xscrollcommand=hscrollbar.set)
+        canvas.grid(row=0, column=0, sticky=N+S+E+W)
+
+        vscrollbar.config(command=canvas.yview)
+        hscrollbar.config(command=canvas.xview)
+
+        # make the canvas expandable
+        self.grid_rowconfigure(0, weight=1)
+        self.grid_columnconfigure(0, weight=1)
+
+#        self.interior = Frame(canvas)
+#        interior_id = canvas.create_window(0, 0, window=self.interior, anchor=NW)
+
+    def getPane(self):
+        return self.canvas
 
 #################################
 ## Additional Dialog Classes
