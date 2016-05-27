@@ -1750,6 +1750,7 @@ class gui:
             spin.bind("<Shift-Tab>", self.__focusLastWindow)
 
             spin.config(values=vals)
+            # prevent invalid entries
             if self.validateSpinBox == None:
                   self.validateSpinBox = (self.containerStack[0]['container'].register(self.__validateSpinBox),'%P', '%W')
 
@@ -1763,11 +1764,12 @@ class gui:
             self.__positionWidget(spin, row, column, colspan)
             self.setSpinBoxPos(title, len(values)-1)
 
-      # validates that an item in the names spinbox starts with the user_input      
+      # validates that an item in the named spinbox starts with the user_input      
       def __validateSpinBox(self, user_input, widget_name):
             spin = self.containerStack[0]['container'].nametowidget(widget_name)
 
             vals = spin.cget("values")#.split()
+            vals=self.__getSpinBoxValsAsList(vals)
             for i in vals:
                   if i.startswith(user_input): return True
 
@@ -1802,9 +1804,15 @@ class gui:
             var.set(val)
             spin.config(textvariable=var)
 
+      def __getSpinBoxValsAsList(self, vals):
+            vals=vals[1:-1]
+            vals=vals.split("} {")
+            return vals
+
       def setSpinBox(self, title, val):
             spin = self.__verifyItem(self.n_spins, title)
             vals = spin.cget("values")#.split()
+            vals = self.__getSpinBoxValsAsList(vals)
             val = str(val)
             if val not in vals:
                   raise Exception("Invalid value: "+ val + ". Not in SpinBox: "+title+"=" + str(vals)) from None
@@ -1813,6 +1821,7 @@ class gui:
       def setSpinBoxPos(self, title, pos):
             spin = self.__verifyItem(self.n_spins, title)
             vals = spin.cget("values")#.split()
+            vals = self.__getSpinBoxValsAsList(vals)
             pos=int(pos)
             if pos <  0 or pos >= len(vals):
                   raise Exception("Invalid position: "+ str(pos) + ". No position in SpinBox: "+title+"=" + str(vals)) from None
@@ -3668,7 +3677,6 @@ class NumDialog(SimpleEntryDialog):
         except ValueError:
             self.setError("Invalid number.")
             return False
-
 
 #####################################
 ## Toplevel Stuff
