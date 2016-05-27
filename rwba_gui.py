@@ -1735,6 +1735,9 @@ class gui:
             self.__verifyItem(self.n_spins, title, True)
             if type(vals) not in [list, tuple]:
                   raise Exception("Can't create SpinBox " + title + ". Invalid values: " + str(vals)) 
+            vals=list(vals)
+            vals.reverse()
+            vals=tuple(vals)
 
             spin = Spinbox(frame)
             spin.inContainer = False
@@ -1758,13 +1761,13 @@ class gui:
       def __addSpinBox(self, title, values,row=None, column=0, colspan=0):
             spin = self.__buildSpinBox(self.__getContainer(), title, values)
             self.__positionWidget(spin, row, column, colspan)
-            self.setSpinBoxPos(title, 0)
+            self.setSpinBoxPos(title, len(values)-1)
 
       # validates that an item in the names spinbox starts with the user_input      
       def __validateSpinBox(self, user_input, widget_name):
             spin = self.containerStack[0]['container'].nametowidget(widget_name)
 
-            vals = spin.cget("values").split()
+            vals = spin.cget("values")#.split()
             for i in vals:
                   if i.startswith(user_input): return True
 
@@ -1801,7 +1804,7 @@ class gui:
 
       def setSpinBox(self, title, val):
             spin = self.__verifyItem(self.n_spins, title)
-            vals = spin.cget("values").split()
+            vals = spin.cget("values")#.split()
             val = str(val)
             if val not in vals:
                   raise Exception("Invalid value: "+ val + ". Not in SpinBox: "+title+"=" + str(vals)) from None
@@ -1809,7 +1812,7 @@ class gui:
 
       def setSpinBoxPos(self, title, pos):
             spin = self.__verifyItem(self.n_spins, title)
-            vals = spin.cget("values").split()
+            vals = spin.cget("values")#.split()
             pos=int(pos)
             if pos <  0 or pos >= len(vals):
                   raise Exception("Invalid position: "+ str(pos) + ". No position in SpinBox: "+title+"=" + str(vals)) from None
