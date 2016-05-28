@@ -2755,7 +2755,7 @@ class gui:
 #####################################
       def addPieChart(self, name, fracs, size=100, row=None, column=0, colspan=0):
             self.__verifyItem(self.n_pieCharts, name, True)
-            pie = PieChart(self.__getContainer(), fracs, size)
+            pie = PieChart(self.__getContainer(), fracs, size, self.labelBgColour )
             self.n_pieCharts[name] = pie
             self.__positionWidget(pie, row, column, colspan, sticky=None)
 
@@ -3407,8 +3407,8 @@ class PieChart(Canvas):
                   "#11c638", "#8dd593", "#c6dec7", "#ead3c6", "#f0b98d", "#ef9708",
                   "#0fcfc0", "#9cded6", "#d5eae7", "#f3e1eb", "#f6c4e1", "#f79cd4"]
 
-      def __init__(self, container, fracs, size):
-            Canvas.__init__(self,container, width=size, height=size,bd=0, highlightthickness=0)
+      def __init__(self, container, fracs, size, bg):
+            Canvas.__init__(self,container, width=size, height=size, bd=0, highlightthickness=0, bg=bg)
             self.fracs=fracs
             self.size=size
             self._drawPie()
