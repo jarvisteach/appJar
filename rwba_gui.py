@@ -10,7 +10,7 @@ from tkinter import colorchooser
 from tkinter import filedialog
 from tkinter import scrolledtext
 from tkinter import font
-import os, sys, re, socket, hashlib
+import os, sys, re, socket, hashlib, imghdr
 import __main__ as main
 from platform import system as platform
 import webbrowser
@@ -1974,13 +1974,19 @@ class gui:
       # internal function to check/build image object
       def __getImage(self, image, cache=True):
             if image is None: return None
-            if os.path.isfile(image) or os.path.isfile(image):
+            if os.path.isfile(image):
+                  imgType = imghdr.what(image)
                   if os.access(image, os.R_OK):
+                        if not image.lower().endswith(imgType) and not (imgType=="jpeg" and image.lower().endswith("jpg")):
+                              # the image has been saved with the wrong extension
+                              raise Exception("Invalid image extension: " + image + " should be a " + imgType)
+
                         if cache and image in self.n_imageCache and self.n_imageCache[image] is not None:
                               imgFile=self.n_imageCache[image]
                         elif image.lower().endswith('.gif'):
                               imgFile=PhotoImage(file=image)
                         elif image.lower().endswith('.png'):
+                              self.warn("Image processing for PNGs is slow. GIF is the recommended format")
                               # known issue here, some PNGs lack IDAT chunks
                               png = PngImageTk(image)
                               png.convert()
@@ -1988,6 +1994,7 @@ class gui:
                         elif image.lower().endswith('.ppm') or image.lower().endswith('.pgm'):
                               imgFile=PhotoImage(file=image)
                         elif image.lower().endswith('jpg'):
+                              self.warn("Image processing for JPGs is slow. GIF is the recommended format")
                               imgFile=self.convertJpgToBmp(image)
                         else:
                               raise Exception("Invalid image type: "+ image) from None
