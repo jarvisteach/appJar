@@ -1880,10 +1880,8 @@ class gui:
                   self.topLevel.after(img.anim_speed, self.__animateImage, name)
 
       def addAnimatedImage(self, name, imageFile, row=None, column=0, colspan=0):
+            self.warn("Warning - addAnimatedImage() is now deprecated - use addImage()")
             self.addImage(name, imageFile, row, column, colspan)
-            img = self.__verifyItem(self.n_images, name).image
-            self.__configAnimatedImage(img, name, imageFile)
-            self.__preloadAnimatedImage(name)
 
       def __configAnimatedImage(self, img, name, path):
             img.isAnimated=True
@@ -1913,6 +1911,9 @@ class gui:
                   label.config(height=h, width=w)
             
             self.n_images[name] = label
+            if self.__checkIsAnimated(imageFile):
+                    self.__configAnimatedImage(img, name, imageFile)
+                    self.__preloadAnimatedImage(name)
             self.__positionWidget(label, row, column, colspan)
 
       def setImageSize(self, name, width, height):
@@ -1970,6 +1971,15 @@ class gui:
       # function to remove image objects form cache
       def clearImageCache(self):
             self.n_imageCache = {}
+
+      # simple way to check if image is animated
+      def __checkIsAnimated(self, name):
+          if imghdr.what(name) == "gif":
+                try:
+                    PhotoImage(file=name, format="gif - 1")
+                    return True
+                except: pass
+          return False
 
       # internal function to check/build image object
       def __getImage(self, image, cache=True):
@@ -2070,7 +2080,7 @@ class gui:
             if platform() in ["win32", "Windows"]:
                   if isFile:
                         if False== os.path.isfile(sound): raise Exception("Can't find sound: "+ sound)
-                        if not sound.endswith('.wav'): raise Exception("Invalid sound format: "+ sound)
+                        if not sound.lower().endswith('.wav'): raise Exception("Invalid sound format: "+ sound)
                         kind = winsound.SND_FILENAME | winsound.SND_ASYNC
                   else:
                         if sound is None:
