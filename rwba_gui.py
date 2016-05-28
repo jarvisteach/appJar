@@ -289,6 +289,7 @@ class gui:
             self.n_trees={}
             self.n_flashLabs = []
             self.n_pieCharts={}
+            self.n_separators=[]
 
             # variables associated with widgets
             self.n_entryVars={}
@@ -619,6 +620,9 @@ class gui:
             # for simple grids - RETHINK
             for na in self.n_grids:
                   self.n_grids[na].configure(background=self.labelBgColour)
+
+            for na in self.n_labels:
+                  na.configure(background=self.labelBgColour)
 
       def setResizable(self, canResize=True):
             self.__getTopLevel().isResizable = canResize
@@ -2740,8 +2744,10 @@ class gui:
 #####################################
 ## FUNCTIONS for seperators
 #####################################
-      def addSeparator(self, row=None, column=0, colspan=0):
+      def addSeparator(self, row=None, column=0, colspan=0, colour=None):
             sep = Separator(self.__getContainer())
+            if colour is not None: sep.setLineFg(colour)
+            self.n_separators.append(sep)
             self.__positionWidget(sep, row, column, colspan)
 
 #####################################
@@ -3388,10 +3394,7 @@ class Separator(Frame):
             self.line.config(relief="ridge", height=2, borderwidth=1)
             self.line.pack(padx=5, pady=5, fill="x")
       
-      def setFg(self, colour):
-            self.line.config(bg=colour)
-
-      def setBg(self, colour):
+      def setLineFg(self, colour):
             self.line.config(bg=colour)
 
 #####################################
