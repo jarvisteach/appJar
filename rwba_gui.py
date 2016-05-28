@@ -1766,7 +1766,7 @@ class gui:
       def __addSpinBox(self, title, values,row=None, column=0, colspan=0):
             spin = self.__buildSpinBox(self.__getContainer(), title, values)
             self.__positionWidget(spin, row, column, colspan)
-            self.setSpinBoxPos(title, len(values)-1)
+            self.setSpinBoxPos(title, 0)
 
       # validates that an item in the named spinbox starts with the user_input      
       def __validateSpinBox(self, user_input, widget_name):
@@ -1829,6 +1829,7 @@ class gui:
             pos=int(pos)
             if pos <  0 or pos >= len(vals):
                   raise Exception("Invalid position: "+ str(pos) + ". No position in SpinBox: "+title+"=" + str(vals)) from None
+            pos = len(vals)-1 - pos
             val = vals[pos]
             self.__setSpinBoxVal(spin, val)
 
@@ -2923,7 +2924,7 @@ class gui:
             if colour is not None: self.status[field].config(foreground=colour)
 
       # TO DO - make multi fielded
-      def addStatus(self, header="", fields=1, side="LEFT"):
+      def addStatus(self, header="", fields=1, side=None):
             self.hasStatus = True
             self.header=header
             self.statusFrame = Frame(self.appWindow)
@@ -2937,7 +2938,7 @@ class gui:
                 self.__addTooltip(self.status[i], "Status bar")
                 if side=="LEFT": self.status[i].pack(side=LEFT)
                 elif side=="RIGHT": self.status[i].pack(side=RIGHT)
-                else: self.status[i].pack(side=BOTH, expand=1, fill=BOTH)
+                else: self.status[i].pack(side=LEFT, expand=1, fill=BOTH)
 
       def setStatus(self, text, field=0):
             if self.hasStatus: self.status[field].config(text=self.__getFormatStatus(text))
