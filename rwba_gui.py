@@ -1959,6 +1959,9 @@ class gui:
       # replace the current image, with a new one
       def setImage(self, name, imageFile):
             label = self.__verifyItem(self.n_images, name)
+            # only set the image if it's different
+            if label.image.path == imageFile: return
+
             label.image.animating=False
             image = self.__getImage(imageFile)
 
