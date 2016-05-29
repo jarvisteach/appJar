@@ -69,3 +69,6 @@ target/
 
 # MAC stuff
 .DS_Store
+
+# mkdocs
+site/
