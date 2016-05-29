@@ -1,0 +1,9 @@
+site_name: RWBAtools
+pages:
+- Home: index.md
+- Layout: Layout.md
+- Options: Options.md
+- Widgets: Widgets.md
+- Dialogs: Dialogs.md
+- Dependencies: Dependencies.md
+theme: united
