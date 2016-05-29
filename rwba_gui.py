@@ -1782,7 +1782,7 @@ class gui:
 
       def addSpinBox(self, title, vals, row=None, column=0, colspan=0):
             self.__addSpinBox(title, vals, row, column, colspan)
-            
+
       def addSpinBoxRange(self, title, fromVal, toVal, row=None, column=0, colspan=0):
             vals = list(range(fromVal, toVal+1))
             self.__addSpinBox(title, vals, row, column, colspan)
@@ -1857,13 +1857,31 @@ class gui:
       def __preloadAnimatedImage(self, img):
             if img.cached: return
             try:
-                  pic = PhotoImage(file=img.path, format="gif - {}".format(img.anim_pos))
-                  img.pics.append(pic)
-                  img.anim_pos += 1
-                  self.topLevel.after(0, self.__preloadAnimatedImage, img)
-            except:
+                pic = PhotoImage(file=img.path, format="gif - {}".format(img.anim_pos))
+                img.pics.append(pic)
+                img.anim_pos += 1
+                self.topLevel.after(0, self.__preloadAnimatedImage, img)
+            # when all frames have been processed
+            except TclError:
                   img.anim_pos=0
                   img.cached=True
+
+      def __configAnimatedImage(self, img):
+            img.isAnimated=True
+            img.pics=[]
+            img.cached=False
+            img.anim_pos=0
+            img.anim_speed=150
+            img.animating=True
+
+      # simple way to check if image is animated
+      def __checkIsAnimated(self, name):
+          if imghdr.what(name) == "gif":
+                try:
+                    PhotoImage(file=name, format="gif - 1")
+                    return True
+                except: pass
+          return False
 
       def setAnimationSpeed(self, name, speed):
             img = self.__verifyItem(self.n_images, name).image
@@ -1890,13 +1908,72 @@ class gui:
             lab.bind("<Leave>", lambda e: self.setImage(title, leaveImg))
             lab.bind("<Enter>", lambda e: self.setImage(title, overImg))
 
-      def __configAnimatedImage(self, img):
-            img.isAnimated=True
-            img.pics=[]
-            img.cached=False
-            img.anim_pos=0
-            img.anim_speed=150
-            img.animating=True
+      # function to remove image objects form cache
+      def clearImageCache(self):
+            self.n_imageCache = {}
+
+      # internal function to check/build image object
+      def __getImage(self, imagePath, cache=True):
+            if imagePath is None: return None
+            elif cache and imagePath in self.n_imageCache and self.n_imageCache[imagePath] is not None:
+                  photo=self.n_imageCache[imagePath]
+            elif os.path.isfile(imagePath):
+                  if os.access(imagePath, os.R_OK):
+                        imgType = imghdr.what(imagePath)
+                        if not imagePath.lower().endswith(imgType) and not (imgType=="jpeg" and imagePath.lower().endswith("jpg")):
+                              # the image has been saved with the wrong extension
+                              raise Exception("Invalid image extension: " + imagePath + " should be a " + imgType)
+                        elif imagePath.lower().endswith('.gif'):
+                              photo=PhotoImage(file=imagePath)
+                        elif imagePath.lower().endswith('.ppm') or imagePath.lower().endswith('.pgm'):
+                              photo=PhotoImage(file=imagePath)
+                        elif imagePath.lower().endswith('jpg'):
+                              self.warn("Image processing for JPGs is slow. GIF is the recommended format")
+                              photo=self.convertJpgToBmp(imagePath)
+                        elif imagePath.lower().endswith('.png'):
+                              self.warn("Image processing for PNGs is slow. GIF is the recommended format")
+                              # known issue here, some PNGs lack IDAT chunks
+                              png = PngImageTk(imagePath)
+                              png.convert()
+                              photo=png.image
+                        else:
+                              raise Exception("Invalid image type: "+ imagePath) from None
+                  else:
+                        raise Exception("Can't read image: "+ imagePath) from None
+            else:
+                  raise Exception("Image "+imagePath+" does not exist") from None
+
+            photo.path=imagePath
+
+            # sort out if it's an animated images
+            if self.__checkIsAnimated(imagePath):
+                self.__configAnimatedImage(photo)
+                self.__preloadAnimatedImage(photo)
+            else:
+                photo.isAnimated=False
+                photo.animating=False
+                if cache: self.n_imageCache[imagePath]=photo
+
+            return photo
+
+      # replace the current image, with a new one
+      def setImage(self, name, imageFile):
+            label = self.__verifyItem(self.n_images, name)
+            label.image.animating=False
+            image = self.__getImage(imageFile)
+
+            label.config(image=image)
+            label.config(anchor=CENTER, font=self.labelFont, background=self.labelBgColour)
+            label.image = image # keep a reference!
+
+            if image.isAnimated:
+                    self.topLevel.after(image.anim_speed, self.__animateImage, name)
+
+            # removed - keep the label the same size, and crop images
+            #h = image.height()
+            #w = image.width()
+            #label.config(height=h, width=w)
+            self.topLevel.update_idletasks()
 
       # must be GIF or PNG
       def addImage(self, name, imageFile, row=None, column=0, colspan=0):
@@ -1913,7 +1990,7 @@ class gui:
                   h = img.height()
                   w = img.width()
                   label.config(height=h, width=w)
-            
+
             self.n_images[name] = label
             self.__positionWidget(label, row, column, colspan)
             if img.isAnimated:
@@ -1941,7 +2018,7 @@ class gui:
             img.config(image=image)
             img.config(anchor=CENTER, font=self.labelFont, background=self.labelBgColour)
             img.modImage = image # keep a reference!
-            img.config(width=image.width(), height=image.height()) 
+            img.config(width=image.width(), height=image.height())
 
       #get every nth pixel (must be an integer)
       # 0 won't work, 1 will return the original size
@@ -1952,84 +2029,7 @@ class gui:
             label.config(image=image)
             label.config(anchor=CENTER, font=self.labelFont, background=self.labelBgColour)
             label.modImage = image # keep a reference!
-            label.config(width=image.width(), height=image.height()) 
-
-      # replace the current image, with a new one
-      def setImage(self, name, imageFile):
-            label = self.__verifyItem(self.n_images, name)
-            label.image.animating=False
-            image = self.__getImage(imageFile)
-            
-            label.config(image=image)
-            label.config(anchor=CENTER, font=self.labelFont, background=self.labelBgColour)
-            label.image = image # keep a reference!
-
-            if image.isAnimated:
-                    self.topLevel.after(image.anim_speed, self.__animateImage, name)
-
-            # removed - keep the label the same size, and crop images
-            #h = image.height()
-            #w = image.width()
-            #label.config(height=h, width=w)
-            self.topLevel.update_idletasks()
-
-      # function to remove image objects form cache
-      def clearImageCache(self):
-            self.n_imageCache = {}
-
-      # simple way to check if image is animated
-      def __checkIsAnimated(self, name):
-          if imghdr.what(name) == "gif":
-                try:
-                    PhotoImage(file=name, format="gif - 1")
-                    return True
-                except: pass
-          return False
-
-      # internal function to check/build image object
-      def __getImage(self, image, cache=True):
-            if image is None: return None
-            if os.path.isfile(image):
-                  imgType = imghdr.what(image)
-                  if os.access(image, os.R_OK):
-                        if not image.lower().endswith(imgType) and not (imgType=="jpeg" and image.lower().endswith("jpg")):
-                              # the image has been saved with the wrong extension
-                              raise Exception("Invalid image extension: " + image + " should be a " + imgType)
-
-                        if cache and image in self.n_imageCache and self.n_imageCache[image] is not None:
-                              imgFile=self.n_imageCache[image]
-                        elif image.lower().endswith('.gif'):
-                              imgFile=PhotoImage(file=image)
-                        elif image.lower().endswith('.png'):
-                              self.warn("Image processing for PNGs is slow. GIF is the recommended format")
-                              # known issue here, some PNGs lack IDAT chunks
-                              png = PngImageTk(image)
-                              png.convert()
-                              imgFile=png.image
-                        elif image.lower().endswith('.ppm') or image.lower().endswith('.pgm'):
-                              imgFile=PhotoImage(file=image)
-                        elif image.lower().endswith('jpg'):
-                              self.warn("Image processing for JPGs is slow. GIF is the recommended format")
-                              imgFile=self.convertJpgToBmp(image)
-                        else:
-                              raise Exception("Invalid image type: "+ image) from None
-                  else:
-                        raise Exception("Can't read image: "+ image) from None
-            else:
-                  raise Exception("Image "+image+" does not exist") from None
-
-            # sort out animated images
-            if self.__checkIsAnimated(image):
-                    self.__configAnimatedImage(imgFile)
-                    self.__preloadAnimatedImage(imgFile)
-            else:
-                imgFile.isAnimated=False
-                imgFile.animating=False
-
-            imgFile.path=image
-
-            if cache: self.n_imageCache[image]=imgFile
-            return imgFile
+            label.config(width=image.width(), height=image.height())
 
       def convertJpgToBmp(self, image):
             # read the image into an array of bytes
@@ -2067,7 +2067,7 @@ class gui:
 #                  else: outFile.write(val.encode('ISO-8859-1'))
 #
 #            return fileName
-            
+
       # function to set a background image
       # make sure this is done before everything else, otherwise it will cover other widgets
       def setBgImage(self, image):
