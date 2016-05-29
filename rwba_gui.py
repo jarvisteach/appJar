@@ -463,7 +463,7 @@ class gui:
                     self.warn("Specified dimensions ("+self.__getTopLevel().geom+"), less than requested dimensions ("+str(r_width)+"x"+str(r_heigth)+")")
 
                 # if the window hasn't been positioned by the user, put it in the middle
-                if not self.locationSet: 
+                if not self.locationSet:
                     x = (self.topLevel.winfo_screenwidth() - width) / 2
                     y = (self.topLevel.winfo_screenheight() - height) / 2
                     self.setLocation(x,y)
@@ -2147,7 +2147,7 @@ class gui:
             else:
                   # sound not available at this time
                   raise Exception("Sound not supported on this platform: " + platform() )
-      
+
 #####################################
 ## FUNCTION for radio buttons
 #####################################
@@ -2837,30 +2837,37 @@ class gui:
 #####################################
 ## FUNCTIONS for menu bar
 #####################################
-
-# BIG CHANGES need to be made here
-# keep a list of menu, so items can be added
-
       def addMenuList(self, menuName, names, funcs, tearable=False):
             self.__initMenu()
+            menu = Menu(self.menuBar, tearoff=tearable)
+
             # deal with a dict_keys object - messy!!!!
             if not isinstance(names, list): names = list(names)
 
-            singleFunc = self.__checkFunc(names, funcs)
-            menu = Menu(self.menuBar, tearoff=tearable)
+            # append some Nones, if it's a list and contains separators
+            if funcs is not None:
+                if not callable(funcs):
+                    seps = names.count("-")
+                    for i in range(seps): funcs.append(None)
+                singleFunc = self.__checkFunc(names, funcs)
 
-            for i in range(len(names)):
-                  t = names[i]
-                  if t == "-": menu.add_separator()
+            # add menu items
+            for t in names:
+                  if t == "-":
+                        menu.add_separator()
                   else:
-                        if singleFunc is not None:
-                                u = self.__makeFunc(singleFunc, t)
+                        if funcs is None:
+                            menu.add_command(label=t)
                         else:
-                                u = self.__makeFunc(funcs[i], t)
+                            if singleFunc is not None:
+                                    u = self.__makeFunc(singleFunc, t)
+                            else:
+                                    u = self.__makeFunc(funcs.pop(0), t)
 
-                        menu.add_command(label=t, command=u )
+                            menu.add_command(label=t, command=u )
 
             self.menuBar.add_cascade(label=menuName,menu=menu)
+            self.n_menus[menuName]=menu
 
       def __initMenu(self):
             # create a menu bar - only shows if populated
@@ -2875,6 +2882,7 @@ class gui:
             u = self.__makeFunc(func, name, True)
             self.menuBar.add_command(label=name, command=u)
 
+      # add a parent menu, for menu items
       def createMenu(self, title, tearable=False):
             self.__verifyItem(self.n_menus, title, True)
             self.__initMenu()
@@ -2882,35 +2890,42 @@ class gui:
             self.menuBar.add_cascade(label=title,menu=menu)
             self.n_menus[title]=menu
 
-      def addMenuItem(self, menu, name, func=None, kind=None):
-            menu = self.__verifyItem(self.n_menus, menu)
+      # add items to the named menu
+      def addMenuItem(self, title, item, func=None, kind=None):
+            menu = self.__verifyItem(self.n_menus, title)
             var = None
-            if name == "-" or kind=="separator":
+            if item == "-" or kind=="separator":
                   menu.add_separator()
+            # creates a var rb+item
+            # uses func for the title of this radiobutotn
             elif kind == "rb":
-                  varName = "rb"+name
+                  varName = "rb"+item
+                  newRb=False
                   if (varName in self.n_menuVars):
                         var = self.n_menuVars[varName]
                   else:
+                        newRb=True
                         var = StringVar(self.topLevel)
                         self.n_menuVars[varName]=var
                   menu.add_radiobutton(label=func, variable=var, value=func)
+                  if newRb: self.setMenuRadioButton(title, item, func)
+            # creates a var cb+item
             elif kind == "cb":
-                  varName = "cb"+name
-                  if (varName in self.n_menuVars):
-                        var = self.n_menuVars[varName]
-                  else:
-                        var = StringVar(self.topLevel)
-                        self.n_menuVars[varName]=var
-                  menu.add_checkbutton(label=name, variable=var, onvalue=1, offvalue=0)
+                  varName = "cb"+item
+                  self.__verifyItem(self.n_menuVars, varName, True)
+                  var = StringVar(self.topLevel)
+                  self.n_menuVars[varName]=var
+                  menu.add_checkbutton(label=item, variable=var, onvalue=1, offvalue=0)
             else:
-                  u = self.__makeFunc(func, name, True)
-                  menu.add_command(label="name", command=u)
+                  if func is not None:
+                        u = self.__makeFunc(func, item, True)
+                        menu.add_command(label=item, command=u)
+                  else:
+                        menu.add_command(label=item)
 
       def __getMenu(self, menu, title, kind):
             title=kind+title
             var = self.__verifyItem(self.n_menuVars, title)
-            print("--",var.get(),"--")
             if kind=="rb":
                   return var.get()
             elif kind=="cb":
@@ -2924,6 +2939,7 @@ class gui:
             return self.__getMenu(menu, title, "rb")
 
       #################
+      # wrappers for other menu types
 
       def addMenuSeparator(self, menu):
             self.addMenuItem(menu, "-")
@@ -2935,6 +2951,26 @@ class gui:
             self.addMenuItem(menu, name, value, kind="rb")
 
       #################
+      # wrappers for setters
+
+      def __setMenu(self, menu, title, value, kind):
+            title=kind+title
+            var = self.__verifyItem(self.n_menuVars, title)
+            if kind=="rb":
+                  var.set(value)
+            elif kind=="cb":
+                  if var.get() == "1": var.set("0")
+                  else: var.set("1")
+
+
+      def setMenuCheckBox(self, menu, name):
+            self.__setMenu(menu, name, None, "cb")
+
+      def setMenuRadioButton(self, menu, name, value):
+            self.__setMenu(menu, name, value, "rb")
+
+      #################
+      # wrappers for platform specific menus
 
       def addMenuPreferences(self, func):
             self.topLevel.createcommand('tk::mac::ShowPreferences', func)
