@@ -1836,34 +1836,34 @@ class gui:
 #####################################
 ## FUNCTION to add images
 #####################################
-      def __animateImage(self, name):
-            img = self.__verifyItem(self.n_images, name)
-            if not img.image.animating: return
+      # looks up label containing image
+      def __animateImage(self, title):
+            lab = self.__verifyItem(self.n_images, title)
+            if not lab.image.animating: return
             try:
-                  if img.image.cached:
-                        pic =img.image.pics[img.image.anim_pos]
+                  if lab.image.cached:
+                        pic =lab.image.pics[lab.image.anim_pos]
                   else:
-                        pic = PhotoImage(file=img.image.anim_path, format="gif - {}".format(img.image.anim_pos))
-                        img.image.pics.append(pic)
-                  img.image.anim_pos += 1
-                  img.config(image=pic)
-                  self.topLevel.after(img.image.anim_speed, self.__animateImage, name)
+                        pic = PhotoImage(file=lab.image.path, format="gif - {}".format(lab.image.anim_pos))
+                        lab.image.pics.append(pic)
+                  lab.image.anim_pos += 1
+                  lab.config(image=pic)
+                  self.topLevel.after(lab.image.anim_speed, self.__animateImage, title)
             except:
-                  img.image.anim_pos=0
-                  img.image.cached=True
-                  self.__animateImage(name)
+                  lab.image.anim_pos=0
+                  lab.image.cached=True
+                  self.__animateImage(title)
 
-      def __preloadAnimatedImage(self, name):
-            img = self.__verifyItem(self.n_images, name)
-            if img.image.cached: return
+      def __preloadAnimatedImage(self, img):
+            if img.cached: return
             try:
-                  pic = PhotoImage(file=img.image.anim_path, format="gif - {}".format(img.image.anim_pos))
-                  img.image.pics.append(pic)
-                  img.image.anim_pos += 1
-                  self.topLevel.after(0, self.__preloadAnimatedImage, name)
+                  pic = PhotoImage(file=img.path, format="gif - {}".format(img.anim_pos))
+                  img.pics.append(pic)
+                  img.anim_pos += 1
+                  self.topLevel.after(0, self.__preloadAnimatedImage, img)
             except:
-                  img.image.anim_pos=0
-                  img.image.cached=True
+                  img.anim_pos=0
+                  img.cached=True
 
       def setAnimationSpeed(self, name, speed):
             img = self.__verifyItem(self.n_images, name).image
@@ -1883,16 +1883,20 @@ class gui:
             self.warn("Warning - addAnimatedImage() is now deprecated - use addImage()")
             self.addImage(name, imageFile, row, column, colspan)
 
-      def __configAnimatedImage(self, img, name, path):
+      # function to set an alternative image, when a mouse goes over
+      def setImageMouseOver(self, title, overImg):
+            lab = self.__verifyItem(self.n_images, title)
+            leaveImg=lab.image.path
+            lab.bind("<Leave>", lambda e: self.setImage(title, leaveImg))
+            lab.bind("<Enter>", lambda e: self.setImage(title, overImg))
+
+      def __configAnimatedImage(self, img):
             img.isAnimated=True
             img.pics=[]
             img.cached=False
             img.anim_pos=0
             img.anim_speed=150
-            img.anim_path=path
             img.animating=True
-            self.topLevel.after(img.anim_speed, self.__animateImage, name)
-            return img
 
       # must be GIF or PNG
       def addImage(self, name, imageFile, row=None, column=0, colspan=0):
@@ -1911,10 +1915,9 @@ class gui:
                   label.config(height=h, width=w)
             
             self.n_images[name] = label
-            if self.__checkIsAnimated(imageFile):
-                    self.__configAnimatedImage(img, name, imageFile)
-                    self.__preloadAnimatedImage(name)
             self.__positionWidget(label, row, column, colspan)
+            if img.isAnimated:
+                    self.topLevel.after(img.anim_speed, self.__animateImage, name)
 
       def setImageSize(self, name, width, height):
             img = self.__verifyItem(self.n_images, name)
@@ -1954,15 +1957,17 @@ class gui:
       # replace the current image, with a new one
       def setImage(self, name, imageFile):
             label = self.__verifyItem(self.n_images, name)
-            oldImage = label.image
+            label.image.animating=False
             image = self.__getImage(imageFile)
-            if oldImage.isAnimated:
-                  self.__configAnimatedImage(image, name, imageFile)
             
             label.config(image=image)
             label.config(anchor=CENTER, font=self.labelFont, background=self.labelBgColour)
             label.image = image # keep a reference!
 
+            if image.isAnimated:
+                    self.topLevel.after(image.anim_speed, self.__animateImage, name)
+
+            # removed - keep the label the same size, and crop images
             #h = image.height()
             #w = image.width()
             #label.config(height=h, width=w)
@@ -2012,8 +2017,17 @@ class gui:
                         raise Exception("Can't read image: "+ image) from None
             else:
                   raise Exception("Image "+image+" does not exist") from None
-            imgFile.isAnimated=False
-            imgFile.animating=False
+
+            # sort out animated images
+            if self.__checkIsAnimated(image):
+                    self.__configAnimatedImage(imgFile)
+                    self.__preloadAnimatedImage(imgFile)
+            else:
+                imgFile.isAnimated=False
+                imgFile.animating=False
+
+            imgFile.path=image
+
             if cache: self.n_imageCache[image]=imgFile
             return imgFile
 
