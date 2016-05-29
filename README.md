@@ -5,13 +5,16 @@ Key tool right now is gui
 
 This provides a library for implementing easy GUIs...
 
-Download the package, unzip it, make sure the folder is called rwbatools
-
-Add rwbatools to your PYTHONPATH (export PYTHONPATH=$PYTHONPATH:~/Downloads/rwbatools)
-
-And give it a twirl.
- - Check the docs folder, for a couple of PDFs with help.
- - Check the Lessons folder, for some example code.
+Installation:
+ - Download the ZIP file (click the big green button)
+ - Unzip it, and rename it from rwbatools-master to rwbatools
+ - Add it to your path:
+   - make a folder in your home directory, called PYLIB, and put rwbatools inside it
+   - On mac/linux add this to your .bashrc: export PYTHONPATH=~/PYLIB:$PYTHONPATH
+   - On Windows, add a new envonrment variable
+ - Give it a twirl:
+   - Check the docs folder, for a couple of PDFs with help.
+   - Check the Lessons folder, for some example code.
 
 Example:
 
