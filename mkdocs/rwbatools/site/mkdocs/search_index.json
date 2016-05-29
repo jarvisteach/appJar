@@ -1,0 +1,284 @@
+{
+    "docs": [
+        {
+            "location": "/",
+            "text": "To Begin\n\n\nTo build a GUI, requires the following steps:\n\n\n1) \nIMPORT\n the library\n\n2) \nCREATE\n the GUI\n\n3) \nSTART\n the GUI  \n\n\nCode Sample:\n\n\nfrom rwbatools import gui  \napp = gui()  \napp.go()  \n\n\n\n\n\n\nIn-between creating & starting the GUI, you \nADD\n any widgets you want, and \nSET\n their properties.  \n\n\nWhen adding a widget, you usually have to give it a title - this is used later if you want to change the widget.  \n\n\nThen, you set any appropriate properties.  \n\n\n\n\nAs well as adding widgets, you need to think about layout:\n\n\n\n\nSimple Layout\n\n\nGrid Layout\n\n\n\n\nThere are also a number of things you can configure about the GUI:\n\n\n\n\nGUI Options\n\n\n\n\n\n\nWidgets\n\n\nThe following widgets are available:\n\n\n\n\nLabel\n - Used for displaying writing\n\n\nFlashLabel - a label that flashes\n\n\n\n\n\n\nEntry\n - A single line box for typing text\n\n\nSecretEntry - an entry box that displays stars as the user types\n\n\nNumericEntry - an entry box that only accepts numbers\n\n\n\n\n\n\nButton\n - A clickable button, that will call a function\n\n\nRadioButton\n - A group of round boxes, only one of which can be selected\n\n\nCheckBox\n - A box, with a label, that can be either ON or OFF\n\n\nListBox\n - A box containing a list of items, single or multi-select\n\n\nSpinBox\n - A scrollable option\n\n\nScale\n - A slider, that has a minimum & maximum value\n\n\nOptionBox\n - A drop-down single-select option\n\n\nMessage\n - Like a multi-line label\n\n\nTextArea\n - A multi-line box for typing text\n\n\nMeter\n - Used for showing progress\n\n\nSplitMeter\n - Shows two values, left & right\n\n\n\n\n\n\nDualMeter\n - shows percentage left & right\n\n\nImage\n - shows an image\n\n\nPieChart\n - shows a pie chart\n\n\nSeparator\n - shows a horizontal line\n\n\nLink/WebLink\n - Clickable text to call a function or launch a URL\n\n\nTree\n - in development\n\n\nGrid\n - in development\n\n\n\n\n\n\nSpecial Widgets\n\n\nSome special widgets are available:\n\n\n\n\nToolBar\n - adds a toolbar along the top of the GUI\n\n\nMenu\n - adds a standard Menu bar along the top of the GUI\n\n\nStatus\n - adds a status bar along the bottom of the GUI\n\n\n\n\n\n\nDialogs\n\n\nA number of dialogs are available:\n\n\n\n\ninfoBox\n\n\nerrorBox\n\n\nwarningBox\n\n\nyesNoBox\n\n\nquestionBox\n\n\nokBox\n\n\nretryBox\n\n\nopenBox\n\n\nsaveBox\n\n\ndirectoryBox\n\n\ncolourBox\n\n\ntextBox\n\n\nnumBox\n\n\n\n\n\n\nLayouts\n\n\nFinally, a number of layouts are available:\n\n\n\n\nLabelFrame\n - will put a border around the widgets, with a title\n\n\nNoteBook\n - will create a tabbed interface, with a number of pages\n\n\nPanedWindow\n - will create a split view, with draggable panes\n\n\nSubWindow\n - used to create additional windows\n\n\n\n\n\n\nSound\n\n\nThe GUI can also make SOUND (on Windows)\n\n\n\n\n.playSound(sound, wait=False)\n\n\n.stopSound()\n\n\n.loopSound()\n\n\n.soundError()\n\n\n.soundWarning()\n\n\n.playNote(note, duration=200)",
+            "title": "Home"
+        },
+        {
+            "location": "/#to-begin",
+            "text": "To build a GUI, requires the following steps:  1)  IMPORT  the library \n2)  CREATE  the GUI \n3)  START  the GUI",
+            "title": "To Begin"
+        },
+        {
+            "location": "/#code-sample",
+            "text": "from rwbatools import gui  \napp = gui()  \napp.go()     In-between creating & starting the GUI, you  ADD  any widgets you want, and  SET  their properties.    When adding a widget, you usually have to give it a title - this is used later if you want to change the widget.    Then, you set any appropriate properties.     As well as adding widgets, you need to think about layout:   Simple Layout  Grid Layout   There are also a number of things you can configure about the GUI:   GUI Options",
+            "title": "Code Sample:"
+        },
+        {
+            "location": "/#widgets",
+            "text": "The following widgets are available:   Label  - Used for displaying writing  FlashLabel - a label that flashes    Entry  - A single line box for typing text  SecretEntry - an entry box that displays stars as the user types  NumericEntry - an entry box that only accepts numbers    Button  - A clickable button, that will call a function  RadioButton  - A group of round boxes, only one of which can be selected  CheckBox  - A box, with a label, that can be either ON or OFF  ListBox  - A box containing a list of items, single or multi-select  SpinBox  - A scrollable option  Scale  - A slider, that has a minimum & maximum value  OptionBox  - A drop-down single-select option  Message  - Like a multi-line label  TextArea  - A multi-line box for typing text  Meter  - Used for showing progress  SplitMeter  - Shows two values, left & right    DualMeter  - shows percentage left & right  Image  - shows an image  PieChart  - shows a pie chart  Separator  - shows a horizontal line  Link/WebLink  - Clickable text to call a function or launch a URL  Tree  - in development  Grid  - in development",
+            "title": "Widgets"
+        },
+        {
+            "location": "/#special-widgets",
+            "text": "Some special widgets are available:   ToolBar  - adds a toolbar along the top of the GUI  Menu  - adds a standard Menu bar along the top of the GUI  Status  - adds a status bar along the bottom of the GUI",
+            "title": "Special Widgets"
+        },
+        {
+            "location": "/#dialogs",
+            "text": "A number of dialogs are available:   infoBox  errorBox  warningBox  yesNoBox  questionBox  okBox  retryBox  openBox  saveBox  directoryBox  colourBox  textBox  numBox",
+            "title": "Dialogs"
+        },
+        {
+            "location": "/#layouts",
+            "text": "Finally, a number of layouts are available:   LabelFrame  - will put a border around the widgets, with a title  NoteBook  - will create a tabbed interface, with a number of pages  PanedWindow  - will create a split view, with draggable panes  SubWindow  - used to create additional windows",
+            "title": "Layouts"
+        },
+        {
+            "location": "/#sound",
+            "text": "The GUI can also make SOUND (on Windows)   .playSound(sound, wait=False)  .stopSound()  .loopSound()  .soundError()  .soundWarning()  .playNote(note, duration=200)",
+            "title": "Sound"
+        },
+        {
+            "location": "/Layout/",
+            "text": "Simple Layout\n\n\nLaying out widgets is very simple.\n\n\nBy default, each new widget is simply added on a new line. That way, you can very quickly, create a simple app.\n\n\nFor example:\n\n\nfrom rwbatools import gui  \n\ndef changeLabel(btn):  \n    app.setLabel(\"l2\", app.getEntry(\"text\"))  \n\napp = gui()  \napp.addLabel(\"l1\", \"Simple Demo\")\napp.addEntry(\"text\")\napp.addButton(\"OK\", changeLabel)\napp.addEmptyLabel(\"l2\")\napp.go()\n\n\n\n\n\n\nGrid Layout\n\n\nIf, however, you want more than that, then a grid layout is supported.\nEach time you add a widget, you can specify a column, row, and even a column-span to position it in.\n\n\n\n\nGrouping Widgets\n\n\nOnce you have got to grips with laying out your widgets, it is possible to group them together.\nThree main styles are currently supported:\n\n\nLabelFrame\n\n\nWill put a border around the widgets, with a title\n\n\n\n\n.\nstartLabelFrame(title)\n\n\n.\nstopLabelFrame()\n\n\n.\nsetLabelFrameAnchor(title, anchor)\n\n\n\n\n\n\nNoteBook\n\n\nWill create a tabbed interface, with a number of pages\n\n\n\n\n.\nstartNoteBook(note)\n\n\n.\nstartNoteTab(tab)\n\n\n.\nstopNoteTab()\n\n\n.\nstopNoteBook()\n\n\n.\nsetNoteTab(note, tab)\n\n\n.\nsetNoteBookBg(note, active, inactive)\n\n\n.\nsetNoteBookFg(note, active, inactive)\n\n\n.\nsetNoteTabBg(note, tab, bg)\n\n\n\n\n\n\nPanedWindow\n\n\nWill create a split view, with draggable panes\n\n\n\n\n.\nstartPanedWindow(title)\n\n\n.\nstopPanedFrame()\n\n\n.\nsetPanedWindowVertical(title)\n\n\n\n\nSubWindow\n\n\nAllows the creation of additional windows.\nThe window is hidden until \n.showSubWindow(title)\n is called.\n\n\n\n\n.\nstartSubWindow(name, title=None)\n\n\n.\nstopSubWindow()\n\n\n.\nshowSubWindow(title)\n\n\n.\nhideSubWindow(title)\n\n\n.\ndestroySubWindow(title)",
+            "title": "Layout"
+        },
+        {
+            "location": "/Layout/#simple-layout",
+            "text": "Laying out widgets is very simple.  By default, each new widget is simply added on a new line. That way, you can very quickly, create a simple app.  For example:  from rwbatools import gui  \n\ndef changeLabel(btn):  \n    app.setLabel(\"l2\", app.getEntry(\"text\"))  \n\napp = gui()  \napp.addLabel(\"l1\", \"Simple Demo\")\napp.addEntry(\"text\")\napp.addButton(\"OK\", changeLabel)\napp.addEmptyLabel(\"l2\")\napp.go()",
+            "title": "Simple Layout"
+        },
+        {
+            "location": "/Layout/#grid-layout",
+            "text": "If, however, you want more than that, then a grid layout is supported.\nEach time you add a widget, you can specify a column, row, and even a column-span to position it in.",
+            "title": "Grid Layout"
+        },
+        {
+            "location": "/Layout/#grouping-widgets",
+            "text": "Once you have got to grips with laying out your widgets, it is possible to group them together.\nThree main styles are currently supported:",
+            "title": "Grouping Widgets"
+        },
+        {
+            "location": "/Layout/#labelframe",
+            "text": "Will put a border around the widgets, with a title   . startLabelFrame(title)  . stopLabelFrame()  . setLabelFrameAnchor(title, anchor)",
+            "title": "LabelFrame"
+        },
+        {
+            "location": "/Layout/#notebook",
+            "text": "Will create a tabbed interface, with a number of pages   . startNoteBook(note)  . startNoteTab(tab)  . stopNoteTab()  . stopNoteBook()  . setNoteTab(note, tab)  . setNoteBookBg(note, active, inactive)  . setNoteBookFg(note, active, inactive)  . setNoteTabBg(note, tab, bg)",
+            "title": "NoteBook"
+        },
+        {
+            "location": "/Layout/#panedwindow",
+            "text": "Will create a split view, with draggable panes   . startPanedWindow(title)  . stopPanedFrame()  . setPanedWindowVertical(title)",
+            "title": "PanedWindow"
+        },
+        {
+            "location": "/Layout/#subwindow",
+            "text": "Allows the creation of additional windows.\nThe window is hidden until  .showSubWindow(title)  is called.   . startSubWindow(name, title=None)  . stopSubWindow()  . showSubWindow(title)  . hideSubWindow(title)  . destroySubWindow(title)",
+            "title": "SubWindow"
+        },
+        {
+            "location": "/Options/",
+            "text": "The library supports lots of additional functionality.\n\n\nGUI Configuration\n\n\n\n\nsetGeometry()\n - sets the height & width of the GUI, or set it fullscreen\n\n\nsetTitle()\n\n\nsetResizable()\n\n\nsetTransparency()\n\n\nsetIcon()\n\n\nsetLocation()\n - sets the position of the GUI\n\n\n\n\n\n\nGUI Actions\n\n\n\n\nexitFullscreen()\n - leave fullscreen\n\n\nregisterEvents()\n - functions that will be called automatically at regular intervals\n\n\nsetPollTime()\n - how frequently registered functions will be called\n\n\nenableEnter()\n - link a function to the return key\n\n\ndisableEnter()\n - unlink a function form the return key\n\n\nbindKey()\n - link the specified key to the specified function\n\n\nunbindKey()\n - unlink the specified key \n\n\n\n\n\n\nWidget Positioning\n\n\n\n\nsetPadX()\n\n\nsetPadY()\n\n\nsetSticky()\n\n\nsetExpand()\n\n\ngetRow()\n\n\ngetNextRow()\n\n\n\n\n\n\nGUI Design\n\n\n\n\nsetBg()\n\n\nsetLabelFont()\n\n\nincreaseLabelFont()\n\n\ndecreaseLabelFont()\n\n\nsetButtonFont()\n\n\nincreaseButtonFont()\n\n\ndecreaseButtonFont()\n\n\nsetFont()\n\n\ndecreaseFont()\n\n\nincreaseFont()\n\n\n\n\n\n\nWidget Actions\n\n\n\n\nhideWidget(kind, name)\n\n\nshowWidget(kind, name)\n\n\nremoveWidget(kind, name)\n\n\nremoveAllWidgets()",
+            "title": "Options"
+        },
+        {
+            "location": "/Options/#gui-configuration",
+            "text": "setGeometry()  - sets the height & width of the GUI, or set it fullscreen  setTitle()  setResizable()  setTransparency()  setIcon()  setLocation()  - sets the position of the GUI",
+            "title": "GUI Configuration"
+        },
+        {
+            "location": "/Options/#gui-actions",
+            "text": "exitFullscreen()  - leave fullscreen  registerEvents()  - functions that will be called automatically at regular intervals  setPollTime()  - how frequently registered functions will be called  enableEnter()  - link a function to the return key  disableEnter()  - unlink a function form the return key  bindKey()  - link the specified key to the specified function  unbindKey()  - unlink the specified key",
+            "title": "GUI Actions"
+        },
+        {
+            "location": "/Options/#widget-positioning",
+            "text": "setPadX()  setPadY()  setSticky()  setExpand()  getRow()  getNextRow()",
+            "title": "Widget Positioning"
+        },
+        {
+            "location": "/Options/#gui-design",
+            "text": "setBg()  setLabelFont()  increaseLabelFont()  decreaseLabelFont()  setButtonFont()  increaseButtonFont()  decreaseButtonFont()  setFont()  decreaseFont()  increaseFont()",
+            "title": "GUI Design"
+        },
+        {
+            "location": "/Options/#widget-actions",
+            "text": "hideWidget(kind, name)  showWidget(kind, name)  removeWidget(kind, name)  removeAllWidgets()",
+            "title": "Widget Actions"
+        },
+        {
+            "location": "/Widgets/",
+            "text": "Widget Library\n\n\nLabel\n\n\nLabels are used for displaying basic text on the screen.\n\n\n\n\n\n\n.addLabel(title, text=None)\n\n\nAt a minimum, a title must be provided - to identify the label. This is then followed by an optional piece of text to display.\n\n\n\n\n\n\n.addEmptyLabel(title)\n\n\nDoes the same as add a label, except there''s no parameter to set any text.\n\n\n\n\n\n\n.addFlashLabel(title, text=None)\n\n\nThis adds a flashing label, that will alternate between the foreground and background colours.\n\n\n\n\n\n\n.setLabel(title, text)\n\n\nChange the contents of the label.\n\n\n\n\n\n\n.getLabel(title)\n\n\nGet the contents of the label.\n\n\n\n\n\n\n.clearLabel(title)\n\n\nClear the contents of the label.\n\n\n\n\n\n\nEntry\n\n\nEntries are used to capture input from the user. They take a single parameter - a title.\n\n\n\n\n.addEntry(title)\n\n\n.addNumericEntry(title)\n\n\n.addSecretEntry(title)\n\n\n.addLabelEntry(title)\n\n\n.addNumericLabelEntry(title)\n\n\n.addSecretLabelEntry(title)\n\n\n.setEntry(title, text)\n\n\n.setEntryDefault(title, text)\n\n\n.getEntry(title)\n\n\n.clearEntry(title)\n\n\n.clearAllEntries()\n\n\n.setFocus(title)\n\n\n\n\nButton\n\n\nA clickable button, that will call a function\n\n\n\n\n.addButton(title, function)\n\n\n.addButtons(titles, functions)\n\n\n.addNamedButton(name, title, function)\n\n\n.setButton(name, text)\n\n\n.setButtonImage(title, image)\n\n\n\n\nRadioButton\n\n\nA group of round boxes, only one of which can be selected\n\n\n\n\n.addRadioButton(title, name)\n\n\n.getRadioButton(title)\n\n\n.setRadioButton(title, value)\n\n\n.setRadioTick(title, tick)\n\n\n\n\nCheckBox\n\n\nA box, with a label, that can be either ON or OFF\n\n\n\n\n.addCheckBox(title)\n\n\n.getCheckBox(title)\n\n\n.setCheckBox(title, ticked)\n\n\n\n\nListBox\n\n\nA box containing a list of items, single or multi-select\n\n\n\n\n.addListBox(title, values)\n\n\n.setListBoxRows(title)\n\n\n.setListSingle(list, single)\n\n\n.selectListItem(title, item)\n\n\n.updateListItems(title, items)\n\n\n.addListItem(title, item)\n\n\n.addListItems(title, items)\n\n\n.getListItems(title)\n\n\n.removeListItem(title, item)\n\n\n.clearListBox(title)\n\n\n\n\nSpinBox\n\n\nA scrollable option\n\n\n\n\n.addSpinBox(title, vals)\n\n\n.addSpinBoxRange(title, from, to)\n\n\n.addLabelSpinBox(title, vals)\n\n\n.addLabelSpinBoxRange(title, from, to)\n\n\n.getSpinBox(title)\n\n\n.setSpinBox(title, val)\n\n\n.setSpinBoxPos(title, pos)\n\n\n\n\nScale\n\n\nA slider, that has a minimum & maximum value\n\n\n\n\n.addScale(title)\n\n\n.setScaleRange(title from, to, curr=0)\n\n\n.orientScaleHor(title, hor=True)\n\n\n.setScale(title, pos)\n\n\n.getScale(title)\n\n\n.showScaleValue(title, show=True)\n\n\n\n\nOptionBox\n\n\nA drop-down single-select option\n\n\n\n\n.addOptionBox(title, values)\n\n\n.addLabelOptionBox(title, values)\n\n\n.getOptionBox(title)\n\n\n.changeOptionBox(title, newOptions)\n\n\n.setOptionBox(title, position)\n\n\n\n\nMessage\n\n\nLike a multi-line label\n\n\n\n\n.addMessage(title, text)\n\n\n.addEmptyMessage(title)\n\n\n.clearMessage(title)\n\n\n.setMessage(title, text)\n\n\n\n\nTextArea\n\n\nA multi-line box for typing text\n\n\n\n\n.addTextArea(title)\n\n\n.addScrolledTextArea(title)\n\n\n.setTextArea(title, text)\n\n\n.getTextArea(title)\n\n\n.clearTextArea(title)\n\n\n.logTextArea(title)\n\n\n.textAreaChanged(title)\n\n\n\n\nMeter\n\n\nUsed for showing progress\n\n\nSplitMeter\n\n\nShows two values, left & right\n\n\nDualMeter\n\n\nShows percentage left & right\n\n\nImage\n\n\nShows an image, there are lots of things you can do with an image.\n\n\n\n\n.addImage(name, file)\n\n\n.setImage(name, image)\n\n\n.setBgImage(image)\n\n\n.removeBgImage(image)\n\n\n.setImageSize(name, width, height)\n\n\n\n\n.zoomImage(name, mod)\n\n\nNegative will shrink, positive will grow.\n\n\n\n\n\n\n.shrinkImage(name, mod)\n\n\n\n\n.growImage(name, mod)\n\n\n.addAnimatedImage(name, file)\n \n\n\n.setAnimationSpeed(name, speed)\n\n\n.stopAnimation(name)\n\n\n.startAnimation(name)\n\n\n\n\nPieChart\n\n\nShows a pie chart\n\n\n\n\n.addPieChart(name, values, size=100)\n\n\n\n\nSeparator\n\n\nShows a horizontal line\n\n\n\n\n.addSeparator()\n\n\n\n\nLink/WebLink\n\n\nClickable text to call a function or launch a URL\n\n\n\n\n.addLink(title, func)\n\n\n.addWebLink(title, page)\n\n\n\n\nTree\n\n\nThis widget is still in development. It takes an arbitrary XML string, and converts it into a tree structure.\n\n\n\n\n\n\n.addTree(title, xml_data)\n\n\nCreate a tree from the xml data\n\n\n\n\n\n\n.addTreeFunction(title, func)\n\n\nRegister he function with double click\n\n\n\n\n\n\n.getTree(title)\n\n\nReturn the tree\n\n\n\n\n\n\nGrid\n\n\nThis widget is still in development.  \n\n\n\n\n\n\n.addGrid(title, data, action=None, addRow=False)\n  \n\n\nReceives a (jagged) 2D list of values. The first list should be the headers for the grid, the rest will contain each row of values.\n\nIf action is set, a button will be created, calling the specified function. If addRow is True, then an additional row will appear, at the end, with Entry boxes.\n\n\n\n\n\n\n.updateGrid(title, data, addRow=False)\n\n\n\n\n.setGridGeom(title, width, height)\n\n\n.getGridEntries(title)\n\n\n.setGridBackground(title, colour)\n\n\n\n\nAdditional Widgets\n\n\nToolBar\n\n\nAdds a toolbar along the top of the GUI\n\n\n\n\n\n\n.addToolbar(names, funcs)\n\n\nWill add a list of buttons along the top, in a toolbar. Each button will call the corresponding function.\n\nIf only one function is supplied, they will all call the same function.\n\nA bundle of free images is available, if the name used for the toolbar matches the nam of an image, an image will be used.  \n\n\n\n\n\n\n.setToolbarImage(name, image)\n\nWill set an image for the corresponding button in the toolbar.\n\n\n\n\n\n\nMenu\n\n\nAdds a standard Menu bar along the top of the GUI\nThe menu bar will show, once the first menu has been added.\nYou can add a single menu option, or a list of menu options.\n\n\n\n\n\n\n.addMenu(title, function)\n\n\nAdds a single menu option, that will call the specified function.\n\n\n\n\n\n\n.addMenuList(title, names, functions, tearable=False)\n\n\nWill add a drop-down menu with the specified title.\n\nWithin the menu will be the list of names, each calling the corresponding function in the function list.\n\nIf only one function is provided, all menus will call the same function.\n\nIf the menu name is a '-', then a separator will be added to the menu.\n\nIf tearable is set to True, then the menu can be undocked.  \n\n\n\n\n\n\nStatus\n\n\nAdds a status bar along the bottom of the GUI.\nThis can be used for easy debugging, or as info for the user.\n\n\n\n\n\n\n.addStatus(header=\"\")\n\n\nThis turns the status bar on, and if a header is supplied, will prepend the header before every message.\n\n\n\n\n\n\n.setStatus(text)\n\n\nThis updates the contents of the status bar. Again, if a header was set when adding the status bar, that will be prepended to the message.\n\n\n\n\n\n\n.clearStatus()\n\n\nClear anything displayed in the status bar, along with any header that might be set.",
+            "title": "Widgets"
+        },
+        {
+            "location": "/Widgets/#widget-library",
+            "text": "",
+            "title": "Widget Library"
+        },
+        {
+            "location": "/Widgets/#label",
+            "text": "Labels are used for displaying basic text on the screen.    .addLabel(title, text=None)  At a minimum, a title must be provided - to identify the label. This is then followed by an optional piece of text to display.    .addEmptyLabel(title)  Does the same as add a label, except there''s no parameter to set any text.    .addFlashLabel(title, text=None)  This adds a flashing label, that will alternate between the foreground and background colours.    .setLabel(title, text)  Change the contents of the label.    .getLabel(title)  Get the contents of the label.    .clearLabel(title)  Clear the contents of the label.",
+            "title": "Label"
+        },
+        {
+            "location": "/Widgets/#entry",
+            "text": "Entries are used to capture input from the user. They take a single parameter - a title.   .addEntry(title)  .addNumericEntry(title)  .addSecretEntry(title)  .addLabelEntry(title)  .addNumericLabelEntry(title)  .addSecretLabelEntry(title)  .setEntry(title, text)  .setEntryDefault(title, text)  .getEntry(title)  .clearEntry(title)  .clearAllEntries()  .setFocus(title)",
+            "title": "Entry"
+        },
+        {
+            "location": "/Widgets/#button",
+            "text": "A clickable button, that will call a function   .addButton(title, function)  .addButtons(titles, functions)  .addNamedButton(name, title, function)  .setButton(name, text)  .setButtonImage(title, image)",
+            "title": "Button"
+        },
+        {
+            "location": "/Widgets/#radiobutton",
+            "text": "A group of round boxes, only one of which can be selected   .addRadioButton(title, name)  .getRadioButton(title)  .setRadioButton(title, value)  .setRadioTick(title, tick)",
+            "title": "RadioButton"
+        },
+        {
+            "location": "/Widgets/#checkbox",
+            "text": "A box, with a label, that can be either ON or OFF   .addCheckBox(title)  .getCheckBox(title)  .setCheckBox(title, ticked)",
+            "title": "CheckBox"
+        },
+        {
+            "location": "/Widgets/#listbox",
+            "text": "A box containing a list of items, single or multi-select   .addListBox(title, values)  .setListBoxRows(title)  .setListSingle(list, single)  .selectListItem(title, item)  .updateListItems(title, items)  .addListItem(title, item)  .addListItems(title, items)  .getListItems(title)  .removeListItem(title, item)  .clearListBox(title)",
+            "title": "ListBox"
+        },
+        {
+            "location": "/Widgets/#spinbox",
+            "text": "A scrollable option   .addSpinBox(title, vals)  .addSpinBoxRange(title, from, to)  .addLabelSpinBox(title, vals)  .addLabelSpinBoxRange(title, from, to)  .getSpinBox(title)  .setSpinBox(title, val)  .setSpinBoxPos(title, pos)",
+            "title": "SpinBox"
+        },
+        {
+            "location": "/Widgets/#scale",
+            "text": "A slider, that has a minimum & maximum value   .addScale(title)  .setScaleRange(title from, to, curr=0)  .orientScaleHor(title, hor=True)  .setScale(title, pos)  .getScale(title)  .showScaleValue(title, show=True)",
+            "title": "Scale"
+        },
+        {
+            "location": "/Widgets/#optionbox",
+            "text": "A drop-down single-select option   .addOptionBox(title, values)  .addLabelOptionBox(title, values)  .getOptionBox(title)  .changeOptionBox(title, newOptions)  .setOptionBox(title, position)",
+            "title": "OptionBox"
+        },
+        {
+            "location": "/Widgets/#message",
+            "text": "Like a multi-line label   .addMessage(title, text)  .addEmptyMessage(title)  .clearMessage(title)  .setMessage(title, text)",
+            "title": "Message"
+        },
+        {
+            "location": "/Widgets/#textarea",
+            "text": "A multi-line box for typing text   .addTextArea(title)  .addScrolledTextArea(title)  .setTextArea(title, text)  .getTextArea(title)  .clearTextArea(title)  .logTextArea(title)  .textAreaChanged(title)",
+            "title": "TextArea"
+        },
+        {
+            "location": "/Widgets/#meter",
+            "text": "Used for showing progress",
+            "title": "Meter"
+        },
+        {
+            "location": "/Widgets/#splitmeter",
+            "text": "Shows two values, left & right",
+            "title": "SplitMeter"
+        },
+        {
+            "location": "/Widgets/#dualmeter",
+            "text": "Shows percentage left & right",
+            "title": "DualMeter"
+        },
+        {
+            "location": "/Widgets/#image",
+            "text": "Shows an image, there are lots of things you can do with an image.   .addImage(name, file)  .setImage(name, image)  .setBgImage(image)  .removeBgImage(image)  .setImageSize(name, width, height)   .zoomImage(name, mod)  Negative will shrink, positive will grow.    .shrinkImage(name, mod)   .growImage(name, mod)  .addAnimatedImage(name, file)    .setAnimationSpeed(name, speed)  .stopAnimation(name)  .startAnimation(name)",
+            "title": "Image"
+        },
+        {
+            "location": "/Widgets/#piechart",
+            "text": "Shows a pie chart   .addPieChart(name, values, size=100)",
+            "title": "PieChart"
+        },
+        {
+            "location": "/Widgets/#separator",
+            "text": "Shows a horizontal line   .addSeparator()",
+            "title": "Separator"
+        },
+        {
+            "location": "/Widgets/#linkweblink",
+            "text": "Clickable text to call a function or launch a URL   .addLink(title, func)  .addWebLink(title, page)",
+            "title": "Link/WebLink"
+        },
+        {
+            "location": "/Widgets/#tree",
+            "text": "This widget is still in development. It takes an arbitrary XML string, and converts it into a tree structure.    .addTree(title, xml_data)  Create a tree from the xml data    .addTreeFunction(title, func)  Register he function with double click    .getTree(title)  Return the tree",
+            "title": "Tree"
+        },
+        {
+            "location": "/Widgets/#grid",
+            "text": "This widget is still in development.      .addGrid(title, data, action=None, addRow=False)     Receives a (jagged) 2D list of values. The first list should be the headers for the grid, the rest will contain each row of values. \nIf action is set, a button will be created, calling the specified function. If addRow is True, then an additional row will appear, at the end, with Entry boxes.    .updateGrid(title, data, addRow=False)   .setGridGeom(title, width, height)  .getGridEntries(title)  .setGridBackground(title, colour)",
+            "title": "Grid"
+        },
+        {
+            "location": "/Widgets/#additional-widgets",
+            "text": "",
+            "title": "Additional Widgets"
+        },
+        {
+            "location": "/Widgets/#toolbar",
+            "text": "Adds a toolbar along the top of the GUI    .addToolbar(names, funcs)  Will add a list of buttons along the top, in a toolbar. Each button will call the corresponding function. \nIf only one function is supplied, they will all call the same function. \nA bundle of free images is available, if the name used for the toolbar matches the nam of an image, an image will be used.      .setToolbarImage(name, image) \nWill set an image for the corresponding button in the toolbar.",
+            "title": "ToolBar"
+        },
+        {
+            "location": "/Widgets/#menu",
+            "text": "Adds a standard Menu bar along the top of the GUI\nThe menu bar will show, once the first menu has been added.\nYou can add a single menu option, or a list of menu options.    .addMenu(title, function)  Adds a single menu option, that will call the specified function.    .addMenuList(title, names, functions, tearable=False)  Will add a drop-down menu with the specified title. \nWithin the menu will be the list of names, each calling the corresponding function in the function list. \nIf only one function is provided, all menus will call the same function. \nIf the menu name is a '-', then a separator will be added to the menu. \nIf tearable is set to True, then the menu can be undocked.",
+            "title": "Menu"
+        },
+        {
+            "location": "/Widgets/#status",
+            "text": "Adds a status bar along the bottom of the GUI.\nThis can be used for easy debugging, or as info for the user.    .addStatus(header=\"\")  This turns the status bar on, and if a header is supplied, will prepend the header before every message.    .setStatus(text)  This updates the contents of the status bar. Again, if a header was set when adding the status bar, that will be prepended to the message.    .clearStatus()  Clear anything displayed in the status bar, along with any header that might be set.",
+            "title": "Status"
+        },
+        {
+            "location": "/Dialogs/",
+            "text": "Dialogs\n\n\nA number of dialogs are available, to add a different user experience, notify the user of information, or get one off pieces of data.\n\n\nMessage Boxes\n\n\n\n\n\n\n.infoBox()\n\n\nShows a simple information message, with an OK button.\n\n\n\n\n\n\n.errorBox()\n\n\nShows a simple error message, with an OK button.\n\n\n\n\n\n\n.warningBox()\n\n\nShows a simple warning message, with an OK message.\n\n\n\n\n\n\nQuestion Boxes\n\n\n\n\n\n\n.yesNoBox()\n\n\nShows a question, with Yes/No buttons. Returns True/False.\n\n\n\n\n\n\n.questionBox()\n\n\nShows a question, with Yes/No buttons. Returns True/False.\n\n\n\n\n\n\n.okBox()\n\n\nShows a question, with OK/Cancel buttons. Returns True/False\n\n\n\n\n\n\n.retryBox()\n\n\nShows a question, with Cancel/Retry buttons. Returns True/False\n\n\n\n\n\n\n.textBox()\n\n\n\n\n\n\n.numberBox()\n\n\n\n\n\n\nFile Boxes\n\n\n\n\n.openBox()\n\n\n.saveBox()\n\n\n.directoryBox()\n\n\n\n\nOther Boxes\n\n\n\n\n.colourBox()",
+            "title": "Dialogs"
+        },
+        {
+            "location": "/Dialogs/#dialogs",
+            "text": "A number of dialogs are available, to add a different user experience, notify the user of information, or get one off pieces of data.",
+            "title": "Dialogs"
+        },
+        {
+            "location": "/Dialogs/#message-boxes",
+            "text": ".infoBox()  Shows a simple information message, with an OK button.    .errorBox()  Shows a simple error message, with an OK button.    .warningBox()  Shows a simple warning message, with an OK message.",
+            "title": "Message Boxes"
+        },
+        {
+            "location": "/Dialogs/#question-boxes",
+            "text": ".yesNoBox()  Shows a question, with Yes/No buttons. Returns True/False.    .questionBox()  Shows a question, with Yes/No buttons. Returns True/False.    .okBox()  Shows a question, with OK/Cancel buttons. Returns True/False    .retryBox()  Shows a question, with Cancel/Retry buttons. Returns True/False    .textBox()    .numberBox()",
+            "title": "Question Boxes"
+        },
+        {
+            "location": "/Dialogs/#file-boxes",
+            "text": ".openBox()  .saveBox()  .directoryBox()",
+            "title": "File Boxes"
+        },
+        {
+            "location": "/Dialogs/#other-boxes",
+            "text": ".colourBox()",
+            "title": "Other Boxes"
+        },
+        {
+            "location": "/Dependencies/",
+            "text": "Thanks to:\n\n\n\n\nhttps://github.com/drj11/pypng - supplies basic PNG support\n\n\nhttps://bitbucket.org/hokaze/tkinter-png - allows PNGs to be treated as PhotoImages\n\n\nhttps://github.com/sullerandras/nanojpeg-python - provides BASIC jpeg support",
+            "title": "Dependencies"
+        },
+        {
+            "location": "/Dependencies/#thanks-to",
+            "text": "https://github.com/drj11/pypng - supplies basic PNG support  https://bitbucket.org/hokaze/tkinter-png - allows PNGs to be treated as PhotoImages  https://github.com/sullerandras/nanojpeg-python - provides BASIC jpeg support",
+            "title": "Thanks to:"
+        }
+    ]
+}
