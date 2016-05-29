@@ -3116,10 +3116,10 @@ class Meter(Frame):
             self._canv.config(bg=col)
 
       def setWidth(self, width):
-            self.config(width=width)
+            self._canv.config(width=width)
 
       def setHeight(self, height):
-            self.config(height=height)
+            self._canv.config(height=height)
 
       def _update_coords(self, event):
             '''Updates the position of the text and rectangle inside the canvas when the size of the widget gets changed.'''
