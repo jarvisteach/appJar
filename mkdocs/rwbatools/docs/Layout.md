@@ -1,9 +1,14 @@
+#Background
+
+RWBAtools was designed to make building a functional GUI as simple as possible.  
+
+It is designed with teaching in mind. Rather than pupils having to focus on the GUI code, they should be focusing on the algorithms that get the work done.
+
+To that end, at it's simplest, you simply keep adding widgets to the GUI, and they will render in sequence.
+
 ##Simple Layout
-Laying out widgets is very simple.
 
-By default, each new widget is simply added on a new line. That way, you can very quickly, create a simple app.
-
-For example:
+By default, each new widget is simply added on a new line. That way, you can very quickly, create a simple GUI:
 
 ```python
 from rwbatools import gui  
@@ -21,52 +26,35 @@ app.go()
 ![Simple Layout](img/1_layout.png)
 
 ## Grid Layout
-If, however, you want more than that, then a grid layout is supported.
+
+If, however, you want more than that, then a basic GRID layout is supported.
+
 Each time you add a widget, you can specify a column, row, and even a column-span to position it in.
 
+```python
+from rwbatools import gui
+
+def press(btn):
+    if btn=="Save":
+        n=app.getEntry("name")
+        a=app.getEntry("age")
+        r=app.getOptionBox("role")
+        app.infoBox("Details", "You entered: {}, {}, {}".format(n, str(a), r))
+    elif btn=="Quit":
+        app.stop()
+
+app=gui()
+
+app.addLabel("l1", "Name", 0, 0)
+app.addLabel("l2", "Age", 1, 0)
+app.addLabel("l3", "Role", 2, 0)
+
+app.addEntry("name", 0, 1)
+app.addNumericEntry("age", 1, 1)
+app.addOptionBox("role", ["Teacher", "Student", "Developer", "Volunteer"], 2, 1)
+
+app.addButtons(["Save", "Quit"], press, 3, 0, 2)
+
+app.go()
+```
 ![Grid Layout](img/2_layout.png)
-
-
-## Grouping Widgets
-Once you have got to grips with laying out your widgets, it is possible to group them together.
-Three main styles are currently supported:
-
-###LabelFrame
-Will put a border around the widgets, with a title
-
-* .`startLabelFrame(title)`
-* .`stopLabelFrame()`
-* .`setLabelFrameAnchor(title, anchor)`
-
-![LabelFrame](img/10_lf_layout.png)
-
-###NoteBook
-Will create a tabbed interface, with a number of pages
-
-* .`startNoteBook(note)`
-* .`startNoteTab(tab)`
-* .`stopNoteTab()`
-* .`stopNoteBook()`
-* .`setNoteTab(note, tab)`
-* .`setNoteBookBg(note, active, inactive)`
-* .`setNoteBookFg(note, active, inactive)`
-* .`setNoteTabBg(note, tab, bg)`
-
-![NoteBook](img/11_nb_layout.png)
-
-###PanedWindow
-Will create a split view, with draggable panes
-
-* .`startPanedWindow(title)`
-* .`stopPanedFrame()`
-* .`setPanedWindowVertical(title)`
-
-###SubWindow
-Allows the creation of additional windows.
-The window is hidden until `.showSubWindow(title)` is called.
-
-* .`startSubWindow(name, title=None)`
-* .`stopSubWindow()`
-* .`showSubWindow(title)`
-* .`hideSubWindow(title)`
-* .`destroySubWindow(title)`

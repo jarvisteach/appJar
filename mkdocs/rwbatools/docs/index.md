@@ -1,29 +1,40 @@
 ##To Begin
-To build a GUI, requires the following steps:
+To build a GUI, requires a minimum of three steps:
 
 1) **IMPORT** the library  
 2) **CREATE** the GUI  
 3) **START** the GUI  
 
-
-###Code Sample:  
-```pyhton
-from rwbatools import gui  
-app = gui()  
-app.go()  
+```python
+from rwbatools import gui   # import the library
+app = gui()                 # create the GUI
+app.go()                    # start the GUI  
 ```
-* In-between creating & starting the GUI, you **ADD** any widgets you want, and **SET** their properties.  
-* When adding a widget, you usually have to give it a title - this is used later if you want to change the widget.  
-* Then, you set any appropriate properties.  
+In-between creating & starting the GUI, you **ADD** any widgets you want, and **SET** their properties.  
 
-As well as adding widgets, you need to think about layout:
+When adding a widget, you usually have to give it a title - this is used later if you want to change the widget.  
 
-* [Simple Layout](Layout#simple-layout)
-* [Grid Layout](Layout#grid-layout)
+Then, you set any appropriate properties, for the widget, using its title.
+
+```python
+from rwbatools import gui
+
+app = gui()
+app.addLabel("title", "Welcome to RWBAtools")   # add a label
+app.setLabelBg("title", "red")                           # set the label's background to be red
+app.go()
+```
+
+Widgets will be added consecutively, each on a new line:
+[Simple Layout](Layout#simple-layout)
+
+If you want more than that, you will need to consider their layout.
+[Grid Layout](Layout#grid-layout)
+
+Widgets can be positioned in a grid, simply by providing a **ROW** and **COLUMN** position for each widget. It's also possible to specify how many columns to **SPAN**.
 
 There are also a number of things you can configure about the GUI:
-
-* [GUI Options](Options)
+[GUI Options](GuiOptions)
 
 ---
 ##Widgets
@@ -45,21 +56,24 @@ The following widgets are available:
 * [TextArea](Widgets#textarea) - A multi-line box for typing text
 * [Meter](Widgets#meter) - Used for showing progress
     * [SplitMeter](Widgets#splitmeter) - Shows two values, left & right
-  * [DualMeter](Widgets#dualmeter) - shows percentage left & right
+    * [DualMeter](Widgets#dualmeter) - shows percentage left & right
 * [Image](Widgets#image) - shows an image
-* [PieChart](Widgets#piechart) - shows a pie chart
 * [Separator](Widgets#separator) - shows a horizontal line
 * [Link/WebLink](Widgets#linkweblink) - Clickable text to call a function or launch a URL
-* [Tree](Widgets#tree) - in development
-* [Grid](Widgets#grid) - in development
+
+The following widgets are under deveopment
+
+* [PieChart](devWidgets#piechart) - shows a pie chart
+* [Tree](devWidgets#tree) - in development
+* [Grid](devWidgets#grid) - in development
 
 ---
 ##Special Widgets
 Some special widgets are available:
 
-* [ToolBar](Widgets#toolbar) - adds a toolbar along the top of the GUI
-* [Menu](Widgets#menu) - adds a standard Menu bar along the top of the GUI
-* [Status](Widgets#status) - adds a status bar along the bottom of the GUI
+* [ToolBar](Toolbars#toolbar) - adds a toolbar along the top of the GUI
+* [Menu](Toolbars#menu) - adds a standard Menu bar along the top of the GUI
+* [Status](Toolbars#status) - adds a status bar along the bottom of the GUI
 
 ---
 ##Dialogs

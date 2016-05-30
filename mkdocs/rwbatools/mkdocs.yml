@@ -1,9 +1,23 @@
 site_name: RWBAtools
+repo_url: https://github.com/RWBA/rwbatools
+repo_name: RWBAtools
 pages:
 - Home: index.md
-- Layout: Layout.md
-- Options: Options.md
-- Widgets: Widgets.md
-- Dialogs: Dialogs.md
-- Dependencies: Dependencies.md
+- Creating a GUI:
+    - Layout: Layout.md
+    - Widgets: Widgets.md
+    - Widget Options: WidgetOptions.md
+    - Toolbars: Toolbars.md
+    - Dialogs: Dialogs.md
+    - Sound: Sound.md
+    - GUI Options: GuiOptions.md
+    - Grouping Widgets: Grouping.md
+    - Under Development: devWidgets.md
+- Recipes:
+    - Empty: Empty.md
+- About:
+    - License: license.md
+    - Release Notes: releaseNotes.md
+    - Dependencies: Dependencies.md
 theme: united
+copyright: <p>Richard Jarvis, 2016</p>
