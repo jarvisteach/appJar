@@ -104,8 +104,7 @@ class gui:
       # used for defining functions
       WIDGETS = { LABEL:"Label", MESSAGE:"Message", BUTTON:"Button", ENTRY:"Entry", CB:"Cb", SCALE:"Scale", RB:"Rb",
                   LB:"Lb", SPIN:"SpinBox", OPTION:"OptionBox", TEXTAREA:"TextArea", LINK:"Link", METER:"Meter", IMAGE:"Image",
-                  RADIOBUTTON:"RadioButton", CHECKBOX:"CheckBox",LISTBOX:"ListBox",
-                  #LABELFRAME:"LabelFrame", NOTEBOOK:"NoteBook", PANEDWINDOW:"PanedWindow" }
+                  RADIOBUTTON:"RadioButton", CHECKBOX:"CheckBox",LISTBOX:"ListBox", #NOTEBOOK:"NoteBook",
                   LABELFRAME:"LabelFrame", PANEDWINDOW:"PanedWindow" }
 
       # music stuff
@@ -2130,12 +2129,12 @@ class gui:
       def playNote(self, note, duration=200):
             if platform() in ["win32", "Windows"]:
                   try:
-                        if isinstance(note, str): freq=self.NOTES[note]
+                        if isinstance(note, str): freq=self.NOTES[note.lower()]
                         else: freq=note
                   except KeyError:
                         raise Exception("Error: cannot play note - "+ note)
                   try:
-                        if isinstance(duration, str): length=self.DURATIONS[duration]
+                        if isinstance(duration, str): length=self.DURATIONS[duration.upper()]
                         else: length=duration
                   except KeyError:
                         raise Exception("Error: cannot play duration - " + duration)
@@ -2578,7 +2577,7 @@ class gui:
             ent.myTitle=title
             ent.isNumeric=False
             ent.config(textvariable=var, font=self.entryFont)
-            if secret: ent.config(show="*")            
+            if secret: ent.config(show="*")
             if platform() == "Darwin":
                 ent.config(highlightbackground=self.labelBgColour)
             ent.bind("<Tab>", self.__focusNextWindow)
@@ -2641,7 +2640,7 @@ class gui:
             ent = self.__buildEntry(title, frame, secret)
             self.__packLabelFrame(frame, ent)
             self.__positionWidget(frame, row, column, colspan)
-            
+
       def addSecretLabelEntry(self, title, row=None, column=0, colspan=0):
             self.addLabelEntry(title, row, column, colspan, True)
 
@@ -3117,6 +3116,7 @@ class gui:
             self.topLevel.update_idletasks()
             return TextDialog(self.topLevel, title, question).result
 
+      def numberBox(self, title, question): self.numBox(title, question)
       def numBox(self, title, question):
             self.topLevel.update_idletasks()
             return NumDialog(self.topLevel, title, question).result
@@ -3464,7 +3464,7 @@ class Separator(Frame):
             self.line = Frame(self)
             self.line.config(relief="ridge", height=2, borderwidth=1)
             self.line.pack(padx=5, pady=5, fill="x")
-      
+
       def setLineFg(self, colour):
             self.line.config(bg=colour)
 
