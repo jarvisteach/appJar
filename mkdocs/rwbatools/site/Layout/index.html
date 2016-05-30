@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        
+        
+        <link rel="shortcut icon" href="../img/favicon.ico">
+
+	<title>Layout - RWBAtools</title>
+
+        <link href="../css/bootstrap-custom.min.css" rel="stylesheet">
+        <link href="../css/font-awesome-4.0.3.css" rel="stylesheet">
+        <link rel="stylesheet" href="../css/highlight.css">
+        <link href="../css/base.css" rel="stylesheet">
+
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+            <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+        <![endif]-->
+
+        
+    </head>
+
+    <body>
+
+        <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="container">
+
+        <!-- Collapsed navigation -->
+        <div class="navbar-header">
+            <!-- Expander button -->
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+
+            <!-- Main title -->
+            <a class="navbar-brand" href="..">RWBAtools</a>
+        </div>
+
+        <!-- Expanded navigation -->
+        <div class="navbar-collapse collapse">
+            <!-- Main navigation -->
+            <ul class="nav navbar-nav">
+            
+            
+                <li >
+                    <a href="..">Home</a>
+                </li>
+            
+            
+            
+                <li class="active">
+                    <a href="./">Layout</a>
+                </li>
+            
+            
+            
+                <li >
+                    <a href="../Options/">Options</a>
+                </li>
+            
+            
+            
+                <li >
+                    <a href="../Widgets/">Widgets</a>
+                </li>
+            
+            
+            
+                <li >
+                    <a href="../Dialogs/">Dialogs</a>
+                </li>
+            
+            
+            
+                <li >
+                    <a href="../Dependencies/">Dependencies</a>
+                </li>
+            
+            
+            </ul>
+
+            <!-- Search, Navigation and Repo links -->
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a href="#" data-toggle="modal" data-target="#mkdocs_search_modal">
+                        <i class="fa fa-search"></i> Search
+                    </a>
+                </li>
+                <li >
+                    <a rel="next" href="..">
+                        <i class="fa fa-arrow-left"></i> Previous
+                    </a>
+                </li>
+                <li >
+                    <a rel="prev" href="../Options/">
+                        Next <i class="fa fa-arrow-right"></i>
+                    </a>
+                </li>
+                
+            </ul>
+        </div>
+    </div>
+</div>
+
+        <div class="container">
+            <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
+    <ul class="nav bs-sidenav">
+    
+        <li class="main active"><a href="#simple-layout">Simple Layout</a></li>
+        
+    
+        <li class="main "><a href="#grid-layout">Grid Layout</a></li>
+        
+    
+        <li class="main "><a href="#grouping-widgets">Grouping Widgets</a></li>
+        
+            <li><a href="#labelframe">LabelFrame</a></li>
+        
+            <li><a href="#notebook">NoteBook</a></li>
+        
+            <li><a href="#panedwindow">PanedWindow</a></li>
+        
+            <li><a href="#subwindow">SubWindow</a></li>
+        
+    
+    </ul>
+</div></div>
+            <div class="col-md-9" role="main">
+
+<h2 id="simple-layout">Simple Layout</h2>
+<p>Laying out widgets is very simple.</p>
+<p>By default, each new widget is simply added on a new line. That way, you can very quickly, create a simple app.</p>
+<p>For example:</p>
+<pre><code class="python">from rwbatools import gui  
+
+def changeLabel(btn):  
+    app.setLabel(&quot;l2&quot;, app.getEntry(&quot;text&quot;))  
+
+app = gui()  
+app.addLabel(&quot;l1&quot;, &quot;Simple Demo&quot;)
+app.addEntry(&quot;text&quot;)
+app.addButton(&quot;OK&quot;, changeLabel)
+app.addEmptyLabel(&quot;l2&quot;)
+app.go()
+</code></pre>
+
+<p><img alt="Simple Layout" src="../img/1_layout.png" /></p>
+<h2 id="grid-layout">Grid Layout</h2>
+<p>If, however, you want more than that, then a grid layout is supported.
+Each time you add a widget, you can specify a column, row, and even a column-span to position it in.</p>
+<p><img alt="Grid Layout" src="../img/2_layout.png" /></p>
+<h2 id="grouping-widgets">Grouping Widgets</h2>
+<p>Once you have got to grips with laying out your widgets, it is possible to group them together.
+Three main styles are currently supported:</p>
+<h3 id="labelframe">LabelFrame</h3>
+<p>Will put a border around the widgets, with a title</p>
+<ul>
+<li>.<code>startLabelFrame(title)</code></li>
+<li>.<code>stopLabelFrame()</code></li>
+<li>.<code>setLabelFrameAnchor(title, anchor)</code></li>
+</ul>
+<p><img alt="LabelFrame" src="../img/10_lf_layout.png" /></p>
+<h3 id="notebook">NoteBook</h3>
+<p>Will create a tabbed interface, with a number of pages</p>
+<ul>
+<li>.<code>startNoteBook(note)</code></li>
+<li>.<code>startNoteTab(tab)</code></li>
+<li>.<code>stopNoteTab()</code></li>
+<li>.<code>stopNoteBook()</code></li>
+<li>.<code>setNoteTab(note, tab)</code></li>
+<li>.<code>setNoteBookBg(note, active, inactive)</code></li>
+<li>.<code>setNoteBookFg(note, active, inactive)</code></li>
+<li>.<code>setNoteTabBg(note, tab, bg)</code></li>
+</ul>
+<p><img alt="NoteBook" src="../img/11_nb_layout.png" /></p>
+<h3 id="panedwindow">PanedWindow</h3>
+<p>Will create a split view, with draggable panes</p>
+<ul>
+<li>.<code>startPanedWindow(title)</code></li>
+<li>.<code>stopPanedFrame()</code></li>
+<li>.<code>setPanedWindowVertical(title)</code></li>
+</ul>
+<h3 id="subwindow">SubWindow</h3>
+<p>Allows the creation of additional windows.
+The window is hidden until <code>.showSubWindow(title)</code> is called.</p>
+<ul>
+<li>.<code>startSubWindow(name, title=None)</code></li>
+<li>.<code>stopSubWindow()</code></li>
+<li>.<code>showSubWindow(title)</code></li>
+<li>.<code>hideSubWindow(title)</code></li>
+<li>.<code>destroySubWindow(title)</code></li>
+</ul></div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            
+            <center>Documentation built with <a href="http://www.mkdocs.org/">MkDocs</a>.</center>
+        </footer>
+
+        <script src="../js/jquery-1.10.2.min.js"></script>
+        <script src="../js/bootstrap-3.0.3.min.js"></script>
+        <script src="../js/highlight.pack.js"></script>
+        <script>var base_url = '..';</script>
+        <script data-main="../mkdocs/js/search.js" src="../mkdocs/js/require.js"></script>
+        <script src="../js/base.js"></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="Search Modal" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                        <h4 class="modal-title" id="exampleModalLabel">Search</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p>
+                            From here you can search these documents. Enter
+                            your search terms below.
+                        </p>
+                        <form role="form">
+                            <div class="form-group">
+                                <input type="text" class="form-control" placeholder="Search..." id="mkdocs-search-query">
+                            </div>
+                        </form>
+                        <div id="mkdocs-search-results"></div>
+                    </div>
+                    <div class="modal-footer">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
