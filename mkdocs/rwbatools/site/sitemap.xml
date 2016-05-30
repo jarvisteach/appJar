@@ -4,49 +4,99 @@
     
     <url>
      <loc>None/</loc>
-     <lastmod>2016-05-29</lastmod>
+     <lastmod>2016-05-30</lastmod>
      <changefreq>daily</changefreq>
     </url>
     
 
     
+        
     <url>
      <loc>None/Layout/</loc>
-     <lastmod>2016-05-29</lastmod>
+     <lastmod>2016-05-30</lastmod>
      <changefreq>daily</changefreq>
     </url>
-    
-
-    
-    <url>
-     <loc>None/Options/</loc>
-     <lastmod>2016-05-29</lastmod>
-     <changefreq>daily</changefreq>
-    </url>
-    
-
-    
+        
     <url>
      <loc>None/Widgets/</loc>
-     <lastmod>2016-05-29</lastmod>
+     <lastmod>2016-05-30</lastmod>
      <changefreq>daily</changefreq>
     </url>
-    
-
-    
+        
+    <url>
+     <loc>None/WidgetOptions/</loc>
+     <lastmod>2016-05-30</lastmod>
+     <changefreq>daily</changefreq>
+    </url>
+        
+    <url>
+     <loc>None/Toolbars/</loc>
+     <lastmod>2016-05-30</lastmod>
+     <changefreq>daily</changefreq>
+    </url>
+        
     <url>
      <loc>None/Dialogs/</loc>
-     <lastmod>2016-05-29</lastmod>
+     <lastmod>2016-05-30</lastmod>
      <changefreq>daily</changefreq>
     </url>
+        
+    <url>
+     <loc>None/Sound/</loc>
+     <lastmod>2016-05-30</lastmod>
+     <changefreq>daily</changefreq>
+    </url>
+        
+    <url>
+     <loc>None/GuiOptions/</loc>
+     <lastmod>2016-05-30</lastmod>
+     <changefreq>daily</changefreq>
+    </url>
+        
+    <url>
+     <loc>None/Grouping/</loc>
+     <lastmod>2016-05-30</lastmod>
+     <changefreq>daily</changefreq>
+    </url>
+        
+    <url>
+     <loc>None/devWidgets/</loc>
+     <lastmod>2016-05-30</lastmod>
+     <changefreq>daily</changefreq>
+    </url>
+        
     
 
     
+        
     <url>
-     <loc>None/Dependencies/</loc>
-     <lastmod>2016-05-29</lastmod>
+     <loc>None/Empty/</loc>
+     <lastmod>2016-05-30</lastmod>
      <changefreq>daily</changefreq>
     </url>
+        
+    
+
+    
+        
+    <url>
+     <loc>None/license/</loc>
+     <lastmod>2016-05-30</lastmod>
+     <changefreq>daily</changefreq>
+    </url>
+        
+    <url>
+     <loc>None/releaseNotes/</loc>
+     <lastmod>2016-05-30</lastmod>
+     <changefreq>daily</changefreq>
+    </url>
+        
+    <url>
+     <loc>None/Dependencies/</loc>
+     <lastmod>2016-05-30</lastmod>
+     <changefreq>daily</changefreq>
+    </url>
+        
     
 
 </urlset>

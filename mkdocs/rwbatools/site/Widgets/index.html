@@ -56,32 +56,107 @@
             
             
             
-                <li >
-                    <a href="../Layout/">Layout</a>
+                <li class="dropdown active">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Creating a GUI <b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                    
+                        
+<li >
+    <a href="../Layout/">Layout</a>
+</li>
+
+                    
+                        
+<li class="active">
+    <a href="./">Widgets</a>
+</li>
+
+                    
+                        
+<li >
+    <a href="../WidgetOptions/">Widget Options</a>
+</li>
+
+                    
+                        
+<li >
+    <a href="../Toolbars/">Toolbars</a>
+</li>
+
+                    
+                        
+<li >
+    <a href="../Dialogs/">Dialogs</a>
+</li>
+
+                    
+                        
+<li >
+    <a href="../Sound/">Sound</a>
+</li>
+
+                    
+                        
+<li >
+    <a href="../GuiOptions/">GUI Options</a>
+</li>
+
+                    
+                        
+<li >
+    <a href="../Grouping/">Grouping Widgets</a>
+</li>
+
+                    
+                        
+<li >
+    <a href="../devWidgets/">Under Development</a>
+</li>
+
+                    
+                    </ul>
                 </li>
             
             
             
-                <li >
-                    <a href="../Options/">Options</a>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Recipes <b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                    
+                        
+<li >
+    <a href="../Empty/">Empty</a>
+</li>
+
+                    
+                    </ul>
                 </li>
             
             
             
-                <li class="active">
-                    <a href="./">Widgets</a>
-                </li>
-            
-            
-            
-                <li >
-                    <a href="../Dialogs/">Dialogs</a>
-                </li>
-            
-            
-            
-                <li >
-                    <a href="../Dependencies/">Dependencies</a>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">About <b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                    
+                        
+<li >
+    <a href="../license/">License</a>
+</li>
+
+                    
+                        
+<li >
+    <a href="../releaseNotes/">Release Notes</a>
+</li>
+
+                    
+                        
+<li >
+    <a href="../Dependencies/">Dependencies</a>
+</li>
+
+                    
+                    </ul>
                 </li>
             
             
@@ -95,13 +170,20 @@
                     </a>
                 </li>
                 <li >
-                    <a rel="next" href="../Options/">
+                    <a rel="next" href="../Layout/">
                         <i class="fa fa-arrow-left"></i> Previous
                     </a>
                 </li>
                 <li >
-                    <a rel="prev" href="../Dialogs/">
+                    <a rel="prev" href="../WidgetOptions/">
                         Next <i class="fa fa-arrow-right"></i>
+                    </a>
+                </li>
+                
+                <li>
+                    <a href="https://github.com/RWBA/rwbatools">
+                        
+                        RWBAtools
                     </a>
                 </li>
                 
@@ -114,7 +196,7 @@
             <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
     <ul class="nav bs-sidenav">
     
-        <li class="main active"><a href="#widget-library">Widget Library</a></li>
+        <li class="main active"><a href="#widgets">Widgets</a></li>
         
             <li><a href="#label">Label</a></li>
         
@@ -140,35 +222,29 @@
         
             <li><a href="#meter">Meter</a></li>
         
-            <li><a href="#image">Image</a></li>
-        
-            <li><a href="#piechart">PieChart</a></li>
-        
             <li><a href="#separator">Separator</a></li>
         
             <li><a href="#linkweblink">Link/WebLink</a></li>
         
-            <li><a href="#tree">Tree</a></li>
-        
-            <li><a href="#grid">Grid</a></li>
-        
-    
-        <li class="main "><a href="#additional-widgets">Additional Widgets</a></li>
-        
-            <li><a href="#toolbar">ToolBar</a></li>
-        
-            <li><a href="#menu">Menu</a></li>
-        
-            <li><a href="#status">Status</a></li>
+            <li><a href="#image">Image</a></li>
         
     
     </ul>
 </div></div>
             <div class="col-md-9" role="main">
 
-<h1 id="widget-library">Widget Library</h1>
+<h1 id="widgets">Widgets</h1>
+<hr />
+<p>Below is a comprehensive list of all the widgets that can be included in a GUI.</p>
+<p>They are all used in the same way:</p>
+<ul>
+<li>First, ADD a widget</li>
+<li>Then, SET any paramters for the widget</li>
+<li>Finally, if needed, GET the contents of the widget</li>
+</ul>
 <h2 id="label">Label</h2>
 <p>Labels are used for displaying basic text on the screen.</p>
+<h4 id="add-labels">Add Labels</h4>
 <ul>
 <li>
 <p><code>.addLabel(title, text=None)</code></p>
@@ -182,21 +258,28 @@
 <p><code>.addFlashLabel(title, text=None)</code></p>
 <p>This adds a flashing label, that will alternate between the foreground and background colours.</p>
 </li>
+</ul>
+<h4 id="change-labels">Change Labels</h4>
+<ul>
 <li>
 <p><code>.setLabel(title, text)</code></p>
 <p>Change the contents of the label.</p>
-</li>
-<li>
-<p><code>.getLabel(title)</code></p>
-<p>Get the contents of the label.</p>
 </li>
 <li>
 <p><code>.clearLabel(title)</code></p>
 <p>Clear the contents of the label.</p>
 </li>
 </ul>
+<h4 id="get-labels">Get Labels</h4>
+<ul>
+<li>
+<p><code>.getLabel(title)</code></p>
+<p>Get the contents of the label.</p>
+</li>
+</ul>
 <h2 id="entry">Entry</h2>
 <p>Entries are used to capture input from the user. They take a single parameter - a title.</p>
+<h4 id="add-entries">Add Entries</h4>
 <ul>
 <li><code>.addEntry(title)</code></li>
 <li><code>.addNumericEntry(title)</code></li>
@@ -204,113 +287,219 @@
 <li><code>.addLabelEntry(title)</code></li>
 <li><code>.addNumericLabelEntry(title)</code></li>
 <li><code>.addSecretLabelEntry(title)</code></li>
+</ul>
+<h4 id="change-entries">Change Entries</h4>
+<ul>
 <li><code>.setEntry(title, text)</code></li>
 <li><code>.setEntryDefault(title, text)</code></li>
-<li><code>.getEntry(title)</code></li>
 <li><code>.clearEntry(title)</code></li>
 <li><code>.clearAllEntries()</code></li>
 <li><code>.setFocus(title)</code></li>
 </ul>
+<h4 id="get-entries">Get Entries</h4>
+<ul>
+<li><code>.getEntry(title)</code></li>
+</ul>
 <h2 id="button">Button</h2>
 <p>A clickable button, that will call a function</p>
+<h4 id="add-buttons">Add Buttons</h4>
 <ul>
 <li><code>.addButton(title, function)</code></li>
 <li><code>.addButtons(titles, functions)</code></li>
 <li><code>.addNamedButton(name, title, function)</code></li>
+</ul>
+<h4 id="change-buttons">Change Buttons</h4>
+<ul>
 <li><code>.setButton(name, text)</code></li>
 <li><code>.setButtonImage(title, image)</code></li>
 </ul>
 <h2 id="radiobutton">RadioButton</h2>
 <p>A group of round boxes, only one of which can be selected</p>
+<h4 id="add-radiobuttons">Add RadioButtons</h4>
 <ul>
 <li><code>.addRadioButton(title, name)</code></li>
-<li><code>.getRadioButton(title)</code></li>
+</ul>
+<h4 id="change-radiobuttons">Change RadioButtons</h4>
+<ul>
 <li><code>.setRadioButton(title, value)</code></li>
 <li><code>.setRadioTick(title, tick)</code></li>
 </ul>
+<h4 id="get-radiobuttons">Get RadioButtons</h4>
+<ul>
+<li><code>.getRadioButton(title)</code></li>
+</ul>
 <h2 id="checkbox">CheckBox</h2>
 <p>A box, with a label, that can be either ON or OFF</p>
+<h4 id="add-checkboxes">Add CheckBoxes</h4>
 <ul>
 <li><code>.addCheckBox(title)</code></li>
-<li><code>.getCheckBox(title)</code></li>
+</ul>
+<h4 id="change-checkboxes">Change CheckBoxes</h4>
+<ul>
 <li><code>.setCheckBox(title, ticked)</code></li>
+</ul>
+<h4 id="get-checkboxes">Get CheckBoxes</h4>
+<ul>
+<li><code>.getCheckBox(title)</code></li>
 </ul>
 <h2 id="listbox">ListBox</h2>
 <p>A box containing a list of items, single or multi-select</p>
+<h4 id="add-listboxes">Add ListBoxes</h4>
 <ul>
 <li><code>.addListBox(title, values)</code></li>
+<li><code>.addListItem(title, item)</code></li>
+<li><code>.addListItems(title, items)</code></li>
+</ul>
+<h4 id="change-listboxes">Change ListBoxes</h4>
+<ul>
 <li><code>.setListBoxRows(title)</code></li>
 <li><code>.setListSingle(list, single)</code></li>
 <li><code>.selectListItem(title, item)</code></li>
 <li><code>.updateListItems(title, items)</code></li>
-<li><code>.addListItem(title, item)</code></li>
-<li><code>.addListItems(title, items)</code></li>
-<li><code>.getListItems(title)</code></li>
 <li><code>.removeListItem(title, item)</code></li>
 <li><code>.clearListBox(title)</code></li>
 </ul>
+<h4 id="get-listboxes">Get ListBoxes</h4>
+<ul>
+<li><code>.getListItems(title)</code></li>
+</ul>
 <h2 id="spinbox">SpinBox</h2>
 <p>A scrollable option</p>
+<h4 id="add-spinboxes">Add SpinBoxes</h4>
 <ul>
 <li><code>.addSpinBox(title, vals)</code></li>
 <li><code>.addSpinBoxRange(title, from, to)</code></li>
 <li><code>.addLabelSpinBox(title, vals)</code></li>
 <li><code>.addLabelSpinBoxRange(title, from, to)</code></li>
-<li><code>.getSpinBox(title)</code></li>
+</ul>
+<h4 id="change-spinboxes">Change SpinBoxes</h4>
+<ul>
 <li><code>.setSpinBox(title, val)</code></li>
 <li><code>.setSpinBoxPos(title, pos)</code></li>
 </ul>
+<h4 id="get-spinboxes">Get SpinBoxes</h4>
+<ul>
+<li><code>.getSpinBox(title)</code></li>
+</ul>
 <h2 id="scale">Scale</h2>
 <p>A slider, that has a minimum &amp; maximum value</p>
+<h4 id="add-scales">Add Scales</h4>
 <ul>
 <li><code>.addScale(title)</code></li>
+</ul>
+<h4 id="change-scales">Change Scales</h4>
+<ul>
 <li><code>.setScaleRange(title from, to, curr=0)</code></li>
 <li><code>.orientScaleHor(title, hor=True)</code></li>
 <li><code>.setScale(title, pos)</code></li>
-<li><code>.getScale(title)</code></li>
 <li><code>.showScaleValue(title, show=True)</code></li>
+</ul>
+<h4 id="get-scales">Get Scales</h4>
+<ul>
+<li><code>.getScale(title)</code></li>
 </ul>
 <h2 id="optionbox">OptionBox</h2>
 <p>A drop-down single-select option</p>
+<h4 id="add-optionboxes">Add OptionBoxes</h4>
 <ul>
 <li><code>.addOptionBox(title, values)</code></li>
 <li><code>.addLabelOptionBox(title, values)</code></li>
-<li><code>.getOptionBox(title)</code></li>
+</ul>
+<h4 id="change-optionbixes">Change OptionBixes</h4>
+<ul>
 <li><code>.changeOptionBox(title, newOptions)</code></li>
 <li><code>.setOptionBox(title, position)</code></li>
 </ul>
+<h4 id="get-optionboxes">Get OptionBoxes</h4>
+<ul>
+<li><code>.getOptionBox(title)</code></li>
+</ul>
 <h2 id="message">Message</h2>
 <p>Like a multi-line label</p>
+<h4 id="add-messages">Add Messages</h4>
 <ul>
 <li><code>.addMessage(title, text)</code></li>
 <li><code>.addEmptyMessage(title)</code></li>
+</ul>
+<h4 id="change-messages">Change Messages</h4>
+<ul>
 <li><code>.clearMessage(title)</code></li>
 <li><code>.setMessage(title, text)</code></li>
 </ul>
 <h2 id="textarea">TextArea</h2>
 <p>A multi-line box for typing text</p>
+<h4 id="add-textareas">Add TextAreas</h4>
 <ul>
 <li><code>.addTextArea(title)</code></li>
 <li><code>.addScrolledTextArea(title)</code></li>
+</ul>
+<h4 id="change-textareas">Change TextAreas</h4>
+<ul>
 <li><code>.setTextArea(title, text)</code></li>
-<li><code>.getTextArea(title)</code></li>
 <li><code>.clearTextArea(title)</code></li>
 <li><code>.logTextArea(title)</code></li>
 <li><code>.textAreaChanged(title)</code></li>
 </ul>
+<h4 id="get-textareas">Get TextAreas</h4>
+<ul>
+<li><code>.getTextArea(title)</code></li>
+</ul>
 <h2 id="meter">Meter</h2>
 <p>Used for showing progress</p>
+<ul>
+<li>
+<h3 id="meter_1">Meter</h3>
+<p>Shows a simple progress meter</p>
+<ul>
+<li>
+<p><code>addMeter(name)</code></p>
+<p>Adds a meter with the specified name.</p>
+</li>
+<li>
+<p><code>setMeter(name, value, text=None)</code></p>
+<p>Changes the specified meter to the specified value, between 0 and 100, with the optional text.</p>
+</li>
+<li>
+<p><code>setMeterFill(name, colour)</code></p>
+<p>Changes the fill colour of the specified meter.</p>
+</li>
+<li>
+<p><code>getMeter(name)</code></p>
+<p>Gets the value of the specified meter.</p>
+</li>
+</ul>
+</li>
+<li>
 <h3 id="splitmeter">SplitMeter</h3>
 <p>Shows two values, left &amp; right</p>
+</li>
+<li>
 <h3 id="dualmeter">DualMeter</h3>
 <p>Shows percentage left &amp; right</p>
+</li>
+</ul>
+<h2 id="separator">Separator</h2>
+<p>Shows a horizontal line</p>
+<ul>
+<li><code>.addSeparator()</code></li>
+</ul>
+<h2 id="linkweblink">Link/WebLink</h2>
+<p>Clickable text to call a function or launch a URL</p>
+<h4 id="add-links">Add Links</h4>
+<ul>
+<li><code>.addLink(title, func)</code></li>
+<li><code>.addWebLink(title, page)</code></li>
+</ul>
 <h2 id="image">Image</h2>
 <p>Shows an image, there are lots of things you can do with an image.</p>
+<h4 id="add-images">Add Images</h4>
 <ul>
 <li><code>.addImage(name, file)</code></li>
+<li><code>.addAnimatedImage(name, file)</code> </li>
+</ul>
+<h4 id="change-images">Change Images</h4>
+<ul>
 <li><code>.setImage(name, image)</code></li>
-<li><code>.setBgImage(image)</code></li>
-<li><code>.removeBgImage(image)</code></li>
 <li><code>.setImageSize(name, width, height)</code></li>
 <li>
 <p><code>.zoomImage(name, mod)</code></p>
@@ -320,112 +509,24 @@
 <p><code>.shrinkImage(name, mod)</code></p>
 </li>
 <li><code>.growImage(name, mod)</code></li>
-<li><code>.addAnimatedImage(name, file)</code> </li>
+</ul>
+<h4 id="change-image-animation">Change Image Animation</h4>
+<ul>
 <li><code>.setAnimationSpeed(name, speed)</code></li>
 <li><code>.stopAnimation(name)</code></li>
 <li><code>.startAnimation(name)</code></li>
 </ul>
-<h2 id="piechart">PieChart</h2>
-<p>Shows a pie chart</p>
+<h4 id="change-background-images">Change Background Images</h4>
 <ul>
-<li><code>.addPieChart(name, values, size=100)</code></li>
-</ul>
-<h2 id="separator">Separator</h2>
-<p>Shows a horizontal line</p>
-<ul>
-<li><code>.addSeparator()</code></li>
-</ul>
-<h2 id="linkweblink">Link/WebLink</h2>
-<p>Clickable text to call a function or launch a URL</p>
-<ul>
-<li><code>.addLink(title, func)</code></li>
-<li><code>.addWebLink(title, page)</code></li>
-</ul>
-<h2 id="tree">Tree</h2>
-<p>This widget is still in development. It takes an arbitrary XML string, and converts it into a tree structure.</p>
-<ul>
-<li>
-<p><code>.addTree(title, xml_data)</code></p>
-<p>Create a tree from the xml data</p>
-</li>
-<li>
-<p><code>.addTreeFunction(title, func)</code></p>
-<p>Register he function with double click</p>
-</li>
-<li>
-<p><code>.getTree(title)</code></p>
-<p>Return the tree</p>
-</li>
-</ul>
-<h2 id="grid">Grid</h2>
-<p>This widget is still in development.  </p>
-<ul>
-<li>
-<p><code>.addGrid(title, data, action=None, addRow=False)</code>  </p>
-<p>Receives a (jagged) 2D list of values. The first list should be the headers for the grid, the rest will contain each row of values.<br />
-If action is set, a button will be created, calling the specified function. If addRow is True, then an additional row will appear, at the end, with Entry boxes.</p>
-</li>
-<li>
-<p><code>.updateGrid(title, data, addRow=False)</code></p>
-</li>
-<li><code>.setGridGeom(title, width, height)</code></li>
-<li><code>.getGridEntries(title)</code></li>
-<li><code>.setGridBackground(title, colour)</code></li>
-</ul>
-<h1 id="additional-widgets">Additional Widgets</h1>
-<h2 id="toolbar">ToolBar</h2>
-<p>Adds a toolbar along the top of the GUI</p>
-<ul>
-<li>
-<p><code>.addToolbar(names, funcs)</code></p>
-<p>Will add a list of buttons along the top, in a toolbar. Each button will call the corresponding function.<br />
-If only one function is supplied, they will all call the same function.<br />
-A bundle of free images is available, if the name used for the toolbar matches the nam of an image, an image will be used.  </p>
-</li>
-<li>
-<p><code>.setToolbarImage(name, image)</code>
-Will set an image for the corresponding button in the toolbar.</p>
-</li>
-</ul>
-<h2 id="menu">Menu</h2>
-<p>Adds a standard Menu bar along the top of the GUI
-The menu bar will show, once the first menu has been added.
-You can add a single menu option, or a list of menu options.</p>
-<ul>
-<li>
-<p><code>.addMenu(title, function)</code></p>
-<p>Adds a single menu option, that will call the specified function.</p>
-</li>
-<li>
-<p><code>.addMenuList(title, names, functions, tearable=False)</code></p>
-<p>Will add a drop-down menu with the specified title.<br />
-Within the menu will be the list of names, each calling the corresponding function in the function list.<br />
-If only one function is provided, all menus will call the same function.<br />
-If the menu name is a '-', then a separator will be added to the menu.<br />
-If tearable is set to True, then the menu can be undocked.  </p>
-</li>
-</ul>
-<h2 id="status">Status</h2>
-<p>Adds a status bar along the bottom of the GUI.
-This can be used for easy debugging, or as info for the user.</p>
-<ul>
-<li>
-<p><code>.addStatus(header="")</code></p>
-<p>This turns the status bar on, and if a header is supplied, will prepend the header before every message.</p>
-</li>
-<li>
-<p><code>.setStatus(text)</code></p>
-<p>This updates the contents of the status bar. Again, if a header was set when adding the status bar, that will be prepended to the message.</p>
-</li>
-<li>
-<p><code>.clearStatus()</code></p>
-<p>Clear anything displayed in the status bar, along with any header that might be set.</p>
-</li>
+<li><code>.setBgImage(image)</code></li>
+<li><code>.removeBgImage(image)</code></li>
 </ul></div>
         </div>
 
         <footer class="col-md-12">
             <hr>
+            
+                <center><p>Richard Jarvis, 2016</p></center>
             
             <center>Documentation built with <a href="http://www.mkdocs.org/">MkDocs</a>.</center>
         </footer>

@@ -48,32 +48,32 @@ The following widgets are available:
 * [Button](Widgets#button) - A clickable button, that will call a function
 * [RadioButton](Widgets#radiobutton) - A group of round boxes, only one of which can be selected
 * [CheckBox](Widgets#checkbox) - A box, with a label, that can be either ON or OFF
-* [ListBox](Widgets#listbox) - A box containing a list of items, single or multi-select
-* [SpinBox](Widgets#spinbox) - A scrollable option
-* [Scale](Widgets#scale) - A slider, that has a minimum & maximum value
 * [OptionBox](Widgets#optionbox) - A drop-down single-select option
+* [SpinBox](Widgets#spinbox) - A scrollable option
+* [ListBox](Widgets#listbox) - A box containing a list of items, single or multi-select
+* [Scale](Widgets#scale) - A slider, that has a minimum & maximum value
 * [Message](Widgets#message) - Like a multi-line label
 * [TextArea](Widgets#textarea) - A multi-line box for typing text
 * [Meter](Widgets#meter) - Used for showing progress
     * [SplitMeter](Widgets#splitmeter) - Shows two values, left & right
     * [DualMeter](Widgets#dualmeter) - shows percentage left & right
-* [Image](Widgets#image) - shows an image
 * [Separator](Widgets#separator) - shows a horizontal line
 * [Link/WebLink](Widgets#linkweblink) - Clickable text to call a function or launch a URL
+* [Image](Widgets#image) - shows an image
 
 The following widgets are under deveopment
 
-* [PieChart](devWidgets#piechart) - shows a pie chart
-* [Tree](devWidgets#tree) - in development
-* [Grid](devWidgets#grid) - in development
+* [PieChart](DevWidgets#piechart) - will show a pie chart
+* [Tree](DevWidgets#tree) - will show a tree-style interface
+* [Grid](DevWidgets#grid) - will show a table interface
 
 ---
-##Special Widgets
-Some special widgets are available:
+##Bar Widgets
+There are 3 bars available to add extra functionality to your GUI:
 
-* [ToolBar](Toolbars#toolbar) - adds a toolbar along the top of the GUI
-* [Menu](Toolbars#menu) - adds a standard Menu bar along the top of the GUI
-* [Status](Toolbars#status) - adds a status bar along the bottom of the GUI
+* [ToolBar](Bars#toolbar) - adds a toolbar along the top of the GUI
+* [Menu](Bars#menu) - adds a standard Menu bar along the top of the GUI
+* [Status](Bars#status) - adds a status bar along the bottom of the GUI
 
 ---
 ##Dialogs

@@ -56,32 +56,107 @@
             
             
             
-                <li >
-                    <a href="Layout/">Layout</a>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Creating a GUI <b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                    
+                        
+<li >
+    <a href="Layout/">Layout</a>
+</li>
+
+                    
+                        
+<li >
+    <a href="Widgets/">Widgets</a>
+</li>
+
+                    
+                        
+<li >
+    <a href="WidgetOptions/">Widget Options</a>
+</li>
+
+                    
+                        
+<li >
+    <a href="Toolbars/">Toolbars</a>
+</li>
+
+                    
+                        
+<li >
+    <a href="Dialogs/">Dialogs</a>
+</li>
+
+                    
+                        
+<li >
+    <a href="Sound/">Sound</a>
+</li>
+
+                    
+                        
+<li >
+    <a href="GuiOptions/">GUI Options</a>
+</li>
+
+                    
+                        
+<li >
+    <a href="Grouping/">Grouping Widgets</a>
+</li>
+
+                    
+                        
+<li >
+    <a href="devWidgets/">Under Development</a>
+</li>
+
+                    
+                    </ul>
                 </li>
             
             
             
-                <li >
-                    <a href="Options/">Options</a>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Recipes <b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                    
+                        
+<li >
+    <a href="Empty/">Empty</a>
+</li>
+
+                    
+                    </ul>
                 </li>
             
             
             
-                <li >
-                    <a href="Widgets/">Widgets</a>
-                </li>
-            
-            
-            
-                <li >
-                    <a href="Dialogs/">Dialogs</a>
-                </li>
-            
-            
-            
-                <li >
-                    <a href="Dependencies/">Dependencies</a>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">About <b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                    
+                        
+<li >
+    <a href="license/">License</a>
+</li>
+
+                    
+                        
+<li >
+    <a href="releaseNotes/">Release Notes</a>
+</li>
+
+                    
+                        
+<li >
+    <a href="Dependencies/">Dependencies</a>
+</li>
+
+                    
+                    </ul>
                 </li>
             
             
@@ -105,6 +180,13 @@
                     </a>
                 </li>
                 
+                <li>
+                    <a href="https://github.com/RWBA/rwbatools">
+                        
+                        RWBAtools
+                    </a>
+                </li>
+                
             </ul>
         </div>
     </div>
@@ -115,8 +197,6 @@
     <ul class="nav bs-sidenav">
     
         <li class="main active"><a href="#to-begin">To Begin</a></li>
-        
-            <li><a href="#code-sample">Code Sample:</a></li>
         
     
         <li class="main "><a href="#widgets">Widgets</a></li>
@@ -139,30 +219,33 @@
             <div class="col-md-9" role="main">
 
 <h2 id="to-begin">To Begin</h2>
-<p>To build a GUI, requires the following steps:</p>
+<p>To build a GUI, requires a minimum of three steps:</p>
 <p>1) <strong>IMPORT</strong> the library<br />
 2) <strong>CREATE</strong> the GUI<br />
 3) <strong>START</strong> the GUI  </p>
-<h3 id="code-sample">Code Sample:</h3>
-<pre><code class="pyhton">from rwbatools import gui  
-app = gui()  
-app.go()  
+<pre><code class="python">from rwbatools import gui   # import the library
+app = gui()                 # create the GUI
+app.go()                    # start the GUI  
 </code></pre>
 
-<ul>
-<li>In-between creating &amp; starting the GUI, you <strong>ADD</strong> any widgets you want, and <strong>SET</strong> their properties.  </li>
-<li>When adding a widget, you usually have to give it a title - this is used later if you want to change the widget.  </li>
-<li>Then, you set any appropriate properties.  </li>
-</ul>
-<p>As well as adding widgets, you need to think about layout:</p>
-<ul>
-<li><a href="./Layout#simple-layout">Simple Layout</a></li>
-<li><a href="./Layout#grid-layout">Grid Layout</a></li>
-</ul>
-<p>There are also a number of things you can configure about the GUI:</p>
-<ul>
-<li><a href="./Options">GUI Options</a></li>
-</ul>
+<p>In-between creating &amp; starting the GUI, you <strong>ADD</strong> any widgets you want, and <strong>SET</strong> their properties.  </p>
+<p>When adding a widget, you usually have to give it a title - this is used later if you want to change the widget.  </p>
+<p>Then, you set any appropriate properties, for the widget, using its title.</p>
+<pre><code class="python">from rwbatools import gui
+
+app = gui()
+app.addLabel(&quot;title&quot;, &quot;Welcome to RWBAtools&quot;)   # add a label
+app.setLabelBg(&quot;title&quot;, &quot;red&quot;)                           # set the label's background to be red
+app.go()
+</code></pre>
+
+<p>Widgets will be added consecutively, each on a new line:
+<a href="./Layout#simple-layout">Simple Layout</a></p>
+<p>If you want more than that, you will need to consider their layout.
+<a href="./Layout#grid-layout">Grid Layout</a></p>
+<p>Widgets can be positioned in a grid, simply by providing a <strong>ROW</strong> and <strong>COLUMN</strong> position for each widget. It's also possible to specify how many columns to <strong>SPAN</strong>.</p>
+<p>There are also a number of things you can configure about the GUI:
+<a href="./GuiOptions">GUI Options</a></p>
 <hr />
 <h2 id="widgets">Widgets</h2>
 <p>The following widgets are available:</p>
@@ -187,23 +270,26 @@ app.go()
 <li><a href="./Widgets#textarea">TextArea</a> - A multi-line box for typing text</li>
 <li><a href="./Widgets#meter">Meter</a> - Used for showing progress<ul>
 <li><a href="./Widgets#splitmeter">SplitMeter</a> - Shows two values, left &amp; right</li>
+<li><a href="./Widgets#dualmeter">DualMeter</a> - shows percentage left &amp; right</li>
 </ul>
 </li>
-<li><a href="./Widgets#dualmeter">DualMeter</a> - shows percentage left &amp; right</li>
 <li><a href="./Widgets#image">Image</a> - shows an image</li>
-<li><a href="./Widgets#piechart">PieChart</a> - shows a pie chart</li>
 <li><a href="./Widgets#separator">Separator</a> - shows a horizontal line</li>
 <li><a href="./Widgets#linkweblink">Link/WebLink</a> - Clickable text to call a function or launch a URL</li>
-<li><a href="./Widgets#tree">Tree</a> - in development</li>
-<li><a href="./Widgets#grid">Grid</a> - in development</li>
+</ul>
+<p>The following widgets are under deveopment</p>
+<ul>
+<li><a href="./devWidgets#piechart">PieChart</a> - shows a pie chart</li>
+<li><a href="./devWidgets#tree">Tree</a> - in development</li>
+<li><a href="./devWidgets#grid">Grid</a> - in development</li>
 </ul>
 <hr />
 <h2 id="special-widgets">Special Widgets</h2>
 <p>Some special widgets are available:</p>
 <ul>
-<li><a href="./Widgets#toolbar">ToolBar</a> - adds a toolbar along the top of the GUI</li>
-<li><a href="./Widgets#menu">Menu</a> - adds a standard Menu bar along the top of the GUI</li>
-<li><a href="./Widgets#status">Status</a> - adds a status bar along the bottom of the GUI</li>
+<li><a href="./Toolbars#toolbar">ToolBar</a> - adds a toolbar along the top of the GUI</li>
+<li><a href="./Toolbars#menu">Menu</a> - adds a standard Menu bar along the top of the GUI</li>
+<li><a href="./Toolbars#status">Status</a> - adds a status bar along the bottom of the GUI</li>
 </ul>
 <hr />
 <h2 id="dialogs">Dialogs</h2>
@@ -247,6 +333,8 @@ app.go()
 
         <footer class="col-md-12">
             <hr>
+            
+                <center><p>Richard Jarvis, 2016</p></center>
             
             <center>Documentation built with <a href="http://www.mkdocs.org/">MkDocs</a>.</center>
         </footer>

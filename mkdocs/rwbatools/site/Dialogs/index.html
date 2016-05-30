@@ -56,32 +56,107 @@
             
             
             
-                <li >
-                    <a href="../Layout/">Layout</a>
+                <li class="dropdown active">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Creating a GUI <b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                    
+                        
+<li >
+    <a href="../Layout/">Layout</a>
+</li>
+
+                    
+                        
+<li >
+    <a href="../Widgets/">Widgets</a>
+</li>
+
+                    
+                        
+<li >
+    <a href="../WidgetOptions/">Widget Options</a>
+</li>
+
+                    
+                        
+<li >
+    <a href="../Toolbars/">Toolbars</a>
+</li>
+
+                    
+                        
+<li class="active">
+    <a href="./">Dialogs</a>
+</li>
+
+                    
+                        
+<li >
+    <a href="../Sound/">Sound</a>
+</li>
+
+                    
+                        
+<li >
+    <a href="../GuiOptions/">GUI Options</a>
+</li>
+
+                    
+                        
+<li >
+    <a href="../Grouping/">Grouping Widgets</a>
+</li>
+
+                    
+                        
+<li >
+    <a href="../devWidgets/">Under Development</a>
+</li>
+
+                    
+                    </ul>
                 </li>
             
             
             
-                <li >
-                    <a href="../Options/">Options</a>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Recipes <b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                    
+                        
+<li >
+    <a href="../Empty/">Empty</a>
+</li>
+
+                    
+                    </ul>
                 </li>
             
             
             
-                <li >
-                    <a href="../Widgets/">Widgets</a>
-                </li>
-            
-            
-            
-                <li class="active">
-                    <a href="./">Dialogs</a>
-                </li>
-            
-            
-            
-                <li >
-                    <a href="../Dependencies/">Dependencies</a>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">About <b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                    
+                        
+<li >
+    <a href="../license/">License</a>
+</li>
+
+                    
+                        
+<li >
+    <a href="../releaseNotes/">Release Notes</a>
+</li>
+
+                    
+                        
+<li >
+    <a href="../Dependencies/">Dependencies</a>
+</li>
+
+                    
+                    </ul>
                 </li>
             
             
@@ -95,13 +170,20 @@
                     </a>
                 </li>
                 <li >
-                    <a rel="next" href="../Widgets/">
+                    <a rel="next" href="../Toolbars/">
                         <i class="fa fa-arrow-left"></i> Previous
                     </a>
                 </li>
                 <li >
-                    <a rel="prev" href="../Dependencies/">
+                    <a rel="prev" href="../Sound/">
                         Next <i class="fa fa-arrow-right"></i>
+                    </a>
+                </li>
+                
+                <li>
+                    <a href="https://github.com/RWBA/rwbatools">
+                        
+                        RWBAtools
                     </a>
                 </li>
                 
@@ -130,45 +212,57 @@
             <div class="col-md-9" role="main">
 
 <h1 id="dialogs">Dialogs</h1>
+<hr />
 <p>A number of dialogs are available, to add a different user experience, notify the user of information, or get one off pieces of data.</p>
 <h2 id="message-boxes">Message Boxes</h2>
 <ul>
 <li>
-<p><code>.infoBox()</code></p>
-<p>Shows a simple information message, with an OK button.</p>
+<p><code>.infoBox(title, message)</code></p>
+<p>Shows a simple information message, with an OK button.<br />
+<img alt="InfoBox" src="../img/dialogs/info.gif" title="=400" /></p>
 </li>
 <li>
-<p><code>.errorBox()</code></p>
-<p>Shows a simple error message, with an OK button.</p>
+<p><code>.errorBox(title, message)</code></p>
+<p>Shows a simple error message, with an OK button.<br />
+<img alt="ErrorBox" src="../img/dialogs/error.gif" /></p>
 </li>
 <li>
-<p><code>.warningBox()</code></p>
-<p>Shows a simple warning message, with an OK message.</p>
+<p><code>.warningBox(title, message)</code></p>
+<p>Shows a simple warning message, with an OK message.<br />
+<img alt="WarningBox" src="../img/dialogs/warning.gif" /></p>
 </li>
 </ul>
 <h2 id="question-boxes">Question Boxes</h2>
 <ul>
 <li>
-<p><code>.yesNoBox()</code></p>
-<p>Shows a question, with Yes/No buttons. Returns True/False.</p>
+<p><code>.yesNoBox(title, message)</code></p>
+<p>Shows a question, with Yes/No buttons. Returns True/False.<br />
+<img alt="yesNoBox" src="../img/dialogs/yesno.gif" /></p>
 </li>
 <li>
-<p><code>.questionBox()</code></p>
-<p>Shows a question, with Yes/No buttons. Returns True/False.</p>
+<p><code>.questionBox(title, message)</code></p>
+<p>Shows a question, with Yes/No buttons. Returns True/False.<br />
+<img alt="QuestionBox" src="../img/dialogs/question.gif" /></p>
 </li>
 <li>
-<p><code>.okBox()</code></p>
-<p>Shows a question, with OK/Cancel buttons. Returns True/False</p>
+<p><code>.okBox(title, message)</code></p>
+<p>Shows a question, with OK/Cancel buttons. Returns True/False.<br />
+<img alt="OkBox" src="../img/dialogs/ok.gif" /></p>
 </li>
 <li>
-<p><code>.retryBox()</code></p>
-<p>Shows a question, with Cancel/Retry buttons. Returns True/False</p>
+<p><code>.retryBox(title, message)</code></p>
+<p>Shows a question, with Cancel/Retry buttons. Returns True/False.<br />
+<img alt="RetryBox" src="../img/dialogs/retry.gif" /></p>
 </li>
 <li>
-<p><code>.textBox()</code></p>
+<p><code>.textBox(title, message)</code></p>
+<p>Shows a question requesting a text response. Returns a String, or None if Cancel pressed.<br />
+<img alt="TextBox" src="../img/dialogs/text.gif" /></p>
 </li>
 <li>
-<p><code>.numberBox()</code></p>
+<p><code>.numberBox(title, message)</code>
+    Shows a question requesting a numeric response. Returns a number, or None if Cancel pressed.<br />
+<img alt="NumberBox" src="../img/dialogs/num.gif" /></p>
 </li>
 </ul>
 <h2 id="file-boxes">File Boxes</h2>
@@ -185,6 +279,8 @@
 
         <footer class="col-md-12">
             <hr>
+            
+                <center><p>Richard Jarvis, 2016</p></center>
             
             <center>Documentation built with <a href="http://www.mkdocs.org/">MkDocs</a>.</center>
         </footer>

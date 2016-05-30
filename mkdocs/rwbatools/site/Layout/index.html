@@ -56,32 +56,107 @@
             
             
             
-                <li class="active">
-                    <a href="./">Layout</a>
+                <li class="dropdown active">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Creating a GUI <b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                    
+                        
+<li class="active">
+    <a href="./">Layout</a>
+</li>
+
+                    
+                        
+<li >
+    <a href="../Widgets/">Widgets</a>
+</li>
+
+                    
+                        
+<li >
+    <a href="../WidgetOptions/">Widget Options</a>
+</li>
+
+                    
+                        
+<li >
+    <a href="../Toolbars/">Toolbars</a>
+</li>
+
+                    
+                        
+<li >
+    <a href="../Dialogs/">Dialogs</a>
+</li>
+
+                    
+                        
+<li >
+    <a href="../Sound/">Sound</a>
+</li>
+
+                    
+                        
+<li >
+    <a href="../GuiOptions/">GUI Options</a>
+</li>
+
+                    
+                        
+<li >
+    <a href="../Grouping/">Grouping Widgets</a>
+</li>
+
+                    
+                        
+<li >
+    <a href="../devWidgets/">Under Development</a>
+</li>
+
+                    
+                    </ul>
                 </li>
             
             
             
-                <li >
-                    <a href="../Options/">Options</a>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Recipes <b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                    
+                        
+<li >
+    <a href="../Empty/">Empty</a>
+</li>
+
+                    
+                    </ul>
                 </li>
             
             
             
-                <li >
-                    <a href="../Widgets/">Widgets</a>
-                </li>
-            
-            
-            
-                <li >
-                    <a href="../Dialogs/">Dialogs</a>
-                </li>
-            
-            
-            
-                <li >
-                    <a href="../Dependencies/">Dependencies</a>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">About <b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                    
+                        
+<li >
+    <a href="../license/">License</a>
+</li>
+
+                    
+                        
+<li >
+    <a href="../releaseNotes/">Release Notes</a>
+</li>
+
+                    
+                        
+<li >
+    <a href="../Dependencies/">Dependencies</a>
+</li>
+
+                    
+                    </ul>
                 </li>
             
             
@@ -100,8 +175,15 @@
                     </a>
                 </li>
                 <li >
-                    <a rel="prev" href="../Options/">
+                    <a rel="prev" href="../Widgets/">
                         Next <i class="fa fa-arrow-right"></i>
+                    </a>
+                </li>
+                
+                <li>
+                    <a href="https://github.com/RWBA/rwbatools">
+                        
+                        RWBAtools
                     </a>
                 </li>
                 
@@ -114,31 +196,23 @@
             <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
     <ul class="nav bs-sidenav">
     
-        <li class="main active"><a href="#simple-layout">Simple Layout</a></li>
+        <li class="main active"><a href="#background">Background</a></li>
         
-    
-        <li class="main "><a href="#grid-layout">Grid Layout</a></li>
+            <li><a href="#simple-layout">Simple Layout</a></li>
         
-    
-        <li class="main "><a href="#grouping-widgets">Grouping Widgets</a></li>
-        
-            <li><a href="#labelframe">LabelFrame</a></li>
-        
-            <li><a href="#notebook">NoteBook</a></li>
-        
-            <li><a href="#panedwindow">PanedWindow</a></li>
-        
-            <li><a href="#subwindow">SubWindow</a></li>
+            <li><a href="#grid-layout">Grid Layout</a></li>
         
     
     </ul>
 </div></div>
             <div class="col-md-9" role="main">
 
+<h1 id="background">Background</h1>
+<p>RWBAtools was designed to make building a functional GUI as simple as possible.  </p>
+<p>It is designed with teaching in mind. Rather than pupils having to focus on the GUI code, they should be focusing on the algorithms that get the work done.</p>
+<p>To that end, at it's simplest, you simply keep adding widgets to the GUI, and they will render in sequence.</p>
 <h2 id="simple-layout">Simple Layout</h2>
-<p>Laying out widgets is very simple.</p>
-<p>By default, each new widget is simply added on a new line. That way, you can very quickly, create a simple app.</p>
-<p>For example:</p>
+<p>By default, each new widget is simply added on a new line. That way, you can very quickly, create a simple GUI:</p>
 <pre><code class="python">from rwbatools import gui  
 
 def changeLabel(btn):  
@@ -154,54 +228,41 @@ app.go()
 
 <p><img alt="Simple Layout" src="../img/1_layout.png" /></p>
 <h2 id="grid-layout">Grid Layout</h2>
-<p>If, however, you want more than that, then a grid layout is supported.
-Each time you add a widget, you can specify a column, row, and even a column-span to position it in.</p>
-<p><img alt="Grid Layout" src="../img/2_layout.png" /></p>
-<h2 id="grouping-widgets">Grouping Widgets</h2>
-<p>Once you have got to grips with laying out your widgets, it is possible to group them together.
-Three main styles are currently supported:</p>
-<h3 id="labelframe">LabelFrame</h3>
-<p>Will put a border around the widgets, with a title</p>
-<ul>
-<li>.<code>startLabelFrame(title)</code></li>
-<li>.<code>stopLabelFrame()</code></li>
-<li>.<code>setLabelFrameAnchor(title, anchor)</code></li>
-</ul>
-<p><img alt="LabelFrame" src="../img/10_lf_layout.png" /></p>
-<h3 id="notebook">NoteBook</h3>
-<p>Will create a tabbed interface, with a number of pages</p>
-<ul>
-<li>.<code>startNoteBook(note)</code></li>
-<li>.<code>startNoteTab(tab)</code></li>
-<li>.<code>stopNoteTab()</code></li>
-<li>.<code>stopNoteBook()</code></li>
-<li>.<code>setNoteTab(note, tab)</code></li>
-<li>.<code>setNoteBookBg(note, active, inactive)</code></li>
-<li>.<code>setNoteBookFg(note, active, inactive)</code></li>
-<li>.<code>setNoteTabBg(note, tab, bg)</code></li>
-</ul>
-<p><img alt="NoteBook" src="../img/11_nb_layout.png" /></p>
-<h3 id="panedwindow">PanedWindow</h3>
-<p>Will create a split view, with draggable panes</p>
-<ul>
-<li>.<code>startPanedWindow(title)</code></li>
-<li>.<code>stopPanedFrame()</code></li>
-<li>.<code>setPanedWindowVertical(title)</code></li>
-</ul>
-<h3 id="subwindow">SubWindow</h3>
-<p>Allows the creation of additional windows.
-The window is hidden until <code>.showSubWindow(title)</code> is called.</p>
-<ul>
-<li>.<code>startSubWindow(name, title=None)</code></li>
-<li>.<code>stopSubWindow()</code></li>
-<li>.<code>showSubWindow(title)</code></li>
-<li>.<code>hideSubWindow(title)</code></li>
-<li>.<code>destroySubWindow(title)</code></li>
-</ul></div>
+<p>If, however, you want more than that, then a basic GRID layout is supported.</p>
+<p>Each time you add a widget, you can specify a column, row, and even a column-span to position it in.</p>
+<pre><code class="python">from rwbatools import gui
+
+def press(btn):
+    if btn==&quot;Save&quot;:
+        n=app.getEntry(&quot;name&quot;)
+        a=app.getEntry(&quot;age&quot;)
+        r=app.getOptionBox(&quot;role&quot;)
+        app.infoBox(&quot;Details&quot;, &quot;You entered: {}, {}, {}&quot;.format(n, str(a), r))
+    elif btn==&quot;Quit&quot;:
+        app.stop()
+
+app=gui()
+
+app.addLabel(&quot;l1&quot;, &quot;Name&quot;, 0, 0)
+app.addLabel(&quot;l2&quot;, &quot;Age&quot;, 1, 0)
+app.addLabel(&quot;l3&quot;, &quot;Role&quot;, 2, 0)
+
+app.addEntry(&quot;name&quot;, 0, 1)
+app.addNumericEntry(&quot;age&quot;, 1, 1)
+app.addOptionBox(&quot;role&quot;, [&quot;Teacher&quot;, &quot;Student&quot;, &quot;Developer&quot;, &quot;Volunteer&quot;], 2, 1)
+
+app.addButtons([&quot;Save&quot;, &quot;Quit&quot;], press, 3, 0, 2)
+
+app.go()
+</code></pre>
+
+<p><img alt="Grid Layout" src="../img/2_layout.png" /></p></div>
         </div>
 
         <footer class="col-md-12">
             <hr>
+            
+                <center><p>Richard Jarvis, 2016</p></center>
             
             <center>Documentation built with <a href="http://www.mkdocs.org/">MkDocs</a>.</center>
         </footer>
