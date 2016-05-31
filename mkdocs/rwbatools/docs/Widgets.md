@@ -7,11 +7,29 @@ They are all used in the same way:
 
 * First, **ADD** a widget
 * Then, **SET** any paramters for the widget
-* Finally, if needed, **GET** the contents of the widget
+* Finally, if needed, **GET** the contents of the widget (usually done in a function)
 
 ##Label
 
-Labels are used for displaying basic text on the screen.
+Labels are used for displaying basic text on the screen.  
+![Label](img/1_labels.gif)  
+```python
+from rwbatools import gui
+
+app = gui()
+
+app.addLabel("l1", "Label 1")
+app.addLabel("l2", "Label 2")
+app.addLabel("l3", "Label 3")
+app.addLabel("l4", "Label 4")
+
+app.setLabelBg("l1", "red")
+app.setLabelBg("l2", "yellow")
+app.setLabelBg("l3", "purple")
+app.setLabelBg("l4", "orange")
+
+app.go()
+```
 
 ####Add Labels
 
@@ -67,11 +85,30 @@ There are two special-case entries:
 * NumericEntry - this only allows numbrs to be typed in.
 * SecretEntry - this will show stars, instead of the letters typed - useful for capturing passwords.
 
+![Entries](img/1_entries.gif)
+
+```python
+from rwbatools import gui
+
+app=gui()
+
+app.addEntry("e1")
+app.addEntry("e2")
+app.addEntry("e3")
+app.addLabelEntry("Name")
+
+app.setEntryDefault("e2", "Age here")
+
+app.go()
+```
+
 ####Add Entries
 
 * `.addEntry(title)`
 * `.addNumericEntry(title)`
 * `.addSecretEntry(title)`
+
+    Each of these will add the specified type of Entry, using the title provided.
 
 #### Change Entries
 
@@ -103,7 +140,6 @@ There are two special-case entries:
 
     This will return the contents of the spcified entry box.
 
-
 ##Button
 A clickable button, that will call a function.  
 These are the key to starting an interactive application.  
@@ -119,6 +155,8 @@ That way, multiple widgets can use the same function, but diffrent actions can b
 
     Add a single button to the GUI, the text on the button will be the same as the button's title.  
     A function should be specified, which will be called when the button is clicked.
+
+![Buttons](img/1_buttons.gif)
 
 ```python
     from rwbatools import gui
@@ -162,6 +200,18 @@ That way, multiple widgets can use the same function, but diffrent actions can b
 A group of round boxes, only one of which can be selected.  
 These are great for getting a single value, for a multiple choice question.
 
+![Radios](img/t_radios.gif)  
+
+```python
+from rwbatools import gui
+
+app=gui()
+app.addRadioButton("song", "Killer Queen")
+app.addRadioButton("song", "Paradise City")
+app.addRadioButton("song", "Parklife")
+app.go()
+```
+
 ####Add RadioButtons
 
 * `.addRadioButton(title, name)`
@@ -169,16 +219,6 @@ These are great for getting a single value, for a multiple choice question.
     This will create a RadioButton grouped by the specified title.  
     This button will have the value of name.  
     Radio buttons are usually used in groups:
-
-```python
-    from rwbatools import gui
-
-    app=gui()
-    app.addRadioButton("song", "Killer Queen")
-    app.addRadioButton("song", "Paradise City")
-    app.addRadioButton("song", "Parklife")
-    app.go()
-```
 
 ####Change RadioButtons
 
@@ -212,6 +252,24 @@ These are great for getting a single value, for a multiple choice question.
 
 ##CheckBox
 A simple tick-box, with a label, that can be either ON or OFF.
+
+![CheckBoxes](img/1_checks.gif)  
+
+```python
+from rwbatools import gui
+
+app=gui()
+app.setFont(20)
+
+app.addCheckBox("Apples")
+app.addCheckBox("Pears")
+app.addCheckBox("Oranges")
+app.addCheckBox("Kiwis")
+
+app.setCheckBox("Oranges")
+
+app.go()
+```
 
 ####Add CheckBoxes
 
