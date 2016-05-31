@@ -1,4 +1,5 @@
 site_name: RWBAtools
+site_dir: ../../../jarvisteach.github.io/
 repo_url: https://github.com/RWBA/rwbatools
 pages:
 - Home: index.md
