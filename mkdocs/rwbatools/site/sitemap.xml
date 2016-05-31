@@ -30,7 +30,7 @@
     </url>
         
     <url>
-     <loc>None/Toolbars/</loc>
+     <loc>None/Bars/</loc>
      <lastmod>2016-05-30</lastmod>
      <changefreq>daily</changefreq>
     </url>
@@ -60,7 +60,7 @@
     </url>
         
     <url>
-     <loc>None/devWidgets/</loc>
+     <loc>None/DevWidgets/</loc>
      <lastmod>2016-05-30</lastmod>
      <changefreq>daily</changefreq>
     </url>
@@ -80,19 +80,19 @@
     
         
     <url>
-     <loc>None/license/</loc>
+     <loc>None/License/</loc>
      <lastmod>2016-05-30</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
     <url>
-     <loc>None/releaseNotes/</loc>
+     <loc>None/ReleaseNotes/</loc>
      <lastmod>2016-05-30</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
     <url>
-     <loc>None/Dependencies/</loc>
+     <loc>None/Thanks/</loc>
      <lastmod>2016-05-30</lastmod>
      <changefreq>daily</changefreq>
     </url>

@@ -44,6 +44,21 @@ Labels are used for displaying basic text on the screen.
 
     Get the contents of the label.
 
+##Auto-Labelled Widgets
+
+It's possible to autoimatically include a label alongside some widgets.  
+Both the label and widget will be placed in the same grid space.  
+Simply add the word `Label` to the command when adding the widget:  
+
+* `.addLabelEntry(title)`
+* `.addLabelNumericlEntry(title)`
+* `.addLabelSecretlEntry(title)`
+* `.addLabelOptionBox(title, values)`
+* `.addLabelSpinBox(title, values)`
+* `.addLabelSpinBoxRange(title, from, to)`  
+
+See the relevant section for a description of what the widget does.
+
 ##Entry
 Entries are used to capture input from the user. They take a single parameter - a title.
 
@@ -57,9 +72,6 @@ There are two special-case entries:
 * `.addEntry(title)`
 * `.addNumericEntry(title)`
 * `.addSecretEntry(title)`
-* `.addLabelEntry(title)`
-* `.addNumericLabelEntry(title)`
-* `.addSecretLabelEntry(title)`
 
 #### Change Entries
 
@@ -154,29 +166,70 @@ These are great for getting a single value, for a multiple choice question.
 
 * `.addRadioButton(title, name)`
 
+    This will create a RadioButton grouped by the specified title.  
+    This button will have the value of name.  
+    Radio buttons are usually used in groups:
+
+```python
+    from rwbatools import gui
+
+    app=gui()
+    app.addRadioButton("song", "Killer Queen")
+    app.addRadioButton("song", "Paradise City")
+    app.addRadioButton("song", "Parklife")
+    app.go()
+```
+
 ####Change RadioButtons
 
 * `.setRadioButton(title, value)`
-* `.setRadioTick(title, tick)`
+
+    This will tick the specified RadioButton.
+
+* `.setRadioTick(title, tick=True)`
+
+    It is possible to use tick-boxes instead of the classic circular radio-button.  
+    Setting tick to True will convert all the radio-buttons for this title to tick boxes.
 
 ####Get RadioButtons
 
 * `.getRadioButton(title)`
 
+    Gets the value of the selcted RadioButton, for the specified title.
+```python
+    from rwbatools import gui
+
+    def press(rb):
+        print(app.getRadioButton("song"))
+
+    app=gui()
+    app.addRadioButton("song", "Killer Queen")
+    app.addRadioButton("song", "Paradise City")
+    app.setRadioButtonFunction("song", press)   # call this funciton, when the RadioButton changes
+    app.addButton("PLAY", press)
+    app.go()
+```
+
 ##CheckBox
-A box, with a label, that can be either ON or OFF
+A simple tick-box, with a label, that can be either ON or OFF.
 
 ####Add CheckBoxes
 
 * `.addCheckBox(title)`
 
+    This creates a CheckBox, with the specified title.
+
 ####Change CheckBoxes
 
-* `.setCheckBox(title, ticked)`
+* `.setCheckBox(title, ticked=True)`
+
+    This will tick the CheckBox, or untick it if ticked is set to False.
 
 ####Get CheckBoxes
 
 * `.getCheckBox(title)`
+
+    This will return True or False, depending on the state of the CheckBox.
 
 ##OptionBox
 A drop-down single-select option
@@ -184,12 +237,18 @@ A drop-down single-select option
 ####Add OptionBoxes
 
 * `.addOptionBox(title, values)`
-* `.addLabelOptionBox(title, values)`
 
-####Change OptionBixes
+    This will create an OptionBox, adding the contents of the values list, in the order specified.
+
+####Change OptionBoxes
 
 * `.changeOptionBox(title, newOptions)`
+
+    This will replace the contents of the OptionBox, with the new list provided.
+
 * `.setOptionBox(title, position)`
+
+    This will select the item in the list, at the position specified.
 
 ####Get OptionBoxes
 
@@ -200,14 +259,12 @@ A scrollable option
 
 ####Add SpinBoxes
 
-* `.addSpinBox(title, vals)`
+* `.addSpinBox(title, values)`
 * `.addSpinBoxRange(title, from, to)`
-* `.addLabelSpinBox(title, vals)`
-* `.addLabelSpinBoxRange(title, from, to)`
 
 ####Change SpinBoxes
 
-* `.setSpinBox(title, val)`
+* `.setSpinBox(title, value)`
 * `.setSpinBoxPos(title, pos)`
 
 ####Get SpinBoxes

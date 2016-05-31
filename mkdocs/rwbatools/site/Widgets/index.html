@@ -80,7 +80,7 @@
                     
                         
 <li >
-    <a href="../Toolbars/">Toolbars</a>
+    <a href="../Bars/">Bars</a>
 </li>
 
                     
@@ -110,7 +110,7 @@
                     
                         
 <li >
-    <a href="../devWidgets/">Under Development</a>
+    <a href="../DevWidgets/">Under Development</a>
 </li>
 
                     
@@ -140,19 +140,19 @@
                     
                         
 <li >
-    <a href="../license/">License</a>
+    <a href="../License/">License</a>
 </li>
 
                     
                         
 <li >
-    <a href="../releaseNotes/">Release Notes</a>
+    <a href="../ReleaseNotes/">Release Notes</a>
 </li>
 
                     
                         
 <li >
-    <a href="../Dependencies/">Dependencies</a>
+    <a href="../Thanks/">Thanks</a>
 </li>
 
                     
@@ -183,7 +183,9 @@
                 <li>
                     <a href="https://github.com/RWBA/rwbatools">
                         
-                        RWBAtools
+                            <i class="fa fa-github"></i>
+                        
+                        GitHub
                     </a>
                 </li>
                 
@@ -208,13 +210,13 @@
         
             <li><a href="#checkbox">CheckBox</a></li>
         
-            <li><a href="#listbox">ListBox</a></li>
+            <li><a href="#optionbox">OptionBox</a></li>
         
             <li><a href="#spinbox">SpinBox</a></li>
         
-            <li><a href="#scale">Scale</a></li>
+            <li><a href="#listbox">ListBox</a></li>
         
-            <li><a href="#optionbox">OptionBox</a></li>
+            <li><a href="#scale">Scale</a></li>
         
             <li><a href="#message">Message</a></li>
         
@@ -238,9 +240,9 @@
 <p>Below is a comprehensive list of all the widgets that can be included in a GUI.</p>
 <p>They are all used in the same way:</p>
 <ul>
-<li>First, ADD a widget</li>
-<li>Then, SET any paramters for the widget</li>
-<li>Finally, if needed, GET the contents of the widget</li>
+<li>First, <strong>ADD</strong> a widget</li>
+<li>Then, <strong>SET</strong> any paramters for the widget</li>
+<li>Finally, if needed, <strong>GET</strong> the contents of the widget</li>
 </ul>
 <h2 id="label">Label</h2>
 <p>Labels are used for displaying basic text on the screen.</p>
@@ -279,6 +281,11 @@
 </ul>
 <h2 id="entry">Entry</h2>
 <p>Entries are used to capture input from the user. They take a single parameter - a title.</p>
+<p>There are two special-case entries:</p>
+<ul>
+<li>NumericEntry - this only allows numbrs to be typed in.</li>
+<li>SecretEntry - this will show stars, instead of the letters typed - useful for capturing passwords.</li>
+</ul>
 <h4 id="add-entries">Add Entries</h4>
 <ul>
 <li><code>.addEntry(title)</code></li>
@@ -290,31 +297,93 @@
 </ul>
 <h4 id="change-entries">Change Entries</h4>
 <ul>
-<li><code>.setEntry(title, text)</code></li>
-<li><code>.setEntryDefault(title, text)</code></li>
-<li><code>.clearEntry(title)</code></li>
-<li><code>.clearAllEntries()</code></li>
-<li><code>.setFocus(title)</code></li>
+<li>
+<p><code>.setEntry(title, text)</code></p>
+<p>This sets the contents of the specified entry box.</p>
+</li>
+<li>
+<p><code>.setEntryDefault(title, text)</code></p>
+<p>This sets a default value to display in an entry box.<br />
+Once the user starts typing, it will disappear.<br />
+The text is centered, shown in a light gray font, and will not be returned by <code>.getEntry(title)</code>  </p>
+</li>
+<li>
+<p><code>.clearEntry(title)</code></p>
+<p>This will clear the contents of the specified entry box.</p>
+</li>
+<li>
+<p><code>.clearAllEntries()</code></p>
+<p>This will clear all the entry boxes in the GUI.</p>
+</li>
+<li>
+<p><code>.setFocus(title)</code></p>
+<p>This will put the cursor in the specified entry box, so that the user can start typing without needing to click.</p>
+</li>
 </ul>
 <h4 id="get-entries">Get Entries</h4>
 <ul>
-<li><code>.getEntry(title)</code></li>
+<li>
+<p><code>.getEntry(title)</code></p>
+<p>This will return the contents of the spcified entry box.</p>
+</li>
 </ul>
 <h2 id="button">Button</h2>
-<p>A clickable button, that will call a function</p>
+<p>A clickable button, that will call a function.<br />
+These are the key to starting an interactive application.<br />
+The GUI is looping, waiting for something to happen.<br />
+A button click is the classic way to start interacting with a GUI.</p>
+<p>Whenever any function is called by the GUI, the title of the widget that called it is passed as a parameter.<br />
+That way, multiple widgets can use the same function, but diffrent actions can be performed, depening on the name passed as a parameter.</p>
 <h4 id="add-buttons">Add Buttons</h4>
 <ul>
-<li><code>.addButton(title, function)</code></li>
-<li><code>.addButtons(titles, functions)</code></li>
-<li><code>.addNamedButton(name, title, function)</code></li>
+<li>
+<p><code>.addButton(title, function)</code></p>
+<p>Add a single button to the GUI, the text on the button will be the same as the button's title.<br />
+A function should be specified, which will be called when the button is clicked.</p>
+</li>
+</ul>
+<pre><code class="python">    from rwbatools import gui
+
+    def press(btn):                 # the title of the button will be received as a parameter
+        print(btn)
+
+    app=gui()
+    app.addButton(&quot;One&quot;, press)     # 3 buttons, each calling the same function
+    app.addButton(&quot;Two&quot;, press)
+    app.addButton(&quot;Three&quot;, press)
+    app.go()
+</code></pre>
+
+<ul>
+<li>
+<p><code>.addButtons(titles, functions)</code></p>
+<p>It's possible to add a list of buttons to the GUI.<br />
+Pass a 1-dimensional or 2-dimensional list, and they will be rendered accordingly.
+A single funciton can be passed, to use for all buttons.
+Or a list of functions can be passed, which MUST correspond to the buttons.</p>
+</li>
+<li>
+<p><code>.addNamedButton(name, title, function)</code></p>
+<p>By default, it's not possible to have two buttons with the same text.<br />
+If that's required, a named button should be used.<br />
+This allows a name and title to be set for a button.<br />
+The name will be displayed on the button, and the title passed to the function.</p>
+</li>
 </ul>
 <h4 id="change-buttons">Change Buttons</h4>
 <ul>
-<li><code>.setButton(name, text)</code></li>
-<li><code>.setButtonImage(title, image)</code></li>
+<li>
+<p><code>.setButton(name, text)</code></p>
+<p>This will change the text displayed on a button, but <strong>NOT</strong> the value passed as a paramter to the function.</p>
+</li>
+<li>
+<p><code>.setButtonImage(title, image)</code></p>
+<p>This allows an image to be placed on a button, instead of the usual text.</p>
+</li>
 </ul>
 <h2 id="radiobutton">RadioButton</h2>
-<p>A group of round boxes, only one of which can be selected</p>
+<p>A group of round boxes, only one of which can be selected.<br />
+These are great for getting a single value, for a multiple choice question.</p>
 <h4 id="add-radiobuttons">Add RadioButtons</h4>
 <ul>
 <li><code>.addRadioButton(title, name)</code></li>
@@ -342,6 +411,40 @@
 <ul>
 <li><code>.getCheckBox(title)</code></li>
 </ul>
+<h2 id="optionbox">OptionBox</h2>
+<p>A drop-down single-select option</p>
+<h4 id="add-optionboxes">Add OptionBoxes</h4>
+<ul>
+<li><code>.addOptionBox(title, values)</code></li>
+<li><code>.addLabelOptionBox(title, values)</code></li>
+</ul>
+<h4 id="change-optionbixes">Change OptionBixes</h4>
+<ul>
+<li><code>.changeOptionBox(title, newOptions)</code></li>
+<li><code>.setOptionBox(title, position)</code></li>
+</ul>
+<h4 id="get-optionboxes">Get OptionBoxes</h4>
+<ul>
+<li><code>.getOptionBox(title)</code></li>
+</ul>
+<h2 id="spinbox">SpinBox</h2>
+<p>A scrollable option</p>
+<h4 id="add-spinboxes">Add SpinBoxes</h4>
+<ul>
+<li><code>.addSpinBox(title, vals)</code></li>
+<li><code>.addSpinBoxRange(title, from, to)</code></li>
+<li><code>.addLabelSpinBox(title, vals)</code></li>
+<li><code>.addLabelSpinBoxRange(title, from, to)</code></li>
+</ul>
+<h4 id="change-spinboxes">Change SpinBoxes</h4>
+<ul>
+<li><code>.setSpinBox(title, val)</code></li>
+<li><code>.setSpinBoxPos(title, pos)</code></li>
+</ul>
+<h4 id="get-spinboxes">Get SpinBoxes</h4>
+<ul>
+<li><code>.getSpinBox(title)</code></li>
+</ul>
 <h2 id="listbox">ListBox</h2>
 <p>A box containing a list of items, single or multi-select</p>
 <h4 id="add-listboxes">Add ListBoxes</h4>
@@ -363,24 +466,6 @@
 <ul>
 <li><code>.getListItems(title)</code></li>
 </ul>
-<h2 id="spinbox">SpinBox</h2>
-<p>A scrollable option</p>
-<h4 id="add-spinboxes">Add SpinBoxes</h4>
-<ul>
-<li><code>.addSpinBox(title, vals)</code></li>
-<li><code>.addSpinBoxRange(title, from, to)</code></li>
-<li><code>.addLabelSpinBox(title, vals)</code></li>
-<li><code>.addLabelSpinBoxRange(title, from, to)</code></li>
-</ul>
-<h4 id="change-spinboxes">Change SpinBoxes</h4>
-<ul>
-<li><code>.setSpinBox(title, val)</code></li>
-<li><code>.setSpinBoxPos(title, pos)</code></li>
-</ul>
-<h4 id="get-spinboxes">Get SpinBoxes</h4>
-<ul>
-<li><code>.getSpinBox(title)</code></li>
-</ul>
 <h2 id="scale">Scale</h2>
 <p>A slider, that has a minimum &amp; maximum value</p>
 <h4 id="add-scales">Add Scales</h4>
@@ -397,22 +482,6 @@
 <h4 id="get-scales">Get Scales</h4>
 <ul>
 <li><code>.getScale(title)</code></li>
-</ul>
-<h2 id="optionbox">OptionBox</h2>
-<p>A drop-down single-select option</p>
-<h4 id="add-optionboxes">Add OptionBoxes</h4>
-<ul>
-<li><code>.addOptionBox(title, values)</code></li>
-<li><code>.addLabelOptionBox(title, values)</code></li>
-</ul>
-<h4 id="change-optionbixes">Change OptionBixes</h4>
-<ul>
-<li><code>.changeOptionBox(title, newOptions)</code></li>
-<li><code>.setOptionBox(title, position)</code></li>
-</ul>
-<h4 id="get-optionboxes">Get OptionBoxes</h4>
-<ul>
-<li><code>.getOptionBox(title)</code></li>
 </ul>
 <h2 id="message">Message</h2>
 <p>Like a multi-line label</p>
@@ -487,8 +556,14 @@
 <p>Clickable text to call a function or launch a URL</p>
 <h4 id="add-links">Add Links</h4>
 <ul>
-<li><code>.addLink(title, func)</code></li>
-<li><code>.addWebLink(title, page)</code></li>
+<li>
+<p><code>.addLink(title, func)</code></p>
+<p>Adds a <strong>hyperlink</strong>, that when clicked, will call the spcified function.</p>
+</li>
+<li>
+<p><code>.addWebLink(title, page)</code></p>
+<p>Adds a <strong>hyperlink</strong>, that when clicked, will launch the default browser, and load the page parameter.</p>
+</li>
 </ul>
 <h2 id="image">Image</h2>
 <p>Shows an image, there are lots of things you can do with an image.</p>
