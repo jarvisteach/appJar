@@ -1779,8 +1779,8 @@ class gui:
             self.containerStack[0]['container'].bell()
             return False
 
-      def addSpinBox(self, title, vals, row=None, column=0, colspan=0):
-            self.__addSpinBox(title, vals, row, column, colspan)
+      def addSpinBox(self, title, values, row=None, column=0, colspan=0):
+            self.__addSpinBox(title, values, row, column, colspan)
 
       def addSpinBoxRange(self, title, fromVal, toVal, row=None, column=0, colspan=0):
             vals = list(range(fromVal, toVal+1))
@@ -1790,9 +1790,9 @@ class gui:
             vals = list(range(fromVal, toVal+1))
             self.addLabelSpinBox(title, vals, row, column, colspan)
 
-      def addLabelSpinBox(self, title, vals, row=None, column=0, colspan=0):
+      def addLabelSpinBox(self, title, values, row=None, column=0, colspan=0):
             frame = self.__getLabelFrame(title)
-            spin = self.__buildSpinBox(frame, title, vals)
+            spin = self.__buildSpinBox(frame, title, values)
             self.__packLabelFrame(frame, spin)
             self.__positionWidget(frame, row, column, colspan)
             self.setSpinBoxPos(title, 0)
@@ -1812,11 +1812,11 @@ class gui:
             vals=vals.split("} {")
             return vals
 
-      def setSpinBox(self, title, val):
+      def setSpinBox(self, title, value):
             spin = self.__verifyItem(self.n_spins, title)
             vals = spin.cget("values")#.split()
             vals = self.__getSpinBoxValsAsList(vals)
-            val = str(val)
+            val = str(value)
             if val not in vals:
                   raise Exception("Invalid value: "+ val + ". Not in SpinBox: "+title+"=" + str(vals)) from None
             self.__setSpinBoxVal(spin, val)
@@ -2619,6 +2619,9 @@ class gui:
             ent.config(validate='key', validatecommand=self.validateNumeric)
             self.setEntryTooltip(title, "Numeric data only.")
 
+      def addLabelNumericEntry(self, title, row=None, column=0, colspan=0, secret=False):
+        self. addNumericLabelEntry(title, row, column, colspan, secret):
+        
       def addNumericLabelEntry(self, title, row=None, column=0, colspan=0, secret=False):
             frame = self.__getLabelFrame(title)
             ent = self.__buildEntry(title, frame, secret)
@@ -2640,6 +2643,9 @@ class gui:
             ent = self.__buildEntry(title, frame, secret)
             self.__packLabelFrame(frame, ent)
             self.__positionWidget(frame, row, column, colspan)
+
+      def addLabelSecretEntry(self, title, row=None, column=0, colspan=0):
+            self.ddSecretLabelEntry(title, row, column, colspan)
 
       def addSecretLabelEntry(self, title, row=None, column=0, colspan=0):
             self.addLabelEntry(title, row, column, colspan, True)
