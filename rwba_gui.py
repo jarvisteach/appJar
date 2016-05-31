@@ -2620,8 +2620,8 @@ class gui:
             self.setEntryTooltip(title, "Numeric data only.")
 
       def addLabelNumericEntry(self, title, row=None, column=0, colspan=0, secret=False):
-        self. addNumericLabelEntry(title, row, column, colspan, secret):
-        
+        self. addNumericLabelEntry(title, row, column, colspan, secret)
+
       def addNumericLabelEntry(self, title, row=None, column=0, colspan=0, secret=False):
             frame = self.__getLabelFrame(title)
             ent = self.__buildEntry(title, frame, secret)
