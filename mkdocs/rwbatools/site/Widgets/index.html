@@ -202,6 +202,8 @@
         
             <li><a href="#label">Label</a></li>
         
+            <li><a href="#auto-labelled-widgets">Auto-Labelled Widgets</a></li>
+        
             <li><a href="#entry">Entry</a></li>
         
             <li><a href="#button">Button</a></li>
@@ -279,6 +281,19 @@
 <p>Get the contents of the label.</p>
 </li>
 </ul>
+<h2 id="auto-labelled-widgets">Auto-Labelled Widgets</h2>
+<p>It's possible to autoimatically include a label alongside some widgets.<br />
+Both the label and widget will be placed in the same grid space.<br />
+Simply add the word <code>Label</code> to the command when adding the widget:  </p>
+<ul>
+<li><code>.addLabelEntry(title)</code></li>
+<li><code>.addLabelNumericlEntry(title)</code></li>
+<li><code>.addLabelSecretlEntry(title)</code></li>
+<li><code>.addLabelOptionBox(title, values)</code></li>
+<li><code>.addLabelSpinBox(title, values)</code></li>
+<li><code>.addLabelSpinBoxRange(title, from, to)</code>  </li>
+</ul>
+<p>See the relevant section for a description of what the widget does.</p>
 <h2 id="entry">Entry</h2>
 <p>Entries are used to capture input from the user. They take a single parameter - a title.</p>
 <p>There are two special-case entries:</p>
@@ -291,9 +306,6 @@
 <li><code>.addEntry(title)</code></li>
 <li><code>.addNumericEntry(title)</code></li>
 <li><code>.addSecretEntry(title)</code></li>
-<li><code>.addLabelEntry(title)</code></li>
-<li><code>.addNumericLabelEntry(title)</code></li>
-<li><code>.addSecretLabelEntry(title)</code></li>
 </ul>
 <h4 id="change-entries">Change Entries</h4>
 <ul>
@@ -386,42 +398,96 @@ The name will be displayed on the button, and the title passed to the function.<
 These are great for getting a single value, for a multiple choice question.</p>
 <h4 id="add-radiobuttons">Add RadioButtons</h4>
 <ul>
-<li><code>.addRadioButton(title, name)</code></li>
+<li>
+<p><code>.addRadioButton(title, name)</code></p>
+<p>This will create a RadioButton grouped by the specified title.<br />
+This button will have the value of name.<br />
+Radio buttons are usually used in groups:</p>
+</li>
 </ul>
+<pre><code class="python">    from rwbatools import gui
+
+    app=gui()
+    app.addRadioButton(&quot;song&quot;, &quot;Killer Queen&quot;)
+    app.addRadioButton(&quot;song&quot;, &quot;Paradise City&quot;)
+    app.addRadioButton(&quot;song&quot;, &quot;Parklife&quot;)
+    app.go()
+</code></pre>
+
 <h4 id="change-radiobuttons">Change RadioButtons</h4>
 <ul>
-<li><code>.setRadioButton(title, value)</code></li>
-<li><code>.setRadioTick(title, tick)</code></li>
+<li>
+<p><code>.setRadioButton(title, value)</code></p>
+<p>This will tick the specified RadioButton.</p>
+</li>
+<li>
+<p><code>.setRadioTick(title, tick=True)</code></p>
+<p>It is possible to use tick-boxes instead of the classic circular radio-button.<br />
+Setting tick to True will convert all the radio-buttons for this title to tick boxes.</p>
+</li>
 </ul>
 <h4 id="get-radiobuttons">Get RadioButtons</h4>
 <ul>
-<li><code>.getRadioButton(title)</code></li>
+<li>
+<p><code>.getRadioButton(title)</code></p>
+<p>Gets the value of the selcted RadioButton, for the specified title.</p>
+</li>
 </ul>
+<pre><code class="python">    from rwbatools import gui
+
+    def press(rb):
+        print(app.getRadioButton(&quot;song&quot;))
+
+    app=gui()
+    app.addRadioButton(&quot;song&quot;, &quot;Killer Queen&quot;)
+    app.addRadioButton(&quot;song&quot;, &quot;Paradise City&quot;)
+    app.setRadioButtonFunction(&quot;song&quot;, press)   # call this funciton, when the RadioButton changes
+    app.addButton(&quot;PLAY&quot;, press)
+    app.go()
+</code></pre>
+
 <h2 id="checkbox">CheckBox</h2>
-<p>A box, with a label, that can be either ON or OFF</p>
+<p>A simple tick-box, with a label, that can be either ON or OFF.</p>
 <h4 id="add-checkboxes">Add CheckBoxes</h4>
 <ul>
-<li><code>.addCheckBox(title)</code></li>
+<li>
+<p><code>.addCheckBox(title)</code></p>
+<p>This creates a CheckBox, with the specified title.</p>
+</li>
 </ul>
 <h4 id="change-checkboxes">Change CheckBoxes</h4>
 <ul>
-<li><code>.setCheckBox(title, ticked)</code></li>
+<li>
+<p><code>.setCheckBox(title, ticked=True)</code></p>
+<p>This will tick the CheckBox, or untick it if ticked is set to False.</p>
+</li>
 </ul>
 <h4 id="get-checkboxes">Get CheckBoxes</h4>
 <ul>
-<li><code>.getCheckBox(title)</code></li>
+<li>
+<p><code>.getCheckBox(title)</code></p>
+<p>This will return True or False, depending on the state of the CheckBox.</p>
+</li>
 </ul>
 <h2 id="optionbox">OptionBox</h2>
 <p>A drop-down single-select option</p>
 <h4 id="add-optionboxes">Add OptionBoxes</h4>
 <ul>
-<li><code>.addOptionBox(title, values)</code></li>
-<li><code>.addLabelOptionBox(title, values)</code></li>
+<li>
+<p><code>.addOptionBox(title, values)</code></p>
+<p>This will create an OptionBox, adding the contents of the values list, in the order specified.</p>
+</li>
 </ul>
-<h4 id="change-optionbixes">Change OptionBixes</h4>
+<h4 id="change-optionboxes">Change OptionBoxes</h4>
 <ul>
-<li><code>.changeOptionBox(title, newOptions)</code></li>
-<li><code>.setOptionBox(title, position)</code></li>
+<li>
+<p><code>.changeOptionBox(title, newOptions)</code></p>
+<p>This will replace the contents of the OptionBox, with the new list provided.</p>
+</li>
+<li>
+<p><code>.setOptionBox(title, position)</code></p>
+<p>This will select the item in the list, at the position specified.</p>
+</li>
 </ul>
 <h4 id="get-optionboxes">Get OptionBoxes</h4>
 <ul>
@@ -431,14 +497,12 @@ These are great for getting a single value, for a multiple choice question.</p>
 <p>A scrollable option</p>
 <h4 id="add-spinboxes">Add SpinBoxes</h4>
 <ul>
-<li><code>.addSpinBox(title, vals)</code></li>
+<li><code>.addSpinBox(title, values)</code></li>
 <li><code>.addSpinBoxRange(title, from, to)</code></li>
-<li><code>.addLabelSpinBox(title, vals)</code></li>
-<li><code>.addLabelSpinBoxRange(title, from, to)</code></li>
 </ul>
 <h4 id="change-spinboxes">Change SpinBoxes</h4>
 <ul>
-<li><code>.setSpinBox(title, val)</code></li>
+<li><code>.setSpinBox(title, value)</code></li>
 <li><code>.setSpinBoxPos(title, pos)</code></li>
 </ul>
 <h4 id="get-spinboxes">Get SpinBoxes</h4>
