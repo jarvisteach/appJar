@@ -103,5 +103,6 @@ app.go()
 
 ###Your turn
 ---
-That's about it from here.  
-Have a look around, discover all of the different fillings available
+That's about it for now.  
+Have a look around, discover all of the different fillings available.  
+And, investigate how best to present your sandwich!

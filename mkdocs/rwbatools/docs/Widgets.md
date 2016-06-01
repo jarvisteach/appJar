@@ -1,18 +1,29 @@
 #Widgets
 ----
+In a GUI, the fillings are known as **widgets**.  
+There are lots of different widgets to chose from, each suited to a specific task.  
 
-Below is a comprehensive list of all the widgets that can be included in a GUI.
+Every widget needs a **TITLE**.  
+This is a unique name for the widget, so that later you can get information from that widget, or change it.  
 
-They are all used in the same way:
+##General Usage
+---
+Nearly all widgets provide the same three functions:
 
-* First, **ADD** a widget
-* Then, **SET** any paramters for the widget
-* Finally, if needed, **GET** the contents of the widget (usually done in a function)
+* Always - **ADD** a widget (with a unique title) - this creates the widget
+* Sometimes - **GET** the widget (using its unique title) - this gets the contents of the widget (usually done in a function)
+* Rarely - **SET** the widget (using its unique title) - this changes what's in the widget
+
+On top of these, there is a common set of functions for [changing widgets](WidgetOptions.md).  
+As well as some specialist functions, unique to each widget (see below).  
 
 ##Label
-____
+---
+*Labels* are used for displaying text in the GUI.  
 
-Labels are used for displaying basic text on the screen.  
+* They are great for titles, at the top of the GUI, usually spanning multiple columns.  
+* They are really useful before *Entries* and *Drop-downs* to explain their purpose.  
+* And, they're very helpful at the bottom of the GUI, to show the results of an action.  
 ![Label](img/1_labels.gif)  
 ```python
 from rwbatools import gui
@@ -23,7 +34,7 @@ app.addLabel("l1", "Label 1")
 app.addLabel("l2", "Label 2")
 app.addLabel("l3", "Label 3")
 app.addLabel("l4", "Label 4")
-
+# common set functions
 app.setLabelBg("l1", "red")
 app.setLabelBg("l2", "yellow")
 app.setLabelBg("l3", "purple")
@@ -34,30 +45,30 @@ app.go()
 
 ####Add Labels
 * `.addLabel(title, text=None)`  
-    At a minimum, a title must be provided - to identify the label. This is then followed by an optional piece of text to display.
+    As with all widgets, when you add a *label*, a title must be provided - to identify the *label*. This is then followed by an optional piece of text to display.
 
 * `.addEmptyLabel(title)`  
-    Does the same as add a label, except there''s no parameter to set any text.
+    Does the same as add a *label*, except there''s no parameter to set any text.
 
 * `.addFlashLabel(title, text=None)`  
-    This adds a flashing label, that will alternate between the foreground and background colours.
+    This adds a flashing *label*, that will alternate between the foreground and background colours.
 
 
-####Change Labels
+####Set Labels
 * `.setLabel(title, text)`  
-    Change the contents of the label.
+    Change the contents of the *label*.
 
 * `.clearLabel(title)`  
-    Clear the contents of the label.
+    Clear the contents of the *label*.
 
 ####Get Labels
 * `.getLabel(title)`  
-    Get the contents of the label.
+    Get the contents of the *label*.
 
 ##Auto-Labelled Widgets
 ___
 
-It's possible to autoimatically include a label alongside some widgets.  
+It's possible to automatically include a *label* alongside some widgets.  
 Both the label and widget will be placed in the same grid space.  
 Simply add the word `Label` to the command when adding the widget:  
 
@@ -104,7 +115,7 @@ app.go()
 
     Each of these will add the specified type of Entry, using the title provided.
 
-#### Change Entries
+#### Set Entries
 * `.setEntry(title, text)`  
     This sets the contents of the specified entry box.
 
@@ -169,7 +180,7 @@ That way, multiple widgets can use the same function, but diffrent actions can b
     This allows a name and title to be set for a button.  
     The name will be displayed on the button, and the title passed to the function.
 
-####Change Buttons
+####Set Buttons
 * `.setButton(name, text)`  
     This will change the text displayed on a button, but **NOT** the value passed as a paramter to the function.
 
@@ -199,7 +210,7 @@ app.go()
     This button will have the value of name.  
     Radio buttons are usually used in groups:
 
-####Change RadioButtons
+####Set RadioButtons
 * `.setRadioButton(title, value)`  
     This will tick the specified RadioButton.
 
@@ -250,7 +261,7 @@ app.go()
 * `.addCheckBox(title)`  
     This creates a CheckBox, with the specified title.
 
-####Change CheckBoxes
+####Set CheckBoxes
 * `.setCheckBox(title, ticked=True)`  
     This will tick the CheckBox, or untick it if ticked is set to False.
 
@@ -266,7 +277,7 @@ A drop-down single-select option
 * `.addOptionBox(title, values)`  
     This will create an OptionBox, adding the contents of the values list, in the order specified.
 
-####Change OptionBoxes
+####Set OptionBoxes
 * `.changeOptionBox(title, newOptions)`  
     This will replace the contents of the OptionBox, with the new list provided.
 
@@ -284,7 +295,7 @@ A scrollable option
 * `.addSpinBox(title, values)`
 * `.addSpinBoxRange(title, from, to)`
 
-####Change SpinBoxes
+####Set SpinBoxes
 * `.setSpinBox(title, value)`
 * `.setSpinBoxPos(title, pos)`
 
@@ -300,7 +311,7 @@ A box containing a list of items, single or multi-select
 * `.addListItem(title, item)`
 * `.addListItems(title, items)`
 
-####Change ListBoxes
+####Set ListBoxes
 * `.setListBoxRows(title)`
 * `.setListSingle(list, single)`
 * `.selectListItem(title, item)`
@@ -319,7 +330,7 @@ A slider, that has a minimum & maximum value
 
 * `.addScale(title)`
 
-####Change Scales
+####Set Scales
 
 * `.setScaleRange(title from, to, curr=0)`
 * `.orientScaleHor(title, hor=True)`
@@ -339,7 +350,7 @@ Like a multi-line label
 * `.addMessage(title, text)`
 * `.addEmptyMessage(title)`
 
-####Change Messages
+####Set Messages
 
 * `.clearMessage(title)`
 * `.setMessage(title, text)`
@@ -353,7 +364,7 @@ A multi-line box for typing text
 * `.addTextArea(title)`
 * `.addScrolledTextArea(title)`
 
-####Change TextAreas
+####Set TextAreas
 
 * `.setTextArea(title, text)`
 * `.clearTextArea(title)`

@@ -6,6 +6,7 @@ def press(btn):
         app.stop()
     else:
         print("User:", app.getEntry('user'), "Pass:", app.getEntry('pass'))
+        app.setStatus(app.getEntry("user"))
 
 app = gui()
 
@@ -17,5 +18,8 @@ app.addSecretEntry("pass", 2, 1)                        # Row 2, Column 1, no sp
 app.addButtons(["Submit", "Cancel"], press, 3, 0, 2)    # Row 3, Column 0, Span 2
 
 app.setEntryFocus("user")
+app.addStatus()
+app.setStatusBg("green")
+app.setStatusFg("blue")
 
 app.go()

@@ -1,8 +1,8 @@
 #Images
 ____
-Default image support in RWBAtools assumes no extra libraries. That means it should only support .GIF and .PPM images.  
-However, code is included to allow the use of .PNG and .JPG files. RWBAtools will convert these to .GIF files, before loading.  
-Converting image files is **SLOW**, so it's best to stick to .GIF files!
+Default image support in RWBAtools assumes no extra libraries. That means it should only support `.GIF` and `.PPM` images.  
+However, code is included to allow the use of `.PNG` and `.JPG` files. RWBAtools will convert these to `.GIF` files, before loading.  
+Converting image files is **SLOW**, so it's best to stick to `.GIF` files!
 
 Getting the path for images right can be **TRICKY**  
 It's therefore best to put images in the same folder as your Python code.
@@ -16,7 +16,7 @@ It's therefore best to put images in the same folder as your Python code.
 
     RWBAtools will confirm the file is valid, and will also check the file contains the type specified.
 
-    If an animated GIF is found, then it will be animated within the GUI.
+    If an animated `.GIF` is found, then it will be animated within the GUI.
 
 ###Change Images
 
