@@ -1,12 +1,15 @@
 #Widgets Under Development
 ----
+The following widgets are **under development**. They're included in the library, but offer limited functionality, and are stilll quite buggy.
 
-##PieChart
+###PieChart
+---
 Shows a pie chart
 
 * `.addPieChart(name, values, size=100)`
 
-##Tree
+###Tree
+---
 This widget is still in development. It takes an arbitrary XML string, and converts it into a tree structure.
 
 * `.addTree(title, xml_data)`
@@ -21,7 +24,8 @@ This widget is still in development. It takes an arbitrary XML string, and conve
 
     Return the tree
 
-##Grid
+###Grid
+---
 This widget is still in development.  
 
 * `.addGrid(title, data, action=None, addRow=False)`  

@@ -1,14 +1,14 @@
 #Dialogs
 ----
 
-A number of dialogs are available, to add a different user experience, notify the user of information, or get one off pieces of data.
+A number of dialogs (aka pop-ups) are available, to add a different user experience, notify the user of information, or get one off pieces of data.
 
-## Message Boxes
+### Message Boxes
 
 * `.infoBox(title, message)`
 
     Shows a simple information message, with an OK button.  
-    ![InfoBox](img/dialogs/info.gif =400)
+    ![InfoBox](img/dialogs/info.gif)
 
 * `.errorBox(title, message)`
 
@@ -20,7 +20,7 @@ A number of dialogs are available, to add a different user experience, notify th
     Shows a simple warning message, with an OK message.  
     ![WarningBox](img/dialogs/warning.gif)
 
-##Question Boxes
+###Question Boxes
 
 * `.yesNoBox(title, message)`
 
@@ -51,11 +51,11 @@ A number of dialogs are available, to add a different user experience, notify th
     Shows a question requesting a numeric response. Returns a number, or None if Cancel pressed.  
     ![NumberBox](img/dialogs/num.gif)
 
-## File Boxes
+### File Boxes
 * `.openBox()`
 * `.saveBox()`
 * `.directoryBox()`
 
-## Other Boxes
+### Other Boxes
 
 * `.colourBox()`

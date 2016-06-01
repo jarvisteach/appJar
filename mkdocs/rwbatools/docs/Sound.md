@@ -1,10 +1,11 @@
 #Sound
 ---
 
-The GUI can also make SOUND (on Windows).  
-This uses the winsound API, so is very limited - must be a WAV file.
+Sound is only supported in Windows, using the Winsound API.  
+Therefore, only ```.WAV``` files will work.
 
-##Sound Files
+###Playing Sound Files
+___
 
 * `.playSound(sound, wait=False)`
 
@@ -20,7 +21,8 @@ This uses the winsound API, so is very limited - must be a WAV file.
 
     This will play the named sound in a loop.
 
-##Built-In Sounds
+###Playing Built-In Sounds
+___
 
 * `.soundError()`
 
@@ -30,7 +32,8 @@ This uses the winsound API, so is very limited - must be a WAV file.
 
     This will sound a simple warning beep.
 
-##Musical Notes
+###Playing Musical Notes
+---
 
 * `.playNote(note, duration=200)`
 

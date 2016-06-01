@@ -1,10 +1,14 @@
-#Toolbars, Menus & StatusBars
+#Toolbars, Menubars & StatusBars
 ----
+Toolbars and Menubars are features common to GUIs, you'll be used to seeing them along the top of apps, such as MS Word.  
+Statusbars are also useful features, they allow you to show information about what's going on in a GUI, along the bottom of the app.  
 
-##ToolBar
-Adds a toolbar along the top of the GUI
+##Toolbar
+___
+Toolbars (sometimes known as ribbons) appear across the top og a GUI.  
+They offer a series of buttons to click, which change settings/functionality in a GUI.
 
-####Create Toolbars
+###Create Toolbars
 
 * `.addToolbar(names, funcs)`
 
@@ -12,14 +16,15 @@ Adds a toolbar along the top of the GUI
     If only one function is supplied, they will all call the same function.  
     A bundle of free images is available, if the name used for the toolbar matches the nam of an image, an image will be used.  
 
-####Change Toolbars
+###Change Toolbars
 
 * `.setToolbarImage(name, image)`
 Will set an image for the corresponding button in the toolbar.
 
-##Menu
-Adds a standard Menu bar along the top of the GUI
-The menu bar will show, once the first menu has been added.
+##Menubar
+___
+Adds a standard Menubar along the top of the GUI
+The menubar will show, once the first menu has been added.
 You can add a single menu option, or a list of menu options.
 
 ####Create Menus
@@ -81,15 +86,16 @@ You can add a single menu option, or a list of menu options.
 
     Returns the value of the checked radio button.
 
-##Status
-Adds a status bar along the bottom of the GUI.
+##Statusbar
+___
+Adds a statusbar along the bottom of the GUI.
 This can be used for easy debugging, or as info for the user.
 
 ####Create Statuses
 
 * `.addStatus(header="", fields=1, side=None)`
 
-    This turns the status bar on, and if a header is supplied, will prepend the header before every message.  
+    This turns the statusbar on, and if a header is supplied, will prepend the header before every message.  
     If fields is populated, it''s possible to have multiple status bixes, each addressable by a number.  
     Side can be set as LEFT/RIGHT to make the fields appear rom the left or rigt side, otherwise they will stretch equally.
 
@@ -97,12 +103,12 @@ This can be used for easy debugging, or as info for the user.
 ####Change Statuses
 * `.setStatus(text, field=0)`
 
-    This updates the contents of the status bar. Again, if a header was set when adding the status bar, that will be prepended to the message.  
+    This updates the contents of the statusbar. Again, if a header was set when adding the statusbar, that will be prepended to the message.  
     If multiple fields were created, a position can be supplied to populate.
 
 * `.clearStatus(field=0)`
     
-    Clear anything displayed in the status bar, along with any header that might be set.
+    Clear anything displayed in the statusbar, along with any header that might be set.
 
 * `.setStatusWidth(width, field=0)`
 
