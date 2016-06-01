@@ -1,12 +1,7 @@
-#Background
+#Arranging Widgets
 ---
-RWBAtools was designed to make building a functional GUI as simple as possible.  
 
-It is designed with teaching in mind. Rather than pupils having to focus on the GUI code, they should be focusing on the algorithms that get the work done.
-
-To that end, at it's simplest, you simply keep adding widgets to the GUI, and they will render in sequence.
-
-###Simple Layout
+###Sequential programming
 ---
 By default, each new widget is simply added on a new line. That way, you can very quickly, create a simple GUI:
 

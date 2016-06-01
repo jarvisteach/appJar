@@ -33,34 +33,25 @@ app.go()
 ```
 
 ####Add Labels
-
-* `.addLabel(title, text=None)`
-
+* `.addLabel(title, text=None)`  
     At a minimum, a title must be provided - to identify the label. This is then followed by an optional piece of text to display.
 
-* `.addEmptyLabel(title)`
-
+* `.addEmptyLabel(title)`  
     Does the same as add a label, except there''s no parameter to set any text.
 
-* `.addFlashLabel(title, text=None)`
-
+* `.addFlashLabel(title, text=None)`  
     This adds a flashing label, that will alternate between the foreground and background colours.
 
 
 ####Change Labels
-
-* `.setLabel(title, text)`
-
+* `.setLabel(title, text)`  
     Change the contents of the label.
 
-* `.clearLabel(title)`
-
+* `.clearLabel(title)`  
     Clear the contents of the label.
 
 ####Get Labels
-
-* `.getLabel(title)`
-
+* `.getLabel(title)`  
     Get the contents of the label.
 
 ##Auto-Labelled Widgets
@@ -114,33 +105,25 @@ app.go()
     Each of these will add the specified type of Entry, using the title provided.
 
 #### Change Entries
-
-* `.setEntry(title, text)`
-
+* `.setEntry(title, text)`  
     This sets the contents of the specified entry box.
 
-* `.setEntryDefault(title, text)`
-
+* `.setEntryDefault(title, text)`  
     This sets a default value to display in an entry box.  
     Once the user starts typing, it will disappear.  
     The text is centered, shown in a light gray font, and will not be returned by `.getEntry(title)`  
 
-* `.clearEntry(title)`
-
+* `.clearEntry(title)`  
     This will clear the contents of the specified entry box.
 
-* `.clearAllEntries()`
-
+* `.clearAllEntries()`  
     This will clear all the entry boxes in the GUI.
 
-* `.setFocus(title)`
-
+* `.setFocus(title)`  
     This will put the cursor in the specified entry box, so that the user can start typing without needing to click.
 
 #### Get Entries
-
-* `.getEntry(title)`
-
+* `.getEntry(title)`  
     This will return the contents of the spcified entry box.
 
 ##Button
@@ -155,8 +138,7 @@ That way, multiple widgets can use the same function, but diffrent actions can b
 
 ####Add Buttons
 
-* `.addButton(title, function)`
-
+* `.addButton(title, function)`  
     Add a single button to the GUI, the text on the button will be the same as the button's title.  
     A function should be specified, which will be called when the button is clicked.
 
@@ -175,33 +157,27 @@ That way, multiple widgets can use the same function, but diffrent actions can b
     app.go()
 ```
 
-* `.addButtons(titles, functions)`
-
+* `.addButtons(titles, functions)`  
     It's possible to add a list of buttons to the GUI.  
     Pass a 1-dimensional or 2-dimensional list, and they will be rendered accordingly.
     A single funciton can be passed, to use for all buttons.
     Or a list of functions can be passed, which MUST correspond to the buttons.
 
-* `.addNamedButton(name, title, function)`
-
+* `.addNamedButton(name, title, function)`  
     By default, it's not possible to have two buttons with the same text.  
     If that's required, a named button should be used.  
     This allows a name and title to be set for a button.  
     The name will be displayed on the button, and the title passed to the function.
 
 ####Change Buttons
-
-* `.setButton(name, text)`
-
+* `.setButton(name, text)`  
     This will change the text displayed on a button, but **NOT** the value passed as a paramter to the function.
 
-* `.setButtonImage(title, image)`
-
+* `.setButtonImage(title, image)`  
     This allows an image to be placed on a button, instead of the usual text.
 
 ##RadioButton
 ____
-
 A group of round boxes, only one of which can be selected.  
 These are great for getting a single value, for a multiple choice question.
 
@@ -218,28 +194,21 @@ app.go()
 ```
 
 ####Add RadioButtons
-
-* `.addRadioButton(title, name)`
-
+* `.addRadioButton(title, name)`  
     This will create a RadioButton grouped by the specified title.  
     This button will have the value of name.  
     Radio buttons are usually used in groups:
 
 ####Change RadioButtons
-
-* `.setRadioButton(title, value)`
-
+* `.setRadioButton(title, value)`  
     This will tick the specified RadioButton.
 
-* `.setRadioTick(title, tick=True)`
-
+* `.setRadioTick(title, tick=True)`  
     It is possible to use tick-boxes instead of the classic circular radio-button.  
     Setting tick to True will convert all the radio-buttons for this title to tick boxes.
 
 ####Get RadioButtons
-
-* `.getRadioButton(title)`
-
+* `.getRadioButton(title)`  
     Gets the value of the selcted RadioButton, for the specified title.
 ```python
     from rwbatools import gui
@@ -278,21 +247,15 @@ app.go()
 ```
 
 ####Add CheckBoxes
-
-* `.addCheckBox(title)`
-
+* `.addCheckBox(title)`  
     This creates a CheckBox, with the specified title.
 
 ####Change CheckBoxes
-
-* `.setCheckBox(title, ticked=True)`
-
+* `.setCheckBox(title, ticked=True)`  
     This will tick the CheckBox, or untick it if ticked is set to False.
 
 ####Get CheckBoxes
-
-* `.getCheckBox(title)`
-
+* `.getCheckBox(title)`  
     This will return True or False, depending on the state of the CheckBox.
 
 ##OptionBox
@@ -300,23 +263,17 @@ ____
 A drop-down single-select option
 
 ####Add OptionBoxes
-
-* `.addOptionBox(title, values)`
-
+* `.addOptionBox(title, values)`  
     This will create an OptionBox, adding the contents of the values list, in the order specified.
 
 ####Change OptionBoxes
-
-* `.changeOptionBox(title, newOptions)`
-
+* `.changeOptionBox(title, newOptions)`  
     This will replace the contents of the OptionBox, with the new list provided.
 
-* `.setOptionBox(title, position)`
-
+* `.setOptionBox(title, position)`  
     This will select the item in the list, at the position specified.
 
 ####Get OptionBoxes
-
 * `.getOptionBox(title)`
 
 ##SpinBox
@@ -324,17 +281,14 @@ ____
 A scrollable option
 
 ####Add SpinBoxes
-
 * `.addSpinBox(title, values)`
 * `.addSpinBoxRange(title, from, to)`
 
 ####Change SpinBoxes
-
 * `.setSpinBox(title, value)`
 * `.setSpinBoxPos(title, pos)`
 
 ####Get SpinBoxes
-
 * `.getSpinBox(title)`
 
 ##ListBox
@@ -342,13 +296,11 @@ ____
 A box containing a list of items, single or multi-select
 
 ####Add ListBoxes
-
 * `.addListBox(title, values)`
 * `.addListItem(title, item)`
 * `.addListItems(title, items)`
 
 ####Change ListBoxes
-
 * `.setListBoxRows(title)`
 * `.setListSingle(list, single)`
 * `.selectListItem(title, item)`
@@ -357,7 +309,6 @@ A box containing a list of items, single or multi-select
 * `.clearListBox(title)`
 
 ####Get ListBoxes
-
 * `.getListItems(title)`
 
 ##Scale
@@ -419,22 +370,18 @@ Used for showing progress
 
 * ###Meter
 
-    Shows a simple progress meter
+    Shows a simple progress meter:  
 
-    * `addMeter(name)`
-
+    * `addMeter(name)`  
         Adds a meter with the specified name.
 
-    * `setMeter(name, value, text=None)`
-
+    * `setMeter(name, value, text=None)`  
         Changes the specified meter to the specified value, between 0 and 100, with the optional text.
 
-    * `setMeterFill(name, colour)`
-
+    * `setMeterFill(name, colour)`  
         Changes the fill colour of the specified meter.
 
-    * `getMeter(name)`
-
+    * `getMeter(name)`  
         Gets the value of the specified meter.
 
 * ###SplitMeter
@@ -457,10 +404,8 @@ Clickable text to call a function or launch a URL
 
 ####Add Links
 
-* `.addLink(title, func)`
-
+* `.addLink(title, func)`  
     Adds a **hyperlink**, that when clicked, will call the spcified function.
 
-* `.addWebLink(title, page)`
-
+* `.addWebLink(title, page)`  
     Adds a **hyperlink**, that when clicked, will launch the default browser, and load the page parameter.

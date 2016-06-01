@@ -2,23 +2,25 @@ site_name: RWBAtools
 site_dir: ../../../jarvisteach.github.io/
 repo_url: https://github.com/RWBA/rwbatools
 pages:
-- Home: index.md
-- Creating a GUI:
+- Welcome: index.md
+- Fillings:
     - Widgets: Widgets.md
     - Images: Images.md
     - Sounds: Sound.md
     - Bars: Bars.md
-    - Dialogs: Dialogs.md
-    - Under Development: DevWidgets.md
-- Configuring a GUI:
-    - Positioning Widgets: Layout.md
-    - Grouping Widgets: Grouping.md
-    - GUI Options: GuiOptions.md
-    - Widget Options: WidgetOptions.md
+    - Pop-ups: Dialogs.md
+    - More to come...: DevWidgets.md
+- Presentation:
+    - Arranging widgets: Layout.md
+    - Grouping widgets: Grouping2.md
+    - Changing widgets: WidgetOptions.md
+    - Extras: GuiOptions.md
+- Lessons:
+    - Lesson 1: empty.md
 - About:
-    - License: License.md
     - Installation: Install.md
-    - Release Notes: ReleaseNotes.md
+    - Release notes: ReleaseNotes.md
+    - License: License.md
     - Acknowledgements: Thanks.md
 theme: united
 copyright: <p>Richard Jarvis, 2016</p>
