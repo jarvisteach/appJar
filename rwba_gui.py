@@ -802,15 +802,19 @@ class gui:
                         elif option == 'tooltip': self.__addTooltip(item, value)
                         elif option == "focus": item.focus_set()
                         elif option == 'over':
+                              if not isinstance(value, list): value=[value]
+                              if len(value) == 1: value.append(None)
                               if len(value) != 2:
-                                    raise Exception("Invalid arguments, an array of 2 functions must be passed to set<widget>OverFunction") 
+                                    raise Exception("Invalid arguments, set<widget>OverFunction requires 1 ot 2 functions to be passed in.") 
                               if kind==self.LABEL:
-                                    item.bind("<Enter>",self.__makeFunc(value[0], name, True), add="+")
-                                    item.bind("<Leave>",self.__makeFunc(value[1], name, True), add="+")
+                                    if value[0] is not None: item.bind("<Enter>",self.__makeFunc(value[0], name, True), add="+")
+                                    if value[1] is not None: item.bind("<Leave>",self.__makeFunc(value[1], name, True), add="+")
                                     #item.bind("<B1-Motion>",self.__makeFunc(value[0], name, True), add="+")
                         elif option == 'drag':
+                              if not isinstance(value, list): value=[value]
+                              if len(value) == 1: value.append(None)
                               if len(value) != 2:
-                                    raise Exception("Invalid arguments, an array of 2 functions must be passed to set<widget>OverFunction") 
+                                    raise Exception("Invalid arguments, set<widget>DragFunction requires 1 ot 2 functions to be passed in.") 
                               if kind==self.LABEL:
                                     if platform() == "Darwin":
                                           item.config(cursor="pointinghand")
@@ -824,8 +828,8 @@ class gui:
                                                       f(key)
                                                       return
 
-                                    item.bind("<ButtonPress-1>", self.__makeFunc(value[0], name, True) , add="+")
-                                    item.bind("<ButtonRelease-1>", self.__makeFunc(getWidget, value[1], True) , add="+")
+                                    if value[0] is not None: item.bind("<ButtonPress-1>", self.__makeFunc(value[0], name, True) , add="+")
+                                    if value[1] is not None: item.bind("<ButtonRelease-1>", self.__makeFunc(getWidget, value[1], True) , add="+")
                         elif option == 'command':
                               # this will discard the scale value, as default function can't handle it
                               if kind==self.SCALE: 
@@ -905,9 +909,9 @@ class gui:
                   exec("gui.set"+v+"Tooltip=set" +v+ "Tooltip")
                   exec("def set"+v+"Function(self, name, val, key=None): self.configureWidget("+str(k)+", name, 'command', val, key)")
                   exec("gui.set"+v+"Function=set" +v+ "Function")
-                  exec("def set"+v+"DragFunction(self, name, val, key=None): self.configureWidget("+str(k)+", name, 'drag', val, key)")
+                  exec("def set"+v+"DragFunction(self, name, val): self.configureWidget("+str(k)+", name, 'drag', val)")
                   exec("gui.set"+v+"DragFunction=set" +v+ "DragFunction")
-                  exec("def set"+v+"OverFunction(self, name, val, key=None): self.configureWidget("+str(k)+", name, 'over', val, key)")
+                  exec("def set"+v+"OverFunction(self, name, val): self.configureWidget("+str(k)+", name, 'over', val)")
                   exec("gui.set"+v+"OverFunction=set" +v+ "OverFunction")
 # deprecated, but left in for backwards compatability
                   exec("def set"+v+"Command(self, name, val, key=None): self.configureWidget("+str(k)+", name, 'command', val, key, deprecated='Function')")
@@ -1017,7 +1021,7 @@ class gui:
 
             # finally remove it from the dictionary
             items.pop(name)
-            
+
       def removeAllWidgets(self):
             for child in self.containerStack[0]['container'].winfo_children():
                   child.destroy()
