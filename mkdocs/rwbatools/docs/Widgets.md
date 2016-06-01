@@ -10,6 +10,7 @@ They are all used in the same way:
 * Finally, if needed, **GET** the contents of the widget (usually done in a function)
 
 ##Label
+____
 
 Labels are used for displaying basic text on the screen.  
 ![Label](img/1_labels.gif)  
@@ -63,6 +64,7 @@ app.go()
     Get the contents of the label.
 
 ##Auto-Labelled Widgets
+___
 
 It's possible to autoimatically include a label alongside some widgets.  
 Both the label and widget will be placed in the same grid space.  
@@ -78,6 +80,7 @@ Simply add the word `Label` to the command when adding the widget:
 See the relevant section for a description of what the widget does.
 
 ##Entry
+____
 Entries are used to capture input from the user. They take a single parameter - a title.
 
 There are two special-case entries:
@@ -141,6 +144,7 @@ app.go()
     This will return the contents of the spcified entry box.
 
 ##Button
+____
 A clickable button, that will call a function.  
 These are the key to starting an interactive application.  
 The GUI is looping, waiting for something to happen.  
@@ -196,6 +200,7 @@ That way, multiple widgets can use the same function, but diffrent actions can b
     This allows an image to be placed on a button, instead of the usual text.
 
 ##RadioButton
+____
 
 A group of round boxes, only one of which can be selected.  
 These are great for getting a single value, for a multiple choice question.
@@ -251,6 +256,7 @@ app.go()
 ```
 
 ##CheckBox
+____
 A simple tick-box, with a label, that can be either ON or OFF.
 
 ![CheckBoxes](img/1_checks.gif)  
@@ -290,6 +296,7 @@ app.go()
     This will return True or False, depending on the state of the CheckBox.
 
 ##OptionBox
+____
 A drop-down single-select option
 
 ####Add OptionBoxes
@@ -313,6 +320,7 @@ A drop-down single-select option
 * `.getOptionBox(title)`
 
 ##SpinBox
+____
 A scrollable option
 
 ####Add SpinBoxes
@@ -330,6 +338,7 @@ A scrollable option
 * `.getSpinBox(title)`
 
 ##ListBox
+____
 A box containing a list of items, single or multi-select
 
 ####Add ListBoxes
@@ -352,6 +361,7 @@ A box containing a list of items, single or multi-select
 * `.getListItems(title)`
 
 ##Scale
+____
 A slider, that has a minimum & maximum value
 
 ####Add Scales
@@ -370,6 +380,7 @@ A slider, that has a minimum & maximum value
 * `.getScale(title)`
 
 ##Message
+____
 Like a multi-line label
 
 ####Add Messages
@@ -383,6 +394,7 @@ Like a multi-line label
 * `.setMessage(title, text)`
 
 ##TextArea
+____
 A multi-line box for typing text
 
 ####Add TextAreas
@@ -402,6 +414,7 @@ A multi-line box for typing text
 * `.getTextArea(title)`
 
 ##Meter
+____
 Used for showing progress
 
 * ###Meter
@@ -433,11 +446,13 @@ Used for showing progress
     Shows percentage left & right
 
 ##Separator
+____
 Shows a horizontal line
 
 * `.addSeparator()`
 
 ##Link/WebLink
+____
 Clickable text to call a function or launch a URL
 
 ####Add Links
@@ -449,34 +464,3 @@ Clickable text to call a function or launch a URL
 * `.addWebLink(title, page)`
 
     Adds a **hyperlink**, that when clicked, will launch the default browser, and load the page parameter.
-
-##Image
-Shows an image, there are lots of things you can do with an image.
-
-####Add Images
-
-* `.addImage(name, file)`
-* `.addAnimatedImage(name, file)` 
-
-####Change Images
-
-* `.setImage(name, image)`
-* `.setImageSize(name, width, height)`
-* `.zoomImage(name, mod)`
-
-    Negative will shrink, positive will grow.
-
-* `.shrinkImage(name, mod)`
-* `.growImage(name, mod)`
-
-####Change Image Animation
-
-* `.setAnimationSpeed(name, speed)`
-* `.stopAnimation(name)`
-* `.startAnimation(name)`
-
-####Change Background Images
-
-* `.setBgImage(image)`
-* `.removeBgImage(image)`
-

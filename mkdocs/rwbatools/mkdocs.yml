@@ -4,20 +4,21 @@ repo_url: https://github.com/RWBA/rwbatools
 pages:
 - Home: index.md
 - Creating a GUI:
-    - Layout: Layout.md
     - Widgets: Widgets.md
-    - Widget Options: WidgetOptions.md
+    - Images: Images.md
+    - Sounds: Sound.md
     - Bars: Bars.md
     - Dialogs: Dialogs.md
-    - Sound: Sound.md
-    - GUI Options: GuiOptions.md
-    - Grouping Widgets: Grouping.md
     - Under Development: DevWidgets.md
-- Recipes:
-    - Empty: Empty.md
+- Configuring a GUI:
+    - Positioning Widgets: Layout.md
+    - Grouping Widgets: Grouping.md
+    - GUI Options: GuiOptions.md
+    - Widget Options: WidgetOptions.md
 - About:
     - License: License.md
+    - Installation: Install.md
     - Release Notes: ReleaseNotes.md
-    - Thanks: Thanks.md
+    - Acknowledgements: Thanks.md
 theme: united
 copyright: <p>Richard Jarvis, 2016</p>
