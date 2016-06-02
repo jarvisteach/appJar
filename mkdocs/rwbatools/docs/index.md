@@ -54,7 +54,7 @@ app.go()                    # bottom slice - START the GUI
 ![simpleApp](img/simpleApp.PNG)
 
 And, that's it...  
-The more fillings you put in your sandwich, and the more time you spend making them look nice, the better it will taste!
+The more [fillings](Widgets.md) you put in your sandwich, and the more time you spend making them [look nice](WidgetOptions.md), the better it will taste!
 
 ###Foot-long sub?
 ---
@@ -73,8 +73,11 @@ The arrangement is paramount, nobody wants the sauce under the meat!
 By default, the fillings are simply stacked on top of each other.  
 
 However, filling a sub is very similar to filling a spreadsheet.  
-Simply tell each filling what row it's on, and what column it's in.  
-And, if you're not planning on chopping a filling, it might span across more than one column.  
+Simply tell each filling what layer (row) it's on, and what column it's in.  
+And, if you're not planning on chopping a filling, it might stretch (span) across more than one column.  
+
+[See here](Layout.md) for more.  
+
 ```python
 from rwbatools import gui
 
@@ -101,8 +104,25 @@ app.go()
 
 ![testLog](img/testLog.PNG)
 
-###Your turn
+###Any extras?  
+---
+It's possible to make changes to how the GUI looks  
+For starters, you can specify a name and size for your GUI when you make it:  
+
+* `app=gui("Login Window", "400x200")`  
+
+And, you can choose what kind of bread, and whether it's toasted:   
+
+* `app.setBg("Brown")`
+* `app.setFont(20)`
+
+[See here](GuiOptions.md) for more.  
+
+![testLog](img/testLog2.PNG)
+
+
+###Make your own!
 ---
 That's about it for now.  
 Have a look around, discover all of the different fillings available.  
-And, investigate how best to present your sandwich!
+And, investigate how best to [present ](Grouping.md) your sandwich!

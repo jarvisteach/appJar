@@ -4,27 +4,52 @@ The following widgets are **under development**. They're included in the library
 
 ###PieChart
 ---
-Shows a pie chart
+Shows a pie chart  
 
-* `.addPieChart(name, values, size=100)`
+* `.addPieChart(name, values, size=100)`  
+    Takes a list of integers, which will be converted to percentages, and plotted on the chart.  
+    An optional size parameter can be passed, to adjust the size of the chart.  
+
+![PieChart](img/dev/pie.png)  
+
+```python
+    from rwbatools import gui
+
+    app=gui()
+    app.addPieChart("p1", [50, 200, 75, 300, 150], size=300)
+    app.go()
+```
 
 ###Tree
 ---
-This widget is still in development. It takes an arbitrary XML string, and converts it into a tree structure.
+Takes an arbitrary XML string, and converts it into a tree structure.  
 
 * `.addTree(title, xml_data)`  
-    Create a tree from the xml data
-
+    Create a tree from the specified XML data  
 * `.addTreeFunction(title, func)`  
-    Register he function with double click
-
+    Register a function to call when an item is double-clicked  
 * `.getTree(title)`  
-    Return the tree
+    Return the tree as XML  
+
+![TreeWidget](img/dev/tree.png)
+
+```python
+from rwbatools import gui
+
+app=gui()
+app.addTree("t1",
+            """<people>
+            <person><name>Fred</name><age>45</age><gender>Male</gender></person>
+            <person><name>Tina</name><age>37</age><gender>Female</gender></person>
+            <person><name>CLive</name><age>28</age><gender>Male</gender></person>
+            <person><name>Betty</name><age>51</age><gender>Female</gender></person>
+            </people>""")
+app.go()
+```
 
 ###Grid
 ---
-This widget is still in development.  
-
+Used to create a spreadsheet like interface.  
 * `.addGrid(title, data, action=None, addRow=False)`  
     Receives a (jagged) 2D list of values. The first list should be the headers for the grid, the rest will contain each row of values.  
     If action is set, a button will be created, calling the specified function. If addRow is True, then an additional row will appear, at the end, with Entry boxes.  
@@ -33,3 +58,35 @@ This widget is still in development.
 * `.setGridGeom(title, width, height)`  
 * `.getGridEntries(title)`  
 * `.setGridBackground(title, colour)`  
+
+![Grid](img/dev/grid.png)  
+
+```python
+    from rwbatools import gui
+
+    app=gui()
+    app.setFont(20)
+    app.addGrid("g1",
+        [["Name", "Age", "Gender"],
+        ["Fred", 45, "Male"],
+        ["Tina", 37, "Female"],
+        ["Clive", 28, "Male"],
+        ["Betty", 51, "Female"]])
+    app.go()
+```
+
+###Properties
+---
+A quick-to-create set of radio/check boxes.  
+
+* `.addProperties(props)`  
+    Creates the properties box, with the list of properties.  
+    The properties can be passed in as dictionary, but the order will be random.  
+* `.addProperty(title, value=False)`  
+    Adds the named property to the end of the properties list.  
+* `.getProperties()`  
+    Returns the properties as a dictionary.  
+* `.getProperty(title)`  
+    Gets the named property.  
+* `.setProperty(title, value=True)`  
+    Sets the named property.

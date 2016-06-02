@@ -1,52 +1,66 @@
-#Grouping Widgets
----
-Once you have got to grips with laying out your widgets, it is possible to group them together.  
-Each of these groups is treated like an individual widget.  
-When you **START** the group, you place it in a cell in your layout.  
-Then, when you place widgets inside the group, you start a new grid.  
-After you **STOP** the group, you go back to your previous grid layout.  
-Three main styles are currently supported:
+#Container Options
+----
 
-###LabelFrame
----
-Will put a border around the widgets, with a title
+###Label Frame
+----
+A way of grouping widgets into a box, with a label at the top of the box.  
+![LabelFrame](img/layouts/labelFrame.PNG)
 
-* `.startLabelFrame(title)`
-* `.stopLabelFrame()`
-* `.setLabelFrameAnchor(title, anchor)`
-
-![LabelFrame](img/10_lf_layout.png)
-
+* Position the *LabelFrame* within the grid, then position widgets inside the *LabelFrame*
+* `.startLabelFrame(name)`  
+* `.stopLabelFrame()`  
+    Used to start and stop a labelFrame  
+* `.setSticky(coords)`  
+    Used to specify how widgets should be positioned inside the *LabelFrame*  
 ###NoteBook
 ---
-Will create a tabbed interface, with a number of pages
+A way to create a (basic) tabbed-style interface.  
+![NoteBook](img/layouts/noteBook.PNG)  
 
-* `.startNoteBook(note)`
-* `.startNoteTab(tab)`
-* `.stopNoteTab()`
-* `.stopNoteBook()`
-* `.setNoteTab(note, tab)`
-* `.setNoteBookBg(note, active, inactive)`
-* `.setNoteBookFg(note, active, inactive)`
-* `.setNoteTabBg(note, tab, bg)`
-
-![NoteBook](img/11_nb_layout.png)
-
+* Position the *NoteBook* within the grid, start a *Tab*, then position widgets inside the *Tab*  
+* `.startNoteBook(name)`  
+* `.stopNoteBook()`  
+    Used to start & stop the main *NoteBook*  
+* `.startNoteTab(name)`
+* `.stopNoteTab()`  
+    Used to start and stop each of the tabs in the *NoteBook*.  
 ###PanedWindow
 ---
-Will create a split view, with draggable panes
+A way to arrange re-sizable frames, with drag-bars.  
 
-* `.startPanedWindow(title)`
-* `.stopPanedFrame()`
-* `.setPanedWindowVertical(title)`
-
+* Call `.startPanedWindow(name)` to create the initial pane  
+* Then keep calling it to add additional panes  
+* Calling `.setPanedWindowVertical(name)` will change the layout to vertical, allowing more configurations.  
+####Horizontal Panes
+* Create an initial pane  
+* Keep adding panes to the initial pane  
+![Horizontal Panes](img/layouts/pane1.PNG)  
+####Vertical Panes
+* Create an initial pane  
+* Make it vertical  
+* Add a second pane  
+* Keep adding panes to the inittial pane  
+![Vertical Panes](img/layouts/pane2.PNG)  
+####E-Pane
+* Create an initial pane  
+* Add a second pane
+* Make the second pane vertical  
+* The remaining panes are added to frame 2  
+![E-Panes](img/layouts/pane3.PNG)  
+####T-Pane
+* Create an initial pane
+* Make it vertical
+* Add a second pane
+* Add the remaining panes to pane 2  
+![T-Panes](img/layouts/pane4.PNG)  
 ###SubWindow
 ---
-Allows the creation of additional windows.
-The window is hidden until `.showSubWindow(title)` is called.
+A way to add additional windows, which can be hidden and shown.  
 
-* `.startSubWindow(name, title=None)`
-* `.stopSubWindow()`
-* `.showSubWindow(title)`
-* `.hideSubWindow(title)`
-* `.destroySubWindow(title)`
+* `.startSubwindow(name)`  
+* `.stopSubwindow()`  
+    Used to start and stop defining a *SubWindow*  
+* `.showSubWindow(name)`  
+* `.hideSubWindow(name)`  
+    Used to show and hide the specified *SubWindow*  
+![SubWindow](img/layouts/SubWin.PNG)

@@ -1,4 +1,8 @@
-##Preparing the library
+#Installation Instructions
+---
+This library is designed to be as simple as possible to *install*.  
+As long as the `rwbatools` folder is in Python's path, you are good to go.  
+###Preparing the library
 ----
 All installations start the same:
 
@@ -19,7 +23,7 @@ from rwbatools import gui
 
 If you want a more permanent solution, you can add the above folder to your path. See below. 
 
-##Windows Installation
+###Windows Installation
 ----
 * Open **Control Panel**
 * Navigate to **System -> Advanced System Settings**
@@ -33,7 +37,7 @@ If you want a more permanent solution, you can add the above folder to your path
 ![System](img/w_install_4.png)
 * Press **OK**, and you're ready to go:
 
-##Linux Installation
+###Linux Installation
 ----
 * Launch a **Terminal**
 * Type the following:
@@ -42,7 +46,7 @@ If you want a more permanent solution, you can add the above folder to your path
 ```
 * Close the terminal, and you're ready to go
 
-##MAC Installation
+###MAC Installation
 ----
 * It's a little trickier on MAC
 * First off, run the Linux installation above. That will make it available form the command line.
@@ -51,7 +55,7 @@ If you want a more permanent solution, you can add the above folder to your path
     * Add the line: ``` setenv PYTHONPATH /Users/myname/Documents/PYLIB ```
     * And you're done
 
-##Using the library
+###Using the library
 ----
 If the rwbatools folder is in your path, you can access it simply though an import:
 ```python

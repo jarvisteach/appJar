@@ -8,6 +8,16 @@ Some of these are also available at a widghet level, where you can specify indiv
 
 Some basic configuration for the size, position, transparency, etc. of the GUI.
 
+####Look & Feel  
+* `setTitle(title)`  
+    Sets the title of the GUI. By default it is the name of the script.
+
+* `setIcon(fileName)`  
+    Sets an icon for the GUI.
+
+* `setTransparency(percentage)`  
+    Sets how transparent the GUI is. Between 0 and 100%.
+
 ####Size & Locaiton
 
 * `setGeometry(geom)`  
@@ -26,16 +36,6 @@ Some basic configuration for the size, position, transparency, etc. of the GUI.
 
 * `setLocation(x, y)`  
     Sets the position of the GUI  
-
-####Look & Feel  
-* `setTitle(title)`  
-    Sets the title of the GUI. By default it is the name of the script.
-
-* `setIcon(fileName)`  
-    Sets an icon for the GUI.
-
-* `setTransparency(percentage)`  
-    Sets how transparent the GUI is. Between 0 and 100%.
 
 ###Design
 ----

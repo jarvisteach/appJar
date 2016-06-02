@@ -9,18 +9,17 @@ pages:
     - Sounds: Sound.md
     - Bars: Bars.md
     - Pop-ups: Dialogs.md
-    - More to come...: DevWidgets.md
+    - Still to come...: DevWidgets.md
 - Presentation:
     - Arranging widgets: Layout.md
-    - Grouping widgets: Grouping2.md
+    - Grouping widgets: Grouping.md
     - Changing widgets: WidgetOptions.md
     - Extras: GuiOptions.md
 - Lessons:
     - Lesson 1: empty.md
 - About:
     - Installation: Install.md
-    - Release notes: ReleaseNotes.md
-    - License: License.md
     - Acknowledgements: Thanks.md
+    - License: License.md
 theme: united
 copyright: <p>Richard Jarvis, 2016</p>
