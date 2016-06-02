@@ -1,0 +1,9 @@
+[submodule "modules/nanojpeg"]
+	path = modules/nanojpeg
+	url = https://github.com/sullerandras/nanojpeg-python
+[submodule "modules/pypng"]
+	path = modules/pypng
+	url = https://github.com/drj11/pypng
+[submodule "modules/tkinter-png"]
+	path = modules/tkinter-png
+	url = https://github.com/jarvisteach/tkinter-png
