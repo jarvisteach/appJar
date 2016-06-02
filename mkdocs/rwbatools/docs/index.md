@@ -51,7 +51,7 @@ app.setLabelBg("title", "red")                  # set the label's background to 
 
 app.go()                    # bottom slice - START the GUI
 ```
-![simpleApp](img/simpleApp.PNG)
+![simpleApp](img/simpleApp.png)
 
 And, that's it...  
 The more [fillings](Widgets.md) you put in your sandwich, and the more time you spend making them [look nice](WidgetOptions.md), the better it will taste!
@@ -102,7 +102,7 @@ app.setEntryFocus("user")
 app.go()
 ```
 
-![testLog](img/testLog.PNG)
+![testLog](img/testLog.png)
 
 ###Any extras?  
 ---
@@ -118,7 +118,7 @@ And, you can choose what kind of bread, and whether it's toasted:
 
 [See here](GuiOptions.md) for more.  
 
-![testLog](img/testLog2.PNG)
+![testLog](img/testLog2.png)
 
 
 ###Make your own!
