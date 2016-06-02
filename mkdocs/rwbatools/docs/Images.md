@@ -9,8 +9,7 @@ It's therefore best to put images in the same folder as your Python code.
 
 ###Add Images
 
-* `.addImage(title, file)`
-
+* `.addImage(title, file)`  
     Adding an image is exactly the same as adding any other widget.  
     Simply give the image a title, and pass the filename.
 
@@ -20,45 +19,38 @@ It's therefore best to put images in the same folder as your Python code.
 
 ###Change Images
 
-* `.setImage(title, image)`
-
+* `.setImage(title, image)`  
     This will replace the existing image with the new one.
 
-* `.setImageSize(title, width, height)`
+* `.setImageMouseOver(title, image)`  
+    Set an image to show, instead of the stored image, while the mouse is over this widget.  
 
+* `.setImageSize(title, width, height)`  
     This will set the size of the container for the image, cropping anything that doesn't fit.
 
-* `.zoomImage(title, mod)`
-
+* `.zoomImage(title, mod)`  
     This will attempt to change the size of the image.  
-    It is very rudimentary, and usually doesn't look very good - but is fun to play around with (try adding a slider under an image...)  
+    It's very rudimentary, and usually doesn't look good - but is fun to play around with (try adding a slider under an image...)  
     Negative values will shrink the image, positive will enlarge the image.  
 
-* `.shrinkImage(title, mod)`
-* `.growImage(title, mod)`
-
+* `.shrinkImage(title, mod)` & `.growImage(title, mod)`  
     These are wrappers for the above function, simply causing the image to shrink or grow accordingly.
 
 ###Change Image Animation
 If an image is animated, it's possible to control it.
 
-* `.setAnimationSpeed(title, speed)`
-    
+* `.setAnimationSpeed(title, speed)`  
     This will change the speed an image is animated at.
 
-* `.stopAnimation(title)`
-* `.startAnimation(title)`
-
+* `.stopAnimation(title)` & `.startAnimation(title)`  
     These will start and stop the animation of an image.
 
 ###Set Background Images
 It's also possible to add a background image to your GUI.  
 If you have lots of grouped widgets, this can look quite **UGLY**, as all of the widgets are drawn on top.  
 
-* `.setBgImage(image)`
-
+* `.setBgImage(image)`  
     Set the image for the background.
 
-* `.removeBgImage(image)`
-
+* `.removeBgImage(image)`  
     Remove the image form the background.
