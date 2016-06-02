@@ -805,7 +805,7 @@ class gui:
                               if not isinstance(value, list): value=[value]
                               if len(value) == 1: value.append(None)
                               if len(value) != 2:
-                                    raise Exception("Invalid arguments, set<widget>OverFunction requires 1 ot 2 functions to be passed in.") 
+                                    raise Exception("Invalid arguments, set<widget>OverFunction requires 1 ot 2 functions to be passed in.")
                               if kind==self.LABEL:
                                     if value[0] is not None: item.bind("<Enter>",self.__makeFunc(value[0], name, True), add="+")
                                     if value[1] is not None: item.bind("<Leave>",self.__makeFunc(value[1], name, True), add="+")
@@ -814,7 +814,7 @@ class gui:
                               if not isinstance(value, list): value=[value]
                               if len(value) == 1: value.append(None)
                               if len(value) != 2:
-                                    raise Exception("Invalid arguments, set<widget>DragFunction requires 1 ot 2 functions to be passed in.") 
+                                    raise Exception("Invalid arguments, set<widget>DragFunction requires 1 ot 2 functions to be passed in.")
                               if kind==self.LABEL:
                                     if platform() == "Darwin":
                                           item.config(cursor="pointinghand")
@@ -832,13 +832,13 @@ class gui:
                                     if value[1] is not None: item.bind("<ButtonRelease-1>", self.__makeFunc(getWidget, value[1], True) , add="+")
                         elif option == 'command':
                               # this will discard the scale value, as default function can't handle it
-                              if kind==self.SCALE: 
+                              if kind==self.SCALE:
                                     item.config( command=self.__makeFunc(value,name, True) )
                               elif kind==self.OPTION:
                                     # need to trace the variable??
                                     item.var.trace('w',  self.__makeFunc(value,name, True))
                               elif kind==self.ENTRY:
-                                    if key is None: key =name 
+                                    if key is None: key =name
                                     item.bind('<Return>', self.__makeFunc(value, key, True))
                               elif kind==self.BUTTON:
                                     item.config(command=self.__makeFunc(value, name))
@@ -964,7 +964,7 @@ class gui:
 
       def hideWidget(self, kind, name):
             # get the dictionary of items, and find the item in it
-            items = self.__getItems(kind) 
+            items = self.__getItems(kind)
             item = self.__verifyItem(items, name)
 
             if self.__widgetHasContainer(kind, item):
@@ -1005,7 +1005,7 @@ class gui:
             if item in self.n_flashLabs:
                 self.n_flashLabs.remove(item)
                 if len(self.n_flashLabs) == 0: self.doFlash = False
-            
+
             if self.__widgetHasContainer(kind, item):
                   # destroy the parent
                   parent = item.master
@@ -1412,7 +1412,7 @@ class gui:
                         if not self.n_frameLabs[na].hidden and size > self.labWidth: self.labWidth = size
                   for na in self.n_frameLabs:
                         self.n_frameLabs[na].config(width=self.labWidth)
-            
+
 #####################################
 ## FUNCTION for check boxes
 #####################################
@@ -1741,7 +1741,7 @@ class gui:
       def __buildSpinBox(self, frame, title, vals):
             self.__verifyItem(self.n_spins, title, True)
             if type(vals) not in [list, tuple]:
-                  raise Exception("Can't create SpinBox " + title + ". Invalid values: " + str(vals)) 
+                  raise Exception("Can't create SpinBox " + title + ". Invalid values: " + str(vals))
             vals=list(vals)
             vals.reverse()
             vals=tuple(vals)
@@ -1925,16 +1925,16 @@ class gui:
                         imgType = imghdr.what(imagePath)
                         if not imagePath.lower().endswith(imgType) and not (imgType=="jpeg" and imagePath.lower().endswith("jpg")):
                               # the image has been saved with the wrong extension
-                              raise Exception("Invalid image extension: " + imagePath + " should be a " + imgType)
+                              raise Exception("Invalid image extension: " + imagePath + " should be a ." + imgType)
                         elif imagePath.lower().endswith('.gif'):
                               photo=PhotoImage(file=imagePath)
                         elif imagePath.lower().endswith('.ppm') or imagePath.lower().endswith('.pgm'):
                               photo=PhotoImage(file=imagePath)
-                        elif imagePath.lower().endswith('jpg'):
-                              self.warn("Image processing for JPGs is slow. GIF is the recommended format")
+                        elif imagePath.lower().endswith('jpg') or imagePath.lower().endswith('jpeg'):
+                              self.warn("Image processing for .JPGs is slow. .GIF is the recommended format")
                               photo=self.convertJpgToBmp(imagePath)
                         elif imagePath.lower().endswith('.png'):
-                              self.warn("Image processing for PNGs is slow. GIF is the recommended format")
+                              self.warn("Image processing for .PNGs is slow. .GIF is the recommended format")
                               # known issue here, some PNGs lack IDAT chunks
                               png = PngImageTk(imagePath)
                               png.convert()
@@ -2193,7 +2193,7 @@ class gui:
             for rb in radios:
                   if tick: rb.config(indicatoron=1)
                   else: rb.config(indicatoron=0)
-                  
+
 #####################################
 ## FUNCTION for list box
 #####################################
@@ -2272,7 +2272,7 @@ class gui:
             # clear any selection
             items = lb.curselection()
             if len(items) > 0: lb.selection_clear(items)
-            
+
             # show & select the newly added item
             lb.see(END)
             lb.activate(lb.size()-1)
@@ -2318,7 +2318,7 @@ class gui:
 
                   but.config( command=command )
                   but.bind('<Return>', bindCommand)
-            
+
             if platform() == "Darwin":
                 but.config(highlightbackground=self.labelBgColour)
             #but.bind("<Tab>", self.__focusNextWindow)
@@ -2353,9 +2353,9 @@ class gui:
 
             if not isinstance(names, list):
                   raise Exception("Invalid button: " + names + ". It must be a list of buttons.")
-        
+
             singleFunc = self.__checkFunc(names, funcs)
-            
+
             frame = Frame(self.__getContainer())
             frame.config( background=self.labelBgColour )
 
@@ -2376,7 +2376,7 @@ class gui:
                         but.grid ( row=bRow, column=i )
                         Grid.columnconfigure(frame, i, weight=1)
                         Grid.rowconfigure(frame, bRow, weight=1)
-                  
+
             self.__positionWidget(frame, row, column, colspan)
             self.n_frames.append(frame)
 
@@ -2429,7 +2429,7 @@ class gui:
             self.__positionWidget(lab, row, column, colspan)
 
       def addEmptyLabel(self, title, row=None, column=0, colspan=0):
-            self.addLabel(title, None, row, column, colspan)     
+            self.addLabel(title, None, row, column, colspan)
 
       # adds a set of labels, in the row, spannning specified columns
       def addLabels(self, names, row=None, colspan=0):
@@ -2440,12 +2440,12 @@ class gui:
                   lab = Label(frame)
                   lab.config( text=names[i], font=self.labelFont, justify=LEFT, background=self.labelBgColour )
                   lab.inContainer=False
-                  
+
                   self.n_labels[names[i]]=lab
                   lab.grid ( row=0, column=i )
                   Grid.columnconfigure(frame, i, weight=1)
                   Grid.rowconfigure(frame, 0, weight=1)
-                  
+
             self.__positionWidget(frame, row, 0, colspan)
             self.n_frames.append(frame)
 
@@ -2476,7 +2476,7 @@ class gui:
 
             text.bind('<Button-2>',self.__rightClick)
             text.bind('<Button-3>',self.__rightClick)
-                  
+
             self.n_textAreas[title]=text
             self.logTextArea(title)
             return text
@@ -2521,7 +2521,7 @@ class gui:
 #####################################
       def addTree(self, title, data, row=None, column=0, colspan=0):
             self.__verifyItem(self.n_trees, title, True)
-            canvas = Canvas(self.__getContainer()) 
+            canvas = Canvas(self.__getContainer())
             self.__positionWidget(canvas, row, column, colspan)
             canvas.config(bg="white")
             dom=parseString(data)
@@ -2546,7 +2546,7 @@ class gui:
 #####################################
       def addMessage(self, title, text, row=None, column=0, colspan=0):
             if (title in self.n_messages): raise Exception("Invalid name:", title, "already exists")
-            mess = Message(self.__getContainer()) 
+            mess = Message(self.__getContainer())
             mess.config(font=self.messageFont)
             mess.config( justify=LEFT, background=self.labelBgColour )
             if text is not None: mess.config(text=text)
@@ -2559,7 +2559,7 @@ class gui:
 
       def addEmptyMessage(self, title, row=None, column=0, colspan=0):
             self.addMessage(title, None, row, column, colspan)
-            
+
       def setMessage(self, title, text):
             if (title not in self.n_messages): raise Exception("Invalid message:", title)
             self.n_messages[title].config(text=text)
@@ -2727,7 +2727,7 @@ class gui:
       def setDualMeter(self, name, value=0.0, text=None):
             item = self.__verifyItem(self.n_meters, name)
             value = value/100
-            item.set(value, text) 
+            item.set(value, text)
 
       def getDualMeter(self, name):
             item = self.__verifyItem(self.n_meters, name)
@@ -2751,7 +2751,7 @@ class gui:
       def setSplitMeter(self, name, value=0.0, text=None):
             item = self.__verifyItem(self.n_meters, name)
             value = value/100
-            item.set(value, text) 
+            item.set(value, text)
 
       def getSplitMeter(self, name):
             item = self.__verifyItem(self.n_meters, name)
@@ -2775,7 +2775,7 @@ class gui:
       def setMeter(self, name, value=0.0, text=None):
             item = self.__verifyItem(self.n_meters, name)
             value = value/100
-            item.set(value, text) 
+            item.set(value, text)
 
       def getMeter(self, name):
             item = self.__verifyItem(self.n_meters, name)
@@ -2784,7 +2784,7 @@ class gui:
       def setMeterFill(self, name, colour):
             item = self.__verifyItem(self.n_meters, name)
             item.setFill(colour)
-      
+
 #####################################
 ## FUNCTIONS for seperators
 #####################################
@@ -2817,7 +2817,7 @@ class gui:
             for i in range(len(names)):
                   t = names[i]
                   if (t in self.n_tbButts): raise Exception("Invalid toolbar name: "+ t+ " already exists")
-            
+
                   imgFile = os.path.join(self.icon_path,"default",t.lower() + ".png")
                   try: image = self.__getImage( imgFile )
                   except Exception as e: image = None
@@ -3027,7 +3027,7 @@ class gui:
 
       def clearStatus(self, field=0):
             if self.hasStatus: self.status[field].config(text=self.__getFormatStatus(""))
-            
+
       # formats the string shown in the status bar
       def __getFormatStatus(self, text):
             text = str(text)
@@ -3274,7 +3274,7 @@ class SplitMeter(Meter):
             r_ratio = float(r2-r1) / limit
             g_ratio = float(g2-g1) / limit
             b_ratio = float(b2-b1) / limit
-            
+
             # loop through the range of lines, in the right direction
             modder = 0
             for i in range(int(start),int(fin),direction):
@@ -3379,7 +3379,7 @@ class NoteBook(Frame):
             tab.bind("<space>", lambda *args:self.changeTab(text))
             tab.bind("<FocusIn>", lambda *args:self.__focusIn(text))
             tab.bind("<FocusOut>", lambda *args:self.__focusOut(text))
-            tab.pack(side=LEFT,ipady=4,ipadx=4) 
+            tab.pack(side=LEFT,ipady=4,ipadx=4)
 
             # create the pane
             pane=Frame(self.panes,bg=self.paneBg)
@@ -3575,7 +3575,6 @@ class TreeWidget(TreeItem):
 
       def getSelected(self):
             return self.selectedNode
-            
 
 #####################################
 ## errors
