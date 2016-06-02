@@ -63,4 +63,4 @@ A way to add additional windows, which can be hidden and shown.
 * `.showSubWindow(name)`  
 * `.hideSubWindow(name)`  
     Used to show and hide the specified *SubWindow*  
-![SubWindow](img/layouts/SubWin.png)
+![SubWindow](img/layouts/subWin.png)
