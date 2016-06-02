@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        
+        
+        <link rel="shortcut icon" href="../img/favicon.ico">
+
+	<title>Extras - RWBAtools</title>
+
+        <link href="../css/bootstrap-custom.min.css" rel="stylesheet">
+        <link href="../css/font-awesome-4.0.3.css" rel="stylesheet">
+        <link rel="stylesheet" href="../css/highlight.css">
+        <link href="../css/base.css" rel="stylesheet">
+
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+            <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+        <![endif]-->
+
+        
+    </head>
+
+    <body>
+
+        <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="container">
+
+        <!-- Collapsed navigation -->
+        <div class="navbar-header">
+            <!-- Expander button -->
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+
+            <!-- Main title -->
+            <a class="navbar-brand" href="..">RWBAtools</a>
+        </div>
+
+        <!-- Expanded navigation -->
+        <div class="navbar-collapse collapse">
+            <!-- Main navigation -->
+            <ul class="nav navbar-nav">
+            
+            
+                <li >
+                    <a href="..">Welcome</a>
+                </li>
+            
+            
+            
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Fillings <b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                    
+                        
+<li >
+    <a href="../Widgets/">Widgets</a>
+</li>
+
+                    
+                        
+<li >
+    <a href="../Images/">Images</a>
+</li>
+
+                    
+                        
+<li >
+    <a href="../Sound/">Sounds</a>
+</li>
+
+                    
+                        
+<li >
+    <a href="../Bars/">Bars</a>
+</li>
+
+                    
+                        
+<li >
+    <a href="../Dialogs/">Pop-ups</a>
+</li>
+
+                    
+                        
+<li >
+    <a href="../DevWidgets/">Still to come...</a>
+</li>
+
+                    
+                    </ul>
+                </li>
+            
+            
+            
+                <li class="dropdown active">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Presentation <b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                    
+                        
+<li >
+    <a href="../Layout/">Arranging widgets</a>
+</li>
+
+                    
+                        
+<li >
+    <a href="../Grouping/">Grouping widgets</a>
+</li>
+
+                    
+                        
+<li >
+    <a href="../WidgetOptions/">Changing widgets</a>
+</li>
+
+                    
+                        
+<li class="active">
+    <a href="./">Extras</a>
+</li>
+
+                    
+                    </ul>
+                </li>
+            
+            
+            
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Lessons <b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                    
+                        
+<li >
+    <a href="../empty/">Lesson 1</a>
+</li>
+
+                    
+                    </ul>
+                </li>
+            
+            
+            
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">About <b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                    
+                        
+<li >
+    <a href="../Install/">Installation</a>
+</li>
+
+                    
+                        
+<li >
+    <a href="../Thanks/">Acknowledgements</a>
+</li>
+
+                    
+                        
+<li >
+    <a href="../License/">License</a>
+</li>
+
+                    
+                    </ul>
+                </li>
+            
+            
+            </ul>
+
+            <!-- Search, Navigation and Repo links -->
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a href="#" data-toggle="modal" data-target="#mkdocs_search_modal">
+                        <i class="fa fa-search"></i> Search
+                    </a>
+                </li>
+                <li >
+                    <a rel="next" href="../WidgetOptions/">
+                        <i class="fa fa-arrow-left"></i> Previous
+                    </a>
+                </li>
+                <li >
+                    <a rel="prev" href="../empty/">
+                        Next <i class="fa fa-arrow-right"></i>
+                    </a>
+                </li>
+                
+                <li>
+                    <a href="https://github.com/RWBA/rwbatools">
+                        
+                            <i class="fa fa-github"></i>
+                        
+                        GitHub
+                    </a>
+                </li>
+                
+            </ul>
+        </div>
+    </div>
+</div>
+
+        <div class="container">
+            <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
+    <ul class="nav bs-sidenav">
+    
+        <li class="main active"><a href="#gui-options">GUI Options</a></li>
+        
+            <li><a href="#configuration">Configuration</a></li>
+        
+            <li><a href="#design">Design</a></li>
+        
+            <li><a href="#widget-positioning">Widget Positioning</a></li>
+        
+            <li><a href="#gui-actions">GUI Actions</a></li>
+        
+    
+    </ul>
+</div></div>
+            <div class="col-md-9" role="main">
+
+<h1 id="gui-options">GUI Options</h1>
+<hr />
+<p>There are a number of generic configurations available, which will affect the whole GUI.<br />
+Some of these are also available at a widghet level, where you can specify individual configurations tor specified widgets.  </p>
+<h3 id="configuration">Configuration</h3>
+<hr />
+<p>Some basic configuration for the size, position, transparency, etc. of the GUI.</p>
+<h4 id="look-feel">Look &amp; Feel</h4>
+<ul>
+<li>
+<p><code>setTitle(title)</code><br />
+    Sets the title of the GUI. By default it is the name of the script.</p>
+</li>
+<li>
+<p><code>setIcon(fileName)</code><br />
+    Sets an icon for the GUI.</p>
+</li>
+<li>
+<p><code>setTransparency(percentage)</code><br />
+    Sets how transparent the GUI is. Between 0 and 100%.</p>
+</li>
+</ul>
+<h4 id="size-locaiton">Size &amp; Locaiton</h4>
+<ul>
+<li><code>setGeometry(geom)</code>  </li>
+<li>
+<p><code>setGeometry(width, height)</code><br />
+    Sets the height &amp; width of the GUI:  </p>
+<ul>
+<li>Either as a single String <code>.setGeometry("200x100")</code> (widthxheight)  </li>
+<li>As two seperate parameters <code>.setGeometry(200,100)</code></li>
+<li>Or to go <em>Fullscreen</em> <code>.setGeometry("Fullscreen")</code>  </li>
+</ul>
+</li>
+<li>
+<p><code>exitFullscreen()</code><br />
+    Leave fullscreen, if set in the geometry.  <br />
+<code>&lt;Escape&gt;</code> will call this automatically, while in fullscreen.  </p>
+</li>
+<li>
+<p><code>setResizable(canResize=True)</code><br />
+    Sets whether the GUI can be resized or not.  </p>
+</li>
+<li>
+<p><code>setLocation(x, y)</code><br />
+    Sets the position of the GUI  </p>
+</li>
+</ul>
+<h3 id="design">Design</h3>
+<hr />
+<p>It's possible to change the default colours and fonts for widgets in the GUI.</p>
+<h4 id="colour">Colour</h4>
+<ul>
+<li><code>setBg(colour)</code><br />
+    Set the background colour for the entire GUI. This should affect all widgets, and will override any backgrounds set before.</li>
+</ul>
+<h4 id="font">Font</h4>
+<ul>
+<li>
+<p><code>setFont(size, font=None)</code><br />
+    This can be used to set the font size and style for all widgets.</p>
+</li>
+<li>
+<p><code>decreaseFont()</code> &amp; <code>increaseFont()</code><br />
+    These can be used to increase or decrease the font of all widgets.</p>
+</li>
+<li>
+<p><code>setLabelFont(size, family=None)</code><br />
+    This can be used to set the font size and style for all label-type widgets.</p>
+</li>
+<li>
+<p><code>increaseLabelFont()</code> &amp; <code>decreaseLabelFont()</code><br />
+    These can be used to increase or decrease the font of all label-type widgets.</p>
+</li>
+<li>
+<p><code>setButtonFont()</code><br />
+    This can be used to set the font size and style for all button-type widgets.</p>
+</li>
+<li>
+<p><code>increaseButtonFont()</code> &amp; <code>decreaseButtonFont()</code><br />
+    These can be used to increase or decrease the font of all butotn-type widgets.</p>
+</li>
+</ul>
+<h3 id="widget-positioning">Widget Positioning</h3>
+<hr />
+<p>The below commands allow the user to change how RWBAtools lays out widgets on the screen.</p>
+<h4 id="location">Location</h4>
+<ul>
+<li>
+<p><code>setPadX()</code> &amp; <code>setPadY()</code><br />
+    These set how much empty padding is included around a widget, within its grid-cell.</p>
+</li>
+<li>
+<p><code>setSticky()</code><br />
+    This determines which side of the grid-cell the widget will stick to:</p>
+<ul>
+<li><code>left</code> - stick to the left side</li>
+<li><code>right</code> - stick to the right side</li>
+<li><code>both</code> - stick to both sides, stretch the widget</li>
+</ul>
+</li>
+</ul>
+<h4 id="resize">Resize</h4>
+<ul>
+<li>
+<p><code>setExpand()</code><br />
+    This tells widgets what to do when the GUI is resized.<br />
+    It allows widgets to be configured to stretch or not:</p>
+<ul>
+<li><code>none</code> - don't expand</li>
+<li><code>row</code> - expand with rows only</li>
+<li><code>column</code> - expand with columns only</li>
+<li><code>all</code> - expand in all directions</li>
+</ul>
+</li>
+</ul>
+<h4 id="row-helpers">Row Helpers</h4>
+<ul>
+<li>
+<p><code>getRow()</code><br />
+    Returns the row number currently being used.</p>
+</li>
+<li>
+<p><code>getNextRow()</code><br />
+    Returns the current row number, before adding one to it.</p>
+</li>
+</ul>
+<h3 id="gui-actions">GUI Actions</h3>
+<hr />
+<h4 id="repeated-events">Repeated Events</h4>
+<p>When you start the GUI, it kicks off an infinte loop that is waiting for the user to do something.<br />
+That means, you should never have your own loops running, as that will stop the GUI from working properly.<br />
+Instead, if you want your own loop to run, you need to ask the GUi to run it for you:  </p>
+<ul>
+<li>
+<p><code>registerEvent(func)</code><br />
+    Pass this a function, and the GUI will call that function every second.</p>
+</li>
+<li>
+<p><code>setPollTime(time)</code><br />
+    If you want your events to be called more or less frequently, set the frequency here.</p>
+</li>
+</ul>
+<h4 id="enter-key">Enter Key</h4>
+<ul>
+<li>
+<p><code>enableEnter(func)</code><br />
+    Link a function to the <code>&lt;Enter&gt;</code> key</p>
+</li>
+<li>
+<p><code>disableEnter()</code><br />
+    Unlink a function form the <code>&lt;Enter&gt;</code>  key</p>
+</li>
+</ul>
+<h4 id="other-keys">Other Keys</h4>
+<ul>
+<li>
+<p><code>bindKey(key, func)</code><br />
+    Link the specified key to the specified function.</p>
+</li>
+<li>
+<p><code>unbindKey(key)</code><br />
+    Unlink the specified key from any functions bound to it.</p>
+</li>
+</ul></div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            
+                <center><p>Richard Jarvis, 2016</p></center>
+            
+            <center>Documentation built with <a href="http://www.mkdocs.org/">MkDocs</a>.</center>
+        </footer>
+
+        <script src="../js/jquery-1.10.2.min.js"></script>
+        <script src="../js/bootstrap-3.0.3.min.js"></script>
+        <script src="../js/highlight.pack.js"></script>
+        <script>var base_url = '..';</script>
+        <script data-main="../mkdocs/js/search.js" src="../mkdocs/js/require.js"></script>
+        <script src="../js/base.js"></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="Search Modal" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                        <h4 class="modal-title" id="exampleModalLabel">Search</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p>
+                            From here you can search these documents. Enter
+                            your search terms below.
+                        </p>
+                        <form role="form">
+                            <div class="form-group">
+                                <input type="text" class="form-control" placeholder="Search..." id="mkdocs-search-query">
+                            </div>
+                        </form>
+                        <div id="mkdocs-search-results"></div>
+                    </div>
+                    <div class="modal-footer">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

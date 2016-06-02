@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        
+        
+        <link rel="shortcut icon" href="../img/favicon.ico">
+
+	<title>Widgets - RWBAtools</title>
+
+        <link href="../css/bootstrap-custom.min.css" rel="stylesheet">
+        <link href="../css/font-awesome-4.0.3.css" rel="stylesheet">
+        <link rel="stylesheet" href="../css/highlight.css">
+        <link href="../css/base.css" rel="stylesheet">
+
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+            <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+        <![endif]-->
+
+        
+    </head>
+
+    <body>
+
+        <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="container">
+
+        <!-- Collapsed navigation -->
+        <div class="navbar-header">
+            <!-- Expander button -->
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+
+            <!-- Main title -->
+            <a class="navbar-brand" href="..">RWBAtools</a>
+        </div>
+
+        <!-- Expanded navigation -->
+        <div class="navbar-collapse collapse">
+            <!-- Main navigation -->
+            <ul class="nav navbar-nav">
+            
+            
+                <li >
+                    <a href="..">Welcome</a>
+                </li>
+            
+            
+            
+                <li class="dropdown active">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Fillings <b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                    
+                        
+<li class="active">
+    <a href="./">Widgets</a>
+</li>
+
+                    
+                        
+<li >
+    <a href="../Images/">Images</a>
+</li>
+
+                    
+                        
+<li >
+    <a href="../Sound/">Sounds</a>
+</li>
+
+                    
+                        
+<li >
+    <a href="../Bars/">Bars</a>
+</li>
+
+                    
+                        
+<li >
+    <a href="../Dialogs/">Pop-ups</a>
+</li>
+
+                    
+                        
+<li >
+    <a href="../DevWidgets/">Still to come...</a>
+</li>
+
+                    
+                    </ul>
+                </li>
+            
+            
+            
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Presentation <b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                    
+                        
+<li >
+    <a href="../Layout/">Arranging widgets</a>
+</li>
+
+                    
+                        
+<li >
+    <a href="../Grouping/">Grouping widgets</a>
+</li>
+
+                    
+                        
+<li >
+    <a href="../WidgetOptions/">Changing widgets</a>
+</li>
+
+                    
+                        
+<li >
+    <a href="../GuiOptions/">Extras</a>
+</li>
+
+                    
+                    </ul>
+                </li>
+            
+            
+            
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Lessons <b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                    
+                        
+<li >
+    <a href="../empty/">Lesson 1</a>
+</li>
+
+                    
+                    </ul>
+                </li>
+            
+            
+            
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">About <b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                    
+                        
+<li >
+    <a href="../Install/">Installation</a>
+</li>
+
+                    
+                        
+<li >
+    <a href="../Thanks/">Acknowledgements</a>
+</li>
+
+                    
+                        
+<li >
+    <a href="../License/">License</a>
+</li>
+
+                    
+                    </ul>
+                </li>
+            
+            
+            </ul>
+
+            <!-- Search, Navigation and Repo links -->
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a href="#" data-toggle="modal" data-target="#mkdocs_search_modal">
+                        <i class="fa fa-search"></i> Search
+                    </a>
+                </li>
+                <li >
+                    <a rel="next" href="..">
+                        <i class="fa fa-arrow-left"></i> Previous
+                    </a>
+                </li>
+                <li >
+                    <a rel="prev" href="../Images/">
+                        Next <i class="fa fa-arrow-right"></i>
+                    </a>
+                </li>
+                
+                <li>
+                    <a href="https://github.com/RWBA/rwbatools">
+                        
+                            <i class="fa fa-github"></i>
+                        
+                        GitHub
+                    </a>
+                </li>
+                
+            </ul>
+        </div>
+    </div>
+</div>
+
+        <div class="container">
+            <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
+    <ul class="nav bs-sidenav">
+    
+        <li class="main active"><a href="#widgets">Widgets</a></li>
+        
+            <li><a href="#general-usage">General Usage</a></li>
+        
+            <li><a href="#label">Label</a></li>
+        
+            <li><a href="#auto-labelled-widgets">Auto-Labelled Widgets</a></li>
+        
+            <li><a href="#entry">Entry</a></li>
+        
+            <li><a href="#button">Button</a></li>
+        
+            <li><a href="#radiobutton">RadioButton</a></li>
+        
+            <li><a href="#checkbox">CheckBox</a></li>
+        
+            <li><a href="#optionbox">OptionBox</a></li>
+        
+            <li><a href="#spinbox">SpinBox</a></li>
+        
+            <li><a href="#listbox">ListBox</a></li>
+        
+            <li><a href="#scale">Scale</a></li>
+        
+            <li><a href="#message">Message</a></li>
+        
+            <li><a href="#textarea">TextArea</a></li>
+        
+            <li><a href="#meter">Meter</a></li>
+        
+            <li><a href="#separator">Separator</a></li>
+        
+            <li><a href="#linkweblink">Link/WebLink</a></li>
+        
+    
+    </ul>
+</div></div>
+            <div class="col-md-9" role="main">
+
+<h1 id="widgets">Widgets</h1>
+<hr />
+<p>In a GUI, the fillings are known as <strong>widgets</strong>.<br />
+There are lots of different widgets to chose from, each suited to a specific task.  </p>
+<p>Every widget needs a <strong>TITLE</strong>.<br />
+This is a unique name for the widget, so that later you can get information from that widget, or change it.  </p>
+<h2 id="general-usage">General Usage</h2>
+<hr />
+<p>Nearly all widgets provide the same three functions:</p>
+<ul>
+<li>Always - <strong>ADD</strong> a widget (with a unique title) - this creates the widget</li>
+<li>Sometimes - <strong>GET</strong> the widget (using its unique title) - this gets the contents of the widget (usually done in a function)</li>
+<li>Rarely - <strong>SET</strong> the widget (using its unique title) - this changes what's in the widget</li>
+</ul>
+<p>On top of these, there is a common set of functions for <a href="../WidgetOptions/">changing widgets</a>.<br />
+As well as some specialist functions, unique to each widget (see below).  </p>
+<h2 id="label">Label</h2>
+<hr />
+<p><em>Labels</em> are used for displaying text in the GUI.  </p>
+<ul>
+<li>They are great for titles, at the top of the GUI, usually spanning multiple columns.  </li>
+<li>They are really useful before <em>Entries</em> and <em>Drop-downs</em> to explain their purpose.  </li>
+<li>And, they're very helpful at the bottom of the GUI, to show the results of an action.<br />
+<img alt="Label" src="../img/1_labels.gif" />  </li>
+</ul>
+<pre><code class="python">from rwbatools import gui
+
+app = gui()
+
+app.addLabel(&quot;l1&quot;, &quot;Label 1&quot;)
+app.addLabel(&quot;l2&quot;, &quot;Label 2&quot;)
+app.addLabel(&quot;l3&quot;, &quot;Label 3&quot;)
+app.addLabel(&quot;l4&quot;, &quot;Label 4&quot;)
+# common set functions
+app.setLabelBg(&quot;l1&quot;, &quot;red&quot;)
+app.setLabelBg(&quot;l2&quot;, &quot;yellow&quot;)
+app.setLabelBg(&quot;l3&quot;, &quot;purple&quot;)
+app.setLabelBg(&quot;l4&quot;, &quot;orange&quot;)
+
+app.go()
+</code></pre>
+
+<h4 id="add-labels">Add Labels</h4>
+<ul>
+<li>
+<p><code>.addLabel(title, text=None)</code><br />
+    As with all widgets, when you add a <em>label</em>, a title must be provided - to identify the <em>label</em>. This is then followed by an optional piece of text to display.</p>
+</li>
+<li>
+<p><code>.addEmptyLabel(title)</code><br />
+    Does the same as add a <em>label</em>, except there''s no parameter to set any text.</p>
+</li>
+<li>
+<p><code>.addFlashLabel(title, text=None)</code><br />
+    This adds a flashing <em>label</em>, that will alternate between the foreground and background colours.</p>
+</li>
+</ul>
+<h4 id="set-labels">Set Labels</h4>
+<ul>
+<li>
+<p><code>.setLabel(title, text)</code><br />
+    Change the contents of the <em>label</em>.</p>
+</li>
+<li>
+<p><code>.clearLabel(title)</code><br />
+    Clear the contents of the <em>label</em>.</p>
+</li>
+</ul>
+<h4 id="get-labels">Get Labels</h4>
+<ul>
+<li><code>.getLabel(title)</code><br />
+    Get the contents of the <em>label</em>.</li>
+</ul>
+<h2 id="auto-labelled-widgets">Auto-Labelled Widgets</h2>
+<hr />
+<p>It's possible to automatically include a <em>label</em> alongside some widgets.<br />
+Both the label and widget will be placed in the same grid space.<br />
+Simply add the word <code>Label</code> to the command when adding the widget:  </p>
+<ul>
+<li><code>.addLabelEntry(title)</code></li>
+<li><code>.addLabelNumericlEntry(title)</code></li>
+<li><code>.addLabelSecretlEntry(title)</code></li>
+<li><code>.addLabelOptionBox(title, values)</code></li>
+<li><code>.addLabelSpinBox(title, values)</code></li>
+<li><code>.addLabelSpinBoxRange(title, from, to)</code>  </li>
+</ul>
+<p>See the relevant section for a description of what the widget does.</p>
+<h2 id="entry">Entry</h2>
+<hr />
+<p>Entries are used to capture input from the user. They take a single parameter - a title.</p>
+<p>There are two special-case entries:</p>
+<ul>
+<li>NumericEntry - this only allows numbrs to be typed in.</li>
+<li>SecretEntry - this will show stars, instead of the letters typed - useful for capturing passwords.</li>
+</ul>
+<p><img alt="Entries" src="../img/1_entries.gif" /></p>
+<pre><code class="python">from rwbatools import gui
+
+app=gui()
+
+app.addEntry(&quot;e1&quot;)
+app.addEntry(&quot;e2&quot;)
+app.addEntry(&quot;e3&quot;)
+app.addLabelEntry(&quot;Name&quot;)
+
+app.setEntryDefault(&quot;e2&quot;, &quot;Age here&quot;)
+
+app.go()
+</code></pre>
+
+<h4 id="add-entries">Add Entries</h4>
+<ul>
+<li><code>.addEntry(title)</code></li>
+<li><code>.addNumericEntry(title)</code></li>
+<li>
+<p><code>.addSecretEntry(title)</code></p>
+<p>Each of these will add the specified type of Entry, using the title provided.</p>
+</li>
+</ul>
+<h4 id="set-entries">Set Entries</h4>
+<ul>
+<li>
+<p><code>.setEntry(title, text)</code><br />
+    This sets the contents of the specified entry box.</p>
+</li>
+<li>
+<p><code>.setEntryDefault(title, text)</code><br />
+    This sets a default value to display in an entry box.<br />
+    Once the user starts typing, it will disappear.<br />
+    The text is centered, shown in a light gray font, and will not be returned by <code>.getEntry(title)</code>  </p>
+</li>
+<li>
+<p><code>.clearEntry(title)</code><br />
+    This will clear the contents of the specified entry box.</p>
+</li>
+<li>
+<p><code>.clearAllEntries()</code><br />
+    This will clear all the entry boxes in the GUI.</p>
+</li>
+<li>
+<p><code>.setFocus(title)</code><br />
+    This will put the cursor in the specified entry box, so that the user can start typing without needing to click.</p>
+</li>
+</ul>
+<h4 id="get-entries">Get Entries</h4>
+<ul>
+<li><code>.getEntry(title)</code><br />
+    This will return the contents of the spcified entry box.</li>
+</ul>
+<h2 id="button">Button</h2>
+<hr />
+<p>A clickable button, that will call a function.<br />
+These are the key to starting an interactive application.<br />
+The GUI is looping, waiting for something to happen.<br />
+A button click is the classic way to start interacting with a GUI.</p>
+<p>Whenever any function is called by the GUI, the title of the widget that called it is passed as a parameter.<br />
+That way, multiple widgets can use the same function, but diffrent actions can be performed, depening on the name passed as a parameter.</p>
+<h4 id="add-buttons">Add Buttons</h4>
+<ul>
+<li><code>.addButton(title, function)</code><br />
+    Add a single button to the GUI, the text on the button will be the same as the button's title.<br />
+    A function should be specified, which will be called when the button is clicked.</li>
+</ul>
+<p><img alt="Buttons" src="../img/1_buttons.gif" /></p>
+<pre><code class="python">    from rwbatools import gui
+
+    def press(btn):                 # the title of the button will be received as a parameter
+        print(btn)
+
+    app=gui()
+    app.addButton(&quot;One&quot;, press)     # 3 buttons, each calling the same function
+    app.addButton(&quot;Two&quot;, press)
+    app.addButton(&quot;Three&quot;, press)
+    app.go()
+</code></pre>
+
+<ul>
+<li>
+<p><code>.addButtons(titles, functions)</code><br />
+    It's possible to add a list of buttons to the GUI.<br />
+    Pass a 1-dimensional or 2-dimensional list, and they will be rendered accordingly.
+    A single funciton can be passed, to use for all buttons.
+    Or a list of functions can be passed, which MUST correspond to the buttons.</p>
+</li>
+<li>
+<p><code>.addNamedButton(name, title, function)</code><br />
+    By default, it's not possible to have two buttons with the same text.<br />
+    If that's required, a named button should be used.<br />
+    This allows a name and title to be set for a button.<br />
+    The name will be displayed on the button, and the title passed to the function.</p>
+</li>
+</ul>
+<h4 id="set-buttons">Set Buttons</h4>
+<ul>
+<li>
+<p><code>.setButton(name, text)</code><br />
+    This will change the text displayed on a button, but <strong>NOT</strong> the value passed as a paramter to the function.</p>
+</li>
+<li>
+<p><code>.setButtonImage(title, image)</code><br />
+    This allows an image to be placed on a button, instead of the usual text.</p>
+</li>
+</ul>
+<h2 id="radiobutton">RadioButton</h2>
+<hr />
+<p>A group of round boxes, only one of which can be selected.<br />
+These are great for getting a single value, for a multiple choice question.</p>
+<p><img alt="Radios" src="../img/t_radios.gif" />  </p>
+<pre><code class="python">from rwbatools import gui
+
+app=gui()
+app.addRadioButton(&quot;song&quot;, &quot;Killer Queen&quot;)
+app.addRadioButton(&quot;song&quot;, &quot;Paradise City&quot;)
+app.addRadioButton(&quot;song&quot;, &quot;Parklife&quot;)
+app.go()
+</code></pre>
+
+<h4 id="add-radiobuttons">Add RadioButtons</h4>
+<ul>
+<li><code>.addRadioButton(title, name)</code><br />
+    This will create a RadioButton grouped by the specified title.<br />
+    This button will have the value of name.<br />
+    Radio buttons are usually used in groups:</li>
+</ul>
+<h4 id="set-radiobuttons">Set RadioButtons</h4>
+<ul>
+<li>
+<p><code>.setRadioButton(title, value)</code><br />
+    This will tick the specified RadioButton.</p>
+</li>
+<li>
+<p><code>.setRadioTick(title, tick=True)</code><br />
+    It is possible to use tick-boxes instead of the classic circular radio-button.<br />
+    Setting tick to True will convert all the radio-buttons for this title to tick boxes.</p>
+</li>
+</ul>
+<h4 id="get-radiobuttons">Get RadioButtons</h4>
+<ul>
+<li><code>.getRadioButton(title)</code><br />
+    Gets the value of the selcted RadioButton, for the specified title.</li>
+</ul>
+<pre><code class="python">    from rwbatools import gui
+
+    def press(rb):
+        print(app.getRadioButton(&quot;song&quot;))
+
+    app=gui()
+    app.addRadioButton(&quot;song&quot;, &quot;Killer Queen&quot;)
+    app.addRadioButton(&quot;song&quot;, &quot;Paradise City&quot;)
+    app.setRadioButtonFunction(&quot;song&quot;, press)   # call this funciton, when the RadioButton changes
+    app.addButton(&quot;PLAY&quot;, press)
+    app.go()
+</code></pre>
+
+<h2 id="checkbox">CheckBox</h2>
+<hr />
+<p>A simple tick-box, with a label, that can be either ON or OFF.</p>
+<p><img alt="CheckBoxes" src="../img/1_checks.gif" />  </p>
+<pre><code class="python">from rwbatools import gui
+
+app=gui()
+app.setFont(20)
+
+app.addCheckBox(&quot;Apples&quot;)
+app.addCheckBox(&quot;Pears&quot;)
+app.addCheckBox(&quot;Oranges&quot;)
+app.addCheckBox(&quot;Kiwis&quot;)
+
+app.setCheckBox(&quot;Oranges&quot;)
+
+app.go()
+</code></pre>
+
+<h4 id="add-checkboxes">Add CheckBoxes</h4>
+<ul>
+<li><code>.addCheckBox(title)</code><br />
+    This creates a CheckBox, with the specified title.</li>
+</ul>
+<h4 id="set-checkboxes">Set CheckBoxes</h4>
+<ul>
+<li><code>.setCheckBox(title, ticked=True)</code><br />
+    This will tick the CheckBox, or untick it if ticked is set to False.</li>
+</ul>
+<h4 id="get-checkboxes">Get CheckBoxes</h4>
+<ul>
+<li><code>.getCheckBox(title)</code><br />
+    This will return True or False, depending on the state of the CheckBox.</li>
+</ul>
+<h2 id="optionbox">OptionBox</h2>
+<hr />
+<p>A drop-down single-select option</p>
+<h4 id="add-optionboxes">Add OptionBoxes</h4>
+<ul>
+<li><code>.addOptionBox(title, values)</code><br />
+    This will create an OptionBox, adding the contents of the values list, in the order specified.</li>
+</ul>
+<h4 id="set-optionboxes">Set OptionBoxes</h4>
+<ul>
+<li>
+<p><code>.changeOptionBox(title, newOptions)</code><br />
+    This will replace the contents of the OptionBox, with the new list provided.</p>
+</li>
+<li>
+<p><code>.setOptionBox(title, position)</code><br />
+    This will select the item in the list, at the position specified.</p>
+</li>
+</ul>
+<h4 id="get-optionboxes">Get OptionBoxes</h4>
+<ul>
+<li><code>.getOptionBox(title)</code></li>
+</ul>
+<h2 id="spinbox">SpinBox</h2>
+<hr />
+<p>A scrollable option</p>
+<h4 id="add-spinboxes">Add SpinBoxes</h4>
+<ul>
+<li><code>.addSpinBox(title, values)</code></li>
+<li><code>.addSpinBoxRange(title, from, to)</code></li>
+</ul>
+<h4 id="set-spinboxes">Set SpinBoxes</h4>
+<ul>
+<li><code>.setSpinBox(title, value)</code></li>
+<li><code>.setSpinBoxPos(title, pos)</code></li>
+</ul>
+<h4 id="get-spinboxes">Get SpinBoxes</h4>
+<ul>
+<li><code>.getSpinBox(title)</code></li>
+</ul>
+<h2 id="listbox">ListBox</h2>
+<hr />
+<p>A box containing a list of items, single or multi-select</p>
+<h4 id="add-listboxes">Add ListBoxes</h4>
+<ul>
+<li><code>.addListBox(title, values)</code></li>
+<li><code>.addListItem(title, item)</code></li>
+<li><code>.addListItems(title, items)</code></li>
+</ul>
+<h4 id="set-listboxes">Set ListBoxes</h4>
+<ul>
+<li><code>.setListBoxRows(title)</code></li>
+<li><code>.setListSingle(list, single)</code></li>
+<li><code>.selectListItem(title, item)</code></li>
+<li><code>.updateListItems(title, items)</code></li>
+<li><code>.removeListItem(title, item)</code></li>
+<li><code>.clearListBox(title)</code></li>
+</ul>
+<h4 id="get-listboxes">Get ListBoxes</h4>
+<ul>
+<li><code>.getListItems(title)</code></li>
+</ul>
+<h2 id="scale">Scale</h2>
+<hr />
+<p>A slider, that has a minimum &amp; maximum value</p>
+<h4 id="add-scales">Add Scales</h4>
+<ul>
+<li><code>.addScale(title)</code></li>
+</ul>
+<h4 id="set-scales">Set Scales</h4>
+<ul>
+<li><code>.setScaleRange(title from, to, curr=0)</code></li>
+<li><code>.orientScaleHor(title, hor=True)</code></li>
+<li><code>.setScale(title, pos)</code></li>
+<li><code>.showScaleValue(title, show=True)</code></li>
+</ul>
+<h4 id="get-scales">Get Scales</h4>
+<ul>
+<li><code>.getScale(title)</code></li>
+</ul>
+<h2 id="message">Message</h2>
+<hr />
+<p>Like a multi-line label</p>
+<h4 id="add-messages">Add Messages</h4>
+<ul>
+<li><code>.addMessage(title, text)</code></li>
+<li><code>.addEmptyMessage(title)</code></li>
+</ul>
+<h4 id="set-messages">Set Messages</h4>
+<ul>
+<li><code>.clearMessage(title)</code></li>
+<li><code>.setMessage(title, text)</code></li>
+</ul>
+<h2 id="textarea">TextArea</h2>
+<hr />
+<p>A multi-line box for typing text</p>
+<h4 id="add-textareas">Add TextAreas</h4>
+<ul>
+<li><code>.addTextArea(title)</code></li>
+<li><code>.addScrolledTextArea(title)</code></li>
+</ul>
+<h4 id="set-textareas">Set TextAreas</h4>
+<ul>
+<li><code>.setTextArea(title, text)</code></li>
+<li><code>.clearTextArea(title)</code></li>
+<li><code>.logTextArea(title)</code></li>
+<li><code>.textAreaChanged(title)</code></li>
+</ul>
+<h4 id="get-textareas">Get TextAreas</h4>
+<ul>
+<li><code>.getTextArea(title)</code></li>
+</ul>
+<h2 id="meter">Meter</h2>
+<hr />
+<p>Used for showing progress</p>
+<ul>
+<li>
+<h3 id="meter_1">Meter</h3>
+<p>Shows a simple progress meter:  </p>
+<ul>
+<li>
+<p><code>addMeter(name)</code><br />
+    Adds a meter with the specified name.</p>
+</li>
+<li>
+<p><code>setMeter(name, value, text=None)</code><br />
+    Changes the specified meter to the specified value, between 0 and 100, with the optional text.</p>
+</li>
+<li>
+<p><code>setMeterFill(name, colour)</code><br />
+    Changes the fill colour of the specified meter.</p>
+</li>
+<li>
+<p><code>getMeter(name)</code><br />
+    Gets the value of the specified meter.</p>
+</li>
+</ul>
+</li>
+<li>
+<h3 id="splitmeter">SplitMeter</h3>
+<p>Shows two values, left &amp; right</p>
+</li>
+<li>
+<h3 id="dualmeter">DualMeter</h3>
+<p>Shows percentage left &amp; right</p>
+</li>
+</ul>
+<h2 id="separator">Separator</h2>
+<hr />
+<p>Shows a horizontal line</p>
+<ul>
+<li><code>.addSeparator()</code></li>
+</ul>
+<h2 id="linkweblink">Link/WebLink</h2>
+<hr />
+<p>Clickable text to call a function or launch a URL</p>
+<h4 id="add-links">Add Links</h4>
+<ul>
+<li>
+<p><code>.addLink(title, func)</code><br />
+    Adds a <strong>hyperlink</strong>, that when clicked, will call the spcified function.</p>
+</li>
+<li>
+<p><code>.addWebLink(title, page)</code><br />
+    Adds a <strong>hyperlink</strong>, that when clicked, will launch the default browser, and load the page parameter.</p>
+</li>
+</ul></div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            
+                <center><p>Richard Jarvis, 2016</p></center>
+            
+            <center>Documentation built with <a href="http://www.mkdocs.org/">MkDocs</a>.</center>
+        </footer>
+
+        <script src="../js/jquery-1.10.2.min.js"></script>
+        <script src="../js/bootstrap-3.0.3.min.js"></script>
+        <script src="../js/highlight.pack.js"></script>
+        <script>var base_url = '..';</script>
+        <script data-main="../mkdocs/js/search.js" src="../mkdocs/js/require.js"></script>
+        <script src="../js/base.js"></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="Search Modal" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                        <h4 class="modal-title" id="exampleModalLabel">Search</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p>
+                            From here you can search these documents. Enter
+                            your search terms below.
+                        </p>
+                        <form role="form">
+                            <div class="form-group">
+                                <input type="text" class="form-control" placeholder="Search..." id="mkdocs-search-query">
+                            </div>
+                        </form>
+                        <div id="mkdocs-search-results"></div>
+                    </div>
+                    <div class="modal-footer">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
