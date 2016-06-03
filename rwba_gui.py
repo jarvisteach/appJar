@@ -1524,6 +1524,7 @@ class gui:
       # function to scroll the canvas/scrollbars
       # gets the requested grid
       # and checks the event.delta to determine where to scroll
+      # https://www.daniweb.com/programming/software-development/code/217059/using-the-mouse-wheel-with-tkinter-python
       def __scrollGrid(self, event, title):
             print(platform())
             if platform() in [ "win32", "Windows", "Darwin"]:
@@ -2521,12 +2522,13 @@ class gui:
 #####################################
       def addTree(self, title, data, row=None, column=0, colspan=0):
             self.__verifyItem(self.n_trees, title, True)
-            canvas = Canvas(self.__getContainer())
-            self.__positionWidget(canvas, row, column, colspan)
-            canvas.config(bg="white")
-            dom=parseString(data)
-            item=TreeWidget(dom.documentElement)
-            node=TreeNode(canvas, None, item)
+            frame=ScrollPane(self.__getContainer(), relief=RAISED,
+                            borderwidth=2, bg="white", highlightthickness=0, takefocus=1)
+            self.__positionWidget(frame, row, column, colspan)
+
+            xmlDoc=parseString(data)
+            item=TreeWidget(xmlDoc.documentElement)
+            node=TreeNode(frame.getPane(), None, item)
             node.update()
             node.expand()
             self.n_trees[title]=item
@@ -2539,7 +2541,7 @@ class gui:
 
       def getTree(self, title):
             tree = self.__verifyItem(self.n_trees, title)
-            return tree.getSelected()
+            return tree.node.toxml()
 
 #####################################
 ## FUNCTIONS to add Message Box
@@ -3536,13 +3538,16 @@ class PieChart(Canvas):
 
 #####################################
 ## Tree Widget Class
+## https://www.safaribooksonline.com/library/view/python-cookbook-2nd/0596007973/ch11s11.html
+## idlelib -> TreeWidget.py
+## modify minidom - https://wiki.python.org/moin/MiniDom
 #####################################
 class TreeWidget(TreeItem):
       def __init__(self, node):
             self.node = node
             self.dblClickFunc = None
-            self.selectedNode = None
 
+      # called whenever the tree expands
       def GetText(self):
             node = self.node
             if node.nodeType == node.ELEMENT_NODE:
@@ -3550,31 +3555,34 @@ class TreeWidget(TreeItem):
             elif node.nodeType == node.TEXT_NODE:
                   return node.nodeValue
 
+      def IsEditable(self):
+            return not self.node.hasChildNodes()
+
+      def SetText(self, text):
+            self.node.replaceWholeText(text)
+
       def IsExpandable(self):
-            node = self.node
-            return node.hasChildNodes()
+            return self.node.hasChildNodes()
+
+      def GetIconName(self):
+            if not self.IsExpandable():
+                return "python" # change to file icon
 
       def GetSubList(self):
-            parent = self.node
-            children = parent.childNodes
+            children = self.node.childNodes
             prelist = [TreeWidget(node) for node in children]
             itemlist = [item for item in prelist if item.GetText().strip()]
             return itemlist
 
-      def registerDblClick(self, func):
-            self.dblClickFunc = func
-
       def OnDoubleClick(self):
-            self.selectedNode = self.GetText()
             if self.dblClickFunc is not None:
-                  self.selectedNode = self.GetText()
                   self.dblClickFunc()
 
-      def GetSelectedIconName(self):
-            self.selectedNode = self.GetText()
-
       def getSelected(self):
-            return self.selectedNode
+            return self.GetText()
+
+      def registerDblClick(self, func):
+            self.dblClickFunc = func
 
 #####################################
 ## errors
@@ -3589,6 +3597,7 @@ class InvalidURLError(ValueError):
 
 #####################################
 ## scrollable frame...
+# http://effbot.org/zone/tkinter-autoscrollbar.htm
 #####################################
 class AutoScrollbar(Scrollbar):
       # a scrollbar that hides itself if it's not needed
@@ -3596,6 +3605,7 @@ class AutoScrollbar(Scrollbar):
       def set(self, lo, hi):
             if float(lo) <= 0.0 and float(hi) >= 1.0:
                   # grid_remove is currently missing from Tkinter!
+ #                 self.grid_remove()
                   self.tk.call("grid", "remove", self)
             else:
                   self.grid()
@@ -3605,28 +3615,86 @@ class AutoScrollbar(Scrollbar):
       def place(self, **kw):
             raise Exception("cannot use place with this widget")
 
+#######################
+## Frame with uilt in scrollbars and canvas for placing stuff on
+## http://effbot.org/zone/tkinter-autoscrollbar.htm
+## Modified with help from idlelib TreeWidget.py
+#######################
 class ScrollPane(Frame):
-    def __init__(self, parent, *args, **kw):
-        vscrollbar = AutoScrollbar(self)
-        vscrollbar.grid(row=0, column=1, sticky=N+S)
-        hscrollbar = AutoScrollbar(self, orient=HORIZONTAL)
-        hscrollbar.grid(row=1, column=0, sticky=E+W)
+    def __init__(self, parent, **opts):
+        Frame.__init__(self, parent)
 
-        self.canvas = Canvas(self, yscrollcommand=vscrollbar.set, xscrollcommand=hscrollbar.set)
-        canvas.grid(row=0, column=0, sticky=N+S+E+W)
-
-        vscrollbar.config(command=canvas.yview)
-        hscrollbar.config(command=canvas.xview)
-
-        # make the canvas expandable
+        # make the ScrollPane expandable
         self.grid_rowconfigure(0, weight=1)
         self.grid_columnconfigure(0, weight=1)
 
-#        self.interior = Frame(canvas)
-#        interior_id = canvas.create_window(0, 0, window=self.interior, anchor=NW)
+        if 'yscrollincrement' not in opts: opts['yscrollincrement'] = 17
+
+        vscrollbar = Scrollbar(self)
+        hscrollbar = Scrollbar(self, orient=HORIZONTAL)
+        opts['yscrollcommand']=vscrollbar.set
+        opts['xscrollcommand']=hscrollbar.set
+
+        self.canvas = Canvas(self,**opts)
+
+        vscrollbar.grid(row=0, column=1, sticky=N+S+E)
+        hscrollbar.grid(row=1, column=0, sticky=E+W+S)
+        self.canvas.grid(row=0, column=0, sticky=N+S+E+W)
+
+        vscrollbar.config(command=self.canvas.yview)
+        hscrollbar.config(command=self.canvas.xview)
+
+        self.canvas.bind("<Key-Prior>", self.page_up)
+        self.canvas.bind("<Key-Next>", self.page_down)
+        self.canvas.bind("<Key-Up>", self.unit_up)
+        self.canvas.bind("<Key-Down>", self.unit_down)
+        self.canvas.bind("<Alt-Key-2>", self.zoom_height)
+        self.canvas.focus_set()
+
+        if platform() == "Linux":
+            self.canvas.bind_all("<4>", self.__mouseScroll)
+            self.canvas.bind_all("<5>", self.__mouseScroll)
+        else: # Windows and MacOS
+            self.canvas.bind_all("<MouseWheel>", self.__mouseScroll)
+
+    # https://www.daniweb.com/programming/software-development/code/217059/using-the-mouse-wheel-with-tkinter-python
+    def __mouseScroll(self, event):
+        if platform() in [ "win32", "Windows", "Darwin"]:
+            if platform() in [ "win32", "Windows"]:
+                val = (event.delta/120) * -1
+            else:
+                val = (event.delta) * -1
+
+            if event.delta in [1,-1]:
+                self.canvas.yview_scroll(val, "units")
+            elif event.delta in [2,-2]:
+                self.canvas.xview_scroll(val, "units")
+        elif platform() == "Linux":
+            if event.num == 4:
+                self.canvas.yview_scroll(-1*2, "units")
+            elif event.num == 5:
+                self.canvas.yview_scroll(2, "units")
+        # unknown platform
+        else: pass
 
     def getPane(self):
         return self.canvas
+
+    def page_up(self, event):
+        self.canvas.yview_scroll(-1, "page")
+        return "break"
+    def page_down(self, event):
+        self.canvas.yview_scroll(1, "page")
+        return "break"
+    def unit_up(self, event):
+        self.canvas.yview_scroll(-1, "unit")
+        return "break"
+    def unit_down(self, event):
+        self.canvas.yview_scroll(1, "unit")
+        return "break"
+    def zoom_height(self, event):
+        ZoomHeight.zoom_height(self.master)
+        return "break"
 
 #################################
 ## Additional Dialog Classes
