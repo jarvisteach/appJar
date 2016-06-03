@@ -1099,6 +1099,7 @@ class gui:
                   self.containerStack[-1]['widgets']=True
                   return
 
+
             # else, add to grid
             row, column, colspan = self.__getRCS(row, column, colspan)
 
@@ -1146,7 +1147,10 @@ class gui:
 
       # returns the current working container
       def __getContainer(self):
-            return self.containerStack[-1]['container']
+            container=self.containerStack[-1]['container']
+            if self.containerStack[-1]['type']==self.C_SCROLLPANE:
+                return container.canvas
+            return container
 
       # if possible, removes the current container
       def __removeContainer(self):
@@ -1207,9 +1211,10 @@ class gui:
                   # now, add to top of stack
                   self.__addContainer(self.C_PANEDFRAME, frame, 0, 1, sticky)
             elif fType == self.C_SCROLLPANE:
-                  scrollPane = ScrollPane(self.containerStack[-1]['container'], bg=self.labelBgColour)
-                  self.containerStack[-1]['container'].add(scrollPane)
-                  self.n_scrollPane[title] = scrollPane
+                  scrollPane = ScrollPane(self.containerStack[-1]['container'], bg=self.labelBgColour, width=100,height=100)
+#                  self.containerStack[-1]['container'].add(scrollPane)
+                  self.__positionWidget(scrollPane, row, column, colspan, sticky=sticky)
+                  self.n_scrollPanes[title] = scrollPane
 
                   # now, add to top of stack
                   self.__addContainer(self.C_SCROLLPANE, scrollPane, 0, 1, sticky)
@@ -1288,7 +1293,7 @@ class gui:
       def stopScrollPane(self):
             if self.containerStack[-1]['type'] != self.C_SCROLLPANE:
                   raise Exception("Can't stop a SCROLLPANE, currently in:", self.containerStack[-1]['type'])
-                  self.stopContainer()
+            self.stopContainer()
 
       def stopAllPanedWindows(self):
             while True:
@@ -2294,10 +2299,17 @@ class gui:
       def removeListItem(self, title, item):
             lb = self.__verifyItem(self.n_lbs, title)
             items = lb.get(0, END)
+            lastPos=0
             for pos, val in enumerate(items):
                   if val == item:
                         lb.delete(pos)
-
+                        lastPos=pos
+            # show & select this item
+            if lastPos >= len(lb.get(0, END)): lastPos-=1
+            if lastPos>=0:
+                lb.see(lastPos)
+                lb.activate(lastPos)
+                lb.selection_set(lastPos)
 
       def clearListBox(self, title):
             lb = self.__verifyItem(self.n_lbs, title)
@@ -3600,15 +3612,17 @@ class InvalidURLError(ValueError):
 # http://effbot.org/zone/tkinter-autoscrollbar.htm
 #####################################
 class AutoScrollbar(Scrollbar):
+      def __init__(self, parent, **opts):
+            Scrollbar.__init__(self, parent)
+
       # a scrollbar that hides itself if it's not needed
       # only works if you use the grid geometry manager
       def set(self, lo, hi):
             if float(lo) <= 0.0 and float(hi) >= 1.0:
-                  # grid_remove is currently missing from Tkinter!
- #                 self.grid_remove()
-                  self.tk.call("grid", "remove", self)
+                # grid_remove is currently missing from Tkinter!
+                self.tk.call("grid", "remove", self)
             else:
-                  self.grid()
+                self.grid()
             Scrollbar.set(self, lo, hi)
       def pack(self, **kw):
             raise Exception("cannot use pack with this widget")
@@ -3629,6 +3643,7 @@ class ScrollPane(Frame):
         self.grid_columnconfigure(0, weight=1)
 
         if 'yscrollincrement' not in opts: opts['yscrollincrement'] = 17
+        opts['height']=100
 
         vscrollbar = Scrollbar(self)
         hscrollbar = Scrollbar(self, orient=HORIZONTAL)
