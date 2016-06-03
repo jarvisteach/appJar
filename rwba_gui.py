@@ -3613,7 +3613,7 @@ class InvalidURLError(ValueError):
 #####################################
 class AutoScrollbar(Scrollbar):
       def __init__(self, parent, **opts):
-            Scrollbar.__init__(self, parent)
+            Scrollbar.__init__(self, parent, **opts)
 
       # a scrollbar that hides itself if it's not needed
       # only works if you use the grid geometry manager
