@@ -64,3 +64,16 @@ A way to add additional windows, which can be hidden and shown.
 * `.hideSubWindow(name)`  
     Used to show and hide the specified *SubWindow*  
 ![SubWindow](img/layouts/subWin.png)
+
+
+
+
+#Containers Under Development
+---
+
+###Scroll Pane  
+---
+A scrollable frame, to contain widgets.
+
+* `.startScrollPane(title)`  
+* `.stopScrollPane(title)`  
