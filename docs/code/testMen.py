@@ -41,7 +41,7 @@ class App(Frame):
             appmenu.add_separator()
             def showMyPreferencesDialog():
                 print("pref")
-                  
+
             root.createcommand('tk::mac::ShowPreferences', showMyPreferencesDialog)
 
             # the MAC specifi HELP Menu
