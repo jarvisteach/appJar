@@ -6,9 +6,9 @@ As long as the `rwbatools` folder is in Python's path, you are good to go.
 ----
 All installations start the same:
 
-* Download the ZIP file.
+* [Download](https://github.com/RWBA/rwbatools/blob/master/releases/rwbatools.zip?raw=true) the ZIP file.
 * Unzip it.
-* Make sure the folder is called ```rwbatools``` (it might be called rwbatools-master if you got it from github)
+* Make sure the folder is called ```rwbatools```  
 * Put the folder in a sensible place ```~/Documents/PYLIB/```
 
 Now, it's ready to go, at the top of your code, you can include the following:
