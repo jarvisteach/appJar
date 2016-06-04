@@ -1775,7 +1775,7 @@ class gui:
             self.__positionWidget(spin, row, column, colspan)
             self.setSpinBoxPos(title, 0)
 
-      # validates that an item in the named spinbox starts with the user_input      
+      # validates that an item in the named spinbox starts with the user_input
       def __validateSpinBox(self, user_input, widget_name):
             spin = self.containerStack[0]['container'].nametowidget(widget_name)
 
@@ -3441,7 +3441,7 @@ class NoteBook(Frame):
                   self.tabVars[key][0]['fg']=self.inactiveFg
                   if swap: self.tabVars[key][1].grid_remove()
 
-            # now decorate the active tab 
+            # now decorate the active tab
             self.tabVars[self.selectedTab][0]['bg']=self.activeBg
             self.tabVars[self.highlightedTab][0]['fg']=self.activeFg
             # and grid it if necessary
@@ -3846,7 +3846,7 @@ class Dialog(Toplevel):
     def validate(self):
         return True
 
-    # override this to do something before closing 
+    # override this to do something before closing
     def apply(self):
         pass
 
@@ -3988,7 +3988,7 @@ if __name__ == "__main__":
                         win.setStatus("CLICK"+ str(win.getCheckBox("Click Me")))
                   elif name == "stop-start":
                         meter = not meter
-                        
+
             except Exception as e:
                   win.errorBox("Exception", e)
 
@@ -4013,7 +4013,7 @@ if __name__ == "__main__":
       def widgetChanged():
             print("HERE")
 
-      
+
       def meter():
             global progress
             if meter:
@@ -4080,7 +4080,7 @@ if __name__ == "__main__":
       win.setSpinBoxCommand("spins1", tb_press)
       win.setSpinBox("superSpinsAre", 4)
       win.stopLabelFrame()
-      win.addLabelOptionBox("Widgets",[ "WINDOW", "LABEL", "ENTRY", "BUTTON", "CB", "SCALE", "RB", "LB", "MESSAGE", "SPIN", "OPTION", "TEXTAREA", "LINK", "METER"]) 
+      win.addLabelOptionBox("Widgets",[ "WINDOW", "LABEL", "ENTRY", "BUTTON", "CB", "SCALE", "RB", "LB", "MESSAGE", "SPIN", "OPTION", "TEXTAREA", "LINK", "METER"])
       win.addMeter("Meter")
       win.setPollTime(2000)
       win.registerEvent(meter)
