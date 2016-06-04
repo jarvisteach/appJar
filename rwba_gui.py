@@ -1091,14 +1091,13 @@ class gui:
       def __positionWidget(self, widget, row, column=0, colspan=0, sticky=W+E):
             # allow item to be added to container
             container = self.__getContainer()
-            widget["bg"]=container["bg"]
+#            widget["bg"]=container["bg"]
 
             # alpha paned window placement
             if self.containerStack[-1]['type'] ==self.C_PANEDWINDOW:
                   container.add(widget)
                   self.containerStack[-1]['widgets']=True
                   return
-
 
             # else, add to grid
             row, column, colspan = self.__getRCS(row, column, colspan)
@@ -1149,7 +1148,7 @@ class gui:
       def __getContainer(self):
             container=self.containerStack[-1]['container']
             if self.containerStack[-1]['type']==self.C_SCROLLPANE:
-                return container.canvas
+                return container.interior
             return container
 
       # if possible, removes the current container
@@ -1531,7 +1530,6 @@ class gui:
       # and checks the event.delta to determine where to scroll
       # https://www.daniweb.com/programming/software-development/code/217059/using-the-mouse-wheel-with-tkinter-python
       def __scrollGrid(self, event, title):
-            print(platform())
             if platform() in [ "win32", "Windows", "Darwin"]:
                   if platform() in [ "win32", "Windows"]:
                       val = event.delta/120
@@ -2246,18 +2244,22 @@ class gui:
       # select the specified item in the list
       def selectListItem(self, title, item):
             lb = self.__verifyItem(self.n_lbs, title)
-
-            # clear any selection
             items = lb.get(0, END)
             if len(items) > 0:
-                  lb.selection_clear(lb.curselection())
                   for pos in range(len(items)):
                         if items[pos] == item:
-                              # show & select this item
-                              lb.see(pos)
-                              lb.activate(pos)
-                              lb.selection_set(pos)
-                              break
+                            self.selectListItemPos(title, pos)
+                            break
+
+      def selectListItemPos(self, title, pos):
+            lb = self.__verifyItem(self.n_lbs, title)
+            sel=lb.curselection()
+            lb.selection_clear(0,END)
+            # show & select this item
+            if pos>=0:
+                lb.see(pos)
+                lb.activate(pos)
+                lb.selection_set(pos)
 
       # replace the list items in the list box
       def updateListItems(self, title, items):
@@ -2280,9 +2282,7 @@ class gui:
             if len(items) > 0: lb.selection_clear(items)
 
             # show & select the newly added item
-            lb.see(END)
-            lb.activate(lb.size()-1)
-            lb.selection_set(lb.size()-1)
+            self.selectListItemPos(title, lb.size()-1)
 
       # returns a list containing 0 or more elements
       # all that are in the selected range
@@ -2293,6 +2293,22 @@ class gui:
             for loop in range(len(items)):
                 values.append ( lb.get(items[loop]) )
             return values
+
+      def getListItemsPos(self, title):
+            lb = self.__verifyItem(self.n_lbs, title)
+            items = lb.curselection()
+            return items
+
+      def removeListItemAtPos(self, title, pos):
+            lb = self.__verifyItem(self.n_lbs, title)
+            items = lb.get(0, END)
+            if pos >= len(items):
+                raise Exception("Invalid position: " + str(pos))
+            lb.delete(pos)
+
+            # show & select this item
+            if pos >= lb.size(): pos-=1
+            self.selectListItemPos(title, pos)
 
       # remove a specific item from the listBox
       # will only remove the first item that matches the String
@@ -2305,11 +2321,9 @@ class gui:
                         lb.delete(pos)
                         lastPos=pos
             # show & select this item
-            if lastPos >= len(lb.get(0, END)): lastPos-=1
-            if lastPos>=0:
-                lb.see(lastPos)
-                lb.activate(lastPos)
-                lb.selection_set(lastPos)
+            # show & select this item
+            if pos >= lb.size(): pos-=1
+            self.selectListItemPos(title, pos)
 
       def clearListBox(self, title):
             lb = self.__verifyItem(self.n_lbs, title)
@@ -3671,6 +3685,27 @@ class ScrollPane(Frame):
             self.canvas.bind_all("<5>", self.__mouseScroll)
         else: # Windows and MacOS
             self.canvas.bind_all("<MouseWheel>", self.__mouseScroll)
+
+        self.interior = interior = Frame(self.canvas)
+        self.interior_id = self.canvas.create_window(0,0,window=interior, anchor=NW)
+
+        self.canvas.bind('<Configure>', self._configure_canvas)
+        self.interior.bind('<Configure>', self._configure_interior)
+
+    # track changes to the canvas and frame width and sync them,
+    # also updating the scrollbar
+    def _configure_interior(self, event):
+        # update the scrollbars to match the size of the inner frame
+        size = (self.interior.winfo_reqwidth(), self.interior.winfo_reqheight())
+        self.canvas.config(scrollregion="0 0 %s %s" % size)
+        if self.interior.winfo_reqwidth() != self.canvas.winfo_width():
+            # update the canvas's width to fit the inner frame
+            self.canvas.config(width=self.interior.winfo_reqwidth())
+
+    def _configure_canvas(self, event):
+        if self.interior.winfo_reqwidth() != self.canvas.winfo_width():
+            # update the inner frame's width to fill the canvas
+            self.canvas.itemconfigure(self.interior_id, width=self.canvas.winfo_width())
 
     # https://www.daniweb.com/programming/software-development/code/217059/using-the-mouse-wheel-with-tkinter-python
     def __mouseScroll(self, event):
