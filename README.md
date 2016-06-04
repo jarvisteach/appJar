@@ -1,7 +1,7 @@
 # rwbatools
 Tools for teaching Python
 
-Download Here: https://github.com/RWBA/rwbatools/blob/master/releases/rwbatools.zip  
+Download Here: https://github.com/RWBA/rwbatools/blob/master/releases/rwbatools.zip
 
 Docs here: http://rwba.github.io/rwbatools  
 
