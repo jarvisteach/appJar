@@ -3680,21 +3680,21 @@ class ScrollPane(Frame):
         self.canvas.bind("<Alt-Key-2>", self.zoom_height)
         self.canvas.focus_set()
 
-        if platform() == "Linux":
-            self.canvas.bind_all("<4>", self.__mouseScroll)
-            self.canvas.bind_all("<5>", self.__mouseScroll)
-        else: # Windows and MacOS
-            self.canvas.bind_all("<MouseWheel>", self.__mouseScroll)
+        self.canvas.bind("<Enter>", self.__mouseEnter)
+        self.canvas.bind("<Leave>", self.__mouseLeave)
+        self.b_ids = []
 
         self.interior = interior = Frame(self.canvas)
         self.interior_id = self.canvas.create_window(0,0,window=interior, anchor=NW)
 
-        self.canvas.bind('<Configure>', self._configure_canvas)
-        self.interior.bind('<Configure>', self._configure_interior)
+        # removed - was cropping label's width
+        #self.canvas.bind('<Configure>', self.__configureCanvas)
+        self.interior.bind('<Configure>', self.__configureInterior)
 
     # track changes to the canvas and frame width and sync them,
     # also updating the scrollbar
-    def _configure_interior(self, event):
+    # http://www.scriptscoop2.com/t/35d742299f35/python-tkinter-scrollbar-for-frame.html
+    def __configureInterior(self, event):
         # update the scrollbars to match the size of the inner frame
         size = (self.interior.winfo_reqwidth(), self.interior.winfo_reqheight())
         self.canvas.config(scrollregion="0 0 %s %s" % size)
@@ -3702,10 +3702,36 @@ class ScrollPane(Frame):
             # update the canvas's width to fit the inner frame
             self.canvas.config(width=self.interior.winfo_reqwidth())
 
-    def _configure_canvas(self, event):
+    def __configureCanvas(self, event):
         if self.interior.winfo_reqwidth() != self.canvas.winfo_width():
             # update the inner frame's width to fill the canvas
             self.canvas.itemconfigure(self.interior_id, width=self.canvas.winfo_width())
+            pass
+
+    # unbind any saved bind ids
+    def __unbindIds(self):
+        if len(self.b_ids) == 0: return
+
+        if platform() == "Linux":
+            self.canvas.unbind("<4>", self.b_ids[0])
+            self.canvas.unbind("<5>", self.b_ids[1])
+        else: # Windows and MacOS
+            self.canvas.unbind("<MouseWheel>", self.b_ids[0])
+
+        self.b_ids=[]
+
+    # bind mouse scroll to this widget only when mouse is over
+    def __mouseEnter(self, event):
+        self.__unbindIds()
+        if platform() == "Linux":
+            self.b_ids.append(self.canvas.bind_all("<4>", self.__mouseScroll))
+            self.b_ids.append(self.canvas.bind_all("<5>", self.__mouseScroll))
+        else: # Windows and MacOS
+            self.b_ids.append(self.canvas.bind_all("<MouseWheel>", self.__mouseScroll))
+
+    # remove mouse scroll binding, when mouse leaves
+    def __mouseLeave(self, event):
+        self.__unbindIds()
 
     # https://www.daniweb.com/programming/software-development/code/217059/using-the-mouse-wheel-with-tkinter-python
     def __mouseScroll(self, event):
