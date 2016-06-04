@@ -147,8 +147,9 @@ class gui:
             self.lib_file = os.path.abspath(__file__)
             self.exe_file = os.path.basename(theMain.__file__)
             self.lib_path = os.path.dirname(self.lib_file)
-            self.icon_path = os.path.join(self.lib_path,"icons")
-            self.sound_path = os.path.join(self.lib_path,"sounds")
+            self.resource_path = os.path.join(self.lib_path, "resources")
+            self.icon_path = os.path.join(self.resource_path,"icons")
+            self.sound_path = os.path.join(self.resource_path,"sounds")
 
             # create the main window - topLevel
             self.topLevel = Tk()
@@ -2865,7 +2866,7 @@ class gui:
                   but.config( text=t, command=u, relief=FLAT, font=self.tbFont )
                   if image is not None:
                         but.image = image
-                        but.config(image=image)
+                        but.config(image=image, compound=TOP, text="", justify=LEFT) # works on Mac & Windows :)
                   but.pack (side=LEFT, padx=2, pady=2)
                   self.__addTooltip(but, t)
 
@@ -4103,7 +4104,7 @@ if __name__ == "__main__":
       win.addLabelOptionBox("Option",["left", "right", "both"])
       win.addLabelOptionBox("opt2",["a","b","c"])
       win.startLabelFrame('spins', sticky="ew")
-      win.addSpinBox("spins1", [3,6,9,1,2,4])
+      win.addSpinBox("spins1", (3,6,9,1,2,4))
       win.setSpinBoxPos("spins1", 3)
       win.addLabelSpinBoxRange("spins2", 1, 10)
       win.addLabelSpinBoxRange("superSpinsAre", 1, 10)
