@@ -1,6 +1,8 @@
 # rwbatools
 Tools for teaching Python
 
+![Download Here](https://github.com/RWBA/rwbatools/blob/master/releases/rwbatools.zip)  
+![Docs here])http://rwba.github.io/rwbatools)
 Key tool right now is gui
 
 This provides a library for implementing easy GUIs...
