@@ -10,8 +10,8 @@ from tkinter import colorchooser
 from tkinter import filedialog
 from tkinter import scrolledtext
 from tkinter import font
-import os, sys, re, socket, hashlib, imghdr
-import __main__ as main
+import os, sys, re, socket, hashlib, imghdr, time
+import __main__ as theMain
 from platform import system as platform
 import webbrowser
 from idlelib.TreeWidget import TreeItem, TreeNode
@@ -145,7 +145,7 @@ class gui:
 
             # set up some default path locations
             self.lib_file = os.path.abspath(__file__)
-            self.exe_file = os.path.basename(main.__file__)
+            self.exe_file = os.path.basename(theMain.__file__)
             self.lib_path = os.path.dirname(self.lib_file)
             self.icon_path = os.path.join(self.lib_path,"icons")
             self.sound_path = os.path.join(self.lib_path,"sounds")
@@ -1815,9 +1815,13 @@ class gui:
             var.set(val)
             spin.config(textvariable=var)
 
+      # is it going to be a hash or list??
       def __getSpinBoxValsAsList(self, vals):
-            vals=vals[1:-1]
-            vals=vals.split("} {")
+            if "{" in vals:
+                vals=vals[1:-1]
+                vals=vals.split("} {")
+            else:
+                vals=vals.split()
             return vals
 
       def setSpinBox(self, title, value):
@@ -3735,23 +3739,49 @@ class ScrollPane(Frame):
 
     # https://www.daniweb.com/programming/software-development/code/217059/using-the-mouse-wheel-with-tkinter-python
     def __mouseScroll(self, event):
-        if platform() in [ "win32", "Windows", "Darwin"]:
-            if platform() in [ "win32", "Windows"]:
-                val = (event.delta/120) * -1
+        timer=round(time.time(),1)
+        if hasattr(self, 'lastScrollTime'):
+            if self.lastScrollTime == timer:
+                if event.delta in [1,-1,2,-2]: self.times.append(event.delta)
+                self.speed += 1
             else:
-                val = (event.delta) * -1
+                try: delta=max(set(self.times), key=self.times.count)
+                except: delta=self.oldDelta
 
-            if event.delta in [1,-1]:
-                self.canvas.yview_scroll(val, "units")
-            elif event.delta in [2,-2]:
-                self.canvas.xview_scroll(val, "units")
-        elif platform() == "Linux":
-            if event.num == 4:
-                self.canvas.yview_scroll(-1*2, "units")
-            elif event.num == 5:
-                self.canvas.yview_scroll(2, "units")
-        # unknown platform
-        else: pass
+                # now apply delta
+                if platform() in [ "win32", "Windows", "Darwin"]:
+                    if platform() in [ "win32", "Windows"]:
+                        val = (delta/120) * -1
+                    else:
+                        val = (self.times.count(delta))
+                        if delta > 0: val = val * -1
+                        if delta > 0: self.speed = self.speed * -1
+
+                    if delta in [1,-1]:
+                        self.canvas.yview_scroll(self.speed, "units")
+                    elif delta in [2,-2]:
+                        self.canvas.xview_scroll(self.speed, "units")
+                    else:
+                        pass
+                elif platform() == "Linux":
+                    if event.num == 4:
+                        self.canvas.yview_scroll(-1*2, "units")
+                    elif event.num == 5:
+                        self.canvas.yview_scroll(2, "units")
+                # unknown platform
+                else:
+                    pass
+
+                self.times=[]
+                self.oldDelta=delta
+                if event.delta in [1,-1,2,-2]: self.times.append(event.delta)
+                self.lastScrollTime = timer
+                self.speed=1
+        else:
+            self.times=[]
+            if event.delta in [1,-1,2,-2]: self.times.append(event.delta)
+            self.lastScrollTime = timer
+            self.speed=1
 
     def getPane(self):
         return self.canvas
@@ -4073,7 +4103,7 @@ if __name__ == "__main__":
       win.addLabelOptionBox("Option",["left", "right", "both"])
       win.addLabelOptionBox("opt2",["a","b","c"])
       win.startLabelFrame('spins', sticky="ew")
-      win.addSpinBox("spins1", (3,6,9,1,2,4))
+      win.addSpinBox("spins1", [3,6,9,1,2,4])
       win.setSpinBoxPos("spins1", 3)
       win.addLabelSpinBoxRange("spins2", 1, 10)
       win.addLabelSpinBoxRange("superSpinsAre", 1, 10)
