@@ -17,6 +17,10 @@ It's therefore best to put images in the same folder as your Python code.
 
     If an animated `.GIF` is found, then it will be animated within the GUI.
 
+* `.setImageLocation(location)`  
+    Set a folder for image files.  
+    This will be put before the names of any image files used.  
+
 ###Change Images
 
 * `.setImage(title, image)`  

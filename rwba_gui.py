@@ -151,6 +151,10 @@ class gui:
             self.icon_path = os.path.join(self.resource_path,"icons")
             self.sound_path = os.path.join(self.resource_path,"sounds")
 
+            # user configurable
+            self.userImages = None
+            self.userSounds = None
+
             # create the main window - topLevel
             self.topLevel = Tk()
             self.topLevel.bind('<Configure>', self.__windowEvent)
@@ -1920,6 +1924,13 @@ class gui:
             lab.bind("<Leave>", lambda e: self.setImage(title, leaveImg))
             lab.bind("<Enter>", lambda e: self.setImage(title, overImg))
 
+      # function to set an image location
+      def setImageLocation(self, location):
+            if os.path.isdir(location):
+                self.userImages = location
+            else:
+                raise Exception("Invalid image location: " + location)
+
       # function to remove image objects form cache
       def clearImageCache(self):
             self.n_imageCache = {}
@@ -1927,7 +1938,10 @@ class gui:
       # internal function to check/build image object
       def __getImage(self, imagePath, cache=True):
             if imagePath is None: return None
-            elif cache and imagePath in self.n_imageCache and self.n_imageCache[imagePath] is not None:
+            if self.userImages is not None:
+                imagePath = os.path.join(self.userImages,imagePath)
+
+            if cache and imagePath in self.n_imageCache and self.n_imageCache[imagePath] is not None:
                   photo=self.n_imageCache[imagePath]
             elif os.path.isfile(imagePath):
                   if os.access(imagePath, os.R_OK):
@@ -2104,9 +2118,19 @@ class gui:
 #####################################
 ## FUNCTION to play sounds
 #####################################
+      # function to set a sound location
+      def setSoundLocation(self, location):
+            if os.path.isdir(location):
+                self.userSounds = location
+            else:
+                raise Exception("Invalid sound location: " + location)
+
       # internal function to manage sound availability
       def __soundWrap(self, sound, isFile=False, repeat=False, wait=False):
             if platform() in ["win32", "Windows"]:
+                  if self.userSounds is not None:
+                        sound = os.path.join(self.userSounds,sound)
+
                   if isFile:
                         if False== os.path.isfile(sound): raise Exception("Can't find sound: "+ sound)
                         if not sound.lower().endswith('.wav'): raise Exception("Invalid sound format: "+ sound)

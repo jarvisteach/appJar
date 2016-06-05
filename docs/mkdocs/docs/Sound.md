@@ -7,19 +7,20 @@ Therefore, only ```.WAV``` files will work.
 ###Playing Sound Files
 ___
 
-* `.playSound(sound, wait=False)`
-
+* `.playSound(sound, wait=False)`  
     Play the named sound file.  
     By default, the sound is played asynchronously, meaning the function will return immediately, even though the sound hasn't finished playing.  
     It is possible to override this, by setting wait to True. This is not recommended though, as the GUI will become unresponsive.
 
-* `.stopSound()`
-
+* `.stopSound()`  
     This will stop whatever sound is currently being played.
 
-* `.loopSound(sound)`
-
+* `.loopSound(sound)`  
     This will play the named sound in a loop.
+
+* `.setSoundLocation(location)`  
+    Set a folder for the sound files.  
+    This will be put before the names of any sound files used.  
 
 ###Playing Built-In Sounds
 ___
