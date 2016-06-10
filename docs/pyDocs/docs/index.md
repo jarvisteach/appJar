@@ -7,7 +7,9 @@ Help can be found at:
 * [GUI Cheat Sheet](/cheatSheets/GUI%20T3%20CheatSheet.pdf)
 * * *
 # Variables & Data Types
-Variables are the most important thing in programming. They let your program remember information. Variables can store someone's name, their age, or even their favourite food.
+Variables are the most important thing in programming.  
+They let your program remember information.  
+Variables can store someone's name, their age, or even their favourite food.
 
 A variable needs three things:
 
@@ -34,25 +36,26 @@ There are five main data types:
 Python tries to work out the data type automatically, but it occasionally needs some help, if you want to tell Python what the data type is, try one of the following:
 ```python
 # create 3 new variables by changing the type of var1/var2/var3
-name = str ( var1 )
-age = int ( var2 )
-price = float ( var3 )
+name = str(var1)
+age = int(var2)
+price = float(var3)
 ```
 * * *
 # Selection & Operators
-Selection is the ability to make a decision. It allows us to do different things, depending on what information is in a variable. This is done using **IF** statements:
+Selection is the ability to make a decision. It allows us to do different things, depending on what information is in a variable.  
+This is done using **IF** statements:
 ```python
 # if they are 18 or over, print "You can vote"
 if age >= 18:
-    print ( "You can vote" )
+    print("You can vote")
 else:
-    print ( "You can't vote" )
+    print("You can't vote")
 ```
 Making decisions is all about comparing things; is one variable bigger than another, are two other variables the same...
 
 To compare things we use standard operators, just like in maths.
 
-#### Equality Operators
+### Equality Operators
 These let us test if things are equal or not:
 
  | |                                     
@@ -60,7 +63,7 @@ These let us test if things are equal or not:
 == | Equal to     | Check if two items are the same
 != | Not equal to | Check if two items are not the same
 
-#### Comparison Operators
+### Comparison Operators
 These let us compare things:
 
  | | 
@@ -70,7 +73,7 @@ These let us compare things:
 >= | Greater than or equal to | Check if the first item is bigger than or the same as the second item
 <= | Less than or equal to    | Check if the first item is smaller than or the same as the second item
 
-#### Logical Operators
+### Logical Operators
 These let us use logic to combine lots of operators:
 
  |
@@ -81,12 +84,13 @@ not | This will change the result from True to False, or vice-versa
 
 * * *
 # Iteration
-Being able to do selection (make decisions) on its own is nearly enough. However, if we want our programs to be really useful, we want them to be able to repeat stuff.
+Being able to do selection (make decisions) on its own is nearly enough.  
+However, if we want our programs to be really useful, we want them to be able to repeat stuff.
 
-We call this iteration. There are two types of iteration:
+We call this *iteration*.
 
-* **WHILE** loops let us repeat something until we can make a decision (this may never occur)
-* **FOR** loops let us repeat something a set number of times 
+## While Loops
+Let us repeat something until we can make a decision (this may never occur)
 
 #### Infinite While Loops
 ```python
@@ -102,6 +106,9 @@ while num != 21:
     print ( "You guessed:", num )
 print ( "You finally got it!!!" )
 ```
+
+## For Loops
+Let us repeat something a set number of times 
 #### For Loop Through an Array
 ```python
 # make a list of fruits
@@ -126,27 +133,29 @@ for index in range ( 10, 21, 2 ):
 ```
 * * *
 # Lists
-This does exactly what it says on the tin - we can store lots of information all with the same name. So, if you have 100 books, you don't want to make 100 variables, so you can remember all the names. Instead, you make one variable called "books" and then give each book a number...
+This does exactly what it says on the tin - we can store lots of information all with the same name.
+If you have 100 books, you don't want to make 100 variables to remember all the names.  
+Instead, you make one variable called *books* and then give each book a number...
 ```python
 # make a list
-pupils = [ "Edd", "Clive", "Kim", "Kat", "Tim", "Tam" ]
+pupils = ["Edd", "Clive", "Kim", "Kat", "Tim", "Tam"]
 
 # print the first pupil in the list - item 0
-print ( pupils [ 0 ] )
+print(pupils[0])
 
 # add a pupil to the list
-pupils.append ( "Jordan" )
+pupils.append("Jordan")
 
 # get the number of pupils in the list
-num_of_pupils = len ( pupils )
+num_of_pupils = len(pupils)
 
 # remove a pupil from the list
-list.remove ( "Edd" )
+list.remove("Edd")
 ```
 We can also iterate through a list, make decisions based on a list, and change items in a list:
 ```python
 # make a list
-pupils = [ "Edd", "Clive", "Kim", "Kat", "Tim", "Tam" ]
+pupils = ["Edd", "Clive", "Kim", "Kat", "Tim", "Tam"]
 
 # print each pupil in the list
 for item in pupils:
@@ -158,6 +167,26 @@ pupils [ 2 ] = "Kimberly"
 # check if an item is in a list
 if "Kat" in pupils:
    print ( "Found her" )
+```
+
+We can also slice up or join lists:
+```python
+# make a list
+pupils = ["Edd", "Clive", "Kim", "Kat", "Tim", "Tam"]
+
+pupils[2:4]     # items from 2 until before 4 = Kim & Kat
+pupils[2:]      # items from 2 until the end = Kim, Kat, Tim & Tam
+pupils[:3]      # items from the beginning until before 3 = Edd, Clive & Kim
+pupils[:]       # everything
+
+# you can also count backwards
+pupils[-1]      #last item in the array = Tam
+pupils[-2:]     # last two items in the array = Tim & Tam
+pupils[:-2]     # items from the beginning until 2 before the end = Edd, CLive, Kim & Kat
+pupils[1:-1]    # remove first & last = Clive, Kim, Kat & Ti
+
+# join an array into a String of items
+sentence = ", ".join(pupils)    # makes the String "Edd, Clive, Kim, Kat, Tim, Tam"
 ```
 * * *
 # Functions
