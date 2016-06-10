@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from rwbatools.rwba_gui import gui
+from rwbatools.appJar import jar
 from rwbatools.rwba_net import net
 from rwbatools.rwba_sql import sql
 
