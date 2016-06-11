@@ -1,4 +1,4 @@
-# rwbatools
+# appJar
 Tools for teaching Python
 
 Download Here: https://github.com/RWBA/rwbatools/blob/master/releases/rwbatools.zip?raw=true
@@ -11,9 +11,9 @@ This provides a library for implementing easy GUIs...
 
 Installation:
  - Download the ZIP file (click the big green button)
- - Unzip it, and rename it from rwbatools-master to rwbatools
+ - Unzip it, and rename it from appJar-master to appJar
  - Add it to your path:
-   - make a folder in your home directory, called PYLIB, and put rwbatools inside it
+   - make a folder in your home directory, called PYLIB, and put appJar inside it
    - On mac/linux add this to your .bashrc: export PYTHONPATH=~/PYLIB:$PYTHONPATH
    - On Windows, add a new envonrment variable
  - Give it a twirl:
@@ -22,7 +22,7 @@ Installation:
 
 Example:
 
-  from rwbatools import gui  
+  from appJar import gui  
   app = gui("Example")  
   app.addLabel("label1", "Hello World")  
   app.go()  
