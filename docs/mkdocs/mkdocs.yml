@@ -16,10 +16,16 @@ pages:
     - Changing widgets: WidgetOptions.md
     - Extras: GuiOptions.md
 - Lessons:
-    - Lesson 1: empty.md
+    - Basic Python: Empty.md
+    - Advanced Python: Empty.md
+    - Turtle Programming: Empty.md
+    - GUI Programming: Empty.md
+    - Files & Databases: Empty.md
+    - Object-Oriented Programming: Empty.md
+- Python: PythonBasics.md
 - About:
     - Installation: Install.md
     - Acknowledgements: Thanks.md
     - License: License.md
-theme: united
+theme: yeti
 copyright: <p>Richard Jarvis, 2016</p>
