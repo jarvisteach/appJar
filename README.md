@@ -1,9 +1,9 @@
 # appJar
 Tools for teaching Python
 
-Download Here: https://github.com/RWBA/rwbatools/blob/master/releases/rwbatools.zip?raw=true
+Download Here: https://github.com/RWBA/appJar/blob/master/releases/appJar.zip?raw=true
 
-Docs here: http://rwba.github.io/rwbatools  
+Docs here: http://rwba.github.io/appJar  
 
 Key tool right now is gui
 
