@@ -1,5 +1,5 @@
 # import the library
-from rwbatools import gui
+from appJar import gui
 
 onimg = "resources/bulb_on.gif"
 offimg = "resources/bulb_off.gif"

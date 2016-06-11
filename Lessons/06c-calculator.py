@@ -1,6 +1,4 @@
-import sys
-sys.path.append('../')
-from rwbatools import gui
+from appJar import gui
 
 total = 0.0
 lastAction = None

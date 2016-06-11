@@ -18,9 +18,9 @@ from idlelib.TreeWidget import TreeItem, TreeNode
 from xml.dom.minidom import parseString
 
 # import borrowed libraries
-from rwbatools.lib.tooltip import ToolTip
-from rwbatools.lib.tkinter_png import *
-from rwbatools.lib import nanojpeg
+from appJar.lib.tooltip import ToolTip
+from appJar.lib.tkinter_png import *
+from appJar.lib import nanojpeg
 
 # only try to import winsound if we're on windows
 if platform() in [ "win32", "Windows"]:
@@ -37,7 +37,7 @@ __email__ = "jarvisteach@gmail.com"
 __status__ = "Development"
 
 #class to allow simple creation of tkinter GUIs
-class jar:
+class gui:
       """
             Class to represent the GUI
             - Create one of these
@@ -891,74 +891,74 @@ class jar:
             # and make all the below functons for each one
             for k, v in self.WIDGETS.items():
                   exec("def set"+v+"Bg(self, name, val): self.configureWidgets("+str(k)+", name, 'background', val)")
-                  exec("jar.set"+v+"Bg=set" +v+ "Bg")
+                  exec("gui.set"+v+"Bg=set" +v+ "Bg")
                   exec("def set"+v+"Fg(self, name, val): self.configureWidgets("+str(k)+", name, 'foreground', val)")
-                  exec("jar.set"+v+"Fg=set" +v+ "Fg")
+                  exec("gui.set"+v+"Fg=set" +v+ "Fg")
                   exec("def set"+v+"DisabledFg(self, name, val): self.configureWidgets("+str(k)+", name, 'disabledforeground', val)")
-                  exec("jar.set"+v+"DisabledFg=set" +v+ "DisabledFg")
+                  exec("gui.set"+v+"DisabledFg=set" +v+ "DisabledFg")
                   exec("def set"+v+"Width(self, name, val): self.configureWidgets("+str(k)+", name, 'width', val)")
-                  exec("jar.set"+v+"Width=set" +v+ "Width")
+                  exec("gui.set"+v+"Width=set" +v+ "Width")
                   exec("def set"+v+"Height(self, name, val): self.configureWidgets("+str(k)+", name, 'height', val)")
-                  exec("jar.set"+v+"Height=set" +v+ "Height")
+                  exec("gui.set"+v+"Height=set" +v+ "Height")
                   exec("def set"+v+"State(self, name, val): self.configureWidgets("+str(k)+", name, 'state', val)")
-                  exec("jar.set"+v+"State=set" +v+ "State")
+                  exec("gui.set"+v+"State=set" +v+ "State")
 
                   # might not all be necessary, could make exclusion list
                   exec("def set"+v+"Relief(self, name, val): self.configureWidget("+str(k)+", name, 'relief', val)")
-                  exec("jar.set"+v+"Relief=set" +v+ "Relief")
+                  exec("gui.set"+v+"Relief=set" +v+ "Relief")
                   exec("def set"+v+"Align(self, name, val): self.configureWidget("+str(k)+", name, 'align', val)")
-                  exec("jar.set"+v+"Align=set" +v+ "Align")
+                  exec("gui.set"+v+"Align=set" +v+ "Align")
                   exec("def set"+v+"Anchor(self, name, val): self.configureWidget("+str(k)+", name, 'anchor', val)")
-                  exec("jar.set"+v+"Anchor=set" +v+ "Anchor")
+                  exec("gui.set"+v+"Anchor=set" +v+ "Anchor")
                   exec("def set"+v+"Tooltip(self, name, val): self.configureWidget("+str(k)+", name, 'tooltip', val)")
-                  exec("jar.set"+v+"Tooltip=set" +v+ "Tooltip")
+                  exec("gui.set"+v+"Tooltip=set" +v+ "Tooltip")
                   exec("def set"+v+"Function(self, name, val, key=None): self.configureWidget("+str(k)+", name, 'command', val, key)")
-                  exec("jar.set"+v+"Function=set" +v+ "Function")
+                  exec("gui.set"+v+"Function=set" +v+ "Function")
                   exec("def set"+v+"DragFunction(self, name, val): self.configureWidget("+str(k)+", name, 'drag', val)")
-                  exec("jar.set"+v+"DragFunction=set" +v+ "DragFunction")
+                  exec("gui.set"+v+"DragFunction=set" +v+ "DragFunction")
                   exec("def set"+v+"OverFunction(self, name, val): self.configureWidget("+str(k)+", name, 'over', val)")
-                  exec("jar.set"+v+"OverFunction=set" +v+ "OverFunction")
+                  exec("gui.set"+v+"OverFunction=set" +v+ "OverFunction")
 # deprecated, but left in for backwards compatability
                   exec("def set"+v+"Command(self, name, val, key=None): self.configureWidget("+str(k)+", name, 'command', val, key, deprecated='Function')")
-                  exec("jar.set"+v+"Command=set" +v+ "Command")
+                  exec("gui.set"+v+"Command=set" +v+ "Command")
                   exec("def set"+v+"Func(self, name, val, key=None): self.configureWidget("+str(k)+", name, 'command', val, key, deprecated='Function')")
-                  exec("jar.set"+v+"Func=set" +v+ "Func")
+                  exec("gui.set"+v+"Func=set" +v+ "Func")
 # end deprecated
                   # http://infohost.nmt.edu/tcc/help/pubs/tkinter/web/cursors.html
                   exec("def set"+v+"Cursor(self, name, val): self.configureWidget("+str(k)+", name, 'cursor', val)")
-                  exec("jar.set"+v+"Cursor=set" +v+ "Cursor")
+                  exec("gui.set"+v+"Cursor=set" +v+ "Cursor")
                   exec("def set"+v+"Focus(self, name): self.configureWidget("+str(k)+", name, 'focus', None)")
-                  exec("jar.set"+v+"Focus=set" +v+ "Focus")
+                  exec("gui.set"+v+"Focus=set" +v+ "Focus")
 
                   # change the stickyness
                   exec("def set"+v+"Sticky(self, name, pos): self.configureWidget("+str(k)+", name, 'sticky', pos)")
-                  exec("jar.set"+v+"Sticky=set" +v+ "Sticky")
+                  exec("gui.set"+v+"Sticky=set" +v+ "Sticky")
 
                   # functions to manage widgets
                   exec("def show"+v+"(self, name): self.showWidget("+str(k)+", name)")
-                  exec("jar.show"+v+"=show" +v )
+                  exec("gui.show"+v+"=show" +v )
                   exec("def hide"+v+"(self, name): self.hideWidget("+str(k)+", name)")
-                  exec("jar.hide"+v+"=hide" +v )
+                  exec("gui.hide"+v+"=hide" +v )
                   exec("def remove"+v+"(self, name): self.removeWidget("+str(k)+", name)")
-                  exec("jar.remove"+v+"=remove" +v )
+                  exec("gui.remove"+v+"=remove" +v )
 
                   # convenience functions for enable/disable
                   # might not all be necessary, could make exclusion list
                   exec("def enable"+v+"(self, name): self.configureWidget("+str(k)+", name, 'state', 'normal')")
-                  exec("jar.enable"+v+"=enable"+v)
+                  exec("gui.enable"+v+"=enable"+v)
                   exec("def disable"+v+"(self, name): self.configureWidget("+str(k)+", name, 'state', 'disabled')")
-                  exec("jar.disable"+v+"=disable"+v)
+                  exec("gui.disable"+v+"=disable"+v)
 
                   # group functions
                   exec("def set"+v+"Widths(self, names, val): self.configureWidgets("+str(k)+", names, 'width', val)")
-                  exec("jar.set"+v+"Widths=set" +v+ "Widths")
+                  exec("gui.set"+v+"Widths=set" +v+ "Widths")
                   exec("def setAll"+v+"Widths(self, val): self.configureAllWidgets("+str(k)+", 'width', val)")
-                  exec("jar.setAll"+v+"Widths=setAll" +v+ "Widths")
+                  exec("gui.setAll"+v+"Widths=setAll" +v+ "Widths")
 
                   exec("def set"+v+"Heights(self, names, val): self.configureWidgets("+str(k)+", names, 'height', val)")
-                  exec("jar.set"+v+"Heights=set" +v+ "Heights")
+                  exec("gui.set"+v+"Heights=set" +v+ "Heights")
                   exec("def setAll"+v+"Heights(self, val): self.configureAllWidgets("+str(k)+", 'height', val)")
-                  exec("jar.setAll"+v+"Heights=setAll" +v+ "Heights")
+                  exec("gui.setAll"+v+"Heights=setAll" +v+ "Heights")
 
 #####################################
 ## FUNCTION to hide/show/remove widgets
@@ -1364,7 +1364,7 @@ class jar:
       def __setattr__(self, name, value):
             if self.built == True and not hasattr(self, name): # would this create a new attribute?
                   raise AttributeError("Creating new attributes is not allowed!")
-            super(jar, self).__setattr__(name, value)
+            super(gui, self).__setattr__(name, value)
 
 #####################################
 ## FUNCTION to add labels before a widget
@@ -4078,7 +4078,7 @@ if __name__ == "__main__":
                   if progress >1: progress = 0
 
       print ( "Making GUI" )
-      win = jar("Details")
+      win = gui("Details")
       #win.setExpand("all")
       #win.setSticky(False)
 #      win.addEntry("Empty")

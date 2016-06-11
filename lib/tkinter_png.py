@@ -5,7 +5,7 @@
 
 from array import *
 from tkinter import *
-import rwbatools.lib.png as png
+import appJar.lib.png as png
 
 ## tkinter hacking section ##
 

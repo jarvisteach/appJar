@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
-from rwbatools.appJar import jar
-from rwbatools.rwba_net import net
-from rwbatools.rwba_sql import sql
+from appJar.appJar import gui
 
-from rwbatools.lib import tooltip
-from rwbatools.lib import tkinter_png
-from rwbatools.lib import png
-from rwbatools.lib import nanojpeg
+from appJar.lib import tooltip
+from appJar.lib import tkinter_png
+from appJar.lib import png
+from appJar.lib import nanojpeg

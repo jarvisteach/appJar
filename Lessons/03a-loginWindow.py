@@ -1,5 +1,5 @@
 # import the library
-from rwbatools import gui
+from appJar import gui
 
 def press(btn):
       if btn == "Cancel":

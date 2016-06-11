@@ -1,4 +1,4 @@
-from rwbatools import gui
+from appJar import gui
 
 # variables
 total = 0.0
