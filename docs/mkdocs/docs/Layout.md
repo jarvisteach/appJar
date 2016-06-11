@@ -6,7 +6,7 @@
 By default, each new widget is simply added on a new line. That way, you can very quickly, create a simple GUI:
 
 ```python
-from rwbatools import gui  
+from appJar import gui  
 
 def changeLabel(btn):  
     app.setLabel("l2", app.getEntry("text"))  
@@ -27,7 +27,7 @@ If, however, you want more than that, then a basic GRID layout is supported.
 Each time you add a widget, you can specify a column, row, and even a column-span to position it in.
 
 ```python
-from rwbatools import gui
+from appJar import gui
 
 def press(btn):
     if btn=="Save":

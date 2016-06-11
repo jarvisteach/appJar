@@ -13,7 +13,7 @@ Shows a pie chart
 ![PieChart](img/dev/pie.png)  
 
 ```python
-    from rwbatools import gui
+    from appJar import gui
 
     app=gui()
     app.addPieChart("p1", [50, 200, 75, 300, 150], size=300)
@@ -34,7 +34,7 @@ Takes an arbitrary XML string, and converts it into a tree structure.
 ![TreeWidget](img/dev/tree.png)
 
 ```python
-from rwbatools import gui
+from appJar import gui
 
 app=gui()
 app.addTree("t1",
@@ -62,7 +62,7 @@ Used to create a spreadsheet like interface.
 ![Grid](img/dev/grid.png)  
 
 ```python
-    from rwbatools import gui
+    from appJar import gui
 
     app=gui()
     app.setFont(20)

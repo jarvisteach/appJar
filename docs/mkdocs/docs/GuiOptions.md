@@ -68,7 +68,7 @@ It's possible to change the default colours and fonts for widgets in the GUI.
 ### Widget Positioning
 ----
 
-The below commands allow the user to change how RWBAtools lays out widgets on the screen.
+The below commands allow the user to change how appJar lays out widgets on the screen.
 
 ####Location
 

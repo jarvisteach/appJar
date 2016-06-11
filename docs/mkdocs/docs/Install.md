@@ -1,24 +1,24 @@
 #Installation Instructions
 ---
 This library is designed to be as simple as possible to *install*.  
-As long as the `rwbatools` folder is in Python's path, you are good to go.  
+As long as the `appJar` folder is in Python's path, you are good to go.  
 ###Preparing the library
 ----
 All installations start the same:
 
 * [Download](https://github.com/RWBA/rwbatools/blob/master/releases/rwbatools.zip?raw=true) the ZIP file.
 * Unzip it.
-* Make sure the folder is called ```rwbatools```  
+* Make sure the folder is called ```appJar```  
 * Put the folder in a sensible place ```~/Documents/PYLIB/```
 
 Now, it's ready to go, at the top of your code, you can include the following:
 
 ```python
-# add the rwbatools folder to your PATH
+# add the appJar folder to your PATH
 import sys
 sys.path.append("~/Documents/PYLIB") # replce this with the correct path
 # import the library
-from rwbatools import gui
+from appJar import gui
 ```
 
 If you want a more permanent solution, you can add the above folder to your path. See below. 
@@ -33,7 +33,7 @@ If you want a more permanent solution, you can add the above folder to your path
 * Under **System vartiables**, click the **New..** button
 ![System](img/w_install_3.png)
 * Set the **Variable name:** to be **PYTHONPATH**
-* Set the **Path:** as the folder you put **rwbatools** in (eg. c:\COMPUTINC\PYLIB")
+* Set the **Path:** as the folder you put **appJar** in (eg. c:\COMPUTINC\PYLIB")
 ![System](img/w_install_4.png)
 * Press **OK**, and you're ready to go:
 
@@ -57,8 +57,8 @@ If you want a more permanent solution, you can add the above folder to your path
 
 ###Using the library
 ----
-If the rwbatools folder is in your path, you can access it simply though an import:
+If the appJar folder is in your path, you can access it simply though an import:
 ```python
 # import the library
-from rwbatools import gui
+from appJar import gui
 ```

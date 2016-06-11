@@ -77,7 +77,7 @@ The following allow widgets to be interacted with:
     If you only want a function to be called when the mouse leaves the widget, pass an array like: `[None, leave]`  
 
 ```python
-    from rwbatools import gui
+    from appJar import gui
 
     def enter(wdgt): 
         print("IN", wdgt)

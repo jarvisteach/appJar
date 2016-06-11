@@ -26,7 +26,7 @@ As well as some specialist functions, unique to each widget (see below).
 * And, they're very helpful at the bottom of the GUI, to show the results of an action.  
 ![Label](img/1_labels.gif)  
 ```python
-from rwbatools import gui
+from appJar import gui
 
 app = gui()
 
@@ -93,7 +93,7 @@ There are two special-case entries:
 ![Entries](img/1_entries.gif)
 
 ```python
-from rwbatools import gui
+from appJar import gui
 
 app=gui()
 
@@ -156,7 +156,7 @@ That way, multiple widgets can use the same function, but diffrent actions can b
 ![Buttons](img/1_buttons.gif)
 
 ```python
-    from rwbatools import gui
+    from appJar import gui
     
     def press(btn):                 # the title of the button will be received as a parameter
         print(btn)
@@ -195,7 +195,7 @@ These are great for getting a single value, for a multiple choice question.
 ![Radios](img/t_radios.gif)  
 
 ```python
-from rwbatools import gui
+from appJar import gui
 
 app=gui()
 app.addRadioButton("song", "Killer Queen")
@@ -222,7 +222,7 @@ app.go()
 * `.getRadioButton(title)`  
     Gets the value of the selcted RadioButton, for the specified title.
 ```python
-    from rwbatools import gui
+    from appJar import gui
 
     def press(rb):
         print(app.getRadioButton("song"))
@@ -242,7 +242,7 @@ A simple tick-box, with a label, that can be either ON or OFF.
 ![CheckBoxes](img/1_checks.gif)  
 
 ```python
-from rwbatools import gui
+from appJar import gui
 
 app=gui()
 app.setFont(20)
