@@ -1,4 +1,4 @@
-from rwbatools import gui
+from appJar import gui
 
 app=gui()
 app.addPieChart("p1", [50, 200, 75, 300, 150], size=300)

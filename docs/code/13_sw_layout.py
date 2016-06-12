@@ -1,4 +1,4 @@
-from rwbatools import gui
+from appJar import gui
 
 def show(btn): app.showSubWindow("sub")
 def hide(btn): app.hideSubWindow("sub")

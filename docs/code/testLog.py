@@ -1,4 +1,4 @@
-from rwbatools import gui
+from appJar import gui
 
 # function called by pressing the buttons
 def press(btn):
@@ -12,7 +12,7 @@ app = gui("Login Window", "400x200")
 app.setBg("brown")
 app.setFont(20)
 
-app.addLabel("title", "Welcome to RWBAtools", 0, 0, 2)  # Row 0, Column 0, Span 2
+app.addLabel("title", "Welcome to appJar", 0, 0, 2)     # Row 0, Column 0, Span 2
 app.addLabel("user", "Username:", 1, 0)                 # Row 1, Column 0, no span
 app.addEntry("user", 1, 1)                              # Row 1, Column 1, no span
 app.addLabel("pass", "Password:", 2, 0)                 # Row 2, Column 0, no span

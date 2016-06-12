@@ -1,4 +1,4 @@
-from rwbatools import gui
+from appJar import gui
 
 app=gui("Tester","100x50")
 app.setFont(20)

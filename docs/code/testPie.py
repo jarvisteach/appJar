@@ -1,4 +1,4 @@
-from rwbatools import gui
+from appJar import gui
 
 myFracs = [100,300,100, 50, 200, 60, 80, 40, 100, 20, 75, 44, 66, 88,
 100,300,100, 50, 200, 60, 80, 40, 100, 20, 75, 44, 66, 88]

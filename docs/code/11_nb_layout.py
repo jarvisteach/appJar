@@ -1,4 +1,4 @@
-from rwbatools import gui
+from appJar import gui
 
 app=gui("NoteBook Demo", "200x200")
 

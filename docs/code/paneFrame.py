@@ -1,4 +1,4 @@
-from rwbatools import gui
+from appJar import gui
 app=gui()
 app.startPanedFrame("f")
 app.addLabel("l1", "l1")

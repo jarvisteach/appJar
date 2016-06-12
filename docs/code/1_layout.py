@@ -1,4 +1,4 @@
-from rwbatools import gui  
+from appJar import gui  
 def changeLabel(btn):  
       app.setLabel("l2", app.getEntry("text"))  
 app = gui()  

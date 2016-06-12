@@ -1,4 +1,4 @@
-from rwbatools import gui
+from appJar import gui
 
 def press(btn):
       if btn=="info": print(app.infoBox("INFO", "This is the info box"))

@@ -1,4 +1,4 @@
-from rwbatools import gui
+from appJar import gui
 cols=["red","blue"]
 
 app=gui("Scroll Pane", "300x200")
