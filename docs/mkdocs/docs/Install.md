@@ -6,7 +6,7 @@ As long as the `appJar` folder is in Python's path, you are good to go.
 ----
 All installations start the same:
 
-* [Download](https://github.com/RWBA/appJar/blob/master/releases/appJar.zip?raw=true) the ZIP file.
+* [Download](https://github.com/RWBA/appJar/blob/appJar/releases/appJar.zip?raw=true) the ZIP file.
 * Unzip it.
 * Make sure the folder is called ```appJar```  
 * Put the folder in a sensible place ```~/Documents/PYLIB/```
