@@ -1,6 +1,9 @@
 site_name: appJar
 site_dir: ../../../jarvisteach.github.io/
-repo_url: https://github.com/RWBA/rwbatools
+repo_url: https://github.com/RWBA/appJar
+google_analytics: ['UA-79206647-1', 'appjar.info']
+theme: yeti
+copyright: <p>Richard Jarvis, 2016</p>
 pages:
 - Welcome: index.md
 - Fillings:
@@ -27,5 +30,3 @@ pages:
     - Installation: Install.md
     - Acknowledgements: Thanks.md
     - License: License.md
-theme: yeti
-copyright: <p>Richard Jarvis, 2016</p>
