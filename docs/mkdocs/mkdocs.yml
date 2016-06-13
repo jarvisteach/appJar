@@ -2,7 +2,7 @@ site_name: appJar
 site_dir: ../../../jarvisteach.github.io/
 repo_url: https://github.com/RWBA/appJar
 google_analytics: ['UA-79206647-1', 'appjar.info']
-theme: yeti
+theme: united
 copyright: <p>Richard Jarvis, 2016</p>
 pages:
 - Welcome: index.md
@@ -18,15 +18,8 @@ pages:
     - Grouping widgets: Grouping.md
     - Changing widgets: WidgetOptions.md
     - Extras: GuiOptions.md
-- Lessons:
-    - Basic Python: Empty.md
-    - Advanced Python: Empty.md
-    - Turtle Programming: Empty.md
-    - GUI Programming: Empty.md
-    - Files & Databases: Empty.md
-    - Object-Oriented Programming: Empty.md
-- Python: PythonBasics.md
 - About:
     - Installation: Install.md
     - Acknowledgements: Thanks.md
+    - Python: PythonBasics.md
     - License: License.md

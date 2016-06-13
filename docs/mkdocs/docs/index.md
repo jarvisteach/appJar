@@ -1,12 +1,10 @@
-#Welcome
+#appJar
 ---
-This library was designed to use in the *classroom*  
+This is a Python library for creating **quick** and **easy** GUIs, designed pimarily for use in the **classroom**.  
 
-It has no dependencies, other than [Python 3.x](https://www.python.org/downloads/)  
-It does not require [*installing*](Install.md), simply unzip and go  
+It has no dependencies, other than [Python 3.x](https://www.python.org/downloads/) and relies on Pyhton's built-in support of [tkinter](https://docs.python.org/3.5/library/tkinter.html).  
 
-It is meant to be as *simple* as possible to get started with  
-Allowing pupils to focus on learning programming & problem solving, not [tkinter](https://docs.python.org/3.5/library/tkinter.html) and GUI building  
+See the [installtion guidelines](Install.md) for more information.
 
 ###Let's make a sandwich
 ---
@@ -18,14 +16,16 @@ You need a slice of bread on the top and bottom, and then a bunch of fillings in
 # import the library
 from appJar import gui
 
-app = gui()                 # top slice - CREATE the GUI
+# top slice - CREATE the GUI
+app = gui()
 
-# fillings go here...
+### fillings go here ###
 
-app.go()                    # bottom slice - START the GUI
+# bottom slice - START the GUI
+app.go()
 ```
 
-If you forget the bread on the bottom, everything falls apart!  
+If you forget  a slice of bread - you haven't got a sandwich!  
 Oh, and if you try to put fillings under the bottom-slice, they won't be in the sandwich!
 
 ###Add some fillings...
@@ -44,12 +44,15 @@ But it's often nice to prepare the fillings too:
 # import the library
 from appJar import gui
 
-app = gui()                 # top slice - CREATE the GUI
+# top slice - CREATE the GUI
+app = gui()
 
-app.addLabel("title", "Welcome to appJar")   # add a label
-app.setLabelBg("title", "red")                  # set the label's background to be red
+### fillings go here ###
+app.addLabel("title", "Welcome to appJar")
+app.setLabelBg("title", "red")
 
-app.go()                    # bottom slice - START the GUI
+# bottom slice - START the GUI
+app.go()
 ```
 ![simpleApp](img/simpleApp.png)
 
@@ -124,5 +127,5 @@ And, you can choose what kind of bread, and whether it's toasted:
 ###Make your own!
 ---
 That's about it for now.  
-Have a look around, discover all of the different fillings available.  
+Have a look around, discover all of the different [fillings](Widgets.md) available.  
 And, investigate how best to [present ](Grouping.md) your sandwich!
