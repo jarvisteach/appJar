@@ -43,12 +43,6 @@ app.setLabelBg("l4", "orange")
 app.go()
 ```
 
-<div class="panel panel-info">
-    <div class="panel-heading">
-        <h3 class="panel-title">Panel info</h3>
-    </div>
-    <div class="panel-body">
-
 ####Add Labels
 * `.addLabel(title, text=None)`  
     As with all widgets, when you add a *label*, a title must be provided - to identify the *label*. This is then followed by an optional piece of text to display.
@@ -58,9 +52,6 @@ app.go()
 
 * `.addFlashLabel(title, text=None)`  
     This adds a flashing *label*, that will alternate between the foreground and background colours.
-
-    </div>
-</div>
 
 ####Set Labels
 * `.setLabel(title, text)`  
