@@ -43,6 +43,12 @@ app.setLabelBg("l4", "orange")
 app.go()
 ```
 
+<div class="panel panel-info">
+    <div class="panel-heading">
+        <h3 class="panel-title">Panel info</h3>
+    </div>
+    <div class="panel-body">
+
 ####Add Labels
 * `.addLabel(title, text=None)`  
     As with all widgets, when you add a *label*, a title must be provided - to identify the *label*. This is then followed by an optional piece of text to display.
@@ -53,6 +59,8 @@ app.go()
 * `.addFlashLabel(title, text=None)`  
     This adds a flashing *label*, that will alternate between the foreground and background colours.
 
+    </div>
+</div>
 
 ####Set Labels
 * `.setLabel(title, text)`  
@@ -483,48 +491,74 @@ Similar to an Entry box, but allows you to type text over multiple lines.
 * `.getTextArea(title)`  
     Gets the contents of the specified TextArea.  
 
-##Meter
+##Meter  
 ____
-Used for showing progress
+Shows a simple progress meter  
 
-* ###Meter
+```
+from appJar import gui
 
-    Shows a simple progress meter:  
+app=gui()
+app.setGeometry("200x50")
+app.setFont(20)
+app.addMeter("progress")
+app.go()
+```
 
-    * `addMeter(name)`  
-        Adds a meter with the specified name.
+![Meter](img/1_meter.png)  
 
-    * `setMeter(name, value, text=None)`  
-        Changes the specified meter to the specified value, between 0 and 100, with the optional text.
+* `addMeter(name)`  
+    Adds a meter with the specified name.  
+* `setMeter(name, value, text=None)`  
+    Changes the specified meter to the specified value, between 0 and 100, with the optional text.  
+    ![Meter](img/2_meter.png)  
 
-    * `setMeterFill(name, colour)`  
-        Changes the fill colour of the specified meter.
+* `setMeterFill(name, colour)`  
+    Changes the fill colour of the specified meter.  
+    ![Meter](img/3_meter.png)  
 
-    * `getMeter(name)`  
-        Gets the value of the specified meter.
-
-* ###SplitMeter
-
-    Shows two values, left & right
-
-* ###DualMeter
-
-    Shows percentage left & right
+* `getMeter(name)`  
+    Gets the value of the specified meter.  
 
 ##Separator
 ____
 Shows a horizontal line
 
-* `.addSeparator()`
+```python
+from appJar import gui
+
+app=gui()
+app.addSeparator()
+app.go()
+```
+
+![Separator](img/1_sep.png)  
+
+* `.addSeparator()`  
+    Adds a separator - a horizontal line, spanning the entire cell.  
 
 ##Link/WebLink
 ____
 Clickable text to call a function or launch a URL
 
+```python
+from appJar import gui
+def press(link):
+    app.infoBox("Info", "You clicked the link!")
+
+app=gui()
+app.setFont(20)
+app.addLink("Click me", press)
+app.addWebLink("appJar.info", "http://appJar.info")
+app.go()
+```
+
+![Link](img/1_link.png)  
+
 ####Add Links
 
 * `.addLink(title, func)`  
-    Adds a **hyperlink**, that when clicked, will call the spcified function.
-
+    Adds a **hyperlink**, that when clicked, will call the specified function.  
 * `.addWebLink(title, page)`  
-    Adds a **hyperlink**, that when clicked, will launch the default browser, and load the page parameter.
+    Adds a **hyperlink**, that when clicked, will launch the default browser, and load the page parameter.  
+    It must be a fully formed link, including ```http://```  

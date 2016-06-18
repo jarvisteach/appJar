@@ -7,6 +7,7 @@ theme: united
 copyright: <p>Richard Jarvis, 2016</p>
 site_description: Python library for building simple tkinter guis
 site_author: Richard Jarvis
+extra_css: [extra.css]
 pages:
 - Welcome: index.md
 - Fillings:
@@ -15,7 +16,7 @@ pages:
     - Sounds: Sound.md
     - Bars: Bars.md
     - Pop-ups: Dialogs.md
-    - Still to come...: DevWidgets.md
+    - In the works...: DevWidgets.md
 - Presentation:
     - Arranging widgets: Layout.md
     - Grouping widgets: Grouping.md

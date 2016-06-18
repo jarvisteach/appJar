@@ -75,6 +75,17 @@ Used to create a spreadsheet like interface.
     app.go()
 ```
 
+###Meters
+Working on some different styles for the Meter.  
+And, a better look - gradiated colour...  
+####SplitMeter
+Shows two values, left & right  
+
+![SplitMeter](img/1_splitMeter.png)
+
+####DualMeter
+Shows percentage left & right  
+
 ###Properties
 ---
 A quick-to-create set of radio/check boxes.  
