@@ -145,28 +145,30 @@ The GUI is looping, waiting for something to happen.
 A button click is the classic way to start interacting with a GUI.
 
 Whenever any function is called by the GUI, the title of the widget that called it is passed as a parameter.  
-That way, multiple widgets can use the same function, but diffrent actions can be performed, depening on the name passed as a parameter.
+That way, multiple widgets can use the same function, but different actions can be performed, depending on the name passed as a parameter.
+
+![Buttons](img/1_buttons.gif)
+
+```python
+    from appJar import gui
+
+    # the title of the button will be received as a parameter
+    def press(btn):
+        print(btn)
+
+    app=gui()
+    # 3 buttons, each calling the same function
+    app.addButton("One", press)
+    app.addButton("Two", press)
+    app.addButton("Three", press)
+    app.go()
+```
 
 ####Add Buttons
 
 * `.addButton(title, function)`  
     Add a single button to the GUI, the text on the button will be the same as the button's title.  
     A function should be specified, which will be called when the button is clicked.
-
-![Buttons](img/1_buttons.gif)
-
-```python
-    from appJar import gui
-    
-    def press(btn):                 # the title of the button will be received as a parameter
-        print(btn)
-
-    app=gui()
-    app.addButton("One", press)     # 3 buttons, each calling the same function
-    app.addButton("Two", press)
-    app.addButton("Three", press)
-    app.go()
-```
 
 * `.addButtons(titles, functions)`  
     It's possible to add a list of buttons to the GUI.  
@@ -271,7 +273,19 @@ app.go()
 
 ##OptionBox
 ____
-A drop-down single-select option
+Creates a simple drop-down box. It is only possible to select one option form this drop-down.  
+Pass in a list of values to show in the drop-down box. They will be added in the same order, with the first item shown.  
+
+![OptionBox](img/1_optBox.png) ![OptionBox](img/2_optBox.png)  
+
+```python
+from appJar import gui
+
+app=gui()
+app.setFont(20)
+app.addLabelOptionBox("Options", ["Apple", "Orange", "Pear", "kiwi"])
+app.go()
+```
 
 ####Add OptionBoxes
 * `.addOptionBox(title, values)`  
@@ -285,95 +299,189 @@ A drop-down single-select option
     This will select the item in the list, at the position specified.
 
 ####Get OptionBoxes
-* `.getOptionBox(title)`
+* `.getOptionBox(title)`  
+    This will return the currently displayed value in the OptionBox.
 
 ##SpinBox
 ____
-A scrollable option
+A scrollable list of options. Up and down buttons are provided to scroll from one item to the next.  
+Unlike the OptionBox, you do not get a drop-down of choices, instead it spins to the next/previous option.  
+
+![SpinBox](img/1_spinBox.png)  
+
+```python
+from appJar import gui
+
+app=gui()
+app.setFont(20)
+app.addLabelSpinBox("options", ["Apple", "Orange", "Pear", "kiwi"])
+app.go()
+```
+
 
 ####Add SpinBoxes
-* `.addSpinBox(title, values)`
-* `.addSpinBoxRange(title, from, to)`
+* `.addSpinBox(title, values)`  
+    This will create a SpinBox, adding the contents of the values list, in the order specified.
+* `.addSpinBoxRange(title, from, to)`  
+    This will create a SpinBox, with a numeric range of items.  
+
+    ![SpinBox](img/3_spinBox.png)  
+
+```python
+    from appJar import gui
+
+    app=gui()
+    app.setFont(20)
+    app.addSpinBoxRange("Numbers", 1, 12)
+    app.go()
+```
 
 ####Set SpinBoxes
-* `.setSpinBox(title, value)`
-* `.setSpinBoxPos(title, pos)`
+* `.setSpinBox(title, value)`  
+    This will change the SpinBox to show the specified value.  
+* `.setSpinBoxPos(title, pos)`  
+    This will change the SpinBox to show the value at the specified position.  
 
 ####Get SpinBoxes
-* `.getSpinBox(title)`
+* `.getSpinBox(title)`  
+    This will get the selected value from the specified SpinBox.  
 
 ##ListBox
 ____
 A box containing a list of items, single or multi-select
 
+```python
+from appJar import gui
+
+app=gui()
+app.setFont(20)
+app.addListBox("list", ["apple", "orange", "pear", "kiwi"])
+app.go()
+```
+
+![ListBox](img/1_listBox.png)  
+
+
 ####Add ListBoxes
-* `.addListBox(title, values)`
-* `.addListItem(title, item)`
-* `.addListItems(title, items)`
-
+* `.addListBox(title, values)`  
+    Creates a ListBox with the specified values.  
+* `.addListItem(title, item)`  
+    Adds a single item to the the end of the ListBox, and selects it.  
+* `.addListItems(title, items)`  
+    Adds a list of items to the end of the List Box, selecting the last one.  
 ####Set ListBoxes
-* `.setListBoxRows(title)`
-* `.setListSingle(list, single)`
-* `.selectListItem(title, item)`
-* `.updateListItems(title, items)`
-* `.removeListItem(title, item)`
-* `.clearListBox(title)`
+* `.updateListItems(title, items)`  
+    Replace the contents of the specified ListBox with the new values.  
+* `.removeListItem(title, item)`  
+    Remove the specified item from teh specified ListBox.  
+```python
+from appJar import gui
+def press(btn):
+    items = app.getListItems("list")
+    if len(items)> 0:
+        app.removeListItem("list", items[0])
 
+app=gui()
+app.setFont(20)
+app.addListBox("list", ["apple", "orange", "pear", "kiwi"])
+app.addButton("press",  press)
+app.go()
+```
+
+* `.clearListBox(title)`  
+    Removes all items from the specified ListBox.  
+* `.setListBoxRows(title)`  
+    Sets how many rows to display in the specified ListBox.  
+* `.setListBoxMulti(list, multi=True)`  
+    Configures whether the specified ListBox is single or multi select.  
+* `.selectListItem(title, item)`  
+    Selects the specified item in the specified ListBox.  
 ####Get ListBoxes
-* `.getListItems(title)`
+* `.getListItems(title)`  
+    Gets all of the selected items from the specified ListBox.  
 
 ##Scale
 ____
-A slider, that has a minimum & maximum value
+A slider, that has a minimum & maximum value.  
+
+```python
+from appJar import gui
+
+app=gui()
+app.setFont(20)
+app.addScale("scale")
+app.go()
+```
+
+![Scale](img/1_scale.png)  
 
 ####Add Scales
-
-* `.addScale(title)`
+* `.addScale(title)`  
+    Adds a scale, with a default range between 0 and 100.  
 
 ####Set Scales
-
-* `.setScaleRange(title from, to, curr=0)`
-* `.orientScaleHor(title, hor=True)`
-* `.setScale(title, pos)`
-* `.showScaleValue(title, show=True)`
+* `.setScale(title, pos)`  
+    Sets the selected pos for the specified Scale.  
+* `.setScaleRange(title from, to, curr=0)`  
+    Allows you to change the range available in the Scale. If ```curr``` is provided, then the Scale will be set to that value.  
+* `.showScaleValue(title, show=True)`  
+    Configures the Scale to show the currently selected value.  
+    ![Scale](img/2_scale.png)  
+* `.orientScaleHor(title, hor=True)`  
+    Changes the Scale's orientation. If ```hor``` is not set, it will be *horizontal*, if False is passed in, it will be *vertical*.  
+    ![Scale](img/3_scale.png)  
 
 ####Get Scales
-
-* `.getScale(title)`
+* `.getScale(title)`  
+    Gets the currently selected value from the scale.  
 
 ##Message
 ____
-Like a multi-line label
+Similar to a Label, except it will wrap the text over multiple lines.  
+
+```python
+from appJar import gui
+
+app=gui()
+app.setFont(12)
+app.addMessage("mess", """You can put a lot of text in this widget.
+The text will be wrapped over multiple lines.
+It's not possible to apply different styles to different words.""")
+app.go()
+```
+
+![Message](img/1_mess.png)  
 
 ####Add Messages
-
-* `.addMessage(title, text)`
-* `.addEmptyMessage(title)`
+* `.addMessage(title, text)`  
+    Adds a Message widget, with the specified text.  
+* `.addEmptyMessage(title)`  
+    Adds an empty Message widget.  
 
 ####Set Messages
-
-* `.clearMessage(title)`
-* `.setMessage(title, text)`
-
+* `.clearMessage(title)`  
+    Clears the specifed Message widget.  
+* `.setMessage(title, text)`  
+    Sets the contents of the specifed Message widget, to the specified text.  
 ##TextArea
 ____
-A multi-line box for typing text
+Similar to an Entry box, but allows you to type text over multiple lines.  
 
 ####Add TextAreas
-
-* `.addTextArea(title)`
-* `.addScrolledTextArea(title)`
+* `.addTextArea(title)`  
+    Adds an empty TextArea, with the specified title.  
+* `.addScrolledTextArea(title)`  
+    Adds a scrollable TextArea with the specified title.  
 
 ####Set TextAreas
-
-* `.setTextArea(title, text)`
-* `.clearTextArea(title)`
-* `.logTextArea(title)`
-* `.textAreaChanged(title)`
+* `.setTextArea(title, text)`  
+    Changes the contents of the specified TextArea, to the specified text.  
+* `.clearTextArea(title)`  
+    Clears the contents of the specified TextArea.  
 
 ####Get TextAreas
-
-* `.getTextArea(title)`
+* `.getTextArea(title)`  
+    Gets the contents of the specified TextArea.  
 
 ##Meter
 ____
