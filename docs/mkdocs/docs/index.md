@@ -57,7 +57,7 @@ app.go()
 ![simpleApp](img/simpleApp.png)
 
 And, that's it...  
-The more [fillings](Widgets.md) you put in your sandwich, and the more time you spend making them [look nice](WidgetOptions.md), the better it will taste!
+The more [fillings](pythonWidgets.md) you put in your sandwich, and the more time you spend making them [look nice](pythonWidgetOptions.md), the better it will taste!
 
 ###Foot-long sub?
 ---
@@ -79,7 +79,7 @@ However, filling a sub is very similar to filling a spreadsheet.
 Simply tell each filling what layer (row) it's on, and what column it's in.  
 And, if you're not planning on chopping a filling, it might stretch (span) across more than one column.  
 
-[See here](Layout.md) for more.  
+[See here](pythonWidgetLayout.md) for more.  
 
 ```python
 from appJar import gui
@@ -119,7 +119,7 @@ And, you can choose what kind of bread, and whether it's toasted:
 * `app.setBg("Brown")`
 * `app.setFont(20)`
 
-[See here](GuiOptions.md) for more.  
+[See here](pythonGuiOptions.md) for more.  
 
 ![testLog](img/testLog2.png)
 
@@ -127,5 +127,5 @@ And, you can choose what kind of bread, and whether it's toasted:
 ###Make your own!
 ---
 That's about it for now.  
-Have a look around, discover all of the different [fillings](Widgets.md) available.  
-And, investigate how best to [present ](Grouping.md) your sandwich!
+Have a look around, discover all of the different [fillings](pythonWidgets.md) available.  
+And, investigate how best to [present ](pythonWidgetGrouping.md) your sandwich!

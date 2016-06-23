@@ -14,7 +14,7 @@ Nearly all widgets provide the same three functions:
 * Sometimes - **GET** the widget (using its unique title) - this gets the contents of the widget (usually done in a function)
 * Rarely - **SET** the widget (using its unique title) - this changes what's in the widget
 
-On top of these, there is a common set of functions for [changing widgets](WidgetOptions.md).  
+On top of these, there is a common set of functions for [changing widgets](pythonWidgetOptions.md).  
 As well as some specialist functions, unique to each widget (see below).  
 
 ##Label

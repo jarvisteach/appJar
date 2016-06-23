@@ -14,19 +14,19 @@ strict: true
 pages:
 - Welcome: index.md
 - Fillings:
-    - Widgets: Widgets.md
-    - Images: Images.md
-    - Sounds: Sound.md
-    - Bars: Bars.md
-    - Pop-ups: Dialogs.md
-    - In the works...: DevWidgets.md
+    - Widgets: pythonWidgets.md
+    - Images: pythonImages.md
+    - Sounds: pythonSound.md
+    - Bars: pythonBars.md
+    - Pop-ups: pythonDialogs.md
+    - In the works...: pythonDevWidgets.md
 - Presentation:
-    - Arranging widgets: Layout.md
-    - Grouping widgets: Grouping.md
-    - Changing widgets: WidgetOptions.md
-    - Extras: GuiOptions.md
+    - Arranging widgets: pythonWidgetLayout.md
+    - Grouping widgets: pythonWidgetGrouping.md
+    - Changing widgets: pythonWidgetOptions.md
+    - Extras: pythonGuiOptions.md
 - About:
     - Installation: Install.md
     - Acknowledgements: Thanks.md
-    - Python: PythonBasics.md
+    - Python: pythonBasics.md
     - License: License.md
