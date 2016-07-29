@@ -1,5 +1,8 @@
 #Container Options
 ----
+The standard way of using appJar, is simply to place all widgets into a simple window. Everything is grouped into that single window, and and changes affect everything in that window.
+
+It's sometimes desirable to group widgets together within a window. A number of options are provided to make this easier.
 
 ###Label Frame
 ----

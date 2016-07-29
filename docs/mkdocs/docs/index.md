@@ -1,8 +1,8 @@
 #appJar
 ---
-This is a Python library for creating **quick** and **easy** GUIs, designed pimarily for use in the **classroom**.  
+This is a Python library for creating **quick** and **easy** GUIs, designed primarily for use in the **classroom**.  
 
-It has no dependencies, other than [Python 3.x](https://www.python.org/downloads/) and relies on Pyhton's built-in [tkinter](https://docs.python.org/3.5/library/tkinter.html) library.  
+It has no dependencies, other than [Python 3.x](https://www.python.org/downloads/) and relies on Python's built-in [tkinter](https://docs.python.org/3.5/library/tkinter.html) library.  
 
 See the [installtion guidelines](Install.md) for more information.
 

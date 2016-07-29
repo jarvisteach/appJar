@@ -101,7 +101,7 @@ The following allow widgets to be interacted with:
 The following allow widgets to be manipulated on screen:
 
 * `.hide XXX (name)`  
-    Temporarily hides the widget form view.
+    Temporarily hides the widget from view.
 
 * `.show XXX (name)`  
     Show the widget, if it was already hidden.
