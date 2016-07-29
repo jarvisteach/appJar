@@ -2483,6 +2483,15 @@ class gui:
             self.__positionWidget(link, row, column, colspan, rowspan)
 
 #####################################
+## FUNCTIONS for grips
+#####################################
+      # adds a simple grip, used to drag the window around
+      def addGrip(self, row=None, column=0, colspan=0, rowspan=0):
+            grip = Grip(self.__getContainer())
+            self.__positionWidget(grip, row, column, colspan, rowspan)
+            self.__addTooltip(grip, "Drag here to move")
+
+#####################################
 ## FUNCTIONS for labels
 #####################################
       def __flash(self):
@@ -3519,6 +3528,35 @@ class NoteBook(Frame):
             self.inactiveBg = inactiveBg
             self.__colourTabs(False)
 
+
+#####################################
+## Drag Grip Label Class
+#####################################
+class Grip(Label):
+      def __init__(self, *args, **kwargs):
+            Label.__init__(self, bitmap="gray25", *args, **kwargs)
+            self.config(cursor="fleur")
+            self.bind("<ButtonPress-1>", self.StartMove)
+            self.bind("<ButtonRelease-1>", self.StopMove)
+            self.bind("<B1-Motion>", self.OnMotion)
+
+      def StartMove(self, event):
+            self.x = event.x
+            self.y = event.y
+
+      def StopMove(self, event):
+            self.x = None
+            self.y = None
+
+      def OnMotion(self, event):
+            parent = self.winfo_toplevel()
+            deltax = event.x - self.x
+            deltay = event.y - self.y
+            x = parent.winfo_x() + deltax
+            y = parent.winfo_y() + deltay
+
+            parent.geometry("+%s+%s" % (x, y))
+
 #####################################
 ## Hyperlink Class
 #####################################
@@ -3826,7 +3864,7 @@ class ScrollPane(Frame):
                     if delta in [1,-1]: self.canvas.yview_scroll(self.speed, "units")
                     elif delta in [2,-2]: self.canvas.xview_scroll(self.speed, "units")
                     else: pass
-                    
+
                 # linux scroll event
                 elif platform() == "Linux":
                     if event.num == 4:
@@ -3843,7 +3881,7 @@ class ScrollPane(Frame):
                 if newDelta in [1,-1,2,-2]: self.times.append(newDelta)
                 self.lastScrollTime = timer
                 self.speed=1
-                
+
         # no lastScrollTime set
         else:
             self.times=[]
