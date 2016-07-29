@@ -5,7 +5,7 @@
 
 from array import *
 from tkinter import *
-import appJar.lib.png as png
+from . import png
 
 ## tkinter hacking section ##
 
