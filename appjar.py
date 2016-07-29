@@ -1085,7 +1085,7 @@ class gui:
                   raise Exception("Unknown geometry manager: " + widget.winfo_manager())
 
       # convenience function to set RCS, referencing the current container's settings
-      def __getRCS(self, row, column, span):
+      def __getRCS(self, row, column, colspan, rowspan):
             if row is None: row=self.getNextRow()
             else: self.containerStack[-1]['emptyRow'] = row + 1
 
@@ -1093,12 +1093,12 @@ class gui:
             #if column == 0 and colspan == 0 and self.containerStack[-1]['colCount'] > 1:
             #      colspan = self.containerStack[-1]['colCount']
 
-            return row, column, span
+            return row, column, colspan, rowspan
 
       # two important things here:
       # grid - sticky: position of widget in its space (side or fill)
       # row/columns configure - weight: how to grow with GUI
-      def __positionWidget(self, widget, row, column=0, colspan=0, sticky=W+E):
+      def __positionWidget(self, widget, row, column=0, colspan=0, rowspan=0, sticky=W+E):
             # allow item to be added to container
             container = self.__getContainer()
 #            widget["bg"]=container["bg"]
@@ -1110,7 +1110,7 @@ class gui:
                   return
 
             # else, add to grid
-            row, column, colspan = self.__getRCS(row, column, colspan)
+            row, column, colspan, rowspan = self.__getRCS(row, column, colspan, rowspan)
 
             # build a dictionary for the named params
             cX = self.containerStack[-1]['padx']
@@ -1119,6 +1119,8 @@ class gui:
 
             # if we have a column span, apply it
             if colspan != 0 : params["columnspan"] = colspan
+            # if we have a rowspan, apply it
+            if rowspan != 0 : params["rowspan"] = rowspan
 
             # 1) if param has sticky, use that
             # 2) if container has sticky - overrirde
@@ -1126,6 +1128,8 @@ class gui:
             if self.containerStack[-1]["sticky"] is not None: params["sticky"] = self.containerStack[-1]["sticky"]
             elif sticky is not None: params["sticky"] = sticky
             else: pass
+
+#            if rowspan != 0 : params["sticky"] = N+S+E+W;
 
             # expand that dictionary out as we pass it as a value
             widget.grid (**params)
@@ -1171,13 +1175,13 @@ class gui:
                   return self.containerStack.pop()
 
       # functions to start the various containers
-      def startContainer(self, fType, title, row=None, column=0, colspan=0, sticky=None):
+      def startContainer(self, fType, title, row=None, column=0, colspan=0, rowspan=0, sticky=None):
             if fType == self.C_LABELFRAME:
                   # first, make a LabelFrame, and position it correctly
                   self.__verifyItem(self.n_labelFrames, title, True)
                   container = LabelFrame(self.containerStack[-1]['container'], text=title)
                   container.config(background=self.labelBgColour, font=self.labelFrameFont, relief="groove")
-                  self.__positionWidget(container, row, column, colspan, "nsew")
+                  self.__positionWidget(container, row, column, colspan, rowspan, "nsew")
                   self.n_labelFrames[title] = container
 
                   # now, add to top of stack
@@ -1185,7 +1189,7 @@ class gui:
             elif fType == self.C_NOTEBOOK:
                   self.__verifyItem(self.n_noteBooks, title, True)
                   notebook = NoteBook(self.containerStack[-1]['container'], bg=self.labelBgColour)
-                  self.__positionWidget(notebook, row, column, colspan, sticky=sticky)
+                  self.__positionWidget(notebook, row, column, colspan, rowspan, sticky=sticky)
                   self.n_noteBooks[title] = notebook
 
                   # now, add to top of stack
@@ -1203,7 +1207,7 @@ class gui:
                   # now, add the new pane
                   self.__verifyItem(self.n_panedWindows, title, True)
                   pane = PanedWindow(self.containerStack[-1]['container'], showhandle=True, sashrelief="groove", bg=self.labelBgColour)
-                  self.__positionWidget(pane, row, column, colspan, sticky=sticky)
+                  self.__positionWidget(pane, row, column, colspan, rowspan, sticky=sticky)
                   self.n_panedWindows[title] = pane
 
                   # now, add to top of stack
@@ -1222,7 +1226,7 @@ class gui:
             elif fType == self.C_SCROLLPANE:
                   scrollPane = ScrollPane(self.containerStack[-1]['container'], bg=self.labelBgColour, width=100,height=100)
 #                  self.containerStack[-1]['container'].add(scrollPane)
-                  self.__positionWidget(scrollPane, row, column, colspan, sticky=sticky)
+                  self.__positionWidget(scrollPane, row, column, colspan, rowspan, sticky=sticky)
                   self.n_scrollPanes[title] = scrollPane
 
                   # now, add to top of stack
@@ -1231,7 +1235,7 @@ class gui:
                   raise Exception("Unknown container: " + fType)
 
       def startNoteBook(self, title, row=None, column=0, colspan=0, sticky="NSEW"):
-            self.startContainer(self.C_NOTEBOOK, title, row, column, colspan, sticky)
+            self.startContainer(self.C_NOTEBOOK, title, row, column, colspan, 0, sticky)
 
       def startNoteTab(self, title):
             # auto close the previous NOTETAB - keep it?
@@ -1243,7 +1247,7 @@ class gui:
             self.startContainer(self.C_NOTETAB, title)
 
       def startPanedWindow(self, title, row=None, column=0, colspan=0, sticky="NSEW"):
-            self.startContainer(self.C_PANEDWINDOW, title, row, column, colspan, sticky)
+            self.startContainer(self.C_PANEDWINDOW, title, row, column, colspan, 0, sticky)
 
       def startSubWindow(self, name, title=None):
             self.__verifyItem(self.n_subWindows, name, True)
@@ -1261,7 +1265,7 @@ class gui:
       # sticky is alignment inside frame
       # frame will be added as other widgets
       def startLabelFrame(self, title, row=None, column=0, colspan=0, sticky=W):
-            self.startContainer(self.C_LABELFRAME, title, row, column, colspan, sticky)
+            self.startContainer(self.C_LABELFRAME, title, row, column, colspan, 0, sticky)
 
       # functions to stop the various containers
       def stopContainer(self): self.__removeContainer()
@@ -1297,7 +1301,7 @@ class gui:
             self.stopContainer()
 
       def startScrollPane(self, title, row=None, column=0, colspan=0, sticky="NSEW"):
-            self.startContainer(self.C_SCROLLPANE, title, row, column, colspan, sticky)
+            self.startContainer(self.C_SCROLLPANE, title, row, column, colspan, 0, sticky)
 
       def stopScrollPane(self):
             if self.containerStack[-1]['type'] != self.C_SCROLLPANE:
@@ -1430,14 +1434,14 @@ class gui:
 #####################################
 ## FUNCTION for check boxes
 #####################################
-      def addCheckBox(self, title, row=None, column=0, colspan=0):
+      def addCheckBox(self, title, row=None, column=0, colspan=0, rowspan=0):
             self.__verifyItem(self.n_cbs, title, True)
             var=IntVar(self.topLevel)
             cb = Checkbutton(self.__getContainer())
             cb.config(text=title, variable=var, font=self.cbFont, background=self.labelBgColour, activebackground=self.labelBgColour)
             self.n_cbs[title]=cb
             self.n_boxVars[title]=var
-            self.__positionWidget(cb, row, column, colspan, None)
+            self.__positionWidget(cb, row, column, colspan, rowspan, None)
 
       def getCheckBox(self, title):
             bVar = self.__verifyItem(self.n_boxVars, title)
@@ -1452,7 +1456,7 @@ class gui:
 #####################################
 ## FUNCTION for scales
 #####################################
-      def addScale(self, title, row=None, column=0, colspan=0 ):
+      def addScale(self, title, row=None, column=0, colspan=0, rowspan=0):
             self.__verifyItem(self.n_scales, title, True)
             frame = self.__getLabelFrame(title)
 
@@ -1460,7 +1464,7 @@ class gui:
             scale.config(orient=HORIZONTAL, showvalue=False, highlightthickness=0)
             self.n_scales[title] = scale
             self.__packLabelFrame(frame, scale)
-            self.__positionWidget(frame, row, column, colspan)
+            self.__positionWidget(frame, row, column, colspan, rowspan)
 
       def getScale(self, title):
             sc = self.__verifyItem(self.n_scales, title)
@@ -1490,10 +1494,11 @@ class gui:
 ## FUNCTION for simple grids - RETHINK
 #####################################
       # first row is used as a header
+# ADD ROWSPAN HERE WHEN FIXIBG...
       def addGrid(self, title, data, row=None, column=0, colspan=0, action=None, addRow=False):
             self.__verifyItem(self.n_grids, title, True)
             frame = self.__makeGrid(title, data, action, addRow)
-            self.__positionWidget(frame, row, column, colspan, N+E+S+W)
+            self.__positionWidget(frame, row, column, colspan, 0, N+E+S+W)
 
       def updateGrid(self, title, data, addRow=None):
             frame = self.__verifyItem(self.n_grids, title)
@@ -1716,15 +1721,15 @@ class gui:
 
             return option
 
-      def addOptionBox(self, title, options, row=None, column=0, colspan=0):
+      def addOptionBox(self, title, options, row=None, column=0, colspan=0, rowspan=0):
             option = self.__buildOptionBox(self.__getContainer(), title, options)
-            self.__positionWidget(option, row, column, colspan)
+            self.__positionWidget(option, row, column, colspan, rowspan)
 
-      def addLabelOptionBox(self, title, options, row=None, column=0, colspan=0):
+      def addLabelOptionBox(self, title, options, row=None, column=0, colspan=0, rowspan=0):
             frame = self.__getLabelFrame(title)
             option = self.__buildOptionBox(frame, title, options)
             self.__packLabelFrame(frame, option)
-            self.__positionWidget(frame, row, column, colspan)
+            self.__positionWidget(frame, row, column, colspan, rowspan)
 
       def getOptionBox(self, title):
             self.__verifyItem(self.n_optionVars, title)
@@ -1780,9 +1785,9 @@ class gui:
             self.n_spins[title] = spin
             return  spin
 
-      def __addSpinBox(self, title, values,row=None, column=0, colspan=0):
+      def __addSpinBox(self, title, values,row=None, column=0, colspan=0, rowspan=0):
             spin = self.__buildSpinBox(self.__getContainer(), title, values)
-            self.__positionWidget(spin, row, column, colspan)
+            self.__positionWidget(spin, row, column, colspan, rowspan)
             self.setSpinBoxPos(title, 0)
 
       # validates that an item in the named spinbox starts with the user_input
@@ -1797,22 +1802,22 @@ class gui:
             self.containerStack[0]['container'].bell()
             return False
 
-      def addSpinBox(self, title, values, row=None, column=0, colspan=0):
-            self.__addSpinBox(title, values, row, column, colspan)
+      def addSpinBox(self, title, values, row=None, column=0, colspan=0, rowspan=0):
+            self.__addSpinBox(title, values, row, column, colspan, rowspan)
 
-      def addSpinBoxRange(self, title, fromVal, toVal, row=None, column=0, colspan=0):
+      def addSpinBoxRange(self, title, fromVal, toVal, row=None, column=0, colspan=0, rowspan=0):
             vals = list(range(fromVal, toVal+1))
-            self.__addSpinBox(title, vals, row, column, colspan)
+            self.__addSpinBox(title, vals, row, column, colspan, rowspan)
 
-      def addLabelSpinBoxRange(self, title, fromVal, toVal, row=None, column=0, colspan=0):
+      def addLabelSpinBoxRange(self, title, fromVal, toVal, row=None, column=0, colspan=0, rowspan=0):
             vals = list(range(fromVal, toVal+1))
-            self.addLabelSpinBox(title, vals, row, column, colspan)
+            self.addLabelSpinBox(title, vals, row, column, colspan, rowspan)
 
-      def addLabelSpinBox(self, title, values, row=None, column=0, colspan=0):
+      def addLabelSpinBox(self, title, values, row=None, column=0, colspan=0, rowspan=0):
             frame = self.__getLabelFrame(title)
             spin = self.__buildSpinBox(frame, title, values)
             self.__packLabelFrame(frame, spin)
-            self.__positionWidget(frame, row, column, colspan)
+            self.__positionWidget(frame, row, column, colspan, rowspan)
             self.setSpinBoxPos(title, 0)
 
       def getSpinBox(self, title):
@@ -1918,9 +1923,9 @@ class gui:
                   img.animating=True
                   self.topLevel.after(img.anim_speed, self.__animateImage, name)
 
-      def addAnimatedImage(self, name, imageFile, row=None, column=0, colspan=0):
+      def addAnimatedImage(self, name, imageFile, row=None, column=0, colspan=0, rowspan=0):
             self.warn("addAnimatedImage() is now deprecated - use addImage()")
-            self.addImage(name, imageFile, row, column, colspan)
+            self.addImage(name, imageFile, row, column, colspan, rowspan)
 
       # function to set an alternative image, when a mouse goes over
       def setImageMouseOver(self, title, overImg):
@@ -2010,7 +2015,7 @@ class gui:
             self.topLevel.update_idletasks()
 
       # must be GIF or PNG
-      def addImage(self, name, imageFile, row=None, column=0, colspan=0):
+      def addImage(self, name, imageFile, row=None, column=0, colspan=0, rowspan=0):
             #image = re.escape(image)
             self.__verifyItem(self.n_images, name, True)
             img = self.__getImage(imageFile)
@@ -2026,7 +2031,7 @@ class gui:
                   label.config(height=h, width=w)
 
             self.n_images[name] = label
-            self.__positionWidget(label, row, column, colspan)
+            self.__positionWidget(label, row, column, colspan, rowspan)
             if img.isAnimated:
                     self.topLevel.after(img.anim_speed, self.__animateImage, name)
 
@@ -2192,7 +2197,7 @@ class gui:
 #####################################
 ## FUNCTION for radio buttons
 #####################################
-      def addRadioButton(self, title, name, row=None, column=0, colspan=0 ):
+      def addRadioButton(self, title, name, row=None, column=0, colspan=0, rowspan=0):
             var = None
             newRb = False
             if (title in self.n_rbVars):
@@ -2214,7 +2219,7 @@ class gui:
             #rb.bind("<Shift-Tab>", self.__focusLastWindow)
             if newRb: rb.select()
 
-            self.__positionWidget(rb, row, column, colspan, None)
+            self.__positionWidget(rb, row, column, colspan, rowspan, None)
 
       def getRadioButton(self, title):
             var = self.__verifyItem(self.n_rbVars, title)
@@ -2235,7 +2240,7 @@ class gui:
 #####################################
 ## FUNCTION for list box
 #####################################
-      def addListBox(self, name, values=None, row=None, column=0, colspan=0):
+      def addListBox(self, name, values=None, row=None, column=0, colspan=0, rowspan=0):
             self.__verifyItem(self.n_lbs, name, True)
             frame = Frame(self.__getContainer())
             vscrollbar = AutoScrollbar(frame)
@@ -2261,7 +2266,7 @@ class gui:
                   for name in values:
                         lb.insert(END, name)
 
-            self.__positionWidget(frame, row, column, colspan)
+            self.__positionWidget(frame, row, column, colspan, rowspan)
 
       # set how many rows to display
       def setListBoxRows(self, name, rows):
@@ -2396,13 +2401,13 @@ class gui:
 
             return but
 
-      def addNamedButton(self, name, title, func, row=None, column=0, colspan=0):
+      def addNamedButton(self, name, title, func, row=None, column=0, colspan=0, rowspan=0):
             but = self.__buildButton(title, func, self.__getContainer(), name)
-            self.__positionWidget(but, row, column, colspan, None)
+            self.__positionWidget(but, row, column, colspan, rowspan, None)
 
-      def addButton(self, title, func, row=None, column=0, colspan=0):
+      def addButton(self, title, func, row=None, column=0, colspan=0, rowspan=0):
             but = self.__buildButton(title, func, self.__getContainer())
-            self.__positionWidget(but, row, column, colspan, None)
+            self.__positionWidget(but, row, column, colspan, rowspan, None)
 
       def setButton(self, name, text):
             but = self.__verifyItem(self.n_buttons, name)
@@ -2418,7 +2423,7 @@ class gui:
 
       # adds a set of buttons, in the row, spannning specified columns
       # pass in a list of names & a list of functions (or a single function to use for all)
-      def addButtons(self, names, funcs, row=None, column=0, colspan=0):
+      def addButtons(self, names, funcs, row=None, column=0, colspan=0, rowspan=0):
 
             if not isinstance(names, list):
                   raise Exception("Invalid button: " + names + ". It must be a list of buttons.")
@@ -2446,7 +2451,7 @@ class gui:
                         Grid.columnconfigure(frame, i, weight=1)
                         Grid.rowconfigure(frame, bRow, weight=1)
 
-            self.__positionWidget(frame, row, column, colspan)
+            self.__positionWidget(frame, row, column, colspan, rowspan)
             self.n_frames.append(frame)
 
 #####################################
@@ -2459,17 +2464,17 @@ class gui:
             return link
 
       # launches a browser to the specified page
-      def addWebLink(self, title, page, row=None, column=0, colspan=0):
+      def addWebLink(self, title, page, row=None, column=0, colspan=0, rowspan=0):
             link = self.__buildLink(title)
             link.registerWebpage(page)
-            self.__positionWidget(link, row, column, colspan)
+            self.__positionWidget(link, row, column, colspan, rowspan)
 
       # executes the specified function
-      def addLink(self, title, func, row=None, column=0, colspan=0):
+      def addLink(self, title, func, row=None, column=0, colspan=0, rowspan=0):
             link = self.__buildLink(title)
             myF = self.__makeFunc(func, title, True)
             link.registerCallback(myF)
-            self.__positionWidget(link, row, column, colspan)
+            self.__positionWidget(link, row, column, colspan, rowspan)
 
 #####################################
 ## FUNCTIONS for labels
@@ -2482,12 +2487,12 @@ class gui:
                         lab.config(background=fg, foreground=bg)
             self.topLevel.after(250, self.__flash)
 
-      def addFlashLabel(self, title, text=None, row=None, column=0, colspan=0):
-            self.addLabel(title, text, row, column, colspan)
+      def addFlashLabel(self, title, text=None, row=None, column=0, colspan=0, rowspan=0):
+            self.addLabel(title, text, row, column, colspan, rowspan)
             self.n_flashLabs.append(self.n_labels[title])
             self.doFlash = True
 
-      def addLabel(self, title, text=None, row=None, column=0, colspan=0):
+      def addLabel(self, title, text=None, row=None, column=0, colspan=0, rowspan=0):
             self.__verifyItem(self.n_labels, title, True)
             lab = Label(self.__getContainer())
             lab.inContainer=False
@@ -2495,13 +2500,13 @@ class gui:
             lab.config( justify=LEFT, font=self.labelFont, background=self.labelBgColour )
             self.n_labels[title]=lab
 
-            self.__positionWidget(lab, row, column, colspan)
+            self.__positionWidget(lab, row, column, colspan, rowspan)
 
-      def addEmptyLabel(self, title, row=None, column=0, colspan=0):
-            self.addLabel(title, None, row, column, colspan)
+      def addEmptyLabel(self, title, row=None, column=0, colspan=0, rowspan=0):
+            self.addLabel(title, None, row, column, colspan, rowspan)
 
       # adds a set of labels, in the row, spannning specified columns
-      def addLabels(self, names, row=None, colspan=0):
+      def addLabels(self, names, row=None, colspan=0, rowspan=0):
             frame = Frame(self.__getContainer())
             frame.config( background=self.labelBgColour )
             for i in range(len(names)):
@@ -2515,7 +2520,7 @@ class gui:
                   Grid.columnconfigure(frame, i, weight=1)
                   Grid.rowconfigure(frame, 0, weight=1)
 
-            self.__positionWidget(frame, row, 0, colspan)
+            self.__positionWidget(frame, row, 0, colspan, rowspan)
             self.n_frames.append(frame)
 
       def setLabel(self, name, text):
@@ -2550,13 +2555,13 @@ class gui:
             self.logTextArea(title)
             return text
 
-      def addTextArea(self, title, row=None, column=0, colspan=0):
+      def addTextArea(self, title, row=None, column=0, colspan=0, rowspan=0):
             text = self.__buildTextArea(title, self.__getContainer())
-            self.__positionWidget(text, row, column, colspan, N+E+S+W)
+            self.__positionWidget(text, row, column, colspan, rowspan, N+E+S+W)
 
-      def addScrolledTextArea(self, title, row=None, column=0, colspan=0):
+      def addScrolledTextArea(self, title, row=None, column=0, colspan=0, rowspan=0):
             text = self.__buildTextArea(title, self.__getContainer(), True)
-            self.__positionWidget(text, row, column, colspan, N+E+S+W)
+            self.__positionWidget(text, row, column, colspan, rowspan, N+E+S+W)
 
       def getTextArea(self, title):
             self.__verifyItem(self.n_textAreas, title)
@@ -2589,11 +2594,11 @@ class gui:
 #####################################
 ## FUNCTIONS to add Tree Widgets
 #####################################
-      def addTree(self, title, data, row=None, column=0, colspan=0):
+      def addTree(self, title, data, row=None, column=0, colspan=0, rowspan=0):
             self.__verifyItem(self.n_trees, title, True)
             frame=ScrollPane(self.__getContainer(), relief=RAISED,
                             borderwidth=2, bg="white", highlightthickness=0, takefocus=1)
-            self.__positionWidget(frame, row, column, colspan)
+            self.__positionWidget(frame, row, column, colspan, rowspan)
 
             xmlDoc=parseString(data)
             item=TreeWidget(xmlDoc.documentElement)
@@ -2615,7 +2620,7 @@ class gui:
 #####################################
 ## FUNCTIONS to add Message Box
 #####################################
-      def addMessage(self, title, text, row=None, column=0, colspan=0):
+      def addMessage(self, title, text, row=None, column=0, colspan=0, rowspan=0):
             if (title in self.n_messages): raise Exception("Invalid name:", title, "already exists")
             mess = Message(self.__getContainer())
             mess.config(font=self.messageFont)
@@ -2625,11 +2630,11 @@ class gui:
                 mess.config(highlightbackground=self.labelBgColour)
             self.n_messages[title]=mess
 
-            self.__positionWidget(mess, row, column, colspan)
+            self.__positionWidget(mess, row, column, colspan, rowspan)
 #            mess.bind("<Configure>", lambda e: mess.config(width=e.width-10))
 
-      def addEmptyMessage(self, title, row=None, column=0, colspan=0):
-            self.addMessage(title, None, row, column, colspan)
+      def addEmptyMessage(self, title, row=None, column=0, colspan=0, rowspan=0):
+            self.addMessage(title, None, row, column, colspan, rowspan)
 
       def setMessage(self, title, text):
             if (title not in self.n_messages): raise Exception("Invalid message:", title)
@@ -2664,9 +2669,9 @@ class gui:
             self.n_entryVars[title]=var
             return ent
 
-      def addEntry(self, title, row=None, column=0, colspan=0, secret=False):
+      def addEntry(self, title, row=None, column=0, colspan=0, rowspan=0, secret=False):
             ent = self.__buildEntry(title, self.__getContainer(), secret)
-            self.__positionWidget(ent, row, column, colspan)
+            self.__positionWidget(ent, row, column, colspan, rowspan)
 
       def __validateNumericEntry(self, action, index, value_if_allowed, prior_value, text, validation_type, trigger_type, widget_name):
             if action == "1":
@@ -2683,9 +2688,9 @@ class gui:
             else:
                 return True
 
-      def addNumericEntry(self, title, row=None, column=0, colspan=0, secret=False):
+      def addNumericEntry(self, title, row=None, column=0, colspan=0, rowspan=0, secret=False):
             ent = self.__buildEntry(title, self.__getContainer(), secret)
-            self.__positionWidget(ent, row, column, colspan)
+            self.__positionWidget(ent, row, column, colspan, rowspan)
 
             if self.validateNumeric == None:
                   self.validateNumeric = (self.containerStack[0]['container'].register(self.__validateNumericEntry), '%d', '%i', '%P', '%s', '%S', '%v', '%V', '%W')
@@ -2694,14 +2699,14 @@ class gui:
             ent.config(validate='key', validatecommand=self.validateNumeric)
             self.setEntryTooltip(title, "Numeric data only.")
 
-      def addLabelNumericEntry(self, title, row=None, column=0, colspan=0, secret=False):
-        self. addNumericLabelEntry(title, row, column, colspan, secret)
+      def addLabelNumericEntry(self, title, row=None, column=0, colspan=0, rowspan=0, secret=False):
+        self. addNumericLabelEntry(title, row, column, colspan, rowspan, secret)
 
-      def addNumericLabelEntry(self, title, row=None, column=0, colspan=0, secret=False):
+      def addNumericLabelEntry(self, title, row=None, column=0, colspan=0, rowspan=0, secret=False):
             frame = self.__getLabelFrame(title)
             ent = self.__buildEntry(title, frame, secret)
             self.__packLabelFrame(frame, ent)
-            self.__positionWidget(frame, row, column, colspan)
+            self.__positionWidget(frame, row, column, colspan, rowspan)
 
             if self.validateNumeric == None:
                   self.validateNumeric = (self.containerStack[0]['container'].register(self.__validateNumericEntry), '%d', '%i', '%P', '%s', '%S', '%v', '%V', '%W')
@@ -2710,20 +2715,20 @@ class gui:
             ent.config(validate='key', validatecommand=self.validateNumeric)
             self.setEntryTooltip(title, "Numeric data only.")
 
-      def addSecretEntry(self, title, row=None, column=0, colspan=0):
-            self.addEntry(title, row, column, colspan, True)
+      def addSecretEntry(self, title, row=None, column=0, colspan=0, rowspan=0):
+            self.addEntry(title, row, column, colspan, rowspan, True)
 
-      def addLabelEntry(self, title, row=None, column=0, colspan=0, secret=False):
+      def addLabelEntry(self, title, row=None, column=0, colspan=0, rowspan=0, secret=False):
             frame = self.__getLabelFrame(title)
             ent = self.__buildEntry(title, frame, secret)
             self.__packLabelFrame(frame, ent)
-            self.__positionWidget(frame, row, column, colspan)
+            self.__positionWidget(frame, row, column, colspan, rowspan)
 
-      def addLabelSecretEntry(self, title, row=None, column=0, colspan=0):
-            self.ddSecretLabelEntry(title, row, column, colspan)
+      def addLabelSecretEntry(self, title, row=None, column=0, colspan=0, rowspan=0):
+            self.addSecretLabelEntry(title, row, column, colspan, rowspan)
 
-      def addSecretLabelEntry(self, title, row=None, column=0, colspan=0):
-            self.addLabelEntry(title, row, column, colspan, True)
+      def addSecretLabelEntry(self, title, row=None, column=0, colspan=0, rowspan=0):
+            self.addLabelEntry(title, row, column, colspan, rowspan, True)
 
       def getEntry(self, name):
             self.__verifyItem(self.n_entryVars, name)
@@ -2787,11 +2792,11 @@ class gui:
       ##############
       # DUAL METERS
       ##############
-      def addDualMeter(self, name, row=None, column=0, colspan=0):
+      def addDualMeter(self, name, row=None, column=0, colspan=0, rowspan=0):
             self.__verifyItem(self.n_meters, name, True)
             meter = DualMeter(self.__getContainer(), font=self.meterFont)
             self.n_meters[name] = meter
-            self.__positionWidget(meter, row, column, colspan)
+            self.__positionWidget(meter, row, column, colspan, rowspan)
 
       # update the value of the specified meter
       # note: expects a value between -100 & 100
@@ -2811,11 +2816,11 @@ class gui:
       ##############
       # SPLIT METERS
       ##############
-      def addSplitMeter(self, name, row=None, column=0, colspan=0):
+      def addSplitMeter(self, name, row=None, column=0, colspan=0, rowspan=0):
             self.__verifyItem(self.n_meters, name, True)
             meter = SplitMeter(self.__getContainer(), font=self.meterFont)
             self.n_meters[name] = meter
-            self.__positionWidget(meter, row, column, colspan)
+            self.__positionWidget(meter, row, column, colspan, rowspan)
 
       # update the value of the specified meter
       # note: expects a value between -100 & 100
@@ -2835,11 +2840,11 @@ class gui:
       ########
       # METERS
       ########
-      def addMeter(self, name, row=None, column=0, colspan=0):
+      def addMeter(self, name, row=None, column=0, colspan=0, rowspan=0):
             self.__verifyItem(self.n_meters, name, True)
             meter = Meter(self.__getContainer(), font=self.meterFont)
             self.n_meters[name] = meter
-            self.__positionWidget(meter, row, column, colspan)
+            self.__positionWidget(meter, row, column, colspan, rowspan)
 
       # update the value of the specified meter
       # note: expects a value between 0 & 100
@@ -2859,20 +2864,20 @@ class gui:
 #####################################
 ## FUNCTIONS for seperators
 #####################################
-      def addSeparator(self, row=None, column=0, colspan=0, colour=None):
+      def addSeparator(self, row=None, column=0, colspan=0, rowspan=0, colour=None):
             sep = Separator(self.__getContainer())
             if colour is not None: sep.setLineFg(colour)
             self.n_separators.append(sep)
-            self.__positionWidget(sep, row, column, colspan)
+            self.__positionWidget(sep, row, column, colspan, rowspan)
 
 #####################################
 ## FUNCTIONS for pie charts
 #####################################
-      def addPieChart(self, name, fracs, size=100, row=None, column=0, colspan=0):
+      def addPieChart(self, name, fracs, size=100, row=None, column=0, colspan=0, rowspan=0):
             self.__verifyItem(self.n_pieCharts, name, True)
             pie = PieChart(self.__getContainer(), fracs, size, self.labelBgColour )
             self.n_pieCharts[name] = pie
-            self.__positionWidget(pie, row, column, colspan, sticky=None)
+            self.__positionWidget(pie, row, column, colspan, rowspan, sticky=None)
 
 #####################################
 ## FUNCTIONS for tool bar
