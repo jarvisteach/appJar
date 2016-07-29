@@ -641,6 +641,12 @@ class gui:
       def getResizable(self):
             return self.__getTopLevel().isResizable
 
+      def hideTitleBar(self):
+            self.topLevel.overrideredirect(1)
+
+      def showTitleBar(self):
+            self.topLevel.overrideredirect(0)
+
       # function to set the window's title
       def setTitle(self, title):
             self.__getTopLevel().title(title)
