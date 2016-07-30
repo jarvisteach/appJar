@@ -1691,33 +1691,30 @@ class gui:
       def __buildOptionBox(self, frame, title, options):
             self.__verifyItem(self.n_options, title, True)
 
-            # deal with a dict_keys object - messy!!!!
-            if not isinstance(options, list): options = list(options)
-            # get the longest string length
-            try: maxSize = len(str(max(options, key=len)))
-            except: maxSize = len(str(max(options)))
-
+            # create a string var to hold selected item
             var=StringVar(self.topLevel)
-            if len(options) > 0: var.set(options[0])
             self.n_optionVars[title]=var
 
-            if len(options) > 0: option = OptionMenu(frame,var,*options)
-            else: option = OptionMenu(frame,var,[])
-            option.inContainer = False
-            option.config(justify=LEFT, font=self.optionFont, background=self.labelBgColour, highlightthickness=0)
-            # set the size, based off the longest item
-            option.config(width=maxSize)
+            maxSize, options = self.__configOptionBox(options)
+
+            if len(options) > 0:
+                option = OptionMenu(frame,var,*options)
+                var.set(options[0])
+            else:
+                option = OptionMenu(frame,var,[])
+
+            option.config(justify=LEFT, font=self.optionFont, background=self.labelBgColour, highlightthickness=0, width=maxSize)
             # compare on windows & mac
-            #option.config(justify=LEFT, font=self.optionFont, background=self.labelBgColour, highlightthickness=12, bd=0, highlightbackground=self.labelBgColour)
+            #option.config(highlightthickness=12, bd=0, highlightbackground=self.labelBgColour)
+            option.var = var
+            option.maxSize = maxSize
+            option.inContainer = False
+            option.options = options
 
             # configure the drop-down too
             dropDown = option.nametowidget(option.menuname)
             dropDown.configure(font=self.optionFont)
 #            dropDown.configure(background=self.labelBgColour)
-
-
-            option.var = var
-            self.n_options[title]=option
 
             if platform() == "Darwin":
                   option.config(highlightbackground=self.labelBgColour)
@@ -1725,6 +1722,10 @@ class gui:
             option.bind("<Tab>", self.__focusNextWindow)
             option.bind("<Shift-Tab>", self.__focusLastWindow)
 
+            self.__disableOptionBoxSeparators(option)
+
+            # add to array list
+            self.n_options[title]=option
             return option
 
       def addOptionBox(self, title, options, row=None, column=0, colspan=0, rowspan=0):
@@ -1739,26 +1740,91 @@ class gui:
 
       def getOptionBox(self, title):
             self.__verifyItem(self.n_optionVars, title)
-            return self.n_optionVars[title].get()
+            val=self.n_optionVars[title].get().strip()
+            # set to None if it's a divider
+            if val.startswith("-") or len(val) == 0: val = None
 
+            return val
+
+      def __disableOptionBoxSeparators(self, box):
+            # disable any separators
+            for pos, item in enumerate(box.options):
+                if item.startswith("-"):
+                    box["menu"].entryconfigure(pos, state="disabled")
+
+
+      def __configOptionBox(self, options):
+            # deal with a dict_keys object - messy!!!!
+            if not isinstance(options, list): options = list(options)
+
+            options = [str(i) for i in options]
+            # create a title if necessary
+            found = False
+            for pos, item in enumerate(options):
+                if item == "":
+                    if not found:
+                        options[pos] = "- options -"
+                        found = True
+                    else:
+                        del options[pos]
+
+            # get the longest string length
+            try: maxSize = len(str(max(options, key=len)))
+            except:
+                try: maxSize = len(str(max(options)))
+                except: maxSize = 0
+
+            return maxSize, options
+
+      # http://www.prasannatech.net/2009/06/tkinter-optionmenu-changing-choices.html
       def changeOptionBox(self, title, options, index=None):
             self.__verifyItem(self.n_optionVars, title)
+
+            # get the relevant items
             box = self.n_options[title]
             var = self.n_optionVars[title]
+
+            maxSize, options = self.__configOptionBox(options)
+
+            # warn if new options bigger
+            if maxSize > box.maxSize:
+                self.warn("The new options are longer then the old ones. " + str(maxSize) + ">"+str(box.maxSize))
+
+            # delete the current options
             box['menu'].delete(0, 'end')
+            var.set(" ")
+            box.options = options
 
+            # add the new items
             for option in options:
-                  box['menu'].add_command(label=option, command=tkinter._setit(var, option))
+                  box["menu"].add_command(label=option, command=lambda temp = option: box.setvar(box.cget("textvariable"), value = temp))
 
-            try: index = options.index(index)
-            except: index = 0
-            if len(options) > 0: var.set(options[0])
+            # disable any separators
+            self.__disableOptionBoxSeparators(box)
+
+            # select the specified option
+            self.setOptionBox(title, index)
 
       # select the option at the specified position
-      def setOptionBox(self, title, pos):
+      def setOptionBox(self, title, index):
             self.__verifyItem(self.n_optionVars, title)
             box = self.n_options[title]
-            box['menu'].invoke(pos)
+            count = len(box.options)
+            if index is None: index = 0
+            if count > 0:
+                if not isinstance(index, int):
+                    try: index = box.options.index(index)
+                    except:
+                        self.warn("Inavlid selection option: " + str(index))
+                        return
+
+                if index < 0 or index > count-1:
+                    self.warn("Invalid selection index: " + str(index) + ". Should be between 0 and " + str(count-1) + ".")
+                else:
+                    if not box['menu'].invoke(index):
+                        self.warn("Invalid selection index: " + str(index) + " is a disabled index.")
+            else:
+                self.warn("No items to select from: " + title)
 
 #####################################
 ## FUNCTION to add spin boxes
