@@ -274,6 +274,8 @@ app.go()
 ____
 Creates a simple drop-down box. It is only possible to select one option form this drop-down.  
 Pass in a list of values to show in the drop-down box. They will be added in the same order, with the first item shown.  
+If the first item is empty, a simple title will be created. Any other empty iems will be removed.  
+If an item starst with a dash (-), it will be treated as a separator, and can't be selected.  
 
 ![OptionBox](img/1_optBox.png) ![OptionBox](img/2_optBox.png)  
 
@@ -288,18 +290,21 @@ app.go()
 
 ####Add OptionBoxes
 * `.addOptionBox(title, values)`  
-    This will create an OptionBox, adding the contents of the values list, in the order specified.
+    This will create an OptionBox, adding the contents of the values list, in the order specified.  
 
 ####Set OptionBoxes
-* `.changeOptionBox(title, newOptions)`  
-    This will replace the contents of the OptionBox, with the new list provided.
+* `.changeOptionBox(title, newOptions, index)`  
+    This will replace the contents of the OptionBox, with the new list provided.  
+    If specified, the indexed item will be selected - this can be a position or an item name.  
 
 * `.setOptionBox(title, position)`  
-    This will select the item in the list, at the position specified.
+    This will select the item in the list, at the position specified.  
+    Alternatively, the name of an item can be specified.  
 
 ####Get OptionBoxes
 * `.getOptionBox(title)`  
-    This will return the currently displayed value in the OptionBox.
+    This will return the currently displayed value in the OptionBox.  
+    Will return None, if an invalid option is currently selected.  
 
 ##SpinBox
 ____
@@ -553,3 +558,12 @@ app.go()
 * `.addWebLink(title, page)`  
     Adds a **hyperlink**, that when clicked, will launch the default browser, and load the page parameter.  
     It must be a fully formed link, including ```http://```  
+
+##Grip
+____
+Clickable icon to drag the window around.  
+
+####Add Grips
+
+* `.addGrip()`  
+    Adds a grip

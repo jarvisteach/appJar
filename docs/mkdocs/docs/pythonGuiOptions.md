@@ -37,6 +37,11 @@ Some basic configuration for the size, position, transparency, etc. of the GUI.
 * `setLocation(x, y)`  
     Sets the position of the GUI  
 
+* `hideTitleBar()`  
+* `showTitleBar()`  
+    Hides/shows the GUI's title bar.  
+    Note, if the title bar is removed, it's not possible to move or resize the GUI.  
+
 ###Design
 ----
 It's possible to change the default colours and fonts for widgets in the GUI.
@@ -73,7 +78,7 @@ The below commands allow the user to change how appJar lays out widgets on the s
 ####Location
 
 * `setPadX()` & `setPadY()`  
-    These set how much empty padding is included around a widget, within its grid-cell.
+    These set how much empty padding is included, inside widgets, between the text and the border.  
 
 * `setSticky()`  
     This determines which side of the grid-cell the widget will stick to:
