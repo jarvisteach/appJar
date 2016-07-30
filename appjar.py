@@ -513,6 +513,9 @@ class gui:
             container.attributes('-fullscreen', False)
             if container.escapeBindId is not None: container.unbind('<Escape>', container.escapeBindId)
 
+      def setPadding(self, x, y):
+            self.containerStack[0]['container'].config(padx=x, pady=y)
+
       def setPadX(self, x=0):
             self.containerStack[-1]['padx'] = x
 
@@ -631,7 +634,7 @@ class gui:
                   self.n_grids[na].configure(background=self.labelBgColour)
 
             for na in self.n_labels:
-                  na.configure(background=self.labelBgColour)
+                  self.n_labels[na].configure(background=self.labelBgColour)
 
       def setResizable(self, canResize=True):
             self.__getTopLevel().isResizable = canResize
@@ -893,6 +896,8 @@ class gui:
                                     else: side = value.upper()
                                     info["sticky"] = side
                               self.__repackWidget(item, info)
+                        elif option == 'padding':
+                            item.config(padx=value[0], pady=value[0])
                   except TclError as e:
                         self.warn("Error configuring " + name + ": " + str(e))
 
@@ -913,6 +918,8 @@ class gui:
                   exec("gui.set"+v+"Height=set" +v+ "Height")
                   exec("def set"+v+"State(self, name, val): self.configureWidgets("+str(k)+", name, 'state', val)")
                   exec("gui.set"+v+"State=set" +v+ "State")
+                  exec("def set"+v+"Padding(self, name, x, y): self.configureWidgets("+str(k)+", name, 'padding', [x, y])")
+                  exec("gui.set"+v+"Padding=set" +v+ "Padding")
 
                   # might not all be necessary, could make exclusion list
                   exec("def set"+v+"Relief(self, name, val): self.configureWidget("+str(k)+", name, 'relief', val)")
@@ -1119,9 +1126,11 @@ class gui:
             row, column, colspan, rowspan = self.__getRCS(row, column, colspan, rowspan)
 
             # build a dictionary for the named params
+            iX = self.containerStack[-1]['ipadx']
+            iY = self.containerStack[-1]['ipady']
             cX = self.containerStack[-1]['padx']
             cY = self.containerStack[-1]['pady']
-            params = {"row":row, "column":column, "ipadx":cX, "ipady":cY}
+            params = {"row":row, "column":column, "ipadx":iX, "ipady":iY, "padx":cX, "pady":cY}
 
             # if we have a column span, apply it
             if colspan != 0 : params["columnspan"] = colspan
@@ -1160,7 +1169,7 @@ class gui:
       def __addContainer(self, cType, container, row, col, sticky=None):
             self.containerStack.append (
                   {'type':cType, 'container':container,'emptyRow':row, 'colCount':col,
-                  'sticky':sticky, 'padx':1, 'pady':1, 'expand':"ALL", 'widgets':False,
+                      'sticky':sticky, 'padx':0, 'pady':0, 'ipadx':0, 'ipady':0, 'expand':"ALL", 'widgets':False,
                   'stopFunction':None}
             )
 
@@ -2575,10 +2584,12 @@ class gui:
 
       def addLabel(self, title, text=None, row=None, column=0, colspan=0, rowspan=0):
             self.__verifyItem(self.n_labels, title, True)
-            lab = Label(self.__getContainer())
+            container = self.__getContainer()
+            lab = Label(container)
+
             lab.inContainer=False
             if text is not None: lab.config ( text=text )
-            lab.config( justify=LEFT, font=self.labelFont, background=self.labelBgColour )
+            lab.config( justify=LEFT, font=self.labelFont, background=container["bg"] )
             self.n_labels[title]=lab
 
             self.__positionWidget(lab, row, column, colspan, rowspan)
