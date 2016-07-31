@@ -74,6 +74,7 @@ Simply add the word `Label` to the command when adding the widget:
 * `.addLabelEntry(title)`
 * `.addLabelNumericlEntry(title)`
 * `.addLabelSecretlEntry(title)`
+* `.addLabelScale(title)`
 * `.addLabelOptionBox(title, values)`
 * `.addLabelSpinBox(title, values)`
 * `.addLabelSpinBoxRange(title, from, to)`  
@@ -421,19 +422,25 @@ app.go()
 
 ####Add Scales
 * `.addScale(title)`  
-    Adds a scale, with a default range between 0 and 100.  
+    Adds a horizontal scale, with a default range between 0 and 100.  
 
 ####Set Scales
 * `.setScale(title, pos)`  
     Sets the selected pos for the specified Scale.  
-* `.setScaleRange(title from, to, curr=0)`  
+* `.setScaleRange(title from, to, curr=None)`  
     Allows you to change the range available in the Scale. If ```curr``` is provided, then the Scale will be set to that value.  
+* `.showScaleIntervals(title, intervals)`  
+    Configures the Scale to show the interval labels along its length.  
 * `.showScaleValue(title, show=True)`  
     Configures the Scale to show the currently selected value.  
     ![Scale](img/2_scale.png)  
-* `.orientScaleHor(title, hor=True)`  
-    Changes the Scale's orientation. If ```hor``` is not set, it will be *horizontal*, if False is passed in, it will be *vertical*.  
+* `.setScaleHorizontal(title)`  
+* `.setScaleVertical(title)`  
+    Changes the Scale's orientation to the specified value.  
     ![Scale](img/3_scale.png)  
+* `.setScaleWidth(title, width)`  
+* `.setScaleLength(title, length)`  
+    Sets a width/length for the scale's slider.  
 
 ####Get Scales
 * `.getScale(title)`  
