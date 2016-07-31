@@ -58,6 +58,9 @@ The following are supported by most widgets:
 * `set XXX Sticky(name, value)`  
     Specifies which side of the cell to stick the widget to, as the GUI expands: `LEFT`, `RIGHT`, `BOTH`
 
+* `set XXX Padding(name, x, y)`  
+    Set internal text padding of the named widget.  
+
 ###Widget Interaction
 ----
 The following allow widgets to be interacted with:

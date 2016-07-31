@@ -35,7 +35,10 @@ Some basic configuration for the size, position, transparency, etc. of the GUI.
     Sets whether the GUI can be resized or not.  
 
 * `setLocation(x, y)`  
-    Sets the position of the GUI  
+    Sets the position of the GUI.  
+
+* `setPadding(x, y)`  
+    Sets the size of the border inside the GUI - defaults to 2.  
 
 * `hideTitleBar()`  
 * `showTitleBar()`  
@@ -78,7 +81,10 @@ The below commands allow the user to change how appJar lays out widgets on the s
 ####Location
 
 * `setPadX()` & `setPadY()`  
-    These set how much empty padding is included, inside widgets, between the text and the border.  
+    These set how much empty padding is included, outside a widget, between the widget & the cell edge.  
+
+* `setIPadX()` & `setIPadY()`  
+    These set how much empty padding is included, inside a widget, between the text and the border.  
 
 * `setSticky()`  
     This determines which side of the grid-cell the widget will stick to:
