@@ -1,7 +1,0 @@
-from appJar import gui
-
-app=gui()
-app.setFont(20)
-app.addScale("scale")
-app.orientScaleHor("scale", False)
-app.go()

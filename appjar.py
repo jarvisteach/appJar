@@ -1493,13 +1493,21 @@ class gui:
 #####################################
 ## FUNCTION for scales
 #####################################
-      def addScale(self, title, row=None, column=0, colspan=0, rowspan=0):
-            self.__verifyItem(self.n_scales, title, True)
-            frame = self.__getLabelFrame(title)
 
+      def __buildScale(self, title, frame):
+            self.__verifyItem(self.n_scales, title, True)
             scale = Scale(frame)
-            scale.config(orient=HORIZONTAL, showvalue=False, highlightthickness=0)
+            scale.config(digits=1,orient=HORIZONTAL, showvalue=False, highlightthickness=0)
             self.n_scales[title] = scale
+            return scale
+
+      def addScale(self, title, row=None, column=0, colspan=0, rowspan=0):
+            scale = self.__buildScale(title, self.__getContainer())
+            self.__positionWidget(scale, row, column, colspan, rowspan)
+
+      def addLabelScale(self, title, row=None, column=0, colspan=0, rowspan=0):
+            frame = self.__getLabelFrame(title)
+            scale = self.__buildScale(title, frame)
             self.__packLabelFrame(frame, scale)
             self.__positionWidget(frame, row, column, colspan, rowspan)
 
@@ -1511,6 +1519,20 @@ class gui:
             sc = self.__verifyItem(self.n_scales, title)
             sc.set(pos)
 
+      def setScaleWidth(self, title, width):
+            sc = self.__verifyItem(self.n_scales, title)
+            sc.config(width=width)
+
+      def setScaleLength(self, title, length):
+            sc = self.__verifyItem(self.n_scales, title)
+            sc.config(sliderlength=length)
+
+      # this will make the scale show interval numbers
+      # set to 0 to remove
+      def showScaleIntervals(self, title, val):
+            sc = self.__verifyItem(self.n_scales, title)
+            sc.config(tickinterval=val)
+
       # this will make the scale show its value
       def showScaleValue(self, title, show=True):
             sc = self.__verifyItem(self.n_scales, title)
@@ -1518,11 +1540,21 @@ class gui:
 
       # change the orientation (Hor or Vert)
       def orientScaleHor(self, title, hor=True):
+            self.warn(".orientScaleHor() is deprecated. Please use .setScaleHorizontal() or .setScaleVertical()")
             sc = self.__verifyItem(self.n_scales, title)
             if hor: sc.config(orient=HORIZONTAL)
             else: sc.config(orient=VERTICAL)
 
-      def setScaleRange(self, title, start, end, curr=0):
+      def setScaleVertical(self, title):
+            sc = self.__verifyItem(self.n_scales, title)
+            sc.config(orient=VERTICAL)
+
+      def setScaleHorizontal(self, title):
+            sc = self.__verifyItem(self.n_scales, title)
+            sc.config(orient=HORIZONTAL)
+
+      def setScaleRange(self, title, start, end, curr=None):
+            if curr is None: curr=start
             sc = self.__verifyItem(self.n_scales, title)
             sc.config(from_=start, to=end)
             self.setScale(title, curr)
