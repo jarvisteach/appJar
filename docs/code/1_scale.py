@@ -1,6 +1,7 @@
 from appJar import gui
 
 def getScales(btn):
+    print(btn)
     print("Scale", app.getScale("scale"))
     print("Scale2", app.getScale("scale2"))
 

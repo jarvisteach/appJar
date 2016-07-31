@@ -173,7 +173,7 @@ That way, multiple widgets can use the same function, but different actions can 
 * `.addButtons(titles, functions)`  
     It's possible to add a list of buttons to the GUI.  
     Pass a 1-dimensional or 2-dimensional list, and they will be rendered accordingly.
-    A single funciton can be passed, to use for all buttons.
+    A single function can be passed, to use for all buttons.
     Or a list of functions can be passed, which MUST correspond to the buttons.
 
 * `.addNamedButton(name, title, function)`  
@@ -232,7 +232,7 @@ app.go()
     app=gui()
     app.addRadioButton("song", "Killer Queen")
     app.addRadioButton("song", "Paradise City")
-    app.setRadioButtonFunction("song", press)   # call this funciton, when the RadioButton changes
+    app.setRadioButtonFunction("song", press)   # call this function, when the RadioButton changes
     app.addButton("PLAY", press)
     app.go()
 ```
@@ -441,6 +441,9 @@ app.go()
 * `.setScaleWidth(title, width)`  
 * `.setScaleLength(title, length)`  
     Sets a width/length for the scale's slider.  
+* `.setScaleFunction(title, func)`  
+    Sets a function to call, each time the scale is changed.  
+    The function must take one parameter, which will be populated with the scale's title.  
 
 ####Get Scales
 * `.getScale(title)`  

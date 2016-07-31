@@ -1529,9 +1529,9 @@ class gui:
 
       # this will make the scale show interval numbers
       # set to 0 to remove
-      def showScaleIntervals(self, title, val):
+      def showScaleIntervals(self, title, intervals):
             sc = self.__verifyItem(self.n_scales, title)
-            sc.config(tickinterval=val)
+            sc.config(tickinterval=intervals)
 
       # this will make the scale show its value
       def showScaleValue(self, title, show=True):
