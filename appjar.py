@@ -1476,6 +1476,7 @@ class gui:
             var=IntVar(self.topLevel)
             cb = Checkbutton(self.__getContainer())
             cb.config(text=title, variable=var, font=self.cbFont, background=self.labelBgColour, activebackground=self.labelBgColour)
+            cb.config(anchor=W)
             self.n_cbs[title]=cb
             self.n_boxVars[title]=var
             self.__positionWidget(cb, row, column, colspan, rowspan, EW)
@@ -2348,6 +2349,7 @@ class gui:
                   newRb = True
             rb = Radiobutton(self.__getContainer())
             rb.config(text=name, variable=var, value=name, background=self.labelBgColour, activebackground=self.labelBgColour, font=self.rbFont, indicatoron=1)
+            rb.config(anchor=W)
             if (title in self.n_rbs): self.n_rbs[title].append(rb)
             else: self.n_rbs[title]=[rb]
             #rb.bind("<Tab>", self.__focusNextWindow)
