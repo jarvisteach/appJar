@@ -71,7 +71,7 @@ The following allow widgets to be interacted with:
 * `set XXX Function(name, value, key=None)`  
     This binds a function to the widget.  
     The function will be called every time an interactive-widget changes. 
-    The funcion will be called when some widgets are clicked.  
+    The function will be called when some widgets are clicked.  
 
 * `set XXX OverFunction(name, values)`  
     Set functions to call whenever the mouse enters (goes over) or leaves the specified widget.  

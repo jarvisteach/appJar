@@ -414,7 +414,7 @@ from appJar import gui
 
 app=gui()
 app.setFont(20)
-app.addScale("scale")
+app.addLabelScale("scale")
 app.go()
 ```
 
@@ -428,9 +428,10 @@ app.go()
 * `.setScale(title, pos)`  
     Sets the selected pos for the specified Scale.  
 * `.setScaleRange(title from, to, curr=None)`  
-    Allows you to change the range available in the Scale. If ```curr``` is provided, then the Scale will be set to that value.  
+    Allows you to change the range available in the Scale.  
+    If ```curr``` is provided, then the Scale will be set to that value.  
 * `.showScaleIntervals(title, intervals)`  
-    Configures the Scale to show the interval labels along its length.  
+    Configures the Scale to show interval labels along its length.  
 * `.showScaleValue(title, show=True)`  
     Configures the Scale to show the currently selected value.  
     ![Scale](img/2_scale.png)  
@@ -513,8 +514,10 @@ app.go()
 
 ![Meter](img/1_meter.png)  
 
+####Add Meters
 * `addMeter(name)`  
     Adds a meter with the specified name.  
+####Set Meters
 * `setMeter(name, value, text=None)`  
     Changes the specified meter to the specified value, between 0 and 100, with the optional text.  
     ![Meter](img/2_meter.png)  
@@ -523,6 +526,7 @@ app.go()
     Changes the fill colour of the specified meter.  
     ![Meter](img/3_meter.png)  
 
+####Get Meters
 * `getMeter(name)`  
     Gets the value of the specified meter.  
 
