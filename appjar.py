@@ -1271,8 +1271,8 @@ class gui:
             else:
                   raise Exception("Unknown container: " + fType)
 
-      def startNoteBook(self, title, row=None, column=0, colspan=0, sticky="NSEW"):
-            self.startContainer(self.C_NOTEBOOK, title, row, column, colspan, 0, sticky)
+      def startNoteBook(self, title, row=None, column=0, colspan=0, rowspan=0, sticky="NSEW"):
+            self.startContainer(self.C_NOTEBOOK, title, row, column, colspan, rowspan, sticky)
 
       def startNoteTab(self, title):
             # auto close the previous NOTETAB - keep it?
@@ -1283,8 +1283,8 @@ class gui:
                   raise Exception("Can't add a Tab to the current container: ", self.containerStack[-1]['type'])
             self.startContainer(self.C_NOTETAB, title)
 
-      def startPanedWindow(self, title, row=None, column=0, colspan=0, sticky="NSEW"):
-            self.startContainer(self.C_PANEDWINDOW, title, row, column, colspan, 0, sticky)
+      def startPanedWindow(self, title, row=None, column=0, colspan=0, rowspan=0, sticky="NSEW"):
+            self.startContainer(self.C_PANEDWINDOW, title, row, column, colspan, rowspan, sticky)
 
       def startSubWindow(self, name, title=None):
             self.__verifyItem(self.n_subWindows, name, True)
@@ -1301,8 +1301,11 @@ class gui:
 
       # sticky is alignment inside frame
       # frame will be added as other widgets
-      def startLabelFrame(self, title, row=None, column=0, colspan=0, sticky=W):
-            self.startContainer(self.C_LABELFRAME, title, row, column, colspan, 0, sticky)
+      def startLabelFrame(self, title, row=None, column=0, colspan=0, rowspan=0, sticky=W):
+            self.startContainer(self.C_LABELFRAME, title, row, column, colspan, rowspan, sticky)
+
+      def startScrollPane(self, title, row=None, column=0, colspan=0, rowspan=0, sticky="NSEW"):
+            self.startContainer(self.C_SCROLLPANE, title, row, column, colspan, rowspan, sticky)
 
       # functions to stop the various containers
       def stopContainer(self): self.__removeContainer()
@@ -1336,9 +1339,6 @@ class gui:
             if self.containerStack[-1]['type'] != self.C_PANEDWINDOW:
                   raise Exception("Can't stop a PANEDWINDOW, currently in:", self.containerStack[-1]['type'])
             self.stopContainer()
-
-      def startScrollPane(self, title, row=None, column=0, colspan=0, sticky="NSEW"):
-            self.startContainer(self.C_SCROLLPANE, title, row, column, colspan, 0, sticky)
 
       def stopScrollPane(self):
             if self.containerStack[-1]['type'] != self.C_SCROLLPANE:
@@ -1375,7 +1375,6 @@ class gui:
       def setPanedWindowVertical(self, window):
             pane = self.__verifyItem(self.n_panedWindows, window )
             pane.config(orient=VERTICAL)
-
 
       # function to set position of title for label frame
       def setLabelFrameAnchor(self, title, anchor):
@@ -1565,10 +1564,10 @@ class gui:
 #####################################
       # first row is used as a header
 # ADD ROWSPAN HERE WHEN FIXIBG...
-      def addGrid(self, title, data, row=None, column=0, colspan=0, action=None, addRow=False):
+      def addGrid(self, title, data, row=None, column=0, colspan=0, rowspan=0, action=None, addRow=False):
             self.__verifyItem(self.n_grids, title, True)
             frame = self.__makeGrid(title, data, action, addRow)
-            self.__positionWidget(frame, row, column, colspan, 0, N+E+S+W)
+            self.__positionWidget(frame, row, column, colspan, rowspan, N+E+S+W)
 
       def updateGrid(self, title, data, addRow=None):
             frame = self.__verifyItem(self.n_grids, title)
@@ -2355,7 +2354,6 @@ class gui:
             #rb.bind("<Tab>", self.__focusNextWindow)
             #rb.bind("<Shift-Tab>", self.__focusLastWindow)
             if newRb: rb.select()
-
             self.__positionWidget(rb, row, column, colspan, rowspan, EW)
 
       def getRadioButton(self, title):
