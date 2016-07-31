@@ -1478,7 +1478,7 @@ class gui:
             cb.config(text=title, variable=var, font=self.cbFont, background=self.labelBgColour, activebackground=self.labelBgColour)
             self.n_cbs[title]=cb
             self.n_boxVars[title]=var
-            self.__positionWidget(cb, row, column, colspan, rowspan, None)
+            self.__positionWidget(cb, row, column, colspan, rowspan, EW)
 
       def getCheckBox(self, title):
             bVar = self.__verifyItem(self.n_boxVars, title)
@@ -2354,7 +2354,7 @@ class gui:
             #rb.bind("<Shift-Tab>", self.__focusLastWindow)
             if newRb: rb.select()
 
-            self.__positionWidget(rb, row, column, colspan, rowspan, None)
+            self.__positionWidget(rb, row, column, colspan, rowspan, EW)
 
       def getRadioButton(self, title):
             var = self.__verifyItem(self.n_rbVars, title)
