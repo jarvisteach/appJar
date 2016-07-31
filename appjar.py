@@ -269,6 +269,11 @@ class gui:
             # set up flash variable
             self.doFlash = False
 
+            # used to hide/show title bar
+            self.hasTitleBar=True
+            # records if we're in fullscreen - stops hideTitle from breaking
+            self.isFullscreen = False
+
             # collections of widgets, widget name is key
             self.n_frames=[] # un-named, so no direct access
             self.n_labels = {}
@@ -483,8 +488,7 @@ class gui:
             container = self.__getTopLevel()
             container.geom = geom
             if container.geom == "fullscreen":
-                  container.attributes('-fullscreen', True)
-                  container.escapeBindId = container.bind('<Escape>', self.__makeFunc(self.exitFullscreen, container, True), "+")
+                  self.setFullscreen()
             else:
                   self.exitFullscreen()
                   if container.geom is not None: container.geometry(container.geom)
@@ -507,20 +511,33 @@ class gui:
             else:
                   self.topLevel.lift()
 
+      def setFullscreen(self, container=None):
+            if not self.isFullscreen:
+                  self.isFullscreen = True
+                  if container is None: container = self.__getTopLevel()
+                  container.attributes('-fullscreen', True)
+                  container.escapeBindId = container.bind('<Escape>', self.__makeFunc(self.exitFullscreen, container, True), "+")
+
       # function to turn off fullscreen mode
       def exitFullscreen(self, container=None):
-            if container is None: container = self.__getTopLevel()
-            container.attributes('-fullscreen', False)
-            if container.escapeBindId is not None: container.unbind('<Escape>', container.escapeBindId)
+            if self.isFullscreen:
+                self.isFullscreen = False
+                if container is None: container = self.__getTopLevel()
+                container.attributes('-fullscreen', False)
+                if container.escapeBindId is not None: container.unbind('<Escape>', container.escapeBindId)
+                self.__doTitleBar()
 
+      # sets the padding around the border of the root container
       def setPadding(self, x, y):
             self.containerStack[0]['container'].config(padx=x, pady=y)
 
-      def setPadX(self, x=0):
-            self.containerStack[-1]['padx'] = x
+      # set the current container's external grid padding
+      def setPadX(self, x=0): self.containerStack[-1]['padx'] = x
+      def setPadY(self, y=0): self.containerStack[-1]['pady'] = y
 
-      def setPadY(self, y=0):
-            self.containerStack[-1]['pady'] = y
+      # sets the current containers internal padding
+      def setIPadX(self, x=0): self.containerStack[-1]['ipadx'] = x
+      def setIPadY(self, y=0): self.containerStack[-1]['ipady'] = y
 
       # set an override sticky for this container
       def setSticky(self, sticky):
@@ -644,11 +661,16 @@ class gui:
       def getResizable(self):
             return self.__getTopLevel().isResizable
 
+      def __doTitleBar(self):
+            self.__getTopLevel().overrideredirect(not self.hasTitleBar)
+
       def hideTitleBar(self):
-            self.topLevel.overrideredirect(1)
+            self.hasTitleBar=False
+            self.__doTitleBar()
 
       def showTitleBar(self):
-            self.topLevel.overrideredirect(0)
+            self.hasTitleBar=True
+            self.__doTitleBar()
 
       # function to set the window's title
       def setTitle(self, title):
