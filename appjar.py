@@ -617,7 +617,6 @@ class gui:
     # self.bglabel = Label, filling all of container
     def setBg(self, colour):
         if self.containerStack[-1]['type'] == "C_ROOT":
-            print("Special root config")
             self.appWindow.config(background=colour)
             self.bgLabel.config(background=colour)
 
@@ -1166,7 +1165,6 @@ class gui:
         noBg = ["Spinbox", "Scale", "ListBox", "SplitMeter", "Meter", "DualMeter"]
 
         widgType = widget.__class__.__name__
-        print(widgType)
         isDarwin = platform() == "Darwin"
 
         # Mac specific colours
@@ -1193,7 +1191,6 @@ class gui:
 
         # any other widgets
         elif widgType not in noBg:
-            print(">>",widgType)
             widget["bg"]=bg
 
     def __getContainerBg(self):
