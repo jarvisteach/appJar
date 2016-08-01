@@ -63,11 +63,12 @@ class gui:
     TEXTAREA=11
     LINK=12
     METER=13
+    IMAGE=17
+    PIECHART=18
+
     LABELFRAME=14
     NOTEBOOK=15
     PANEDWINDOW=16
-    IMAGE=17
-    PIECHART=18
     SCROLLPANE=19
 
     # positioning
@@ -213,11 +214,6 @@ class gui:
         self.gdC= self.topLevel.cget("bg")
         self.gdHighlight = "red"
 
-        # set up colours
-        self.bgColour = self.topLevel.cget("bg")
-        self.buttonBgColour = self.topLevel.cget("bg")
-        self.labelBgColour = self.topLevel.cget("bg")
-
 #        self.fgColour = self.topLevel.cget("foreground")
 #        self.buttonFgColour = self.topLevel.cget("foreground")
 #        self.labelFgColour = self.topLevel.cget("foreground")
@@ -235,7 +231,7 @@ class gui:
         # create the main container for this GUI
         container = Frame(self.appWindow)
         #container = Label(self.appWindow) # made as a label, so we can set an image
-        container.config(padx=2, pady=2, background=self.labelBgColour)
+        container.config(padx=2, pady=2, background=self.topLevel.cget("bg"))
         container.pack(fill=BOTH, expand=True)
         self.__addContainer(self.C_ROOT, container, 0, 1)
 
@@ -251,7 +247,7 @@ class gui:
         # set up a background image holder
         # alternative to label option above, as label doesn't update widgets properly
         self.bgLabel = Label(container)
-        self.bgLabel.config(anchor=CENTER, font=self.labelFont, background=self.labelBgColour)
+        self.bgLabel.config(anchor=CENTER, font=self.labelFont, background=self.__getContainerBg())
         self.bgLabel.place(x=0, y=0, relwidth=1, relheight=1)
         container.image = None
 
@@ -614,56 +610,79 @@ class gui:
         for na in self.n_messages:
               self.n_messages[na].config(foreground=colour)
 
-    def setBg(self, colour=None):
-        if colour is None: colour = self.labelBgColour
-        self.labelBgColour=colour
-        self.topLevel.config(background=self.labelBgColour)
-        self.appWindow.config(background=self.labelBgColour)
-        self.containerStack[0]['container'].config(background=self.labelBgColour)
-        self.bgLabel.config(background=self.labelBgColour)
+    # self.topLevel = Tk()
+    # self.appWindow = Frame, fills all of self.topLevel
+    # self.tb = Frame, at bottom of appWindow
+    # self.containr = Frame, at top of appWindow => C_ROOT container
+    # self.bglabel = Label, filling all of container
+    def setBg(self, colour):
+        if self.containerStack[-1]['type'] == "C_ROOT":
+            print("Special root config")
+            self.appWindow.config(background=colour)
+            self.bgLabel.config(background=colour)
 
-        for na in self.n_labels:
-              self.n_labels[na].config(background=self.labelBgColour)
-        for na in self.n_messages:
-              self.n_messages[na].config(background=self.labelBgColour)
+        self.containerStack[-1]['container'].config(background=colour)
 
-        if platform() == "Darwin":
-              for na in self.n_entries:
-                    self.n_entries[na].config(highlightbackground=self.labelBgColour)
-              for na in self.n_buttons:
-                    self.n_buttons[na].config(highlightbackground=self.labelBgColour)
-              for na in self.n_spins:
-                    self.n_spins[na].config(highlightbackground=self.labelBgColour)
-              for na in self.n_options:
-                    self.n_options[na].config(background=self.labelBgColour, highlightbackground=self.labelBgColour)
+        for child in self.containerStack[-1]['container'].winfo_children():
+            if not self.__widgetIsContainer(child): self.__setWidgetBg(child, colour)
 
-        for na in self.n_scales:
-              self.n_scales[na].config(background=self.labelBgColour)
-        for na in self.n_cbs:
-              self.n_cbs[na].config(background=self.labelBgColour, activebackground=self.labelBgColour)
-        for gr in self.n_rbs:
-              for na in self.n_rbs[gr]:
-                  na.config(background=self.labelBgColour, activebackground=self.labelBgColour)
-        for na in self.n_frames:
-              na.config(background=self.labelBgColour)
-        for na in self.n_links:
-              self.n_links[na].config(background=self.labelBgColour)
-        for na in self.n_labelFrames:
-              self.n_labelFrames[na].config(background=self.labelBgColour)
-        for na in self.n_noteBooks:
-              self.n_noteBooks[na].config(background=self.labelBgColour)
-        for na in self.n_panedFrames:
-              self.n_panedFrames[na].config(background=self.labelBgColour)
-        for na in self.n_scrollPanes:
-              self.n_scrollPanes[na].config(background=self.labelBgColour)
-        #for na in self.n_options:
+    def __widgetIsContainer(self, widget):
+        try:
+            if widget.isContainer: return True
+        except: pass
+        return False
+            
+#    def setOldBg(self, colour):
+#        #self.topLevel.config(background=self.labelBgColour)
+#
+#        if self.containerStack[-1]['type'] == "C_ROOT":
+#            self.appWindow.config(background=colour)
+#            self.bgLabel.config(background=colour)
+#
+#        self.containerStack[-1]['container'].config(background=colour)
+#
+#        for na in self.n_labels:
+#              self.n_labels[na].config(background=self.labelBgColour)
+#        for na in self.n_messages:
+#              self.n_messages[na].config(background=self.labelBgColour)
+#
+#        if platform() == "Darwin":
+#              for na in self.n_entries:
+#                    self.n_entries[na].config(highlightbackground=self.labelBgColour)
+#              for na in self.n_buttons:
+#                    self.n_buttons[na].config(highlightbackground=self.labelBgColour)
+#              for na in self.n_spins:
+#                    self.n_spins[na].config(highlightbackground=self.labelBgColour)
+#              for na in self.n_options:
+#                    self.n_options[na].config(background=self.labelBgColour, highlightbackground=self.labelBgColour)
+#
+#        for na in self.n_scales:
+#              self.n_scales[na].config(background=self.labelBgColour)
+#        for na in self.n_cbs:
+#              self.n_cbs[na].config(background=self.labelBgColour, activebackground=self.labelBgColour)
+#        for gr in self.n_rbs:
+#              for na in self.n_rbs[gr]:
+#                  na.config(background=self.labelBgColour, activebackground=self.labelBgColour)
+#        for na in self.n_frames:
+#              na.config(background=self.labelBgColour)
+#        for na in self.n_links:
+#              self.n_links[na].config(background=self.labelBgColour)
+#        for na in self.n_labelFrames:
+#              self.n_labelFrames[na].config(background=self.labelBgColour)
+#        for na in self.n_noteBooks:
+#              self.n_noteBooks[na].config(background=self.labelBgColour)
+#        for na in self.n_panedFrames:
+#              self.n_panedFrames[na].config(background=self.labelBgColour)
+#        for na in self.n_scrollPanes:
+#              self.n_scrollPanes[na].config(background=self.labelBgColour)
+#        #for na in self.n_options:
         #      self.n_options[na].config(background=self.labelBgColour)
         #for na in self.n_spins:
         #      self.n_spins[na].config(background=self.labelBgColour)
 
         # for simple grids - RETHINK
-        for na in self.n_grids:
-              self.n_grids[na].configure(background=self.labelBgColour)
+#        for na in self.n_grids:
+#              self.n_grids[na].configure(background=self.labelBgColour)
 
     def setResizable(self, canResize=True):
         self.__getTopLevel().isResizable = canResize
@@ -1144,20 +1163,26 @@ class gui:
     # convenience method to set a widget's bg
     def __setWidgetBg(self, widget, bg):
         darwinBorders = ["Text", "Button", "Entry", "OptionMenu"]
-        noBg = ["Spinbox", "Scale"]
+        noBg = ["Spinbox", "Scale", "ListBox", "SplitMeter", "Meter", "DualMeter"]
 
         widgType = widget.__class__.__name__
+        print(widgType)
         isDarwin = platform() == "Darwin"
 
+        # Mac specific colours
         if isDarwin and widgType in darwinBorders:
                 widget.config(highlightbackground=bg)
                 if widgType == "OptionMenu": widget.config(background=bg)
+
+        # widget with label, in frame
         elif widgType == "LabelBox":
             widget.theLabel["bg"]=bg
             widgType = widget.theWidget.__class__.__name__ 
             if isDarwin and  widgType in darwinBorders:
                 widget.theWidget.config(highlightbackground=bg)
                 if widgType == "OptionMenu": widget.theWidget.config(background=bg)
+
+        # group of buttons or labels
         elif widgType == "WidgetBox":
             widget["bg"]=bg
             if isDarwin:
@@ -1165,8 +1190,14 @@ class gui:
                     widgType = widg.__class__.__name__
                     if widgType == "Button": widg.config(highlightbackground=bg)
                     elif widgType == "Label": widg.config(background=bg)
+
+        # any other widgets
         elif widgType not in noBg:
+            print(">>",widgType)
             widget["bg"]=bg
+
+    def __getContainerBg(self):
+        return self.__getContainer()["bg"]
 
     # two important things here:
     # grid - sticky: position of widget in its space (side or fill)
@@ -1174,7 +1205,7 @@ class gui:
     def __positionWidget(self, widget, row, column=0, colspan=0, rowspan=0, sticky=W+E):
         # allow item to be added to container
         container = self.__getContainer()
-        self.__setWidgetBg(widget, container["bg"])
+        self.__setWidgetBg(widget, self.__getContainerBg())
 
         # alpha paned window placement
         if self.containerStack[-1]['type'] ==self.C_PANEDWINDOW:
@@ -1255,7 +1286,8 @@ class gui:
               # first, make a LabelFrame, and position it correctly
               self.__verifyItem(self.n_labelFrames, title, True)
               container = LabelFrame(self.containerStack[-1]['container'], text=title)
-              container.config(background=self.labelBgColour, font=self.labelFrameFont, relief="groove")
+              container.isContainer = True
+              container.config(background=self.__getContainerBg(), font=self.labelFrameFont, relief="groove")
               self.__positionWidget(container, row, column, colspan, rowspan, "nsew")
               self.n_labelFrames[title] = container
 
@@ -1263,7 +1295,8 @@ class gui:
               self.__addContainer(self.C_LABELFRAME, container, 0, 1, sticky)
         elif fType == self.C_NOTEBOOK:
               self.__verifyItem(self.n_noteBooks, title, True)
-              notebook = NoteBook(self.containerStack[-1]['container'], bg=self.labelBgColour)
+              notebook = NoteBook(self.containerStack[-1]['container'], bg=self.__getContainerBg())
+              notebook.isContainer = True
               self.__positionWidget(notebook, row, column, colspan, rowspan, sticky=sticky)
               self.n_noteBooks[title] = notebook
 
@@ -1281,7 +1314,8 @@ class gui:
 
               # now, add the new pane
               self.__verifyItem(self.n_panedWindows, title, True)
-              pane = PanedWindow(self.containerStack[-1]['container'], showhandle=True, sashrelief="groove", bg=self.labelBgColour)
+              pane = PanedWindow(self.containerStack[-1]['container'], showhandle=True, sashrelief="groove", bg=self.__getContainerBg())
+              pane.isContainer = True
               self.__positionWidget(pane, row, column, colspan, rowspan, sticky=sticky)
               self.n_panedWindows[title] = pane
 
@@ -1292,14 +1326,16 @@ class gui:
               self.startContainer(self.C_PANEDFRAME, title)
         elif fType == self.C_PANEDFRAME:
               # create a frame, and add it to the pane
-              frame = Frame(self.containerStack[-1]['container'], bg=self.labelBgColour)
+              frame = Frame(self.containerStack[-1]['container'], bg=self.__getContainerBg())
+              frame.isContainer = True
               self.containerStack[-1]['container'].add(frame)
               self.n_panedFrames[title] = frame
 
               # now, add to top of stack
               self.__addContainer(self.C_PANEDFRAME, frame, 0, 1, sticky)
         elif fType == self.C_SCROLLPANE:
-              scrollPane = ScrollPane(self.containerStack[-1]['container'], bg=self.labelBgColour, width=100,height=100)
+              scrollPane = ScrollPane(self.containerStack[-1]['container'], bg=self.__getContainerBg(), width=100,height=100)
+              scrollPane.isContainer = True
 #                  self.containerStack[-1]['container'].add(scrollPane)
               self.__positionWidget(scrollPane, row, column, colspan, rowspan, sticky=sticky)
               self.n_scrollPanes[title] = scrollPane
@@ -1458,7 +1494,7 @@ class gui:
 
         # first, make a frame
         frame = LabelBox(self.__getContainer())
-        frame.config( background=self.labelBgColour )
+        frame.config( background=self.__getContainerBg() )
         self.n_frames.append(frame)
 
         # if this is a big label, update the others to match...
@@ -1474,7 +1510,7 @@ class gui:
         frame.theLabel = lab
         lab.hidden = False
         lab.inContainer = True
-        lab.config( anchor=W,text=title, justify=LEFT, font=self.labelFont, background=self.labelBgColour )
+        lab.config( anchor=W,text=title, justify=LEFT, font=self.labelFont, background=self.__getContainerBg() )
 #            lab.config( width=self.labWidth)
         self.n_labels[title]=lab
         self.n_frameLabs[title]=lab
@@ -1514,7 +1550,7 @@ class gui:
         self.__verifyItem(self.n_cbs, title, True)
         var=IntVar(self.topLevel)
         cb = Checkbutton(self.__getContainer())
-        cb.config(text=title, variable=var, font=self.cbFont, background=self.labelBgColour, activebackground=self.labelBgColour)
+        cb.config(text=title, variable=var, font=self.cbFont, background=self.__getContainerBg(), activebackground=self.__getContainerBg())
         cb.config(anchor=W)
         self.n_cbs[title]=cb
         self.n_boxVars[title]=var
@@ -1690,7 +1726,7 @@ class gui:
     # However, couldn't get canvas to expand in frame using grid
     def __makeGrid(self, title, data, action=None, addRow=False):
         frame = Frame(self.__getContainer())
-        frame.configure( background=self.labelBgColour )
+        frame.configure( background=self.__getContainerBg() )
         self.n_grids[title] = frame
         frame.action = action
         frame.addRow = addRow
@@ -1724,7 +1760,7 @@ class gui:
         #frame.c1.grid_columnconfigure(0, weight=1)
 
         gridFrame = Frame(frame.c1)
-        gridFrame.configure( background=self.labelBgColour )
+        gridFrame.configure( background=self.__getContainerBg() )
         frame.c1.create_window((4,4), window=gridFrame, anchor="nw", tags="gridFrame")
         gridFrame.bind("<Configure>", self.__refreshGrids)
 
@@ -1765,7 +1801,7 @@ class gui:
                           widg.configure( text="Action", font=self.ghFont, background=self.ghBg )
                     else:
                           but = Button(widg)
-                          but.configure( text="Press", command=self.__makeFunc(action, vals),font=self.buttonFont, background=self.buttonBgColour )
+                          but.configure( text="Press", command=self.__makeFunc(action, vals),font=self.buttonFont )
                           but.grid ( row=0,column=0, sticky=N+E+S+W )
                     widg.grid ( row=rowNum, column=cellNum+1, sticky=N+E+S+W )
         # add a row of entry boxes...
@@ -1782,7 +1818,7 @@ class gui:
               widg = Label(gridFrame)
               widg.configure( relief=RIDGE )
               but = Button(widg)
-              but.configure( text="Press", command=self.__makeFunc(action, "newRow"),font=self.buttonFont, background=self.buttonBgColour )
+              but.configure( text="Press", command=self.__makeFunc(action, "newRow"),font=self.buttonFont )
               but.grid ( row=0,column=0, sticky=N+E+S+W )
               widg.grid ( row=len(data), column=maxSize, sticky=N+E+S+W )
 
@@ -1806,9 +1842,9 @@ class gui:
         else:
             option = OptionMenu(frame,var,[])
 
-        option.config(justify=LEFT, font=self.optionFont, background=self.labelBgColour, highlightthickness=0, width=maxSize)
+        option.config(justify=LEFT, font=self.optionFont, background=self.__getContainerBg(), highlightthickness=0, width=maxSize)
         # compare on windows & mac
-        #option.config(highlightthickness=12, bd=0, highlightbackground=self.labelBgColour)
+        #option.config(highlightthickness=12, bd=0, highlightbackground=self.__getContainerBg())
         option.var = var
         option.maxSize = maxSize
         option.inContainer = False
@@ -1817,10 +1853,10 @@ class gui:
         # configure the drop-down too
         dropDown = option.nametowidget(option.menuname)
         dropDown.configure(font=self.optionFont)
-#            dropDown.configure(background=self.labelBgColour)
+#            dropDown.configure(background=self.__getContainerBg())
 
         if platform() == "Darwin":
-              option.config(highlightbackground=self.labelBgColour)
+              option.config(highlightbackground=self.__getContainerBg())
 
         option.bind("<Tab>", self.__focusNextWindow)
         option.bind("<Shift-Tab>", self.__focusLastWindow)
@@ -1942,10 +1978,10 @@ class gui:
 
         spin = Spinbox(frame)
         spin.inContainer = False
-        spin.config(font=self.entryFont, highlightbackground=self.labelBgColour, highlightthickness=0)
+        spin.config(font=self.entryFont, highlightbackground=self.__getContainerBg(), highlightthickness=0)
 
         if platform() == "Darwin":
-              spin.config(highlightbackground=self.labelBgColour)
+              spin.config(highlightbackground=self.__getContainerBg())
 
         spin.bind("<Tab>", self.__focusNextWindow)
         spin.bind("<Shift-Tab>", self.__focusLastWindow)
@@ -2177,7 +2213,7 @@ class gui:
         image = self.__getImage(imageFile)
 
         label.config(image=image)
-        label.config(anchor=CENTER, font=self.labelFont, background=self.labelBgColour)
+        label.config(anchor=CENTER, font=self.labelFont, background=self.__getContainerBg())
         label.image = image # keep a reference!
 
         if image.isAnimated:
@@ -2196,7 +2232,7 @@ class gui:
         img = self.__getImage(imageFile)
 
         label = Label(self.__getContainer())
-        label.config(anchor=CENTER, font=self.labelFont, background=self.labelBgColour)
+        label.config(anchor=CENTER, font=self.labelFont, background=self.__getContainerBg())
         label.config(image=img)
         label.image = img # keep a reference!
 
@@ -2230,7 +2266,7 @@ class gui:
         image = img.image.subsample(x,y)
 
         img.config(image=image)
-        img.config(anchor=CENTER, font=self.labelFont, background=self.labelBgColour)
+        img.config(anchor=CENTER, font=self.labelFont, background=self.__getContainerBg())
         img.modImage = image # keep a reference!
         img.config(width=image.width(), height=image.height())
 
@@ -2241,7 +2277,7 @@ class gui:
         image = label.image.zoom(x,y)
 
         label.config(image=image)
-        label.config(anchor=CENTER, font=self.labelFont, background=self.labelBgColour)
+        label.config(anchor=CENTER, font=self.labelFont, background=self.__getContainerBg())
         label.modImage = image # keep a reference!
         label.config(width=image.width(), height=image.height())
 
@@ -2387,7 +2423,7 @@ class gui:
               self.n_rbVals[title]=vals
               newRb = True
         rb = Radiobutton(self.__getContainer())
-        rb.config(text=name, variable=var, value=name, background=self.labelBgColour, activebackground=self.labelBgColour, font=self.rbFont, indicatoron=1)
+        rb.config(text=name, variable=var, value=name, background=self.__getContainerBg(), activebackground=self.__getContainerBg(), font=self.rbFont, indicatoron=1)
         rb.config(anchor=W)
         if (title in self.n_rbs): self.n_rbs[title].append(rb)
         else: self.n_rbs[title]=[rb]
@@ -2417,7 +2453,7 @@ class gui:
 #####################################
     def addListBox(self, name, values=None, row=None, column=0, colspan=0, rowspan=0):
         self.__verifyItem(self.n_lbs, name, True)
-        frame = Frame(self.__getContainer())
+        frame = ListBox(self.__getContainer())
         vscrollbar = AutoScrollbar(frame)
         hscrollbar = AutoScrollbar(frame, orient=HORIZONTAL)
 
@@ -2559,7 +2595,7 @@ class gui:
         self.__verifyItem(self.n_buttons, title, True)
         but = Button(frame)
 
-        but.config( text=name, font=self.buttonFont, background=self.buttonBgColour )
+        but.config( text=name, font=self.buttonFont )
 
         if func is not None:
               command = self.__makeFunc(func, title)
@@ -2569,7 +2605,7 @@ class gui:
               but.bind('<Return>', bindCommand)
 
         if platform() == "Darwin":
-            but.config(highlightbackground=self.labelBgColour)
+            but.config(highlightbackground=self.__getContainerBg())
         #but.bind("<Tab>", self.__focusNextWindow)
         #but.bind("<Shift-Tab>", self.__focusLastWindow)
         self.n_buttons[name]=but
@@ -2606,7 +2642,7 @@ class gui:
         singleFunc = self.__checkFunc(names, funcs)
 
         frame = WidgetBox(self.__getContainer())
-        frame.config( background=self.labelBgColour )
+        frame.config( background=self.__getContainerBg() )
 
         # make them into a 2D array, if not already
         if not isinstance(names[0], list):
@@ -2635,7 +2671,7 @@ class gui:
 #####################################
     def __buildLink(self, title):
         link = Link(self.__getContainer())
-        link.config(text=title, font=self.linkFont, background=self.labelBgColour)
+        link.config(text=title, font=self.linkFont, background=self.__getContainerBg())
         self.n_links[title]=link
         return link
 
@@ -2684,7 +2720,7 @@ class gui:
 
         lab.inContainer=False
         if text is not None: lab.config ( text=text )
-        lab.config( justify=LEFT, font=self.labelFont, background=self.labelBgColour )
+        lab.config( justify=LEFT, font=self.labelFont, background=self.__getContainerBg() )
         self.n_labels[title]=lab
 
         self.__positionWidget(lab, row, column, colspan, rowspan)
@@ -2695,11 +2731,11 @@ class gui:
     # adds a set of labels, in the row, spannning specified columns
     def addLabels(self, names, row=None, colspan=0, rowspan=0):
         frame = WidgetBox(self.__getContainer())
-        frame.config( background=self.labelBgColour )
+        frame.config( background=self.__getContainerBg() )
         for i in range(len(names)):
               self.__verifyItem(self.n_labels, names[i], True)
               lab = Label(frame)
-              lab.config( text=names[i], font=self.labelFont, justify=LEFT, background=self.labelBgColour )
+              lab.config( text=names[i], font=self.labelFont, justify=LEFT, background=self.__getContainerBg() )
               lab.inContainer=False
 
               self.n_labels[names[i]]=lab
@@ -2732,7 +2768,7 @@ class gui:
         text.config(font=self.taFont, width=20, height=10)
 
         if platform() == "Darwin":
-            text.config(highlightbackground=self.labelBgColour)
+            text.config(highlightbackground=self.__getContainerBg())
         text.bind("<Tab>", self.__focusNextWindow)
         text.bind("<Shift-Tab>", self.__focusLastWindow)
 
@@ -2812,10 +2848,10 @@ class gui:
         if (title in self.n_messages): raise Exception("Invalid name:", title, "already exists")
         mess = Message(self.__getContainer())
         mess.config(font=self.messageFont)
-        mess.config( justify=LEFT, background=self.labelBgColour )
+        mess.config( justify=LEFT, background=self.__getContainerBg() )
         if text is not None: mess.config(text=text)
         if platform() == "Darwin":
-            mess.config(highlightbackground=self.labelBgColour)
+            mess.config(highlightbackground=self.__getContainerBg())
         self.n_messages[title]=mess
 
         self.__positionWidget(mess, row, column, colspan, rowspan)
@@ -2847,7 +2883,7 @@ class gui:
         ent.config(textvariable=var, font=self.entryFont)
         if secret: ent.config(show="*")
         if platform() == "Darwin":
-            ent.config(highlightbackground=self.labelBgColour)
+            ent.config(highlightbackground=self.__getContainerBg())
         ent.bind("<Tab>", self.__focusNextWindow)
         ent.bind("<Shift-Tab>", self.__focusLastWindow)
 
@@ -3063,7 +3099,7 @@ class gui:
 #####################################
     def addPieChart(self, name, fracs, size=100, row=None, column=0, colspan=0, rowspan=0):
         self.__verifyItem(self.n_pieCharts, name, True)
-        pie = PieChart(self.__getContainer(), fracs, size, self.labelBgColour )
+        pie = PieChart(self.__getContainer(), fracs, size, self.__getContainerBg() )
         self.n_pieCharts[name] = pie
         self.__positionWidget(pie, row, column, colspan, rowspan, sticky=None)
 
@@ -3599,7 +3635,6 @@ class DualMeter(SplitMeter):
     def drawLines(self):
         width = self._canv.winfo_width()
         mid = width * self._value
-        print("Draw: 0 -", mid, "@", self._leftFill)
         self._canv.coords(self._l_rect, 0, 0, mid, self._canv.winfo_height())
         self._canv.coords(self._r_rect, 0, 0, width, self._canv.winfo_height())
 
@@ -3884,7 +3919,7 @@ class InvalidURLError(ValueError):
     pass
 
 #####################################
-## LabelBox - wrapper for matching labels & frames
+## Named classes for containing groups
 #####################################
 class LabelBox(Frame):
     def __init__(self, parent, **opts):
@@ -3892,13 +3927,14 @@ class LabelBox(Frame):
       self.theLabel=None
       self.theWidget=None
 
-#####################################
-## WidgetBox - wrapper for grouping buttons
-#####################################
 class WidgetBox(Frame):
     def __init__(self, parent, **opts):
       Frame.__init__(self, parent)
       self.theWidgets=[]
+
+class ListBox(Frame):
+    def __init__(self, parent, **opts):
+      Frame.__init__(self, parent)
 
 #####################################
 ## scrollable frame...
