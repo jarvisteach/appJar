@@ -725,27 +725,27 @@ class gui:
 
     def __rightClick(self,event):
         def rClick_Copy(event, apnd=0):
-              #event.widget.event_generate('<Control-c>')
-              try:
-                    text = event.widget.selection_get()
-                    self.topLevel.clipboard_clear()
-                    #text = event.widget.get("sel.first", "sel.last")
-                    self.topLevel.clipboard_append(text)
-              except TclError: pass
+            #event.widget.event_generate('<Control-c>')
+            try:
+                text = event.widget.selection_get()
+                self.topLevel.clipboard_clear()
+                #text = event.widget.get("sel.first", "sel.last")
+                self.topLevel.clipboard_append(text)
+            except TclError: pass
 
         def rClick_Cut(event):
-              #event.widget.event_generate('<Control-x>')
-              try:
-                    text = event.widget.selection_get()
-                    self.topLevel.clipboard_clear()
-                    self.topLevel.clipboard_append(text)
-                    event.widget.delete("sel.first", "sel.last")
-              except TclError: pass
+            #event.widget.event_generate('<Control-x>')
+            try:
+                text = event.widget.selection_get()
+                self.topLevel.clipboard_clear()
+                self.topLevel.clipboard_append(text)
+                event.widget.delete("sel.first", "sel.last")
+            except TclError: pass
 
         def rClick_Paste(event):
-              #event.widget.event_generate('<Control-v>')
-              text = self.topLevel.selection_get(selection='CLIPBOARD')
-              event.widget.insert('insert', text)
+            #event.widget.event_generate('<Control-v>')
+            text = self.topLevel.selection_get(selection='CLIPBOARD')
+            event.widget.insert('insert', text)
 
         event.widget.focus()
 
@@ -757,7 +757,7 @@ class gui:
 
         rmenu = Menu(None, tearoff=0, takefocus=0)
         for (txt, cmd) in nclst:
-              rmenu.add_command(label=txt, command=cmd)
+            rmenu.add_command(label=txt, command=cmd)
 
         rmenu.tk_popup(event.x_root+40, event.y_root+10,entry="0")
         event.widget.selection_clear()
@@ -794,15 +794,14 @@ class gui:
     def configureWidgets(self, kind, names, option, value ):
         if not isinstance(names, list): self.configureWidget(kind, names, option, value)
         else:
-              for widg in names:
-                    self.configureWidget(kind, widg, option, value)
+            for widg in names:
+                self.configureWidget(kind, widg, option, value)
 
     def configureWidget(self, kind, name, option, value, key=None, deprecated=False):
-
         # warn about deprecated functions
         if deprecated:
             self.warn("Deprecated config function ("+option+") used for: "
-    +self.WIDGETS[kind]+"->"+name+" use "+deprecated+" instead")
+                        +self.WIDGETS[kind]+"->"+name+" use "+deprecated+" instead")
         if kind in [self.RB, self.LB, self.CB]:
             self.warn("Deprecated config function ("+option+") used for: "
                         +self.WIDGETS[kind]+"->"+name+" use "+self.WIDGETS[kind/10]+" instead")
@@ -817,123 +816,123 @@ class gui:
         # this will often faile - widgets have varied config options
         for item in items:
             try:
-                  if option == 'background':
-                        if kind==self.METER:
-                              item.setBg(value)
-                        elif kind==self.NOTEBOOK:
-                              item.setBg(value)
+                if option == 'background':
+                    if kind==self.METER:
+                        item.setBg(value)
+                    elif kind==self.NOTEBOOK:
+                        item.setBg(value)
+                    else:
+                        self.__setWidgetBg(item, value)
+                elif option == 'foreground':
+                    if kind==self.ENTRY:
+                        if item.hasDefault: item.oldFg=value
                         else:
-                              item.config(background=value)
-                  elif option == 'foreground':
-                        if kind==self.ENTRY:
-                              if item.hasDefault: item.oldFg=value
-                              else:
-                                    item.config(foreground=value)
-                                    item.oldFg=value
-                        elif kind==self.METER:
+                            item.config(foreground=value)
+                            item.oldFg=value
+                    elif kind==self.METER:
                               item.setFg(value)
-                        else:
-                              item.config(foreground=value)
-                  elif option == 'disabledforeground': item.config( disabledforeground=value )
-                  elif option == 'width':
-                        if kind==self.METER: item.setWidth(value)
-                        else: item.config( width=value )
-                  elif option == 'height':
-                        if kind==self.METER: item.setHeight(value)
-                        else: item.config( height=value )
-                  elif option == 'state': item.config( state=value )
-                  elif option == 'relief': item.config( relief=value )
-                  elif option == 'align':
-                        if kind==self.ENTRY:
-                              if value == W or value == LEFT: value = LEFT
-                              elif value == E or value == RIGHT: value = RIGHT
-                              item.config( justify=value )
-                        else:
-                              item.config( anchor=value )
-                  elif option == 'anchor': item.config( anchor=value )
-                  elif option == 'cursor': item.config( cursor=value )
-                  elif option == 'tooltip': self.__addTooltip(item, value)
-                  elif option == "focus": item.focus_set()
-                  elif option == 'over':
-                        if not isinstance(value, list): value=[value]
-                        if len(value) == 1: value.append(None)
-                        if len(value) != 2:
-                              raise Exception("Invalid arguments, set<widget>OverFunction requires 1 ot 2 functions to be passed in.")
-                        if kind==self.LABEL:
-                              if value[0] is not None: item.bind("<Enter>",self.__makeFunc(value[0], name, True), add="+")
-                              if value[1] is not None: item.bind("<Leave>",self.__makeFunc(value[1], name, True), add="+")
-                              #item.bind("<B1-Motion>",self.__makeFunc(value[0], name, True), add="+")
-                  elif option == 'drag':
-                        if not isinstance(value, list): value=[value]
-                        if len(value) == 1: value.append(None)
-                        if len(value) != 2:
-                              raise Exception("Invalid arguments, set<widget>DragFunction requires 1 ot 2 functions to be passed in.")
-                        if kind==self.LABEL:
-                              if platform() == "Darwin":
-                                    item.config(cursor="pointinghand")
-                              elif platform() in [ "win32", "Windows"]:
-                                    item.config(cursor="hand2")
+                    else:
+                        item.config(foreground=value)
+                elif option == 'disabledforeground': item.config( disabledforeground=value )
+                elif option == 'width':
+                    if kind==self.METER: item.setWidth(value)
+                    else: item.config( width=value )
+                elif option == 'height':
+                    if kind==self.METER: item.setHeight(value)
+                    else: item.config( height=value )
+                elif option == 'state': item.config( state=value )
+                elif option == 'relief': item.config( relief=value )
+                elif option == 'align':
+                    if kind==self.ENTRY:
+                        if value == W or value == LEFT: value = LEFT
+                        elif value == E or value == RIGHT: value = RIGHT
+                        item.config( justify=value )
+                    else:
+                        item.config( anchor=value )
+                elif option == 'anchor': item.config( anchor=value )
+                elif option == 'cursor': item.config( cursor=value )
+                elif option == 'tooltip': self.__addTooltip(item, value)
+                elif option == "focus": item.focus_set()
+                elif option == 'over':
+                    if not isinstance(value, list): value=[value]
+                    if len(value) == 1: value.append(None)
+                    if len(value) != 2:
+                        raise Exception("Invalid arguments, set<widget>OverFunction requires 1 ot 2 functions to be passed in.")
+                    if kind==self.LABEL:
+                        if value[0] is not None: item.bind("<Enter>",self.__makeFunc(value[0], name, True), add="+")
+                        if value[1] is not None: item.bind("<Leave>",self.__makeFunc(value[1], name, True), add="+")
+                        #item.bind("<B1-Motion>",self.__makeFunc(value[0], name, True), add="+")
+                elif option == 'drag':
+                    if not isinstance(value, list): value=[value]
+                    if len(value) == 1: value.append(None)
+                    if len(value) != 2:
+                        raise Exception("Invalid arguments, set<widget>DragFunction requires 1 ot 2 functions to be passed in.")
+                    if kind==self.LABEL:
+                        if platform() == "Darwin":
+                            item.config(cursor="pointinghand")
+                        elif platform() in [ "win32", "Windows"]:
+                            item.config(cursor="hand2")
 
-                              def getWidget(f):
-                                    # loop through all labels
-                                    for key, value in self.n_labels.items():
-                                          if self.__isMouseInWidget(value):
-                                                f(key)
-                                                return
+                        def getWidget(f):
+                            # loop through all labels
+                            for key, value in self.n_labels.items():
+                                if self.__isMouseInWidget(value):
+                                    f(key)
+                                    return
 
-                              if value[0] is not None: item.bind("<ButtonPress-1>", self.__makeFunc(value[0], name, True) , add="+")
-                              if value[1] is not None: item.bind("<ButtonRelease-1>", self.__makeFunc(getWidget, value[1], True) , add="+")
-                  elif option == 'command':
-                        # this will discard the scale value, as default function can't handle it
-                        if kind==self.SCALE:
-                              item.config( command=self.__makeFunc(value,name, True) )
-                        elif kind==self.OPTION:
-                              # need to trace the variable??
-                              item.var.trace('w',  self.__makeFunc(value,name, True))
-                        elif kind==self.ENTRY:
-                              if key is None: key =name
-                              item.bind('<Return>', self.__makeFunc(value, key, True))
-                        elif kind==self.BUTTON:
-                              item.config(command=self.__makeFunc(value, name))
-                              item.bind('<Return>', self.__makeFunc(value, name, True))
-                        # make labels clickable, add a cursor, and change the look
-                        elif kind==self.LABEL or kind==self.IMAGE:
-                              if platform() == "Darwin":
-                                    item.config(cursor="pointinghand")
-                              elif platform() in [ "win32", "Windows"]:
-                                    item.config(cursor="hand2")
+                        if value[0] is not None: item.bind("<ButtonPress-1>", self.__makeFunc(value[0], name, True) , add="+")
+                        if value[1] is not None: item.bind("<ButtonRelease-1>", self.__makeFunc(getWidget, value[1], True) , add="+")
+                elif option == 'command':
+                    # this will discard the scale value, as default function can't handle it
+                    if kind==self.SCALE:
+                        item.config( command=self.__makeFunc(value,name, True) )
+                    elif kind==self.OPTION:
+                        # need to trace the variable??
+                        item.var.trace('w',  self.__makeFunc(value,name, True))
+                    elif kind==self.ENTRY:
+                        if key is None: key =name
+                        item.bind('<Return>', self.__makeFunc(value, key, True))
+                    elif kind==self.BUTTON:
+                        item.config(command=self.__makeFunc(value, name))
+                        item.bind('<Return>', self.__makeFunc(value, name, True))
+                    # make labels clickable, add a cursor, and change the look
+                    elif kind==self.LABEL or kind==self.IMAGE:
+                        if platform() == "Darwin":
+                            item.config(cursor="pointinghand")
+                        elif platform() in [ "win32", "Windows"]:
+                            item.config(cursor="hand2")
 
-                              item.bind("<Button-1>",self.__makeFunc(value, name, True), add="+")
-                              # these look good, but break when dialogs take focus
-                              #up = item.cget("relief").lower()
-                              #down="sunken"
-                              # make it look like it's pressed
-                              #item.bind("<Button-1>",lambda e: item.config(relief=down), add="+")
-                              #item.bind("<ButtonRelease-1>",lambda e: item.config(relief=up))
-                        else:
-                              item.config( command=self.__makeFunc(value,name) )
-                  elif option == 'sticky':
-                        info = {}
-                        # need to reposition the widget in its grid
-                        if self.__widgetHasContainer(kind, item):
-                              # pack uses LEFT & RIGHT & BOTH
-                              info["side"] = value
-                              if value.lower() == "both":
-                                    info["expand"] = 1
-                                    info["side"] = "right"
-                              else: info["expand"] = 0
-                        else:
-                              # grid uses E+W
-                              if value.lower() == "left": side = W
-                              elif value.lower() == "right": side = E
-                              elif value.lower() == "both": side = W+E
-                              else: side = value.upper()
-                              info["sticky"] = side
-                        self.__repackWidget(item, info)
-                  elif option == 'padding':
-                      item.config(padx=value[0], pady=value[0])
+                        item.bind("<Button-1>",self.__makeFunc(value, name, True), add="+")
+                        # these look good, but break when dialogs take focus
+                        #up = item.cget("relief").lower()
+                        #down="sunken"
+                        # make it look like it's pressed
+                        #item.bind("<Button-1>",lambda e: item.config(relief=down), add="+")
+                        #item.bind("<ButtonRelease-1>",lambda e: item.config(relief=up))
+                    else:
+                        item.config( command=self.__makeFunc(value,name) )
+                elif option == 'sticky':
+                    info = {}
+                    # need to reposition the widget in its grid
+                    if self.__widgetHasContainer(kind, item):
+                        # pack uses LEFT & RIGHT & BOTH
+                        info["side"] = value
+                        if value.lower() == "both":
+                            info["expand"] = 1
+                            info["side"] = "right"
+                        else: info["expand"] = 0
+                    else:
+                        # grid uses E+W
+                        if value.lower() == "left": side = W
+                        elif value.lower() == "right": side = E
+                        elif value.lower() == "both": side = W+E
+                        else: side = value.upper()
+                        info["sticky"] = side
+                    self.__repackWidget(item, info)
+                elif option == 'padding':
+                    item.config(padx=value[0], pady=value[0])
             except TclError as e:
-                  self.warn("Error configuring " + name + ": " + str(e))
+                self.warn("Error configuring " + name + ": " + str(e))
 
     # dynamic way to create the configuration functions
     def __buildConfigFuncs(self):
