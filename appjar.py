@@ -344,6 +344,11 @@ class gui:
                     if kind not in [self.C_PANEDFRAME]:
                           self.warn("STOP: "+kind)
 
+        if len(self.n_trees)>0:
+            for k in self.n_trees:
+                self.n_trees[k].update()
+                self.n_trees[k].expand()
+
         # only add the menu bar at the end...
         if self.hasMenu:
               self.topLevel.config(menu=self.menuBar)
@@ -2781,24 +2786,37 @@ class gui:
         self.__verifyItem(self.n_trees, title, True)
         frame=ScrollPane(self.__getContainer(), relief=RAISED,
                         borderwidth=2, bg="white", highlightthickness=0, takefocus=1)
-        self.__positionWidget(frame, row, column, colspan, rowspan)
+        self.__positionWidget(frame, row, column, colspan, rowspan, "NSEW")
 
         xmlDoc=parseString(data)
-        item=TreeWidget(xmlDoc.documentElement)
-        node=TreeNode(frame.getPane(), None, item)
-        node.update()
-        node.expand()
-        self.n_trees[title]=item
+        item=ajTreeWidget(xmlDoc.documentElement)
+        node=ajTreeNode(frame.getPane(), None, item)
+        self.n_trees[title]=node
 
-    def addTreeFunction(self, title, func):
+    def setTreeDoubleClickFunction(self, title, func):
         if func is not None:
               tree = self.__verifyItem(self.n_trees, title)
               command = self.__makeFunc(func, title)
-              tree.registerDblClick(command)
+              tree.item.registerDblClick(command)
 
-    def getTree(self, title):
+    # get whole tree as XML
+    def getTreeXML(self, title):
         tree = self.__verifyItem(self.n_trees, title)
-        return tree.node.toxml()
+        return tree.item.node.toxml()
+
+    # get selected node as a string
+    def getTreeSelected(self, title):
+        tree = self.__verifyItem(self.n_trees, title)
+        return tree.getSelectedText()
+
+    # get selected node (and children) as XML
+    def getTreeSelectedXML(self, title):
+        tree = self.__verifyItem(self.n_trees, title)
+        item = tree.getSelected()
+        if item is not None:
+            return item.node.toxml()
+        else:
+            return None
 
 #####################################
 ## FUNCTIONS to add Message Box
@@ -3864,7 +3882,27 @@ class PieChart(Canvas):
 ## idlelib -> TreeWidget.py
 ## modify minidom - https://wiki.python.org/moin/MiniDom
 #####################################
-class TreeWidget(TreeItem):
+class ajTreeNode(TreeNode):
+    def __init__(self, canvas, parent, item):
+        TreeNode.__init__(self, canvas, parent, item)
+
+    def getSelectedText(self):
+        item = self.getSelected()
+        if item is not None:
+            return item.GetText()
+        else:
+            return None
+
+    def getSelected(self):
+        if self.selected:
+            return self.item
+        else:
+            for c in self.children:
+                val = c.getSelected()
+                if val is not None: return val
+            return None
+
+class ajTreeWidget(TreeItem):
     def __init__(self, node):
         self.node = node
         self.dblClickFunc = None
@@ -3892,19 +3930,29 @@ class TreeWidget(TreeItem):
 
     def GetSubList(self):
         children = self.node.childNodes
-        prelist = [TreeWidget(node) for node in children]
-        itemlist = [item for item in prelist if item.GetText().strip()]
-        return itemlist
-
-    def OnDoubleClick(self):
-        if self.dblClickFunc is not None:
-              self.dblClickFunc()
-
-    def getSelected(self):
-        return self.GetText()
+        prelist = [ajTreeWidget(node) for node in children]
+        itemList = [item for item in prelist if item.GetText().strip()]
+        for item in itemList:
+            item.registerDblClick(self.dblClickFunc)
+        return itemList
 
     def registerDblClick(self, func):
         self.dblClickFunc = func
+
+    def OnDoubleClick(self):
+        if self.dblClickFunc is not None:
+            self.dblClickFunc()
+
+    def getSelected(self, spaces=1):
+        if spaces==1: print(self.node.tagName)
+        for c in self.node.childNodes:
+            if c.__class__.__name__ == "Element":
+                print(" "*spaces, ">>",c.tagName)
+                node = ajTreeWidget(c)
+                node.getSelected(spaces+2)
+            elif c.__class__.__name__ == "Text":
+                val=c.data.strip()
+                if len(val)>0: print(" "*spaces, ">>>>",val)
 
 #####################################
 ## errors
