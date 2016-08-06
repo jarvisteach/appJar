@@ -2969,6 +2969,42 @@ class gui:
         self.__verifyItem(self.n_entries, name)
         self.n_entries[name].focus_set()
 
+    def __lookupValue(self, myDict, val):
+        for name in myDict:
+            if type(myDict[name]) == type([]):  # array of cbs
+                for rb in myDict[name]:
+                    if rb == val:
+                        return name
+            else:
+                if myDict[name] == val:
+                    return name
+        return None
+
+    def __getWidgetName(self, widg):
+        name = widg.__class__.__name__
+        print(name)
+        if name.lower() == "tk": return self.__getTopLevel().title()
+        elif name == "Listbox": return self.__lookupValue(self.n_lbs, widg)
+        elif name == "Button":
+            # merge together Buttons & Toolbar Buttons
+            z = self.n_buttons.copy()
+            z.update(self.n_tbButts)
+            return self.__lookupValue(z, widg)
+        elif name == "Entry": return self.__lookupValue(self.n_entries, widg)
+        elif name == "Scale": return self.__lookupValue(self.n_scales, widg)
+        elif name == "Checkbutton": return self.__lookupValue(self.n_cbs, widg)
+        elif name == "Radiobutton": return self.__lookupValue(self.n_rbs, widg)
+        elif name == "Spinbox": return self.__lookupValue(self.n_spins, widg)
+        elif name == "OptionMenu": return self.__lookupValue(self.n_options, widg)
+        elif name == "Text": return self.__lookupValue(self.n_textAreas, widg)
+        elif name == "Link": return self.__lookupValue(self.n_links, widg)          # can't receive focus yet....
+        else:
+              raise Exception("Unknown widget type: " + name)
+
+    def getFocus(self):
+        widg = self.topLevel.focus_get()
+        return self.__getWidgetName(widg)
+
 #####################################
 ## FUNCTIONS for progress bars (meters)
 #####################################

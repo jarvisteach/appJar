@@ -1,7 +1,8 @@
 from appJar import gui
 
 def press(btn):
-    app.removeListItemAtPos("l1", app.getListItemsPos("l1")[0])
+    listName = app.getFocus()
+    if listName is not None: app.removeListItemAtPos(listName, app.getListItemsPos(listName)[0])
 
 def add(btn):
     app.addListItem("l1", app.getEntry("e1"))

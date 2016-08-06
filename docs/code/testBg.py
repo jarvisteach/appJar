@@ -1,6 +1,10 @@
 from appJar import gui
 
+def getName(btn):
+    app.setLabel("FOCUS", app.getFocus())
+
 app=gui()
+app.addToolbar(["But1", "But2", "But3"], getName)
 
 app.setBg("green")
 
@@ -15,7 +19,9 @@ app.setLabelFrameBg("LabelFrame", "red")
 app.addLabel("2", "Label 2")
 app.addLabels(["a", "b", "c", "d", "e", "f"])
 
-app.addButton("B1", None)
+row=app.getNextRow()
+app.addButton("FOCUS NAME", getName, row, 0)
+app.addFlashLabel("FOCUS", "FOCUS NAME HERE",row, 1)
 app.addButtons(["B2", "B3", "B4"], None)
 row=app.getNextRow()
 app.addEntry("e1", row, 0)
