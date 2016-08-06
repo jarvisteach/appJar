@@ -313,7 +313,7 @@ class gui:
         self.n_taHashes={}      # for monitoring textAreas
 
         # for simple grids
-        self.n_grids= {}
+        self.n_grids={}
 
         # menu stuff
         self.n_menus={}
@@ -336,7 +336,6 @@ class gui:
 #####################################
     def go(self):
         """ Most important function! Start the GUI """
-
         # check the containers have all been stopped
         if len(self.containerStack) > 1:
               self.warn("You didn't stop all containers")
@@ -439,6 +438,9 @@ class gui:
               return True
         else:
               return False
+
+    # function to give a clicked widget the keyboard focus
+    def __grabFocus(self, e): e.widget.focus_set()
 
 #####################################
 ## FUNCTIONS for configuring GUI settings
@@ -612,8 +614,8 @@ class gui:
 
     # self.topLevel = Tk()
     # self.appWindow = Frame, fills all of self.topLevel
-    # self.tb = Frame, at bottom of appWindow
-    # self.containr = Frame, at top of appWindow => C_ROOT container
+    # self.tb = Frame, at top of appWindow
+    # self.container = Frame, at bottom of appWindow => C_ROOT container
     # self.bglabel = Label, filling all of container
     def setBg(self, colour):
         if self.containerStack[-1]['type'] == "C_ROOT":
@@ -631,58 +633,6 @@ class gui:
         except: pass
         return False
             
-#    def setOldBg(self, colour):
-#        #self.topLevel.config(background=self.labelBgColour)
-#
-#        if self.containerStack[-1]['type'] == "C_ROOT":
-#            self.appWindow.config(background=colour)
-#            self.bgLabel.config(background=colour)
-#
-#        self.containerStack[-1]['container'].config(background=colour)
-#
-#        for na in self.n_labels:
-#              self.n_labels[na].config(background=self.labelBgColour)
-#        for na in self.n_messages:
-#              self.n_messages[na].config(background=self.labelBgColour)
-#
-#        if platform() == "Darwin":
-#              for na in self.n_entries:
-#                    self.n_entries[na].config(highlightbackground=self.labelBgColour)
-#              for na in self.n_buttons:
-#                    self.n_buttons[na].config(highlightbackground=self.labelBgColour)
-#              for na in self.n_spins:
-#                    self.n_spins[na].config(highlightbackground=self.labelBgColour)
-#              for na in self.n_options:
-#                    self.n_options[na].config(background=self.labelBgColour, highlightbackground=self.labelBgColour)
-#
-#        for na in self.n_scales:
-#              self.n_scales[na].config(background=self.labelBgColour)
-#        for na in self.n_cbs:
-#              self.n_cbs[na].config(background=self.labelBgColour, activebackground=self.labelBgColour)
-#        for gr in self.n_rbs:
-#              for na in self.n_rbs[gr]:
-#                  na.config(background=self.labelBgColour, activebackground=self.labelBgColour)
-#        for na in self.n_frames:
-#              na.config(background=self.labelBgColour)
-#        for na in self.n_links:
-#              self.n_links[na].config(background=self.labelBgColour)
-#        for na in self.n_labelFrames:
-#              self.n_labelFrames[na].config(background=self.labelBgColour)
-#        for na in self.n_noteBooks:
-#              self.n_noteBooks[na].config(background=self.labelBgColour)
-#        for na in self.n_panedFrames:
-#              self.n_panedFrames[na].config(background=self.labelBgColour)
-#        for na in self.n_scrollPanes:
-#              self.n_scrollPanes[na].config(background=self.labelBgColour)
-#        #for na in self.n_options:
-        #      self.n_options[na].config(background=self.labelBgColour)
-        #for na in self.n_spins:
-        #      self.n_spins[na].config(background=self.labelBgColour)
-
-        # for simple grids - RETHINK
-#        for na in self.n_grids:
-#              self.n_grids[na].configure(background=self.labelBgColour)
-
     def setResizable(self, canResize=True):
         self.__getTopLevel().isResizable = canResize
         if self.__getTopLevel().isResizable: self.__getTopLevel().resizable(True, True)
@@ -1161,7 +1111,13 @@ class gui:
 
     # convenience method to set a widget's bg
     def __setWidgetBg(self, widget, bg):
-        darwinBorders = ["Text", "Button", "Entry", "OptionMenu"]
+
+        # POTENTIAL ISSUES
+        # spinBox - highlightBackground
+        # cbs/rbs - activebackground
+        # grids - background
+
+        darwinBorders = ["Text", "Button", "Entry"]#, "OptionMenu"]
         noBg = ["Spinbox", "Scale", "ListBox", "SplitMeter", "Meter", "DualMeter"]
 
         widgType = widget.__class__.__name__
@@ -1170,7 +1126,7 @@ class gui:
         # Mac specific colours
         if isDarwin and widgType in darwinBorders:
                 widget.config(highlightbackground=bg)
-                if widgType == "OptionMenu": widget.config(background=bg)
+#                if widgType == "OptionMenu": widget.config(background=bg)
 
         # widget with label, in frame
         elif widgType == "LabelBox":
@@ -1178,7 +1134,7 @@ class gui:
             widgType = widget.theWidget.__class__.__name__ 
             if isDarwin and  widgType in darwinBorders:
                 widget.theWidget.config(highlightbackground=bg)
-                if widgType == "OptionMenu": widget.theWidget.config(background=bg)
+            if widgType == "OptionMenu": widget.theWidget.config(background=bg)
 
         # group of buttons or labels
         elif widgType == "WidgetBox":
@@ -1549,6 +1505,7 @@ class gui:
         cb = Checkbutton(self.__getContainer())
         cb.config(text=title, variable=var, font=self.cbFont, background=self.__getContainerBg(), activebackground=self.__getContainerBg())
         cb.config(anchor=W)
+        cb.bind("<Button-1>", self.__grabFocus)
         self.n_cbs[title]=cb
         self.n_boxVars[title]=var
         self.__positionWidget(cb, row, column, colspan, rowspan, EW)
@@ -1570,8 +1527,9 @@ class gui:
     def __buildScale(self, title, frame):
         self.__verifyItem(self.n_scales, title, True)
         scale = Scale(frame)
-        scale.config(digits=1,orient=HORIZONTAL, showvalue=False, highlightthickness=0)
+        scale.config(repeatinterval=10,digits=1,orient=HORIZONTAL, showvalue=False, highlightthickness=1)
         self.n_scales[title] = scale
+        scale.bind("<Button-1>", self.__grabFocus)
         return scale
 
     def addScale(self, title, row=None, column=0, colspan=0, rowspan=0):
@@ -1839,7 +1797,8 @@ class gui:
         else:
             option = OptionMenu(frame,var,[])
 
-        option.config(justify=LEFT, font=self.optionFont, background=self.__getContainerBg(), highlightthickness=0, width=maxSize)
+        option.config(justify=LEFT, font=self.optionFont, background=self.__getContainerBg(), highlightthickness=1, width=maxSize, takefocus=1)
+        option.bind("<Button-1>", self.__grabFocus)
         # compare on windows & mac
         #option.config(highlightthickness=12, bd=0, highlightbackground=self.__getContainerBg())
         option.var = var
@@ -1852,8 +1811,8 @@ class gui:
         dropDown.configure(font=self.optionFont)
 #            dropDown.configure(background=self.__getContainerBg())
 
-        if platform() == "Darwin":
-              option.config(highlightbackground=self.__getContainerBg())
+#        if platform() == "Darwin":
+#              option.config(highlightbackground=self.__getContainerBg())
 
         option.bind("<Tab>", self.__focusNextWindow)
         option.bind("<Shift-Tab>", self.__focusLastWindow)
@@ -1975,10 +1934,11 @@ class gui:
 
         spin = Spinbox(frame)
         spin.inContainer = False
-        spin.config(font=self.entryFont, highlightbackground=self.__getContainerBg(), highlightthickness=0)
+        spin.config(font=self.entryFont, highlightthickness=0)
 
-        if platform() == "Darwin":
-              spin.config(highlightbackground=self.__getContainerBg())
+# adds bg colour under spinners
+#        if platform() == "Darwin":
+#              spin.config(highlightbackground=self.__getContainerBg())
 
         spin.bind("<Tab>", self.__focusNextWindow)
         spin.bind("<Shift-Tab>", self.__focusLastWindow)
@@ -1993,10 +1953,33 @@ class gui:
         self.n_spins[title] = spin
         return  spin
 
+
     def __addSpinBox(self, title, values,row=None, column=0, colspan=0, rowspan=0):
         spin = self.__buildSpinBox(self.__getContainer(), title, values)
         self.__positionWidget(spin, row, column, colspan, rowspan)
         self.setSpinBoxPos(title, 0)
+
+    def addSpinBox(self, title, values, row=None, column=0, colspan=0, rowspan=0):
+        self.__addSpinBox(title, values, row, column, colspan, rowspan)
+
+    def addLabelSpinBox(self, title, values, row=None, column=0, colspan=0, rowspan=0):
+        frame = self.__getLabelBox(title)
+        spin = self.__buildSpinBox(frame, title, values)
+        self.__packLabelBox(frame, spin)
+        self.__positionWidget(frame, row, column, colspan, rowspan)
+        self.setSpinBoxPos(title, 0)
+
+    def addSpinBoxRange(self, title, fromVal, toVal, row=None, column=0, colspan=0, rowspan=0):
+        vals = list(range(fromVal, toVal+1))
+        self.__addSpinBox(title, vals, row, column, colspan, rowspan)
+
+    def addLabelSpinBoxRange(self, title, fromVal, toVal, row=None, column=0, colspan=0, rowspan=0):
+        vals = list(range(fromVal, toVal+1))
+        self.addLabelSpinBox(title, vals, row, column, colspan, rowspan)
+
+    def getSpinBox(self, title):
+        spin = self.__verifyItem(self.n_spins, title)
+        return spin.get()
 
     # validates that an item in the named spinbox starts with the user_input
     def __validateSpinBox(self, user_input, widget_name):
@@ -2009,28 +1992,6 @@ class gui:
 
         self.containerStack[0]['container'].bell()
         return False
-
-    def addSpinBox(self, title, values, row=None, column=0, colspan=0, rowspan=0):
-        self.__addSpinBox(title, values, row, column, colspan, rowspan)
-
-    def addSpinBoxRange(self, title, fromVal, toVal, row=None, column=0, colspan=0, rowspan=0):
-        vals = list(range(fromVal, toVal+1))
-        self.__addSpinBox(title, vals, row, column, colspan, rowspan)
-
-    def addLabelSpinBoxRange(self, title, fromVal, toVal, row=None, column=0, colspan=0, rowspan=0):
-        vals = list(range(fromVal, toVal+1))
-        self.addLabelSpinBox(title, vals, row, column, colspan, rowspan)
-
-    def addLabelSpinBox(self, title, values, row=None, column=0, colspan=0, rowspan=0):
-        frame = self.__getLabelBox(title)
-        spin = self.__buildSpinBox(frame, title, values)
-        self.__packLabelBox(frame, spin)
-        self.__positionWidget(frame, row, column, colspan, rowspan)
-        self.setSpinBoxPos(title, 0)
-
-    def getSpinBox(self, title):
-        spin = self.__verifyItem(self.n_spins, title)
-        return spin.get()
 
     # expects a valid spin box widget, and a valid value
     def __setSpinBoxVal(self, spin, val):
@@ -2422,6 +2383,7 @@ class gui:
         rb = Radiobutton(self.__getContainer())
         rb.config(text=name, variable=var, value=name, background=self.__getContainerBg(), activebackground=self.__getContainerBg(), font=self.rbFont, indicatoron=1)
         rb.config(anchor=W)
+        rb.bind("<Button-1>", self.__grabFocus)
         if (title in self.n_rbs): self.n_rbs[title].append(rb)
         else: self.n_rbs[title]=[rb]
         #rb.bind("<Tab>", self.__focusNextWindow)
