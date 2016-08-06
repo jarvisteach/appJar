@@ -3763,7 +3763,7 @@ class Grip(Label):
 class Link(Label):
     def __init__(self, *args, **kwargs):
         Label.__init__(self, *args, **kwargs)
-        self.config(fg="blue")
+        self.config(fg="blue", takefocus=1, highlightthickness=1)
         self.page=""
 
         if platform() == "Darwin":
@@ -3773,6 +3773,8 @@ class Link(Label):
 
     def registerCallback(self, callback):
         self.bind("<Button-1>", callback)
+        self.bind("<Return>", callback)
+        self.bind("<space>", callback)
 
     def launchBrowser(self, event):
         webbrowser.open_new(r""+self.page)
@@ -3784,6 +3786,8 @@ class Link(Label):
 
         self.page = page
         self.bind("<Button-1>", self.launchBrowser)
+        self.bind("<Return>", self.launchBrowser)
+        self.bind("<space>", self.launchBrowser)
 
 #####################################
 ## Simple Separator
