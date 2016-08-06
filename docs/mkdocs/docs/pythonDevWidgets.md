@@ -26,10 +26,29 @@ Takes an arbitrary XML string, and converts it into a tree structure.
 
 * `.addTree(title, xml_data)`  
     Create a tree from the specified XML data  
-* `.addTreeFunction(title, func)`  
+
+* `.setTreeBg(title, colour)`  
+    Set the background colour of the tree  
+* `.setTreeFg(title, colour)`  
+    Set the foreground colour of the tree  
+* `.setTreeHighlightBg(title, colour)`  
+    Set the background colour of the highlighted node    
+* `.setTreeHighlightFg(title, colour)`  
+    Set the foreground colour of the highlighted node  
+
+* `.setTreeDoubleClickFunction(title, func)`  
     Register a function to call when an item is double-clicked  
-* `.getTree(title)`  
+* `.setTreeEditFunction(title, func)`  
+    Register a function to call when an item is edited  
+* `.setTreeEditable(title, value)`  
+    Set whether the tree can be edited  
+
+* `.getTreeXML(title)`  
     Return the tree as XML  
+* `.getTreeSelected(title)`  
+    Return the selected node as a String
+* `.getTreeSelectedXML(title)`  
+    Return the selected node (and any children) as XML
 
 ![TreeWidget](img/dev/tree.png)
 

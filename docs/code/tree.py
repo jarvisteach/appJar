@@ -1,4 +1,21 @@
 from appJar import gui
+canEdit=True
+def edited(btn):
+    print("EDITED:", btn)
+
+def col(btn):
+    #app.setTreeBg("t1", "black")
+    #app.setTreeFg("t1", "white")
+    #app.setTreeHighlightBg("t1", "white")
+    #app.setTreeHighlightFg("t1", "black")
+    global canEdit
+    canEdit = not canEdit
+    app.setTreeEditable("t1", canEdit)
+    app.setBg("black")
+    app.setTreeBg("t1", "red")
+    app.setTreeFg("t1", "yellow")
+    app.setTreeHighlightBg("t1", "yellow")
+    app.setTreeHighlightFg("t1", "red")
 def dClick(btn):
     print("DBL CLICK:", app.getTreeSelected(btn))
 
@@ -15,7 +32,9 @@ app.addTree("t1",
             <person><name>Betty</name><age>51</age><gender>Female</gender></person>
             </people>""")
 app.setTreeDoubleClickFunction("t1", dClick)
+app.setTreeEditFunction("t1", edited)
+app.setTreeEditable("t1", canEdit)
 #app.setTreeWidth("t1", 500)
 #app.setTreeHeight("t1", 500)
-app.addButton("PRESS", press)
+app.addButtons(["PRESS", "YELLOW"], [press, col])
 app.go()
