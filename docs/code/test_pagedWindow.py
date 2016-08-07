@@ -11,7 +11,7 @@ def pos(btn):
         app.showPageLabel("pager", True)
 
 app=gui("Pages")
-app.addLabel("l0", "Title here...")
+app.addToolbar(["top", "hide", "show","bottom"], pos)
 
 app.startPagedWindow("pager")
 
@@ -47,6 +47,4 @@ app.addLabel("l6", "Label 6")
 app.stopPage()
 
 app.stopPagedWindow()
-app.addButtons(["top", "hide", "show","bottom"], pos)
-app.addLabel("l01", "Footer here...")
 app.go()

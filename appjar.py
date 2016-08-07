@@ -1319,7 +1319,7 @@ class gui:
               # register it as a container
               pagedWindow.isContainer = True
               self.__positionWidget(pagedWindow, row, column, colspan, rowspan, sticky=sticky)
-              self.__addContainer(self.C_PAGEDWINDOW, pagedWindow, 0, 1, sticky)
+              self.__addContainer(self.C_PAGEDWINDOW, pagedWindow, 0, 1, "nw")
               self.n_pagedWindows[title] = pagedWindow
         else:
               raise Exception("Unknown container: " + fType)
@@ -4152,14 +4152,15 @@ class PagedWindow(Frame):
         self.posLabel = Label(self)
 
         self.grid_rowconfigure(0, weight=1)
+        self.grid_rowconfigure(1, weight=0)
         self.grid_columnconfigure(0, weight=1)
         self.grid_columnconfigure(1, weight=1)
         self.grid_columnconfigure(2, weight=1)
 
         # grid the navigation components
-        self.prevButton.grid(row=self.navPos, column=0, sticky=S+W)
-        self.posLabel.grid(row=self.navPos, column=1, sticky=S+E+W)
-        self.nextButton.grid(row=self.navPos, column=2, sticky=S+E)
+        self.prevButton.grid(row=self.navPos, column=0, sticky=N+S+W)
+        self.posLabel.grid(row=self.navPos, column=1, sticky=N+S+E+W)
+        self.nextButton.grid(row=self.navPos, column=2, sticky=N+S+E)
 
         self.__setLabel()
 
@@ -4172,6 +4173,12 @@ class PagedWindow(Frame):
         if top: self.navPos = 0
         else: self.navPos = 1
         if oldNavPos != self.navPos:
+            if self.navPos == 0:
+                self.grid_rowconfigure(0, weight=0)
+                self.grid_rowconfigure(1, weight=1)
+            else:
+                self.grid_rowconfigure(0, weight=1)
+                self.grid_rowconfigure(1, weight=0)
             # grid the navigation components
             self.frames[self.currentPage].grid_remove()
             self.prevButton.grid_remove()
