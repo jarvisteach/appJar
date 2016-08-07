@@ -79,4 +79,16 @@ A way to add additional windows, which can be hidden and shown.
 A scrollable frame, to contain widgets.
 
 * `.startScrollPane(title)`  
-* `.stopScrollPane(title)`  
+* `.stopScrollPane()`  
+
+###Paged Window
+---
+A series of pages with NEXT/PREVIOUS buttons and page counter
+
+* `.startPagedWindow(title)`  
+* `.stopPagedWindow()`  
+* `.addpage(title)`  
+* `.stopPage()`  
+* `.setPage(title, pageNum)`  
+* `.setPagedWindowTop(title, top=True)`  
+* `.showPageLabel(title, show=True)`  

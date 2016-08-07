@@ -70,6 +70,7 @@ class gui:
     NOTEBOOK=15
     PANEDWINDOW=16
     SCROLLPANE=19
+    PAGEDWINDOW=20
 
     # positioning
     N = N
@@ -100,6 +101,7 @@ class gui:
     C_PANEDFRAME="panedFrame"
     C_SUBWINDOW="subWindow"
     C_SCROLLPANE="scrollPane"
+    C_PAGEDWINDOW="pagedWindow"
 
     # names for each of the widgets defined above
     # used for defining functions
@@ -295,6 +297,7 @@ class gui:
         self.n_labelFrames={}
         self.n_noteBooks={}
         self.n_panedWindows={}
+        self.n_pagedWindows={}
         self.n_panedFrames={}
         self.n_scrollPanes={}
         self.n_trees={}
@@ -627,10 +630,13 @@ class gui:
             self.appWindow.config(background=colour)
             self.bgLabel.config(background=colour)
 
-        self.containerStack[-1]['container'].config(background=colour)
+        if self.containerStack[-1]['type'] == self.C_PAGEDWINDOW:
+            self.containerStack[-1]['container'].setBg(colour)
+        else:
+            self.containerStack[-1]['container'].config(background=colour)
 
-        for child in self.containerStack[-1]['container'].winfo_children():
-            if not self.__widgetIsContainer(child): self.__setWidgetBg(child, colour)
+            for child in self.containerStack[-1]['container'].winfo_children():
+                if not self.__widgetIsContainer(child): self.__setWidgetBg(child, colour)
 
     def __widgetIsContainer(self, widget):
         try:
@@ -1227,7 +1233,10 @@ class gui:
         container=self.containerStack[-1]['container']
         if self.containerStack[-1]['type']==self.C_SCROLLPANE:
             return container.interior
-        return container
+        elif self.containerStack[-1]['type']==self.C_PAGEDWINDOW:
+            return container.getPage()
+        else:
+            return container
 
     # if possible, removes the current container
     def __removeContainer(self):
@@ -1300,6 +1309,18 @@ class gui:
 
               # now, add to top of stack
               self.__addContainer(self.C_SCROLLPANE, scrollPane, 0, 1, sticky)
+        elif fType == self.C_PAGEDWINDOW:
+              # create the paged window
+              pagedWindow = PagedWindow(self.containerStack[-1]['container'], bg=self.__getContainerBg(), width=200, height=400)
+              pagedWindow.config(background="yellow")
+              # bind events
+              self.topLevel.bind("<Left>", pagedWindow.showPrev)
+              self.topLevel.bind("<Right>", pagedWindow.showNext)
+              # register it as a container
+              pagedWindow.isContainer = True
+              self.__positionWidget(pagedWindow, row, column, colspan, rowspan, sticky=sticky)
+              self.__addContainer(self.C_PAGEDWINDOW, pagedWindow, 0, 1, sticky)
+              self.n_pagedWindows[title] = pagedWindow
         else:
               raise Exception("Unknown container: " + fType)
 
@@ -1335,6 +1356,41 @@ class gui:
     # frame will be added as other widgets
     def startLabelFrame(self, title, row=None, column=0, colspan=0, rowspan=0, sticky=W):
         self.startContainer(self.C_LABELFRAME, title, row, column, colspan, rowspan, sticky)
+
+    ###### PAGED WINDOWS #######
+    def startPagedWindow(self, title, row=None, column=0, colspan=0, rowspan=0):
+        self.startContainer(self.C_PAGEDWINDOW, title, row, column, colspan, rowspan, sticky="nsew")
+
+    def setPage(self, title, page):
+        pager = self.__verifyItem(self.n_pagedWindows, title)
+        pager.showPage(page)
+
+    def setPagedWindowTop(self, title, top=True):
+        pager = self.__verifyItem(self.n_pagedWindows, title)
+        pager.setNavPositionTop(top)
+
+    def showPageLabel(self, title, show=True):
+        pager = self.__verifyItem(self.n_pagedWindows, title)
+        pager.showLabel(show)
+
+    def addPage(self, title):
+        if self.containerStack[-1]['type'] == self.C_PAGEDWINDOW:
+            self.containerStack[-1]['container'].addPage()
+        else:
+              raise Exception("Can't add a PAGEDWINDOW, currently in:", self.containerStack[-1]['type'])
+
+    def stopPage(self):
+        if self.containerStack[-1]['type'] == self.C_PAGEDWINDOW:
+            self.containerStack[-1]['container'].stopPage()
+        else:
+              raise Exception("Can't stop PAGEDWINDOW, currently in:", self.containerStack[-1]['type'])
+
+    def stopPagedWindow(self):
+        if self.containerStack[-1]['type'] != self.C_PAGEDWINDOW:
+              raise Exception("Can't stop a PAGEDWINDOW, currently in:", self.containerStack[-1]['type'])
+        self.stopContainer()
+
+    ###### PAGED WINDOWS #######
 
     def startScrollPane(self, title, row=None, column=0, colspan=0, rowspan=0, sticky="NSEW"):
         self.startContainer(self.C_SCROLLPANE, title, row, column, colspan, rowspan, sticky)
@@ -4074,6 +4130,121 @@ class ItemLookupError(LookupError):
 class InvalidURLError(ValueError):
     '''raise this when there's a lookup error for my app'''
     pass
+
+#####################################
+## Paged Window
+#####################################
+class PagedWindow(Frame):
+    def __init__(self, parent, **opts):
+        # call the super constructor
+        Frame.__init__(self, parent, **opts)
+        self.config(width=300, height=400)
+
+        # globals to hold list of frames(pages) and current page
+        self.currentPage = -1
+        self.frames=[]
+        self.shouldShowLabel = True
+        self.navPos = 1
+
+        # create the 3 components, including a default container frame
+        self.prevButton = Button(self, text="PREVIOUS", command=self.showPrev, state="disabled", width=10)
+        self.nextButton = Button(self, text="NEXT", command=self.showNext, state="disabled", width=10)
+        self.posLabel = Label(self)
+
+        self.grid_rowconfigure(0, weight=1)
+        self.grid_columnconfigure(0, weight=1)
+        self.grid_columnconfigure(1, weight=1)
+        self.grid_columnconfigure(2, weight=1)
+
+        # grid the navigation components
+        self.prevButton.grid(row=self.navPos, column=0, sticky=S+W)
+        self.posLabel.grid(row=self.navPos, column=1, sticky=S+E+W)
+        self.nextButton.grid(row=self.navPos, column=2, sticky=S+E)
+
+        self.__setLabel()
+
+    # functions to change the labels of the two buttons
+    def setPrevButton(self, title): self.prevButton.config(text=title)
+    def setNextButton(self, title): self.nextButton.config(text=title)
+
+    def setNavPositionTop(self, top=True):
+        oldNavPos = self.navPos
+        if top: self.navPos = 0
+        else: self.navPos = 1
+        if oldNavPos != self.navPos:
+            # grid the navigation components
+            self.frames[self.currentPage].grid_remove()
+            self.prevButton.grid_remove()
+            self.posLabel.grid_remove()
+            self.nextButton.grid_remove()
+
+            self.frames[self.currentPage].grid(row=int(not self.navPos), column=0, columnspan=3, sticky=N+S+E+W)
+            self.prevButton.grid(row=self.navPos, column=0, sticky=S+W)
+            self.posLabel.grid(row=self.navPos, column=1, sticky=S+E+W)
+            self.nextButton.grid(row=self.navPos, column=2, sticky=S+E)
+
+    def showLabel(self, val=True):
+        self.shouldShowLabel = val
+        self.__setLabel()
+
+    # function to update the contents of the label
+    def __setLabel(self):
+        if self.shouldShowLabel:
+            self.posLabel.config(text=str(self.currentPage+1) + "/" + str(len(self.frames)))
+        else:
+            self.posLabel.config(text="")
+
+    # get the current frame being shown - for adding widgets
+    def getPage(self): return self.frames[self.currentPage]
+
+    # adds a new page, making it visible
+    def addPage(self):
+        # if we're showing a page, remove it
+        if self.currentPage >= 0: self.frames[self.currentPage].grid_forget()
+
+        # add a new page
+        self.frames.append(Frame(self))
+        self.frames[-1].grid(row=int(not self.navPos), column=0, columnspan=3, sticky=N+S+E+W)
+        self.currentPage = len(self.frames)-1
+
+        # update the buttons & labels
+        if self.currentPage > 0: self.prevButton.config(state="normal")
+        self.__setLabel()
+
+    def stopPage(self):
+        self.showPage(1)
+
+    # function to display the specified page
+    # will re-grid, and disable/enable buttons
+    # also updates label
+    def showPage(self, page):
+        if page < 1 or page > len(self.frames):
+            raise Exception("Invalid page number: " + str(page) + ". Must be between 1 and " + str(len(self.frames)))
+
+        self.frames[self.currentPage].grid_forget()
+        self.currentPage = page - 1
+        self.frames[self.currentPage].grid(row=int(not self.navPos), column=0, columnspan=3, sticky=N+S+E+W)
+        self.frames[self.currentPage].grid_columnconfigure(0, weight=1)
+        self.__setLabel()
+
+        # update the buttons
+        if self.currentPage == 0:
+            self.prevButton.config(state="disabled")
+            self.nextButton.config(state="normal")
+        elif self.currentPage == len(self.frames)-1:
+            self.prevButton.config(state="normal")
+            self.nextButton.config(state="disabled")
+        else:
+            self.prevButton.config(state="normal")
+            self.nextButton.config(state="normal")
+
+    def showPrev(self, event=None):
+        if self.currentPage > 0:
+            self.showPage(self.currentPage)
+
+    def showNext(self, event=None):
+        if self.currentPage < len(self.frames)-1:
+            self.showPage(self.currentPage + 2)
 
 #####################################
 ## Named classes for containing groups
