@@ -1315,7 +1315,7 @@ class gui:
             self.__addContainer(self.C_SCROLLPANE, scrollPane, 0, 1, sticky)
         elif fType == self.C_PAGEDWINDOW:
             # create the paged window
-            pagedWindow = PagedWindow(self.containerStack[-1]['container'], bg=self.__getContainerBg(), width=200, height=400)
+            pagedWindow = PagedWindow(self.containerStack[-1]['container'], title=title, bg=self.__getContainerBg(), width=200, height=400)
             # bind events
             self.topLevel.bind("<Left>", pagedWindow.showPrev)
             self.topLevel.bind("<Right>", pagedWindow.showNext)
@@ -1382,9 +1382,26 @@ class gui:
         pager.setPrevButton(buttons[0])
         pager.setNextButton(buttons[1])
 
-    def showPageLabel(self, title, show=True):
+    def setPagedWindowFunction(self, title, func):
+        pager = self.__verifyItem(self.n_pagedWindows, title)
+        command = self.__makeFunc(func, title)
+        pager.registerPageChangeEvent(command)
+
+    def getPagedWindowPage(self, title):
+        pager = self.__verifyItem(self.n_pagedWindows, title)
+        return pager.getPageNumber()
+
+    def showPagedWindowLabel(self, title, show=True):
         pager = self.__verifyItem(self.n_pagedWindows, title)
         pager.showLabel(show)
+
+    def showPagedWindowTitle(self, title, show=True):
+        pager = self.__verifyItem(self.n_pagedWindows, title)
+        pager.showTitle(show)
+
+    def setPagedWindowTitle(self, title, pageTitle):
+        pager = self.__verifyItem(self.n_pagedWindows, title)
+        pager.setTitle(pageTitle)
 
     def startPage(self, title, row=None, column=0, colspan=0, rowspan=0, sticky="nw"):
         if self.containerStack[-1]['type'] == self.C_PAGE:
@@ -4157,7 +4174,7 @@ class InvalidURLError(ValueError):
 ## Paged Window
 #####################################
 class PagedWindow(Frame):
-    def __init__(self, parent, **opts):
+    def __init__(self, parent, title=None, **opts):
         # call the super constructor
         Frame.__init__(self, parent, **opts)
         self.config(width=300, height=400)
@@ -4166,26 +4183,37 @@ class PagedWindow(Frame):
         self.currentPage = -1
         self.frames=[]
         self.shouldShowLabel = True
+        self.shouldShowTitle = True
+        self.title=title
         self.navPos = 1
         self.maxX=0
         self.maxY=0
+        self.pageChangeEvent = None
 
         # create the 3 components, including a default container frame
+        self.titleLabel = Label(self)
         self.prevButton = Button(self, text="PREVIOUS", command=self.showPrev, state="disabled", width=10)
         self.nextButton = Button(self, text="NEXT", command=self.showNext, state="disabled", width=10)
-        self.posLabel = Label(self)
+        self.posLabel = Label(self, width=8)
 
-        self.grid_rowconfigure(0, weight=1)
-        self.grid_rowconfigure(1, weight=0)
+        self.grid_rowconfigure(0, weight=0)
+        self.grid_rowconfigure(1, weight=1)
+        self.grid_rowconfigure(2, weight=0)
         self.grid_columnconfigure(0, weight=1)
         self.grid_columnconfigure(1, weight=1)
         self.grid_columnconfigure(2, weight=1)
 
         # grid the navigation components
-        self.prevButton.grid(row=self.navPos, column=0, sticky=N+S+W, padx=5, pady=(0,5))
-        self.posLabel.grid(row=self.navPos, column=1, sticky=N+S+E+W, padx=5, pady=(0,5))
-        self.nextButton.grid(row=self.navPos, column=2, sticky=N+S+E, padx=5, pady=(0,5))
+        self.prevButton.grid(row=self.navPos+1, column=0, sticky=N+S+W, padx=5, pady=(0,5))
+        self.posLabel.grid(row=self.navPos+1, column=1, sticky=N+S+E+W, padx=5, pady=(0,5))
+        self.nextButton.grid(row=self.navPos+1, column=2, sticky=N+S+E, padx=5, pady=(0,5))
 
+        # show thte title
+        if self.title is not None and self.shouldShowTitle:
+            self.titleLabel.config(text=self.title, font="-weight bold")
+            self.titleLabel.grid(row=0, column=0, columnspan=3, sticky=N+W+E)
+
+        # show the label
         self.__setLabel()
 
     def setBg(self, colour):
@@ -4194,9 +4222,11 @@ class PagedWindow(Frame):
             self.prevButton.config(highlightbackground=colour)
             self.nextButton.config(highlightbackground=colour)
         self.posLabel.config(bg=colour)
+        self.titleLabel.config(bg=colour)
 
     def setFg(self, colour):
         self.poslabel.config(fg=colour)
+        self.titleLabel.config(fg=colour)
 
     # functions to change the labels of the two buttons
     def setPrevButton(self, title): self.prevButton.config(text=title)
@@ -4204,29 +4234,43 @@ class PagedWindow(Frame):
 
     def setNavPositionTop(self, top=True):
         oldNavPos = self.navPos
+        pady=(0,5)
         if top: self.navPos = 0
         else: self.navPos = 1
         if oldNavPos != self.navPos:
             if self.navPos == 0:
-                self.grid_rowconfigure(0, weight=0)
-                self.grid_rowconfigure(1, weight=1)
-            else:
-                self.grid_rowconfigure(0, weight=1)
                 self.grid_rowconfigure(1, weight=0)
+                self.grid_rowconfigure(2, weight=1)
+                pady=(5,0)
+            else:
+                self.grid_rowconfigure(1, weight=1)
+                self.grid_rowconfigure(2, weight=0)
             # grid the navigation components
             self.frames[self.currentPage].grid_remove()
             self.prevButton.grid_remove()
             self.posLabel.grid_remove()
             self.nextButton.grid_remove()
 
-            self.frames[self.currentPage].grid(row=int(not self.navPos), column=0, columnspan=3, sticky=N+S+E+W, padx=5, pady=5)
-            self.prevButton.grid(row=self.navPos, column=0, sticky=S+W, padx=5, pady=(0,5))
-            self.posLabel.grid(row=self.navPos, column=1, sticky=S+E+W, padx=5, pady=(0,5))
-            self.nextButton.grid(row=self.navPos, column=2, sticky=S+E, padx=5, pady=(0,5))
+            self.frames[self.currentPage].grid(row=int(not self.navPos)+1, column=0, columnspan=3, sticky=N+S+E+W, padx=5, pady=5)
+            self.prevButton.grid(row=self.navPos+1, column=0, sticky=S+W, padx=5, pady=pady)
+            self.posLabel.grid(row=self.navPos+1, column=1, sticky=S+E+W, padx=5, pady=pady)
+            self.nextButton.grid(row=self.navPos+1, column=2, sticky=S+E, padx=5, pady=pady)
 
     def showLabel(self, val=True):
         self.shouldShowLabel = val
         self.__setLabel()
+
+    def setTitle(self, title):
+        self.title = title
+        self.showTitle()
+
+    def showTitle(self, val=True):
+        self.shouldShowTitle = val
+        if self.title is not None and self.shouldShowTitle:
+            self.titleLabel.config(text=self.title, font="-weight bold")
+            self.titleLabel.grid(row=0, column=0, columnspan=3, sticky=N+W+E)
+        else:
+            self.titleLabel.grid_remove()
 
     # function to update the contents of the label
     def __setLabel(self):
@@ -4238,6 +4282,13 @@ class PagedWindow(Frame):
     # get the current frame being shown - for adding widgets
     def getPage(self): return self.frames[self.currentPage]
 
+    # get current page number
+    def getPageNumber(self): return self.currentPage+1
+
+    # register a funciton to call when the page changes
+    def registerPageChangeEvent(self, event):
+        self.pageChangeEvent = event
+
     # adds a new page, making it visible
     def addPage(self):
         # if we're showing a page, remove it
@@ -4246,8 +4297,8 @@ class PagedWindow(Frame):
             self.frames[self.currentPage].grid_forget()
 
         # add a new page
-        self.frames.append(Frame(self, relief=RIDGE, borderwidth=2))
-        self.frames[-1].grid(row=int(not self.navPos), column=0, columnspan=3, sticky=N+S+E+W, padx=5, pady=5)
+        self.frames.append(Page(self))
+        self.frames[-1].grid(row=int(not self.navPos)+1, column=0, columnspan=3, sticky=N+S+E+W, padx=5, pady=5)
 
         self.currentPage = len(self.frames)-1
 
@@ -4277,7 +4328,7 @@ class PagedWindow(Frame):
         self.frames[self.currentPage].grid_forget()
         self.currentPage = page - 1
         self.frames[self.currentPage].grid_propagate(False)
-        self.frames[self.currentPage].grid(row=int(not self.navPos), column=0, columnspan=3, sticky=N+S+E+W, padx=5, pady=5)
+        self.frames[self.currentPage].grid(row=int(not self.navPos)+1, column=0, columnspan=3, sticky=N+S+E+W, padx=5, pady=5)
         self.frames[self.currentPage].grid_columnconfigure(0, weight=1)
         self.frames[self.currentPage].config(width=self.maxX, height=self.maxY)
         self.__setLabel()
@@ -4296,28 +4347,39 @@ class PagedWindow(Frame):
     def showPrev(self, event=None):
         if self.currentPage > 0:
             self.showPage(self.currentPage)
+            if self.pageChangeEvent is not None: self.pageChangeEvent()
+        else:
+            self.bell()
 
     def showNext(self, event=None):
         if self.currentPage < len(self.frames)-1:
             self.showPage(self.currentPage + 2)
+            if self.pageChangeEvent is not None: self.pageChangeEvent()
+        else:
+            self.bell()
+
+class Page(Frame):
+    def __init__(self, parent, **opts):
+        Frame.__init__(self, parent)
+        self.config(relief=RIDGE, borderwidth=2)
 
 #####################################
 ## Named classes for containing groups
 #####################################
 class LabelBox(Frame):
     def __init__(self, parent, **opts):
-      Frame.__init__(self, parent)
-      self.theLabel=None
-      self.theWidget=None
+        Frame.__init__(self, parent)
+        self.theLabel=None
+        self.theWidget=None
 
 class WidgetBox(Frame):
     def __init__(self, parent, **opts):
-      Frame.__init__(self, parent)
-      self.theWidgets=[]
+        Frame.__init__(self, parent)
+        self.theWidgets=[]
 
 class ListBox(Frame):
     def __init__(self, parent, **opts):
-      Frame.__init__(self, parent)
+        Frame.__init__(self, parent)
 
 #####################################
 ## scrollable frame...
