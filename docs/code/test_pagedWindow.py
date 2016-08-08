@@ -15,11 +15,12 @@ def pos(btn):
         app.showPagedWindowTitle("PagedWindow", False)
 
 def pageChanged(pager):
-    print(pager, app.getPagedWindowPage(pager))
+    app.setStatus(pager + " - " + str(app.getPagedWindowPage(pager)))
 
 app=gui("Pages", "280x400")
 app.setBg("old lace")
 app.addToolbar(["top", "hide", "show","bottom", "titleOn", "titleOff"], pos)
+app.addStatus()
 
 app.startPagedWindow("PagedWindow")
 #app.setBg("blue")

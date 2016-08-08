@@ -1318,7 +1318,9 @@ class gui:
             pagedWindow = PagedWindow(self.containerStack[-1]['container'], title=title, bg=self.__getContainerBg(), width=200, height=400)
             # bind events
             self.topLevel.bind("<Left>", pagedWindow.showPrev)
+            self.topLevel.bind("<Control-Left>", pagedWindow.showFirst)
             self.topLevel.bind("<Right>", pagedWindow.showNext)
+            self.topLevel.bind("<Control-Right>", pagedWindow.showLast)
             # register it as a container
             pagedWindow.isContainer = True
             self.__positionWidget(pagedWindow, row, column, colspan, rowspan, sticky=sticky)
@@ -4194,6 +4196,8 @@ class PagedWindow(Frame):
         self.titleLabel = Label(self)
         self.prevButton = Button(self, text="PREVIOUS", command=self.showPrev, state="disabled", width=10)
         self.nextButton = Button(self, text="NEXT", command=self.showNext, state="disabled", width=10)
+        self.prevButton.bind("<Control-Button-1>", self.showFirst)
+        self.nextButton.bind("<Control-Button-1>", self.showLast)
         self.posLabel = Label(self, width=8)
 
         self.grid_rowconfigure(0, weight=0)
@@ -4343,6 +4347,20 @@ class PagedWindow(Frame):
         else:
             self.prevButton.config(state="normal")
             self.nextButton.config(state="normal")
+
+    def showFirst(self, event=None):
+        if self.currentPage == 0:
+            self.bell()
+        else:
+            self.showPage(1)
+            if self.pageChangeEvent is not None: self.pageChangeEvent()
+
+    def showLast(self, event=None):
+        if self.currentPage == len(self.frames)-1:
+            self.bell()
+        else:
+            self.showPage(len(self.frames))
+            if self.pageChangeEvent is not None: self.pageChangeEvent()
 
     def showPrev(self, event=None):
         if self.currentPage > 0:
