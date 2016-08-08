@@ -28,11 +28,9 @@ app.addLabel("l23", "Label 2")
 app.addLabel("l24", "Label 2")
 app.stopPage()
 
-
 app.addPage("pager")
 app.addLabel("l3", "Label 3")
 app.stopPage()
-
 
 app.addPage("pager")
 app.addLabel("l4", "Label 4")

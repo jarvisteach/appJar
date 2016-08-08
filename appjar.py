@@ -1320,6 +1320,7 @@ class gui:
               pagedWindow.isContainer = True
               self.__positionWidget(pagedWindow, row, column, colspan, rowspan, sticky=sticky)
               self.__addContainer(self.C_PAGEDWINDOW, pagedWindow, 0, 1, "nw")
+              self.containerStack[-1]['expand']="None"
               self.n_pagedWindows[title] = pagedWindow
         else:
               raise Exception("Unknown container: " + fType)
@@ -4145,6 +4146,8 @@ class PagedWindow(Frame):
         self.frames=[]
         self.shouldShowLabel = True
         self.navPos = 1
+        self.maxX=0
+        self.maxY=0
 
         # create the 3 components, including a default container frame
         self.prevButton = Button(self, text="PREVIOUS", command=self.showPrev, state="disabled", width=10)
@@ -4207,11 +4210,14 @@ class PagedWindow(Frame):
     # adds a new page, making it visible
     def addPage(self):
         # if we're showing a page, remove it
-        if self.currentPage >= 0: self.frames[self.currentPage].grid_forget()
+        if self.currentPage >= 0:
+            self.__updateMaxSize()
+            self.frames[self.currentPage].grid_forget()
 
         # add a new page
         self.frames.append(Frame(self))
         self.frames[-1].grid(row=int(not self.navPos), column=0, columnspan=3, sticky=N+S+E+W)
+
         self.currentPage = len(self.frames)-1
 
         # update the buttons & labels
@@ -4219,7 +4225,15 @@ class PagedWindow(Frame):
         self.__setLabel()
 
     def stopPage(self):
+        self.__updateMaxSize()
         self.showPage(1)
+
+    def __updateMaxSize(self):
+        self.frames[self.currentPage].update_idletasks()
+        x = self.frames[self.currentPage].winfo_reqwidth()
+        y = self.frames[self.currentPage].winfo_reqheight()
+        if x > self.maxX: self.maxX = x
+        if y > self.maxY: self.maxY = y
 
     # function to display the specified page
     # will re-grid, and disable/enable buttons
@@ -4230,8 +4244,10 @@ class PagedWindow(Frame):
 
         self.frames[self.currentPage].grid_forget()
         self.currentPage = page - 1
+        self.frames[self.currentPage].grid_propagate(False)
         self.frames[self.currentPage].grid(row=int(not self.navPos), column=0, columnspan=3, sticky=N+S+E+W)
         self.frames[self.currentPage].grid_columnconfigure(0, weight=1)
+        self.frames[self.currentPage].config(width=self.maxX, height=self.maxY)
         self.__setLabel()
 
         # update the buttons
