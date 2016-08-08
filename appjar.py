@@ -3434,12 +3434,6 @@ class gui:
 #####################################
 ## FUNCTIONS for status bar
 #####################################
-    def setStatusBg(self, colour=None, field=0):
-        if colour is not None: self.status[field].config(background=colour)
-
-    def setStatusFg(self, colour=None, field=0):
-        if colour is not None: self.status[field].config(foreground=colour)
-
     # TO DO - make multi fielded
     def addStatus(self, header="", fields=1, side=None):
         self.hasStatus = True
@@ -3453,18 +3447,60 @@ class gui:
             self.status.append(Label(self.statusFrame))
             self.status[i].config( bd=1, relief=SUNKEN, anchor=W, font=self.statusFont, width=10)
             self.__addTooltip(self.status[i], "Status bar")
+
             if side=="LEFT": self.status[i].pack(side=LEFT)
             elif side=="RIGHT": self.status[i].pack(side=RIGHT)
             else: self.status[i].pack(side=LEFT, expand=1, fill=BOTH)
 
     def setStatus(self, text, field=0):
-        if self.hasStatus: self.status[field].config(text=self.__getFormatStatus(text))
+        if self.hasStatus:
+            if field is None:
+                for status in self.status:
+                    status.config(text=self.__getFormatStatus(text))
+            elif field >=0 and field < len(self.status):
+                self.status[field].config(text=self.__getFormatStatus(text))
+            else:
+                raise Exception("Invalid status field: " + str(field) + ". Must be between 0 and " + str(len(self.status)-1))
 
-    def setStatusWidth(self, width, field=0):
-        if self.hasStatus: self.status[field].config(width=width)
+    def setStatusBg(self, colour, field=None):
+        if self.hasStatus:
+            if field is None:
+                for status in self.status:
+                    status.config(background=colour)
+            elif field >=0 and field < len(self.status):
+                self.status[field].config(background=colour)
+            else:
+                raise Exception("Invalid status field: " + str(field) + ". Must be between 0 and " + str(len(self.status)-1))
 
-    def clearStatus(self, field=0):
-        if self.hasStatus: self.status[field].config(text=self.__getFormatStatus(""))
+    def setStatusFg(self, colour, field=None):
+        if self.hasStatus:
+            if field is None:
+                for status in self.status:
+                    status.config(foreground=colour)
+            elif field >=0 and field < len(self.status):
+                self.status[field].config(foreground=colour)
+            else:
+                raise Exception("Invalid status field: " + str(field) + ". Must be between 0 and " + str(len(self.status)-1))
+
+    def setStatusWidth(self, width, field=None):
+        if self.hasStatus:
+            if field is None:
+                for status in self.status:
+                    status.config(width=width)
+            elif field >=0 and field < len(self.status):
+                self.status[field].config(width=width)
+            else:
+                raise Exception("Invalid status field: " + str(field) + ". Must be between 0 and " + str(len(self.status)-1))
+
+    def clearStatus(self, field=None):
+        if self.hasStatus:
+            if field is None:
+                for status in self.status:
+                    status.config(text=self.__getFormatStatus(""))
+            elif field >=0 and field < len(self.status):
+                self.status[field].config(text=self.__getFormatStatus(""))
+            else:
+                raise Exception("Invalid status field: " + str(field) + ". Must be between 0 and " + str(len(self.status)-1))
 
     # formats the string shown in the status bar
     def __getFormatStatus(self, text):
