@@ -102,6 +102,7 @@ class gui:
     C_SUBWINDOW="subWindow"
     C_SCROLLPANE="scrollPane"
     C_PAGEDWINDOW="pagedWindow"
+    C_PAGE="page"
 
     # names for each of the widgets defined above
     # used for defining functions
@@ -629,14 +630,14 @@ class gui:
         if self.containerStack[-1]['type'] == "C_ROOT":
             self.appWindow.config(background=colour)
             self.bgLabel.config(background=colour)
-
-        if self.containerStack[-1]['type'] == self.C_PAGEDWINDOW:
+        elif self.containerStack[-1]['type'] == "C_PAGEDWINDOW":
             self.containerStack[-1]['container'].setBg(colour)
-        else:
-            self.containerStack[-1]['container'].config(background=colour)
+            
 
-            for child in self.containerStack[-1]['container'].winfo_children():
-                if not self.__widgetIsContainer(child): self.__setWidgetBg(child, colour)
+        self.containerStack[-1]['container'].config(background=colour)
+
+        for child in self.containerStack[-1]['container'].winfo_children():
+            if not self.__widgetIsContainer(child): self.__setWidgetBg(child, colour)
 
     def __widgetIsContainer(self, widget):
         try:
@@ -1156,6 +1157,9 @@ class gui:
                     if widgType == "Button": widg.config(highlightbackground=bg)
                     elif widgType == "Label": widg.config(background=bg)
 
+        elif widgType == "PagedWindow":
+            widget.setBg(bg)
+
         # any other widgets
         elif widgType not in noBg:
             widget["bg"]=bg
@@ -1241,89 +1245,92 @@ class gui:
     # if possible, removes the current container
     def __removeContainer(self):
         if len(self.containerStack) == 1:
-              raise Exception("Can't remove container, already in root window.")
+            raise Exception("Can't remove container, already in root window.")
         elif not self.containerStack[-1]['widgets']:
-              raise Exception("Put something in the container, before removing it.")
+            raise Exception("Put something in the container, before removing it.")
         else:
-              return self.containerStack.pop()
+            return self.containerStack.pop()
 
     # functions to start the various containers
     def startContainer(self, fType, title, row=None, column=0, colspan=0, rowspan=0, sticky=None):
         if fType == self.C_LABELFRAME:
-              # first, make a LabelFrame, and position it correctly
-              self.__verifyItem(self.n_labelFrames, title, True)
-              container = LabelFrame(self.containerStack[-1]['container'], text=title)
-              container.isContainer = True
-              container.config(background=self.__getContainerBg(), font=self.labelFrameFont, relief="groove")
-              self.__positionWidget(container, row, column, colspan, rowspan, "nsew")
-              self.n_labelFrames[title] = container
+            # first, make a LabelFrame, and position it correctly
+            self.__verifyItem(self.n_labelFrames, title, True)
+            container = LabelFrame(self.containerStack[-1]['container'], text=title)
+            container.isContainer = True
+            container.config(background=self.__getContainerBg(), font=self.labelFrameFont, relief="groove")
+            self.__positionWidget(container, row, column, colspan, rowspan, "nsew")
+            self.n_labelFrames[title] = container
 
-              # now, add to top of stack
-              self.__addContainer(self.C_LABELFRAME, container, 0, 1, sticky)
+            # now, add to top of stack
+            self.__addContainer(self.C_LABELFRAME, container, 0, 1, sticky)
         elif fType == self.C_NOTEBOOK:
-              self.__verifyItem(self.n_noteBooks, title, True)
-              notebook = NoteBook(self.containerStack[-1]['container'], bg=self.__getContainerBg())
-              notebook.isContainer = True
-              self.__positionWidget(notebook, row, column, colspan, rowspan, sticky=sticky)
-              self.n_noteBooks[title] = notebook
+            self.__verifyItem(self.n_noteBooks, title, True)
+            notebook = NoteBook(self.containerStack[-1]['container'], bg=self.__getContainerBg())
+            notebook.isContainer = True
+            self.__positionWidget(notebook, row, column, colspan, rowspan, sticky=sticky)
+            self.n_noteBooks[title] = notebook
 
-              # now, add to top of stack
-              self.__addContainer(self.C_NOTEBOOK, notebook, 0, 1, sticky)
+            # now, add to top of stack
+            self.__addContainer(self.C_NOTEBOOK, notebook, 0, 1, sticky)
         elif fType == self.C_NOTETAB:
-              # add to top of stack
-              self.containerStack[-1]['widgets']=True
-              self.__addContainer(self.C_NOTETAB, self.containerStack[-1]['container'].addTab(title), 0, 1, sticky)
+            # add to top of stack
+            self.containerStack[-1]['widgets']=True
+            self.__addContainer(self.C_NOTETAB, self.containerStack[-1]['container'].addTab(title), 0, 1, sticky)
         elif fType == self.C_PANEDWINDOW:
-              # if we previously put a frame for widgets
-              # remove it
-              if self.containerStack[-1]['type'] == self.C_PANEDFRAME:
-                    self.stopContainer()
+            # if we previously put a frame for widgets
+            # remove it
+            if self.containerStack[-1]['type'] == self.C_PANEDFRAME:
+                self.stopContainer()
 
-              # now, add the new pane
-              self.__verifyItem(self.n_panedWindows, title, True)
-              pane = PanedWindow(self.containerStack[-1]['container'], showhandle=True, sashrelief="groove", bg=self.__getContainerBg())
-              pane.isContainer = True
-              self.__positionWidget(pane, row, column, colspan, rowspan, sticky=sticky)
-              self.n_panedWindows[title] = pane
+            # now, add the new pane
+            self.__verifyItem(self.n_panedWindows, title, True)
+            pane = PanedWindow(self.containerStack[-1]['container'], showhandle=True, sashrelief="groove", bg=self.__getContainerBg())
+            pane.isContainer = True
+            self.__positionWidget(pane, row, column, colspan, rowspan, sticky=sticky)
+            self.n_panedWindows[title] = pane
 
-              # now, add to top of stack
-              self.__addContainer(self.C_PANEDWINDOW, pane, 0, 1, sticky)
+            # now, add to top of stack
+            self.__addContainer(self.C_PANEDWINDOW, pane, 0, 1, sticky)
 
-              # now, add a frame to the pane
-              self.startContainer(self.C_PANEDFRAME, title)
+            # now, add a frame to the pane
+            self.startContainer(self.C_PANEDFRAME, title)
         elif fType == self.C_PANEDFRAME:
-              # create a frame, and add it to the pane
-              frame = Frame(self.containerStack[-1]['container'], bg=self.__getContainerBg())
-              frame.isContainer = True
-              self.containerStack[-1]['container'].add(frame)
-              self.n_panedFrames[title] = frame
+            # create a frame, and add it to the pane
+            frame = Frame(self.containerStack[-1]['container'], bg=self.__getContainerBg())
+            frame.isContainer = True
+            self.containerStack[-1]['container'].add(frame)
+            self.n_panedFrames[title] = frame
 
-              # now, add to top of stack
-              self.__addContainer(self.C_PANEDFRAME, frame, 0, 1, sticky)
+            # now, add to top of stack
+            self.__addContainer(self.C_PANEDFRAME, frame, 0, 1, sticky)
         elif fType == self.C_SCROLLPANE:
-              scrollPane = ScrollPane(self.containerStack[-1]['container'], bg=self.__getContainerBg(), width=100,height=100)
-              scrollPane.isContainer = True
-#                  self.containerStack[-1]['container'].add(scrollPane)
-              self.__positionWidget(scrollPane, row, column, colspan, rowspan, sticky=sticky)
-              self.n_scrollPanes[title] = scrollPane
+            scrollPane = ScrollPane(self.containerStack[-1]['container'], bg=self.__getContainerBg(), width=100,height=100)
+            scrollPane.isContainer = True
+#                self.containerStack[-1]['container'].add(scrollPane)
+            self.__positionWidget(scrollPane, row, column, colspan, rowspan, sticky=sticky)
+            self.n_scrollPanes[title] = scrollPane
 
-              # now, add to top of stack
-              self.__addContainer(self.C_SCROLLPANE, scrollPane, 0, 1, sticky)
+            # now, add to top of stack
+            self.__addContainer(self.C_SCROLLPANE, scrollPane, 0, 1, sticky)
         elif fType == self.C_PAGEDWINDOW:
-              # create the paged window
-              pagedWindow = PagedWindow(self.containerStack[-1]['container'], bg=self.__getContainerBg(), width=200, height=400)
-              pagedWindow.config(background="yellow")
-              # bind events
-              self.topLevel.bind("<Left>", pagedWindow.showPrev)
-              self.topLevel.bind("<Right>", pagedWindow.showNext)
-              # register it as a container
-              pagedWindow.isContainer = True
-              self.__positionWidget(pagedWindow, row, column, colspan, rowspan, sticky=sticky)
-              self.__addContainer(self.C_PAGEDWINDOW, pagedWindow, 0, 1, "nw")
-              self.containerStack[-1]['expand']="None"
-              self.n_pagedWindows[title] = pagedWindow
+            # create the paged window
+            pagedWindow = PagedWindow(self.containerStack[-1]['container'], bg=self.__getContainerBg(), width=200, height=400)
+            # bind events
+            self.topLevel.bind("<Left>", pagedWindow.showPrev)
+            self.topLevel.bind("<Right>", pagedWindow.showNext)
+            # register it as a container
+            pagedWindow.isContainer = True
+            self.__positionWidget(pagedWindow, row, column, colspan, rowspan, sticky=sticky)
+            self.__addContainer(self.C_PAGEDWINDOW, pagedWindow, 0, 1, "nw")
+            self.n_pagedWindows[title] = pagedWindow
+        elif fType == self.C_PAGE:
+            page = self.containerStack[-1]['container'].addPage()
+            page.isContainer = True
+            self.__addContainer(self.C_PAGE, page, 0, 1, sticky)
+            self.containerStack[-1]['expand']="None"
         else:
-              raise Exception("Unknown container: " + fType)
+            raise Exception("Unknown container: " + fType)
 
     def startNoteBook(self, title, row=None, column=0, colspan=0, rowspan=0, sticky="NSEW"):
         self.startContainer(self.C_NOTEBOOK, title, row, column, colspan, rowspan, sticky)
@@ -1370,25 +1377,39 @@ class gui:
         pager = self.__verifyItem(self.n_pagedWindows, title)
         pager.setNavPositionTop(top)
 
+    def setPagedWindowButtons(self, title, buttons):
+        pager = self.__verifyItem(self.n_pagedWindows, title)
+        pager.setPrevButton(buttons[0])
+        pager.setNextButton(buttons[1])
+
     def showPageLabel(self, title, show=True):
         pager = self.__verifyItem(self.n_pagedWindows, title)
         pager.showLabel(show)
 
-    def addPage(self, title):
-        if self.containerStack[-1]['type'] == self.C_PAGEDWINDOW:
-            self.containerStack[-1]['container'].addPage()
-        else:
-              raise Exception("Can't add a PAGEDWINDOW, currently in:", self.containerStack[-1]['type'])
+    def startPage(self, title, row=None, column=0, colspan=0, rowspan=0, sticky="nw"):
+        if self.containerStack[-1]['type'] == self.C_PAGE:
+            self.warn("You didn't STOP the previous PAGE")
+            self.stopPage()
+        elif self.containerStack[-1]['type'] != self.C_PAGEDWINDOW:
+            raise Exception("Can't start a PAGE, currently in:", self.containerStack[-1]['type'])
+
+        self.containerStack[-1]['widgets']=True
+        self.startContainer(self.C_PAGE, title, row, column, colspan, rowspan, sticky="nw")
 
     def stopPage(self):
-        if self.containerStack[-1]['type'] == self.C_PAGEDWINDOW:
-            self.containerStack[-1]['container'].stopPage()
+        if self.containerStack[-1]['type'] == self.C_PAGE:
+            self.stopContainer()
         else:
-              raise Exception("Can't stop PAGEDWINDOW, currently in:", self.containerStack[-1]['type'])
+            raise Exception("Can't stop PAGE, currently in:", self.containerStack[-1]['type'])
+        self.containerStack[-1]['container'].stopPage()
 
     def stopPagedWindow(self):
+        if self.containerStack[-1]['type'] == self.C_PAGE:
+            self.warn("You didn't STOP the previous PAGE")
+            self.containerStack[-1]['container'].stopPage()
+            self.stopContainer()
         if self.containerStack[-1]['type'] != self.C_PAGEDWINDOW:
-              raise Exception("Can't stop a PAGEDWINDOW, currently in:", self.containerStack[-1]['type'])
+            raise Exception("Can't stop a PAGEDWINDOW, currently in:", self.containerStack[-1]['type'])
         self.stopContainer()
 
     ###### PAGED WINDOWS #######
@@ -4161,11 +4182,21 @@ class PagedWindow(Frame):
         self.grid_columnconfigure(2, weight=1)
 
         # grid the navigation components
-        self.prevButton.grid(row=self.navPos, column=0, sticky=N+S+W)
-        self.posLabel.grid(row=self.navPos, column=1, sticky=N+S+E+W)
-        self.nextButton.grid(row=self.navPos, column=2, sticky=N+S+E)
+        self.prevButton.grid(row=self.navPos, column=0, sticky=N+S+W, padx=5, pady=(0,5))
+        self.posLabel.grid(row=self.navPos, column=1, sticky=N+S+E+W, padx=5, pady=(0,5))
+        self.nextButton.grid(row=self.navPos, column=2, sticky=N+S+E, padx=5, pady=(0,5))
 
         self.__setLabel()
+
+    def setBg(self, colour):
+        self.config(bg=colour)
+        if platform() == "Darwin":
+            self.prevButton.config(highlightbackground=colour)
+            self.nextButton.config(highlightbackground=colour)
+        self.posLabel.config(bg=colour)
+
+    def setFg(self, colour):
+        self.poslabel.config(fg=colour)
 
     # functions to change the labels of the two buttons
     def setPrevButton(self, title): self.prevButton.config(text=title)
@@ -4188,10 +4219,10 @@ class PagedWindow(Frame):
             self.posLabel.grid_remove()
             self.nextButton.grid_remove()
 
-            self.frames[self.currentPage].grid(row=int(not self.navPos), column=0, columnspan=3, sticky=N+S+E+W)
-            self.prevButton.grid(row=self.navPos, column=0, sticky=S+W)
-            self.posLabel.grid(row=self.navPos, column=1, sticky=S+E+W)
-            self.nextButton.grid(row=self.navPos, column=2, sticky=S+E)
+            self.frames[self.currentPage].grid(row=int(not self.navPos), column=0, columnspan=3, sticky=N+S+E+W, padx=5, pady=5)
+            self.prevButton.grid(row=self.navPos, column=0, sticky=S+W, padx=5, pady=(0,5))
+            self.posLabel.grid(row=self.navPos, column=1, sticky=S+E+W, padx=5, pady=(0,5))
+            self.nextButton.grid(row=self.navPos, column=2, sticky=S+E, padx=5, pady=(0,5))
 
     def showLabel(self, val=True):
         self.shouldShowLabel = val
@@ -4215,14 +4246,15 @@ class PagedWindow(Frame):
             self.frames[self.currentPage].grid_forget()
 
         # add a new page
-        self.frames.append(Frame(self))
-        self.frames[-1].grid(row=int(not self.navPos), column=0, columnspan=3, sticky=N+S+E+W)
+        self.frames.append(Frame(self, relief=RIDGE, borderwidth=2))
+        self.frames[-1].grid(row=int(not self.navPos), column=0, columnspan=3, sticky=N+S+E+W, padx=5, pady=5)
 
         self.currentPage = len(self.frames)-1
 
         # update the buttons & labels
         if self.currentPage > 0: self.prevButton.config(state="normal")
         self.__setLabel()
+        return self.frames[-1]
 
     def stopPage(self):
         self.__updateMaxSize()
@@ -4245,7 +4277,7 @@ class PagedWindow(Frame):
         self.frames[self.currentPage].grid_forget()
         self.currentPage = page - 1
         self.frames[self.currentPage].grid_propagate(False)
-        self.frames[self.currentPage].grid(row=int(not self.navPos), column=0, columnspan=3, sticky=N+S+E+W)
+        self.frames[self.currentPage].grid(row=int(not self.navPos), column=0, columnspan=3, sticky=N+S+E+W, padx=5, pady=5)
         self.frames[self.currentPage].grid_columnconfigure(0, weight=1)
         self.frames[self.currentPage].config(width=self.maxX, height=self.maxY)
         self.__setLabel()

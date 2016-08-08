@@ -10,37 +10,42 @@ def pos(btn):
     elif btn=="show":
         app.showPageLabel("pager", True)
 
-app=gui("Pages")
+app=gui("Pages", "250x400")
+app.setBg("old lace")
 app.addToolbar(["top", "hide", "show","bottom"], pos)
 
 app.startPagedWindow("pager")
+#app.setBg("blue")
+app.setPagedWindowButtons("pager", ["<<", ">>"])
 
-app.addPage("pager")
+app.startPage("pager")
 app.addLabel("l11", "Label 1")
 app.addLabel("l12", "Label 1")
 app.addLabel("l13", "Label 1")
 app.stopPage()
 
-app.addPage("pager")
+app.startPage("pager")
 app.addLabel("l21", "Label 2")
 app.addLabel("l22", "Label 2")
 app.addLabel("l23", "Label 2")
 app.addLabel("l24", "Label 2")
+app.setBg("orange")
 app.stopPage()
 
-app.addPage("pager")
+app.startPage("pager")
+app.setBg("green")
 app.addLabel("l3", "Label 3")
 app.stopPage()
 
-app.addPage("pager")
+app.startPage("pager")
 app.addLabel("l4", "Label 4")
 app.stopPage()
 
-app.addPage("pager")
+app.startPage("pager")
 app.addLabel("l5", "Label 5")
 app.stopPage()
 
-app.addPage("pager")
+app.startPage("pager")
 app.addLabel("l6", "Label 6")
 app.stopPage()
 
