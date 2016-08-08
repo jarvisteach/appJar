@@ -1371,16 +1371,18 @@ class gui:
     def startPagedWindow(self, title, row=None, column=0, colspan=0, rowspan=0):
         self.startContainer(self.C_PAGEDWINDOW, title, row, column, colspan, rowspan, sticky="nsew")
 
-    def setPage(self, title, page):
+    def setPagedWindowPage(self, title, page):
         pager = self.__verifyItem(self.n_pagedWindows, title)
         pager.showPage(page)
 
-    def setPagedWindowTop(self, title, top=True):
+    def setPagedWindowButtonsTop(self, title, top=True):
         pager = self.__verifyItem(self.n_pagedWindows, title)
         pager.setNavPositionTop(top)
 
     def setPagedWindowButtons(self, title, buttons):
         pager = self.__verifyItem(self.n_pagedWindows, title)
+        if not isinstance(buttons, list) or len(buttons) != 2:
+            raise Exception("You must provide a list of two strings fot setPagedWinowButtons()")
         pager.setPrevButton(buttons[0])
         pager.setNextButton(buttons[1])
 
@@ -1389,7 +1391,7 @@ class gui:
         command = self.__makeFunc(func, title)
         pager.registerPageChangeEvent(command)
 
-    def getPagedWindowPage(self, title):
+    def getPagedWindowPageNumber(self, title):
         pager = self.__verifyItem(self.n_pagedWindows, title)
         return pager.getPageNumber()
 

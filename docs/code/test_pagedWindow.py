@@ -2,9 +2,9 @@ from appJar import gui
 
 def pos(btn):
     if btn=="top":
-        app.setPagedWindowTop("PagedWindow", True)
+        app.setPagedWindowButtonsTop("PagedWindow", True)
     elif btn=="bottom":
-        app.setPagedWindowTop("PagedWindow", False)
+        app.setPagedWindowButtonsTop("PagedWindow", False)
     elif btn=="hide":
         app.showPagedWindowLabel("PagedWindow", False)
     elif btn=="show":
@@ -15,7 +15,7 @@ def pos(btn):
         app.showPagedWindowTitle("PagedWindow", False)
 
 def pageChanged(pager):
-    app.setStatus(pager + " - " + str(app.getPagedWindowPage(pager)))
+    app.setStatus(pager + " - " + str(app.getPagedWindowPageNumber(pager)))
 
 app=gui("Pages", "280x400")
 app.setBg("old lace")

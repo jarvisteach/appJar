@@ -83,12 +83,21 @@ A scrollable frame, to contain widgets.
 
 ###Paged Window
 ---
-A series of pages with NEXT/PREVIOUS buttons and page counter
+A series of pages with NEXT/PREVIOUS buttons, optional page counter & title  
 
 * `.startPagedWindow(title)`  
 * `.stopPagedWindow()`  
-* `.addpage(title)`  
+
+* `.startPage(title)`  
 * `.stopPage()`  
-* `.setPage(title, pageNum)`  
-* `.setPagedWindowTop(title, top=True)`  
-* `.showPageLabel(title, show=True)`  
+
+* `.setPagedWindowTitle(title, title)`  
+* `.setPagedWindowPage(title, pageNum)`  
+* `.setPagedWindowButtons(title, [buttons])`  
+* `.setPagedWindowButtonsTop(title, top=True)`  
+* `.setPagedWindowFunction(title, function)`  
+
+* `.showPagedWindowLabel(title, show=True)`  
+* `.showPagedWindowTitle(title, show=True)`  
+
+* `.getPagedWindowPageNumber(title)`  
