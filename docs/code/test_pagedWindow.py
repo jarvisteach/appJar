@@ -13,6 +13,10 @@ def pos(btn):
         app.showPagedWindowTitle("PagedWindow", True)
     elif btn=="titleOff":
         app.showPagedWindowTitle("PagedWindow", False)
+    elif btn=="tbOn":
+        app.showToolbar()
+    elif btn=="tbOff":
+        app.hideToolbar()
 
 def pageChanged(pager):
     app.setStatus(pager + " - " + str(app.getPagedWindowPageNumber(pager)))
@@ -32,6 +36,7 @@ app.startPage("PagedWindow")
 app.addLabel("l11", "Label 1")
 app.addLabel("l12", "Label 1")
 app.addLabel("l13", "Label 1")
+app.addButtons(["tbOn", "tbOff"], pos)
 app.stopPage()
 
 app.startPage("PagedWindow")

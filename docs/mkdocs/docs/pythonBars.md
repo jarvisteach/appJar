@@ -19,6 +19,10 @@ They offer a series of buttons to click, which change settings/functionality in 
 
 * `.setToolbarImage(name, image)`  
 Will set an image for the corresponding button in the toolbar.
+* `.hideToolbar()`  
+Will hide the toolbar  
+* `.showToolbar()`  
+Will show the toolbar  
 
 ##Menubar
 ___

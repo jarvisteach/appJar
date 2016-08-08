@@ -3281,6 +3281,12 @@ class gui:
         self.n_tbButts[name].config(image=image)
         self.n_tbButts[name].image = image
 
+    # functions to hide & show the toolbar
+    def hideToolbar(self):
+        if self.hasTb: self.tb.pack_forget()
+    def showToolbar(self):
+        if self.hasTb: self.tb.pack(before=self.containerStack[0]['container'], side=TOP, fill=X) 
+
 #####################################
 ## FUNCTIONS for menu bar
 #####################################
