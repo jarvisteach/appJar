@@ -3445,6 +3445,7 @@ class gui:
               if func is not None:
                     u = self.__makeFunc(func, item, True)
                     menu.add_command(label=item, command=u, accelerator=shortcut)
+                    shortcut = "<"+shortcut+">"
                     self.topLevel.bind(shortcut, u)
               else:
                     menu.add_command(label=item, accelerator=shortcut)

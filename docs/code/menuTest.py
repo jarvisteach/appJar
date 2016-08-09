@@ -19,13 +19,13 @@ def showMenus(btn):
 
 app=gui("Menu Tester", "400x400")
 
-app.createMenu("Test 1")
+app.createMenu("Test 1", True)
 app.createMenu("Test 2")
 app.createMenu("Test 3")
 app.addMenu("Funky", menuPress)
 
-app.addMenuItem("Test 1", "Option 1", menuPress, shortcut="1")
-app.addMenuItem("Test 1", "Option 2", menuPress, shortcut="2")
+app.addMenuItem("Test 1", "Option 1", menuPress, shortcut="f")
+app.addMenuItem("Test 1", "Option 2", menuPress, shortcut="g")
 app.addMenuItem("Test 1", "-")
 app.addMenuItem("Test 1", "Option 3", "dogs", kind="rb", shortcut="3")
 app.addMenuItem("Test 1", "Option 3", "cats", kind="rb", shortcut="4")
@@ -40,8 +40,8 @@ app.addMenuItem("More Menus", "Option 20", menuPress, shortcut="b")
 app.addMenuWindow()
 app.addMenuPreferences(menuPress)
 app.addMenuHelp(menuPress)
-app.addMenuItem("help", "Option Help", menuPress, shortcut="b")
-app.addMenuItem("window", "Option Help", menuPress, shortcut="b")
+app.addMenuItem("help", "Option Help", menuPress, shortcut="h")
+app.addMenuItem("window", "Window", menuPress, shortcut="w")
 
 app.addButton("SHOW", showMenus)
 app.addTextArea("t1")
