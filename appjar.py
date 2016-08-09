@@ -4318,22 +4318,28 @@ class InvalidURLError(ValueError):
 class ToggleFrame(Frame):
     def __init__(self, parent, title="", *args, **options):
         Frame.__init__(self, parent, *args, **options)
+
         self.config(relief="raised", borderwidth=2, padx=5, pady=5)
-        self.showing=False
+        self.showing=True
 
         self.titleFrame = Frame(self)
         self.titleFrame.config(bg="DarkGray")
-        self.titleFrame.pack(fill="x", expand=1)
 
         self.titleLabel = Label(self.titleFrame, text=title)
         self.titleLabel.config(font="-weight bold")
-        self.titleLabel.pack(side="left", fill="x", expand=1)
 
-        self.toggleButton = Button(self.titleFrame, width=2, text='+', command=self.toggle)
-        self.toggleButton.pack(side="left")
+        self.toggleButton = Button(self.titleFrame, width=2, text='-', command=self.toggle)
 
         self.subFrame = Frame(self, relief="sunken", borderwidth=2)
+
         self.setBg("DarkGray")
+
+        self.grid_columnconfigure(0, weight=1)
+        self.titleFrame.grid(row=0, column=0, sticky=EW)
+        self.titleFrame.grid_columnconfigure(0, weight=1)
+        self.titleLabel.grid(row=0, column=0)
+        self.toggleButton.grid(row=0, column=1)
+        self.subFrame.grid(row=1, column=0, sticky=EW)
 
     def setFont(self, font):
         self.titleLabel.config(font=font)
@@ -4341,10 +4347,10 @@ class ToggleFrame(Frame):
 
     def toggle(self):
         if not self.showing:
-            self.subFrame.pack(fill="x", expand=1)
+            self.subFrame.grid()
             self.toggleButton.configure(text='-')
         else:
-            self.subFrame.forget()
+            self.subFrame.grid_remove()
             self.toggleButton.configure(text='+')
         self.showing = not self.showing
 
@@ -4359,7 +4365,9 @@ class ToggleFrame(Frame):
         if platform() == "Darwin": self.toggleButton.config(highlightbackground=colour)
 
     def stop(self):
-        pass
+        self.update_idletasks()
+        self.titleFrame.config(width=self.winfo_reqwidth())
+        self.toggle()
 
 #####################################
 ## Paged Window
