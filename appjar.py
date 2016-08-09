@@ -204,6 +204,7 @@ class gui:
         self.meterFont = font.Font(family="Helvetica", size=12, weight='bold')
         self.linkFont = font.Font(family="Helvetica", size=12, weight='bold', underline=1)
         self.labelFrameFont = font.Font(family="Helvetica", size=12)
+        self.toggleFrameFont = font.Font(family="Helvetica", size=12)
         self.noteBookFont = font.Font(family="Helvetica", size=12)
         self.panedWindowFont = font.Font(family="Helvetica", size=12)
         self.scrollPaneFont = font.Font(family="Helvetica", size=12)
@@ -591,6 +592,7 @@ class gui:
         self.linkFont.config(family=font, size=size)
         self.meterFont.config(family=font, size=size)
         self.labelFrameFont.config(family=font, size=size)
+        self.toggleFrameFont.config(family=font, size=size)
         self.noteBookFont.config(family=font, size=size)
         self.panedWindowFont.config(family=font, size=size)
         self.scrollPaneFont.config(family=font, size=size)
@@ -1318,6 +1320,7 @@ class gui:
             self.__addContainer(self.C_SCROLLPANE, scrollPane, 0, 1, sticky)
         elif fType == self.C_TOGGLEFRAME:
             toggleFrame = ToggleFrame(self.containerStack[-1]['container'], title=title, bg=self.__getContainerBg())
+            toggleFrame.setFont(self.toggleFrameFont)
             toggleFrame.isContainer = True
             self.__positionWidget(toggleFrame, row, column, colspan, rowspan, sticky=sticky)
             self.__addContainer(self.C_TOGGLEFRAME, toggleFrame, 0, 1, "nw")
@@ -4323,6 +4326,7 @@ class ToggleFrame(Frame):
         self.titleFrame.pack(fill="x", expand=1)
 
         self.titleLabel = Label(self.titleFrame, text=title)
+        self.titleLabel.config(font="-weight bold")
         self.titleLabel.pack(side="left", fill="x", expand=1)
 
         self.toggleButton = Button(self.titleFrame, width=2, text='+', command=self.toggle)
@@ -4330,6 +4334,10 @@ class ToggleFrame(Frame):
 
         self.subFrame = Frame(self, relief="sunken", borderwidth=2)
         self.setBg("DarkGray")
+
+    def setFont(self, font):
+        self.titleLabel.config(font=font)
+        self.toggleButton.config(font=font)
 
     def toggle(self):
         if not self.showing:
@@ -4393,7 +4401,7 @@ class PagedWindow(Frame):
         self.posLabel.grid(row=self.navPos+1, column=1, sticky=N+S+E+W, padx=5, pady=(0,5))
         self.nextButton.grid(row=self.navPos+1, column=2, sticky=N+S+E, padx=5, pady=(0,5))
 
-        # show thte title
+        # show the title
         if self.title is not None and self.shouldShowTitle:
             self.titleLabel.config(text=self.title, font="-weight bold")
             self.titleLabel.grid(row=0, column=0, columnspan=3, sticky=N+W+E)

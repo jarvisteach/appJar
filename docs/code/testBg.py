@@ -4,6 +4,7 @@ def getName(btn):
     app.setLabel("FOCUS", app.getFocus())
 
 app=gui()
+app.setFont(15)
 app.addToolbar(["But1", "But2", "But3"], getName)
 
 app.setBg("green")

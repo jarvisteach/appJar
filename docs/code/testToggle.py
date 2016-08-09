@@ -4,6 +4,8 @@ def press(btn):
     print(app.getOptionBox("Fred"))
 
 app=gui()
+app.setBg("yellow")
+app.setFont(40)
 
 app.addTickOptionBox("Fred", ["Dogs", "Cats", "Elephants Are Super Cool And Funky"])
 app.addButton("Check Tick", press)
