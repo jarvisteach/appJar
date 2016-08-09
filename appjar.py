@@ -1920,8 +1920,9 @@ class gui:
             option.kind="normal"
         elif kind == "ticks":
             ## http://stackoverflow.com/questions/29019760/how-to-create-a-combobox-that-includes-checkbox-for-each-item
-            option = OptionMenu(frame,variable=var,value="- options -")
-            option["menu"].entryconfigure(0, state="disabled")
+            option = OptionMenu(frame,variable=var,value="")
+            # delete the empty value we just added
+            option['menu'].delete(0, 'end')
             var.set(title)
             vals = []
             for o in options:
@@ -1977,18 +1978,25 @@ class gui:
     def getOptionBox(self, title):
         self.__verifyItem(self.n_optionVars, title)
         val=self.n_optionVars[title]
+
         if type(val) == list:
-            vals=[]
-            for v in val:
-                if v.get(): vals.append(True)
-                else: vals.append(False)
+            ## get list of values ##
+            menu = self.n_options[title]["menu"]
+            last = menu.index("end")
+            items = []
+            for index in range(last+1):
+                items.append(menu.entrycget(index, "label"))
+            ########################
+            vals={}
+            for pos, v in enumerate(val):
+                if v.get(): vals[items[pos]] = True
+                else: vals[items[pos]] = False
             return vals
-
-        val = val.get().strip()
-        # set to None if it's a divider
-        if val.startswith("-") or len(val) == 0: val = None
-
-        return val
+        else:
+            val = val.get().strip()
+            # set to None if it's a divider
+            if val.startswith("-") or len(val) == 0: val = None
+            return val
 
     def __disableOptionBoxSeparators(self, box):
         # disable any separators
