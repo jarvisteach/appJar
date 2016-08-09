@@ -71,6 +71,7 @@ class gui:
     PANEDWINDOW=16
     SCROLLPANE=19
     PAGEDWINDOW=20
+    TOGGLEFRAME=21
 
     # positioning
     N = N
@@ -102,6 +103,7 @@ class gui:
     C_SUBWINDOW="subWindow"
     C_SCROLLPANE="scrollPane"
     C_PAGEDWINDOW="pagedWindow"
+    C_TOGGLEFRAME="toggleFrame"
     C_PAGE="page"
 
     # names for each of the widgets defined above
@@ -300,6 +302,7 @@ class gui:
         self.n_panedWindows={}
         self.n_pagedWindows={}
         self.n_panedFrames={}
+        self.n_toggleFrames={}
         self.n_scrollPanes={}
         self.n_trees={}
         self.n_flashLabs = []
@@ -630,9 +633,8 @@ class gui:
         if self.containerStack[-1]['type'] == "C_ROOT":
             self.appWindow.config(background=colour)
             self.bgLabel.config(background=colour)
-        elif self.containerStack[-1]['type'] == "C_PAGEDWINDOW":
+        elif self.containerStack[-1]['type'] in ["C_PAGEDWINDOW", "C_TOGGLEFRAME"]:
             self.containerStack[-1]['container'].setBg(colour)
-            
 
         self.containerStack[-1]['container'].config(background=colour)
 
@@ -1227,9 +1229,8 @@ class gui:
     # adds the container to the container stack - makes this the current working container
     def __addContainer(self, cType, container, row, col, sticky=None):
         self.containerStack.append (
-              {'type':cType, 'container':container,'emptyRow':row, 'colCount':col,
-                  'sticky':sticky, 'padx':0, 'pady':0, 'ipadx':0, 'ipady':0, 'expand':"ALL", 'widgets':False,
-              'stopFunction':None}
+            {'type':cType, 'container':container,'emptyRow':row, 'colCount':col, 'sticky':sticky,
+            'padx':0, 'pady':0, 'ipadx':0, 'ipady':0, 'expand':"ALL", 'widgets':False, 'stopFunction':None}
         )
 
     # returns the current working container
@@ -1239,6 +1240,8 @@ class gui:
             return container.interior
         elif self.containerStack[-1]['type']==self.C_PAGEDWINDOW:
             return container.getPage()
+        elif self.containerStack[-1]['type']==self.C_TOGGLEFRAME:
+            return container.getContainer()
         else:
             return container
 
@@ -1313,6 +1316,12 @@ class gui:
 
             # now, add to top of stack
             self.__addContainer(self.C_SCROLLPANE, scrollPane, 0, 1, sticky)
+        elif fType == self.C_TOGGLEFRAME:
+            toggleFrame = ToggleFrame(self.containerStack[-1]['container'], title=title, bg=self.__getContainerBg())
+            toggleFrame.isContainer = True
+            self.__positionWidget(toggleFrame, row, column, colspan, rowspan, sticky=sticky)
+            self.__addContainer(self.C_TOGGLEFRAME, toggleFrame, 0, 1, "nw")
+            self.n_toggleFrames[title] = toggleFrame
         elif fType == self.C_PAGEDWINDOW:
             # create the paged window
             pagedWindow = PagedWindow(self.containerStack[-1]['container'], title=title, bg=self.__getContainerBg(), width=200, height=400)
@@ -1366,6 +1375,16 @@ class gui:
     # frame will be added as other widgets
     def startLabelFrame(self, title, row=None, column=0, colspan=0, rowspan=0, sticky=W):
         self.startContainer(self.C_LABELFRAME, title, row, column, colspan, rowspan, sticky)
+
+    ###### TOGGLE FRAMES #######
+    def startToggleFrame(self, title, row=None, column=0, colspan=0, rowspan=0):
+        self.startContainer(self.C_TOGGLEFRAME, title, row, column, colspan, rowspan, sticky="new")
+
+    def stopToggleFrame(self):
+        if self.containerStack[-1]['type'] != self.C_TOGGLEFRAME:
+            raise Exception("Can't stop a TOGGLEFRAME, currently in:", self.containerStack[-1]['type'])
+        self.containerStack[-1]['container'].stop()
+        self.stopContainer()
 
     ###### PAGED WINDOWS #######
     def startPagedWindow(self, title, row=None, column=0, colspan=0, rowspan=0):
@@ -1886,7 +1905,7 @@ class gui:
 #####################################
 ## FUNCTION for optionMenus
 #####################################
-    def __buildOptionBox(self, frame, title, options):
+    def __buildOptionBox(self, frame, title, options, kind="normal"):
         self.__verifyItem(self.n_options, title, True)
 
         # create a string var to hold selected item
@@ -1895,11 +1914,24 @@ class gui:
 
         maxSize, options = self.__configOptionBox(options)
 
-        if len(options) > 0:
+        if len(options) > 0 and kind == "normal":
             option = OptionMenu(frame,var,*options)
             var.set(options[0])
+            option.kind="normal"
+        elif kind == "ticks":
+            ## http://stackoverflow.com/questions/29019760/how-to-create-a-combobox-that-includes-checkbox-for-each-item
+            option = OptionMenu(frame,variable=var,value="- options -")
+            option["menu"].entryconfigure(0, state="disabled")
+            var.set(title)
+            vals = []
+            for o in options:
+                vals.append(BooleanVar())
+                option['menu'].add_checkbutton(label=o, onvalue=1, offvalue=False, variable=vals[-1])
+            self.n_optionVars[title]=vals
+            option.kind="ticks"
         else:
             option = OptionMenu(frame,var,[])
+            option.kind="normal"
 
         option.config(justify=LEFT, font=self.optionFont, background=self.__getContainerBg(), highlightthickness=1, width=maxSize, takefocus=1)
         option.bind("<Button-1>", self.__grabFocus)
@@ -1931,6 +1963,11 @@ class gui:
         option = self.__buildOptionBox(self.__getContainer(), title, options)
         self.__positionWidget(option, row, column, colspan, rowspan)
 
+    # under development
+    def addTickOptionBox(self, title, options, row=None, column=0, colspan=0, rowspan=0):
+        tick = self.__buildOptionBox(self.__getContainer(), title, options, "ticks")
+        self.__positionWidget(tick, row, column, colspan, rowspan)
+
     def addLabelOptionBox(self, title, options, row=None, column=0, colspan=0, rowspan=0):
         frame = self.__getLabelBox(title)
         option = self.__buildOptionBox(frame, title, options)
@@ -1939,7 +1976,15 @@ class gui:
 
     def getOptionBox(self, title):
         self.__verifyItem(self.n_optionVars, title)
-        val=self.n_optionVars[title].get().strip()
+        val=self.n_optionVars[title]
+        if type(val) == list:
+            vals=[]
+            for v in val:
+                if v.get(): vals.append(True)
+                else: vals.append(False)
+            return vals
+
+        val = val.get().strip()
         # set to None if it's a divider
         if val.startswith("-") or len(val) == 0: val = None
 
@@ -3325,15 +3370,22 @@ class gui:
     def __initMenu(self):
         # create a menu bar - only shows if populated
         if not self.hasMenu:
-              self.hasMenu = True
-              self.menuBar = Menu(self.topLevel)
+            self.hasMenu = True
+            self.menuBar = Menu(self.topLevel)
+
+            appmenu = Menu(self.menuBar, name='apple')
+            self.menuBar.add_cascade(menu=appmenu)
+            self.n_menus["appmenu"]=appmenu
+
 
     # add a single entry for a menu
     def addMenu(self, name, func):
-        # may not be supported on MAC
-        self.__initMenu()
-        u = self.__makeFunc(func, name, True)
-        self.menuBar.add_command(label=name, command=u)
+        if platform() == "Darwin":
+            self.warn("Unable to make topLevel menus (" + name + ") on Mac")
+        else:
+            self.__initMenu()
+            u = self.__makeFunc(func, name, True)
+            self.menuBar.add_command(label=name, command=u)
 
     # add a parent menu, for menu items
     def createMenu(self, title, tearable=False):
@@ -3343,10 +3395,25 @@ class gui:
         self.menuBar.add_cascade(label=title,menu=menu)
         self.n_menus[title]=menu
 
+    def disableMenuItem(self, title, item):
+        menu = self.__verifyItem(self.n_menus, title)
+        menu.entryconfigure(item, state=DISABLED)
+
+    def enableMenuItem(self, title, item):
+        menu = self.__verifyItem(self.n_menus, title)
+        menu.entryconfigure(item, state=NORMAL)
+
     # add items to the named menu
-    def addMenuItem(self, title, item, func=None, kind=None):
+    def addMenuItem(self, title, item, func=None, kind=None, shortcut=None):
         menu = self.__verifyItem(self.n_menus, title)
         var = None
+
+        if shortcut is not None:
+            if platform() == "Darwin":
+                shortcut="Command-"+shortcut.lower()
+            elif platform() in [ "win32", "Windows"]:
+                shortcut=shortcut.upper()
+
         if item == "-" or kind=="separator":
               menu.add_separator()
         # creates a var rb+item
@@ -3360,7 +3427,7 @@ class gui:
                     newRb=True
                     var = StringVar(self.topLevel)
                     self.n_menuVars[varName]=var
-              menu.add_radiobutton(label=func, variable=var, value=func)
+              menu.add_radiobutton(label=func, variable=var, value=func, accelerator=shortcut)
               if newRb: self.setMenuRadioButton(title, item, func)
         # creates a var cb+item
         elif kind == "cb":
@@ -3368,13 +3435,19 @@ class gui:
               self.__verifyItem(self.n_menuVars, varName, True)
               var = StringVar(self.topLevel)
               self.n_menuVars[varName]=var
-              menu.add_checkbutton(label=item, variable=var, onvalue=1, offvalue=0)
+              menu.add_checkbutton(label=item, variable=var, onvalue=1, offvalue=0, accelerator=shortcut)
+        elif kind == "sub":
+            self.__verifyItem(self.n_menus, item, True)
+            subMenu = Menu(menu)
+            self.n_menus[item]=subMenu
+            menu.add_cascade(menu=subMenu, label=item, accelerator=shortcut)
         else:
               if func is not None:
                     u = self.__makeFunc(func, item, True)
-                    menu.add_command(label=item, command=u)
+                    menu.add_command(label=item, command=u, accelerator=shortcut)
+                    self.topLevel.bind(shortcut, u)
               else:
-                    menu.add_command(label=item)
+                    menu.add_command(label=item, accelerator=shortcut)
 
     def __getMenu(self, menu, title, kind):
         title=kind+title
@@ -3415,7 +3488,6 @@ class gui:
               if var.get() == "1": var.set("0")
               else: var.set("1")
 
-
     def setMenuCheckBox(self, menu, name):
         self.__setMenu(menu, name, None, "cb")
 
@@ -3425,17 +3497,26 @@ class gui:
     #################
     # wrappers for platform specific menus
 
+    # enables the preferences item in the app menu
     def addMenuPreferences(self, func):
-        self.topLevel.createcommand('tk::mac::ShowPreferences', func)
-        self.topLevel.createcommand('tk::mac::ShowHelp', func)
+        self.__initMenu()
+        u = self.__makeFunc(func, "preferences")
+        self.topLevel.createcommand('tk::mac::ShowPreferences', u)
 
     def addMenuHelp(self, func):
+        self.__initMenu()
         helpMenu = Menu(self.menuBar, name='help')
-        self.topLevel.createcommand('tk::mac::ShowHelp', func)
+        self.menuBar.add_cascade(menu=helpMenu, label='Help')
+        u = self.__makeFunc(func, "help")
+        self.topLevel.createcommand('tk::mac::ShowHelp', u)
+        self.n_menus["help"]=helpMenu
 
-    def addMenuWindow(self, func):
-        windowmenu = Menu(self.menuBar, name='window')
-        self.menuBar.add_cascade(menu=windowmenu, label='Window')
+    # Shows a Window menu
+    def addMenuWindow(self):
+        self.__initMenu()
+        windowMenu = Menu(self.menuBar, name='window')
+        self.menuBar.add_cascade(menu=windowMenu, label='Window')
+        self.n_menus["window"]=windowMenu
 
 #####################################
 ## FUNCTIONS for status bar
@@ -4215,6 +4296,53 @@ class ItemLookupError(LookupError):
 class InvalidURLError(ValueError):
     '''raise this when there's a lookup error for my app'''
     pass
+
+
+
+#####################################
+## ToggleFrame - collapsable frame
+## http://stackoverflow.com/questions/13141259/expandable-and-contracting-frame-in-tkinter
+#####################################
+class ToggleFrame(Frame):
+    def __init__(self, parent, title="", *args, **options):
+        Frame.__init__(self, parent, *args, **options)
+        self.config(relief="raised", borderwidth=2, padx=5, pady=5)
+        self.showing=False
+
+        self.titleFrame = Frame(self)
+        self.titleFrame.config(bg="DarkGray")
+        self.titleFrame.pack(fill="x", expand=1)
+
+        self.titleLabel = Label(self.titleFrame, text=title)
+        self.titleLabel.pack(side="left", fill="x", expand=1)
+
+        self.toggleButton = Button(self.titleFrame, width=2, text='+', command=self.toggle)
+        self.toggleButton.pack(side="left")
+
+        self.subFrame = Frame(self, relief="sunken", borderwidth=2)
+        self.setBg("DarkGray")
+
+    def toggle(self):
+        if not self.showing:
+            self.subFrame.pack(fill="x", expand=1)
+            self.toggleButton.configure(text='-')
+        else:
+            self.subFrame.forget()
+            self.toggleButton.configure(text='+')
+        self.showing = not self.showing
+
+    def getContainer(self):
+        return self.subFrame
+
+    def setBg(self, colour):
+        self.config(bg=colour)
+        self.titleFrame.config(bg=colour)
+        self.titleLabel.config(bg=colour)
+        self.subFrame.config(bg=colour)
+        if platform() == "Darwin": self.toggleButton.config(highlightbackground=colour)
+
+    def stop(self):
+        pass
 
 #####################################
 ## Paged Window
