@@ -164,6 +164,7 @@ class gui:
         self.resource_path = os.path.join(self.lib_path, "resources")
         self.icon_path = os.path.join(self.resource_path,"icons")
         self.sound_path = os.path.join(self.resource_path,"sounds")
+        self.appJarIcon = os.path.join(self.icon_path,"favicon3.ico")
 
         # user configurable
         self.userImages = self.exe_loc
@@ -254,6 +255,7 @@ class gui:
         self.events = []
         self.pollTime = 250
         self.built = True
+        self.topLevel.wm_iconbitmap(self.appJarIcon)
 
     def __configBg(self, container):
         # set up a background image holder
