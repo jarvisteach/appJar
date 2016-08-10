@@ -53,6 +53,19 @@ app.go()
 * `.addFlashLabel(title, text=None)`  
     This adds a flashing *label*, that will alternate between the foreground and background colours.
 
+![FlashLabel](img/1_flash.gif)  
+```python
+from appJar import gui
+
+app = gui()
+
+app.addFlashLabel("f1", "This is flashing")
+app.addLabel("f2", "This is not flashing")
+app.addFlashLabel("f3", "This is also flashing")
+
+app.go()
+```
+
 ####Set Labels
 * `.setLabel(title, text)`  
     Change the contents of the *label*.
@@ -76,6 +89,7 @@ Simply add the word `Label` to the command when adding the widget:
 * `.addLabelSecretlEntry(title)`
 * `.addLabelScale(title)`
 * `.addLabelOptionBox(title, values)`
+* `.addLabelTickOptionBox(title, values)`
 * `.addLabelSpinBox(title, values)`
 * `.addLabelSpinBoxRange(title, from, to)`  
 
@@ -194,7 +208,7 @@ ____
 A group of round boxes, only one of which can be selected.  
 These are great for getting a single value, for a multiple choice question.
 
-![Radios](img/t_radios.gif)  
+![Radios](img/t_radios.png)  
 
 ```python
 from appJar import gui
@@ -241,7 +255,7 @@ app.go()
 ____
 A simple tick-box, with a label, that can be either ON or OFF.
 
-![CheckBoxes](img/1_checks.gif)  
+![CheckBoxes](img/1_checks.png)  
 
 ```python
 from appJar import gui
@@ -275,8 +289,8 @@ app.go()
 ____
 Creates a simple drop-down box. It is only possible to select one option form this drop-down.  
 Pass in a list of values to show in the drop-down box. They will be added in the same order, with the first item shown.  
-If the first item is empty, a simple title will be created. Any other empty iems will be removed.  
-If an item starst with a dash (-), it will be treated as a separator, and can't be selected.  
+If the first item is empty, a simple title `- options -` will be created. Any other empty items will be removed.  
+If an item starts with a dash (-), it will be treated as a separator, and can't be selected.  
 
 ![OptionBox](img/1_optBox.png) ![OptionBox](img/2_optBox.png)  
 
@@ -285,7 +299,8 @@ from appJar import gui
 
 app=gui()
 app.setFont(20)
-app.addLabelOptionBox("Options", ["Apple", "Orange", "Pear", "kiwi"])
+app.addLabelOptionBox("Options", ["- Fruits -", "Apple", "Orange", "Pear", "kiwi",
+                                    "- Pets -", "Dogs", "Cats", "Fish", "Hamsters"])
 app.go()
 ```
 
@@ -293,18 +308,41 @@ app.go()
 * `.addOptionBox(title, values)`  
     This will create an OptionBox, adding the contents of the values list, in the order specified.  
 
+* `.addTickOptionBox(title, values)`  
+    This will create an OptionBox made up of check buttons.  
+    The `title` will always be displayed as the *selected* entry in the OptionBox, event though it can't be selected/ticked.  
+    Instead of selecting a single item, you tick the ones you want.  
+    Calling `.getOptionBox(title)` will return a dictionary of the options along with a True/False value.  
+    ![TickOptionBox](img/3_optBox.png)  
+
+```python
+from appJar import gui
+
+def get(btn):
+    print(app.getOptionBox("Favourite Pets"))
+
+app=gui()
+app.setFont(20)
+app.addTickOptionBox("Favourite Pets", ["Dogs", "Cats", "Hamsters", "Fish"])
+app.addButton("GET", get)
+app.go()
+```
+
 ####Set OptionBoxes
 * `.changeOptionBox(title, newOptions, index)`  
     This will replace the contents of the OptionBox, with the new list provided.  
     If specified, the indexed item will be selected - this can be a position or an item name.  
+    Not available on TickOptionBoxes.  
 
 * `.setOptionBox(title, position)`  
     This will select the item in the list, at the position specified.  
     Alternatively, the name of an item can be specified.  
+    Not available on TickOptionBoxes.  
 
 ####Get OptionBoxes
 * `.getOptionBox(title)`  
-    This will return the currently displayed value in the OptionBox.  
+    This will return the currently displayed value in an OptionBox.  
+    Or a dictionary of names, and their boolean value if a TickOptionBox.  
     Will return None, if an invalid option is currently selected.  
 
 ##SpinBox
@@ -482,11 +520,22 @@ app.go()
 ____
 Similar to an Entry box, but allows you to type text over multiple lines.  
 
+```
+from appJar import gui
+
+app=gui()
+app.addTextArea("t1")
+app.go()
+```
+![TextArea](img/1_textArea.png)  
+
 ####Add TextAreas
 * `.addTextArea(title)`  
     Adds an empty TextArea, with the specified title.  
 * `.addScrolledTextArea(title)`  
     Adds a scrollable TextArea with the specified title.  
+
+![ScrolledTextArea](img/2_textArea.png)  
 
 ####Set TextAreas
 * `.setTextArea(title, text)`  
@@ -538,14 +587,16 @@ Shows a horizontal line
 from appJar import gui
 
 app=gui()
-app.addSeparator()
+app.setBg("lightBlue")
+app.addSeparator(colour="red")
 app.go()
 ```
 
 ![Separator](img/1_sep.png)  
 
-* `.addSeparator()`  
+* `.addSeparator(colour=None)`  
     Adds a separator - a horizontal line, spanning the entire cell.  
+    An optional, named parameter, can be passed in to set a colour for the line.  
 
 ##Link/WebLink
 ____
@@ -577,7 +628,23 @@ app.go()
 ____
 Clickable icon to drag the window around.  
 
+```python
+from appJar import gui
+
+app=gui()
+app.setFont(20)
+app.setBg("lightBlue")
+
+app.addLabel("l1", "Move me around...", 0, 0)
+app.addGrip(0,1)
+app.addSeparator(1,0,2, colour="red")
+app.go()
+```
+![Grip](img/1_grip.png)  
+
 ####Add Grips
 
 * `.addGrip()`  
-    Adds a grip
+    Adds a simple grip icon.  
+    The mouse pointer changes over the grip, and a ToolTip will be shown.  
+    The size and image can't be changed.  

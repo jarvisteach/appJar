@@ -1,28 +1,31 @@
 #Widgets Under Development
 ----
-The following widgets are **under development**. They're included in the library, but offer limited functionality, and are stilll quite buggy.
+The following widgets are **under development**.  
+They're included in the library, but offer limited functionality, and are still buggy.  
 
 ###PieChart
 ---
-Shows a pie chart  
-
-* `.addPieChart(title, values, size=100)`  
-    Takes a dictionary of names and values, which will be converted to percentages, and plotted on the chart.  
-    The names will be used as part of tooltips that appear over each wedge of the PieChart.  
-    An optional size parameter can be passed, to adjust the size of the chart.  
-
-* `.setPieChart(title, name, value)`  
-    Will update the PieChart, by either changing an existing value, adding a new value, or removing a value if it's set to 0.  
-
+Widget to depict a Pie Chart.  
+It will automatically calculate percentages, and draw a pie chart, given a dictionary of items and their amount.  
+The PieChart is purely for display purposes, and is not interactive.  
 ![PieChart](img/dev/pie.png)  
 
 ```python
     from appJar import gui
 
     app=gui()
-    app.addPieChart("p1", {"apples":50, "oranges":200, "pears":75, "peaches":300, "lemons":150}, size=300)
+    app.addPieChart("p1", {"apples":50, "oranges":200, "grapes":75,
+                            "beef":300, "turkey":150}, size=300)
     app.go()
 ```
+
+* `.addPieChart(title, values, size=100)`  
+    Takes a dictionary of names and values, which will be converted to percentages, and plotted on the chart.  
+    The names will be used as part of tooltips that appear over each wedge of the PieChart.  
+    An optional size parameter can be passed, to adjust the size of the PieChart.  
+
+* `.setPieChart(title, name, value)`  
+    Will update the PieChart, by either changing an existing value, adding a new value, or removing a value if it's set to 0.  
 
 ###Tree
 ---

@@ -123,7 +123,7 @@ The following allow widgets to be manipulated on screen:
 
 ###Grouped Options
 ----
-The following are convenience functions, for modifying a group of widgets:
+The following are convenience functions, for modifying a group of widgets:  
 
 * `set XXX Widths(names, val)`  
 * `set XXX Heights(names, val)`  
@@ -132,3 +132,11 @@ The following are convenience functions, for modifying a group of widgets:
 * `setAll XXX Widths(val)`  
 * `setAll XXX Heights(val)`  
     Sets the widths/heights of all widgets of the specified type.
+
+###tkinter Options
+----
+It's also possible to request a widget, and modify it directly:  
+
+* `.get XXX Widget(name)`  
+    This will get the named widget of the specified type.  
+    Any standard tkinter options can then be changed.  
