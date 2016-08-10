@@ -4095,46 +4095,28 @@ class PieChart(Canvas):
         self.fracs=fracs
         self.size=size
         self._drawPie()
-#            self.bind('<Configure>', self._update_coords)
-
-#      def _update_coords(self, event):
-#            '''Updates the position of the text and rectangle inside the canvas when the size of the widget gets changed.'''
-#            self._drawPie()
 
     def _drawPie(self):
         pos = 0
         col = 0
-        for val in self.fracs:
-              sliceId="slice"+str(col)
-              coord=self.size*.05,self.size*.05,self.size*.95,self.size*.95
-              arc=self.create_arc(coord,
-                                fill=self.COLOURS[col%len(self.COLOURS)],
-                                start=self.frac(pos), extent=self.frac(val), activedash=(3,5),
-                                activeoutline="grey", activewidth=3, tag=(sliceId,), width=1)
-              self.tag_bind(sliceId,'<Button>',func=self.pieEvent)
-              self.tag_bind(sliceId,'<Enter>',func=self.pieEvent)
-              self.tag_bind(sliceId,'<Leave>',func=self.pieEvent)
-              pos += val
-              col+=1
+        for key, val in self.fracs.items():
+            sliceId="slice"+str(col)
+            coord=self.size*.05,self.size*.05,self.size*.95,self.size*.95
+            arc=self.create_arc(coord,
+                              fill=self.COLOURS[col%len(self.COLOURS)],
+                              start=self.frac(pos), extent=self.frac(val), activedash=(3,5),
+                              activeoutline="grey", activewidth=3, tag=(sliceId,), width=1)
+
+            # generate a tooltip
+            frac = int(val/sum(self.fracs.values())*100)
+            tip = key + ": " + str(val) + " (" + str(frac) + "%)"
+            tt=ToolTip(self,tip,delay=500, follow_mouse=1, specId=sliceId) 
+
+            pos += val
+            col+=1
 
     def frac(self, curr):
-        return 360. * curr / sum(self.fracs)
-
-    def pieEvent(self,event):
-        widg=str(event.widget.find_withtag("current")[0])
-        if event.type=="7": # enter
-              self.delete("text")
-              bb = self.bbox(widg)
-              x = bb[0] + ((bb[2]-bb[0])/2)
-              y = bb[1] + ((bb[3]-bb[1])/2)
-              #if not x-10<=event.x<=x+10 and not y-10<=event.y<=y+10:
-              #      self.create_text(x,y,text="ID"+widg, tag=("text"))
-              #else:
-              #      self.create_text(x+20,y+20,text="ID"+widg, tag=("text"))
-        elif event.type=="4": # click
-              pass
-        elif event.type=="8": # leave
-              self.delete("text")
+        return 360. * curr / sum(self.fracs.values())
 
 #####################################
 ## Tree Widget Class

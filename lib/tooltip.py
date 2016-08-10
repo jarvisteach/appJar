@@ -42,7 +42,7 @@ create_contents() : creates the contents of the tooltip window (by default a Tki
 import tkinter
 
 class ToolTip:
-    def __init__(self, master, text='Your text here', delay=1500, **opts):
+    def __init__(self, master, text='Your text here', delay=1500, specId=None, **opts):
         self.master = master
         self._opts = {'anchor':'center', 'bd':1, 'bg':'lightyellow', 'delay':delay, 'fg':'black',\
                       'follow_mouse':0, 'font':None, 'justify':'left', 'padx':4, 'pady':2,\
@@ -51,13 +51,21 @@ class ToolTip:
         self.configure(**opts)
         self._tipwindow = None
         self._id = None
-        self._id1 = self.master.bind("<Enter>", self.enter, '+')
-        self._id2 = self.master.bind("<Leave>", self.leave, '+')
-        self._id3 = self.master.bind("<ButtonPress>", self.leave, '+')
         self._follow_mouse = 0
-        if self._opts['follow_mouse']:
-            self._id4 = self.master.bind("<Motion>", self.motion, '+')
-            self._follow_mouse = 1
+        if specId is not None:
+            self._id1 = self.master.tag_bind(specId,"<Enter>", self.enter, '+')
+            self._id2 = self.master.tag_bind(specId,"<Leave>", self.leave, '+')
+            self._id3 = self.master.tag_bind(specId,"<ButtonPress>", self.leave, '+')
+            if self._opts['follow_mouse']:
+                self._id4 = self.master.tag_bind(specId,"<Motion>", self.motion, '+')
+                self._follow_mouse = 1
+        else:
+            self._id1 = self.master.bind("<Enter>", self.enter, '+')
+            self._id2 = self.master.bind("<Leave>", self.leave, '+')
+            self._id3 = self.master.bind("<ButtonPress>", self.leave, '+')
+            if self._opts['follow_mouse']:
+                self._id4 = self.master.bind("<Motion>", self.motion, '+')
+                self._follow_mouse = 1
 
     def configure(self, **opts):
         for key in opts:
