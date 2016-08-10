@@ -53,6 +53,10 @@ class ToolTip:
         self._id = None
         self._follow_mouse = 0
         if specId is not None:
+            self.master.tag_unbind(specId,"<Enter>")
+            self.master.tag_unbind(specId,"<Leave>")
+            self.master.tag_unbind(specId,"<ButtonPress>")
+
             self._id1 = self.master.tag_bind(specId,"<Enter>", self.enter, '+')
             self._id2 = self.master.tag_bind(specId,"<Leave>", self.leave, '+')
             self._id3 = self.master.tag_bind(specId,"<ButtonPress>", self.leave, '+')
