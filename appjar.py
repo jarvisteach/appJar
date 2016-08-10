@@ -96,15 +96,20 @@ class gui:
     # containers
     C_ROOT='rootPage'
     C_LABELFRAME='labelFrame'
+    C_TOGGLEFRAME="toggleFrame"
+
+    # 2 containers for pagedsWindow
+    C_PAGEDWINDOW="pagedWindow"
+    C_PAGE="page"
+    # 2 containers for tabbedFrame
     C_TABBEDFRAME='tabbedFrame'
     C_TAB='tab'
+    # 2 containers for panedWindow
     C_PANEDWINDOW="panedWindow"
     C_PANEDFRAME="panedFrame"
+
     C_SUBWINDOW="subWindow"
     C_SCROLLPANE="scrollPane"
-    C_PAGEDWINDOW="pagedWindow"
-    C_TOGGLEFRAME="toggleFrame"
-    C_PAGE="page"
 
     # names for each of the widgets defined above
     # used for defining functions
