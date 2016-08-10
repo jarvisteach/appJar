@@ -189,6 +189,7 @@ class gui:
 
         # configure the geometry of the window
         self.topLevel.escapeBindId = None # used to exit fullscreen
+        self.topLevel.stopFunction = None # used to exit fullscreen
         self.setGeom(geom)
 
         # set the resize status - default to True
@@ -389,14 +390,12 @@ class gui:
 
     def setStopFunction(self, function):
         """ set a funciton to call when the GUI is quit. Must return True or False """
-        if self.containerStack[-1]['type'] == self.C_SUBWINDOW:
-            self.containerStack[-1]['container'].stopFunction = function
-        else:
-            self.containerStack[0]['stopFunction'] = function
+        tl = self.__getTopLevel()
+        tl.stopFunction = function
 
     def stop(self, event=None):
         """ Closes the GUI. If a stop function is set, will only close the GUI if True """
-        theFunc = self.containerStack[0]['stopFunction']
+        theFunc = self.__getTopLevel().stopFunction
         if theFunc is None or theFunc():
             # stop any sounds, ignore error when not on Windows
             try: self.stopSound()
@@ -1253,7 +1252,7 @@ class gui:
     def __addContainer(self, cType, container, row, col, sticky=None):
         self.containerStack.append (
             {'type':cType, 'container':container,'emptyRow':row, 'colCount':col, 'sticky':sticky,
-            'padx':0, 'pady':0, 'ipadx':0, 'ipady':0, 'expand':"ALL", 'widgets':False, 'stopFunction':None}
+            'padx':0, 'pady':0, 'ipadx':0, 'ipady':0, 'expand':"ALL", 'widgets':False}
         )
 
     # returns the current working container
@@ -1390,19 +1389,6 @@ class gui:
     def startPanedWindow(self, title, row=None, column=0, colspan=0, rowspan=0, sticky="NSEW"):
         self.startContainer(self.C_PANEDWINDOW, title, row, column, colspan, rowspan, sticky)
 
-    def startSubWindow(self, name, title=None):
-        self.__verifyItem(self.n_subWindows, name, True)
-        if title == None: title=name
-        top = SubWindow()
-        top.title(title)
-        top.protocol("WM_DELETE_WINDOW", self.__makeFunc(self.destroySubWindow, name))
-        top.withdraw()
-        top.win = self
-        self.n_subWindows[name] = top
-
-        # now, add to top of stack
-        self.__addContainer(self.C_SUBWINDOW, top, 0, 1, "")
-
     # sticky is alignment inside frame
     # frame will be added as other widgets
     def startLabelFrame(self, title, row=None, column=0, colspan=0, rowspan=0, sticky=W):
@@ -1504,12 +1490,6 @@ class gui:
     # functions to stop the various containers
     def stopContainer(self): self.__removeContainer()
 
-    def stopSubWindow(self):
-        if self.containerStack[-1]['type'] == self.C_SUBWINDOW:
-              self.stopContainer()
-        else:
-              raise Exception("Can't stop a SUBWINDOW, currently in:", self.containerStack[-1]['type'])
-
     def stopTabbedFrame(self):
         # auto close the existing TAB - keep it?
         if self.containerStack[-1]['type'] == self.C_TAB:
@@ -1544,26 +1524,68 @@ class gui:
               try: self.stopPanedWindow()
               except: break
 
+    ### SUB WINDOWS ###
+
+    def startSubWindow(self, name, title=None, modal=False):
+        self.__verifyItem(self.n_subWindows, name, True)
+        if title == None: title=name
+        top = SubWindow()
+        top.modal=modal
+        top.title(title)
+        top.protocol("WM_DELETE_WINDOW", self.__makeFunc(self.hideSubWindow, name))
+        top.withdraw()
+        top.win = self
+        self.n_subWindows[name] = top
+
+        # now, add to top of stack
+        self.__addContainer(self.C_SUBWINDOW, top, 0, 1, "")
+
+    def stopSubWindow(self):
+        if self.containerStack[-1]['type'] == self.C_SUBWINDOW:
+              self.stopContainer()
+        else:
+              raise Exception("Can't stop a SUBWINDOW, currently in:", self.containerStack[-1]['type'])
+
     # functions to show/hide/destroy SubWindows
     def showSubWindow(self, title):
         tl = self.__verifyItem(self.n_subWindows, title)
         tl.deiconify()
         tl.config(takefocus=True)
+        tl.killLab=Label(tl)
+
+        if tl.modal:
+            tl.transient(self.topLevel)
+            tl.grab_set()
+            tl.focus_set()
+            self.topLevel.wait_window(tl.killLab)
 
     def setSubWindowLocation(self, title, x, y):
         tl = self.__verifyItem(self.n_subWindows, title)
         tl.geometry("+%d+%d" % (x, y))
 
     def hideSubWindow(self, title):
-        self.__verifyItem(self.n_subWindows, title).withdraw()
+        tl = self.__verifyItem(self.n_subWindows, title)
+        theFunc = tl.stopFunction
+        if theFunc is None or theFunc():
+            tl.withdraw()
+            if tl.modal:
+                tl.killLab.destroy()
+                self.topLevel.grab_set()
+                self.topLevel.focus_set()
 
     def destroySubWindow(self, title):
-        topLevel = self.__verifyItem(self.n_subWindows, title)
-        theFunc = topLevel.stopFunction
+        tl = self.__verifyItem(self.n_subWindows, title)
+        theFunc = tl.stopFunction
         if theFunc is None or theFunc():
-            # stop any sounds, ignore error when not on Windows
-            topLevel.destroy()
+            tl.withdraw()
+            tl.killLab.destroy()
+            tl.killLab=None
+            self.topLevel.grab_set()
+            self.topLevel.focus_set()
+
+            tl.destroy()
             del self.n_subWindows[title]
+    #### END SUB WINDOWS ####
 
     # make a PanedWindow align vertically
     def setPanedWindowVertical(self, window):
