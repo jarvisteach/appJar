@@ -1363,6 +1363,10 @@ class gui:
     def startNoteBook(self, title, row=None, column=0, colspan=0, rowspan=0, sticky="NSEW"):
         self.startContainer(self.C_NOTEBOOK, title, row, column, colspan, rowspan, sticky)
 
+    def setNoteBookTabExpand(self, title, expand=True):
+        nb = self.__verifyItem(self.n_noteBooks, title)
+        nb.expandTabs(expand)
+
     def startNoteTab(self, title):
         # auto close the previous NOTETAB - keep it?
         if self.containerStack[-1]['type'] == self.C_NOTETAB:
@@ -3962,13 +3966,19 @@ class DualMeter(SplitMeter):
 ## NoteBook Class
 #################################
 class NoteBook(Frame):
-    def __init__(self, master, bg, *args, **kwargs):
+    def __init__(self, master, bg, fill=False, *args, **kwargs):
         Frame.__init__(self, master, bg=bg)
         self.tabs=Frame(self,bg=bg)
         self.paneBg=bg
         self.panes=Frame(self,relief=SUNKEN,bd=2,bg=self.paneBg,**kwargs)
+        self.fill=fill
+        self.tabList=[]
 
-        self.tabs.grid(row=0, sticky=W)
+        if self.fill:
+            self.tabs.grid(row=0, sticky=W+E)
+        else:
+            self.tabs.grid(row=0, sticky=W)
+
         Grid.columnconfigure(self, 0, weight=1)
         self.panes.grid(row=1,sticky="NESW")
         Grid.rowconfigure(self, 1, weight=1)
@@ -3982,6 +3992,21 @@ class NoteBook(Frame):
         self.selectedTab = None
         self.highlightedTab = None
 
+    def expandTabs(self, fill=True):
+        self.fill = fill
+        self.tabs.grid_forget()
+        if self.fill:
+            self.tabs.grid(row=0, sticky=W+E)
+        else:
+            self.tabs.grid(row=0, sticky=W)
+
+        for tab in self.tabList:
+            tab.pack_forget()
+            if self.fill:
+                tab.pack(side=LEFT,ipady=4,ipadx=4, expand=True, fill=BOTH)
+            else:
+                tab.pack(side=LEFT,ipady=4,ipadx=4)
+
     def addTab(self, text, **kwargs):
         # log the first tab as the selected tab
         if self.selectedTab is None: self.selectedTab=text
@@ -3989,12 +4014,17 @@ class NoteBook(Frame):
 
         # create the tab, bind events, pack it in
         tab=Label(self.tabs,text=text,relief=RIDGE,cursor="hand2",takefocus=1,**kwargs)
+        self.tabList.append(tab)
+
         tab.bind("<Button-1>", lambda *args:self.changeTab(text))
         tab.bind("<Return>", lambda *args:self.changeTab(text))
         tab.bind("<space>", lambda *args:self.changeTab(text))
         tab.bind("<FocusIn>", lambda *args:self.__focusIn(text))
         tab.bind("<FocusOut>", lambda *args:self.__focusOut(text))
-        tab.pack(side=LEFT,ipady=4,ipadx=4)
+        if self.fill:
+            tab.pack(side=LEFT,ipady=4,ipadx=4, expand=True, fill=BOTH)
+        else:
+            tab.pack(side=LEFT,ipady=4,ipadx=4)
 
         # create the pane
         pane=Frame(self.panes,bg=self.paneBg)
@@ -4051,7 +4081,6 @@ class NoteBook(Frame):
         self.activeBg = activeBg
         self.inactiveBg = inactiveBg
         self.__colourTabs(False)
-
 
 #####################################
 ## Drag Grip Label Class
