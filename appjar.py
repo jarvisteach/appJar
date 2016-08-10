@@ -3297,6 +3297,10 @@ class gui:
         self.n_pieCharts[name] = pie
         self.__positionWidget(pie, row, column, colspan, rowspan, sticky=None)
 
+    def setPieChart(self, title, name, value):
+        pie = self.__verifyItem(self.n_pieCharts, title)
+        pie.setValue(name, value)
+
 #####################################
 ## FUNCTIONS for tool bar
 #####################################
@@ -4117,6 +4121,14 @@ class PieChart(Canvas):
 
     def frac(self, curr):
         return 360. * curr / sum(self.fracs.values())
+
+    def setValue(self, name, value):
+        if value == 0 and name in self.fracs:
+            del self.fracs[name]
+        else:
+            self.fracs[name]=value
+
+        self._drawPie()
 
 #####################################
 ## Tree Widget Class

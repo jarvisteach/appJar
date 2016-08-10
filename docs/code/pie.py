@@ -2,6 +2,7 @@ from appJar import gui
 
 def press(btn):
     app.setBg("green")
+    app.setPieChart("p1", "apples", 0)
 
 app=gui()
 app.setBg("yellow")
