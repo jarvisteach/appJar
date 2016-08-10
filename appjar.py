@@ -67,7 +67,7 @@ class gui:
     CB=40
     LB=70
     LABELFRAME=16
-    NOTEBOOK=17
+    TABBEDFRAME=17
     PANEDWINDOW=18
     SCROLLPANE=19
     PAGEDWINDOW=20
@@ -96,8 +96,8 @@ class gui:
     # containers
     C_ROOT='rootPage'
     C_LABELFRAME='labelFrame'
-    C_NOTEBOOK='noteBook'
-    C_NOTETAB='noteTab'
+    C_TABBEDFRAME='tabbedFrame'
+    C_TAB='tab'
     C_PANEDWINDOW="panedWindow"
     C_PANEDFRAME="panedFrame"
     C_SUBWINDOW="subWindow"
@@ -110,7 +110,7 @@ class gui:
     # used for defining functions
     WIDGETS = { LABEL:"Label", MESSAGE:"Message", BUTTON:"Button", ENTRY:"Entry", CB:"Cb", SCALE:"Scale", RB:"Rb",
               LB:"Lb", SPIN:"SpinBox", OPTION:"OptionBox", TEXTAREA:"TextArea", LINK:"Link", METER:"Meter", IMAGE:"Image",
-              RADIOBUTTON:"RadioButton", CHECKBOX:"CheckBox", LISTBOX:"ListBox", PIECHART:"PieChart", #NOTEBOOK:"NoteBook",
+              RADIOBUTTON:"RadioButton", CHECKBOX:"CheckBox", LISTBOX:"ListBox", PIECHART:"PieChart", #TABBEDFRAME:"TabbedFrame",
               LABELFRAME:"LabelFrame", PANEDWINDOW:"PanedWindow" }
 
     # music stuff
@@ -206,7 +206,7 @@ class gui:
         self.linkFont = font.Font(family="Helvetica", size=12, weight='bold', underline=1)
         self.labelFrameFont = font.Font(family="Helvetica", size=12)
         self.toggleFrameFont = font.Font(family="Helvetica", size=12)
-        self.noteBookFont = font.Font(family="Helvetica", size=12)
+        self.tabbedFrameFont = font.Font(family="Helvetica", size=12)
         self.panedWindowFont = font.Font(family="Helvetica", size=12)
         self.scrollPaneFont = font.Font(family="Helvetica", size=12)
 
@@ -300,7 +300,7 @@ class gui:
         self.n_meters={}
         self.n_subWindows={}
         self.n_labelFrames={}
-        self.n_noteBooks={}
+        self.n_tabbedFrames={}
         self.n_panedWindows={}
         self.n_pagedWindows={}
         self.n_panedFrames={}
@@ -594,7 +594,7 @@ class gui:
         self.meterFont.config(family=font, size=size)
         self.labelFrameFont.config(family=font, size=size)
         self.toggleFrameFont.config(family=font, size=size)
-        self.noteBookFont.config(family=font, size=size)
+        self.tabbedFrameFont.config(family=font, size=size)
         self.panedWindowFont.config(family=font, size=size)
         self.scrollPaneFont.config(family=font, size=size)
 
@@ -769,7 +769,7 @@ class gui:
         elif kind == self.PIECHART: return self.n_pieCharts
 
         elif kind == self.LABELFRAME: return self.n_labelFrames
-        elif kind == self.NOTEBOOK: return self.n_noteBooks
+        elif kind == self.TABBEDFRAME: return self.n_tabbedFrames
         elif kind == self.PANEDWINDOW: return self.n_panedFrames
         elif kind == self.SCROLLPANE: return self.n_scrollPanes
         elif kind == self.PAGEDWINDOW: return self.n_pagedWindows
@@ -814,7 +814,7 @@ class gui:
                 if option == 'background':
                     if kind==self.METER:
                         item.setBg(value)
-                    elif kind==self.NOTEBOOK:
+                    elif kind==self.TABBEDFRAME:
                         item.setBg(value)
                     else:
                         self.__setWidgetBg(item, value)
@@ -1283,19 +1283,19 @@ class gui:
 
             # now, add to top of stack
             self.__addContainer(self.C_LABELFRAME, container, 0, 1, sticky)
-        elif fType == self.C_NOTEBOOK:
-            self.__verifyItem(self.n_noteBooks, title, True)
-            notebook = NoteBook(self.containerStack[-1]['container'], bg=self.__getContainerBg())
-            notebook.isContainer = True
-            self.__positionWidget(notebook, row, column, colspan, rowspan, sticky=sticky)
-            self.n_noteBooks[title] = notebook
+        elif fType == self.C_TABBEDFRAME:
+            self.__verifyItem(self.n_tabbedFrames, title, True)
+            tabbedFrame = TabbedFrame(self.containerStack[-1]['container'], bg=self.__getContainerBg())
+            tabbedFrame.isContainer = True
+            self.__positionWidget(tabbedFrame, row, column, colspan, rowspan, sticky=sticky)
+            self.n_tabbedFrames[title] = tabbedFrame
 
             # now, add to top of stack
-            self.__addContainer(self.C_NOTEBOOK, notebook, 0, 1, sticky)
-        elif fType == self.C_NOTETAB:
+            self.__addContainer(self.C_TABBEDFRAME, tabbedFrame, 0, 1, sticky)
+        elif fType == self.C_TAB:
             # add to top of stack
             self.containerStack[-1]['widgets']=True
-            self.__addContainer(self.C_NOTETAB, self.containerStack[-1]['container'].addTab(title), 0, 1, sticky)
+            self.__addContainer(self.C_TAB, self.containerStack[-1]['container'].addTab(title), 0, 1, sticky)
         elif fType == self.C_PANEDWINDOW:
             # if we previously put a frame for widgets
             # remove it
@@ -1360,21 +1360,25 @@ class gui:
         else:
             raise Exception("Unknown container: " + fType)
 
-    def startNoteBook(self, title, row=None, column=0, colspan=0, rowspan=0, sticky="NSEW"):
-        self.startContainer(self.C_NOTEBOOK, title, row, column, colspan, rowspan, sticky)
+    def startTabbedFrame(self, title, row=None, column=0, colspan=0, rowspan=0, sticky="NSEW"):
+        self.startContainer(self.C_TABBEDFRAME, title, row, column, colspan, rowspan, sticky)
 
-    def setNoteBookTabExpand(self, title, expand=True):
-        nb = self.__verifyItem(self.n_noteBooks, title)
+    def setTabbedFrameTabExpand(self, title, expand=True):
+        nb = self.__verifyItem(self.n_tabbedFrames, title)
         nb.expandTabs(expand)
 
-    def startNoteTab(self, title):
-        # auto close the previous NOTETAB - keep it?
-        if self.containerStack[-1]['type'] == self.C_NOTETAB:
-              self.warn("You didn't STOP the previous NOTETAB")
+    def setTabbedFrameSelectedTab(self, title, tab):
+        nb = self.__verifyItem(self.n_tabbedFrames, title)
+        nb.changeTab(tab)
+
+    def startTab(self, title):
+        # auto close the previous TAB - keep it?
+        if self.containerStack[-1]['type'] == self.C_TAB:
+              self.warn("You didn't STOP the previous TAB")
               self.stopContainer()
-        elif self.containerStack[-1]['type'] != self.C_NOTEBOOK:
+        elif self.containerStack[-1]['type'] != self.C_TABBEDFRAME:
               raise Exception("Can't add a Tab to the current container: ", self.containerStack[-1]['type'])
-        self.startContainer(self.C_NOTETAB, title)
+        self.startContainer(self.C_TAB, title)
 
     def startPanedWindow(self, title, row=None, column=0, colspan=0, rowspan=0, sticky="NSEW"):
         self.startContainer(self.C_PANEDWINDOW, title, row, column, colspan, rowspan, sticky)
@@ -1499,16 +1503,16 @@ class gui:
         else:
               raise Exception("Can't stop a SUBWINDOW, currently in:", self.containerStack[-1]['type'])
 
-    def stopNoteBook(self):
+    def stopTabbedFrame(self):
         # auto close the existing TAB - keep it?
-        if self.containerStack[-1]['type'] == self.C_NOTETAB:
-              self.warn("You didn't STOP the previous NOTETAB")
+        if self.containerStack[-1]['type'] == self.C_TAB:
+              self.warn("You didn't STOP the previous TAB")
               self.stopContainer()
         self.stopContainer()
 
-    def stopNoteTab(self):
-        if self.containerStack[-1]['type'] != self.C_NOTETAB:
-              raise Exception("Can't stop a NOTETAB, currently in:", self.containerStack[-1]['type'])
+    def stopTab(self):
+        if self.containerStack[-1]['type'] != self.C_TAB:
+              raise Exception("Can't stop a TAB, currently in:", self.containerStack[-1]['type'])
         self.stopContainer()
 
     def stopLabelFrame(self):
@@ -1564,22 +1568,22 @@ class gui:
         frame = self.__verifyItem(self.n_labelFrames, title)
         frame.config(labelanchor=anchor)
 
-    # functions to change colours of NoteBooks
-    def setNoteTabBg(self, note, tab, bg):
-        myNote = self.__verifyItem(self.n_noteBooks, note)
-        myNote.setTabBg(tab, bg)
+    # functions to change colours of TabbedFrames
+    def setTabbedFrameTabBg(self, tabbedFrame, tab, bg):
+        myFrame = self.__verifyItem(self.n_tabbedFrames, tabbedFrame)
+        myFrame.setTabBg(tab, bg)
 
-    def setNoteTab(self, note, tab):
-        myNote = self.__verifyItem(self.n_noteBooks, note)
-        myNote.changeTab(tab)
+    def setTabbedFrameTab(self, tabbedFrame, tab):
+        myFrame = self.__verifyItem(self.n_tabbedFrames, tabbedFrame)
+        myFrame.changeTab(tab)
 
-    def setNoteBookFg(self, note, active, inactive):
-        myNote = self.__verifyItem(self.n_noteBooks, note)
-        myNote.setFg(active, inactive)
+    def setTabbedFrameFg(self, tabbedFrame, active, inactive):
+        myFrame = self.__verifyItem(self.n_tabbedFrames, tabbedFrame)
+        myFrame.setFg(active, inactive)
 
-    def setNoteBookBg(self, note, active, inactive):
-        myNote = self.__verifyItem(self.n_noteBooks, note)
-        myNote.setBg(active, inactive)
+    def setTabbedFrameBg(self, tabbedFrame, active, inactive):
+        myFrame = self.__verifyItem(self.n_tabbedFrames, tabbedFrame)
+        myFrame.setBg(active, inactive)
 
 #####################################
 ## warn when bad functions called...
@@ -3963,9 +3967,9 @@ class DualMeter(SplitMeter):
 
 
 #################################
-## NoteBook Class
+## TabbedFrame Class
 #################################
-class NoteBook(Frame):
+class TabbedFrame(Frame):
     def __init__(self, master, bg, fill=False, *args, **kwargs):
         Frame.__init__(self, master, bg=bg)
         self.tabs=Frame(self,bg=bg)
@@ -4045,6 +4049,8 @@ class NoteBook(Frame):
         self.tabVars[tabName][0]['fg']='black'
 
     def changeTab(self, tabName):
+        if tabName not in self.tabVars.keys():
+            raise Exception("Invalid tab name: " + tabName)
         self.tabVars[tabName][0].focus_set()
         self.highlightedTab = tabName
         if tabName != self.selectedTab:
