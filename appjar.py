@@ -111,7 +111,7 @@ class gui:
     WIDGETS = { LABEL:"Label", MESSAGE:"Message", BUTTON:"Button", ENTRY:"Entry", CB:"Cb", SCALE:"Scale", RB:"Rb",
               LB:"Lb", SPIN:"SpinBox", OPTION:"OptionBox", TEXTAREA:"TextArea", LINK:"Link", METER:"Meter", IMAGE:"Image",
               RADIOBUTTON:"RadioButton", CHECKBOX:"CheckBox",LISTBOX:"ListBox", #NOTEBOOK:"NoteBook",
-              LABELFRAME:"LabelFrame", PANEDWINDOW:"PanedWindow" }
+              LABELFRAME:"LabelFrame", PANEDWINDOW:"PanedWindow", PIECHART:"PieChart" }
 
     # music stuff
     BASIC_NOTES = {"A":440, "B":493, "C":261, "D":293, "E":329, "F":349, "G":392 }
@@ -400,7 +400,7 @@ class gui:
 #####################################
     #events will fire in order of being added, after sleeping for time
     def setPollTime(self, time):
-        """ Set a frequency for executing queueud functions """
+        """ Set a frequency for executing queued functions """
         self.pollTime = time
 
     # register events to be called by the sleep timer
@@ -755,8 +755,8 @@ class gui:
         elif kind == self.MESSAGE: return self.n_messages
         elif kind == self.BUTTON: return self.n_buttons
         elif kind == self.ENTRY: return self.n_entries
-        elif kind in [self.CB, self.CHECKBOX]: return self.n_cbs
         elif kind == self.SCALE: return self.n_scales
+        elif kind in [self.CB, self.CHECKBOX]: return self.n_cbs
         elif kind in [self.RB, self.RADIOBUTTON]: return self.n_rbs
         elif kind in [self.LB, self.LISTBOX]: return self.n_lbs
         elif kind == self.SPIN: return self.n_spins
@@ -769,6 +769,7 @@ class gui:
         elif kind == self.PANEDWINDOW: return self.n_panedFrames
         elif kind == self.SCROLLPANE: return self.n_scrollPanes
         elif kind == self.IMAGE: return self.n_images
+        elif kind == self.PIECHART: return self.n_pieCharts
         else: raise Exception ("Unknown widget type: " + str(kind))
 
     def configureAllWidgets(self, kind, option, value):

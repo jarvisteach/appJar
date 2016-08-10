@@ -6,9 +6,13 @@ The following widgets are **under development**. They're included in the library
 ---
 Shows a pie chart  
 
-* `.addPieChart(name, values, size=100)`  
-    Takes a list of integers, which will be converted to percentages, and plotted on the chart.  
+* `.addPieChart(title, values, size=100)`  
+    Takes a dictionary of names and values, which will be converted to percentages, and plotted on the chart.  
+    The names will be used as part of tooltips that appear over each wedge of the PieChart.  
     An optional size parameter can be passed, to adjust the size of the chart.  
+
+* `.setPieChart(title, name, value)`  
+    Will update the PieChart, by either changing an existing value, adding a new value, or removing a value if it's set to 0.  
 
 ![PieChart](img/dev/pie.png)  
 
@@ -16,7 +20,7 @@ Shows a pie chart
     from appJar import gui
 
     app=gui()
-    app.addPieChart("p1", [50, 200, 75, 300, 150], size=300)
+    app.addPieChart("p1", {"apples":50, "oranges":200, "pears":75, "peaches":300, "lemons":150}, size=300)
     app.go()
 ```
 

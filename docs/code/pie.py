@@ -4,6 +4,14 @@ def press(btn):
     app.setBg(app.getEntry("Colour"))
     app.setPieChart("p1", app.getEntry("Name"), app.getEntry("Amount"))
 
+def test(btn):
+    if btn =="HIDE":
+        app.hidePieChart("p1")
+    elif btn =="SHOW":
+        app.showPieChart("p1")
+    elif btn =="REMOVE":
+        app.removePieChart("p1")
+
 app=gui()
 app.setBg("yellow")
 #app.addPieChart("p1", [50, 200, 75, 300, 150], size=300)
@@ -13,4 +21,6 @@ app.addLabelNumericEntry("Amount")
 app.addLabelEntry("Colour")
 app.addButton("PRESS", press)
 app.setButtonTooltip("PRESS", "help me")
+
+app.addButtons(["HIDE", "SHOW", "REMOVE"], test)
 app.go()
