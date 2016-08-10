@@ -1431,7 +1431,7 @@ class gui:
         pager = self.__verifyItem(self.n_pagedWindows, title)
         return pager.getPageNumber()
 
-    def showPagedWindowLabel(self, title, show=True):
+    def showPagedWindowPageNumber(self, title, show=True):
         pager = self.__verifyItem(self.n_pagedWindows, title)
         pager.showLabel(show)
 
@@ -1443,7 +1443,7 @@ class gui:
         pager = self.__verifyItem(self.n_pagedWindows, title)
         pager.setTitle(pageTitle)
 
-    def startPage(self, title, row=None, column=0, colspan=0, rowspan=0, sticky="nw"):
+    def startPage(self, row=None, column=0, colspan=0, rowspan=0, sticky="nw"):
         if self.containerStack[-1]['type'] == self.C_PAGE:
             self.warn("You didn't STOP the previous PAGE")
             self.stopPage()
@@ -1451,7 +1451,7 @@ class gui:
             raise Exception("Can't start a PAGE, currently in:", self.containerStack[-1]['type'])
 
         self.containerStack[-1]['widgets']=True
-        self.startContainer(self.C_PAGE, title, row, column, colspan, rowspan, sticky="nw")
+        self.startContainer(self.C_PAGE, None, row, column, colspan, rowspan, sticky="nw")
 
     def stopPage(self):
         if self.containerStack[-1]['type'] == self.C_PAGE:
