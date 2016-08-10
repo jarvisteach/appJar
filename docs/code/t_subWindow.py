@@ -1,5 +1,7 @@
 from appJar import gui
 
+def checkDone(btn): pass
+
 def launch(win):
     if win == "one": app.showSubWindow("one")
     elif win == "two": app.showSubWindow("two")
@@ -12,13 +14,11 @@ app=gui()
 app.addButtons(["one", "two", "three", "four"], launch)
 
 app.startSubWindow("one", modal=True)
+app.setBg("orange")
 app.setGeometry("400x400")
-app.setBg("red")
-app.addLabel("l1", "Sub Window One")
-app.startSubWindow("inner")
-app.addLabel("in", "inner")
-app.stopSubWindow()
-app.addButton("in", launch)
+app.setTransparency(25)
+app.setStopFunction(checkDone)
+app.addLabel("l1", "In sub window")
 app.stopSubWindow()
 
 app.startSubWindow("two")

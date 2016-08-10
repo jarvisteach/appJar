@@ -1,18 +1,25 @@
 from appJar import gui
-cols=["red","blue"]
 
-app=gui("Scroll Pane", "300x200")
-app.startScrollPane("sp")
-for i in range(150):
-    idd="L"+str(i)
-    app.addLabel(idd, "In the paneeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee")
-    app.setLabelBg(idd, cols[i%2])
+app=gui("Scroll Pane", "500x300")
+app.setSticky("nsew")
+
+app.addLabel("l1", "Welcome to ScrollPane Demo", 0, 0, 3)
+app.setLabelBg("l1", "peru")
+
+app.addLabel("l2", "", 1, 0, 0, 4)
+app.setLabelBg("l2", "peru")
+
+app.startScrollPane("sp", 1, 1, 0, 0)
+for x in range(10):
+    for y in range(5):
+        title=str(x)+str(y)
+        app.addLabelEntry(title, x, y)
 app.stopScrollPane()
-app.startScrollPane("sp2")
-for i in range(150):
-    idd="LL"+str(i)
-    app.addLabel(idd, "In the paneeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee")
-    app.setLabelBg(idd, cols[i%2])
-app.stopScrollPane()
-app.addLabel("l2", "Out scroll pane")
+
+app.addLabel("l3", "", 1, 2, 0, 4)
+app.setLabelBg("l3", "peru")
+
+app.addLabel("l4", "", 4, 1)
+app.setLabelBg("l4", "peru")
+
 app.go()

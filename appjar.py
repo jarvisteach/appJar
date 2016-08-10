@@ -4737,6 +4737,7 @@ class AutoScrollbar(Scrollbar):
 class ScrollPane(Frame):
     def __init__(self, parent, **opts):
       Frame.__init__(self, parent)
+      self.config(padx=5, pady=5, width=100, height=100)
 
       # make the ScrollPane expandable
       self.grid_rowconfigure(0, weight=1)
@@ -4751,6 +4752,7 @@ class ScrollPane(Frame):
       opts['xscrollcommand']=hscrollbar.set
 
       self.canvas = Canvas(self,**opts)
+      self.canvas.config(highlightthickness=0)
 
       vscrollbar.grid(row=0, column=1, sticky=N+S+E)
       hscrollbar.grid(row=1, column=0, sticky=E+W+S)
