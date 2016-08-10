@@ -3362,7 +3362,17 @@ class gui:
 ## FUNCTIONS for seperators
 #####################################
     def addSeparator(self, row=None, column=0, colspan=0, rowspan=0, colour=None):
-        sep = Separator(self.__getContainer())
+        self.warn(".addSeparator() is deprecated. You should be using .addHorizontalSeparator() or .addVerticalSeparator()")
+        self.addHorizontalSeparator(row, column, colspan, rowspan, colour)
+
+    def addHorizontalSeparator(self, row=None, column=0, colspan=0, rowspan=0, colour=None):
+        self.__addSeparator("horizontal", row, column, colspan, rowspan, colour)
+
+    def addVerticalSeparator(self, row=None, column=0, colspan=0, rowspan=0, colour=None):
+        self.__addSeparator("vertical", row, column, colspan, rowspan, colour)
+
+    def __addSeparator(self, orient, row=None, column=0, colspan=0, rowspan=0, colour=None):
+        sep = Separator(self.__getContainer(), orient)
         if colour is not None: sep.setLineFg(colour)
         self.n_separators.append(sep)
         self.__positionWidget(sep, row, column, colspan, rowspan)
@@ -4181,11 +4191,15 @@ class Link(Label):
 ## Simple Separator
 #####################################
 class Separator(Frame):
-    def __init__(self, *args, **kwargs):
-        Frame.__init__(self, *args, **kwargs)
+    def __init__(self, parent, orient="horizontal", *args, **options):
+        Frame.__init__(self, parent, *args, **options)
         self.line = Frame(self)
-        self.line.config(relief="ridge", height=2, width=100, borderwidth=1)
-        self.line.pack(padx=5, pady=5, fill="x")
+        if orient=="horizontal":
+            self.line.config(relief="ridge", height=2, width=100, borderwidth=1)
+            self.line.pack(padx=5, pady=5, fill="x")
+        else:
+            self.line.config(relief="ridge", height=100, width=2, borderwidth=1)
+            self.line.pack(padx=5, pady=5, fill="y")
 
     def setLineFg(self, colour):
         self.line.config(bg=colour)
