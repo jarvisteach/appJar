@@ -1403,6 +1403,18 @@ class gui:
         self.containerStack[-1]['container'].stop()
         self.stopContainer()
 
+    def toggleToggleFrame(self, title):
+        toggle = self.__verifyItem(self.n_toggleFrames, title)
+        toggle.toggle()
+
+    def disableToggleFrame(self, title, disabled=True):
+        toggle = self.__verifyItem(self.n_toggleFrames, title)
+        toggle.disable(disabled)
+
+    def getToggleFrameState(self, title):
+        toggle = self.__verifyItem(self.n_toggleFrames, title)
+        return toggle.isShowing()
+
     ###### PAGED WINDOWS #######
     def startPagedWindow(self, title, row=None, column=0, colspan=0, rowspan=0):
         self.startContainer(self.C_PAGEDWINDOW, title, row, column, colspan, rowspan, sticky="nsew")
@@ -4392,6 +4404,17 @@ class ToggleFrame(Frame):
         self.update_idletasks()
         self.titleFrame.config(width=self.winfo_reqwidth())
         self.toggle()
+
+    def isShowing(self):
+        return self.showing
+
+    def disable(self, disable=True):
+        if disable:
+            if self.showing:
+                self.toggle()
+            self.toggleButton.config(state="disabled")
+        else:
+            self.toggleButton.config(state="normal")
 
 #####################################
 ## Paged Window
