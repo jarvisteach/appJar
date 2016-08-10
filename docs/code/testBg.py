@@ -2,6 +2,7 @@ from appJar import gui
 
 def getName(btn):
     app.setLabel("FOCUS", app.getFocus())
+    print(app.getLabelWidget("f"))
 
 app=gui()
 app.setFont(15)

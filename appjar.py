@@ -45,17 +45,15 @@ class gui:
         - call the go() function
     """
     built = False
+
     # used to identify widgets in component configurations
     WINDOW=0
     LABEL=1
     ENTRY=2
     BUTTON=3
-    CB=40
     CHECKBOX=4
     SCALE=5
-    RB=60
     RADIOBUTTON=6
-    LB=70
     LISTBOX=7
     MESSAGE=8
     SPIN=9
@@ -63,12 +61,14 @@ class gui:
     TEXTAREA=11
     LINK=12
     METER=13
-    IMAGE=17
-    PIECHART=18
-
-    LABELFRAME=14
-    NOTEBOOK=15
-    PANEDWINDOW=16
+    IMAGE=14
+    PIECHART=15
+    RB=60
+    CB=40
+    LB=70
+    LABELFRAME=16
+    NOTEBOOK=17
+    PANEDWINDOW=18
     SCROLLPANE=19
     PAGEDWINDOW=20
     TOGGLEFRAME=21
@@ -110,8 +110,8 @@ class gui:
     # used for defining functions
     WIDGETS = { LABEL:"Label", MESSAGE:"Message", BUTTON:"Button", ENTRY:"Entry", CB:"Cb", SCALE:"Scale", RB:"Rb",
               LB:"Lb", SPIN:"SpinBox", OPTION:"OptionBox", TEXTAREA:"TextArea", LINK:"Link", METER:"Meter", IMAGE:"Image",
-              RADIOBUTTON:"RadioButton", CHECKBOX:"CheckBox",LISTBOX:"ListBox", #NOTEBOOK:"NoteBook",
-              LABELFRAME:"LabelFrame", PANEDWINDOW:"PanedWindow", PIECHART:"PieChart" }
+              RADIOBUTTON:"RadioButton", CHECKBOX:"CheckBox", LISTBOX:"ListBox", PIECHART:"PieChart", #NOTEBOOK:"NoteBook",
+              LABELFRAME:"LabelFrame", PANEDWINDOW:"PanedWindow" }
 
     # music stuff
     BASIC_NOTES = {"A":440, "B":493, "C":261, "D":293, "E":329, "F":349, "G":392 }
@@ -130,6 +130,7 @@ class gui:
          'e3': 164, 'f#3': 184, 'g#1': 51, 'd8': 4698, 'f#4': 369, 'f1': 43, 'c8': 4186, 'g4': 391,
          'g3': 195, 'a4': 440, 'a#3': 233, 'd#1': 38, 'e2': 82, 'e4': 329, 'a5': 880, 'a#2': 116,
          'g5': 783, 'g#7': 3322, 'b6': 1975, 'c2': 65, 'f#1': 46}
+
     DURATIONS={"BREVE":2000, "SEMIBREVE":1000, "MINIM":500, "CROTCHET":250,  "QUAVER":125,"SEMIQUAVER":63, "DEMISEMIQUAVER":32, "HEMIDEMISEMIQUAVER":16}
 
 #####################################
@@ -194,9 +195,9 @@ class gui:
         self.messageFont = font.Font(family="Helvetica", size=12)
         self.rbFont = font.Font(family="Helvetica", size=12)
         self.cbFont = font.Font(family="Helvetica", size=12)
+        self.tbFont = font.Font(family="Helvetica", size=12)
         self.scaleFont = font.Font(family="Helvetica", size=12)
         self.statusFont = font.Font(family="Helvetica", size=12)
-        self.tbFont = font.Font(family="Helvetica", size=12)
         self.spinFont = font.Font(family="Helvetica", size=12)
         self.optionFont = font.Font(family="Helvetica", size=12)
         self.lbFont = font.Font(family="Helvetica", size=12)
@@ -632,10 +633,10 @@ class gui:
     # self.container = Frame, at bottom of appWindow => C_ROOT container
     # self.bglabel = Label, filling all of container
     def setBg(self, colour):
-        if self.containerStack[-1]['type'] == "C_ROOT":
+        if self.containerStack[-1]['type'] == self.C_ROOT:
             self.appWindow.config(background=colour)
             self.bgLabel.config(background=colour)
-        elif self.containerStack[-1]['type'] in ["C_PAGEDWINDOW", "C_TOGGLEFRAME"]:
+        elif self.containerStack[-1]['type'] in [self.C_PAGEDWINDOW, self.C_TOGGLEFRAME]:
             self.containerStack[-1]['container'].setBg(colour)
 
         self.containerStack[-1]['container'].config(background=colour)
@@ -764,12 +765,16 @@ class gui:
         elif kind == self.TEXTAREA: return self.n_textAreas
         elif kind == self.LINK: return self.n_links
         elif kind == self.METER: return self.n_meters
+        elif kind == self.IMAGE: return self.n_images
+        elif kind == self.PIECHART: return self.n_pieCharts
+
         elif kind == self.LABELFRAME: return self.n_labelFrames
         elif kind == self.NOTEBOOK: return self.n_noteBooks
         elif kind == self.PANEDWINDOW: return self.n_panedFrames
         elif kind == self.SCROLLPANE: return self.n_scrollPanes
-        elif kind == self.IMAGE: return self.n_images
-        elif kind == self.PIECHART: return self.n_pieCharts
+        elif kind == self.PAGEDWINDOW: return self.n_pagedWindows
+        elif kind == self.TOGGLEFRAME: return self.n_toggleFrames
+
         else: raise Exception ("Unknown widget type: " + str(kind))
 
     def configureAllWidgets(self, kind, option, value):
@@ -781,6 +786,11 @@ class gui:
         else:
             for widg in names:
                 self.configureWidget(kind, widg, option, value)
+
+    def getWidget(self, kind, name):
+        # get the list of items for this type, and validate the widget is in the list
+        items = self.__getItems(kind)
+        return self.__verifyItem(items, name, False)
 
     def configureWidget(self, kind, name, option, value, key=None, deprecated=False):
         # warn about deprecated functions
@@ -858,7 +868,7 @@ class gui:
                         elif platform() in [ "win32", "Windows"]:
                             item.config(cursor="hand2")
 
-                        def getWidget(f):
+                        def getLabel(f):
                             # loop through all labels
                             for key, value in self.n_labels.items():
                                 if self.__isMouseInWidget(value):
@@ -866,7 +876,7 @@ class gui:
                                     return
 
                         if value[0] is not None: item.bind("<ButtonPress-1>", self.__makeFunc(value[0], name, True) , add="+")
-                        if value[1] is not None: item.bind("<ButtonRelease-1>", self.__makeFunc(getWidget, value[1], True) , add="+")
+                        if value[1] is not None: item.bind("<ButtonRelease-1>", self.__makeFunc(getLabel, value[1], True) , add="+")
                 elif option == 'command':
                     # this will discard the scale value, as default function can't handle it
                     if kind==self.SCALE:
@@ -995,6 +1005,9 @@ class gui:
               exec("gui.set"+v+"Heights=set" +v+ "Heights")
               exec("def setAll"+v+"Heights(self, val): self.configureAllWidgets("+str(k)+", 'height', val)")
               exec("gui.setAll"+v+"Heights=setAll" +v+ "Heights")
+
+              exec("def get"+v+"Widget(self, name): return self.getWidget("+str(k)+", name)")
+              exec("gui.get"+v+"Widget=get" +v+ "Widget")
 
 #####################################
 ## FUNCTION to hide/show/remove widgets
