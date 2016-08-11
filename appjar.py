@@ -1228,8 +1228,10 @@ class gui:
         else: pass
 
         # make colspanned widgets expand to fill hieght of cell
-        if rowspan != 0 :
-            if "sticky" in params: params["sticky"] += "ns"
+        if rowspan != 0:
+            if "sticky" in params:
+                if "n" not in params["sticky"]: params["sticky"] += "n"
+                if "s" not in params["sticky"]: params["sticky"] += "s"
             else: params["sticky"] = "ns"
 
         # expand that dictionary out as we pass it as a value
