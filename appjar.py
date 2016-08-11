@@ -2142,14 +2142,19 @@ class gui:
         # select the specified option
         self.setOptionBox(title, index)
 
+    def deleteOptionBox(self, title, index):
+        self.__verifyItem(self.n_optionVars, title)
+        box = self.n_options[title]
+        self.setOptionBox(title, index, None)
+
     # select the option at the specified position
     def setOptionBox(self, title, index, value=True):
-        self.__verifyItem(self.n_optionVars, title)
+        var = self.__verifyItem(self.n_optionVars, title)
         box = self.n_options[title]
 
         if box.kind == "ticks":
-            if index in self.n_optionVars[title]:
-                self.n_optionVars[title][index].set(value)
+            if index in var:
+                var[index].set(value)
             else:
                 raise Exception("Unknown TickOptionBox: " + str(index) + " in: " +title)
         else:
@@ -2165,9 +2170,16 @@ class gui:
                 if index < 0 or index > count-1:
                     self.warn("Invalid selection index: " + str(index) + ". Should be between 0 and " + str(count-1) + ".")
                 else:
-                    if not box['menu'].invoke(index):
-                        self.warn("Invalid selection index: " + str(index) + " is a disabled index.")
+                    # then we can delete it...
+                    if value is None:
+                        box['menu'].delete(index)
+                        del(box.options[index])
+                        self.setOptionBox(title, 0)
+                    else:
+                        if not box['menu'].invoke(index):
+                            self.warn("Invalid selection index: " + str(index) + " is a disabled index.")
             else:
+                var.set("")
                 self.warn("No items to select from: " + title)
 
 #####################################
@@ -4271,7 +4283,7 @@ class Properties(LabelFrame):
                 del self.cbs[prop]
             else:
                 self.props[prop].set(value)
-        else:
+        elif prop is not None:
             var=BooleanVar()
             var.set(value)
             cb = Checkbutton(self)
@@ -4279,6 +4291,8 @@ class Properties(LabelFrame):
             cb.pack(fill="x", expand=1)
             self.props[prop]=var
             self.cbs[prop]=cb
+        else:
+            raise Exception("Can't add a None property to: ", prop)
         # if text is not None: lab.config ( text=text )
 
     def getProperties(self):

@@ -4,6 +4,7 @@ def getEm(btn=None):
     if btn=="DELETE":
         app.deleteProperty("The props", app.getOptionBox("Prop"))
         # TODO: remove from OptionBox
+        app.deleteOptionBox("Prop", app.getOptionBox("Prop"))
 
     else:
         print(app.getProperties("The props"))
