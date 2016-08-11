@@ -1995,10 +1995,10 @@ class gui:
             # delete the empty value we just added
             option['menu'].delete(0, 'end')
             var.set(title)
-            vals = []
+            vals = {}
             for o in options:
-                vals.append(BooleanVar())
-                option['menu'].add_checkbutton(label=o, onvalue=1, offvalue=False, variable=vals[-1])
+                vals[o]=BooleanVar()
+                option['menu'].add_checkbutton(label=o, onvalue=1, offvalue=False, variable=vals[o])
             self.n_optionVars[title]=vals
             option.kind="ticks"
         else:
@@ -2056,19 +2056,11 @@ class gui:
         self.__verifyItem(self.n_optionVars, title)
         val=self.n_optionVars[title]
 
-        if type(val) == list:
-            ## get list of values ##
-            menu = self.n_options[title]["menu"]
-            last = menu.index("end")
-            items = []
-            for index in range(last+1):
-                items.append(menu.entrycget(index, "label"))
-            ########################
-            vals={}
-            for pos, v in enumerate(val):
-                if v.get(): vals[items[pos]] = True
-                else: vals[items[pos]] = False
-            return vals
+        if type(val) == dict:
+            retVal = {}
+            for k,v in val.items():
+                retVal[k] = v.get()
+            return retVal
         else:
             val = val.get().strip()
             # set to None if it's a divider
@@ -2142,28 +2134,32 @@ class gui:
         self.setOptionBox(title, index)
 
     # select the option at the specified position
-    def setOptionBox(self, title, index):
+    def setOptionBox(self, title, index, value=True):
         self.__verifyItem(self.n_optionVars, title)
         box = self.n_options[title]
-        if box.kind == "ticks":
-            self.warn("Unable to set TickOptionBoxes")
-            return
-        count = len(box.options)
-        if index is None: index = 0
-        if count > 0:
-            if not isinstance(index, int):
-                try: index = box.options.index(index)
-                except:
-                    self.warn("Inavlid selection option: " + str(index))
-                    return
 
-            if index < 0 or index > count-1:
-                self.warn("Invalid selection index: " + str(index) + ". Should be between 0 and " + str(count-1) + ".")
+        if box.kind == "ticks":
+            if index in self.n_optionVars[title]:
+                self.n_optionVars[title][index].set(value)
             else:
-                if not box['menu'].invoke(index):
-                    self.warn("Invalid selection index: " + str(index) + " is a disabled index.")
+                raise Exception("Unknown TickOptionBox: " + str(index) + " in: " +title)
         else:
-            self.warn("No items to select from: " + title)
+            count = len(box.options)
+            if count > 0:
+                if index is None: index = 0
+                if not isinstance(index, int):
+                    try: index = box.options.index(index)
+                    except:
+                        self.warn("Inavlid selection option: " + str(index))
+                        return
+
+                if index < 0 or index > count-1:
+                    self.warn("Invalid selection index: " + str(index) + ". Should be between 0 and " + str(count-1) + ".")
+                else:
+                    if not box['menu'].invoke(index):
+                        self.warn("Invalid selection index: " + str(index) + " is a disabled index.")
+            else:
+                self.warn("No items to select from: " + title)
 
 #####################################
 ## FUNCTION to add spin boxes
