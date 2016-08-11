@@ -12,6 +12,12 @@ def getEm(btn=None):
 def change(btn=None):
     app.setProperty("The props", app.getOptionBox("Prop"), app.getCheckBox("Value"))
 
+def state(btn):
+    if btn=="ENAB":
+        app.setPropertiesState("The props", "normal")
+    else:
+        app.setPropertiesState("The props", "disabled")
+
 props = {
             "Name":True, "Age":False,
             "Name1":True, "Age1":False,
@@ -22,11 +28,20 @@ props = {
 app=gui()
 
 app.setBg("lightBlue")
+app.setFont(20)
 
+#app.startToggleFrame("t")
+#app.setSticky("nsew")
 app.addProperties("The props", props)
+#app.setPropertiesBg("The props", "yellow")
+#app.stopToggleFrame()
 app.addButtons(["GET EM", "DELETE"], getEm)
 app.addLabelOptionBox("Prop", ["Name", "Age", "Name1", "Age1", "Name2", "Age2", "Name3", "Age3"])
 app.addCheckBox("Value")
 app.setCheckBoxFunction("Value", change)
+app.setProperty("The props", "Super Prop")
+app.addButtons(["ENAB", "DISAB"], state)
+app.setProperties("The props", {"fred":True, "Apples":False, "Age":True})
 
+app.setBg("red")
 app.go()

@@ -1171,7 +1171,8 @@ class gui:
 
         # widget with label, in frame
         elif widgType == "LabelBox":
-            widget.theLabel["bg"]=bg
+# changed to config
+            widget.theLabel.config(bg=bg)
             widgType = widget.theWidget.__class__.__name__ 
             if isDarwin and  widgType in darwinBorders:
                 widget.theWidget.config(highlightbackground=bg)
@@ -1179,7 +1180,8 @@ class gui:
 
         # group of buttons or labels
         elif widgType == "WidgetBox":
-            widget["bg"]=bg
+# changed to config
+            widget.config(bg=bg)
             if isDarwin:
                 for widg in widget.theWidgets:
                     widgType = widg.__class__.__name__
@@ -1191,7 +1193,9 @@ class gui:
 
         # any other widgets
         elif widgType not in noBg:
-            widget["bg"]=bg
+# changed to config
+            widget.config(bg=bg)
+            #widget["bg"]=bg
 
     def __getContainerBg(self):
         return self.__getContainer()["bg"]
@@ -2171,8 +2175,7 @@ class gui:
 #####################################
     def addProperties(self, title, values, row=None, column=0, colspan=0, rowspan=0):
         self.__verifyItem(self.n_props, title, True)
-        props = Properties(self.__getContainer(), title, values)
-        props.config(font=self.propertiesFont)
+        props = Properties(self.__getContainer(), title, values, font=self.propertiesFont, background=self.__getContainerBg())
         self.__positionWidget(props, row, column, colspan, rowspan)
         self.n_props[title] = props
 
@@ -2187,6 +2190,10 @@ class gui:
     def setProperty(self, title, prop, value=True):
         props = self.__verifyItem(self.n_props, title)
         props.addProperty(prop, value)
+
+    def setProperties(self, title, props):
+        p = self.__verifyItem(self.n_props, title)
+        p.addProperties(props)
 
     def deleteProperty(self, title, prop):
         props = self.__verifyItem(self.n_props, title)
@@ -4231,7 +4238,26 @@ class Properties(LabelFrame):
         self.cbs={}
         self.title = text
         self.addProperties(props)
-    
+
+    def config(self, cnf=None, **kw):
+        self.configure(cnf, **kw)
+
+    def configure(self, cnf=None, **kw):
+        # properties to pass on to checkBoxes
+        vals=["bg", "background", "fg", "foreground", "disabledforeground", "state", "font"]
+
+        # loop through all propertoes received
+        for k, v in kw.items():
+            if k in vals:
+                # look thrpough all checkBoxes
+                for prop_key in self.cbs:
+                    self.cbs[prop_key][k]=v
+
+        if "state" in kw: del(kw["state"])
+        if "disabledforeground" in kw: del(kw["disabledforeground"])
+
+        super(LabelFrame, self).config(cnf, **kw)
+
     def addProperties(self, props):
         for k,v in props.items():
             self.addProperty(k, v)
@@ -4248,8 +4274,7 @@ class Properties(LabelFrame):
             var=BooleanVar()
             var.set(value)
             cb = Checkbutton(self)
-            cb.config(text=prop, variable=var)
-            cb.config(anchor=W)
+            cb.config(anchor=W, text=prop, variable=var, bg=self.cget("bg"), font=self.cget("font"), fg=self.cget("fg"))
             cb.pack(fill="x", expand=1)
             self.props[prop]=var
             self.cbs[prop]=cb
