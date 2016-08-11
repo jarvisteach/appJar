@@ -1221,13 +1221,16 @@ class gui:
         if rowspan != 0 : params["rowspan"] = rowspan
 
         # 1) if param has sticky, use that
-        # 2) if container has sticky - overrirde
+        # 2) if container has sticky - override
         # 3) else, none
         if self.containerStack[-1]["sticky"] is not None: params["sticky"] = self.containerStack[-1]["sticky"]
         elif sticky is not None: params["sticky"] = sticky
         else: pass
 
-#        if rowspan != 0 : params["sticky"] = N+S+E+W;
+        # make colspanned widgets expand to fill hieght of cell
+        if rowspan != 0 :
+            if "sticky" in params: params["sticky"] += "ns"
+            else: params["sticky"] = "ns"
 
         # expand that dictionary out as we pass it as a value
         widget.grid (**params)
@@ -4196,10 +4199,10 @@ class Separator(Frame):
         self.line = Frame(self)
         if orient=="horizontal":
             self.line.config(relief="ridge", height=2, width=100, borderwidth=1)
-            self.line.pack(padx=5, pady=5, fill="x")
+            self.line.pack(padx=5, pady=5, fill="x", expand=1)
         else:
             self.line.config(relief="ridge", height=100, width=2, borderwidth=1)
-            self.line.pack(padx=5, pady=5, fill="y")
+            self.line.pack(padx=5, pady=5, fill="y", expand=1)
 
     def setLineFg(self, colour):
         self.line.config(bg=colour)
