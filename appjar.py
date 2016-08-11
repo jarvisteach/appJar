@@ -258,7 +258,7 @@ class gui:
         self.events = []
         self.pollTime = 250
         self.built = True
-        self.topLevel.wm_iconbitmap(self.appJarIcon)
+#        self.topLevel.wm_iconbitmap(self.appJarIcon)
 
     def __configBg(self, container):
         # set up a background image holder
@@ -2185,7 +2185,7 @@ class gui:
 #####################################
 ## FUNCTION to manage Properties Widgets
 #####################################
-    def addProperties(self, title, values, row=None, column=0, colspan=0, rowspan=0):
+    def addProperties(self, title, values=None, row=None, column=0, colspan=0, rowspan=0):
         self.__verifyItem(self.n_props, title, True)
         props = Properties(self.__getContainer(), title, values, font=self.propertiesFont, background=self.__getContainerBg())
         self.__positionWidget(props, row, column, colspan, rowspan)
@@ -2199,7 +2199,7 @@ class gui:
         props = self.__verifyItem(self.n_props, title)
         return props.getProperty(prop)
 
-    def setProperty(self, title, prop, value=True):
+    def setProperty(self, title, prop, value=False):
         props = self.__verifyItem(self.n_props, title)
         props.addProperty(prop, value)
 
@@ -4256,7 +4256,7 @@ class Properties(LabelFrame):
 
     def configure(self, cnf=None, **kw):
         # properties to pass on to checkBoxes
-        vals=["bg", "background", "fg", "foreground", "disabledforeground", "state", "font"]
+        vals=["bg", "background", "fg", "foreground", "disabledforeground", "state", "font", "command"]
 
         # loop through all propertoes received
         for k, v in kw.items():
@@ -4267,13 +4267,15 @@ class Properties(LabelFrame):
 
         if "state" in kw: del(kw["state"])
         if "disabledforeground" in kw: del(kw["disabledforeground"])
+        if "command" in kw: del(kw["command"])
 
         super(LabelFrame, self).config(cnf, **kw)
 
     def addProperties(self, props):
 
-        for k in sorted(props):
-            self.addProperty(k, props[k])
+        if props is not None:
+            for k in sorted(props):
+                self.addProperty(k, props[k])
 
     def addProperty(self, prop, value=False):
         if prop in self.props:
