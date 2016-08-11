@@ -329,13 +329,19 @@ app.go()
 ```
 
 ####Set OptionBoxes
-* `.changeOptionBox(title, newOptions, index)`  
+* `.changeOptionBox(title, newOptions, index, value=True)`  
     This will replace the contents of the OptionBox, with the new list provided.  
     If specified, the indexed item will be selected - this can be a position or an item name.  
-    Not available on TickOptionBoxes.  
+    If setting a TickOptionBox, pass in the optional value.  
 
-* `.setOptionBox(title, position)`  
+
+* `.setOptionBox(title, position, value=True)`  
     This will select the item in the list, at the position specified.  
+    Alternatively, the name of an item can be specified.  
+    If changing a TickOptionBox, the specified item will be setto the specified value.  
+
+* `.deleteOptionBox(title, position)`  
+    This will delete the item in the list, at the position specified.  
     Alternatively, the name of an item can be specified.  
     Not available on TickOptionBoxes.  
 
@@ -578,6 +584,77 @@ app.go()
 ####Get Meters
 * `getMeter(name)`  
     Gets the value of the specified meter.  
+
+##Properties
+A compound widget that shows multiple CheckButtons linked to a dictionary.  
+Note, dictionaries have no order, so when added as a dictionary, the items will be automatically sorted.  
+
+![Properties](img/1_props.png)
+![Properties](img/2_props.png)
+
+```
+from appJar import gui
+
+toppings={"Cheese":False, "Tomato":False, "Bacon":False,
+            "Corn":False, "Mushroom":False}
+
+app=gui()
+app.setBg("lightBlue")
+app.setFont(20)
+app.addProperties("Toppings", toppings)
+app.setProperty("Toppings", "Pepper")
+app.go()
+```
+
+####Add Properties
+* `addProperties(title, values)`  
+    Creates a new Properties widget, with the specified title.  
+    If values is populated, then the dictionary items will be added to the widget.  
+
+####Set Properties
+* `setProperties(title, props)`  
+    Adds the dictionary of properties to the widget.  
+    If any of them already exist, they will be updated.  
+* `setProperty(title, prop, value=False)`  
+    Sets the named property to the specified value.  
+    If it doesn't exist, it will be added first, at the end of the widget.  
+* `deleteProperty(title, prop)`  
+    Deletes the named propert from the widget.  
+
+####Get Properties
+* `getProperties(title)`  
+    Gets a dictionary of the all items in the Properties widget.  
+
+* `getProperty(title, prop)`  
+    Gets the value of the named property.  
+
+####Examples
+It's possible to put Properties into ToggleFrames, and also set a Function to listen for any changes.  
+
+![Properties](img/3_props.png)
+![Properties](img/4_props.png)
+![Properties](img/5_props.png)
+
+```
+from appJar import gui
+
+def changed(props):
+    print("Changed", props)
+
+toppings={"Cheese":False, "Tomato":False, "Bacon":False,
+            "Corn":False, "Mushroom":False}
+
+app=gui()
+app.setBg("lightBlue")
+app.setFont(20)
+
+app.startToggleFrame("Toppings")
+app.addProperties("Toppings", toppings)
+app.setPropertiesFunction("Toppings", changed)
+app.stopToggleFrame()
+
+app.go()
+```
 
 ##Separator
 ____
