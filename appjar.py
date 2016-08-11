@@ -63,15 +63,16 @@ class gui:
     METER=13
     IMAGE=14
     PIECHART=15
+    PROPERTIES=16
     RB=60
     CB=40
     LB=70
-    LABELFRAME=16
-    TABBEDFRAME=17
-    PANEDWINDOW=18
-    SCROLLPANE=19
-    PAGEDWINDOW=20
-    TOGGLEFRAME=21
+    LABELFRAME=30
+    TABBEDFRAME=31
+    PANEDWINDOW=32
+    SCROLLPANE=33
+    PAGEDWINDOW=34
+    TOGGLEFRAME=35
 
     # positioning
     N = N
@@ -115,7 +116,7 @@ class gui:
     # used for defining functions
     WIDGETS = { LABEL:"Label", MESSAGE:"Message", BUTTON:"Button", ENTRY:"Entry", CB:"Cb", SCALE:"Scale", RB:"Rb",
               LB:"Lb", SPIN:"SpinBox", OPTION:"OptionBox", TEXTAREA:"TextArea", LINK:"Link", METER:"Meter", IMAGE:"Image",
-              RADIOBUTTON:"RadioButton", CHECKBOX:"CheckBox", LISTBOX:"ListBox", PIECHART:"PieChart", #TABBEDFRAME:"TabbedFrame",
+              RADIOBUTTON:"RadioButton", CHECKBOX:"CheckBox", LISTBOX:"ListBox", PIECHART:"PieChart", PROPERTIES:"Properties", #TABBEDFRAME:"TabbedFrame",
               LABELFRAME:"LabelFrame", PANEDWINDOW:"PanedWindow" }
 
     # music stuff
@@ -216,6 +217,7 @@ class gui:
         self.tabbedFrameFont = font.Font(family="Helvetica", size=12)
         self.panedWindowFont = font.Font(family="Helvetica", size=12)
         self.scrollPaneFont = font.Font(family="Helvetica", size=12)
+        self.propertiesFont = font.Font(family="Helvetica", size=12)
 
         # for simple grids - RETHINK
         self.gdFont = font.Font(family="Helvetica", size=12)
@@ -301,6 +303,7 @@ class gui:
         self.n_lbs={}
         self.n_tbButts={}
         self.n_spins={}
+        self.n_props={}
         self.n_options={}
         self.n_frameLabs={}
         self.n_textAreas={}
@@ -598,6 +601,7 @@ class gui:
         self.taFont.config(family=font, size=size)
         self.linkFont.config(family=font, size=size)
         self.meterFont.config(family=font, size=size)
+        self.propertiesFont.config(family=font, size=size)
         self.labelFrameFont.config(family=font, size=size)
         self.toggleFrameFont.config(family=font, size=size)
         self.tabbedFrameFont.config(family=font, size=size)
@@ -773,6 +777,7 @@ class gui:
         elif kind == self.METER: return self.n_meters
         elif kind == self.IMAGE: return self.n_images
         elif kind == self.PIECHART: return self.n_pieCharts
+        elif kind == self.PROPERTIES: return self.n_props
 
         elif kind == self.LABELFRAME: return self.n_labelFrames
         elif kind == self.TABBEDFRAME: return self.n_tabbedFrames
@@ -2162,6 +2167,32 @@ class gui:
                 self.warn("No items to select from: " + title)
 
 #####################################
+## FUNCTION to manage Properties Widgets
+#####################################
+    def addProperties(self, title, values, row=None, column=0, colspan=0, rowspan=0):
+        self.__verifyItem(self.n_props, title, True)
+        props = Properties(self.__getContainer(), title, values)
+        props.config(font=self.propertiesFont)
+        self.__positionWidget(props, row, column, colspan, rowspan)
+        self.n_props[title] = props
+
+    def getProperties(self, title):
+        props = self.__verifyItem(self.n_props, title)
+        return props.getProperties()
+
+    def getProperty(self, title, prop):
+        props = self.__verifyItem(self.n_props, title)
+        return props.getProperty(prop)
+
+    def setProperty(self, title, prop, value=True):
+        props = self.__verifyItem(self.n_props, title)
+        props.addProperty(prop, value)
+
+    def deleteProperty(self, title, prop):
+        props = self.__verifyItem(self.n_props, title)
+        props.addProperty(prop, None)
+
+#####################################
 ## FUNCTION to add spin boxes
 #####################################
     def __buildSpinBox(self, frame, title, vals):
@@ -2192,7 +2223,6 @@ class gui:
 
         self.n_spins[title] = spin
         return  spin
-
 
     def __addSpinBox(self, title, values,row=None, column=0, colspan=0, rowspan=0):
         spin = self.__buildSpinBox(self.__getContainer(), title, values)
@@ -4187,6 +4217,55 @@ class Link(Label):
         self.bind("<Button-1>", self.launchBrowser)
         self.bind("<Return>", self.launchBrowser)
         self.bind("<space>", self.launchBrowser)
+
+
+#####################################
+## Properties Widget
+#####################################
+class Properties(LabelFrame):
+    def __init__(self, parent, text, props=None, *args, **options):
+        LabelFrame.__init__(self, parent, text=text, *args, **options)
+        self.parent=parent
+        self.config(relief="groove")
+        self.props={}
+        self.cbs={}
+        self.title = text
+        self.addProperties(props)
+    
+    def addProperties(self, props):
+        for k,v in props.items():
+            self.addProperty(k, v)
+
+    def addProperty(self, prop, value=False):
+        if prop in self.props:
+            if value is None:
+                del self.props[prop]
+                self.cbs[prop].pack_forget()
+                del self.cbs[prop]
+            else:
+                self.props[prop].set(value)
+        else:
+            var=BooleanVar()
+            var.set(value)
+            cb = Checkbutton(self)
+            cb.config(text=prop, variable=var)
+            cb.config(anchor=W)
+            cb.pack(fill="x", expand=1)
+            self.props[prop]=var
+            self.cbs[prop]=cb
+        # if text is not None: lab.config ( text=text )
+
+    def getProperties(self):
+        vals = {}
+        for k,v in self.props.items():
+            vals[k] = v.get()
+        return vals
+
+    def getProperty(self, prop):
+        if prop in self.props:
+            return self.props[prop].get()
+        else:
+            raise Exception("Property: " + str(prop) + " not found in Properties: " + self.title)
 
 #####################################
 ## Simple Separator
