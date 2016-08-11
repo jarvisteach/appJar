@@ -393,6 +393,8 @@ app.go()
 ____
 A box containing a list of items, single or multi-select
 
+![ListBox](img/1_listBox.png)  
+
 ```python
 from appJar import gui
 
@@ -401,9 +403,6 @@ app.setFont(20)
 app.addListBox("list", ["apple", "orange", "pear", "kiwi"])
 app.go()
 ```
-
-![ListBox](img/1_listBox.png)  
-
 
 ####Add ListBoxes
 * `.addListBox(title, values)`  
@@ -447,6 +446,8 @@ app.go()
 ____
 A slider, that has a minimum & maximum value.  
 
+![Scale](img/1_scale.png)  
+
 ```python
 from appJar import gui
 
@@ -455,8 +456,6 @@ app.setFont(20)
 app.addLabelScale("scale")
 app.go()
 ```
-
-![Scale](img/1_scale.png)  
 
 ####Add Scales
 * `.addScale(title)`  
@@ -492,6 +491,8 @@ app.go()
 ____
 Similar to a Label, except it will wrap the text over multiple lines.  
 
+![Message](img/1_mess.png)  
+
 ```python
 from appJar import gui
 
@@ -502,8 +503,6 @@ The text will be wrapped over multiple lines.
 It's not possible to apply different styles to different words.""")
 app.go()
 ```
-
-![Message](img/1_mess.png)  
 
 ####Add Messages
 * `.addMessage(title, text)`  
@@ -520,6 +519,8 @@ app.go()
 ____
 Similar to an Entry box, but allows you to type text over multiple lines.  
 
+![TextArea](img/1_textArea.png)  
+
 ```
 from appJar import gui
 
@@ -527,7 +528,6 @@ app=gui()
 app.addTextArea("t1")
 app.go()
 ```
-![TextArea](img/1_textArea.png)  
 
 ####Add TextAreas
 * `.addTextArea(title)`  
@@ -551,6 +551,8 @@ app.go()
 ____
 Shows a simple progress meter  
 
+![Meter](img/1_meter.png)  
+
 ```
 from appJar import gui
 
@@ -560,8 +562,6 @@ app.setFont(20)
 app.addMeter("progress")
 app.go()
 ```
-
-![Meter](img/1_meter.png)  
 
 ####Add Meters
 * `addMeter(name)`  
@@ -581,26 +581,36 @@ app.go()
 
 ##Separator
 ____
-Shows a horizontal line
+Useful for indicating separation between widgets.  
+Will draw a horizontal/vertical line spanning the cell.  
+![Separator](img/1_sep.png)  
 
 ```python
 from appJar import gui
 
 app=gui()
 app.setBg("lightBlue")
-app.addSeparator(colour="red")
+app.addHorizontalSeparator(0,0,4, colour="red")
+app.addVerticalSeparator(1,0, colour="red")
+app.addVerticalSeparator(1,1, colour="red")
+app.addVerticalSeparator(1,2, colour="red")
+app.addVerticalSeparator(1,3, colour="red")
+app.addHorizontalSeparator(2,0,4, colour="red")
 app.go()
 ```
 
-![Separator](img/1_sep.png)  
+####Add Links
 
-* `.addSeparator(colour=None)`  
-    Adds a separator - a horizontal line, spanning the entire cell.  
-    An optional, named parameter, can be passed in to set a colour for the line.  
+* `.addHorizontalSeparator(colour=None)`  
+* `.addVerticalSeparator(colour=None)`  
+    Adds a separator - a horizontal/vertical line, spanning the cell.  
+    An optional, named parameter can be passed in at the end, to set a colour for the line.  
 
 ##Link/WebLink
 ____
 Clickable text to call a function or launch a URL
+
+![Link](img/1_link.png)  
 
 ```python
 from appJar import gui
@@ -614,8 +624,6 @@ app.addWebLink("appJar.info", "http://appJar.info")
 app.go()
 ```
 
-![Link](img/1_link.png)  
-
 ####Add Links
 
 * `.addLink(title, func)`  
@@ -627,6 +635,8 @@ app.go()
 ##Grip
 ____
 Clickable icon to drag the window around.  
+
+![Grip](img/1_grip.png)  
 
 ```python
 from appJar import gui
@@ -640,8 +650,6 @@ app.addGrip(0,1)
 app.addSeparator(1,0,2, colour="red")
 app.go()
 ```
-![Grip](img/1_grip.png)  
-
 ####Add Grips
 
 * `.addGrip()`  

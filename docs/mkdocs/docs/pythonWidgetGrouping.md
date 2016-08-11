@@ -215,20 +215,62 @@ A way to arrange re-sizable frames, with drag-bars.
 * Add a second pane
 * Add the remaining panes to pane 2  
 
-#Under Development
----
-
 ###Sub Window
 ---
 A way to add additional windows, which can be hidden and shown.  
 ![SubWindow](img/layouts/subWin.png)
+```
+from appJar import gui
 
-* `.startSubwindow(name)`  
+def launch(win):
+    app.showSubWindow(win)
+
+app=gui()
+
+app.startSubWindow("one", modal=True)
+app.addLabel("l1", "SubWindow One")
+app.stopSubWindow()
+
+app.startSubWindow("two")
+app.addLabel("l2", "SubWindow Two")
+app.stopSubWindow()
+
+app.addButtons(["one", "two"], launch)
+
+app.go()
+```
+
+####Start/Stop Sub Windows
+* `.startSubwindow(name, title=None, modal=False)`  
 * `.stopSubwindow()`  
     Used to start and stop defining a *SubWindow*  
-* `.showSubWindow(name)`  
-* `.hideSubWindow(name)`  
-    Used to show and hide the specified *SubWindow*  
+    Setting a `title` will override the `name` as a title for the SubWindow. 
+    Setting `modal` to True, will prevent the user from interacting with the parent window until the SubWindow is closed.  
+####Show/Hide Sub Windows
+* `.showSubWindow(title)`  
+    Will cause the specified SubWindow to be shown.  
+    If it is set as *modal* the parent window will become uninteractive until the SubWindow is closed.  
+* `.hideSubWindow(title)`  
+    Used to hide the specified *SubWindow*.  
+    This will not destroy the SubWindow, so it can be shown again later.  
+* `.destroySubWindow(title)`  
+    This will hide and permanently destroy the specified SubWindow.  
+    It cannot be shown again.  
+####Set Sub Windows
+Note, all functions available on the main window are also available on Sub Windows.  
+Simply call those functions after starting a Sub Window.  
+```
+app.startSubWindow("one", modal=True)
+app.setBg("orange")
+app.setGeometry("400x400")
+app.setTransparency(25)
+app.setStopFunction(checkDone)
+app.addLabel("l1", "In sub window")
+app.stopSubWindow()
+```
+
+#Under Development
+---
 
 ###Scroll Pane  
 ---
@@ -236,4 +278,4 @@ A scrollable frame, to contain widgets.
 
 * `.startScrollPane(title)`  
 * `.stopScrollPane()`  
-
+    Used to start and stop the ScrollPane.  
