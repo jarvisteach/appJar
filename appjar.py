@@ -4259,8 +4259,9 @@ class Properties(LabelFrame):
         super(LabelFrame, self).config(cnf, **kw)
 
     def addProperties(self, props):
-        for k,v in props.items():
-            self.addProperty(k, v)
+
+        for k in sorted(props):
+            self.addProperty(k, props[k])
 
     def addProperty(self, prop, value=False):
         if prop in self.props:
