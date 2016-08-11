@@ -117,7 +117,7 @@ class gui:
     WIDGETS = { LABEL:"Label", MESSAGE:"Message", BUTTON:"Button", ENTRY:"Entry", CB:"Cb", SCALE:"Scale", RB:"Rb",
               LB:"Lb", SPIN:"SpinBox", OPTION:"OptionBox", TEXTAREA:"TextArea", LINK:"Link", METER:"Meter", IMAGE:"Image",
               RADIOBUTTON:"RadioButton", CHECKBOX:"CheckBox", LISTBOX:"ListBox", PIECHART:"PieChart", PROPERTIES:"Properties", #TABBEDFRAME:"TabbedFrame",
-              LABELFRAME:"LabelFrame", PANEDWINDOW:"PanedWindow" }
+              LABELFRAME:"LabelFrame", PANEDWINDOW:"PanedWindow", TOGGLEFRAME:"ToggleFrame" }
 
     # music stuff
     BASIC_NOTES = {"A":440, "B":493, "C":261, "D":293, "E":329, "F":349, "G":392 }
@@ -1188,7 +1188,7 @@ class gui:
                     if widgType == "Button": widg.config(highlightbackground=bg)
                     elif widgType == "Label": widg.config(background=bg)
 
-        elif widgType == "PagedWindow":
+        elif widgType in ["PagedWindow", "Meter", "TabbedFrame"]:
             widget.setBg(bg)
 
         # any other widgets
@@ -4255,16 +4255,17 @@ class Properties(LabelFrame):
         self.configure(cnf, **kw)
 
     def configure(self, cnf=None, **kw):
-        # properties to pass on to checkBoxes
+        # properties to propagate to CheckBoxes
         vals=["bg", "background", "fg", "foreground", "disabledforeground", "state", "font", "command"]
 
-        # loop through all propertoes received
+        # loop through all kw properties received
         for k, v in kw.items():
             if k in vals:
-                # look thrpough all checkBoxes
+                # and set them on all CheckBoxes if desired
                 for prop_key in self.cbs:
                     self.cbs[prop_key][k]=v
 
+        # remove any props the LabelFrame can't handle
         if "state" in kw: del(kw["state"])
         if "disabledforeground" in kw: del(kw["disabledforeground"])
         if "command" in kw: del(kw["command"])
@@ -4576,6 +4577,32 @@ class ToggleFrame(Frame):
         self.titleLabel.grid(row=0, column=0)
         self.toggleButton.grid(row=0, column=1)
         self.subFrame.grid(row=1, column=0, sticky=EW)
+
+    def config(self, cnf=None, **kw):
+        self.configure(cnf, **kw)
+
+    def configure(self, cnf=None, **kw):
+        if "font" in kw:
+            self.titleLabel.config(font=kw["font"])
+            self.toggleButton.config(font=kw["font"])
+            del(kw["font"])
+        if "bg" in kw or "background" in kw:
+            if "bg" in kw: bg = kw["bg"]
+            if "background" in kw: bg = kw["background"]
+
+            self.titleFrame.config(bg=bg)
+            self.titleFrame.config(bg=bg)
+            self.titleLabel.config(bg=bg)
+            self.subFrame.config(bg=bg)
+            if platform() == "Darwin": self.toggleButton.config(highlightbackground=bg)
+        if "state" in kw:
+            if kw["state"]=="disabled":
+                if self.showing:
+                    self.toggle()
+            self.toggleButton.config(state=kw["state"])
+            del(kw["state"])
+
+        super(Frame, self).config(cnf, **kw)
 
     def setFont(self, font):
         self.titleLabel.config(font=font)

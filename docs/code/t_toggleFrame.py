@@ -2,8 +2,10 @@ from appJar import gui
 
 def toggle(btn):
     if btn=="toggle": app.toggleToggleFrame("Options")
-    elif btn=="disable": app.disableToggleFrame("Options")
-    elif btn=="enable": app.disableToggleFrame("Options", False)
+    elif btn=="disable":
+        app.setToggleFrameState("Options","disabled")
+    elif btn=="enable":
+        app.setToggleFrameState("Options", "normal")
     elif btn=="state": print(app.getToggleFrameState("Options"))
 
 app=gui()
@@ -17,5 +19,7 @@ app.setCheckBox("Show that")
 app.stopToggleFrame()
 
 app.addButtons(["toggle", "disable", "enable", "state"], toggle)
+
+app.setToggleFrameBg("Options", "yellow")
 
 app.go()
