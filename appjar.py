@@ -44,6 +44,20 @@ class gui:
         - add some widgets
         - call the go() function
     """
+
+    @staticmethod
+    def cleanConfigDict(**kw):
+        """
+            Used by all Classes to tidy up dictionaries passed into config functions
+            Allows us to more quickly process the dictionaries when overriding config
+        """
+        try: kw['bg'] = kw.pop('background')
+        except: pass
+        try: kw['fg'] = kw.pop('foreground')
+        except: pass
+        kw = dict((k.lower().strip(), v) for k, v in kw.items())
+        return kw
+
     built = False
 
     # used to identify widgets in component configurations
@@ -4256,7 +4270,8 @@ class Properties(LabelFrame):
 
     def configure(self, cnf=None, **kw):
         # properties to propagate to CheckBoxes
-        vals=["bg", "background", "fg", "foreground", "disabledforeground", "state", "font", "command"]
+        vals=["bg", "fg", "disabledforeground", "state", "font", "command"]
+        kw=gui.cleanConfigDict(**kw)
 
         # loop through all kw properties received
         for k, v in kw.items():
@@ -4582,19 +4597,17 @@ class ToggleFrame(Frame):
         self.configure(cnf, **kw)
 
     def configure(self, cnf=None, **kw):
+        kw=gui.cleanConfigDict(**kw)
         if "font" in kw:
             self.titleLabel.config(font=kw["font"])
             self.toggleButton.config(font=kw["font"])
             del(kw["font"])
-        if "bg" in kw or "background" in kw:
-            if "bg" in kw: bg = kw["bg"]
-            if "background" in kw: bg = kw["background"]
-
-            self.titleFrame.config(bg=bg)
-            self.titleFrame.config(bg=bg)
-            self.titleLabel.config(bg=bg)
-            self.subFrame.config(bg=bg)
-            if platform() == "Darwin": self.toggleButton.config(highlightbackground=bg)
+        if "bg" in kw:
+            self.titleFrame.config(bg=kw["bg"])
+            self.titleFrame.config(bg=kw["bg"])
+            self.titleLabel.config(bg=kw["bg"])
+            self.subFrame.config(bg=kw["bg"])
+            if platform() == "Darwin": self.toggleButton.config(highlightbackground=kw["bg"])
         if "state" in kw:
             if kw["state"]=="disabled":
                 if self.showing:
