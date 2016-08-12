@@ -46,7 +46,7 @@ class gui:
     """
 
     @staticmethod
-    def cleanConfigDict(**kw):
+    def CLEAN_CONFIG_DICTIONARY(**kw):
         """
             Used by all Classes to tidy up dictionaries passed into config functions
             Allows us to more quickly process the dictionaries when overriding config
@@ -664,7 +664,7 @@ class gui:
         self.containerStack[-1]['container'].config(background=colour)
 
         for child in self.containerStack[-1]['container'].winfo_children():
-            if not self.__widgetIsContainer(child): self.__setWidgetBg(child, colour)
+            if not self.__widgetIsContainer(child): gui.SET_WIDGET_BG(child, colour)
 
     def __widgetIsContainer(self, widget):
         try:
@@ -837,7 +837,7 @@ class gui:
                 if option == 'background':
                     if kind==self.METER: item.config(backfill=value)
                     elif kind==self.TABBEDFRAME: item.setBg(value)
-                    else: self.__setWidgetBg(item, value)
+                    else: gui.SET_WIDGET_BG(item, value)
                 elif option == 'foreground':
                     if kind==self.ENTRY:
                         if item.hasDefault: item.oldFg=value
@@ -1154,7 +1154,8 @@ class gui:
         return row, column, colspan, rowspan
 
     # convenience method to set a widget's bg
-    def __setWidgetBg(self, widget, bg):
+    @staticmethod
+    def SET_WIDGET_BG(widget, bg):
         # POTENTIAL ISSUES
         # spinBox - highlightBackground
         # cbs/rbs - activebackground
@@ -1201,7 +1202,7 @@ class gui:
     def __positionWidget(self, widget, row, column=0, colspan=0, rowspan=0, sticky=W+E):
         # allow item to be added to container
         container = self.__getContainer()
-        self.__setWidgetBg(widget, self.__getContainerBg())
+        gui.SET_WIDGET_BG(widget, self.__getContainerBg())
 
         # alpha paned window placement
         if self.containerStack[-1]['type'] ==self.C_PANEDWINDOW:
@@ -3867,7 +3868,7 @@ class Meter(Frame):
 
     def configure(self, cnf=None, **kw):
         # properties to propagate to CheckBoxes
-        kw=gui.cleanConfigDict(**kw)
+        kw=gui.CLEAN_CONFIG_DICTIONARY(**kw)
 
         if "fill" in kw: self._canv.itemconfigure(self._rect, fill=kw.pop("fill"))
         if "fg" in kw: self._canv.itemconfigure(self._text, fill=kw.pop("fg"))
@@ -4085,7 +4086,7 @@ class TabbedFrame(Frame):
         self.configure(cnf, **kw)
 
     def configure(self, cnf=None, **kw):
-        kw=gui.cleanConfigDict(**kw)
+        kw=gui.CLEAN_CONFIG_DICTIONARY(**kw)
         # configure fgs 
         if "activeforeground" in kw: self.activeFg=kw.pop("activeforeground")
         if "fg" in kw: self.inactiveFg=kw.pop("fg")
@@ -4096,7 +4097,9 @@ class TabbedFrame(Frame):
         if "activebackground" in kw:
             self.activeBg=kw.pop("activebackground")
             for key in list(self.tabVars.keys()):
-                self.tabVars[key][1]['bg']=self.activeBg
+                self.tabVars[key][1].configure(bg=self.activeBg)
+                for child in self.tabVars[key][1].winfo_children():
+                    gui.SET_WIDGET_BG(child, self.activeBg)
         if "inactivebackground" in kw: self.inactiveBg=kw.pop("inactivebackground")
 
         # update tabs if we have any
@@ -4277,7 +4280,7 @@ class Properties(LabelFrame):
     def configure(self, cnf=None, **kw):
         # properties to propagate to CheckBoxes
         vals=["bg", "fg", "disabledforeground", "state", "font", "command"]
-        kw=gui.cleanConfigDict(**kw)
+        kw=gui.CLEAN_CONFIG_DICTIONARY(**kw)
 
         # loop through all kw properties received
         for k, v in kw.items():
@@ -4608,7 +4611,7 @@ class ToggleFrame(Frame):
         self.configure(cnf, **kw)
 
     def configure(self, cnf=None, **kw):
-        kw=gui.cleanConfigDict(**kw)
+        kw=gui.CLEAN_CONFIG_DICTIONARY(**kw)
         if "font" in kw:
             self.titleLabel.config(font=kw["font"])
             self.toggleButton.config(font=kw["font"])
@@ -4699,7 +4702,7 @@ class PagedWindow(Frame):
         self.configure(cnf, **kw)
 
     def configure(self, cnf=None, **kw):
-        kw=gui.cleanConfigDict(**kw)
+        kw=gui.CLEAN_CONFIG_DICTIONARY(**kw)
 
         if "bg" in kw:
             if platform() == "Darwin":

@@ -11,6 +11,9 @@ app.startTabbedFrame("NB")
 
 app.startTab("Tab1")
 app.addLabel("l1", "TabbedFrame Tab 1 Demo")
+app.addEntry("e1")
+app.addButton("BUTTON", None)
+app.addCheckBox("CHECKER")
 app.stopTab()
 
 app.startTab("Tab2")
