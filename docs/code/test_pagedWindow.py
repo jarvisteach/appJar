@@ -6,9 +6,9 @@ def pos(btn):
     elif btn=="bottom":
         app.setPagedWindowButtonsTop("PagedWindow", False)
     elif btn=="hide":
-        app.showPagedWindowLabel("PagedWindow", False)
+        app.showPagedWindowPageNumber("PagedWindow", False)
     elif btn=="show":
-        app.showPagedWindowLabel("PagedWindow", True)
+        app.showPagedWindowPageNumber("PagedWindow", True)
     elif btn=="titleOn":
         app.showPagedWindowTitle("PagedWindow", True)
     elif btn=="titleOff":
@@ -23,6 +23,7 @@ def pageChanged(pager):
 
 app=gui("Pages", "280x400")
 app.setBg("old lace")
+app.setFont(20)
 app.addToolbar(["top", "hide", "show","bottom", "titleOn", "titleOff"], pos)
 app.addStatus()
 

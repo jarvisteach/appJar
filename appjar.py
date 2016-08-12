@@ -660,8 +660,8 @@ class gui:
         if self.containerStack[-1]['type'] == self.C_ROOT:
             self.appWindow.config(background=colour)
             self.bgLabel.config(background=colour)
-        elif self.containerStack[-1]['type'] in [self.C_PAGEDWINDOW, self.C_TOGGLEFRAME]:
-            self.containerStack[-1]['container'].setBg(colour)
+#        elif self.containerStack[-1]['type'] in [self.C_PAGEDWINDOW]:
+#            self.containerStack[-1]['container'].setBg(colour)
 
         self.containerStack[-1]['container'].config(background=colour)
 
@@ -1175,7 +1175,6 @@ class gui:
 
         # widget with label, in frame
         elif widgType == "LabelBox":
-# changed to config
             widget.theLabel.config(bg=bg)
             widgType = widget.theWidget.__class__.__name__ 
             if isDarwin and  widgType in darwinBorders:
@@ -1184,7 +1183,6 @@ class gui:
 
         # group of buttons or labels
         elif widgType == "WidgetBox":
-# changed to config
             widget.config(bg=bg)
             if isDarwin:
                 for widg in widget.theWidgets:
@@ -1192,18 +1190,14 @@ class gui:
                     if widgType == "Button": widg.config(highlightbackground=bg)
                     elif widgType == "Label": widg.config(background=bg)
 
-        elif widgType in ["PagedWindow", "TabbedFrame"]:
+        elif widgType in ["TabbedFrame"]:
             widget.setBg(bg)
 
         # any other widgets
         elif widgType not in noBg:
-# changed to config
             widget.config(bg=bg)
-            #widget["bg"]=bg
         elif widgType in noBg:
             pass
-#        else:
-#            self.warn("__setWidgetBg() called on unknown widget type: " + widgType)
 
     def __getContainerBg(self):
         return self.__getContainer()["bg"]
@@ -4694,17 +4688,31 @@ class PagedWindow(Frame):
         # show the label
         self.__setLabel()
 
-    def setBg(self, colour):
-        self.config(bg=colour)
-        if platform() == "Darwin":
-            self.prevButton.config(highlightbackground=colour)
-            self.nextButton.config(highlightbackground=colour)
-        self.posLabel.config(bg=colour)
-        self.titleLabel.config(bg=colour)
+    def config(self, cnf=None, **kw):
+        self.configure(cnf, **kw)
 
-    def setFg(self, colour):
-        self.poslabel.config(fg=colour)
-        self.titleLabel.config(fg=colour)
+    def configure(self, cnf=None, **kw):
+        kw=gui.cleanConfigDict(**kw)
+
+        if "bg" in kw:
+            if platform() == "Darwin":
+                self.prevButton.config(highlightbackground=kw["bg"])
+                self.nextButton.config(highlightbackground=kw["bg"])
+            self.posLabel.config(bg=kw["bg"])
+            self.titleLabel.config(bg=kw["bg"])
+        if "fg" in kw:
+            self.poslabel.config(fg=kw["fg"])
+            self.titleLabel.config(fg=kw["fg"])
+            kw.pop("fg")
+
+        super(Frame, self).config(cnf, **kw)
+
+#    def setBg(self, colour):
+#        self.config(bg=colour)
+#
+#    def setFg(self, colour):
+#        self.poslabel.config(fg=colour)
+#        self.titleLabel.config(fg=colour)
 
     # functions to change the labels of the two buttons
     def setPrevButton(self, title): self.prevButton.config(text=title)
