@@ -837,12 +837,9 @@ class gui:
         for item in items:
             try:
                 if option == 'background':
-                    if kind==self.METER:
-                        item.config(backfill=value)
-                    elif kind==self.TABBEDFRAME:
-                        item.setBg(value)
-                    else:
-                        self.__setWidgetBg(item, value)
+                    if kind==self.METER: item.config(backfill=value)
+                    elif kind==self.TABBEDFRAME: item.setBg(value)
+                    else: self.__setWidgetBg(item, value)
                 elif option == 'foreground':
                     if kind==self.ENTRY:
                         if item.hasDefault: item.oldFg=value
@@ -3435,7 +3432,7 @@ class gui:
 
     def __addSeparator(self, orient, row=None, column=0, colspan=0, rowspan=0, colour=None):
         sep = Separator(self.__getContainer(), orient)
-        if colour is not None: sep.setLineFg(colour)
+        if colour is not None: sep.configure(fg=colour)
         self.n_separators.append(sep)
         self.__positionWidget(sep, row, column, colspan, rowspan)
 
@@ -4172,6 +4169,16 @@ class TabbedFrame(Frame):
         # and grid it if necessary
         if swap: self.tabVars[self.selectedTab][1].grid()
 
+    def config(self, cnf=None, **kw):
+        self.configure(cnf, **kw)
+
+    def configure(self, cnf=None, **kw):
+        if "bg" in kw:
+            self.paneBg=bg
+            for key in list(self.tabVars.keys()):
+                self.tabVars[key][1]['bg']=kw.pop("bg")
+        super(Frame, self).config(cnf, **kw)
+
     def setBg(self, bg):
         self.paneBg=bg
         for key in list(self.tabVars.keys()):
@@ -4280,9 +4287,9 @@ class Properties(LabelFrame):
                     self.cbs[prop_key][k]=v
 
         # remove any props the LabelFrame can't handle
-        if "state" in kw: del(kw["state"])
-        if "disabledforeground" in kw: del(kw["disabledforeground"])
-        if "command" in kw: del(kw["command"])
+        kw.pop("state", None)
+        kw.pop("disabledforeground", None)
+        kw.pop("command", None)
 
         super(LabelFrame, self).config(cnf, **kw)
 
@@ -4338,8 +4345,13 @@ class Separator(Frame):
             self.line.config(relief="ridge", height=100, width=2, borderwidth=1)
             self.line.pack(padx=5, pady=5, fill="y", expand=1)
 
-    def setLineFg(self, colour):
-        self.line.config(bg=colour)
+    def config(self, cnf=None, **kw):
+        self.configure(cnf, **kw)
+
+    def configure(self, cnf=None, **kw):
+        if "fg" in kw:
+            self.line.config(bg=kw.pop("fg"))
+        super(Frame, self).config(cnf, **kw)
 
 #####################################
 ## Pie Chart Class
