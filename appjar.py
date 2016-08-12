@@ -1157,14 +1157,13 @@ class gui:
 
     # convenience method to set a widget's bg
     def __setWidgetBg(self, widget, bg):
-
         # POTENTIAL ISSUES
         # spinBox - highlightBackground
         # cbs/rbs - activebackground
         # grids - background
 
         darwinBorders = ["Text", "Button", "Entry"]#, "OptionMenu"]
-        noBg = ["Spinbox", "Scale", "ListBox", "SplitMeter", "DualMeter", "Meter"]
+        noBg = ["Spinbox", "Scale", "ListBox", "SplitMeter", "DualMeter", "Meter", "ToggleFrame"]
 
         widgType = widget.__class__.__name__
         isDarwin = platform() == "Darwin"
@@ -1363,7 +1362,7 @@ class gui:
             self.__addContainer(self.C_SCROLLPANE, scrollPane, 0, 1, sticky)
         elif fType == self.C_TOGGLEFRAME:
             toggleFrame = ToggleFrame(self.containerStack[-1]['container'], title=title, bg=self.__getContainerBg())
-            toggleFrame.setFont(self.toggleFrameFont)
+            toggleFrame.configure(font=self.toggleFrameFont)
             toggleFrame.isContainer = True
             self.__positionWidget(toggleFrame, row, column, colspan, rowspan, sticky=sticky)
             self.__addContainer(self.C_TOGGLEFRAME, toggleFrame, 0, 1, "nw")
@@ -4595,7 +4594,7 @@ class ToggleFrame(Frame):
 
         self.subFrame = Frame(self, relief="sunken", borderwidth=2)
 
-        self.setBg("DarkGray")
+        self.configure(bg="DarkGray")
 
         self.grid_columnconfigure(0, weight=1)
         self.titleFrame.grid(row=0, column=0, sticky=EW)
@@ -4627,10 +4626,6 @@ class ToggleFrame(Frame):
 
         super(Frame, self).config(cnf, **kw)
 
-    def setFont(self, font):
-        self.titleLabel.config(font=font)
-        self.toggleButton.config(font=font)
-
     def toggle(self):
         if not self.showing:
             self.subFrame.grid()
@@ -4643,13 +4638,6 @@ class ToggleFrame(Frame):
     def getContainer(self):
         return self.subFrame
 
-    def setBg(self, colour):
-        self.config(bg=colour)
-        self.titleFrame.config(bg=colour)
-        self.titleLabel.config(bg=colour)
-        self.subFrame.config(bg=colour)
-        if platform() == "Darwin": self.toggleButton.config(highlightbackground=colour)
-
     def stop(self):
         self.update_idletasks()
         self.titleFrame.config(width=self.winfo_reqwidth())
@@ -4657,14 +4645,6 @@ class ToggleFrame(Frame):
 
     def isShowing(self):
         return self.showing
-
-    def disable(self, disable=True):
-        if disable:
-            if self.showing:
-                self.toggle()
-            self.toggleButton.config(state="disabled")
-        else:
-            self.toggleButton.config(state="normal")
 
 #####################################
 ## Paged Window
