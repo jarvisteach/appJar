@@ -838,7 +838,7 @@ class gui:
             try:
                 if option == 'background':
                     if kind==self.METER:
-                        item.setBg(value)
+                        item.config(backfill=value)
                     elif kind==self.TABBEDFRAME:
                         item.setBg(value)
                     else:
@@ -849,17 +849,11 @@ class gui:
                         else:
                             item.config(foreground=value)
                             item.oldFg=value
-                    elif kind==self.METER:
-                              item.setFg(value)
                     else:
                         item.config(foreground=value)
                 elif option == 'disabledforeground': item.config( disabledforeground=value )
-                elif option == 'width':
-                    if kind==self.METER: item.setWidth(value)
-                    else: item.config( width=value )
-                elif option == 'height':
-                    if kind==self.METER: item.setHeight(value)
-                    else: item.config( height=value )
+                elif option == 'width': item.config( width=value )
+                elif option == 'height': item.config( height=value )
                 elif option == 'state': item.config( state=value )
                 elif option == 'relief': item.config( relief=value )
                 elif option == 'align':
@@ -1173,7 +1167,7 @@ class gui:
         # grids - background
 
         darwinBorders = ["Text", "Button", "Entry"]#, "OptionMenu"]
-        noBg = ["Spinbox", "Scale", "ListBox", "SplitMeter", "Meter", "DualMeter"]
+        noBg = ["Spinbox", "Scale", "ListBox", "SplitMeter", "DualMeter", "Meter"]
 
         widgType = widget.__class__.__name__
         isDarwin = platform() == "Darwin"
@@ -1202,7 +1196,7 @@ class gui:
                     if widgType == "Button": widg.config(highlightbackground=bg)
                     elif widgType == "Label": widg.config(background=bg)
 
-        elif widgType in ["PagedWindow", "Meter", "TabbedFrame"]:
+        elif widgType in ["PagedWindow", "TabbedFrame"]:
             widget.setBg(bg)
 
         # any other widgets
@@ -1210,6 +1204,10 @@ class gui:
 # changed to config
             widget.config(bg=bg)
             #widget["bg"]=bg
+        elif widgType in noBg:
+            pass
+#        else:
+#            self.warn("__setWidgetBg() called on unknown widget type: " + widgType)
 
     def __getContainerBg(self):
         return self.__getContainer()["bg"]
@@ -3420,7 +3418,7 @@ class gui:
 
     def setMeterFill(self, name, colour):
         item = self.__verifyItem(self.n_meters, name)
-        item.setFill(colour)
+        item.configure(fill=colour)
 
 #####################################
 ## FUNCTIONS for seperators
@@ -3881,20 +3879,21 @@ class Meter(Frame):
         self.set(value, text)
         self.bind('<Configure>', self._update_coords)
 
-    def setFill(self, col):
-        self._canv.itemconfigure(self._rect, fill=col)
+    def config(self, cnf=None, **kw):
+        self.configure(cnf, **kw)
 
-    def setFg(self, col):
-        self._canv.itemconfigure(self._text, fill=col)
+    def configure(self, cnf=None, **kw):
+        # properties to propagate to CheckBoxes
+        kw=gui.cleanConfigDict(**kw)
 
-    def setBg(self, col):
-        self._canv.config(bg=col)
+        if "fill" in kw: self._canv.itemconfigure(self._rect, fill=kw.pop("fill"))
+        if "fg" in kw: self._canv.itemconfigure(self._text, fill=kw.pop("fg"))
+        if "backfill" in kw: self._canv.config(bg=kw.pop("backfill"))
+        if "width" in kw: self._canv.config(width=kw.pop("width"))
+        if "height" in kw: self._canv.config(height=kw.pop("height"))
 
-    def setWidth(self, width):
-        self._canv.config(width=width)
-
-    def setHeight(self, height):
-        self._canv.config(height=height)
+        # propagate anything left
+        super(Frame, self).config(cnf, **kw)
 
     def _update_coords(self, event):
         '''Updates the position of the text and rectangle inside the canvas when the size of the widget gets changed.'''
@@ -4603,7 +4602,6 @@ class ToggleFrame(Frame):
             self.toggleButton.config(font=kw["font"])
             del(kw["font"])
         if "bg" in kw:
-            self.titleFrame.config(bg=kw["bg"])
             self.titleFrame.config(bg=kw["bg"])
             self.titleLabel.config(bg=kw["bg"])
             self.subFrame.config(bg=kw["bg"])
