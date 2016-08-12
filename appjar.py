@@ -130,8 +130,8 @@ class gui:
     # used for defining functions
     WIDGETS = { LABEL:"Label", MESSAGE:"Message", BUTTON:"Button", ENTRY:"Entry", CB:"Cb", SCALE:"Scale", RB:"Rb",
               LB:"Lb", SPIN:"SpinBox", OPTION:"OptionBox", TEXTAREA:"TextArea", LINK:"Link", METER:"Meter", IMAGE:"Image",
-              RADIOBUTTON:"RadioButton", CHECKBOX:"CheckBox", LISTBOX:"ListBox", PIECHART:"PieChart", PROPERTIES:"Properties", #TABBEDFRAME:"TabbedFrame",
-              LABELFRAME:"LabelFrame", PANEDWINDOW:"PanedWindow", TOGGLEFRAME:"ToggleFrame" }
+              RADIOBUTTON:"RadioButton", CHECKBOX:"CheckBox", LISTBOX:"ListBox", PIECHART:"PieChart", PROPERTIES:"Properties",
+              LABELFRAME:"LabelFrame", PANEDWINDOW:"PanedWindow", TOGGLEFRAME:"ToggleFrame", TABBEDFRAME:"TabbedFrame"}
 
     # music stuff
     BASIC_NOTES = {"A":440, "B":493, "C":261, "D":293, "E":329, "F":349, "G":392 }
@@ -660,8 +660,6 @@ class gui:
         if self.containerStack[-1]['type'] == self.C_ROOT:
             self.appWindow.config(background=colour)
             self.bgLabel.config(background=colour)
-#        elif self.containerStack[-1]['type'] in [self.C_PAGEDWINDOW]:
-#            self.containerStack[-1]['container'].setBg(colour)
 
         self.containerStack[-1]['container'].config(background=colour)
 
@@ -1170,8 +1168,8 @@ class gui:
 
         # Mac specific colours
         if isDarwin and widgType in darwinBorders:
-                widget.config(highlightbackground=bg)
-#                if widgType == "OptionMenu": widget.config(background=bg)
+            widget.config(highlightbackground=bg)
+#            if widgType == "OptionMenu": widget.config(background=bg)
 
         # widget with label, in frame
         elif widgType == "LabelBox":
@@ -1190,14 +1188,9 @@ class gui:
                     if widgType == "Button": widg.config(highlightbackground=bg)
                     elif widgType == "Label": widg.config(background=bg)
 
-        elif widgType in ["TabbedFrame"]:
-            widget.setBg(bg)
-
         # any other widgets
         elif widgType not in noBg:
             widget.config(bg=bg)
-        elif widgType in noBg:
-            pass
 
     def __getContainerBg(self):
         return self.__getContainer()["bg"]
@@ -1308,7 +1301,7 @@ class gui:
         elif fType == self.C_TABBEDFRAME:
             self.__verifyItem(self.n_tabbedFrames, title, True)
             tabbedFrame = TabbedFrame(self.containerStack[-1]['container'], bg=self.__getContainerBg())
-            tabbedFrame.isContainer = True
+#            tabbedFrame.isContainer = True
             self.__positionWidget(tabbedFrame, row, column, colspan, rowspan, sticky=sticky)
             self.n_tabbedFrames[title] = tabbedFrame
 
@@ -4088,6 +4081,30 @@ class TabbedFrame(Frame):
         self.selectedTab = None
         self.highlightedTab = None
 
+    def config(self, cnf=None, **kw):
+        self.configure(cnf, **kw)
+
+    def configure(self, cnf=None, **kw):
+        kw=gui.cleanConfigDict(**kw)
+        # configure fgs 
+        if "activeforeground" in kw: self.activeFg=kw.pop("activeforeground")
+        if "fg" in kw: self.inactiveFg=kw.pop("fg")
+        if "disabledforeground" in kw: self.disabledFg=kw.pop("disabledforeground")
+
+        # configure bgs
+        if "bg" in kw: pass # propagate to colour the frame
+        if "activebackground" in kw:
+            self.activeBg=kw.pop("activebackground")
+            for key in list(self.tabVars.keys()):
+                self.tabVars[key][1]['bg']=self.activeBg
+        if "inactivebackground" in kw: self.inactiveBg=kw.pop("inactivebackground")
+
+        # update tabs if we have any
+        if self.selectedTab is not None: self.__colourTabs(False)
+
+        #propagate any left over confs
+        super(Frame, self).config(cnf, **kw)
+
     def expandTabs(self, fill=True):
         self.fill = fill
         self.tabs.grid_forget()
@@ -4161,16 +4178,6 @@ class TabbedFrame(Frame):
         self.tabVars[self.highlightedTab][0]['fg']=self.activeFg
         # and grid it if necessary
         if swap: self.tabVars[self.selectedTab][1].grid()
-
-    def config(self, cnf=None, **kw):
-        self.configure(cnf, **kw)
-
-    def configure(self, cnf=None, **kw):
-        if "bg" in kw:
-            self.paneBg=bg
-            for key in list(self.tabVars.keys()):
-                self.tabVars[key][1]['bg']=kw.pop("bg")
-        super(Frame, self).config(cnf, **kw)
 
     def setBg(self, bg):
         self.paneBg=bg

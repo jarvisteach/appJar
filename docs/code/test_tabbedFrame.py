@@ -6,7 +6,6 @@ def fill(btn):
     elif btn=="SELECT": app.setTabbedFrameSelectedTab("NB", app.getEntry("Select Tab"))
 
 app = gui()
-app.setBg("red")
 
 app.startTabbedFrame("NB")
 
@@ -31,4 +30,7 @@ app.stopTabbedFrame()
 app.addLabelEntry("Select Tab")
 app.addButtons(["FILL", "SMALL", "SELECT"], fill)
 
+tabs=app.getTabbedFrameWidget("NB")
+tabs.configure(activeforeground="red", foreground="gray", disabledforeground="gray", bg="purple", activebackground="lightblue", inactivebackground="darkblue")
+app.setBg("pink")
 app.go()
