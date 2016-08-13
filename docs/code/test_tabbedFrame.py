@@ -4,6 +4,7 @@ def fill(btn):
     if btn=="FILL": app.setTabbedFrameTabExpand("NB")
     elif btn=="SMALL": app.setTabbedFrameTabExpand("NB", False)
     elif btn=="SELECT": app.setTabbedFrameSelectedTab("NB", app.getEntry("Select Tab"))
+    elif btn=="DISABLE": app.setTabbedFrameDisabledTab("NB", app.getEntry("Select Tab"))
 
 app = gui()
 
@@ -17,6 +18,7 @@ app.addCheckBox("CHECKER")
 app.stopTab()
 
 app.startTab("Tab2")
+app.setBg("pink")
 app.addLabel("l2", "TabbedFrame Tab 2 Demo")
 app.stopTab()
 
@@ -31,9 +33,19 @@ app.stopTab()
 app.stopTabbedFrame()
 
 app.addLabelEntry("Select Tab")
-app.addButtons(["FILL", "SMALL", "SELECT"], fill)
+app.addButtons(["FILL", "SMALL", "SELECT", "DISABLE"], fill)
 
-tabs=app.getTabbedFrameWidget("NB")
-tabs.configure(activeforeground="red", foreground="gray", disabledforeground="gray", bg="purple", activebackground="lightblue", inactivebackground="darkblue")
-app.setBg("pink")
+#tabs=app.getTabbedFrameWidget("NB")
+#
+#app.setTabbedFrameActiveFg("NB", "tomato")
+#app.setTabbedFrameActiveBg("NB", "saddlebrown")
+#
+#app.setTabbedFrameFg("NB", "coral")
+#app.setTabbedFrameInactiveBg("NB", "wheat")
+#
+#app.setTabbedFrameDisabledFg("NB", "cornsilk")
+#app.setTabbedFrameBg("NB", "purple")
+
+#app.setBg("pink")
+app.setBg("green")
 app.go()

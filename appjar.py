@@ -836,7 +836,6 @@ class gui:
             try:
                 if option == 'background':
                     if kind==self.METER: item.config(backfill=value)
-                    elif kind==self.TABBEDFRAME: item.setBg(value)
                     else: gui.SET_WIDGET_BG(item, value)
                 elif option == 'foreground':
                     if kind==self.ENTRY:
@@ -847,6 +846,15 @@ class gui:
                     else:
                         item.config(foreground=value)
                 elif option == 'disabledforeground': item.config( disabledforeground=value )
+                elif option == 'disabledbackground': item.config( disabledbackground=value )
+                elif option == 'activeforeground': item.config( activeforeground=value )
+                elif option == 'activebackground': item.config( activebackground=value )
+                elif option == 'inactiveforeground':
+                    if kind==self.TABBEDFRAME: item.config( inactiveforeground=value )
+                    else: self.warn("Error configuring " + name + ": can't set inactiveforeground")
+                elif option == 'inactivebackground':
+                    if kind==self.TABBEDFRAME: item.config( inactivebackground=value )
+                    else: self.warn("Error configuring " + name + ": can't set inactivebackground")
                 elif option == 'width': item.config( width=value )
                 elif option == 'height': item.config( height=value )
                 elif option == 'state': item.config( state=value )
@@ -952,8 +960,22 @@ class gui:
               exec("gui.set"+v+"Bg=set" +v+ "Bg")
               exec("def set"+v+"Fg(self, name, val): self.configureWidgets("+str(k)+", name, 'foreground', val)")
               exec("gui.set"+v+"Fg=set" +v+ "Fg")
+
               exec("def set"+v+"DisabledFg(self, name, val): self.configureWidgets("+str(k)+", name, 'disabledforeground', val)")
               exec("gui.set"+v+"DisabledFg=set" +v+ "DisabledFg")
+              exec("def set"+v+"DisabledBg(self, name, val): self.configureWidgets("+str(k)+", name, 'disabledbackground', val)")
+              exec("gui.set"+v+"DisabledBg=set" +v+ "DisabledBg")
+
+              exec("def set"+v+"ActiveFg(self, name, val): self.configureWidgets("+str(k)+", name, 'activeforeground', val)")
+              exec("gui.set"+v+"ActiveFg=set" +v+ "ActiveFg")
+              exec("def set"+v+"ActiveBg(self, name, val): self.configureWidgets("+str(k)+", name, 'activebackground', val)")
+              exec("gui.set"+v+"ActiveBg=set" +v+ "ActiveBg")
+
+              exec("def set"+v+"InactiveFg(self, name, val): self.configureWidgets("+str(k)+", name, 'inactiveforeground', val)")
+              exec("gui.set"+v+"InactiveFg=set" +v+ "InactiveFg")
+              exec("def set"+v+"InactiveBg(self, name, val): self.configureWidgets("+str(k)+", name, 'inactivebackground', val)")
+              exec("gui.set"+v+"InactiveBg=set" +v+ "InactiveBg")
+
               exec("def set"+v+"Width(self, name, val): self.configureWidgets("+str(k)+", name, 'width', val)")
               exec("gui.set"+v+"Width=set" +v+ "Width")
               exec("def set"+v+"Height(self, name, val): self.configureWidgets("+str(k)+", name, 'height', val)")
@@ -1376,6 +1398,8 @@ class gui:
         else:
             raise Exception("Unknown container: " + fType)
 
+    ####### Tabbed Frames ########
+
     def startTabbedFrame(self, title, row=None, column=0, colspan=0, rowspan=0, sticky="NSEW"):
         self.startContainer(self.C_TABBEDFRAME, title, row, column, colspan, rowspan, sticky)
 
@@ -1387,6 +1411,10 @@ class gui:
         nb = self.__verifyItem(self.n_tabbedFrames, title)
         nb.changeTab(tab)
 
+    def setTabbedFrameDisabledTab(self, title, tab, disabled=True):
+        nb = self.__verifyItem(self.n_tabbedFrames, title)
+        nb.disableTab(tab, disabled)
+
     def startTab(self, title):
         # auto close the previous TAB - keep it?
         if self.containerStack[-1]['type'] == self.C_TAB:
@@ -1395,6 +1423,20 @@ class gui:
         elif self.containerStack[-1]['type'] != self.C_TABBEDFRAME:
               raise Exception("Can't add a Tab to the current container: ", self.containerStack[-1]['type'])
         self.startContainer(self.C_TAB, title)
+
+    def stopTabbedFrame(self):
+        # auto close the existing TAB - keep it?
+        if self.containerStack[-1]['type'] == self.C_TAB:
+              self.warn("You didn't STOP the previous TAB")
+              self.stopContainer()
+        self.stopContainer()
+
+    def stopTab(self):
+        if self.containerStack[-1]['type'] != self.C_TAB:
+              raise Exception("Can't stop a TAB, currently in:", self.containerStack[-1]['type'])
+        self.stopContainer()
+
+    ###### END Tabbed Frames ########
 
     def startPanedWindow(self, title, row=None, column=0, colspan=0, rowspan=0, sticky="NSEW"):
         self.startContainer(self.C_PANEDWINDOW, title, row, column, colspan, rowspan, sticky)
@@ -1500,18 +1542,6 @@ class gui:
     # functions to stop the various containers
     def stopContainer(self): self.__removeContainer()
 
-    def stopTabbedFrame(self):
-        # auto close the existing TAB - keep it?
-        if self.containerStack[-1]['type'] == self.C_TAB:
-              self.warn("You didn't STOP the previous TAB")
-              self.stopContainer()
-        self.stopContainer()
-
-    def stopTab(self):
-        if self.containerStack[-1]['type'] != self.C_TAB:
-              raise Exception("Can't stop a TAB, currently in:", self.containerStack[-1]['type'])
-        self.stopContainer()
-
     def stopLabelFrame(self):
         if self.containerStack[-1]['type'] != self.C_LABELFRAME:
               raise Exception("Can't stop a LABELFRAME, currently in:", self.containerStack[-1]['type'])
@@ -1606,23 +1636,6 @@ class gui:
     def setLabelFrameAnchor(self, title, anchor):
         frame = self.__verifyItem(self.n_labelFrames, title)
         frame.config(labelanchor=anchor)
-
-    # functions to change colours of TabbedFrames
-    def setTabbedFrameTabBg(self, tabbedFrame, tab, bg):
-        myFrame = self.__verifyItem(self.n_tabbedFrames, tabbedFrame)
-        myFrame.setTabBg(tab, bg)
-
-    def setTabbedFrameTab(self, tabbedFrame, tab):
-        myFrame = self.__verifyItem(self.n_tabbedFrames, tabbedFrame)
-        myFrame.changeTab(tab)
-
-    def setTabbedFrameFg(self, tabbedFrame, active, inactive):
-        myFrame = self.__verifyItem(self.n_tabbedFrames, tabbedFrame)
-        myFrame.setFg(active, inactive)
-
-    def setTabbedFrameBg(self, tabbedFrame, active, inactive):
-        myFrame = self.__verifyItem(self.n_tabbedFrames, tabbedFrame)
-        myFrame.setBg(active, inactive)
 
 #####################################
 ## warn when bad functions called...
@@ -4057,30 +4070,42 @@ class DualMeter(SplitMeter):
 #################################
 class TabbedFrame(Frame):
     def __init__(self, master, bg, fill=False, *args, **kwargs):
+
+        # main frame & tabContainer inherit BG colour
         Frame.__init__(self, master, bg=bg)
-        self.tabs=Frame(self,bg=bg)
-        self.paneBg=bg
-        self.panes=Frame(self,relief=SUNKEN,bd=2,bg=self.paneBg,**kwargs)
-        self.fill=fill
-        self.tabList=[]
 
-        if self.fill:
-            self.tabs.grid(row=0, sticky=W+E)
-        else:
-            self.tabs.grid(row=0, sticky=W)
+        # create two containers
+        self.tabContainer=Frame(self,bg=bg)
+        self.paneContainer=Frame(self,relief=SUNKEN,bd=2,bg=bg,**kwargs)
 
+        # grid the containers
         Grid.columnconfigure(self, 0, weight=1)
-        self.panes.grid(row=1,sticky="NESW")
         Grid.rowconfigure(self, 1, weight=1)
+        self.fill=fill
+        if self.fill:
+            self.tabContainer.grid(row=0, sticky=W+E)
+        else:
+            self.tabContainer.grid(row=0, sticky=W)
+        self.paneContainer.grid(row=1,sticky="NESW")
 
-        self.activeFg="blue"
-        self.inactiveFg="black"
-        self.activeBg="white"
-        self.inactiveBg="grey"
+        # nain store dictionary: name = [tab, pane] 
+        from collections import OrderedDict
+        self.widgetStore=OrderedDict()
 
-        self.tabVars = {}
         self.selectedTab = None
         self.highlightedTab = None
+
+        # selected tab & all panes
+        self.activeFg="blue"
+        self.activeBg="white"
+
+        # other tabs
+        self.inactiveFg="black"
+        self.inactiveBg="grey"
+
+        # disabled tabs
+        self.disabledFg="lightGray"
+        self.disabledBg="darkGray"
 
     def config(self, cnf=None, **kw):
         self.configure(cnf, **kw)
@@ -4088,19 +4113,27 @@ class TabbedFrame(Frame):
     def configure(self, cnf=None, **kw):
         kw=gui.CLEAN_CONFIG_DICTIONARY(**kw)
         # configure fgs 
-        if "activeforeground" in kw: self.activeFg=kw.pop("activeforeground")
-        if "fg" in kw: self.inactiveFg=kw.pop("fg")
-        if "disabledforeground" in kw: self.disabledFg=kw.pop("disabledforeground")
-
-        # configure bgs
-        if "bg" in kw: pass # propagate to colour the frame
+        if "activeforeground" in kw:
+            self.activeFg=kw.pop("activeforeground")
+            for key in list(self.widgetStore.keys()):
+                self.widgetStore[key][0].config(highlightcolor=self.activeFg)
         if "activebackground" in kw:
             self.activeBg=kw.pop("activebackground")
-            for key in list(self.tabVars.keys()):
-                self.tabVars[key][1].configure(bg=self.activeBg)
-                for child in self.tabVars[key][1].winfo_children():
+            for key in list(self.widgetStore.keys()):
+                self.widgetStore[key][1].configure(bg=self.activeBg)
+                for child in self.widgetStore[key][1].winfo_children():
                     gui.SET_WIDGET_BG(child, self.activeBg)
+
+        if "fg" in kw: self.inactiveFg=kw.pop("fg")
         if "inactivebackground" in kw: self.inactiveBg=kw.pop("inactivebackground")
+
+        if "disabledforeground" in kw: self.disabledFg=kw.pop("disabledforeground")
+        if "disabledbackground" in kw: self.disabledBg=kw.pop("disabledbackground")
+
+        if "bg" in kw:
+            self.tabContainer.configure(bg=kw["bg"])
+            self.paneContainer.configure(bg=kw["bg"])
+            pass
 
         # update tabs if we have any
         if self.selectedTab is not None: self.__colourTabs(False)
@@ -4108,29 +4141,18 @@ class TabbedFrame(Frame):
         #propagate any left over confs
         super(Frame, self).config(cnf, **kw)
 
-    def expandTabs(self, fill=True):
-        self.fill = fill
-        self.tabs.grid_forget()
-        if self.fill:
-            self.tabs.grid(row=0, sticky=W+E)
-        else:
-            self.tabs.grid(row=0, sticky=W)
-
-        for tab in self.tabList:
-            tab.pack_forget()
-            if self.fill:
-                tab.pack(side=LEFT,ipady=4,ipadx=4, expand=True, fill=BOTH)
-            else:
-                tab.pack(side=LEFT,ipady=4,ipadx=4)
-
     def addTab(self, text, **kwargs):
+        # check for duplicates
+        if text in self.widgetStore:
+            raise Exception("Duplicate tabName: " + text)
+
         # log the first tab as the selected tab
         if self.selectedTab is None: self.selectedTab=text
         if self.highlightedTab is None: self.highlightedTab=text
 
         # create the tab, bind events, pack it in
-        tab=Label(self.tabs,text=text,relief=RIDGE,cursor="hand2",takefocus=1,**kwargs)
-        self.tabList.append(tab)
+        tab=Label(self.tabContainer,text=text,highlightthickness=1,highlightcolor=self.activeFg, relief=RIDGE,cursor="hand2",takefocus=1,**kwargs)
+        tab.disabled=False
 
         tab.bind("<Button-1>", lambda *args:self.changeTab(text))
         tab.bind("<Return>", lambda *args:self.changeTab(text))
@@ -4143,62 +4165,96 @@ class TabbedFrame(Frame):
             tab.pack(side=LEFT,ipady=4,ipadx=4)
 
         # create the pane
-        pane=Frame(self.panes,bg=self.paneBg)
+        pane=Frame(self.paneContainer,bg=self.activeBg)
         pane.grid(sticky="nsew", row=0, column=0)
-        self.panes.grid_columnconfigure(0, weight=1)
-        self.panes.grid_rowconfigure(0, weight=1)
+        self.paneContainer.grid_columnconfigure(0, weight=1)
+        self.paneContainer.grid_rowconfigure(0, weight=1)
 
-        self.tabVars[text]=[tab, pane]
+        self.widgetStore[text]=[tab, pane]
         self.__colourTabs(self.selectedTab)
 
         return pane
+
+    def expandTabs(self, fill=True):
+        self.fill = fill
+
+        # update the tabConatiner
+        self.tabContainer.grid_forget()
+        if self.fill:
+            self.tabContainer.grid(row=0, sticky=W+E)
+        else:
+            self.tabContainer.grid(row=0, sticky=W)
+
+
+        for key in list(self.widgetStore.keys()):
+            tab=self.widgetStore[key][0]
+            tab.pack_forget()
+            if self.fill:
+                tab.pack(side=LEFT,ipady=4,ipadx=4, expand=True, fill=BOTH)
+            else:
+                tab.pack(side=LEFT,ipady=4,ipadx=4)
 
     def __focusIn(self, tabName):
         self.highlightedTab = tabName
         self.__colourTabs(False)
 
     def __focusOut(self, tabName):
-        self.tabVars[tabName][0]['fg']='black'
+        self.highlightedTab = None
+        self.__colourTabs(False)
+
+    def disableTab(self, tabName, disabled=True):
+        if tabName not in self.widgetStore.keys():
+            raise Exception("Invalid tab name: " + tabName)
+
+        self.widgetStore[tabName][0].disabled=True
+        self.widgetStore[tabName][0].config(cursor="X_cursor",takefocus=1)
+        if self.highlightedTab == tabName: self.highlightedTab = None
+
+        # difficult if the active tab is disabled
+        if self.selectedTab == tabName:
+            self.widgetStore[tabName][1].grid_remove()
+            # find an enabled tab
+            self.selectedTab = None
+            for key in list(self.widgetStore.keys()):
+                if not self.widgetStore[key][0].disabled:
+                    self.changeTab(key)
+                    break
+
+        self.__colourTabs()
 
     def changeTab(self, tabName):
-        if tabName not in self.tabVars.keys():
+        if tabName not in self.widgetStore.keys():
             raise Exception("Invalid tab name: " + tabName)
-        self.tabVars[tabName][0].focus_set()
+
+        if self.widgetStore[tabName][0].disabled:
+            return
+
+        self.selectedTab=tabName
         self.highlightedTab = tabName
-        if tabName != self.selectedTab:
-              self.selectedTab=tabName
-              self.__colourTabs()
+        self.widgetStore[tabName][0].focus_set()
+        self.__colourTabs()
 
     def __colourTabs(self, swap=True):
         # clear all tabs & remove if necessary
-        for key in list(self.tabVars.keys()):
-              self.tabVars[key][0]['bg']=self.inactiveBg
-              self.tabVars[key][0]['fg']=self.inactiveFg
-              if swap: self.tabVars[key][1].grid_remove()
+        for key in list(self.widgetStore.keys()):
+            if self.widgetStore[key][0].disabled:
+                self.widgetStore[key][0]['bg']=self.disabledBg
+                self.widgetStore[key][0]['fg']=self.disabledFg
+            else:
+                self.widgetStore[key][0]['bg']=self.inactiveBg
+                self.widgetStore[key][0]['fg']=self.inactiveFg
+                if swap: self.widgetStore[key][1].grid_remove()
+
+        # decorate the highlighted tab
+        if self.highlightedTab is not None:
+            self.widgetStore[self.highlightedTab][0]['fg']=self.activeFg
 
         # now decorate the active tab
-        self.tabVars[self.selectedTab][0]['bg']=self.activeBg
-        self.tabVars[self.highlightedTab][0]['fg']=self.activeFg
-        # and grid it if necessary
-        if swap: self.tabVars[self.selectedTab][1].grid()
-
-    def setBg(self, bg):
-        self.paneBg=bg
-        for key in list(self.tabVars.keys()):
-            self.tabVars[key][1]['bg']=bg
-
-    def setTabBg(self, tab, bg):
-        self.tabVars[tab][1].config(bg=bg)
-
-    def setFg(self, activeFg, inactiveFg):
-        self.activeFg = activeFg
-        self.inactiveFg = inactiveFg
-        self.__colourTabs(False)
-
-    def setBg(self, activeBg, inactiveBg):
-        self.activeBg = activeBg
-        self.inactiveBg = inactiveBg
-        self.__colourTabs(False)
+        if self.selectedTab is not None:
+            self.widgetStore[self.selectedTab][0]['bg']=self.activeBg
+            self.widgetStore[self.selectedTab][0]['fg']=self.activeFg
+            # and grid it if necessary
+            if swap: self.widgetStore[self.selectedTab][1].grid()
 
 #####################################
 ## Drag Grip Label Class
