@@ -1184,7 +1184,7 @@ class gui:
         # grids - background
 
         darwinBorders = ["Text", "Button", "Entry"]#, "OptionMenu"]
-        noBg = ["Spinbox", "Scale", "ListBox", "SplitMeter", "DualMeter", "Meter", "ToggleFrame"]
+        noBg = ["Spinbox", "ListBox", "SplitMeter", "DualMeter", "Meter", "ToggleFrame"]#, "Scale"]
 
         widgType = widget.__class__.__name__
         isDarwin = platform() == "Darwin"
@@ -1981,13 +1981,13 @@ class gui:
                     widg = self.__buildEntry(name, gridFrame)
                     frame.entries.append(widg)
                     #entry.grid ( row=0,column=0, sticky=N+E+S+W )
-                    widg.grid ( row=len(data), column=cellNum, sticky=N+E+S+W )
+                    widg.grid(row=len(data), column=cellNum, sticky=N+E+S+W)
               widg = Label(gridFrame)
-              widg.configure( relief=RIDGE )
+              widg.configure(relief=RIDGE)
               but = Button(widg)
-              but.configure( text="Press", command=self.__makeFunc(action, "newRow"),font=self.buttonFont )
-              but.grid ( row=0,column=0, sticky=N+E+S+W )
-              widg.grid ( row=len(data), column=maxSize, sticky=N+E+S+W )
+              but.configure(text="Press", command=self.__makeFunc(action, "newRow"),font=self.buttonFont)
+              but.grid(row=0,column=0, sticky=N+E+S+W)
+              widg.grid(row=len(data), column=maxSize, sticky=N+E+S+W)
 
         return frame
 
@@ -2035,10 +2035,10 @@ class gui:
         # configure the drop-down too
         dropDown = option.nametowidget(option.menuname)
         dropDown.configure(font=self.optionFont)
-#            dropDown.configure(background=self.__getContainerBg())
+#        dropDown.configure(background=self.__getContainerBg())
 
 #        if platform() == "Darwin":
-#              option.config(highlightbackground=self.__getContainerBg())
+#            option.config(highlightbackground=self.__getContainerBg())
 
         option.bind("<Tab>", self.__focusNextWindow)
         option.bind("<Shift-Tab>", self.__focusLastWindow)
@@ -2053,7 +2053,6 @@ class gui:
         option = self.__buildOptionBox(self.__getContainer(), title, options)
         self.__positionWidget(option, row, column, colspan, rowspan)
 
-    # under development
     def addTickOptionBox(self, title, options, row=None, column=0, colspan=0, rowspan=0):
         tick = self.__buildOptionBox(self.__getContainer(), title, options, "ticks")
         self.__positionWidget(tick, row, column, colspan, rowspan)
