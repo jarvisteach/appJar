@@ -1403,6 +1403,13 @@ class gui:
     def startTabbedFrame(self, title, row=None, column=0, colspan=0, rowspan=0, sticky="NSEW"):
         self.startContainer(self.C_TABBEDFRAME, title, row, column, colspan, rowspan, sticky)
 
+    def stopTabbedFrame(self):
+        # auto close the existing TAB - keep it?
+        if self.containerStack[-1]['type'] == self.C_TAB:
+              self.warn("You didn't STOP the previous TAB")
+              self.stopContainer()
+        self.stopContainer()
+
     def setTabbedFrameTabExpand(self, title, expand=True):
         nb = self.__verifyItem(self.n_tabbedFrames, title)
         nb.expandTabs(expand)
@@ -1423,13 +1430,6 @@ class gui:
         elif self.containerStack[-1]['type'] != self.C_TABBEDFRAME:
               raise Exception("Can't add a Tab to the current container: ", self.containerStack[-1]['type'])
         self.startContainer(self.C_TAB, title)
-
-    def stopTabbedFrame(self):
-        # auto close the existing TAB - keep it?
-        if self.containerStack[-1]['type'] == self.C_TAB:
-              self.warn("You didn't STOP the previous TAB")
-              self.stopContainer()
-        self.stopContainer()
 
     def stopTab(self):
         if self.containerStack[-1]['type'] != self.C_TAB:
@@ -4069,7 +4069,7 @@ class DualMeter(SplitMeter):
 ## TabbedFrame Class
 #################################
 class TabbedFrame(Frame):
-    def __init__(self, master, bg, fill=False, *args, **kwargs):
+    def __init__(self, master, bg, fill=False, changeOnFocus=True, *args, **kwargs):
 
         # main frame & tabContainer inherit BG colour
         Frame.__init__(self, master, bg=bg)
@@ -4094,6 +4094,7 @@ class TabbedFrame(Frame):
 
         self.selectedTab = None
         self.highlightedTab = None
+        self.changeOnFocus = changeOnFocus
 
         # selected tab & all panes
         self.activeFg="blue"
@@ -4146,10 +4147,6 @@ class TabbedFrame(Frame):
         if text in self.widgetStore:
             raise Exception("Duplicate tabName: " + text)
 
-        # log the first tab as the selected tab
-        if self.selectedTab is None: self.selectedTab=text
-        if self.highlightedTab is None: self.highlightedTab=text
-
         # create the tab, bind events, pack it in
         tab=Label(self.tabContainer,text=text,highlightthickness=1,highlightcolor=self.activeFg, relief=RIDGE,cursor="hand2",takefocus=1,**kwargs)
         tab.disabled=False
@@ -4169,6 +4166,12 @@ class TabbedFrame(Frame):
         pane.grid(sticky="nsew", row=0, column=0)
         self.paneContainer.grid_columnconfigure(0, weight=1)
         self.paneContainer.grid_rowconfigure(0, weight=1)
+
+        # log the first tab as the selected tab
+        if self.selectedTab is None:
+            self.selectedTab=text
+            tab.focus_set()
+        if self.highlightedTab is None: self.highlightedTab=text
 
         self.widgetStore[text]=[tab, pane]
         self.__colourTabs(self.selectedTab)
@@ -4195,8 +4198,11 @@ class TabbedFrame(Frame):
                 tab.pack(side=LEFT,ipady=4,ipadx=4)
 
     def __focusIn(self, tabName):
-        self.highlightedTab = tabName
-        self.__colourTabs(False)
+        if self.changeOnFocus:
+            self.changeTab(tabName)
+        else:
+            self.highlightedTab = tabName
+            self.__colourTabs(False)
 
     def __focusOut(self, tabName):
         self.highlightedTab = None
@@ -4206,19 +4212,23 @@ class TabbedFrame(Frame):
         if tabName not in self.widgetStore.keys():
             raise Exception("Invalid tab name: " + tabName)
 
-        self.widgetStore[tabName][0].disabled=True
-        self.widgetStore[tabName][0].config(cursor="X_cursor",takefocus=1)
-        if self.highlightedTab == tabName: self.highlightedTab = None
+        if not disabled:
+            self.widgetStore[tabName][0].disabled=False
+            self.widgetStore[tabName][0].config(cursor="hand2",takefocus=1)
+        else:
+            self.widgetStore[tabName][0].disabled=True
+            self.widgetStore[tabName][0].config(cursor="X_cursor",takefocus=0)
+            if self.highlightedTab == tabName: self.highlightedTab = None
 
-        # difficult if the active tab is disabled
-        if self.selectedTab == tabName:
-            self.widgetStore[tabName][1].grid_remove()
-            # find an enabled tab
-            self.selectedTab = None
-            for key in list(self.widgetStore.keys()):
-                if not self.widgetStore[key][0].disabled:
-                    self.changeTab(key)
-                    break
+            # difficult if the active tab is disabled
+            if self.selectedTab == tabName:
+                self.widgetStore[tabName][1].grid_remove()
+                # find an enabled tab
+                self.selectedTab = None
+                for key in list(self.widgetStore.keys()):
+                    if not self.widgetStore[key][0].disabled:
+                        self.changeTab(key)
+                        break
 
         self.__colourTabs()
 

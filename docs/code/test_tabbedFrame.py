@@ -1,10 +1,12 @@
 from appJar import gui
 
 def fill(btn):
+    print("DOING FOR:", app.getEntry("Select Tab"))
     if btn=="FILL": app.setTabbedFrameTabExpand("NB")
     elif btn=="SMALL": app.setTabbedFrameTabExpand("NB", False)
     elif btn=="SELECT": app.setTabbedFrameSelectedTab("NB", app.getEntry("Select Tab"))
     elif btn=="DISABLE": app.setTabbedFrameDisabledTab("NB", app.getEntry("Select Tab"))
+    elif btn=="ENABLE": app.setTabbedFrameDisabledTab("NB", app.getEntry("Select Tab"), False)
 
 app = gui()
 
@@ -33,7 +35,7 @@ app.stopTab()
 app.stopTabbedFrame()
 
 app.addLabelEntry("Select Tab")
-app.addButtons(["FILL", "SMALL", "SELECT", "DISABLE"], fill)
+app.addButtons(["FILL", "SMALL", "SELECT", "DISABLE", "ENABLE"], fill)
 
 #tabs=app.getTabbedFrameWidget("NB")
 #
