@@ -169,10 +169,12 @@ app.go()
 ####Start/Stop Tabbed Frames
 * `.startTabbedFrame(name)`  
 * `.stopTabbedFrame()`  
-    Used to start & stop the main *TabbedFrame*  
+    Used to start & stop the a *TabbedFrame*, with the specified name.  
 * `.startTab(name)`
 * `.stopTab()`  
     Used to start and stop each of the tabs in the *TabbedFrame*.  
+    The title for the tab will be the specified *name*.  
+
 ####Set TabbedFrame
 * `.setTabbedFrameTabExpand(title, expand=True)`  
     By default, the tabs take up the minimum amount of space necessary.  
@@ -180,6 +182,29 @@ app.go()
 ![TabbedFrame](img/layouts/2_tabbedFrame.png)  
 * `.setTabbedFrameSelectedTab(title, tab)`  
     Select the specified tab in the TabbedFrame.  
+* `.setTabbedFrameDisabledTab(title, tab, disabled=True)`  
+    Disable the specified tab in the TabbedFrame.  
+    Set disabled to False to re-enable it.  
+    This will also change the displayed tab, if the disaplyed tab is being disabled.  
+
+####Changing Colours  
+TabbedFrames have a set of colours that can be changed:  
+
+* ActiveFg - Sets the colour of the text in the active tab  
+* ActiveBg - Sets the background colour of the active tab  
+* InactiveFg - Sets the colour of the text in all inactive tabs  
+* InactiveBG - Sets the background colour of all inactive tabs  
+* DisabledFg - Sets the colour of the text in all disabled tabs  
+* DisabledBg - Sets the background colour of all disabled tabs  
+* Bg - Sets the background colour behind the widget - only visible at the end of the tabs  
+
+These are all changed via the standard property changing functions, eg:  
+
+* `.setTabbedFrameBg("t1", "red")`
+* `.setTabbedFrameActiveBg("t1", "yellow")`
+
+It is also possible to change the colour of individual panes.  
+Call `.setBg("colour")` while adding widgets to the specific pane.  
 
 ###Paned Window
 ---

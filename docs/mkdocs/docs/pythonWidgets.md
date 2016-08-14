@@ -3,11 +3,9 @@
 In a GUI, the fillings are known as **widgets**.  
 There are lots of different widgets to chose from, each suited to a specific task.  
 
-Every widget needs a **TITLE**.  
+Nearly every widget needs a **TITLE**.  
 This is a unique name for the widget, so that later you can get information from that widget, or change it.  
 
-##General Usage
----
 Nearly all widgets provide the same three functions:
 
 * Always - **ADD** a widget (with a unique title) - this creates the widget
@@ -334,7 +332,6 @@ app.go()
     If specified, the indexed item will be selected - this can be a position or an item name.  
     If setting a TickOptionBox, pass in the optional value.  
 
-
 * `.setOptionBox(title, position, value=True)`  
     This will select the item in the list, at the position specified.  
     Alternatively, the name of an item can be specified.  
@@ -366,7 +363,6 @@ app.setFont(20)
 app.addLabelSpinBox("options", ["Apple", "Orange", "Pear", "kiwi"])
 app.go()
 ```
-
 
 ####Add SpinBoxes
 * `.addSpinBox(title, values)`  
