@@ -452,7 +452,7 @@ class gui:
     def bindKey(self, key, func):
         """ bind the specified key, to the specified function, for all widgets """
         # for now discard the Event...
-        myF = self.__makeFunc(func, key, True)
+        myF = self.MAKE_FUNC(func, key, True)
         self.__getTopLevel().bind(key, myF)
 
     def unbindKey(self, key):
@@ -548,7 +548,7 @@ class gui:
               self.isFullscreen = True
               if container is None: container = self.__getTopLevel()
               container.attributes('-fullscreen', True)
-              container.escapeBindId = container.bind('<Escape>', self.__makeFunc(self.exitFullscreen, container, True), "+")
+              container.escapeBindId = container.bind('<Escape>', self.MAKE_FUNC(self.exitFullscreen, container, True), "+")
 
     # function to turn off fullscreen mode
     def exitFullscreen(self, container=None):
@@ -867,9 +867,9 @@ class gui:
                     if len(value) != 2:
                         raise Exception("Invalid arguments, set<widget>OverFunction requires 1 ot 2 functions to be passed in.")
                     if kind==self.LABEL:
-                        if value[0] is not None: item.bind("<Enter>",self.__makeFunc(value[0], name, True), add="+")
-                        if value[1] is not None: item.bind("<Leave>",self.__makeFunc(value[1], name, True), add="+")
-                        #item.bind("<B1-Motion>",self.__makeFunc(value[0], name, True), add="+")
+                        if value[0] is not None: item.bind("<Enter>",self.MAKE_FUNC(value[0], name, True), add="+")
+                        if value[1] is not None: item.bind("<Leave>",self.MAKE_FUNC(value[1], name, True), add="+")
+                        #item.bind("<B1-Motion>",self.MAKE_FUNC(value[0], name, True), add="+")
                 elif option == 'drag':
                     if not isinstance(value, list): value=[value]
                     if len(value) == 1: value.append(None)
@@ -888,21 +888,21 @@ class gui:
                                     f(key)
                                     return
 
-                        if value[0] is not None: item.bind("<ButtonPress-1>", self.__makeFunc(value[0], name, True) , add="+")
-                        if value[1] is not None: item.bind("<ButtonRelease-1>", self.__makeFunc(getLabel, value[1], True) , add="+")
+                        if value[0] is not None: item.bind("<ButtonPress-1>", self.MAKE_FUNC(value[0], name, True) , add="+")
+                        if value[1] is not None: item.bind("<ButtonRelease-1>", self.MAKE_FUNC(getLabel, value[1], True) , add="+")
                 elif option == 'command':
                     # this will discard the scale value, as default function can't handle it
                     if kind==self.SCALE:
-                        item.config( command=self.__makeFunc(value,name, True) )
+                        item.config( command=self.MAKE_FUNC(value,name, True) )
                     elif kind==self.OPTION:
                         # need to trace the variable??
-                        item.var.trace('w',  self.__makeFunc(value,name, True))
+                        item.var.trace('w',  self.MAKE_FUNC(value,name, True))
                     elif kind==self.ENTRY:
                         if key is None: key =name
-                        item.bind('<Return>', self.__makeFunc(value, key, True))
+                        item.bind('<Return>', self.MAKE_FUNC(value, key, True))
                     elif kind==self.BUTTON:
-                        item.config(command=self.__makeFunc(value, name))
-                        item.bind('<Return>', self.__makeFunc(value, name, True))
+                        item.config(command=self.MAKE_FUNC(value, name))
+                        item.bind('<Return>', self.MAKE_FUNC(value, name, True))
                     # make labels clickable, add a cursor, and change the look
                     elif kind==self.LABEL or kind==self.IMAGE:
                         if platform() == "Darwin":
@@ -910,7 +910,7 @@ class gui:
                         elif platform() in [ "win32", "Windows"]:
                             item.config(cursor="hand2")
 
-                        item.bind("<Button-1>",self.__makeFunc(value, name, True), add="+")
+                        item.bind("<Button-1>",self.MAKE_FUNC(value, name, True), add="+")
                         # these look good, but break when dialogs take focus
                         #up = item.cget("relief").lower()
                         #down="sunken"
@@ -918,7 +918,7 @@ class gui:
                         #item.bind("<Button-1>",lambda e: item.config(relief=down), add="+")
                         #item.bind("<ButtonRelease-1>",lambda e: item.config(relief=up))
                     else:
-                        item.config( command=self.__makeFunc(value,name) )
+                        item.config( command=self.MAKE_FUNC(value,name) )
                 elif option == 'sticky':
                     info = {}
                     # need to reposition the widget in its grid
@@ -1115,7 +1115,8 @@ class gui:
 #####################################
     # funcion to wrap up lambda
     # if the thing calling this generates parameters - then set discard=True
-    def __makeFunc(self, funcName, param, discard=False):
+    @staticmethod
+    def MAKE_FUNC(funcName, param, discard=False):
         if discard: return lambda *args: funcName(param)
         else: return lambda: funcName(param)
 
@@ -1463,6 +1464,9 @@ class gui:
     def getGridEntries(self, title):
         return self.__verifyItem(self.n_grids, title).getEntries()
 
+    def getGridSelectedCells(self, title):
+        return self.__verifyItem(self.n_grids, title).getSelectedCells()
+
     ########################################
 
     def startPanedWindow(self, title, row=None, column=0, colspan=0, rowspan=0, sticky="NSEW"):
@@ -1516,7 +1520,7 @@ class gui:
 
     def setPagedWindowFunction(self, title, func):
         pager = self.__verifyItem(self.n_pagedWindows, title)
-        command = self.__makeFunc(func, title)
+        command = self.MAKE_FUNC(func, title)
         pager.registerPageChangeEvent(command)
 
     def getPagedWindowPageNumber(self, title):
@@ -1599,7 +1603,7 @@ class gui:
         top = SubWindow()
         top.modal=modal
         top.title(title)
-        top.protocol("WM_DELETE_WINDOW", self.__makeFunc(self.hideSubWindow, name))
+        top.protocol("WM_DELETE_WINDOW", self.MAKE_FUNC(self.hideSubWindow, name))
         top.withdraw()
         top.win = self
         self.n_subWindows[name] = top
@@ -2692,8 +2696,8 @@ class gui:
         but.config( text=name, font=self.buttonFont )
 
         if func is not None:
-              command = self.__makeFunc(func, title)
-              bindCommand = self.__makeFunc(func, title, True)
+              command = self.MAKE_FUNC(func, title)
+              bindCommand = self.MAKE_FUNC(func, title, True)
 
               but.config( command=command )
               but.bind('<Return>', bindCommand)
@@ -2778,7 +2782,7 @@ class gui:
     # executes the specified function
     def addLink(self, title, func, row=None, column=0, colspan=0, rowspan=0):
         link = self.__buildLink(title)
-        myF = self.__makeFunc(func, title, True)
+        myF = self.MAKE_FUNC(func, title, True)
         link.registerCallback(myF)
         self.__positionWidget(link, row, column, colspan, rowspan)
 
@@ -2947,13 +2951,13 @@ class gui:
     def setTreeDoubleClickFunction(self, title, func):
         if func is not None:
               tree = self.__verifyItem(self.n_trees, title)
-              command = self.__makeFunc(func, title)
+              command = self.MAKE_FUNC(func, title)
               tree.item.registerDblClick(command)
 
     def setTreeEditFunction(self, title, func):
         if func is not None:
             tree = self.__verifyItem(self.n_trees, title)
-            command = self.__makeFunc(func, title)
+            command = self.MAKE_FUNC(func, title)
             tree.registerEditEvent(command)
 
     # get whole tree as XML
@@ -3127,7 +3131,7 @@ class gui:
         entry.oldJustify=entry.cget('justify')
         entry.oldFg=entry.cget('foreground')
         entry.config(justify='center', foreground='grey')
-        command = self.__makeFunc(self.__updateEntryDefault, name, True)
+        command = self.MAKE_FUNC(self.__updateEntryDefault, name, True)
         entry.bind("<FocusIn>", command)
         entry.bind("<FocusOut>", command)
 
@@ -3309,9 +3313,9 @@ class gui:
               self.n_tbButts[t] = but
 
               if singleFunc is not None:
-                    u = self.__makeFunc(singleFunc, t)
+                    u = self.MAKE_FUNC(singleFunc, t)
               else:
-                    u = self.__makeFunc(funcs[i], t)
+                    u = self.MAKE_FUNC(funcs[i], t)
 
               but.config( text=t, command=u, relief=FLAT, font=self.tbFont )
               if image is not None:
@@ -3358,9 +3362,9 @@ class gui:
                         menu.add_command(label=t)
                     else:
                         if singleFunc is not None:
-                                u = self.__makeFunc(singleFunc, t)
+                                u = self.MAKE_FUNC(singleFunc, t)
                         else:
-                                u = self.__makeFunc(funcs.pop(0), t)
+                                u = self.MAKE_FUNC(funcs.pop(0), t)
 
                         menu.add_command(label=t, command=u )
 
@@ -3384,7 +3388,7 @@ class gui:
             self.warn("Unable to make topLevel menus (" + name + ") on Mac")
         else:
             self.__initMenu()
-            u = self.__makeFunc(func, name, True)
+            u = self.MAKE_FUNC(func, name, True)
             self.menuBar.add_command(label=name, command=u)
 
     # add a parent menu, for menu items
@@ -3443,7 +3447,7 @@ class gui:
             menu.add_cascade(menu=subMenu, label=item, accelerator=shortcut)
         else:
               if func is not None:
-                    u = self.__makeFunc(func, item, True)
+                    u = self.MAKE_FUNC(func, item, True)
                     menu.add_command(label=item, command=u, accelerator=shortcut)
                     shortcut = "<"+shortcut+">"
                     self.topLevel.bind(shortcut, u)
@@ -3501,14 +3505,14 @@ class gui:
     # enables the preferences item in the app menu
     def addMenuPreferences(self, func):
         self.__initMenu()
-        u = self.__makeFunc(func, "preferences")
+        u = self.MAKE_FUNC(func, "preferences")
         self.topLevel.createcommand('tk::mac::ShowPreferences', u)
 
     def addMenuHelp(self, func):
         self.__initMenu()
         helpMenu = Menu(self.menuBar, name='help')
         self.menuBar.add_cascade(menu=helpMenu, label='Help')
-        u = self.__makeFunc(func, "help")
+        u = self.MAKE_FUNC(func, "help")
         self.topLevel.createcommand('tk::mac::ShowHelp', u)
         self.n_menus["help"]=helpMenu
 
@@ -5173,11 +5177,15 @@ class SimpleGrid(Frame):
         # store them in the frame object for access, later
         self.entries = []
 
+        # a list of any selected cells
+        from collections import OrderedDict
+        self.selectedCells=OrderedDict()
+
         # colours
-        self.cellHeadingBg= "gray"      # HEADING BG
-        self.cellBg= "lightblue"        # CELL BG
-        self.cellOverBg= "orange"       # mouse over BG
-        self.cellSelectedBg= "blue"     # selected cell BG
+        self.cellHeadingBg= "DarkGray"      # HEADING BG
+        self.cellBg= "LightCyan"        # CELL BG
+        self.cellOverBg= "Silver"       # mouse over BG
+        self.cellSelectedBg= "LightGray"     # selected cell BG
 
         # add a canvas for scrolling
         self.mainCanvas = Canvas(self, borderwidth=0, highlightthickness=2, bg=self.cget("bg"))
@@ -5216,61 +5224,67 @@ class SimpleGrid(Frame):
 
         # loop through each row
         for rowNum in range(len(data)):
-              vals = []
-              # then the cells in that row
-              for cellNum in range(maxSize):
-                    # get a name and val ("" if no val)
-                    name = "c" + str(rowNum) + "-" + str(cellNum)
-                    if cellNum >= len(data[rowNum]) : val = ""
-                    else: val = data[rowNum][cellNum]
-                    vals.append(val)
+            vals = []
+            # then the cells in that row
+            for cellNum in range(maxSize):
+                gridPos = str(rowNum) + "-" + str(cellNum)
+                self.selectedCells[gridPos] = False
+                # get a name and val ("" if no val)
+                name = "c" + str(rowNum) + "-" + str(cellNum)
+                if cellNum >= len(data[rowNum]) : val = ""
+                else: val = data[rowNum][cellNum]
+                vals.append(val)
 
-                    lab = Label(self.gridContainer)
-                    lab.selected = False
-                    if rowNum == 0: lab.configure( relief=RIDGE,text=val, font=self.ghFont, background=self.cellHeadingBg )
-                    else:
-                          lab.configure( relief=RIDGE,text=val, font=self.gdFont, background=self.cellBg )
-                          lab.bind("<Enter>", self.__gridCellEnter)
-                          lab.bind("<Leave>", self.__gridCellLeave)
-                          lab.bind("<Button-1>", self.__gridCellClick)
+                lab = Label(self.gridContainer)
+                lab.gridPos = gridPos
+                if rowNum == 0: lab.configure( relief=RIDGE,text=val, font=self.ghFont, background=self.cellHeadingBg )
+                else:
+                    lab.configure( relief=RIDGE,text=val, font=self.gdFont, background=self.cellBg )
+                    lab.bind("<Enter>", self.__gridCellEnter)
+                    lab.bind("<Leave>", self.__gridCellLeave)
+                    lab.bind("<Button-1>", self.__gridCellClick)
 
-                    lab.grid ( row=rowNum, column=cellNum, sticky=N+E+S+W )
-                    Grid.columnconfigure(self.gridContainer, cellNum, weight=1)
-              Grid.rowconfigure(self.gridContainer, rowNum, weight=1)
+                lab.grid ( row=rowNum, column=cellNum, sticky=N+E+S+W )
+                Grid.columnconfigure(self.gridContainer, cellNum, weight=1)
+                Grid.rowconfigure(self.gridContainer, rowNum, weight=1)
 
-              # add some buttons for each row
-              if action is not None:
-                    widg = Label(self.gridContainer)
-                    widg.configure( relief=RIDGE )
+                # add some buttons for each row
+                if action is not None:
+                    widg = Label(self.gridContainer, relief=RIDGE)
+                    # add the title
                     if rowNum == 0:
-                          widg.configure( text="Action", font=self.ghFont, background=self.cellHeadingBg )
+                        widg.configure( text="Action", font=self.ghFont, background=self.cellHeadingBg )
+                    # add a button
                     else:
-                          but = Button(widg)
-                          but.configure( text="Press")#, command=self.__makeFunc(action, vals))
-                          but.grid ( row=0,column=0, sticky=N+E+S+W )
+                        but = Button(widg, text="Press", command=gui.MAKE_FUNC(action, vals))
+                        but.place(relx=0.5, rely=0.5, anchor=CENTER)
+
                     widg.grid ( row=rowNum, column=cellNum+1, sticky=N+E+S+W )
 
         # add a row of entry boxes...
         if addRow==True:
-              for cellNum in range(maxSize):
-                    name = "GR"+str(cellNum)
-                    widg = Label(self.gridContainer)
-                    widg.configure( relief=RIDGE )
-                    var=StringVar(self)
-                    widg = Entry(self.gridContainer, width=5)#self.__buildEntry(name, self.gridContainer)
-                    widg.var = var
-                    widg.config(textvariable=var)
-                    self.entries.append(widg)
-                    widg.grid(row=len(data), column=cellNum, sticky=N+E+S+W)
-              widg = Label(self.gridContainer)
-              widg.configure(relief=RIDGE)
-              but = Button(widg)
-              but.configure(text="Press")#, command=self.__makeFunc(action, "newRow"))
-              but.grid(row=0,column=0, sticky=N+E+S+W)
-              widg.grid(row=len(data), column=maxSize, sticky=N+E+S+W)
+            for cellNum in range(maxSize):
+                name = "GR"+str(cellNum)
+                widg = Label(self.gridContainer)
+                widg.configure( relief=RIDGE )
+                var=StringVar(self)
+                widg = Entry(self.gridContainer, width=5)#self.__buildEntry(name, self.gridContainer)
+                widg.var = var
+                widg.config(textvariable=var)
+                self.entries.append(widg)
+                widg.grid(row=len(data), column=cellNum, sticky=N+E+S+W)
+            widg = Label(self.gridContainer)
+            widg.configure(relief=RIDGE)
+            but = Button(widg)
+            but.configure(text="Press", command=gui.MAKE_FUNC(action, "newRow"))
+            but.place(relx=0.5, rely=0.5, anchor=CENTER)
+            widg.grid(row=len(data), column=maxSize, sticky=N+E+S+W)
 
     def getEntries(self):
         return [e.var.get() for e in self.entries]
+
+    def getSelectedCells(self):
+        return dict(self.selectedCells)
 
     # function to scroll the canvas/scrollbars
     # gets the requested grid
@@ -5307,16 +5321,18 @@ class SimpleGrid(Frame):
 
     def __gridCellLeave(self, event):
         cell = event.widget
-        if cell.selected: cell.config(background=self.cellSelectedBg)
+        gridPos = cell.gridPos
+        if self.selectedCells[gridPos]: cell.config(background=self.cellSelectedBg)
         else: cell.config(background=self.cellBg)
 
     def __gridCellClick(self, event):
         cell = event.widget
-        if cell.selected:
-            cell.selected = False
+        gridPos = cell.gridPos
+        if self.selectedCells[gridPos]:
+            self.selectedCells[gridPos] = False
             cell.config(background=self.cellBg)
         else:
-            cell.selected = True
+            self.selectedCells[gridPos] = True
             cell.config(background=self.cellSelectedBg)
 
 #####################################
