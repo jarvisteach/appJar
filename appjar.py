@@ -78,9 +78,12 @@ class gui:
     IMAGE=14
     PIECHART=15
     PROPERTIES=16
+    GRID=17
+
     RB=60
     CB=40
     LB=70
+
     LABELFRAME=30
     TABBEDFRAME=31
     PANEDWINDOW=32
@@ -128,7 +131,7 @@ class gui:
 
     # names for each of the widgets defined above
     # used for defining functions
-    WIDGETS = { LABEL:"Label", MESSAGE:"Message", BUTTON:"Button", ENTRY:"Entry", CB:"Cb", SCALE:"Scale", RB:"Rb",
+    WIDGETS = { LABEL:"Label", MESSAGE:"Message", BUTTON:"Button", ENTRY:"Entry", CB:"Cb", SCALE:"Scale", RB:"Rb", GRID:"Grid",
               LB:"Lb", SPIN:"SpinBox", OPTION:"OptionBox", TEXTAREA:"TextArea", LINK:"Link", METER:"Meter", IMAGE:"Image",
               RADIOBUTTON:"RadioButton", CHECKBOX:"CheckBox", LISTBOX:"ListBox", PIECHART:"PieChart", PROPERTIES:"Properties",
               LABELFRAME:"LabelFrame", PANEDWINDOW:"PanedWindow", TOGGLEFRAME:"ToggleFrame", TABBEDFRAME:"TabbedFrame"}
@@ -232,17 +235,7 @@ class gui:
         self.panedWindowFont = font.Font(family="Helvetica", size=12)
         self.scrollPaneFont = font.Font(family="Helvetica", size=12)
         self.propertiesFont = font.Font(family="Helvetica", size=12)
-
-        # for simple grids - RETHINK
-        self.gdFont = font.Font(family="Helvetica", size=12)
-        self.ghFont = font.Font(family="Helvetica", size=14, weight="bold")
-        self.ghBg= "gray"
-        self.gdBg= self.topLevel.cget("bg")
-        self.gdHBg= "red"
-        self.gdSBg= "blue"
-        self.ghHBg= self.topLevel.cget("bg")
-        self.gdC= self.topLevel.cget("bg")
-        self.gdHighlight = "red"
+        self.gridFont = font.Font(family="Helvetica", size=12)
 
 #        self.fgColour = self.topLevel.cget("foreground")
 #        self.buttonFgColour = self.topLevel.cget("foreground")
@@ -621,12 +614,11 @@ class gui:
         self.tabbedFrameFont.config(family=font, size=size)
         self.panedWindowFont.config(family=font, size=size)
         self.scrollPaneFont.config(family=font, size=size)
+        self.gridFont.config(family=font, size=size)
 
-        # for simple grids - RETHINK
-        self.lbFont.configure (family=font, size=size)
-        self.taFont.configure (family=font, size=size)
-        self.gdFont.configure (family=font, size=size)
-        self.ghFont.configure (family=font, size=size+2, weight="bold")
+        # need tbetter way to register font change events on grids
+        for grid in self.n_grids:
+            self.n_grids[grid].config(font=self.gridFont) 
 
     def increaseFont(self):
          self.increaseLabelFont()
@@ -646,10 +638,8 @@ class gui:
     # all widgets will then need to use it
     # and here we update all....
     def setFg(self, colour):
-        for na in self.n_labels:
-              self.n_labels[na].config(foreground=colour)
-        for na in self.n_messages:
-              self.n_messages[na].config(foreground=colour)
+        print("set FG to:", colour)
+        self.SET_WIDGET_FG(self.containerStack[-1]['container'], colour)
 
     # self.topLevel = Tk()
     # self.appWindow = Frame, fills all of self.topLevel
@@ -664,9 +654,9 @@ class gui:
         self.containerStack[-1]['container'].config(background=colour)
 
         for child in self.containerStack[-1]['container'].winfo_children():
-            if not self.__widgetIsContainer(child): gui.SET_WIDGET_BG(child, colour)
+            if not self.__isWidgetContainer(child): gui.SET_WIDGET_BG(child, colour)
 
-    def __widgetIsContainer(self, widget):
+    def __isWidgetContainer(self, widget):
         try:
             if widget.isContainer: return True
         except: pass
@@ -790,6 +780,7 @@ class gui:
         elif kind == self.IMAGE: return self.n_images
         elif kind == self.PIECHART: return self.n_pieCharts
         elif kind == self.PROPERTIES: return self.n_props
+        elif kind == self.GRID: return self.n_grids
 
         elif kind == self.LABELFRAME: return self.n_labelFrames
         elif kind == self.TABBEDFRAME: return self.n_tabbedFrames
@@ -1175,6 +1166,19 @@ class gui:
 
         return row, column, colspan, rowspan
 
+    def SET_WIDGET_FG(self, widget, fg):
+
+        widgType = widget.__class__.__name__
+        isDarwin = platform() == "Darwin"
+
+        if self.__isWidgetContainer(widget):
+            self.containerStack[-1]['fg'] = fg
+        else:
+            try: widget.config(foreground=fg)
+            except:
+                print(widget, "Unable to set FG")
+                pass # can't set an FG colour on this widget
+
     # convenience method to set a widget's bg
     @staticmethod
     def SET_WIDGET_BG(widget, bg):
@@ -1218,6 +1222,13 @@ class gui:
     def __getContainerBg(self):
         return self.__getContainer()["bg"]
 
+    def __getContainerFg(self):
+        try:
+            return self.__getContainer()["fg"]
+        except:
+            print("Failed to get a FG")
+            return "black"
+
     # two important things here:
     # grid - sticky: position of widget in its space (side or fill)
     # row/columns configure - weight: how to grow with GUI
@@ -1225,6 +1236,7 @@ class gui:
         # allow item to be added to container
         container = self.__getContainer()
         gui.SET_WIDGET_BG(widget, self.__getContainerBg())
+        self.SET_WIDGET_FG(widget, self.__getContainerFg())
 
         # alpha paned window placement
         if self.containerStack[-1]['type'] ==self.C_PANEDWINDOW:
@@ -1284,7 +1296,7 @@ class gui:
     def __addContainer(self, cType, container, row, col, sticky=None):
         self.containerStack.append (
             {'type':cType, 'container':container,'emptyRow':row, 'colCount':col, 'sticky':sticky,
-            'padx':0, 'pady':0, 'ipadx':0, 'ipady':0, 'expand':"ALL", 'widgets':False}
+            'padx':0, 'pady':0, 'ipadx':0, 'ipady':0, 'expand':"ALL", 'widgets':False, "fg": "black"}
         )
 
     # returns the current working container
@@ -1437,6 +1449,21 @@ class gui:
         self.stopContainer()
 
     ###### END Tabbed Frames ########
+
+    #####################################
+    ## FUNCTION for simple grids
+    #####################################
+    def addGrid(self, title, data, row=None, column=0, colspan=0, rowspan=0, action=None, addRow=False):
+        self.__verifyItem(self.n_grids, title, True)
+        grid = SimpleGrid(self.__getContainer(), title, data, action, addRow)
+        grid.config(font=self.gridFont, background=self.__getContainerBg() )
+        self.__positionWidget(grid, row, column, colspan, rowspan, N+E+S+W)
+        self.n_grids[title] = grid
+
+    def getGridEntries(self, title):
+        return self.__verifyItem(self.n_grids, title).getEntries()
+
+    ########################################
 
     def startPanedWindow(self, title, row=None, column=0, colspan=0, rowspan=0, sticky="NSEW"):
         self.startContainer(self.C_PANEDWINDOW, title, row, column, colspan, rowspan, sticky)
@@ -1801,195 +1828,6 @@ class gui:
         sc = self.__verifyItem(self.n_scales, title)
         sc.config(from_=start, to=end)
         self.setScale(title, curr)
-
-#####################################
-## FUNCTION for simple grids - RETHINK
-#####################################
-    # first row is used as a header
-# ADD ROWSPAN HERE WHEN FIXIBG...
-    def addGrid(self, title, data, row=None, column=0, colspan=0, rowspan=0, action=None, addRow=False):
-        self.__verifyItem(self.n_grids, title, True)
-        frame = self.__makeGrid(title, data, action, addRow)
-        self.__positionWidget(frame, row, column, colspan, rowspan, N+E+S+W)
-
-    def updateGrid(self, title, data, addRow=None):
-        frame = self.__verifyItem(self.n_grids, title)
-        params = frame.grid_info()
-        action = frame.action
-        if addRow is None: addRow = frame.addRow
-        entries = frame.entries
-        for e in frame.entries:
-              del self.n_entries[e.myTitle]
-
-        del ( self.n_grids[title] )
-        frame.grid_forget()
-        frame.destroy()
-
-        self.addGrid(title, data, int(params["row"]), int(params["column"]), int(params["columnspan"]), action, addRow)
-
-    def __refreshGrids(self, event):
-        '''Reset the scroll region to encompass the inner frame'''
-        for name in self.n_grids:
-            can = self.n_grids[name].c1
-            can.configure(scrollregion=can.bbox("all"))
-            #can.itemconfig(_id, height=frame.c1.height, width=frame.c1.width)
-
-    def __gridCellEnter(self, event):
-        cell = event.widget
-        cell.config(background=self.gdHBg)
-
-    def __gridCellLeave(self, event):
-        cell = event.widget
-        if cell.selected: cell.config(background=self.gdSBg)
-        else: cell.config(background=self.gdBg)
-
-    def __gridCellClick(self, event):
-        cell = event.widget
-        if cell.selected:
-            cell.selected = False
-            cell.config(background=self.gdBg)
-        else:
-            cell.selected = True
-            cell.config(background=self.gdSBg)
-
-    # function to scroll the canvas/scrollbars
-    # gets the requested grid
-    # and checks the event.delta to determine where to scroll
-    # https://www.daniweb.com/programming/software-development/code/217059/using-the-mouse-wheel-with-tkinter-python
-    def __scrollGrid(self, event, title):
-        if platform() in [ "win32", "Windows", "Darwin"]:
-              if platform() in [ "win32", "Windows"]:
-                  val = event.delta/120
-              else:
-                  val = event.delta
-
-              val = val * -1
-
-              if event.delta in [1,-1]:
-                  self.n_grids[title].c1.yview_scroll(val, "units")
-              elif event.delta in [2,-2]:
-                  self.n_grids[title].c1.xview_scroll(val, "units")
-
-        elif platform() == "Linux":
-                if event.num == 4:
-                    self.n_grids[title].c1.yview_scroll(-1*2, "units")
-                elif event.num == 5:
-                    self.n_grids[title].c1.yview_scroll(2, "units")
-
-    def setGridGeom(self, title, width=200, height=200):
-        grid = self.__verifyItem(self.n_grids, title)
-        grid.configure(width=width, height=height)
-
-    def getGridEntries(self, title):
-        return [e.var.get() for e in self.__verifyItem(self.n_grids, title).entries ]
-
-    def setGridBackground(self, title, colour=None):
-        grid = self.__verifyItem(self.n_grids, title)
-        if colour == None: colour = self.gdC
-        self.gdC = colour
-        grid.c1.configure(background=self.gdC, highlightcolor=self.gdC, highlightbackground=self.gdC)
-
-    # note - if use grid layout, can use AutoScrollBar
-    # However, couldn't get canvas to expand in frame using grid
-    def __makeGrid(self, title, data, action=None, addRow=False):
-        frame = Frame(self.__getContainer())
-        frame.configure( background=self.__getContainerBg() )
-        self.n_grids[title] = frame
-        frame.action = action
-        frame.addRow = addRow
-        frame.entries = []      # store them in the frame object for access, later
-
-        frame.c1 = Canvas(frame, borderwidth=0, highlightthickness=2)
-
-        if platform() == "Linux":
-            frame.c1.bind_all("<4>", lambda event, arg=title: self.__scrollGrid(event, arg))
-            frame.c1.bind_all("<5>", lambda event, arg=title: self.__scrollGrid(event, arg))
-        else:
-            # Windows and MacOS
-            frame.c1.bind_all("<MouseWheel>", lambda event, arg=title: self.__scrollGrid(event, arg))
-
-        self.setGridBackground(title)
-
-        vsb = Scrollbar(frame, orient="vertical", command=frame.c1.yview)
-        frame.c1.configure(yscrollcommand=vsb.set)
-        vsb.pack(side="right", fill="y")
-        #vsb.grid(row=0, column=1, sticky=N+S)
-
-        hsb = Scrollbar(frame, orient="horizontal", command=frame.c1.xview)
-        frame.c1.configure(xscrollcommand=hsb.set)
-        hsb.pack(side="bottom", fill="x")
-        #hsb.grid(row=1, column=0, sticky=E+W)
-
-        frame.c1.pack(side="left", fill="both", expand=True)
-        #frame.c1.grid(row=0, column=0, sticky=N+S+E+W)
-
-        #frame.c1.grid_rowconfigure(0, weight=1)
-        #frame.c1.grid_columnconfigure(0, weight=1)
-
-        gridFrame = Frame(frame.c1)
-        gridFrame.configure( background=self.__getContainerBg() )
-        frame.c1.create_window((4,4), window=gridFrame, anchor="nw", tags="gridFrame")
-        gridFrame.bind("<Configure>", self.__refreshGrids)
-
-        # find the longest row...
-        maxSize = 0
-        for rowNum in range(len(data)):
-              if len(data[rowNum]) > maxSize: maxSize = len(data[rowNum])
-
-        # loop through each row
-        for rowNum in range(len(data)):
-              vals = []
-              # then the cells in that row
-              for cellNum in range(maxSize):
-                    # get a name and val ("" if no val)
-                    name = "c" + str(rowNum) + "-" + str(cellNum)
-                    if cellNum >= len(data[rowNum]) : val = ""
-                    else: val = data[rowNum][cellNum]
-                    vals.append(val)
-
-                    lab = Label(gridFrame)
-                    lab.selected = False
-                    if rowNum == 0: lab.configure( relief=RIDGE,text=val, font=self.ghFont, background=self.ghBg )
-                    else:
-                          lab.configure( relief=RIDGE,text=val, font=self.gdFont, background=self.gdBg )
-                          lab.bind("<Enter>", self.__gridCellEnter)
-                          lab.bind("<Leave>", self.__gridCellLeave)
-                          lab.bind("<Button-1>", self.__gridCellClick)
-
-                    lab.grid ( row=rowNum, column=cellNum, sticky=N+E+S+W )
-                    Grid.columnconfigure(gridFrame, cellNum, weight=1)
-              Grid.rowconfigure(gridFrame, rowNum, weight=1)
-
-              # add some buttons for each row
-              if action is not None:
-                    widg = Label(gridFrame)
-                    widg.configure( relief=RIDGE )
-                    if rowNum == 0:
-                          widg.configure( text="Action", font=self.ghFont, background=self.ghBg )
-                    else:
-                          but = Button(widg)
-                          but.configure( text="Press", command=self.__makeFunc(action, vals),font=self.buttonFont )
-                          but.grid ( row=0,column=0, sticky=N+E+S+W )
-                    widg.grid ( row=rowNum, column=cellNum+1, sticky=N+E+S+W )
-        # add a row of entry boxes...
-        if addRow==True:
-              for cellNum in range(maxSize):
-                    name = "GR"+str(cellNum)
-                    #widg = Label(gridFrame)
-                    #widg.configure( relief=RIDGE )
-                    #entry = self.__buildEntry(name, widg)
-                    widg = self.__buildEntry(name, gridFrame)
-                    frame.entries.append(widg)
-                    #entry.grid ( row=0,column=0, sticky=N+E+S+W )
-                    widg.grid(row=len(data), column=cellNum, sticky=N+E+S+W)
-              widg = Label(gridFrame)
-              widg.configure(relief=RIDGE)
-              but = Button(widg)
-              but.configure(text="Press", command=self.__makeFunc(action, "newRow"),font=self.buttonFont)
-              but.grid(row=0,column=0, sticky=N+E+S+W)
-              widg.grid(row=len(data), column=maxSize, sticky=N+E+S+W)
-
-        return frame
 
 #####################################
 ## FUNCTION for optionMenus
@@ -5299,6 +5137,187 @@ class SubWindow(Toplevel):
         def handlerFunction(*args,**kwargs):
               print("Unknown function:", name,args,kwargs)
         return handlerFunction
+
+#####################################
+## SimpleGrid Stuff
+#####################################
+
+# first row is used as a header
+class SimpleGrid(Frame):
+    def config(self, cnf=None, **kw):
+        self.configure(cnf, **kw)
+
+    def configure(self, cnf=None, **kw):
+        print(kw)
+        kw=gui.CLEAN_CONFIG_DICTIONARY(**kw)
+        if "bg" in kw: self.mainCanvas.config(bg=kw["bg"])
+        if "activebackground" in kw: self.cellSelectedBg = kw.pop("activebackground")
+        if "inactivebackground" in kw: self.cellBg = kw.pop("inactivebackground")
+        if "font" in kw:
+            font = kw.pop("font")
+            self.gdFont.configure (family=font.actual("family"), size=font.actual("size"))
+            self.ghFont.configure (family=font.actual("family"), size=font.actual("size")+2, weight="bold")
+
+    def __init__(self, parent, title, data, action=None, addRow=False,**opts):
+        print("OPTS:", opts)
+        Frame.__init__(self, parent, **opts)
+
+        if "font" in opts:
+            self.gdFont = opts["font"]
+            self.ghFont = opts["font"]
+            self.ghFont.configure (size=self.ghFont.actual("size")+2, weight="bold")
+        else:
+            self.gdFont = font.Font(family="Helvetica", size=12)
+            self.ghFont = font.Font(family="Helvetica", size=14, weight="bold")
+
+        # store them in the frame object for access, later
+        self.entries = []
+
+        # colours
+        self.cellHeadingBg= "gray"      # HEADING BG
+        self.cellBg= "lightblue"        # CELL BG
+        self.cellOverBg= "orange"       # mouse over BG
+        self.cellSelectedBg= "blue"     # selected cell BG
+
+        # add a canvas for scrolling
+        self.mainCanvas = Canvas(self, borderwidth=0, highlightthickness=2, bg=self.cget("bg"))
+        vsb = Scrollbar(self, orient="vertical", command=self.mainCanvas.yview)
+        hsb = Scrollbar(self, orient="horizontal", command=self.mainCanvas.xview)
+
+        # pack them in
+        vsb.pack(side="right", fill="y")
+        hsb.pack(side="bottom", fill="x")
+        self.mainCanvas.pack(side="left", fill="both", expand=True)
+
+        # add the grid cpntainer to the frame
+        self.gridContainer = Frame(self.mainCanvas)
+        self.mainCanvas.create_window((4,4), window=self.gridContainer, anchor="nw", tags="self.gridContainer")
+        self.gridContainer.bind("<Configure>", self.__refreshGrids)
+
+        # configure scrollCommands
+        self.mainCanvas.configure(yscrollcommand=vsb.set)
+        self.mainCanvas.configure(xscrollcommand=hsb.set)
+
+        # bind scroll events
+        if platform() == "Linux":
+            self.mainCanvas.bind_all("<4>", lambda event, arg=title: self.__scrollGrid(event, arg))
+            self.mainCanvas.bind_all("<5>", lambda event, arg=title: self.__scrollGrid(event, arg))
+        else:
+            # Windows and MacOS
+            self.mainCanvas.bind_all("<MouseWheel>", lambda event, arg=title: self.__scrollGrid(event, arg))
+
+        self.__addRows(data, action, addRow)
+
+    def __addRows(self, data, action, addRow):
+        # find out the max number of cells in a row
+        maxSize = 0
+        for rowNum in range(len(data)):
+              if len(data[rowNum]) > maxSize: maxSize = len(data[rowNum])
+
+        # loop through each row
+        for rowNum in range(len(data)):
+              vals = []
+              # then the cells in that row
+              for cellNum in range(maxSize):
+                    # get a name and val ("" if no val)
+                    name = "c" + str(rowNum) + "-" + str(cellNum)
+                    if cellNum >= len(data[rowNum]) : val = ""
+                    else: val = data[rowNum][cellNum]
+                    vals.append(val)
+
+                    lab = Label(self.gridContainer)
+                    lab.selected = False
+                    if rowNum == 0: lab.configure( relief=RIDGE,text=val, font=self.ghFont, background=self.cellHeadingBg )
+                    else:
+                          lab.configure( relief=RIDGE,text=val, font=self.gdFont, background=self.cellBg )
+                          lab.bind("<Enter>", self.__gridCellEnter)
+                          lab.bind("<Leave>", self.__gridCellLeave)
+                          lab.bind("<Button-1>", self.__gridCellClick)
+
+                    lab.grid ( row=rowNum, column=cellNum, sticky=N+E+S+W )
+                    Grid.columnconfigure(self.gridContainer, cellNum, weight=1)
+              Grid.rowconfigure(self.gridContainer, rowNum, weight=1)
+
+              # add some buttons for each row
+              if action is not None:
+                    widg = Label(self.gridContainer)
+                    widg.configure( relief=RIDGE )
+                    if rowNum == 0:
+                          widg.configure( text="Action", font=self.ghFont, background=self.cellHeadingBg )
+                    else:
+                          but = Button(widg)
+                          but.configure( text="Press")#, command=self.__makeFunc(action, vals))
+                          but.grid ( row=0,column=0, sticky=N+E+S+W )
+                    widg.grid ( row=rowNum, column=cellNum+1, sticky=N+E+S+W )
+
+        # add a row of entry boxes...
+        if addRow==True:
+              for cellNum in range(maxSize):
+                    name = "GR"+str(cellNum)
+                    widg = Label(self.gridContainer)
+                    widg.configure( relief=RIDGE )
+                    var=StringVar(self)
+                    widg = Entry(self.gridContainer, width=5)#self.__buildEntry(name, self.gridContainer)
+                    widg.var = var
+                    widg.config(textvariable=var)
+                    self.entries.append(widg)
+                    widg.grid(row=len(data), column=cellNum, sticky=N+E+S+W)
+              widg = Label(self.gridContainer)
+              widg.configure(relief=RIDGE)
+              but = Button(widg)
+              but.configure(text="Press")#, command=self.__makeFunc(action, "newRow"))
+              but.grid(row=0,column=0, sticky=N+E+S+W)
+              widg.grid(row=len(data), column=maxSize, sticky=N+E+S+W)
+
+    def getEntries(self):
+        return [e.var.get() for e in self.entries]
+
+    # function to scroll the canvas/scrollbars
+    # gets the requested grid
+    # and checks the event.delta to determine where to scroll
+    # https://www.daniweb.com/programming/software-development/code/217059/using-the-mouse-wheel-with-tkinter-python
+    def __scrollGrid(self, event, title):
+        if platform() in [ "win32", "Windows", "Darwin"]:
+              if platform() in [ "win32", "Windows"]:
+                  val = event.delta/120
+              else:
+                  val = event.delta
+
+              val = val * -1
+
+              if event.delta in [1,-1]:
+                  self.mainCanvas.yview_scroll(val, "units")
+              elif event.delta in [2,-2]:
+                  self.mainCanvas.xview_scroll(val, "units")
+
+        elif platform() == "Linux":
+                if event.num == 4:
+                    self.mainCanvas.yview_scroll(-1*2, "units")
+                elif event.num == 5:
+                    self.mainCanvas.yview_scroll(2, "units")
+
+    def __refreshGrids(self, event):
+        '''Reset the scroll region to encompass the inner frame'''
+        self.mainCanvas.configure(scrollregion=self.mainCanvas.bbox("all"))
+        #can.itemconfig(_id, height=frame.mainCanvas.height, width=frame.mainCanvas.width)
+
+    def __gridCellEnter(self, event):
+        cell = event.widget
+        cell.config(background=self.cellOverBg)
+
+    def __gridCellLeave(self, event):
+        cell = event.widget
+        if cell.selected: cell.config(background=self.cellSelectedBg)
+        else: cell.config(background=self.cellBg)
+
+    def __gridCellClick(self, event):
+        cell = event.widget
+        if cell.selected:
+            cell.selected = False
+            cell.config(background=self.cellBg)
+        else:
+            cell.selected = True
+            cell.config(background=self.cellSelectedBg)
 
 #####################################
 ## MAIN - for testing

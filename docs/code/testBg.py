@@ -5,6 +5,7 @@ def getName(btn):
     print(app.getLabelWidget("f"))
 
 app=gui()
+app.setFg("green")
 app.setFont(15)
 app.addToolbar(["But1", "But2", "But3"], getName)
 
