@@ -1467,6 +1467,9 @@ class gui:
     def getGridSelectedCells(self, title):
         return self.__verifyItem(self.n_grids, title).getSelectedCells()
 
+    def addGridRow(self, title, data):
+        self.__verifyItem(self.n_grids, title).addRow(data)
+
     ########################################
 
     def startPanedWindow(self, title, row=None, column=0, colspan=0, rowspan=0, sticky="NSEW"):
@@ -5175,7 +5178,14 @@ class SimpleGrid(Frame):
             self.ghFont = font.Font(family="Helvetica", size=14, weight="bold")
 
         # store them in the frame object for access, later
+        self.action = action
         self.entries = []
+        self.numColumns = 0
+        self.numRows = len(data)
+        # find out the max number of cells in a row
+        for rowNum in range(self.numRows):
+              if len(data[rowNum]) > self.numColumns: self.numColumns = len(data[rowNum])
+
 
         # a list of any selected cells
         from collections import OrderedDict
@@ -5214,74 +5224,91 @@ class SimpleGrid(Frame):
             # Windows and MacOS
             self.mainCanvas.bind_all("<MouseWheel>", lambda event, arg=title: self.__scrollGrid(event, arg))
 
-        self.__addRows(data, action, addRow)
+        self.__addRows(data, addRow)
 
-    def __addRows(self, data, action, addRow):
-        # find out the max number of cells in a row
-        maxSize = 0
-        for rowNum in range(len(data)):
-              if len(data[rowNum]) > maxSize: maxSize = len(data[rowNum])
-
+    def __addRows(self, data, addEntryRow=False):
         # loop through each row
-        for rowNum in range(len(data)):
-            vals = []
-            # then the cells in that row
-            for cellNum in range(maxSize):
-                gridPos = str(rowNum) + "-" + str(cellNum)
-                self.selectedCells[gridPos] = False
-                # get a name and val ("" if no val)
-                name = "c" + str(rowNum) + "-" + str(cellNum)
-                if cellNum >= len(data[rowNum]) : val = ""
-                else: val = data[rowNum][cellNum]
-                vals.append(val)
-
-                lab = Label(self.gridContainer)
-                lab.gridPos = gridPos
-                if rowNum == 0: lab.configure( relief=RIDGE,text=val, font=self.ghFont, background=self.cellHeadingBg )
-                else:
-                    lab.configure( relief=RIDGE,text=val, font=self.gdFont, background=self.cellBg )
-                    lab.bind("<Enter>", self.__gridCellEnter)
-                    lab.bind("<Leave>", self.__gridCellLeave)
-                    lab.bind("<Button-1>", self.__gridCellClick)
-
-                lab.grid ( row=rowNum, column=cellNum, sticky=N+E+S+W )
-                Grid.columnconfigure(self.gridContainer, cellNum, weight=1)
-                Grid.rowconfigure(self.gridContainer, rowNum, weight=1)
-
-                # add some buttons for each row
-                if action is not None:
-                    widg = Label(self.gridContainer, relief=RIDGE)
-                    # add the title
-                    if rowNum == 0:
-                        widg.configure( text="Action", font=self.ghFont, background=self.cellHeadingBg )
-                    # add a button
-                    else:
-                        but = Button(widg, text="Press", command=gui.MAKE_FUNC(action, vals))
-                        but.place(relx=0.5, rely=0.5, anchor=CENTER)
-
-                    widg.grid ( row=rowNum, column=cellNum+1, sticky=N+E+S+W )
+        for rowNum in range(self.numRows):
+            self.__addRow(rowNum, data[rowNum])
 
         # add a row of entry boxes...
-        if addRow==True:
-            for cellNum in range(maxSize):
-                name = "GR"+str(cellNum)
-                widg = Label(self.gridContainer)
-                widg.configure( relief=RIDGE )
-                var=StringVar(self)
-                widg = Entry(self.gridContainer, width=5)#self.__buildEntry(name, self.gridContainer)
-                widg.var = var
-                widg.config(textvariable=var)
-                self.entries.append(widg)
-                widg.grid(row=len(data), column=cellNum, sticky=N+E+S+W)
-            widg = Label(self.gridContainer)
-            widg.configure(relief=RIDGE)
-            but = Button(widg)
-            but.configure(text="Press", command=gui.MAKE_FUNC(action, "newRow"))
-            but.place(relx=0.5, rely=0.5, anchor=CENTER)
-            widg.grid(row=len(data), column=maxSize, sticky=N+E+S+W)
+        if addEntryRow==True:
+            self.__addEntryBoxes()
+
+    def addRow(self, rowData):
+        self.__removeEntryBoxes()
+        self.__addRow(self.numRows, rowData)
+        self.numRows += 1
+        self.__addEntryBoxes()
+
+    def __addRow(self, rowNum, rowData):
+        celContents = []
+        # then the cells in that row
+        for cellNum in range(self.numColumns):
+
+            # get a val ("" if no val)
+            if cellNum >= len(rowData) : val = ""
+            else: val = rowData[cellNum]
+            celContents.append(val)
+
+            lab = Label(self.gridContainer)
+            if rowNum == 0:
+                lab.configure( relief=RIDGE,text=val, font=self.ghFont, background=self.cellHeadingBg )
+            else:
+                lab.configure( relief=RIDGE,text=val, font=self.gdFont, background=self.cellBg )
+                lab.bind("<Enter>", self.__gridCellEnter)
+                lab.bind("<Leave>", self.__gridCellLeave)
+                lab.bind("<Button-1>", self.__gridCellClick)
+                gridPos = str(rowNum-1) + "-" + str(cellNum)
+                self.selectedCells[gridPos] = False
+                lab.gridPos = gridPos
+
+            lab.grid(row=rowNum, column=cellNum, sticky=N+E+S+W)
+            Grid.columnconfigure(self.gridContainer, cellNum, weight=1)
+            Grid.rowconfigure(self.gridContainer, rowNum, weight=1)
+
+            # add some buttons for each row
+            if self.action is not None:
+                widg = Label(self.gridContainer, relief=RIDGE, height=2)
+                # add the title
+                if rowNum == 0:
+                    widg.configure( text="Action", font=self.ghFont, background=self.cellHeadingBg )
+                # add a button
+                else:
+                    but = Button(widg, text="Press", command=gui.MAKE_FUNC(self.action, celContents))
+                    but.place(relx=0.5, rely=0.5, anchor=CENTER)
+
+                widg.grid ( row=rowNum, column=cellNum+1, sticky=N+E+S+W )
+
+    def __removeEntryBoxes(self):
+        for e in self.entries:
+            e.lab.grid_forget()
+            e.place_forget()
+        self.ent_but.lab.grid_forget()
+        self.ent_but.place_forget()
+
+
+    def __addEntryBoxes(self):
+        self.entries=[]
+        for cellNum in range(self.numColumns):
+            name = "GR"+str(cellNum)
+            lab = Label(self.gridContainer, relief=RIDGE, width=6, height=2)
+            lab.grid(row=self.numRows, column=cellNum, sticky=N+E+S+W)
+
+            ent = Entry(lab, width=5)#self.__buildEntry(name, self.gridContainer)
+            ent.place(relx=0.5, rely=0.5, anchor=CENTER)
+            self.entries.append(ent)
+            ent.lab=lab
+
+        lab = Label(self.gridContainer, relief=RIDGE, height=2)
+        lab.grid(row=self.numRows, column=self.numColumns, sticky=N+E+S+W)
+
+        self.ent_but = Button(lab, text="Press", command=gui.MAKE_FUNC(self.action, "newRow"))
+        self.ent_but.lab = lab
+        self.ent_but.place(relx=0.5, rely=0.5, anchor=CENTER)
 
     def getEntries(self):
-        return [e.var.get() for e in self.entries]
+        return [e.get() for e in self.entries]
 
     def getSelectedCells(self):
         return dict(self.selectedCells)

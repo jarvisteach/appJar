@@ -6,6 +6,7 @@ def press(btn):
         print(app.getGridSelectedCells("grid"))
     elif btn=="UP": app.increaseFont()
     elif btn=="DOWN": app.decreaseFont()
+    elif btn=="newRow": app.addGridRow("grid", app.getGridEntries("grid"))
 app=gui()
 #app.setFg("orange")
 #app.setBg("red")
