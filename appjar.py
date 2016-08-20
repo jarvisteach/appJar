@@ -1456,7 +1456,7 @@ class gui:
     #####################################
     def addGrid(self, title, data, row=None, column=0, colspan=0, rowspan=0, action=None, addRow=False):
         self.__verifyItem(self.n_grids, title, True)
-        grid = SimpleGrid(self.__getContainer(), title, data, action, addRow)
+        grid = SimpleGrid(self.__getContainer(), title, data, action, addRow, buttonFont=self.buttonFont)
         grid.config(font=self.gridFont, background=self.__getContainerBg() )
         self.__positionWidget(grid, row, column, colspan, rowspan, N+E+S+W)
         self.n_grids[title] = grid
@@ -5155,7 +5155,6 @@ class SimpleGrid(Frame):
         self.configure(cnf, **kw)
 
     def configure(self, cnf=None, **kw):
-        print(kw)
         kw=gui.CLEAN_CONFIG_DICTIONARY(**kw)
         if "bg" in kw: self.mainCanvas.config(bg=kw["bg"])
         if "activebackground" in kw: self.cellSelectedBg = kw.pop("activebackground")
@@ -5164,9 +5163,14 @@ class SimpleGrid(Frame):
             font = kw.pop("font")
             self.gdFont.configure (family=font.actual("family"), size=font.actual("size"))
             self.ghFont.configure (family=font.actual("family"), size=font.actual("size")+2, weight="bold")
+        if "buttonFont" in kw:
+            buttonFont = opts.pop("buttonFont")
+            self.buttonFont.configure(family=buttonFont.actual("family"), size=buttonFont.actual("size"))
 
     def __init__(self, parent, title, data, action=None, addRow=False,**opts):
-        print("OPTS:", opts)
+        if "buttonFont" in opts: self.buttonFont = opts.pop("buttonFont")
+        else: self.buttonFont = font.Font(family="Helvetica", size=12)
+
         Frame.__init__(self, parent, **opts)
 
         if "font" in opts:
@@ -5275,7 +5279,7 @@ class SimpleGrid(Frame):
                     widg.configure( text="Action", font=self.ghFont, background=self.cellHeadingBg )
                 # add a button
                 else:
-                    but = Button(widg, text="Press", command=gui.MAKE_FUNC(self.action, celContents))
+                    but = Button(widg, font=self.buttonFont, text="Press", command=gui.MAKE_FUNC(self.action, celContents))
                     but.place(relx=0.5, rely=0.5, anchor=CENTER)
 
                 widg.grid ( row=rowNum, column=cellNum+1, sticky=N+E+S+W )
@@ -5303,7 +5307,7 @@ class SimpleGrid(Frame):
         lab = Label(self.gridContainer, relief=RIDGE, height=2)
         lab.grid(row=self.numRows, column=self.numColumns, sticky=N+E+S+W)
 
-        self.ent_but = Button(lab, text="Press", command=gui.MAKE_FUNC(self.action, "newRow"))
+        self.ent_but = Button(lab, font=self.buttonFont, text="Press", command=gui.MAKE_FUNC(self.action, "newRow"))
         self.ent_but.lab = lab
         self.ent_but.place(relx=0.5, rely=0.5, anchor=CENTER)
 
