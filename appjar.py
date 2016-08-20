@@ -2040,7 +2040,10 @@ class gui:
 #####################################
     def addProperties(self, title, values=None, row=None, column=0, colspan=0, rowspan=0):
         self.__verifyItem(self.n_props, title, True)
-        props = Properties(self.__getContainer(), title, values, font=self.propertiesFont, background=self.__getContainerBg())
+        haveTitle = True
+        if self.containerStack[-1]['type'] == self.C_TOGGLEFRAME: haveTitle=False
+
+        props = Properties(self.__getContainer(), title, values, haveTitle, font=self.propertiesFont, background=self.__getContainerBg())
         self.__positionWidget(props, row, column, colspan, rowspan)
         self.n_props[title] = props
 
@@ -4175,8 +4178,9 @@ class Link(Label):
 ## Properties Widget
 #####################################
 class Properties(LabelFrame):
-    def __init__(self, parent, text, props=None, *args, **options):
-        LabelFrame.__init__(self, parent, text=text, *args, **options)
+    def __init__(self, parent, text, props=None, haveLabel=True, *args, **options):
+        if haveLabel: LabelFrame.__init__(self, parent, text=text, *args, **options)
+        else: LabelFrame.__init__(self, parent, text="", *args, **options)
         self.parent=parent
         self.config(relief="groove")
         self.props={}
