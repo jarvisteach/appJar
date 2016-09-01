@@ -83,8 +83,8 @@ Both the label and widget will be placed in the same grid space.
 Simply add the word `Label` to the command when adding the widget:  
 
 * `.addLabelEntry(title)`
-* `.addLabelNumericlEntry(title)`
-* `.addLabelSecretlEntry(title)`
+* `.addLabelNumericEntry(title)`
+* `.addLabelSecretEntry(title)`
 * `.addLabelScale(title)`
 * `.addLabelOptionBox(title, values)`
 * `.addLabelTickOptionBox(title, values)`
@@ -327,7 +327,7 @@ app.go()
 ```
 
 ####Set OptionBoxes
-* `.changeOptionBox(title, newOptions, index, value=True)`  
+* `.changeOptionBox(title, newOptions, index)`  
     This will replace the contents of the OptionBox, with the new list provided.  
     If specified, the indexed item will be selected - this can be a position or an item name.  
     If setting a TickOptionBox, pass in the optional value.  
@@ -335,7 +335,7 @@ app.go()
 * `.setOptionBox(title, position, value=True)`  
     This will select the item in the list, at the position specified.  
     Alternatively, the name of an item can be specified.  
-    If changing a TickOptionBox, the specified item will be setto the specified value.  
+    If changing a TickOptionBox, the specified item will be set to the specified value.  
 
 * `.deleteOptionBox(title, position)`  
     This will delete the item in the list, at the position specified.  
