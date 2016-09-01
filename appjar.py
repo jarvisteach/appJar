@@ -827,7 +827,7 @@ class gui:
             try:
                 if option == 'background':
                     if kind==self.METER: item.config(backfill=value)
-                    else: gui.SET_WIDGET_BG(item, value)
+                    else: gui.SET_WIDGET_BG(item, value, True)
                 elif option == 'foreground':
                     if kind==self.ENTRY:
                         if item.hasDefault: item.oldFg=value
@@ -1182,41 +1182,41 @@ class gui:
 
     # convenience method to set a widget's bg
     @staticmethod
-    def SET_WIDGET_BG(widget, bg):
+    def SET_WIDGET_BG(widget, bg, external=False):
         # POTENTIAL ISSUES
         # spinBox - highlightBackground
         # cbs/rbs - activebackground
         # grids - background
 
         darwinBorders = ["Text", "Button", "Entry"]#, "OptionMenu"]
-        noBg = ["Spinbox", "ListBox", "SplitMeter", "DualMeter", "Meter", "ToggleFrame"]#, "Scale"]
+        noBg = ["Spinbox", "ListBox", "SplitMeter", "DualMeter", "Meter", "ToggleFrame", "OptionMenu"]#, "Scale"]
 
         widgType = widget.__class__.__name__
         isDarwin = platform() == "Darwin"
 
         # Mac specific colours
-        if isDarwin and widgType in darwinBorders:
-            widget.config(highlightbackground=bg)
-#            if widgType == "OptionMenu": widget.config(background=bg)
+        if widgType in darwinBorders:
+            if isDarwin:
+                widget.config(highlightbackground=bg)
+#               if widgType == "OptionMenu": widget.config(background=bg)
+            if external:
+                widget.config(bg=bg)
+
 
         # widget with label, in frame
         elif widgType == "LabelBox":
             widget.theLabel.config(bg=bg)
-            widgType = widget.theWidget.__class__.__name__ 
-            if isDarwin and  widgType in darwinBorders:
-                widget.theWidget.config(highlightbackground=bg)
-            if widgType == "OptionMenu": widget.theWidget.config(background=bg)
+            gui.SET_WIDGET_BG(widget.theWidget, bg)
 
         # group of buttons or labels
         elif widgType == "WidgetBox":
             widget.config(bg=bg)
-            if isDarwin:
-                for widg in widget.theWidgets:
-                    widgType = widg.__class__.__name__
-                    if widgType == "Button": widg.config(highlightbackground=bg)
-                    elif widgType == "Label": widg.config(background=bg)
+            for widg in widget.theWidgets:
+                gui.SET_WIDGET_BG(widg, bg)
 
         # any other widgets
+        elif external == True:
+            widget.config(bg=bg)
         elif widgType not in noBg:
             widget.config(bg=bg)
 
@@ -3382,11 +3382,14 @@ class gui:
         if not self.hasMenu:
             self.hasMenu = True
             self.menuBar = Menu(self.topLevel)
-
-            appmenu = Menu(self.menuBar, name='apple')
-            self.menuBar.add_cascade(menu=appmenu)
-            self.n_menus["appmenu"]=appmenu
-
+            if platform() == "Darwin":
+                appmenu = Menu(self.menuBar, name='apple')
+                self.menuBar.add_cascade(menu=appmenu)
+                self.n_menus["appmenu"]=appmenu
+            else:
+                sysmenu = Menu(self.menuBar, name="system", tearoff=False)
+               # self.menuBar.add_cascade(menu=sysmenu)
+                self.n_menus["sysmenu"]=sysmenu
 
     # add a single entry for a menu
     def addMenu(self, name, func):
@@ -3422,7 +3425,7 @@ class gui:
             if platform() == "Darwin":
                 shortcut="Command-"+shortcut.lower()
             elif platform() in [ "win32", "Windows"]:
-                shortcut=shortcut.upper()
+                shortcut=shortcut#.upper()
 
         if item == "-" or kind=="separator":
               menu.add_separator()
@@ -3448,7 +3451,7 @@ class gui:
               menu.add_checkbutton(label=item, variable=var, onvalue=1, offvalue=0, accelerator=shortcut)
         elif kind == "sub":
             self.__verifyItem(self.n_menus, item, True)
-            subMenu = Menu(menu)
+            subMenu = Menu(menu, tearoff=False)
             self.n_menus[item]=subMenu
             menu.add_cascade(menu=subMenu, label=item, accelerator=shortcut)
         else:
@@ -3510,24 +3513,33 @@ class gui:
 
     # enables the preferences item in the app menu
     def addMenuPreferences(self, func):
-        self.__initMenu()
-        u = self.MAKE_FUNC(func, "preferences")
-        self.topLevel.createcommand('tk::mac::ShowPreferences', u)
+        if platform() == "Darwin":
+            self.__initMenu()
+            u = self.MAKE_FUNC(func, "preferences")
+            self.topLevel.createcommand('tk::mac::ShowPreferences', u)
+        else:
+            self.warn("The Preferences Menu is specific to Mac OSX")
 
     def addMenuHelp(self, func):
-        self.__initMenu()
-        helpMenu = Menu(self.menuBar, name='help')
-        self.menuBar.add_cascade(menu=helpMenu, label='Help')
-        u = self.MAKE_FUNC(func, "help")
-        self.topLevel.createcommand('tk::mac::ShowHelp', u)
-        self.n_menus["help"]=helpMenu
+        if platform() == "Darwin":
+            self.__initMenu()
+            helpMenu = Menu(self.menuBar, name='help')
+            self.menuBar.add_cascade(menu=helpMenu, label='Help')
+            u = self.MAKE_FUNC(func, "help")
+            self.topLevel.createcommand('tk::mac::ShowHelp', u)
+            self.n_menus["help"]=helpMenu
+        else:
+            self.warn("The Help Menu is specific to Mac OSX")
 
     # Shows a Window menu
     def addMenuWindow(self):
-        self.__initMenu()
-        windowMenu = Menu(self.menuBar, name='window')
-        self.menuBar.add_cascade(menu=windowMenu, label='Window')
-        self.n_menus["window"]=windowMenu
+        if platform() == "Darwin":
+            self.__initMenu()
+            windowMenu = Menu(self.menuBar, name='window')
+            self.menuBar.add_cascade(menu=windowMenu, label='Window')
+            self.n_menus["window"]=windowMenu
+        else:
+            self.warn("The Window Menu is specific to Mac OSX")
 
 #####################################
 ## FUNCTIONS for status bar

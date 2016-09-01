@@ -24,8 +24,10 @@ app.addLabels(["a", "b", "c", "d", "e", "f"])
 
 row=app.getNextRow()
 app.addButton("FOCUS NAME", getName, row, 0)
+
 app.addFlashLabel("FOCUS", "FOCUS NAME HERE",row, 1)
 app.addButtons(["B2", "B3", "B4"], None)
+app.setButtonBg("B3", "blue")
 row=app.getNextRow()
 app.addEntry("e1", row, 0)
 app.addLabelEntry("e2", row, 1)
