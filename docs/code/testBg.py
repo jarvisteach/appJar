@@ -4,6 +4,11 @@ def getName(btn):
     app.setLabel("FOCUS", app.getFocus())
     print(app.getLabelWidget("f"))
 
+def dialogs(btn):
+    if btn == "B2": print(app.colourBox())
+    elif btn == "B3": print(app.openBox())
+    elif btn == "B4": print(app.directoryBox())
+
 app=gui()
 app.setFg("green")
 app.setFont(15)
@@ -26,7 +31,7 @@ row=app.getNextRow()
 app.addButton("FOCUS NAME", getName, row, 0)
 
 app.addFlashLabel("FOCUS", "FOCUS NAME HERE",row, 1)
-app.addButtons(["B2", "B3", "B4"], None)
+app.addButtons(["B2", "B3", "B4"], dialogs)
 app.setButtonBg("B3", "blue")
 row=app.getNextRow()
 app.addEntry("e1", row, 0)

@@ -4,12 +4,30 @@
 # with help from: http://infohost.nmt.edu/tcc/help/pubs/tkinter/web/index.html
 # with snippets from stackexchange.com
 
-from tkinter import *
-from tkinter import messagebox
-from tkinter import colorchooser
-from tkinter import filedialog
-from tkinter import scrolledtext
-from tkinter import font
+# make print backwards compatible
+from __future__ import print_function
+
+try:
+    # for Python2
+    from Tkinter import *
+    import tkMessageBox as messagebox
+    from tkColorChooser import askcolor
+    import tkFileDialog as filedialog
+    import ScrolledText as scrolledtext
+    import tkFont as font
+    PYTHON2 = True
+    PY_NAME = "Python"
+except ImportError:
+    # for Python3
+    from tkinter import *
+    from tkinter import messagebox
+    from tkinter.colorchooser import askcolor
+    from tkinter import filedialog
+    from tkinter import scrolledtext
+    from tkinter import font
+    PYTHON2 = False
+    PY_NAME = "python3"
+
 import os, sys, re, socket, hashlib, imghdr, time
 import __main__ as theMain
 from platform import system as platform
@@ -37,7 +55,7 @@ __email__ = "info@appJar.info"
 __status__ = "Development"
 
 #class to allow simple creation of tkinter GUIs
-class gui:
+class gui(object):
     """
         Class to represent the GUI
         - Create one of these
@@ -533,7 +551,7 @@ class gui:
     # called to make sure this window is on top
     def __bringToFront(self):
         if platform() == "Darwin":
-              val=os.system('''/usr/bin/osascript -e 'tell app "Finder" to set frontmost of process "python3" to true' ''')
+              val=os.system('''/usr/bin/osascript -e 'tell app "Finder" to set frontmost of process "''' + PY_NAME + '''" to true' ''')
 #                  val=os.system('''/usr/bin/osascript -e 'tell app "System Events" to tell process "python3" perform action "AXRaise" of window ' ''')
 #                  self.topLevel.lift()
 #                  self.topLevel.call('wm', 'attributes', '.', '-topmost', True)
@@ -638,7 +656,6 @@ class gui:
     # all widgets will then need to use it
     # and here we update all....
     def setFg(self, colour):
-        print("set FG to:", colour)
         self.SET_WIDGET_FG(self.containerStack[-1]['container'], colour)
 
     # self.topLevel = Tk()
@@ -1177,7 +1194,6 @@ class gui:
         else:
             try: widget.config(foreground=fg)
             except:
-                print(widget, "Unable to set FG")
                 pass # can't set an FG colour on this widget
 
     # convenience method to set a widget's bg
@@ -1227,7 +1243,6 @@ class gui:
         try:
             return self.__getContainer()["fg"]
         except:
-            print("Failed to get a FG")
             return "black"
 
     # two important things here:
@@ -2159,7 +2174,7 @@ class gui:
         vals = self.__getSpinBoxValsAsList(vals)
         val = str(value)
         if val not in vals:
-              raise Exception("Invalid value: "+ val + ". Not in SpinBox: "+title+"=" + str(vals)) from None
+              raise Exception("Invalid value: "+ val + ". Not in SpinBox: "+title+"=" + str(vals))
         self.__setSpinBoxVal(spin, val)
 
     def setSpinBoxPos(self, title, pos):
@@ -2168,7 +2183,7 @@ class gui:
         vals = self.__getSpinBoxValsAsList(vals)
         pos=int(pos)
         if pos <  0 or pos >= len(vals):
-              raise Exception("Invalid position: "+ str(pos) + ". No position in SpinBox: "+title+"=" + str(vals)) from None
+              raise Exception("Invalid position: "+ str(pos) + ". No position in SpinBox: "+title+"=" + str(vals))
         pos = len(vals)-1 - pos
         val = vals[pos]
         self.__setSpinBoxVal(spin, val)
@@ -2287,11 +2302,11 @@ class gui:
                           png.convert()
                           photo=png.image
                     else:
-                          raise Exception("Invalid image type: "+ imagePath) from None
+                          raise Exception("Invalid image type: "+ imagePath)
               else:
-                    raise Exception("Can't read image: "+ imagePath) from None
+                    raise Exception("Can't read image: "+ imagePath)
         else:
-              raise Exception("Image "+imagePath+" does not exist") from None
+              raise Exception("Image "+imagePath+" does not exist")
 
         photo.path=imagePath
 
@@ -3702,7 +3717,7 @@ class gui:
 
     def colourBox(self, colour='#ff0000'):
         self.topLevel.update_idletasks()
-        col = colorchooser.askcolor(colour)
+        col = askcolor(colour)
         if col[1] is None: return None
         else: return col[1]
 
@@ -3749,7 +3764,8 @@ class Meter(Frame):
         if "height" in kw: self._canv.config(height=kw.pop("height"))
 
         # propagate anything left
-        super(Frame, self).config(cnf, **kw)
+        if PYTHON2: Frame.config(self, cnf, **kw)
+        else: super(Frame, self).config(cnf, **kw)
 
     def _update_coords(self, event):
         '''Updates the position of the text and rectangle inside the canvas when the size of the widget gets changed.'''
@@ -4280,7 +4296,9 @@ class Separator(Frame):
     def configure(self, cnf=None, **kw):
         if "fg" in kw:
             self.line.config(bg=kw.pop("fg"))
-        super(Frame, self).config(cnf, **kw)
+
+        if PYTHON2: Frame.config(self, cnf, **kw)
+        else: super(Frame, self).config(cnf, **kw)
 
 #####################################
 ## Pie Chart Class

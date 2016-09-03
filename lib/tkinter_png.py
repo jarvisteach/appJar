@@ -4,7 +4,12 @@
 # v0.75 - Example code and module seperated out, speed optimisation of the convert function
 
 from array import *
-from tkinter import *
+try:
+    # for Python2
+    from Tkinter import *
+except ImportError:
+    # for Python3
+    from tkinter import *
 from . import png
 
 ## tkinter hacking section ##

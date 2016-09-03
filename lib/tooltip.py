@@ -39,7 +39,12 @@ create_contents() : creates the contents of the tooltip window (by default a Tki
 '''
 # Ideas gleaned from PySol
 
-import tkinter
+try:
+    # for Python2
+    from Tkinter import *
+except ImportError:
+    # for Python3
+    from tkinter import *
 
 class ToolTip:
     def __init__(self, master, text='Your text here', delay=1500, specId=None, **opts):
@@ -113,7 +118,7 @@ class ToolTip:
             self._unschedule()
             return
         if not self._tipwindow:
-            self._tipwindow = tw = tkinter.Toplevel(self.master)
+            self._tipwindow = tw = Toplevel(self.master)
             # hide the window until we know the geometry
             tw.withdraw()
             tw.wm_overrideredirect(1)
@@ -166,18 +171,18 @@ class ToolTip:
         opts = self._opts.copy()
         for opt in ('delay', 'follow_mouse', 'state'):
             del opts[opt]
-        label = tkinter.Label(self._tipwindow, **opts)
+        label = Label(self._tipwindow, **opts)
         label.pack()
 
 ##---------demo code-----------------------------------##
 
 def demo():
-    root = tkinter.Tk(className='ToolTip-demo')
-    l = tkinter.Listbox(root)
+    root = Tk(className='ToolTip-demo')
+    l = Listbox(root)
     l.insert('end', "I'm a listbox")
     l.pack(side='top')
     t1 = ToolTip(l, follow_mouse=1, text="I'm a tooltip with follow_mouse set to 1, so I won't be placed outside my parent")
-    b = tkinter.Button(root, text='Quit', command=root.quit)
+    b = Button(root, text='Quit', command=root.quit)
     b.pack(side='bottom')
     t2 = ToolTip(b, text='Enough of this')
     root.mainloop()
