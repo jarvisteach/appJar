@@ -495,10 +495,11 @@ class gui(object):
 #####################################
     # set a minimum size
     def __dimensionWindow(self):
+        self.topLevel.update_idletasks()
         if self.__getTopLevel().geom != "fullscreen":
             # get the apps requested width & height
             r_width=self.__getTopLevel().winfo_reqwidth()
-            r_heigth=self.__getTopLevel().winfo_reqheight()
+            r_height=self.__getTopLevel().winfo_reqheight()
 
             # if a geom has not ben set
             if self.__getTopLevel().geom is None:
@@ -506,8 +507,11 @@ class gui(object):
                 width=self.__getTopLevel().winfo_width()
                 height=self.__getTopLevel().winfo_height()
 
-                if r_width>width: width=r_width
-                if r_heigth>height: height=r_heigth
+                #if r_width>width: width=r_width
+                #if r_height>height: height=r_height
+
+                height = min(r_height, height)
+                width = min(r_width, width)
 
                 # store it in the app's geom
                 self.__getTopLevel().geom = str(width)+"x"+str(height)
@@ -520,8 +524,8 @@ class gui(object):
             self.__getTopLevel().minsize(width, height)
 
             # warn the user that their geom is not big enough
-            if width < r_width or height < r_heigth:
-                self.warn("Specified dimensions ("+self.__getTopLevel().geom+"), less than requested dimensions ("+str(r_width)+"x"+str(r_heigth)+")")
+            if width < r_width or height < r_height:
+                self.warn("Specified dimensions ("+self.__getTopLevel().geom+"), less than requested dimensions ("+str(r_width)+"x"+str(r_height)+")")
 
             # if the window hasn't been positioned by the user, put it in the middle
             if not self.locationSet:

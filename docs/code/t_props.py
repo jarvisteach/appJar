@@ -6,7 +6,7 @@ toppings={"Cheese":False, "Tomato":False, "Bacon":False,
 
 app=gui()
 app.setBg("lightBlue")
-app.setFont(20)
+app.setFont(10)
 app.startToggleFrame("Toppings")
 app.addProperties("Toppings")
 app.setProperties("Toppings", toppings)
