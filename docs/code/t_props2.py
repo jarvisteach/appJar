@@ -12,6 +12,8 @@ app.setFont(20)
 
 app.startToggleFrame("Toppings")
 app.addProperties("Toppings", toppings)
+app.addProperties("Toppings2", toppings)
+app.addProperties("Toppings3", toppings)
 app.setPropertiesFunction("Toppings", changed)
 app.stopToggleFrame()
 
