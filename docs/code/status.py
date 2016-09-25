@@ -6,6 +6,7 @@ def press(btn):
         return
     if btn != "None": btn=int(btn)
     else: btn=None
+    
     app.setStatus(app.getEntry("e1"), btn)
     app.setStatusWidth(int(app.getEntry("e1")), btn)
 

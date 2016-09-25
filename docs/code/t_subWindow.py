@@ -1,6 +1,7 @@
 from appJar import gui
 
-def checkDone(btn): pass
+def checkDone():
+    return True
 
 def launch(win):
     if win == "one": app.showSubWindow("one")

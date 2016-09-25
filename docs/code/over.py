@@ -8,5 +8,5 @@ def leave(btn):
 
 app=gui()
 app.addLabel("l1", "Testing...")
-app.setLabelOverFunction("l1", [None, leave])
+app.setLabelOverFunction("l1", [enter, leave])
 app.go()
