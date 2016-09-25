@@ -688,6 +688,8 @@ class gui(object):
         return self.__getTopLevel().isResizable
 
     def __doTitleBar(self):
+        if platform() == "Darwin":
+            self.warn("Title bar hiding doesn't work on MAC - app may become unresponsive.")
         self.__getTopLevel().overrideredirect(not self.hasTitleBar)
 
     def hideTitleBar(self):
