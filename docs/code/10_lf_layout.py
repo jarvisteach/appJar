@@ -4,7 +4,7 @@ def music(btn):
       if btn == "Stop":
             app.stopSound()
       elif btn == "Play":
-            song.app.getRadioButton("song")+".wav"
+            song = app.getRadioButton("song")+".wav"
             app.playSound(song)
 
 app=gui()

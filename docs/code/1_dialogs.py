@@ -11,7 +11,7 @@ def press(btn):
       elif btn=="open": print(app.openBox("OPEN"))
       elif btn=="save": print(app.saveBox("SAVE"))
       elif btn=="dir": print(app.directoryBox("DIRECTORY"))
-      elif btn=="col": print(app.colourBox("COLOUR"))
+      elif btn=="col": print(app.colourBox())
       elif btn=="text": print(app.textBox("TEXT", "This is the text box"))
       elif btn=="num": print(app.numBox("NUMBER", "This is the number box"))
 
