@@ -13,8 +13,8 @@ def updateMeter():
 #      val += 1
 
 app=gui()
-app.startNoteBook("One")
-app.startNoteTab("Two")
+app.startTabbedFrame("One")
+app.startTab("Two")
 app.addDualMeter("m1")
 #app.setDualMeterFill("m1", ["yellow","blue"])
 #app.setMeterFg("m1", "white")
@@ -52,8 +52,8 @@ app.addButton("B4", press)
 
 app.setButtonBg("B1", "green")
 
-app.stopNoteTab()
-app.stopNoteBook()
+app.stopTab()
+app.stopTabbedFrame()
 
 
 app.go()
