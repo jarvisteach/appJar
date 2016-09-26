@@ -1224,7 +1224,6 @@ class gui(object):
             if external:
                 widget.config(bg=bg)
 
-
         # widget with label, in frame
         elif widgType == "LabelBox":
             widget.theLabel.config(bg=bg)
@@ -2473,9 +2472,8 @@ class gui(object):
     # internal function to manage sound availability
     def __soundWrap(self, sound, isFile=False, repeat=False, wait=False):
         if platform() in ["win32", "Windows"]:
-              if self.userSounds is not None:
+              if self.userSounds is not None and sound is not None:
                     sound = os.path.join(self.userSounds,sound)
-
               if isFile:
                     if False== os.path.isfile(sound): raise Exception("Can't find sound: "+ sound)
                     if not sound.lower().endswith('.wav'): raise Exception("Invalid sound format: "+ sound)
