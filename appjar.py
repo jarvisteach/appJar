@@ -2482,7 +2482,8 @@ class gui(object):
               if isFile:
                     if False== os.path.isfile(sound): raise Exception("Can't find sound: "+ sound)
                     if not sound.lower().endswith('.wav'): raise Exception("Invalid sound format: "+ sound)
-                    kind = winsound.SND_FILENAME | winsound.SND_ASYNC
+                    kind = winsound.SND_FILENAME
+                    if not wait: kind = kind | winsound.SND_ASYNC
               else:
                     if sound is None:
                           kind = winsound.SND_FILENAME
