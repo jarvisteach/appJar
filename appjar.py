@@ -4368,6 +4368,7 @@ class ajTreeNode(TreeNode):
         self.fgColour = None
         self.bgHColour = None
         self.fgHColour = None
+        # called (if set) when a leaf is edited
         self.editEvent = None
 
         if self.parent:
@@ -4419,7 +4420,8 @@ class ajTreeNode(TreeNode):
     # override parent function, so that we can generate an event on finish editing
     def edit_finish(self, event=None):
         super().edit_finish(event)
-        self.editEvent()
+        if self.editEvent is not None:
+            self.editEvent()
 
     def colourLabels(self):
         try:
