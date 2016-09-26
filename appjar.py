@@ -2197,9 +2197,11 @@ class gui(object):
 ## FUNCTION to add images
 #####################################
     # looks up label containing image
-    def __animateImage(self, title):
+    def __animateImage(self, title, firstTime=False):
         lab = self.__verifyItem(self.n_images, title)
-        if not lab.image.animating: return
+        if not lab.image.animating or (firstTime and lab.image.alreadyAnimated):
+            return
+        lab.image.alreadyAnimated=True
         try:
               if lab.image.cached:
                     pic =lab.image.pics[lab.image.anim_pos]
@@ -2227,6 +2229,7 @@ class gui(object):
               img.cached=True
 
     def __configAnimatedImage(self, img):
+        img.alreadyAnimated=False
         img.isAnimated=True
         img.pics=[]
         img.cached=False
@@ -2264,7 +2267,7 @@ class gui(object):
     # function to set an alternative image, when a mouse goes over
     def setImageMouseOver(self, title, overImg):
         lab = self.__verifyItem(self.n_images, title)
-        leaveImg=lab.image.path
+        leaveImg=lab.image.originalPath
         lab.bind("<Leave>", lambda e: self.setImage(title, leaveImg))
         lab.bind("<Enter>", lambda e: self.setImage(title, overImg))
 
@@ -2282,6 +2285,7 @@ class gui(object):
     # internal function to check/build image object
     def __getImage(self, imagePath, cache=True):
         if imagePath is None: return None
+        originalPath = imagePath
         if self.userImages is not None:
             imagePath = os.path.join(self.userImages,imagePath)
 
@@ -2314,6 +2318,7 @@ class gui(object):
               raise Exception("Image "+imagePath+" does not exist")
 
         photo.path=imagePath
+        photo.originalPath=originalPath
 
         # sort out if it's an animated images
         if self.__checkIsAnimated(imagePath):
@@ -2330,7 +2335,7 @@ class gui(object):
     def setImage(self, name, imageFile):
         label = self.__verifyItem(self.n_images, name)
         # only set the image if it's different
-        if label.image.path == imageFile: return
+        if label.image.originalPath == imageFile: return
 
         label.image.animating=False
         image = self.__getImage(imageFile)
@@ -2340,7 +2345,7 @@ class gui(object):
         label.image = image # keep a reference!
 
         if image.isAnimated:
-                self.topLevel.after(image.anim_speed, self.__animateImage, name)
+                self.topLevel.after(image.anim_speed, self.__animateImage, name, True)
 
         # removed - keep the label the same size, and crop images
         #h = image.height()
@@ -2367,7 +2372,7 @@ class gui(object):
         self.n_images[name] = label
         self.__positionWidget(label, row, column, colspan, rowspan)
         if img.isAnimated:
-                self.topLevel.after(img.anim_speed, self.__animateImage, name)
+                self.topLevel.after(img.anim_speed, self.__animateImage, name, True)
 
     def setImageSize(self, name, width, height):
         img = self.__verifyItem(self.n_images, name)
