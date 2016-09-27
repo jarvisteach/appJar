@@ -2219,7 +2219,7 @@ class gui(object):
     def __preloadAnimatedImage(self, img):
         if img.cached: return
         try:
-            pic = PhotoImage(file=img.path, format="gif - {}".format(img.anim_pos))
+            pic = PhotoImage(file=img.path, format="gif - {0}".format(img.anim_pos))
             img.pics.append(pic)
             img.anim_pos += 1
             self.topLevel.after(0, self.__preloadAnimatedImage, img)

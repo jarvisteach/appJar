@@ -1633,6 +1633,7 @@ class Reader:
                 out.extend([mask&(o>>i) for i in shifts])
             return out[:width]
 
+        # this break it!!!!!!
         return map(asvalues, rows)
 
     def serialtoflat(self, bytes, width=None):
@@ -1720,6 +1721,7 @@ class Reader:
                 if self.atchunk is None:
                     raise FormatError(
                       'This PNG file has no IDAT chunks.')
+
             if self.atchunk[1] == 'IDAT':
                 return
             self.process_chunk(lenient=lenient)
