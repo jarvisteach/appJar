@@ -26,7 +26,7 @@ pages:
     - Changing widgets: pythonWidgetOptions.md
     - Extras: pythonGuiOptions.md
 - About:
-    - Installation: Install.md
+    - Set-up: Install.md
     - Acknowledgements: Thanks.md
     - Python: pythonBasics.md
     - License: License.md

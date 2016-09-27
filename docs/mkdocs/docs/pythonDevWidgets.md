@@ -133,3 +133,7 @@ Shows two values, left & right
 
 ####DualMeter
 Shows percentage left & right  
+
+###Date Picker
+---
+A widget to capture a date - will handle presenting accurate drop-downs, and return a date.  

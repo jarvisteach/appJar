@@ -76,6 +76,33 @@ You can add a single menu option, or a list of menu options.
     Get the value of the specified radio button, from the named menu.  
     Returns the value of the checked radio button.
 
+####Platform Specific Menus
+It's possible to interact with menus that are specific to particular platforms.  
+
+On **Windows**, you can add items to the *System Menu*, accessed by clicking the icon in the top left corner of the GUI.  
+
+* `.addMenuSystem()`  
+    This creates a *System Menu*, ready to add items to.  
+    Then just add menu items as normal, using the title `SYSTEM`.  
+
+On **Mac**, there are a bunch of special menus you can access.  
+
+The application (apple) menu is alway
+
+* `.addMenuPreferences(func)`  
+    This will enable the *Preferences Menu*, in the *Applicaiton Menu*, and link it to the specified function.  
+    Note, the *Application Menu* is named after the shell running the app - usually *python3*.  
+
+* `.addMenuHelp(func)`  
+    This will link to the application specific Help option, under the *Help Menu*.  
+    You can add further items to the *Help Menu* using the title `HELP`.  
+    Note, the app's name will be the same as the shell running it - probably python3.  
+    
+* `.addMenuWindow()`  
+    This will create the standard *Window Menu*.  
+    You can add further items to the *Window Menu* using the title `WINDOW`.  
+    Adding items to this, will add them to the end of the *Window Menu*.  
+
 ##Statusbar
 ___
 Adds a statusbar along the bottom of the GUI.

@@ -2,13 +2,13 @@
 ---
 This is a Python library for creating **quick** and **easy** GUIs, designed primarily for use in the **classroom**.  
 
-It has no dependencies, other than [Python 3.x](https://www.python.org/downloads/) and relies on Python's built-in [tkinter](https://docs.python.org/3.5/library/tkinter.html) library.  
+It has no dependencies, other than [Python 3.x](https://www.python.org/downloads/) (although it mostly works on 2.x) and relies on Python's built-in [tkinter](https://docs.python.org/3.5/library/tkinter.html) library.  
 
 See the [installtion guidelines](Install.md) for more information.
 
 ###Let's make a sandwich
 ---
-Building a [GUI](https://en.wikipedia.org/wiki/Graphical_user_interface) is just like making a [sandwich](https://en.wikipedia.org/wiki/Sandwich)!  
+Making a [GUI](https://en.wikipedia.org/wiki/Graphical_user_interface) is just like making a [sandwich](https://en.wikipedia.org/wiki/Sandwich)!  
 
 You need a slice of bread on the top and bottom, and then a bunch of fillings in the middle...
 

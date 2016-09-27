@@ -1,9 +1,9 @@
 #Arranging Widgets
 ---
 
-###Sequential programming
+###Sequential Layout
 ---
-By default, each new widget is simply added on a new line. That way, you can very quickly, create a simple GUI:
+By default, each new widget is simply added on a new row. That way, you can very quickly, create a simple GUI:
 
 ```python
 from appJar import gui  
@@ -22,9 +22,9 @@ app.go()
 
 ###Grid Layout
 ---
-If, however, you want more than that, then a basic GRID layout is supported.
+If, however, you want more than that, then a basic **GRID** layout is supported.
 
-Each time you add a widget, you can specify a column, row, and even a column-span to position it in.
+Each time you add a widget, you can specify a column, row, and even a column-span or row-span to position it in.
 
 ```python
 from appJar import gui
@@ -41,11 +41,12 @@ def press(btn):
 app=gui()
 
 app.addLabel("l1", "Name", 0, 0)
-app.addLabel("l2", "Age", 1, 0)
-app.addLabel("l3", "Role", 2, 0)
-
 app.addEntry("name", 0, 1)
+
+app.addLabel("l2", "Age", 1, 0)
 app.addNumericEntry("age", 1, 1)
+
+app.addLabel("l3", "Role", 2, 0)
 app.addOptionBox("role", ["Teacher", "Student", "Developer", "Volunteer"], 2, 1)
 
 app.addButtons(["Save", "Quit"], press, 3, 0, 2)
