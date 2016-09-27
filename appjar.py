@@ -1211,7 +1211,7 @@ class gui(object):
         # grids - background
 
         darwinBorders = ["Text", "Entry"]#, "Button", "OptionMenu"]
-        noBg = ["Spinbox", "Button", "ListBox", "SplitMeter", "DualMeter", "Meter", "ToggleFrame", "OptionMenu"]#, "Scale"]
+        noBg = ["Button", "Spinbox", "ListBox", "SplitMeter", "DualMeter", "Meter", "ToggleFrame", "OptionMenu"]#, "Scale"]
 
         widgType = widget.__class__.__name__
         isDarwin = platform() == "Darwin"
@@ -3569,7 +3569,7 @@ class gui(object):
             self.menuBar.add_cascade(menu=helpMenu, label='Help')
             u = self.MAKE_FUNC(func, "help")
             self.topLevel.createcommand('tk::mac::ShowHelp', u)
-            self.n_menus["help"]=helpMenu
+            self.n_menus["HELP"]=helpMenu
         else:
             self.warn("The Help Menu is specific to Mac OSX")
 
@@ -3579,9 +3579,20 @@ class gui(object):
             self.__initMenu()
             windowMenu = Menu(self.menuBar, name='window')
             self.menuBar.add_cascade(menu=windowMenu, label='Window')
-            self.n_menus["window"]=windowMenu
+            self.n_menus["WINDOW"]=windowMenu
         else:
             self.warn("The Window Menu is specific to Mac OSX")
+
+    # Shows a Window menu
+    def addMenuSystem(self):
+        if platform() in [ "win32", "Windows"]:
+            self.__initMenu()
+            sysMenu = Menu(self.menuBar, name='system', tearoff=False)
+            self.menuBar.add_cascade(menu=sysMenu)
+            self.n_menus["SYSTEM"]=sysMenu
+            self.addMenuSeparator('SYSTEM')
+        else:
+            self.warn("The System Menu is specific to Windows")
 
 #####################################
 ## FUNCTIONS for status bar
