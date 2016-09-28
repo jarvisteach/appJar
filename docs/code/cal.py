@@ -39,10 +39,13 @@ def buildWidgets():
     years=range(STARTDATE, ENDDATE)
 
     app.addLabel("dl", "Day:", 0, 0)
+    app.setLabelAlign("dl", "w")
     app.addOptionBox("Day", days, 0, 1)
     app.addLabel("ml", "Month:", 1, 0)
+    app.setLabelAlign("ml", "w")
     app.addOptionBox("Month", MONTH_NAMES,1,1)
     app.addLabel("yl", "Year:", 2, 0)
+    app.setLabelAlign("yl", "w")
     app.addOptionBox("Year", years,2,1)
     app.setOptionBoxFunction("Month", updateDays)
     app.setOptionBoxFunction("Year", updateDays)
