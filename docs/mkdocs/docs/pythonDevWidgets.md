@@ -134,6 +134,23 @@ Shows two values, left & right
 ####DualMeter
 Shows percentage left & right  
 
-###Date Picker
+###DatePicker
 ---
 A widget to capture a date - will handle presenting accurate drop-downs, and return a date.  
+![DatePicker](img/dev/1_cal.png)  
+
+####Add DatePickers  
+
+* `.addDatePicker(title, date=None)`  
+    Create a DatePicker, it will display the specified date, or the current date if no date is supplied.  
+
+####Set DatePickers  
+
+* `.setDatePicker(title, date=None)`  
+    Will set the specified DatePicker to the specified date, or current date if no date is supplied.  
+
+####Get DatePickers  
+
+* `.getDatePicker(title)`  
+    Will return the currently selected date.  
+

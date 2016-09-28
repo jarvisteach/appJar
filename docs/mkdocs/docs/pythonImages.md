@@ -2,10 +2,12 @@
 ____
 Default image support in appJar assumes no extra libraries. That means it should only support `.GIF` and `.PPM` images.  
 However, code is included to allow the use of `.PNG` and `.JPG` files. appJar will convert these to `.GIF` files, before loading.  
-Converting image files is **SLOW**, so it's best to stick to `.GIF` files!
+Converting image files is **SLOW**, so it's best to stick to `.GIF` files!  
+`.PNG` files don't work in Python 2  
 
 Getting the path for images right can be **TRICKY**  
 It's therefore best to put images in the same folder as your Python code.
+Or, create an image folder and set it using the `.setImageLocation(location)` function.  
 
 ###Add Images
 
