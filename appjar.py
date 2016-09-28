@@ -2307,9 +2307,13 @@ class gui(object):
                     elif imagePath.lower().endswith('.png'):
                           self.warn("Image processing for .PNGs is slow. .GIF is the recommended format")
                           # known issue here, some PNGs lack IDAT chunks
-                          png = PngImageTk(imagePath)
-                          png.convert()
-                          photo=png.image
+                          # also, PNGs seem broken on python<3, maybe around the map function used to generate pixel maps
+                          if sys.version_info >= (3,0):
+                                png = PngImageTk(imagePath)
+                                png.convert()
+                                photo=png.image
+                          else:
+                                raise Exception("PNG images only supported in python 3: "+ imagePath)
                     else:
                           raise Exception("Invalid image type: "+ imagePath)
               else:
