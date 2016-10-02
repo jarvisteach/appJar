@@ -45,6 +45,9 @@ The following options are available for all widgets:
 * `set XXX State(name, value)`  
     Sets the state of the named widget. One of: `NORMAL`, `ACTIVE`, `DISABLED`  
 
+* `set XXX Focus(name)`  
+    Gives focus to the specified widget. This is the widget where the user will be able to start typing.
+
 ###Advanced Appearance
 ----
 The following are supported by most widgets:
@@ -60,44 +63,6 @@ The following are supported by most widgets:
 
 * `set XXX Padding(name, x, y)`  
     Set internal text padding of the named widget.  
-
-###Widget Interaction
-----
-The following allow widgets to be interacted with:
-
-* `set XXX Focus(name)`  
-    Gives focus to the specified widget. This is the widget where the user will be able to start typing.
-
-* `set XXX Function(name, value, key=None)`  
-    This binds a function to the widget.  
-    The function will be called every time an interactive-widget changes. 
-    The function will be called when some widgets are clicked.  
-
-* `set XXX OverFunction(name, values)`  
-    Set functions to call whenever the mouse enters (goes over) or leaves the specified widget.  
-    The first function is called when the mouse first enters the widget.  
-    The second function is called when the mouse leaves the widget.  
-    If you only want a function to be called when the mouse leaves the widget, pass an array like: `[None, leave]`  
-
-```python
-    from appJar import gui
-
-    def enter(wdgt): 
-        print("IN", wdgt)
-    def leave(wdgt):
-        print("OUT", wdgt)
-
-    app=gui()
-    app.addLabel("l1", "Testing...")
-    app.setLabelOverFunction("l1", [enter, leave])
-    app.go()
-```  
-* `set XXX DragFunction(name, values)`  
-    Set functions to call whenever the mouse button is clicked and dragged.  
-    The first function will be called when the mouse is initially clicked.  
-    The second function will be called when the mouse is released.  
-    The same rules for passing functions apply as above.  
-
 
 ###Widget Manipulaiton
 ----

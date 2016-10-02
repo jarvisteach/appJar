@@ -24,7 +24,8 @@ pages:
     - Arranging widgets: pythonWidgetLayout.md
     - Grouping widgets: pythonWidgetGrouping.md
     - Changing widgets: pythonWidgetOptions.md
-    - Extras: pythonGuiOptions.md
+    - GUI Options: pythonGuiOptions.md
+    - GUI Events: pythonEvents.md
 - About:
     - Set-up: Install.md
     - Acknowledgements: Thanks.md
