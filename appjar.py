@@ -200,7 +200,7 @@ class gui(object):
         self.resource_path = os.path.join(self.lib_path, "resources")
         self.icon_path = os.path.join(self.resource_path,"icons")
         self.sound_path = os.path.join(self.resource_path,"sounds")
-        self.appJarIcon = os.path.join(self.icon_path,"favicon3.ico")
+        self.appJarIcon = os.path.join(self.icon_path,"favicon.ico")
 
         # user configurable
         self.userImages = self.exe_loc
@@ -283,7 +283,7 @@ class gui(object):
         self.events = []
         self.pollTime = 250
         self.built = True
-#        self.topLevel.wm_iconbitmap(self.appJarIcon)
+        self.topLevel.wm_iconbitmap(self.appJarIcon)
 
     def __configBg(self, container):
         # set up a background image holder
@@ -2308,7 +2308,7 @@ class gui(object):
                           self.warn("Image processing for .PNGs is slow. .GIF is the recommended format")
                           # known issue here, some PNGs lack IDAT chunks
                           # also, PNGs seem broken on python<3, maybe around the map function used to generate pixel maps
-                          if sys.version_info >= (3,0):
+                          if sys.version_info >= (2,7):
                                 png = PngImageTk(imagePath)
                                 png.convert()
                                 photo=png.image
@@ -2349,7 +2349,7 @@ class gui(object):
         label.image = image # keep a reference!
 
         if image.isAnimated:
-                self.topLevel.after(image.anim_speed, self.__animateImage, name, True)
+                self.topLevel.after(image.anim_speed+100, self.__animateImage, name, True)
 
         # removed - keep the label the same size, and crop images
         #h = image.height()
@@ -2414,36 +2414,39 @@ class gui(object):
         label.config(width=image.width(), height=image.height())
 
     def convertJpgToBmp(self, image):
-        # read the image into an array of bytes
-        with open(image, 'rb') as inFile:
-              import array
-              buf = array.array("B",inFile.read())
-
-        # init the translator, and decode the array of bytes
-        nanojpeg.njInit()
-        nanojpeg.njDecode(buf, len(buf))
-
-        # determine a file name & type
-        if nanojpeg.njIsColor():
-              fileName = image.split('.jpg', 1)[0] + '.ppm'
-              param = 6
+        if sys.version_info < (2,7):
+            raise Exception("JPG images only supported in python 2.7+: "+ image)
         else:
-              fileName = image.split('.jpg', 1)[0] + '.pgm'
-              fileName = "test3.pgm"
-              param = 5
+            # read the image into an array of bytes
+            with open(image, 'rb') as inFile:
+                import array
+                buf = array.array("B",inFile.read())
 
-        # create a string, starting with the header
-        val = "P%d\n%d %d\n255\n" % (param, nanojpeg.njGetWidth(), nanojpeg.njGetHeight())
-        # append the bytes, converted to chars
-        val += ''.join(map(chr,nanojpeg.njGetImage()))
+            # init the translator, and decode the array of bytes
+            nanojpeg.njInit()
+            nanojpeg.njDecode(buf, len(buf))
 
-        # release any stuff
-        nanojpeg.njDone()
+            # determine a file name & type
+            if nanojpeg.njIsColor():
+                fileName = image.split('.jpg', 1)[0] + '.ppm'
+                param = 6
+            else:
+                fileName = image.split('.jpg', 1)[0] + '.pgm'
+                fileName = "test3.pgm"
+                param = 5
 
-        photo = PhotoImage(data=val)
-        return photo
+            # create a string, starting with the header
+            val = "P%d\n%d %d\n255\n" % (param, nanojpeg.njGetWidth(), nanojpeg.njGetHeight())
+            # append the bytes, converted to chars
+            val += ''.join(map(chr,nanojpeg.njGetImage()))
 
-        # write the chars to a new file, if python3 we need to encode them first
+            # release any stuff
+            nanojpeg.njDone()
+
+            photo = PhotoImage(data=val)
+            return photo
+
+            # write the chars to a new file, if python3 we need to encode them first
 #            with open(fileName, "wb") as outFile:
 #                  if sys.version_info[0] == 2: outFile.write(val)
 #                  else: outFile.write(val.encode('ISO-8859-1'))
@@ -3329,7 +3332,7 @@ class gui(object):
 ## FUNCTIONS for tool bar
 #####################################
     # adds a list of buttons along the top - like a tool bar...
-    def addToolbar(self, names, funcs):
+    def addToolbar(self, names, funcs, findIcon=False):
         if not self.hasTb: self.hasTb = True
 
         image = None
@@ -3337,27 +3340,36 @@ class gui(object):
         if not isinstance(names, list): names = [names]
 
         for i in range(len(names)):
-              t = names[i]
-              if (t in self.n_tbButts): raise Exception("Invalid toolbar name: "+ t+ " already exists")
+            t = names[i]
+            if (t in self.n_tbButts): raise Exception("Invalid toolbar button name: "+ t+ " already exists")
 
-              imgFile = os.path.join(self.icon_path,"default",t.lower() + ".png")
-              try: image = self.__getImage( imgFile )
-              except Exception as e: image = None
+            if findIcon:
+                # turn off warnings about PNGs
+                myWarn = self.WARN
+                self.WARN=False
+                imgFile = os.path.join(self.icon_path,t.lower() + ".png")
+                try: image = self.__getImage( imgFile )
+                except Exception as e: image = None
+                self.WARN=myWarn
 
-              but = Button(self.tb)
-              self.n_tbButts[t] = but
+            but = Button(self.tb)
+            self.n_tbButts[t] = but
 
-              if singleFunc is not None:
-                    u = self.MAKE_FUNC(singleFunc, t)
-              else:
-                    u = self.MAKE_FUNC(funcs[i], t)
+            if singleFunc is not None:
+                u = self.MAKE_FUNC(singleFunc, t)
+            else:
+                u = self.MAKE_FUNC(funcs[i], t)
 
-              but.config( text=t, command=u, relief=FLAT, font=self.tbFont )
-              if image is not None:
-                    but.image = image
-                    but.config(image=image, compound=TOP, text="", justify=LEFT) # works on Mac & Windows :)
-              but.pack (side=LEFT, padx=2, pady=2)
-              self.__addTooltip(but, t)
+            but.config( text=t, command=u, relief=FLAT, font=self.tbFont )
+            if image is not None:
+                but.image = image
+                but.config(image=image, compound=TOP, text="", justify=LEFT) # works on Mac & Windows :)
+            but.pack (side=LEFT, padx=2, pady=2)
+            self.__addTooltip(but, t)
+
+    def setToolbarIcon(self, name, icon):
+        imgFile = os.path.join(self.icon_path,icon.lower() + ".png")
+        self.setToolbarImage(name, imgFile)
 
     def setToolbarImage(self, name, imgFile):
         if (name not in self.n_tbButts): raise Exception("Unknown toolbar name: " + name)
@@ -3575,7 +3587,7 @@ class gui(object):
 ## FUNCTIONS for status bar
 #####################################
     # TO DO - make multi fielded
-    def addStatus(self, header="", fields=1, side=None):
+    def addStatusbar(self, header="", fields=1, side=None):
         self.hasStatus = True
         self.header=header
         self.statusFrame = Frame(self.appWindow)
@@ -3592,7 +3604,7 @@ class gui(object):
             elif side=="RIGHT": self.status[i].pack(side=RIGHT)
             else: self.status[i].pack(side=LEFT, expand=1, fill=BOTH)
 
-    def setStatus(self, text, field=0):
+    def setStatusbar(self, text, field=0):
         if self.hasStatus:
             if field is None:
                 for status in self.status:
@@ -3602,7 +3614,7 @@ class gui(object):
             else:
                 raise Exception("Invalid status field: " + str(field) + ". Must be between 0 and " + str(len(self.status)-1))
 
-    def setStatusBg(self, colour, field=None):
+    def setStatusbarBg(self, colour, field=None):
         if self.hasStatus:
             if field is None:
                 for status in self.status:
@@ -3612,7 +3624,7 @@ class gui(object):
             else:
                 raise Exception("Invalid status field: " + str(field) + ". Must be between 0 and " + str(len(self.status)-1))
 
-    def setStatusFg(self, colour, field=None):
+    def setStatusbarFg(self, colour, field=None):
         if self.hasStatus:
             if field is None:
                 for status in self.status:
@@ -3622,7 +3634,7 @@ class gui(object):
             else:
                 raise Exception("Invalid status field: " + str(field) + ". Must be between 0 and " + str(len(self.status)-1))
 
-    def setStatusWidth(self, width, field=None):
+    def setStatusbarWidth(self, width, field=None):
         if self.hasStatus:
             if field is None:
                 for status in self.status:
@@ -3632,7 +3644,7 @@ class gui(object):
             else:
                 raise Exception("Invalid status field: " + str(field) + ". Must be between 0 and " + str(len(self.status)-1))
 
-    def clearStatus(self, field=None):
+    def clearStatusbar(self, field=None):
         if self.hasStatus:
             if field is None:
                 for status in self.status:
