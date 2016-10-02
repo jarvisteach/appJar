@@ -14,6 +14,8 @@ def tbFunc(tool):
         app.infoBox(".HELP", "ABOUTER")
     elif tool == "REFRESH":
         app.clearStatusbar(4)
+    elif tool == "OPEN":
+        app.openBox()
 
 def bar(btn):
     if btn == "HIDE": app.hideToolbar()
