@@ -5,24 +5,37 @@ Statusbars are also useful features, they allow you to show information about wh
 
 ##Toolbar
 ___
-Toolbars (sometimes known as ribbons) appear across the top og a GUI.  
-They offer a series of buttons to click, which change settings/functionality in a GUI.
+Toolbars (sometimes known as ribbons) appear across the top of a GUI.  
+They offer a series of buttons to click, which can be used to change settings/functionality in a GUI.
+![Toolbar](img/bars/toolbar_1.png)  
+
+```python
+tools = ["ABOUT", "REFRESH", "OPEN", "CLOSE", "SAVE",
+        "NEW", "SETTINGS", "PRINT", "SEARCH", "UNDO",
+        "REDO", "PREFERENCES", "HOME", "HELP", "CALENDAR",
+        "WEB", "OFF"]
+
+app.addToolbar(tools, tbFunc, True)
+```
 
 ####Create Toolbars
 
-* `.addToolbar(names, funcs)`  
+* `.addToolbar(names, funcs, findIcon=False)`  
     Will add a list of buttons along the top, in a toolbar. Each button will call the corresponding function.  
-    If only one function is supplied, they will all call the same function.  
-    A bundle of free images is available, if the name used for the toolbar matches the nam of an image, an image will be used.  
+    If only one function is supplied, they will all call the same function, providing the buttons name as a parameter.  
+    A set of icons is available, if findIcon is set to True, then appJart will attempt to fins an icon for each button.  
 
 ####Set Toolbars
 
+* `.setToolbarIcon(name, icon)`  
+    Will set an icon for the corresponding button in the toolbar.  
+    Use the name of any of the icons in the resource folder (without the folder or file extension).  
+
 * `.setToolbarImage(name, image)`  
-Will set an image for the corresponding button in the toolbar.
-* `.hideToolbar()`  
-Will hide the toolbar  
-* `.showToolbar()`  
-Will show the toolbar  
+    Will set an image for the corresponding button in the toolbar.  
+
+* `.showToolbar()` & `.hideToolbar()`  
+    Will show/hide the toolbar.  
 
 ##Menubar
 ___
@@ -106,23 +119,44 @@ The application (apple) menu is alway
 ##Statusbar
 ___
 Adds a statusbar along the bottom of the GUI.
-This can be used for easy debugging, or as info for the user.
+This can be used for easy debugging, as info for the user, or to show current settings.  
 
-####Create Statuses
+![Statusbar](img/bars/statusbar_1.png)  
 
-* `.addStatus(header="", fields=1, side=None)`  
-    This turns the statusbar on, and if a header is supplied, will prepend the header before every message.  
-    If fields is populated, it''s possible to have multiple status bixes, each addressable by a number.  
-    Side can be set as LEFT/RIGHT to make the fields appear rom the left or rigt side, otherwise they will stretch equally.
+```python
+app.addStatusbar(fields=3)
+app.setStatusbar("Line: 20", 0)
+app.setStatusbar("Column: 4", 1)
+app.setStatusbar("Mode: Edit", 2)
+```
 
+![Statusbar](img/bars/statusbar_2.png)  
 
-####Set Statuses
-* `.setStatus(text, field=0)`  
-    This updates the contents of the statusbar. Again, if a header was set when adding the statusbar, that will be prepended to the message.  
-    If multiple fields were created, a position can be supplied to populate.
+```python
+app.addToolbar(tools, tbFunc, True)
+app.addStatusbar(fields=3, side="RIGHT")
+# NOTE: 0 is now on the right
+app.setStatusbarWidth(50, 2)
+app.setStatusbarBg("red", 2)
+app.setStatusbarFg("white", 2)
+```
 
-* `.clearStatus(field=0)`  
-    Clear anything displayed in the statusbar, along with any header that might be set.
+####Create Statusbars  
 
-* `.setStatusWidth(width, field=0)`  
-    Set the width of the specified status field.
+* `.addStatusBar(header="", fields=1, side=None)`  
+    This turns the statusbar on, and if a header is supplied, will prepend the header before every status.  
+    If ```fields``` is populated, it's possible to have multiple status boxes, each addressable by a number.  
+    ```side``` can be set as LEFT/RIGHT to make the fields appear from the left or right side, otherwise they will stretch equally.  
+
+####Set Statusbars  
+* `.setStatusbar(text, field=0)`  
+    This updates the contents of the statusbar.  
+    Again, if a header was set when adding the statusbar, it will be prepended to the message.  
+    If multiple fields were created, a position should be supplied to populate (starting from 0).  
+
+* `.clearStatusbar(field=0)`  
+    Clear anything displayed in the statusbar, along with any header that might be set.  
+    If multiple fields were created, specify which one, otherwise all fields will be cleared.  
+
+* `.setStatusbarWidth(width, field=0)`  
+    Set the width of the specified statusbar field (in characters).  
