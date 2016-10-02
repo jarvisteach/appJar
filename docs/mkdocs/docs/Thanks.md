@@ -14,7 +14,10 @@ ____
 * [https://github.com/sullerandras/nanojpeg-python](https://github.com/sullerandras/nanojpeg-python) - provides BASIC jpeg support
 * [http://tkinter.unpythonic.net/wiki/ToolTip](http://tkinter.unpythonic.net/wiki/ToolTip) - provides ToolTips
 
+##Icons
+* Credit to www.interactivemania.com for the icons - warning malware...  
+
 ##Documentation
 
 * [http://www.mkdocs.org](http://www.mkdocs.org) - used to generate this documentation
-* [http://lab.hakim.se/reveal-js/#/](http://lab.hakim.se/reveal-js/#/) - used to generate the slides
+* [http://lab.hakim.se/reveal-js/](http://lab.hakim.se/reveal-js/) - used to generate the slides
