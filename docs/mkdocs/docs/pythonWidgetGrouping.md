@@ -1,13 +1,15 @@
 #Container Options
 ----
-The standard way of using appJar, is simply to place all widgets into a simple window. Everything is grouped into that single window, and and changes affect everything in that window.
+The standard way of using appJar, is simply to place all widgets into a single window.  
+Everything is grouped into that single window, and any changes affect everything in that window.  
 
-It's sometimes desirable to group widgets together within a window. A number of options are provided to make this easier.
+It's sometimes desirable to group widgets together within a window.  
+A number of options are provided to make this easier.  
 
 ###Label Frame
 ----
 A way of grouping widgets into a box, with a label at the top of the box.  
-Position the *LabelFrame* within the grid, then position widgets inside the *LabelFrame*
+Position the *LabelFrame* within the grid, then position widgets inside the *LabelFrame*  
 ![LabelFrame](img/layouts/labelFrame.png)
 ```
 from appJar import gui
@@ -29,10 +31,10 @@ app.go()
 ```
 
 ####Start/Stop Label Frames  
-* `.startLabelFrame(name)`  
-* `.stopLabelFrame()`  
+* `.startLabelFrame(name)` & `.stopLabelFrame()`  
     Used to start and stop a LabelFrame  
     The specified title will be used as the label for the frame.  
+
 ####Set Label Frames  
 * `.setSticky(coords)`  
     By default widgets in the frame will align on the left.  

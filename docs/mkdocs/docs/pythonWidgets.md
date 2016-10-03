@@ -184,9 +184,9 @@ That way, multiple widgets can use the same function, but different actions can 
 
 * `.addButtons(titles, functions)`  
     It's possible to add a list of buttons to the GUI.  
-    Pass a 1-dimensional or 2-dimensional list, and they will be rendered accordingly.
-    A single function can be passed, to use for all buttons.
-    Or a list of functions can be passed, which MUST correspond to the buttons.
+    Pass a 1-dimensional or 2-dimensional list, and they will be rendered accordingly.  
+    A single function can be passed, to use for all buttons.  
+    Or a list of functions can be passed, which MUST correspond to the buttons.  
 
 * `.addNamedButton(name, title, function)`  
     By default, it's not possible to have two buttons with the same text.  
@@ -196,15 +196,15 @@ That way, multiple widgets can use the same function, but different actions can 
 
 ####Set Buttons
 * `.setButton(name, text)`  
-    This will change the text displayed on a button, but **NOT** the value passed as a paramter to the function.
+    This will change the text displayed on a button, but **NOT** the value passed as a paramter to the function.  
 
 * `.setButtonImage(title, image)`  
-    This allows an image to be placed on a button, instead of the usual text.
+    This allows an image to be placed on a button, instead of the usual text.  
 
 ##RadioButton
 ____
 A group of round boxes, only one of which can be selected.  
-These are great for getting a single value, for a multiple choice question.
+These are great for getting a single value, for a multiple choice question.  
 
 ![Radios](img/t_radios.png)  
 
@@ -222,15 +222,15 @@ app.go()
 * `.addRadioButton(title, name)`  
     This will create a RadioButton grouped by the specified title.  
     This button will have the value of name.  
-    Radio buttons are usually used in groups:
+    Radio buttons are usually used in groups.  
 
 ####Set RadioButtons
 * `.setRadioButton(title, value)`  
-    This will tick the specified RadioButton.
+    This will tick the specified RadioButton.  
 
 * `.setRadioTick(title, tick=True)`  
     It is possible to use tick-boxes instead of the classic circular radio-button.  
-    Setting tick to True will convert all the radio-buttons for this title to tick boxes.
+    Setting tick to True will convert all the radio-buttons for this title to tick boxes.  
 
 ####Get RadioButtons
 * `.getRadioButton(title)`  
@@ -244,14 +244,17 @@ app.go()
     app=gui()
     app.addRadioButton("song", "Killer Queen")
     app.addRadioButton("song", "Paradise City")
-    app.setRadioButtonFunction("song", press)   # call this function, when the RadioButton changes
+
+    # call this function, when the RadioButton changes
+    app.setRadioButtonFunction("song", press)
+
     app.addButton("PLAY", press)
     app.go()
 ```
 
 ##CheckBox
 ____
-A simple tick-box, with a label, that can be either ON or OFF.
+A simple tick-box, with a label, that can be either ON or OFF.  
 
 ![CheckBoxes](img/1_checks.png)  
 
@@ -273,21 +276,24 @@ app.go()
 
 ####Add CheckBoxes
 * `.addCheckBox(title)`  
-    This creates a CheckBox, with the specified title.
+    This creates a CheckBox, with the specified title.  
 
 ####Set CheckBoxes
 * `.setCheckBox(title, ticked=True)`  
-    This will tick the CheckBox, or untick it if ticked is set to False.
+    This will tick the CheckBox, or untick it if ticked is set to False.  
 
 ####Get CheckBoxes
 * `.getCheckBox(title)`  
-    This will return True or False, depending on the state of the CheckBox.
+    This will return True or False, depending on the state of the CheckBox.  
 
 ##OptionBox
 ____
-Creates a simple drop-down box. It is only possible to select one option form this drop-down.  
-Pass in a list of values to show in the drop-down box. They will be added in the same order, with the first item shown.  
-If the first item is empty, a simple title `- options -` will be created. Any other empty items will be removed.  
+Creates a simple drop-down box.  
+It is only possible to select one option form this drop-down.  
+Pass in a list of values to show in the drop-down box.  
+They will be added in the same order, with the first item shown.  
+If the first item is empty, a simple title `- options -` will be created.  
+Any other empty items will be removed.  
 If an item starts with a dash (-), it will be treated as a separator, and can't be selected.  
 
 ![OptionBox](img/1_optBox.png) ![OptionBox](img/2_optBox.png)  
@@ -297,8 +303,9 @@ from appJar import gui
 
 app=gui()
 app.setFont(20)
-app.addLabelOptionBox("Options", ["- Fruits -", "Apple", "Orange", "Pear", "kiwi",
-                                    "- Pets -", "Dogs", "Cats", "Fish", "Hamsters"])
+app.addLabelOptionBox("Options", ["- Fruits -", "Apple", "Orange",
+                        "Pear", "kiwi", "- Pets -", "Dogs", "Cats",
+                        "Fish", "Hamsters"])
 app.go()
 ```
 
@@ -367,6 +374,7 @@ app.go()
 ####Add SpinBoxes
 * `.addSpinBox(title, values)`  
     This will create a SpinBox, adding the contents of the values list, in the order specified.
+
 * `.addSpinBoxRange(title, from, to)`  
     This will create a SpinBox, with a numeric range of items.  
 
@@ -383,9 +391,10 @@ app.go()
 
 ####Set SpinBoxes
 * `.setSpinBox(title, value)`  
-    This will change the SpinBox to show the specified value.  
+    This will select the specified value in the SpinBox.  
+
 * `.setSpinBoxPos(title, pos)`  
-    This will change the SpinBox to show the value at the specified position.  
+    This will select the value at the specified position in the SpinBox.  
 
 ####Get SpinBoxes
 * `.getSpinBox(title)`  
@@ -409,15 +418,20 @@ app.go()
 ####Add ListBoxes
 * `.addListBox(title, values)`  
     Creates a ListBox with the specified values.  
+
 * `.addListItem(title, item)`  
     Adds a single item to the the end of the ListBox, and selects it.  
+
 * `.addListItems(title, items)`  
     Adds a list of items to the end of the List Box, selecting the last one.  
+
 ####Set ListBoxes
 * `.updateListItems(title, items)`  
     Replace the contents of the specified ListBox with the new values.  
+
 * `.removeListItem(title, item)`  
     Remove the specified item from teh specified ListBox.  
+
 ```python
 from appJar import gui
 def press(btn):
@@ -434,12 +448,16 @@ app.go()
 
 * `.clearListBox(title)`  
     Removes all items from the specified ListBox.  
+
 * `.setListBoxRows(title)`  
     Sets how many rows to display in the specified ListBox.  
+
 * `.setListBoxMulti(list, multi=True)`  
     Configures whether the specified ListBox is single or multi select.  
+
 * `.selectListItem(title, item)`  
     Selects the specified item in the specified ListBox.  
+
 ####Get ListBoxes
 * `.getListItems(title)`  
     Gets all of the selected items from the specified ListBox.  
@@ -466,21 +484,26 @@ app.go()
 ####Set Scales
 * `.setScale(title, pos)`  
     Sets the selected pos for the specified Scale.  
+
 * `.setScaleRange(title from, to, curr=None)`  
     Allows you to change the range available in the Scale.  
     If ```curr``` is provided, then the Scale will be set to that value.  
+
 * `.showScaleIntervals(title, intervals)`  
     Configures the Scale to show interval labels along its length.  
+
 * `.showScaleValue(title, show=True)`  
     Configures the Scale to show the currently selected value.  
     ![Scale](img/2_scale.png)  
-* `.setScaleHorizontal(title)`  
-* `.setScaleVertical(title)`  
+
+* `.setScaleHorizontal(title)` & `.setScaleVertical(title)`  
     Changes the Scale's orientation to the specified value.  
+
     ![Scale](img/3_scale.png)  
-* `.setScaleWidth(title, width)`  
-* `.setScaleLength(title, length)`  
+
+* `.setScaleWidth(title, width)` & `.setScaleLength(title, length)`  
     Sets a width/length for the scale's slider.  
+
 * `.setScaleFunction(title, func)`  
     Sets a function to call, each time the scale is changed.  
     The function must take one parameter, which will be populated with the scale's title.  
@@ -509,21 +532,24 @@ app.go()
 ####Add Messages
 * `.addMessage(title, text)`  
     Adds a Message widget, with the specified text.  
+
 * `.addEmptyMessage(title)`  
     Adds an empty Message widget.  
 
 ####Set Messages
 * `.clearMessage(title)`  
     Clears the specifed Message widget.  
+
 * `.setMessage(title, text)`  
     Sets the contents of the specifed Message widget, to the specified text.  
+
 ##TextArea
 ____
 Similar to an Entry box, but allows you to type text over multiple lines.  
 
 ![TextArea](img/1_textArea.png)  
 
-```
+```python
 from appJar import gui
 
 app=gui()
@@ -534,6 +560,7 @@ app.go()
 ####Add TextAreas
 * `.addTextArea(title)`  
     Adds an empty TextArea, with the specified title.  
+
 * `.addScrolledTextArea(title)`  
     Adds a scrollable TextArea with the specified title.  
 
@@ -542,6 +569,7 @@ app.go()
 ####Set TextAreas
 * `.setTextArea(title, text)`  
     Changes the contents of the specified TextArea, to the specified text.  
+
 * `.clearTextArea(title)`  
     Clears the contents of the specified TextArea.  
 
@@ -555,7 +583,7 @@ Shows a simple progress meter
 
 ![Meter](img/1_meter.png)  
 
-```
+```python
 from appJar import gui
 
 app=gui()
@@ -588,7 +616,7 @@ Note, dictionaries have no order, so when added as a dictionary, the items will 
 ![Properties](img/1_props.png)
 ![Properties](img/2_props.png)
 
-```
+```python
 from appJar import gui
 
 toppings={"Cheese":False, "Tomato":False, "Bacon":False,
@@ -611,9 +639,11 @@ app.go()
 * `setProperties(title, props)`  
     Adds the dictionary of properties to the widget.  
     If any of them already exist, they will be updated.  
+
 * `setProperty(title, prop, value=False)`  
     Sets the named property to the specified value.  
     If it doesn't exist, it will be added first, at the end of the widget.  
+
 * `deleteProperty(title, prop)`  
     Deletes the named propert from the widget.  
 
@@ -631,7 +661,7 @@ It's possible to put Properties into ToggleFrames, and also set a Function to li
 ![Properties](img/4_props.png)
 ![Properties](img/5_props.png)
 
-```
+```python
 from appJar import gui
 
 def changed(props):
@@ -672,12 +702,11 @@ app.addHorizontalSeparator(2,0,4, colour="red")
 app.go()
 ```
 
-####Add Links
+####Add Seperators
 
-* `.addHorizontalSeparator(colour=None)`  
-* `.addVerticalSeparator(colour=None)`  
-    Adds a separator - a horizontal/vertical line, spanning the cell.  
-    An optional, named parameter can be passed in at the end, to set a colour for the line.  
+* `.addHorizontalSeparator(colour=None)` & `.addVerticalSeparator(colour=None)`  
+    Adds a separator (a horizontal or vertical line) spanning the cell.  
+    An optional colour can be passed in, to set a colour for the separator.  
 
 ##Link/WebLink
 ____
@@ -701,8 +730,9 @@ app.go()
 
 * `.addLink(title, func)`  
     Adds a **hyperlink**, that when clicked, will call the specified function.  
+
 * `.addWebLink(title, page)`  
-    Adds a **hyperlink**, that when clicked, will launch the default browser, and load the page parameter.  
+    Adds a **hyperlink**, that when clicked, will launch the default browser, and load the specified page.  
     It must be a fully formed link, including ```http://```  
 
 ##Grip
