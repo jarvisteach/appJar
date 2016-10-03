@@ -1210,7 +1210,7 @@ class gui(object):
         # cbs/rbs - activebackground
         # grids - background
 
-        darwinBorders = ["Text", "Entry"]#, "Button", "OptionMenu"]
+        darwinBorders = ["Text", "ScrolledText", "Entry"]#, "Button", "OptionMenu"]
         noBg = ["Spinbox", "Button", "ListBox", "SplitMeter", "DualMeter", "Meter", "ToggleFrame", "OptionMenu"]#, "Scale"]
 
         widgType = widget.__class__.__name__
@@ -2061,7 +2061,9 @@ class gui(object):
     def addProperties(self, title, values=None, row=None, column=0, colspan=0, rowspan=0):
         self.__verifyItem(self.n_props, title, True)
         haveTitle = True
-        if self.containerStack[-1]['type'] == self.C_TOGGLEFRAME: haveTitle=False
+        if self.containerStack[-1]['type'] == self.C_TOGGLEFRAME:
+            self.containerStack[-1]['sticky'] = "ew"
+            haveTitle=False
 
         props = Properties(self.__getContainer(), title, values, haveTitle, font=self.propertiesFont, background=self.__getContainerBg())
         self.__positionWidget(props, row, column, colspan, rowspan)
@@ -5152,6 +5154,7 @@ class SimpleEntryDialog(Dialog):
         self.l1.config(text="")
 
     def setError(self, message):
+      self.parent.bell()
       self.error = True
       self.l1.config(text=message)
 

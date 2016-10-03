@@ -16,6 +16,8 @@ def tbFunc(tool):
         app.clearStatusbar(4)
     elif tool == "OPEN":
         app.openBox()
+    elif tool == "CALENDAR":
+        app.numberBox("nb", "nb")
 
 def bar(btn):
     if btn == "HIDE": app.hideToolbar()
@@ -32,9 +34,17 @@ settings = {"Bold":False, "Italic": False, "Underline": False}
 app=gui()
 
 app.startPanedWindow("mainPane")
-app.setBg("grey")
+
+app.setExpand("column")
+app.setSticky("new")
+app.setBg("lightgrey")
 app.addLabel("mainLabel", "Enter your text below")
-app.addTextArea("t1")
+app.setLabelBg("mainLabel", "grey")
+
+app.setExpand("all")
+app.setSticky("nsew")
+app.addScrolledTextArea("t1")
+#app.setTextAreaBg("t1", "red")
 app.setTextAreaWidth("t1", 50)
 app.setTextAreaHeight("t1", 25)
 app.startPanedWindow("toolPane")
