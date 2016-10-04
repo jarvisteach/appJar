@@ -1210,8 +1210,8 @@ class gui(object):
         # cbs/rbs - activebackground
         # grids - background
 
-        darwinBorders = ["Text", "Entry"]#, "Button", "OptionMenu"]
-        noBg = ["Button", "Spinbox", "ListBox", "SplitMeter", "DualMeter", "Meter", "ToggleFrame", "OptionMenu"]#, "Scale"]
+        darwinBorders = ["Text", "ScrolledText", "Entry"]#, "Button", "OptionMenu"]
+        noBg = ["Spinbox", "Button", "ListBox", "SplitMeter", "DualMeter", "Meter", "ToggleFrame", "OptionMenu"]#, "Scale"]
 
         widgType = widget.__class__.__name__
         isDarwin = platform() == "Darwin"
