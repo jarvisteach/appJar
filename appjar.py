@@ -1211,9 +1211,7 @@ class gui(object):
         # grids - background
 
         darwinBorders = ["Text", "ScrolledText", "Entry"]#, "Button", "OptionMenu"]
-
         noBg = ["Button", "Spinbox", "ListBox", "SplitMeter", "DualMeter", "Meter", "ToggleFrame", "OptionMenu"]#, "Scale"]
-        noBg = ["Spinbox", "Button", "ListBox", "SplitMeter", "DualMeter", "Meter", "ToggleFrame", "OptionMenu"]#, "Scale"]
 
         widgType = widget.__class__.__name__
         isDarwin = platform() == "Darwin"
@@ -1304,7 +1302,6 @@ class gui(object):
             self.containerStack[-2]['widgets']=True
 
         # configure the row/column to expand equally
-        print(self.containerStack[-1]['expand'])
         if self.containerStack[-1]['expand'] in ["ALL", "COLUMN"]: Grid.columnconfigure(container, column, weight=1)
         else: Grid.columnconfigure(container, column, weight=0)
         if self.containerStack[-1]['expand'] in ["ALL", "ROW"]: Grid.rowconfigure(container, row, weight=1)
