@@ -32,14 +32,22 @@ settings = {"Bold":False, "Italic": False, "Underline": False}
 app=gui()
 
 app.startPanedWindow("mainPane")
-app.setBg("grey")
+app.setBg("lightgrey")
+app.setSticky("new")
+app.setExpand("column")
 app.addLabel("mainLabel", "Enter your text below")
+app.setLabelBg("mainLabel", "grey")
+
+app.setSticky("nsew")
+app.setExpand("all")
 app.addTextArea("t1")
 app.setTextAreaWidth("t1", 50)
 app.setTextAreaHeight("t1", 25)
 app.startPanedWindow("toolPane")
 app.setSticky("new")
 app.addProperties("Settings", settings)
+app.setSticky("new")
+app.setExpand("column")
 app.addButtons(["HIDE", "SHOW"], bar)
 app.stopAllPanedWindows()
 
