@@ -962,6 +962,8 @@ class gui(object):
                     self.__repackWidget(item, info)
                 elif option == 'padding':
                     item.config(padx=value[0], pady=value[0])
+                elif option == 'ipadding':
+                    item.config(ipadx=value[0], ipady=value[0])
             except TclError as e:
                 self.warn("Error configuring " + name + ": " + str(e))
 
@@ -998,6 +1000,8 @@ class gui(object):
               exec("gui.set"+v+"State=set" +v+ "State")
               exec("def set"+v+"Padding(self, name, x, y): self.configureWidgets("+str(k)+", name, 'padding', [x, y])")
               exec("gui.set"+v+"Padding=set" +v+ "Padding")
+              exec("def set"+v+"IPadding(self, name, x, y): self.configureWidgets("+str(k)+", name, 'ipadding', [x, y])")
+              exec("gui.set"+v+"IPadding=set" +v+ "IPadding")
 
               # might not all be necessary, could make exclusion list
               exec("def set"+v+"Relief(self, name, val): self.configureWidget("+str(k)+", name, 'relief', val)")
@@ -1161,11 +1165,7 @@ class gui(object):
 
     def getRow(self):
         return self.containerStack[-1]['emptyRow']
-
-    def getNextRow(self):
-        temp = self.containerStack[-1]['emptyRow']
-        self.containerStack[-1]['emptyRow'] = temp + 1
-        return temp
+    def gr(self): return self.getRow()
 
     def __repackWidget(self, widget, params):
         if widget.winfo_manager() == "grid":
@@ -1181,8 +1181,8 @@ class gui(object):
 
     # convenience function to set RCS, referencing the current container's settings
     def __getRCS(self, row, column, colspan, rowspan):
-        if row is None: row=self.getNextRow()
-        else: self.containerStack[-1]['emptyRow'] = row + 1
+        if row is None: row=self.containerStack[-1]['emptyRow']
+        self.containerStack[-1]['emptyRow'] = row + 1
 
         if column >= self.containerStack[-1]['colCount']: self.containerStack[-1]['colCount'] = column + 1
         #if column == 0 and colspan == 0 and self.containerStack[-1]['colCount'] > 1:
@@ -1211,7 +1211,7 @@ class gui(object):
         # grids - background
 
         darwinBorders = ["Text", "ScrolledText", "Entry"]#, "Button", "OptionMenu"]
-        noBg = ["Spinbox", "Button", "ListBox", "SplitMeter", "DualMeter", "Meter", "ToggleFrame", "OptionMenu"]#, "Scale"]
+        noBg = ["Button", "Spinbox", "ListBox", "SplitMeter", "DualMeter", "Meter", "ToggleFrame", "OptionMenu"]#, "Scale"]
 
         widgType = widget.__class__.__name__
         isDarwin = platform() == "Darwin"
@@ -1287,7 +1287,7 @@ class gui(object):
         elif sticky is not None: params["sticky"] = sticky
         else: pass
 
-        # make colspanned widgets expand to fill hieght of cell
+        # make colspanned widgets expand to fill height of cell
         if rowspan != 0:
             if "sticky" in params:
                 if "n" not in params["sticky"]: params["sticky"] += "n"
@@ -1302,6 +1302,7 @@ class gui(object):
             self.containerStack[-2]['widgets']=True
 
         # configure the row/column to expand equally
+        print(self.containerStack[-1]['expand'])
         if self.containerStack[-1]['expand'] in ["ALL", "COLUMN"]: Grid.columnconfigure(container, column, weight=1)
         else: Grid.columnconfigure(container, column, weight=0)
         if self.containerStack[-1]['expand'] in ["ALL", "ROW"]: Grid.rowconfigure(container, row, weight=1)
@@ -3571,7 +3572,7 @@ class gui(object):
             self.menuBar.add_cascade(menu=helpMenu, label='Help')
             u = self.MAKE_FUNC(func, "help")
             self.topLevel.createcommand('tk::mac::ShowHelp', u)
-            self.n_menus["help"]=helpMenu
+            self.n_menus["HELP"]=helpMenu
         else:
             self.warn("The Help Menu is specific to Mac OSX")
 
@@ -3581,9 +3582,20 @@ class gui(object):
             self.__initMenu()
             windowMenu = Menu(self.menuBar, name='window')
             self.menuBar.add_cascade(menu=windowMenu, label='Window')
-            self.n_menus["window"]=windowMenu
+            self.n_menus["WINDOW"]=windowMenu
         else:
             self.warn("The Window Menu is specific to Mac OSX")
+
+    # Shows a Window menu
+    def addMenuSystem(self):
+        if platform() in [ "win32", "Windows"]:
+            self.__initMenu()
+            sysMenu = Menu(self.menuBar, name='system', tearoff=False)
+            self.menuBar.add_cascade(menu=sysMenu)
+            self.n_menus["SYSTEM"]=sysMenu
+            self.addMenuSeparator('SYSTEM')
+        else:
+            self.warn("The System Menu is specific to Windows")
 
 #####################################
 ## FUNCTIONS for status bar
