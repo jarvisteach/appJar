@@ -62,7 +62,7 @@ price = float(var3)
 ```
 
 ### Arithmetic Operators
-Python allows you to easliy perform maths on your data
+Python allows you to easily perform maths on your data
 
  | | 
 -|-|-
@@ -172,7 +172,7 @@ for index in range ( 10, 21, 2 ):
 ### Loop Control
 Pyhton provides two really useful commands to help in loop control:
 
-- ```break``` - Ends the loop immediatley
+- ```break``` - Ends the loop immediately
 - ```continue``` - Goes back to the start of the loop, skipping anything not yet done
 
 ```python
@@ -243,7 +243,7 @@ sentence = ", ".join(pupils)    # makes the String "Edd, Clive, Kim, Kat, Tim, T
 ```
 * * *
 ## Modular Development
-A modular program is made up of lots of seperate parts (modules). Each of these should work independently of the others. In Python, we acheive this by writing *functions*.  
+A modular program is made up of lots of separate parts (modules). Each of these should work independently of the others. In Python, we achieve this by writing *functions*.  
 
 Python has lots of [built-in functions](https://docs.python.org/3.4/library/functions.html) that you might have met already: ``print()``, ``input()``, ``int()``, ``str()``, ``len()``, ``round()``, etc... These work by themselves, without needing to be changed. You simply give them some information to work with, and they (sometimes) give you some information back.  
 ## Writing a Function
@@ -256,10 +256,9 @@ def myFunction():
 print("This is not in the function.")
 
 ```
-This funciton is called *myFunction*, but it could be called anything (except for the built-in function names or [keywords](https://docs.python.org/3/reference/lexical_analysis.html#keywords)). Whenever you tell your program to do *myFunction* it should print the two messages inside.
-* * *
-## Functions
-When you are writing a program, you might want to keep doing the same things again and again. It is not a good idea (or any fun) to keep typing the same stuff again and again. Sometimes a loop can solve thi , but other times it might not be enough.
+This function is called *myFunction*, but it could be called anything (except for the built-in function names or [keywords](https://docs.python.org/3/reference/lexical_analysis.html#keywords)). Whenever you tell your program to do *myFunction* it should print the two messages inside.
+
+A more detailed example might be for when you want to keep repeating the same things again and again. It is not a good idea (or any fun) to keep typing the same stuff again and again. Sometimes a loop can solve this, but other times it might not be enough.
 ```python
 # define a function to draw a square
 # the size parameter sets the length of the sides
@@ -308,7 +307,7 @@ with open ( "myfile.txt", "a" ) as outFile :
 When you open a file, you pass the name of the file you want, and an access mode. The following access modes are most commonly used:
 
 * **r** - opens a file for reading.
-* **w** - creates a new file for writing (overwrites existng file).
+* **w** - creates a new file for writing (overwrites existing file).
 * **a** - opens a file to append to (will create a file if needed).
 
 When reading from a file, it is most common to read it line-by-line. Again, it is more convenient to use **with**:
@@ -367,7 +366,7 @@ Python comes with a built-in database: [SQLite](https://www.sqlite.org/). To gai
 import sqlite3
 ```
 
-Having done that, we simply connect to the database, perform some SQL, and dosconnect:
+Having done that, we simply connect to the database, perform some SQL, and disconnect:
 
 ```python
 db = sqlite3.connect('pupils.db')
@@ -375,7 +374,7 @@ db = sqlite3.connect('pupils.db')
 db.close()
 ```
 
-As with file access, this can wrapped up using with, to ensure we always disconnect:
+As with file access, this can be wrapped up using with, to ensure we always disconnect:
 
 ```python
 with sqlite3.connect("pupils.db") as db:

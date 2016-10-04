@@ -7,7 +7,7 @@ It's also possible to configure functions to be called automatically, in a loop.
 ----
 The following allow widgets to be interacted with:
 
-* `set XXX Function(name, value, key=None)`  
+* `.set XXX Function(name, value, key=None)`  
     This binds a function to the widget.  
     The function will be called every time an interactive-widget changes.  
     The function will be called when some widgets are clicked.  
@@ -25,7 +25,7 @@ app.setRadioButtonFunction("song", songChanged)
 app.go()
 ```
 
-* `set XXX OverFunction(name, values)`  
+* `.set XXX OverFunction(name, values)`  
     Set functions to call whenever the mouse enters (goes over) or leaves the specified widget.  
     The first function is called when the mouse first enters the widget.  
     The second function is called when the mouse leaves the widget.  
@@ -44,7 +44,7 @@ app.go()
     app.setLabelOverFunction("l1", [enter, leave])
     app.go()
 ```  
-* `set XXX DragFunction(name, values)`  
+* `.set XXX DragFunction(name, values)`  
     Set functions to call whenever the mouse button is clicked and dragged.  
     The first function will be called when the mouse is initially clicked.  
     The second function will be called when the mouse is released.  
@@ -57,23 +57,22 @@ When you start the GUI, it kicks off an infinte loop that is waiting for the use
 That means, you should never have your own loops running, as that will stop the GUI from working properly.  
 Instead, if you want your own loop to run, you need to ask the GUi to run it for you:  
 
-* `registerEvent(func)`  
+* `.registerEvent(func)`  
 Pass this a function, and the GUI will call that function every second.
 
-* `setPollTime(time)`  
+* `.setPollTime(time)`  
 If you want your events to be called more or less frequently, set the frequency here.
 
 ####Enter Key
-* `enableEnter(func)`  
+* `.enableEnter(func)`  
 Link a function to the `<Enter>` key
 
-* `disableEnter()`  
+* `.disableEnter()`  
 Unlink a function form the `<Enter>`  key
 
 ####Other Keys
-* `bindKey(key, func)`  
+* `.bindKey(key, func)`  
 Link the specified key to the specified function.
 
-* `unbindKey(key)`  
+* `.unbindKey(key)`  
 Unlink the specified key from any functions bound to it.
-

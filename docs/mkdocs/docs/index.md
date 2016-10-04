@@ -6,11 +6,11 @@ It hasn't been officially released yet - we're always looking for more beta test
 
 It has no dependencies, other than [Python 3.x](https://www.python.org/downloads/) (although it mostly works on 2.7) and relies on Python's built-in [tkinter](https://docs.python.org/3.5/library/tkinter.html) library.  
 
-See the [installtion guidelines](Install.md) for more information.
+See the [installation guidelines](Install.md) for more information.
 
 ###Let's make a sandwich
 ---
-Making a [GUI](https://en.wikipedia.org/wiki/Graphical_user_interface) is just like making a [sandwich](https://en.wikipedia.org/wiki/Sandwich)!  
+Making a [GUI](https://en.wikipedia.org/wiki/Graphical_user_interface) (using appJar) is just like making a [sandwich](https://en.wikipedia.org/wiki/Sandwich)!  
 
 You need a slice of bread on the top and bottom, and then a bunch of fillings in the middle ...
 
@@ -34,7 +34,7 @@ Oh, and if you try to put fillings under the bottom-slice, then they won't be in
 ---
 When making a sandwich, you could just stuff it with fillings:  
 
-* `addFilling('cheese', 'chedar')`  
+* `addFilling('cheese', 'cheddar')`  
 * `addFilling('ham', 'smoked')`  
 
 But it's often nice to prepare the fillings too:  
@@ -71,7 +71,7 @@ In which case, you're going to want to arrange your fillings a bit more cleverly
 * 3 slices of cheese along the bottom  
 * Alternating slices of tomato & cucumber on top  
 * Then a mixture of onions and peppers  
-* Finally the sauce!  
+* Finally, the sauce!  
 
 By default, in an appJar GUI, the fillings are simply stacked on top of each other.  
 
@@ -93,12 +93,12 @@ def press(btn):
 
 app = gui()
 
-app.addLabel("title", "Welcome to appJar", 0, 0, 2)     # Row 0, Column 0, Span 2
-app.addLabel("user", "Username:", 1, 0)                 # Row 1, Column 0, no span
-app.addEntry("user", 1, 1)                              # Row 1, Column 1, no span
-app.addLabel("pass", "Password:", 2, 0)                 # Row 2, Column 0, no span
-app.addSecretEntry("pass", 2, 1)                        # Row 2, Column 1, no span
-app.addButtons(["Submit", "Cancel"], press, 3, 0, 2)    # Row 3, Column 0, Span 2
+app.addLabel("title", "Welcome to appJar", 0, 0, 2)  # Row 0,Column 0,Span 2
+app.addLabel("user", "Username:", 1, 0)              # Row 1,Column 0
+app.addEntry("user", 1, 1)                           # Row 1,Column 1
+app.addLabel("pass", "Password:", 2, 0)              # Row 2,Column 0
+app.addSecretEntry("pass", 2, 1)                     # Row 2,Column 1
+app.addButtons(["Submit", "Cancel"], press, 3, 0, 2) # Row 3,Column 0,Span 2
 
 app.setEntryFocus("user")
 

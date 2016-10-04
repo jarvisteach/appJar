@@ -125,7 +125,7 @@ It is possible to include buttons at the end of each row, and an additional row 
 ###Meters
 ---
 Working on some different styles for the Meter.  
-And, a better look - gradiated colour...  
+And, a better look - gradated colour...  
 ####SplitMeter
 Shows two values, left & right  
 

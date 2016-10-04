@@ -23,7 +23,7 @@ sys.path.append("E:\PYLIB")
 ```
 
 ##(not so) Advanced Set-up  
-If you've got friendy technicians, or are at home, you can make this even more accessible...  
+If you've got friendly technicians, or are at home, you can make this even more accessible...  
 
 ###Windows
 ----
@@ -35,7 +35,7 @@ Then you don't even need the two lines above to make it work...
 ![System](img/w_install_1.png)
 * Click the **Advanced** tab
 ![System](img/w_install_2.png)
-* Under **System vartiables**, click the **New..** button
+* Under **System variables**, click the **New..** button
 ![System](img/w_install_3.png)
 * Set the **Variable name:** to be **PYTHONPATH**
 * Set the **Variable value:** as the folder you put **appJar** in (eg. "E:\PYLIB")

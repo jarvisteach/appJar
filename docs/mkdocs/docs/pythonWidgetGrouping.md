@@ -37,14 +37,14 @@ app.go()
 
 ####Set Label Frames  
 * `.setSticky(coords)`  
-    By default widgets in the frame will align on the left.  
+    By default, widgets in the frame will align on the left.  
     If you want to change this, specify a different `sticky` value.  
     For example, `.setSticky("ew")` will cause the widgets to stretch to fit the width, aligning in the centre.  
 
 ###Toggle Frame
 ----
-A collapsable container for a group of related widgets.  
-By default the contents of the frame are hidded.  
+A collapsible container for a group of related widgets.  
+By default, the contents of the frame are hidden.  
 They can be revealed/hidden again by clicking an associated button.  
 ![ToggleFrame](img/layouts/1_toggleFrame.png)
 ![ToggleFrame](img/layouts/2_toggleFrame.png)
@@ -129,7 +129,7 @@ app.go()
     Used to change the text in the title and buttons.  
     When changing the buttons, two values must be passed in: previous/next.  
 * `.setPagedWindowButtonsTop(title, top=True)`  
-    Used to position the navigation buttons.  By default they are at the bottom.  
+    Used to position the navigation buttons.  By default, they are at the bottom.  
     Call this funtion to move them to the top.  
 * `.setPagedWindowPage(title, pageNum)`  
     Used to display the selected page.  
@@ -226,7 +226,7 @@ A way to arrange re-sizable frames, with drag-bars.
 * Create an initial pane  
 * Make it vertical  
 * Add a second pane  
-* Keep adding panes to the inittial pane  
+* Keep adding panes to the initial pane  
 ####E-Pane
 ![E-Panes](img/layouts/pane3.png)  
 

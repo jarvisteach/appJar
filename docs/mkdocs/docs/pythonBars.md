@@ -23,7 +23,7 @@ app.addToolbar(tools, tbFunc, True)
 * `.addToolbar(names, funcs, findIcon=False)`  
     Will add a list of buttons along the top, in a toolbar. Each button will call the corresponding function.  
     If only one function is supplied, they will all call the same function, providing the buttons name as a parameter.  
-    A set of icons is available, if findIcon is set to True, then appJart will attempt to fins an icon for each button.  
+    A set of icons is available, if `findIcon` is set to True, then appJar will attempt to fins an icon for each button.  
 
 ####Set Toolbars
 
@@ -100,7 +100,7 @@ On **Windows**, you can add items to the *System Menu*, accessed by clicking the
 
 On **Mac**, there are a bunch of special menus you can access.  
 
-The application (apple) menu is alway
+The application (apple) menu is always present.
 
 * `.addMenuPreferences(func)`  
     This will enable the *Preferences Menu*, in the *Applicaiton Menu*, and link it to the specified function.  

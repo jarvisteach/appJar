@@ -14,57 +14,60 @@ Label, Message, Button, Entry, Scale, SpinBox, OptionBox, TextArea, Link, Meter,
 ----
 The following options are available for all widgets:
 
-* `set XXX Bg(name, value)`  
+* `.set XXX Bg(name, value)`  
     Sets the background colour of the named widget.
 
-* `set XXX Fg(name, value)`  
-    Sets the foregound colour (usually the text) of the named widget.
+* `.set XXX Fg(name, value)`  
+    Sets the foreground colour (usually the text) of the named widget.
 
-* `set XXX DisabledFg(name, value)`  
+* `.set XXX DisabledFg(name, value)`  
     Sets the disabled foreground colour (usually the text) of the named widget.
 
-* `set XXX Width(name, value)`  
+* `.set XXX Width(name, value)`  
     Sets the width of the named widget.
 
-* `set XXX Height(name, value)`  
+* `.set XXX Height(name, value)`  
     Set the height of the named widget.
 
 ###Extended Appearance
 ---
-* `set XXX Tooltip(name, value)`  
+* `.set XXX Tooltip(name, value)`  
     Sets a tooltip for the widget.
     The specified text will be displayed in a small pop-up, when the mouse is left over the widget.
 
-* `set XXX Cursor(name, value)`  
+* `.set XXX Cursor(name, value)`  
     Sets the cursor shown, when the mouse goes over this widget.  
-    There are lots of cursors avalable, for different platforms, see [here](http://infohost.nmt.edu/tcc/help/pubs/tkinter/web/cursors.html)
+    There are lots of cursors available, for different platforms, see [here](http://infohost.nmt.edu/tcc/help/pubs/tkinter/web/cursors.html)
 
-* `set XXX Relief(name, value)`  
+* `.set XXX Relief(name, value)`  
     Sets the border for the widget. One of: `SUNKEN`, `RAISED`, `GROOVE`, `RIDGE`, `FLAT`  
 
-* `set XXX State(name, value)`  
+* `.set XXX State(name, value)`  
     Sets the state of the named widget. One of: `NORMAL`, `ACTIVE`, `DISABLED`  
 
-* `set XXX Focus(name)`  
+* `.set XXX Focus(name)`  
     Gives focus to the specified widget. This is the widget where the user will be able to start typing.
 
 ###Advanced Appearance
 ----
 The following are supported by most widgets:
 
-* `set XXX Align(name, value)`  
+* `.set XXX Align(name, value)`  
     Specifies how to align text within the widget: `LEFT`, `RIGHT`, `CENTER`
 
-* `set XXX Anchor(name, value)`  
+* `.set XXX Anchor(name, value)`  
     Sets where the text is positioned within the widget. One of: `CENTER`, `N`, `S`, `E`, `W`, `NE`, `NW`, `SE`, `SW`  
 
-* `set XXX Sticky(name, value)`  
+* `.set XXX Sticky(name, value)`  
     Specifies which side of the cell to stick the widget to, as the GUI expands: `LEFT`, `RIGHT`, `BOTH`
 
-* `set XXX Padding(name, x, y)`  
-    Set internal text padding of the named widget.  
+* `.set XXX Padding(name, [x, y])`  
+    Set external padding of the named widget.  
 
-###Widget Manipulaiton
+* `.set XXX IPadding(name, [x, y])`  
+    Set internal padding of the named widget.  
+
+###Widget Manipulation
 ----
 The following allow widgets to be manipulated on screen:
 
@@ -78,7 +81,7 @@ The following allow widgets to be manipulated on screen:
     Permanently remove the widget (deletes it).
 
 * `.removeAllWidgets()`  
-    Permanenently remove all widgets.
+    Permanently remove all widgets.
 
 * `.disable XXX (name)`  
     Disable the widget - stops the user from interacting with it, but keeps it visible.
@@ -90,12 +93,10 @@ The following allow widgets to be manipulated on screen:
 ----
 The following are convenience functions, for modifying a group of widgets:  
 
-* `set XXX Widths(names, val)`  
-* `set XXX Heights(names, val)`  
+* `.set XXX Widths(names, val)` & `.set XXX Heights(names, val)`  
     Sets the widths/heights of the specified widgets.
 
-* `setAll XXX Widths(val)`  
-* `setAll XXX Heights(val)`  
+* `.setAll XXX Widths(val)` & `.setAll XXX Heights(val)`  
     Sets the widths/heights of all widgets of the specified type.
 
 ###tkinter Options

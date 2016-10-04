@@ -6,11 +6,11 @@ There are lots of different widgets to chose from, each suited to a specific tas
 Nearly every widget needs a **TITLE**.  
 This is a unique name for the widget, so that later you can get information from that widget, or change it.  
 
-Nearly all widgets provide the same three functions:
+Nearly all widgets in appJar provide the same three functions:
 
-* Always - **ADD** a widget (with a unique title) - this creates the widget
-* Sometimes - **GET** the widget (using its unique title) - this gets the contents of the widget (usually done in a function)
-* Rarely - **SET** the widget (using its unique title) - this changes what's in the widget
+* (Always) - **ADD** a widget (with a unique title) - this creates the widget
+* (Often) - **GET** the widget (using its unique title) - this gets the contents of the widget (usually done in a function)
+* (Sometimes) - **SET** the widget (using its unique title) - this changes what's in the widget
 
 On top of these, there is a common set of functions for [changing widgets](pythonWidgetOptions.md).  
 As well as some specialist functions, unique to each widget (see below).  
@@ -99,7 +99,7 @@ Entries are used to capture input from the user. They take a single parameter - 
 
 There are two special-case entries:
 
-* NumericEntry - this only allows numbrs to be typed in.
+* NumericEntry - this only allows numbers to be typed in.
 * SecretEntry - this will show stars, instead of the letters typed - useful for capturing passwords.
 
 ![Entries](img/1_entries.gif)
@@ -147,7 +147,7 @@ app.go()
 
 #### Get Entries
 * `.getEntry(title)`  
-    This will return the contents of the spcified entry box.
+    This will return the contents of the specified entry box.
 
 ##Button
 ____
@@ -196,7 +196,7 @@ That way, multiple widgets can use the same function, but different actions can 
 
 ####Set Buttons
 * `.setButton(name, text)`  
-    This will change the text displayed on a button, but **NOT** the value passed as a paramter to the function.  
+    This will change the text displayed on a button, but **NOT** the value passed as a parameter to the function.  
 
 * `.setButtonImage(title, image)`  
     This allows an image to be placed on a button, instead of the usual text.  
@@ -234,7 +234,7 @@ app.go()
 
 ####Get RadioButtons
 * `.getRadioButton(title)`  
-    Gets the value of the selcted RadioButton, for the specified title.
+    Gets the value of the selected RadioButton, for the specified title.
 ```python
     from appJar import gui
 
@@ -538,10 +538,10 @@ app.go()
 
 ####Set Messages
 * `.clearMessage(title)`  
-    Clears the specifed Message widget.  
+    Clears the specified Message widget.  
 
 * `.setMessage(title, text)`  
-    Sets the contents of the specifed Message widget, to the specified text.  
+    Sets the contents of the specified Message widget, to the specified text.  
 
 ##TextArea
 ____
@@ -645,7 +645,7 @@ app.go()
     If it doesn't exist, it will be added first, at the end of the widget.  
 
 * `deleteProperty(title, prop)`  
-    Deletes the named propert from the widget.  
+    Deletes the named property from the widget.  
 
 ####Get Properties
 * `getProperties(title)`  
