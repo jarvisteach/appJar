@@ -504,17 +504,14 @@ class gui(object):
             # get the apps requested width & height
             r_width=self.__getTopLevel().winfo_reqwidth()
             r_height=self.__getTopLevel().winfo_reqheight()
-            print("REQ:", r_width, r_height)
 
             # get the current width & height
             w_width=self.__getTopLevel().winfo_width()
             w_height=self.__getTopLevel().winfo_height()
-            print("WIN:", w_width, w_height)
 
             # get the window's width & height
             m_width = self.topLevel.winfo_screenwidth()
             m_height = self.topLevel.winfo_screenheight()
-            print("MAX:", m_width, m_height)
 
             # determine best geom for OS
             if platform() == "Darwin":
@@ -524,7 +521,6 @@ class gui(object):
                 b_height = min(r_height, w_height)
                 b_width = min(r_width, w_width)
 
-            print("BEST:", b_width, b_height)
 
             # if a geom has not ben set
             if self.__getTopLevel().geom is None:
