@@ -398,11 +398,11 @@ class gui(object):
         """ Most important function! Start the GUI """
         # check the containers have all been stopped
         if len(self.containerStack) > 1:
-              self.warn("You didn't stop all containers")
-              for i in range(len(self.containerStack)-1, 0, -1):
-                    kind = self.containerStack[i]['type']
-                    if kind not in [self.C_PANEDFRAME]:
-                          self.warn("STOP: "+kind)
+            self.warn("You didn't stop all containers")
+            for i in range(len(self.containerStack)-1, 0, -1):
+                kind = self.containerStack[i]['type']
+                if kind not in [self.C_PANEDFRAME]:
+                    self.warn("STOP: "+kind)
 
         if len(self.n_trees)>0:
             for k in self.n_trees:
@@ -411,7 +411,10 @@ class gui(object):
 
         # only add the menu bar at the end...
         if self.hasMenu:
-              self.topLevel.config(menu=self.menuBar)
+            self.topLevel.config(menu=self.menuBar)
+        else:
+            self.addAppJarMenu()
+            self.topLevel.config(menu=self.menuBar)
 
         # pack it all in & make sure it's drawn
         self.appWindow.pack(fill=BOTH)
@@ -3486,14 +3489,14 @@ class gui(object):
             if self.platform == self.MAC:
                 appmenu = Menu(self.menuBar, name='apple')
                 self.menuBar.add_cascade(menu=appmenu)
-                self.n_menus["appmenu"]=appmenu
+                self.n_menus["APPMENU"]=appmenu
             elif self.platform == self.WINDOWS:
-                sysmenu = Menu(self.menuBar, name="system", tearoff=False)
-               # self.menuBar.add_cascade(menu=sysmenu)
-                self.n_menus["sysmenu"]=sysmenu
+                sysMenu = Menu(self.menuBar, name='system', tearoff=False)
+                self.menuBar.add_cascade(menu=sysMenu)
+                self.n_menus["SYSTEM"]=sysMenu
+                self.addMenuSeparator('SYSTEM')
             elif self.platform == self.LINUX:
                 self.warn("appJar (__initMenu) untested on LINUX")
-                self.n_menus["sysmenu"]=sysmenu
 
     # add a single entry for a menu
     def addMenu(self, name, func):
@@ -3524,6 +3527,7 @@ class gui(object):
 
     # add items to the named menu
     def addMenuItem(self, title, item, func=None, kind=None, shortcut=None):
+        self.__initMenu()
         menu = self.__verifyItem(self.n_menus, title)
         var = None
 
@@ -3651,21 +3655,29 @@ class gui(object):
         else:
             self.warn("The Window Menu is specific to Mac OSX")
 
-    # Shows a Window menu
-    def addMenuSystem(self):
-        if self.platform == self.WINDOWS:
-            self.__initMenu()
-            sysMenu = Menu(self.menuBar, name='system', tearoff=False)
-            self.menuBar.add_cascade(menu=sysMenu)
-            self.n_menus["SYSTEM"]=sysMenu
-            self.addMenuSeparator('SYSTEM')
-        else:
-            self.warn("The System Menu is specific to Windows")
+    def appJarAbout(self, menu=None):
+        self.infoBox("About appJar", "appJar\nCopyright Richard Jarvis, 2016")
+
+    def appJarHelp(self, menu=None):
+        self.infoBox("appJar Help", "For help, visit http://appJar.info")
+
+    def addAppJarMenu(self):
+        if self.platform == self.MAC:
+            self.addMenuItem("APPMENU", "About appJar", self.appJarAbout)
+            self.addMenuWindow()
+            self.addMenuHelp(self.appJarHelp)
+        elif self.platform == self.WINDOWS:
+            self.addMenuItem("SYSTEM", "About appJar", self.appJarAbout)
+            self.addMenuItem("SYSTEM", "appJar Help", self.appJarHelp)
 
 #####################################
 ## FUNCTIONS for status bar
 #####################################
     # TO DO - make multi fielded
+    def addStatus(self, header="", fields=1, side=None):
+        self.warn("addStatus() is deprecated, please use addStatusbar()")
+        self.addStatusbar(header, fields, side)
+
     def addStatusbar(self, header="", fields=1, side=None):
         self.hasStatus = True
         self.header=header
@@ -3683,6 +3695,10 @@ class gui(object):
             elif side=="RIGHT": self.status[i].pack(side=RIGHT)
             else: self.status[i].pack(side=LEFT, expand=1, fill=BOTH)
 
+    def setStatus(self, text, field=0):
+        self.warn("setStatus() is deprecated, please use setStatusbar()")
+        self.setStatusbar(text, field)
+
     def setStatusbar(self, text, field=0):
         if self.hasStatus:
             if field is None:
@@ -3692,6 +3708,10 @@ class gui(object):
                 self.status[field].config(text=self.__getFormatStatus(text))
             else:
                 raise Exception("Invalid status field: " + str(field) + ". Must be between 0 and " + str(len(self.status)-1))
+
+    def setStatusBg(self, colour, field=None):
+        self.warn("setStatusBg() is deprecated, please use setStatusbarBg()")
+        self.setStatusbarBg(self, colour, field)
 
     def setStatusbarBg(self, colour, field=None):
         if self.hasStatus:

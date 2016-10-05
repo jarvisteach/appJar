@@ -68,7 +68,7 @@ app.addSplitMeter("m2", row, 1)
 app.addDualMeter("m3", row, 2)
 
 #app.setSticky("EW")
-app.addSeparator()
+app.addHorizontalSeparator()
 #app.setSticky(None)
 app.addWebLink("appjar", "http://www.appjar.info")
 
