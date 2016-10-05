@@ -18,6 +18,8 @@ def tbFunc(tool):
         app.openBox()
     elif tool == "CALENDAR":
         app.numberBox("nb", "nb")
+    elif tool == "OFF":
+        app.stop()
 
 def bar(btn):
     if btn == "HIDE": app.hideToolbar()
@@ -31,7 +33,7 @@ tools = ["ABOUT", "REFRESH", "OPEN", "CLOSE", "SAVE",
 
 settings = {"Bold":False, "Italic": False, "Underline": False}
 
-app=gui("Toolbar Demo", "700x700")
+app=gui("Toolbar Demo")
 
 app.startPanedWindow("mainPane")
 

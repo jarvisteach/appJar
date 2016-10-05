@@ -78,6 +78,11 @@ class gui(object):
 
     built = False
 
+    # globals for supported platforms
+    WINDOWS=1
+    MAC=2
+    LINUX=3
+
     # used to identify widgets in component configurations
     WINDOW=0
     LABEL=1
@@ -178,6 +183,16 @@ class gui(object):
 ## CONSTRUCTOR - creates the GUI
 #####################################
     def __init__(self, title=None, geom=None, warn=True, debug=False):
+        # first out, verify the platform
+        if platform() in [ "win32", "Windows"]:
+            self.platform = self.WINDOWS
+        elif platform() == "Darwin":
+            self.platform = self.MAC
+        elif platform() == "Linux":
+            self.platform = self.LINUX
+        else:
+            raise Exception ("Unsupported platform: " + platform())
+
         self.WARN = warn
         self.DEBUG = debug
 
@@ -514,12 +529,16 @@ class gui(object):
             m_height = self.topLevel.winfo_screenheight()
 
             # determine best geom for OS
-            if platform() == "Darwin":
+            if self.platform == self.MAC:
                 b_width = r_width
                 b_height = r_height
-            else:
+            elif self.platform == self.WINDOWS:
                 b_height = min(r_height, w_height)
                 b_width = min(r_width, w_width)
+            elif self.platform == self.LINUX:
+                self.warn("appJar (__dimensionWindow) untested on LINUX")
+                b_width = r_width
+                b_height = r_height
 
 
             # if a geom has not ben set
@@ -567,16 +586,19 @@ class gui(object):
 
     # called to make sure this window is on top
     def __bringToFront(self):
-        if platform() == "Darwin":
-              val=os.system('''/usr/bin/osascript -e 'tell app "Finder" to set frontmost of process "''' + PY_NAME + '''" to true' ''')
-#                  val=os.system('''/usr/bin/osascript -e 'tell app "System Events" to tell process "python3" perform action "AXRaise" of window ' ''')
-#                  self.topLevel.lift()
-#                  self.topLevel.call('wm', 'attributes', '.', '-topmost', True)
-#                  self.topLevel.call('wm', 'focusmodel', '.', 'active')
-#                  self.topLevel.call('wm', 'deiconify', '.')
-#                  self.topLevel.after_idle(self.topLevel.call, 'wm', 'attributes', '.', '-topmost', True)
-        else:
-              self.topLevel.lift()
+        if self.platform == self.MAC:
+            val=os.system('''/usr/bin/osascript -e 'tell app "Finder" to set frontmost of process "''' + PY_NAME + '''" to true' ''')
+#            val=os.system('''/usr/bin/osascript -e 'tell app "System Events" to tell process "python3" perform action "AXRaise" of window ' ''')
+#            self.topLevel.lift()
+#            self.topLevel.call('wm', 'attributes', '.', '-topmost', True)
+#            self.topLevel.call('wm', 'focusmodel', '.', 'active')
+#            self.topLevel.call('wm', 'deiconify', '.')
+#            self.topLevel.after_idle(self.topLevel.call, 'wm', 'attributes', '.', '-topmost', True)
+        elif self.platform == self.WINDOWS:
+            self.topLevel.lift()
+        elif self.platform == self.LINUX:
+            self.warn("appJar (__bringToFront) untested on LINUX")
+            self.topLevel.lift()
 
     def setFullscreen(self, container=None):
         if not self.isFullscreen:
@@ -705,8 +727,10 @@ class gui(object):
         return self.__getTopLevel().isResizable
 
     def __doTitleBar(self):
-        if platform() == "Darwin":
+        if self.platform == self.MAC:
             self.warn("Title bar hiding doesn't work on MAC - app may become unresponsive.")
+        elif self.platform == self.LINUX:
+            self.warn("appJar (__doTitleBar) untested on LINUX")
         self.__getTopLevel().overrideredirect(not self.hasTitleBar)
 
     def hideTitleBar(self):
@@ -912,10 +936,13 @@ class gui(object):
                     if len(value) != 2:
                         raise Exception("Invalid arguments, set<widget>DragFunction requires 1 ot 2 functions to be passed in.")
                     if kind==self.LABEL:
-                        if platform() == "Darwin":
+                        if self.platform == self.MAC:
                             item.config(cursor="pointinghand")
-                        elif platform() in [ "win32", "Windows"]:
+                        elif self.platform == self.WINDOWS:
                             item.config(cursor="hand2")
+                        elif self.platform == self.LINUX:
+                            self.warn("appJar (setXXXDrag) untested on LINUX")
+                            item.config(cursor="pointinghand")
 
                         def getLabel(f):
                             # loop through all labels
@@ -941,10 +968,13 @@ class gui(object):
                         item.bind('<Return>', self.MAKE_FUNC(value, name, True))
                     # make labels clickable, add a cursor, and change the look
                     elif kind==self.LABEL or kind==self.IMAGE:
-                        if platform() == "Darwin":
+                        if self.platform == self.MAC:
                             item.config(cursor="pointinghand")
-                        elif platform() in [ "win32", "Windows"]:
+                        elif self.platform == self.WINDOWS:
                             item.config(cursor="hand2")
+                        elif self.platform == self.LINUX:
+                            self.warn("appJar (setXXXCommand) untested on LINUX")
+                            item.config(cursor="pointinghand")
 
                         item.bind("<Button-1>",self.MAKE_FUNC(value, name, True), add="+")
                         # these look good, but break when dialogs take focus
@@ -1915,7 +1945,7 @@ class gui(object):
         dropDown.configure(font=self.optionFont)
 #        dropDown.configure(background=self.__getContainerBg())
 
-#        if platform() == "Darwin":
+#        if self.platform == self.MAC:
 #            option.config(highlightbackground=self.__getContainerBg())
 
         option.bind("<Tab>", self.__focusNextWindow)
@@ -2118,7 +2148,7 @@ class gui(object):
         spin.config(font=self.entryFont, highlightthickness=0)
 
 # adds bg colour under spinners
-#        if platform() == "Darwin":
+#        if self.platform == self.MAC:
 #              spin.config(highlightbackground=self.__getContainerBg())
 
         spin.bind("<Tab>", self.__focusNextWindow)
@@ -2498,7 +2528,7 @@ class gui(object):
 
     # internal function to manage sound availability
     def __soundWrap(self, sound, isFile=False, repeat=False, wait=False):
-        if platform() in ["win32", "Windows"]:
+        if self.platform == self.WINDOWS:
               if self.userSounds is not None and sound is not None:
                     sound = os.path.join(self.userSounds,sound)
               if isFile:
@@ -2535,7 +2565,7 @@ class gui(object):
         self.__soundWrap("SystemAsterisk")
 
     def playNote(self, note, duration=200):
-        if platform() in ["win32", "Windows"]:
+        if self.platform == self.WINDOWS:
               try:
                     if isinstance(note, str): freq=self.NOTES[note.lower()]
                     else: freq=note
@@ -2755,8 +2785,12 @@ class gui(object):
               but.config( command=command )
               but.bind('<Return>', bindCommand)
 
-        if platform() == "Darwin":
+        if self.platform == self.MAC:
             but.config(highlightbackground=self.__getContainerBg())
+        elif self.platform == self.LINUX:
+            self.warn("appJar (__buildButton) untested on LINUX")
+            but.config(highlightbackground=self.__getContainerBg())
+
         #but.bind("<Tab>", self.__focusNextWindow)
         #but.bind("<Shift-Tab>", self.__focusLastWindow)
         self.n_buttons[name]=but
@@ -2918,8 +2952,12 @@ class gui(object):
         else: text = Text(frame)
         text.config(font=self.taFont, width=20, height=10)
 
-        if platform() == "Darwin":
+        if self.platform == self.MAC:
             text.config(highlightbackground=self.__getContainerBg())
+        elif self.platform == self.LINUX:
+            self.warn("appJar (__buildTestArea) untested on LINUX")
+            text.config(highlightbackground=self.__getContainerBg())
+
         text.bind("<Tab>", self.__focusNextWindow)
         text.bind("<Shift-Tab>", self.__focusLastWindow)
 
@@ -3041,8 +3079,12 @@ class gui(object):
         mess.config(font=self.messageFont)
         mess.config( justify=LEFT, background=self.__getContainerBg() )
         if text is not None: mess.config(text=text)
-        if platform() == "Darwin":
+        if self.platform == self.MAC:
             mess.config(highlightbackground=self.__getContainerBg())
+        elif self.platform == self.LINUX:
+            self.warn("appJar (addMessage) untested on LINUX")
+            mess.config(highlightbackground=self.__getContainerBg())
+
         self.n_messages[title]=mess
 
         self.__positionWidget(mess, row, column, colspan, rowspan)
@@ -3073,7 +3115,10 @@ class gui(object):
         ent.isNumeric=False
         ent.config(textvariable=var, font=self.entryFont)
         if secret: ent.config(show="*")
-        if platform() == "Darwin":
+        if self.platform == self.MAC:
+            ent.config(highlightbackground=self.__getContainerBg())
+        elif self.platform == self.LINUX:
+            self.warn("appJar (__buildEntry) untested on LINUX")
             ent.config(highlightbackground=self.__getContainerBg())
         ent.bind("<Tab>", self.__focusNextWindow)
         ent.bind("<Shift-Tab>", self.__focusLastWindow)
@@ -3438,23 +3483,28 @@ class gui(object):
         if not self.hasMenu:
             self.hasMenu = True
             self.menuBar = Menu(self.topLevel)
-            if platform() == "Darwin":
+            if self.platform == self.MAC:
                 appmenu = Menu(self.menuBar, name='apple')
                 self.menuBar.add_cascade(menu=appmenu)
                 self.n_menus["appmenu"]=appmenu
-            else:
+            elif self.platform == self.WINDOWS:
                 sysmenu = Menu(self.menuBar, name="system", tearoff=False)
                # self.menuBar.add_cascade(menu=sysmenu)
+                self.n_menus["sysmenu"]=sysmenu
+            elif self.platform == self.LINUX:
+                self.warn("appJar (__initMenu) untested on LINUX")
                 self.n_menus["sysmenu"]=sysmenu
 
     # add a single entry for a menu
     def addMenu(self, name, func):
-        if platform() == "Darwin":
+        if self.platform == self.MAC:
             self.warn("Unable to make topLevel menus (" + name + ") on Mac")
-        else:
+        elif self.platform == self.WINDOWS:
             self.__initMenu()
             u = self.MAKE_FUNC(func, name, True)
             self.menuBar.add_command(label=name, command=u)
+        elif self.platform == self.LINUX:
+            self.warn("appJar (addMenu) untested on LINUX")
 
     # add a parent menu, for menu items
     def createMenu(self, title, tearable=False):
@@ -3478,10 +3528,13 @@ class gui(object):
         var = None
 
         if shortcut is not None:
-            if platform() == "Darwin":
+            if self.platform == self.MAC:
                 shortcut="Command-"+shortcut.lower()
-            elif platform() in [ "win32", "Windows"]:
+            elif self.platform == self.WINDOWS:
                 shortcut=shortcut#.upper()
+            elif self.platform == self.LINUX:
+                self.warn("appJar (addMenuItem) untested on LINUX")
+                shortcut=shortcut
 
         if item == "-" or kind=="separator":
               menu.add_separator()
@@ -3570,7 +3623,7 @@ class gui(object):
 
     # enables the preferences item in the app menu
     def addMenuPreferences(self, func):
-        if platform() == "Darwin":
+        if self.platform == self.MAC:
             self.__initMenu()
             u = self.MAKE_FUNC(func, "preferences")
             self.topLevel.createcommand('tk::mac::ShowPreferences', u)
@@ -3578,7 +3631,7 @@ class gui(object):
             self.warn("The Preferences Menu is specific to Mac OSX")
 
     def addMenuHelp(self, func):
-        if platform() == "Darwin":
+        if self.platform == self.MAC:
             self.__initMenu()
             helpMenu = Menu(self.menuBar, name='help')
             self.menuBar.add_cascade(menu=helpMenu, label='Help')
@@ -3590,7 +3643,7 @@ class gui(object):
 
     # Shows a Window menu
     def addMenuWindow(self):
-        if platform() == "Darwin":
+        if self.platform == self.MAC:
             self.__initMenu()
             windowMenu = Menu(self.menuBar, name='window')
             self.menuBar.add_cascade(menu=windowMenu, label='Window')
@@ -3600,7 +3653,7 @@ class gui(object):
 
     # Shows a Window menu
     def addMenuSystem(self):
-        if platform() in [ "win32", "Windows"]:
+        if self.platform == self.WINDOWS:
             self.__initMenu()
             sysMenu = Menu(self.menuBar, name='system', tearoff=False)
             self.menuBar.add_cascade(menu=sysMenu)
