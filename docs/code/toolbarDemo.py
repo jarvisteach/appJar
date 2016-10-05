@@ -31,7 +31,7 @@ tools = ["ABOUT", "REFRESH", "OPEN", "CLOSE", "SAVE",
 
 settings = {"Bold":False, "Italic": False, "Underline": False}
 
-app=gui()
+app=gui("Toolbar Demo", "700x700")
 
 app.startPanedWindow("mainPane")
 

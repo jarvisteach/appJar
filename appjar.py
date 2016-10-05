@@ -497,40 +497,57 @@ class gui(object):
     def __dimensionWindow(self):
         self.topLevel.update_idletasks()
         if self.__getTopLevel().geom != "fullscreen":
+            # ISSUES HERE:
+            # on MAC, w_width/w_height always 1
+            # on WIN, w_height is bigger then r_height - leaving empty space
+
             # get the apps requested width & height
             r_width=self.__getTopLevel().winfo_reqwidth()
             r_height=self.__getTopLevel().winfo_reqheight()
+            print("REQ:", r_width, r_height)
+
+            # get the current width & height
+            w_width=self.__getTopLevel().winfo_width()
+            w_height=self.__getTopLevel().winfo_height()
+            print("WIN:", w_width, w_height)
+
+            # get the window's width & height
+            m_width = self.topLevel.winfo_screenwidth()
+            m_height = self.topLevel.winfo_screenheight()
+            print("MAX:", m_width, m_height)
+
+            # determine best geom for OS
+            if platform() == "Darwin":
+                b_width = r_width
+                b_height = r_height
+            else:
+                b_height = min(r_height, w_height)
+                b_width = min(r_width, w_width)
+
+            print("BEST:", b_width, b_height)
 
             # if a geom has not ben set
             if self.__getTopLevel().geom is None:
-                # determine a minimum geom
-                width=self.__getTopLevel().winfo_width()
-                height=self.__getTopLevel().winfo_height()
-
-                #if r_width>width: width=r_width
-                #if r_height>height: height=r_height
-
-                height = min(r_height, height)
-                width = min(r_width, width)
-
+                width=b_width
+                height=b_height
                 # store it in the app's geom
                 self.__getTopLevel().geom = str(width)+"x"+str(height)
-
-            # now split the app's geom
-            width = int(self.__getTopLevel().geom.lower().split("x")[0])
-            height = int(self.__getTopLevel().geom.lower().split("x")[1])
+            else:
+                # now split the app's geom
+                width = int(self.__getTopLevel().geom.lower().split("x")[0])
+                height = int(self.__getTopLevel().geom.lower().split("x")[1])
+                # warn the user that their geom is not big enough
+                if width < b_width or height < b_height:
+                    self.warn("Specified dimensions (" + self.__getTopLevel().geom +
+                                "), less than requested dimensions (" + str(b_width) + "x" + str(b_height) + ")")
 
             # and set it as the minimum size
             self.__getTopLevel().minsize(width, height)
 
-            # warn the user that their geom is not big enough
-            if width < r_width or height < r_height:
-                self.warn("Specified dimensions ("+self.__getTopLevel().geom+"), less than requested dimensions ("+str(r_width)+"x"+str(r_height)+")")
-
             # if the window hasn't been positioned by the user, put it in the middle
             if not self.locationSet:
-                x = (self.topLevel.winfo_screenwidth() - width) / 2
-                y = (self.topLevel.winfo_screenheight() - height) / 2
+                x = (m_width - width) / 2
+                y = (m_height - height) / 2
                 self.setLocation(x,y)
 
     # called to update screen geometry
