@@ -3545,7 +3545,7 @@ class gui(object):
         # creates a var rb+item
         # uses func for the title of this radiobutotn
         elif kind == "rb":
-              varName = "rb"+item
+              varName = title+"rb"+item
               newRb=False
               if (varName in self.n_menuVars):
                     var = self.n_menuVars[varName]
@@ -3557,7 +3557,7 @@ class gui(object):
               if newRb: self.setMenuRadioButton(title, item, func)
         # creates a var cb+item
         elif kind == "cb":
-              varName = "cb"+item
+              varName = title+"cb"+item
               self.__verifyItem(self.n_menuVars, varName, True)
               var = StringVar(self.topLevel)
               self.n_menuVars[varName]=var
@@ -3578,7 +3578,7 @@ class gui(object):
                     menu.add_command(label=item, accelerator=shortcut)
 
     def __getMenu(self, menu, title, kind):
-        title=kind+title
+        title=menu+kind+title
         var = self.__verifyItem(self.n_menuVars, title)
         if kind=="rb":
               return var.get()
@@ -3608,7 +3608,7 @@ class gui(object):
     # wrappers for setters
 
     def __setMenu(self, menu, title, value, kind):
-        title=kind+title
+        title=menu+kind+title
         var = self.__verifyItem(self.n_menuVars, title)
         if kind=="rb":
               var.set(value)
@@ -3634,6 +3634,7 @@ class gui(object):
         else:
             self.warn("The Preferences Menu is specific to Mac OSX")
 
+    # MAC help mnenu
     def addMenuHelp(self, func):
         if self.platform == self.MAC:
             self.__initMenu()
