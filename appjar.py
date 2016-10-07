@@ -424,8 +424,8 @@ class gui(object):
         self.__dimensionWindow()
 
         # bring to front
-        self.topLevel.deiconify()
         self.__bringToFront()
+        self.topLevel.deiconify()
 
         # start the call back & flash loops
         self.__poll()
@@ -590,13 +590,13 @@ class gui(object):
     # called to make sure this window is on top
     def __bringToFront(self):
         if self.platform == self.MAC:
-            val=os.system('''/usr/bin/osascript -e 'tell app "Finder" to set frontmost of process "''' + PY_NAME + '''" to true' ''')
-#            val=os.system('''/usr/bin/osascript -e 'tell app "System Events" to tell process "python3" perform action "AXRaise" of window ' ''')
-#            self.topLevel.lift()
-#            self.topLevel.call('wm', 'attributes', '.', '-topmost', True)
-#            self.topLevel.call('wm', 'focusmodel', '.', 'active')
-#            self.topLevel.call('wm', 'deiconify', '.')
-#            self.topLevel.after_idle(self.topLevel.call, 'wm', 'attributes', '.', '-topmost', True)
+            import subprocess
+            tmpl = 'tell application "System Events" to set frontmost of every process whose unix id is {} to true'
+            script = tmpl.format(os.getpid())
+            output = subprocess.check_call(['/usr/bin/osascript', '-e', script])
+            self.topLevel.after(0, lambda: self.topLevel.attributes("-topmost", False))
+#            val=os.system('''/usr/bin/osascript -e 'tell app "Finder" to set frontmost of process "''' + PY_NAME + '''" to true' ''')
+            self.topLevel.lift()
         elif self.platform == self.WINDOWS:
             self.topLevel.lift()
         elif self.platform == self.LINUX:
@@ -3526,10 +3526,14 @@ class gui(object):
         menu.entryconfigure(item, state=NORMAL)
 
     # add items to the named menu
-    def addMenuItem(self, title, item, func=None, kind=None, shortcut=None):
+    def addMenuItem(self, title, item, func=None, kind=None, shortcut=None, underline=-1):
         self.__initMenu()
         menu = self.__verifyItem(self.n_menus, title)
         var = None
+
+        if underline > -1:
+            if self.platform == self.MAC:
+                self.warn("Underlining menu items not available on MAC")
 
         if shortcut is not None:
             if self.platform == self.MAC:
@@ -3553,7 +3557,7 @@ class gui(object):
                     newRb=True
                     var = StringVar(self.topLevel)
                     self.n_menuVars[varName]=var
-              menu.add_radiobutton(label=func, variable=var, value=func, accelerator=shortcut)
+              menu.add_radiobutton(label=func, variable=var, value=func, accelerator=shortcut, underline=underline)
               if newRb: self.setMenuRadioButton(title, item, func)
         # creates a var cb+item
         elif kind == "cb":
@@ -3561,16 +3565,16 @@ class gui(object):
               self.__verifyItem(self.n_menuVars, varName, True)
               var = StringVar(self.topLevel)
               self.n_menuVars[varName]=var
-              menu.add_checkbutton(label=item, variable=var, onvalue=1, offvalue=0, accelerator=shortcut)
+              menu.add_checkbutton(label=item, variable=var, onvalue=1, offvalue=0, accelerator=shortcut, underline=underline)
         elif kind == "sub":
             self.__verifyItem(self.n_menus, item, True)
             subMenu = Menu(menu, tearoff=False)
             self.n_menus[item]=subMenu
-            menu.add_cascade(menu=subMenu, label=item, accelerator=shortcut)
+            menu.add_cascade(menu=subMenu, label=item, accelerator=shortcut, underline=underline)
         else:
               if func is not None:
                     u = self.MAKE_FUNC(func, item, True)
-                    menu.add_command(label=item, command=u, accelerator=shortcut)
+                    menu.add_command(label=item, command=u, accelerator=shortcut, underline=underline)
                     if shortcut is not None:
                         shortcut = "<"+shortcut+">"
                         self.topLevel.bind(shortcut, u)
