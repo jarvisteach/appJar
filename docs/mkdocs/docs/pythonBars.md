@@ -93,28 +93,24 @@ You can add a single menu option, or a list of menu options.
 It's possible to interact with menus that are specific to particular platforms.  
 
 On **Windows**, you can add items to the *System Menu*, accessed by clicking the icon in the top left corner of the GUI.  
-
-* `.addMenuSystem()`  
-    This creates a *System Menu*, ready to add items to.  
-    Then just add menu items as normal, using the title `SYSTEM`.  
+Simply add menu items using the title `SYSTEM`.  
 
 On **Mac**, there are a bunch of special menus you can access.  
 
-The application (apple) menu is always present.
+The *Application Menu* is always present, and is always named after python - usually *python3*.  
+To add items to this menu, simply call `.addMenuItem()` with the title `APPMENU`.  
 
 * `.addMenuPreferences(func)`  
-    This will enable the *Preferences Menu*, in the *Applicaiton Menu*, and link it to the specified function.  
-    Note, the *Application Menu* is named after the shell running the app - usually *python3*.  
+    This will enable the *Preferences Menu*, in the *Application Menu*, and link it to the specified function.  
 
 * `.addMenuHelp(func)`  
-    This will link to the application specific Help option, under the *Help Menu*.  
+    This will create the *Help Menu* with a *Search Menu*,  
+    Followed by *pyhton3 Help*, which links to the function specified.  
     You can add further items to the *Help Menu* using the title `HELP`.  
-    Note, the app's name will be the same as the shell running it - probably python3.  
     
 * `.addMenuWindow()`  
     This will create the standard *Window Menu*.  
     You can add further items to the *Window Menu* using the title `WINDOW`.  
-    Adding items to this, will add them to the end of the *Window Menu*.  
 
 ##Statusbar
 ___
