@@ -973,7 +973,7 @@ class gui(object):
                             item.config(cursor="hand2")
                         elif self.platform == self.LINUX:
                             self.warn("appJar (setXXXDrag) untested on LINUX")
-                            item.config(cursor="pointinghand")
+                            item.config(cursor="hand2")
 
                         def getLabel(f):
                             # loop through all labels
@@ -1005,7 +1005,7 @@ class gui(object):
                             item.config(cursor="hand2")
                         elif self.platform == self.LINUX:
                             self.warn("appJar (setXXXCommand) untested on LINUX")
-                            item.config(cursor="pointinghand")
+                            item.config(cursor="hand2")
 
                         item.bind("<Button-1>",self.MAKE_FUNC(value, name, True), add="+")
                         # these look good, but break when dialogs take focus
@@ -4359,7 +4359,7 @@ class Link(Label):
 
         if platform() == "Darwin":
               self.config(cursor="pointinghand")
-        elif platform() in [ "win32", "Windows"]:
+        elif platform() in [ "win32", "Windows", "Linux"]:
               self.config(cursor="hand2")
 
     def registerCallback(self, callback):
