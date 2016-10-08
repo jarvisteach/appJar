@@ -612,8 +612,26 @@ class gui(object):
 
     # called to set screen position
     def setLocation(self, x, y):
-        self.locationSet = True
-        self.__getTopLevel().geometry("+%d+%d" % (x, y))
+        # get the window's width & height
+        m_width = self.topLevel.winfo_screenwidth()
+        m_height = self.topLevel.winfo_screenheight()
+
+        if x < 0 or x > m_width or  y < 0 or y > m_height:
+            self.warn("Invalid location: " + str(x) + ", " + str(y) + " - ignoring")
+            return
+
+        cType = self.containerStack[-1]['type']
+        if cType == self.C_ROOT:
+            self.locationSet = True
+            self.__getTopLevel().geometry("+%d+%d" % (x, y))
+        elif cType == self.C_SUBWINDOW:
+            print("set location for sub window", x, y)
+            self.containerStack[-1]['container'].geometry("+%d+%d" % (x, y))
+        else:
+            self.warn("Setting location when in " + cType + " only affects root window.")
+            self.locationSet = True
+            self.__getTopLevel().geometry("+%d+%d" % (x, y))
+
 
     # called to make sure this window is on top
     def __bringToFront(self):
