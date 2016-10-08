@@ -423,12 +423,12 @@ class gui(object):
                 self.n_trees[k].update()
                 self.n_trees[k].expand()
 
-        # only add the menu bar at the end...
-        if self.hasMenu:
-            self.topLevel.config(menu=self.menuBar)
-        else:
+        # create appJar menu, if no menuBar created
+        if not self.hasMenu:
             self.addAppJarMenu()
-            self.topLevel.config(menu=self.menuBar)
+        if self.platform == self.WINDOWS:
+            self.menuBar.add_cascade(menu=self.n_menus["SYSTEM"])
+        self.topLevel.config(menu=self.menuBar)
 
         # pack it all in & make sure it's drawn
         self.appWindow.pack(fill=BOTH)
@@ -536,15 +536,18 @@ class gui(object):
             # get the apps requested width & height
             r_width=self.__getTopLevel().winfo_reqwidth()
             r_height=self.__getTopLevel().winfo_reqheight()
+            print("REQ", r_width, r_height)
 
             # get the current width & height
             w_width=self.__getTopLevel().winfo_width()
             w_height=self.__getTopLevel().winfo_height()
-
+            print("CUR", w_width, w_height)
+            
             # get the window's width & height
             m_width = self.topLevel.winfo_screenwidth()
             m_height = self.topLevel.winfo_screenheight()
-
+            print("MAX", m_width, m_height)
+            
             # determine best geom for OS
             if self.platform == self.MAC:
                 b_width = r_width
@@ -552,11 +555,12 @@ class gui(object):
             elif self.platform == self.WINDOWS:
                 b_height = min(r_height, w_height)
                 b_width = min(r_width, w_width)
+                h_height = max(r_height, w_height)
+                h_width = max(r_width, w_width)
             elif self.platform == self.LINUX:
                 self.warn("appJar (__dimensionWindow) untested on LINUX")
                 b_width = r_width
                 b_height = r_height
-
 
             # if a geom has not ben set
             if self.__getTopLevel().geom is None:
@@ -578,8 +582,16 @@ class gui(object):
 
             # if the window hasn't been positioned by the user, put it in the middle
             if not self.locationSet:
-                x = (m_width - width) / 2
-                y = (m_height - height) / 2
+                if self.platform == self.WINDOWS:
+                    x = (m_width - h_width) / 2
+                    y = (m_height - h_height) / 2
+                elif self.platform == self.MAC:
+                    x = (m_width - width) / 2
+                    y = (m_height - height) / 2
+                elif self.platform == self.LINUX:
+                    self.warn("Positioning not tested on LINUX")
+                    x = (m_width - width) / 2
+                    y = (m_height - height) / 2
                 self.setLocation(x,y)
 
     # called to update screen geometry
@@ -3509,10 +3521,9 @@ class gui(object):
                 self.menuBar.add_cascade(menu=appmenu)
                 self.n_menus["APPMENU"]=appmenu
             elif self.platform == self.WINDOWS:
+                # sysMenu must be added last, otherwise other menus vanish
                 sysMenu = Menu(self.menuBar, name='system', tearoff=False)
-                self.menuBar.add_cascade(menu=sysMenu)
                 self.n_menus["SYSTEM"]=sysMenu
-                self.addMenuSeparator('SYSTEM')
             elif self.platform == self.LINUX:
                 self.warn("appJar (__initMenu) untested on LINUX")
 
@@ -3690,6 +3701,7 @@ class gui(object):
             self.addMenuWindow()
             self.addMenuHelp(self.appJarHelp)
         elif self.platform == self.WINDOWS:
+            self.addMenuSeparator('SYSTEM')
             self.addMenuItem("SYSTEM", "About appJar", self.appJarAbout)
             self.addMenuItem("SYSTEM", "appJar Help", self.appJarHelp)
 
