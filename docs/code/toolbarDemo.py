@@ -13,7 +13,7 @@ def tbFunc(tool):
     elif tool == "ABOUT":
         app.infoBox(".HELP", "ABOUTER")
     elif tool == "REFRESH":
-        app.clearStatusbar(4)
+        app.clearStatusbar()
     elif tool == "OPEN":
         app.openBox()
     elif tool == "CALENDAR":
@@ -41,6 +41,7 @@ app.setExpand("column")
 app.setSticky("new")
 app.setBg("lightgrey")
 app.addLabel("mainLabel", "Enter your text below")
+app.setLabelTooltip("mainLabel", "Mainlabel")
 app.setLabelBg("mainLabel", "grey")
 
 app.setExpand("all")
@@ -66,5 +67,6 @@ app.setStatusbarWidth(50, 2)
 app.setStatusbar("Line: 20", 0)
 app.setStatusbar("Column: 4", 1)
 app.setStatusbar("Mode: Edit", 2)
+app.addGrip()
 
 app.go()

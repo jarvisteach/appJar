@@ -35,10 +35,23 @@ import webbrowser
 from idlelib.TreeWidget import TreeItem, TreeNode
 from xml.dom.minidom import parseString
 
-# import borrowed libraries
-from appJar.lib.tooltip import ToolTip
-from appJar.lib.tkinter_png import *
-from appJar.lib import nanojpeg
+# import borrowed libraries - not compulsory
+try:
+    from appJar.lib.tooltip import ToolTip
+    TOOLTIP_AVAILABLE=True
+except:
+    TOOLTIP_AVAILABLE=False
+
+try:
+    from appJar.lib.tkinter_png import *
+    TKINTERPNG_AVAILABLE=True
+except:
+    TKINTERPNG_AVAILABLE=False
+try:
+    from appJar.lib import nanojpeg
+    NANOJPEG_AVAILABLE=True
+except:
+    NANOJPEG_AVAILABLE=False
 
 # only try to import winsound if we're on windows
 if platform() in [ "win32", "Windows"]:
@@ -2344,27 +2357,29 @@ class gui(object):
               if os.access(imagePath, os.R_OK):
                     imgType = imghdr.what(imagePath)
                     if not imagePath.lower().endswith(imgType) and not (imgType=="jpeg" and imagePath.lower().endswith("jpg")):
-                          # the image has been saved with the wrong extension
-                          raise Exception("Invalid image extension: " + imagePath + " should be a ." + imgType)
+                        # the image has been saved with the wrong extension
+                        raise Exception("Invalid image extension: " + imagePath + " should be a ." + imgType)
                     elif imagePath.lower().endswith('.gif'):
-                          photo=PhotoImage(file=imagePath)
+                        photo=PhotoImage(file=imagePath)
                     elif imagePath.lower().endswith('.ppm') or imagePath.lower().endswith('.pgm'):
-                          photo=PhotoImage(file=imagePath)
+                        photo=PhotoImage(file=imagePath)
                     elif imagePath.lower().endswith('jpg') or imagePath.lower().endswith('jpeg'):
-                          self.warn("Image processing for .JPGs is slow. .GIF is the recommended format")
-                          photo=self.convertJpgToBmp(imagePath)
+                        self.warn("Image processing for .JPGs is slow. .GIF is the recommended format")
+                        photo=self.convertJpgToBmp(imagePath)
                     elif imagePath.lower().endswith('.png'):
-                          self.warn("Image processing for .PNGs is slow. .GIF is the recommended format")
-                          # known issue here, some PNGs lack IDAT chunks
-                          # also, PNGs seem broken on python<3, maybe around the map function used to generate pixel maps
-                          if sys.version_info >= (2,7):
-                                png = PngImageTk(imagePath)
-                                png.convert()
-                                photo=png.image
-                          else:
-                                raise Exception("PNG images only supported in python 3: "+ imagePath)
+                        # known issue here, some PNGs lack IDAT chunks
+                        # also, PNGs seem broken on python<3, maybe around the map function used to generate pixel maps
+                        if not TKINTERPNG_AVAILABLE:
+                              raise Exception("TKINTERPNG library not found, PNG files not supported: "+ imagePath)
+                        if sys.version_info >= (2,7):
+                              self.warn("Image processing for .PNGs is slow. .GIF is the recommended format")
+                              png = PngImageTk(imagePath)
+                              png.convert()
+                              photo=png.image
+                        else:
+                              raise Exception("PNG images only supported in python 3: "+ imagePath)
                     else:
-                          raise Exception("Invalid image type: "+ imagePath)
+                        raise Exception("Invalid image type: "+ imagePath)
               else:
                     raise Exception("Can't read image: "+ imagePath)
         else:
@@ -2463,7 +2478,9 @@ class gui(object):
         label.config(width=image.width(), height=image.height())
 
     def convertJpgToBmp(self, image):
-        if sys.version_info < (2,7):
+        if not NANOJPEG_AVAILABLE:
+            raise Exception("nanjpeg library not found, unable to display jpeg files: " + image)
+        elif sys.version_info < (2,7):
             raise Exception("JPG images only supported in python 2.7+: "+ image)
         else:
             # read the image into an array of bytes
@@ -2884,7 +2901,7 @@ class gui(object):
     def addGrip(self, row=None, column=0, colspan=0, rowspan=0):
         grip = Grip(self.__getContainer())
         self.__positionWidget(grip, row, column, colspan, rowspan)
-        self.__addTooltip(grip, "Drag here to move")
+        self.__addTooltip(grip, "Drag here to move", True)
 
 #####################################
 ## FUNCTIONS for labels
@@ -3429,7 +3446,7 @@ class gui(object):
                 but.image = image
                 but.config(image=image, compound=TOP, text="", justify=LEFT) # works on Mac & Windows :)
             but.pack (side=LEFT, padx=2, pady=2)
-            self.__addTooltip(but, t)
+            self.__addTooltip(but, t, True)
 
     def setToolbarIcon(self, name, icon):
         imgFile = os.path.join(self.icon_path,icon.lower() + ".png")
@@ -3695,7 +3712,7 @@ class gui(object):
         for i in range(fields):
             self.status.append(Label(self.statusFrame))
             self.status[i].config( bd=1, relief=SUNKEN, anchor=W, font=self.statusFont, width=10)
-            self.__addTooltip(self.status[i], "Status bar")
+            self.__addTooltip(self.status[i], "Status bar", True)
 
             if side=="LEFT": self.status[i].pack(side=LEFT)
             elif side=="RIGHT": self.status[i].pack(side=RIGHT)
@@ -3770,8 +3787,15 @@ class gui(object):
 #####################################
 ## TOOLTIPS
 #####################################
-    def __addTooltip(self, item, text):
-        tip = ToolTip(item, delay=500, follow_mouse=1, text=text)
+    def __addTooltip(self, item, text, hideWarn=False):
+        if TOOLTIP_AVAILABLE:
+            # turn off warnings about tooltips
+            myWarn = self.WARN
+            if hideWarn: self.WARN=False
+            tip = ToolTip(item, delay=500, follow_mouse=1, text=text)
+            self.WARN = myWarn
+        elif not hideWarn:
+            self.warn("ToolTips unavailable - check tooltip.py is in the lib folder")
 
 #####################################
 ## FUNCTIONS to show pop-up dialogs
@@ -4462,7 +4486,8 @@ class PieChart(Canvas):
             # generate a tooltip
             frac = int(val/sum(self.fracs.values())*100)
             tip = key + ": " + str(val) + " (" + str(frac) + "%)"
-            tt=ToolTip(self,tip,delay=500, follow_mouse=1, specId=sliceId) 
+            if TOOLTIP_AVAILABLE:
+                tt=ToolTip(self,tip,delay=500, follow_mouse=1, specId=sliceId) 
 
             pos += val
             col+=1
