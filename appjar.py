@@ -298,7 +298,8 @@ class gui(object):
         self.events = []
         self.pollTime = 250
         self.built = True
-        self.topLevel.wm_iconbitmap(self.appJarIcon)
+        if self.platform != self.MAC:
+            self.topLevel.wm_iconbitmap(self.appJarIcon)
 
     def __configBg(self, container):
         # set up a background image holder
