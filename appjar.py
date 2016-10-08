@@ -801,8 +801,11 @@ class gui(object):
 
     # make the window transparent (between 0 & 1)
     def setTransparency(self, percentage):
-        if percentage>1: percentage = percentage/100
-        self.__getTopLevel().attributes("-alpha", percentage)
+        if self.platform == self.LINUX:
+            self.warn("Transparency not supported on LINUX")
+        else:
+            if percentage>1: percentage = percentage/100
+            self.__getTopLevel().attributes("-alpha", percentage)
 
 ##############################
 ## funcitons to deal with tabbing and right clicking
