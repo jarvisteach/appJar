@@ -56,7 +56,7 @@ You can add a single menu option, or a list of menu options.
     If tearable is set to True, then the menu can be undocked.  
 
 * `.createMenu(title, tearable=False)`  
-    Will create a top-level menu, to add memnu items to.
+    Will create a top-level menu, to add menu items to.
 
 * `.addMenuItem(title, item, func=None)`  
     Add a sub-menu to the named top-level menu, with the specified function
