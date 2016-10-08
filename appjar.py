@@ -35,7 +35,9 @@ import webbrowser
 from idlelib.TreeWidget import TreeItem, TreeNode
 from xml.dom.minidom import parseString
 
+#######################
 # import borrowed libraries - not compulsory
+#######################
 try:
     from appJar.lib.tooltip import ToolTip
     TOOLTIP_AVAILABLE=True
@@ -152,7 +154,7 @@ class gui(object):
     C_LABELFRAME='labelFrame'
     C_TOGGLEFRAME="toggleFrame"
 
-    # 2 containers for pagedsWindow
+    # 2 containers for pagedWindow
     C_PAGEDWINDOW="pagedWindow"
     C_PAGE="page"
     # 2 containers for tabbedFrame
@@ -311,7 +313,7 @@ class gui(object):
         self.events = []
         self.pollTime = 250
         self.built = True
-        if self.platform != self.MAC:
+        if self.platform == self.WINDOWS:
             self.topLevel.wm_iconbitmap(self.appJarIcon)
 
     def __configBg(self, container):
@@ -1283,16 +1285,25 @@ class gui(object):
         # grids - background
 
         darwinBorders = ["Text", "ScrolledText", "Entry"]#, "Button", "OptionMenu"]
+        linuxBorders = darwinBorders + ["Radiobutton", "Checkbuttton"]
         noBg = ["Button", "Spinbox", "ListBox", "SplitMeter", "DualMeter", "Meter", "ToggleFrame", "OptionMenu"]#, "Scale"]
 
         widgType = widget.__class__.__name__
         isDarwin = platform() == "Darwin"
+        isLinux = platform() == "Linux"
 
         # Mac specific colours
         if widgType in darwinBorders:
             if isDarwin:
                 widget.config(highlightbackground=bg)
 #               if widgType == "OptionMenu": widget.config(background=bg)
+            if external:
+                widget.config(bg=bg)
+
+        # LInux specific colours
+        if widgType in linuxBorders:
+            if isLinux:
+                widget.config(highlightbackground=bg)
             if external:
                 widget.config(bg=bg)
 
