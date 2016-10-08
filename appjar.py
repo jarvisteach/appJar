@@ -532,7 +532,7 @@ class gui(object):
         self.topLevel.update_idletasks()
         if self.__getTopLevel().geom != "fullscreen":
             # ISSUES HERE:
-            # on MAC, w_width/w_height always 1
+            # on MAC & LINUX, w_width/w_height always 1
             # on WIN, w_height is bigger then r_height - leaving empty space
 
             # get the apps requested width & height
@@ -560,7 +560,6 @@ class gui(object):
                 h_height = max(r_height, w_height)
                 h_width = max(r_width, w_width)
             elif self.platform == self.LINUX:
-                self.warn("appJar (__dimensionWindow) untested on LINUX")
                 b_width = r_width
                 b_height = r_height
 
@@ -620,18 +619,10 @@ class gui(object):
             self.warn("Invalid location: " + str(x) + ", " + str(y) + " - ignoring")
             return
 
-        cType = self.containerStack[-1]['type']
-        if cType == self.C_ROOT:
+        if self.containerStack[-1]['type'] != self.C_SUBWINDOW:
             self.locationSet = True
-            self.__getTopLevel().geometry("+%d+%d" % (x, y))
-        elif cType == self.C_SUBWINDOW:
-            print("set location for sub window", x, y)
-            self.containerStack[-1]['container'].geometry("+%d+%d" % (x, y))
-        else:
-            self.warn("Setting location when in " + cType + " only affects root window.")
-            self.locationSet = True
-            self.__getTopLevel().geometry("+%d+%d" % (x, y))
 
+        self.__getTopLevel().geometry("+%d+%d" % (x, y))
 
     # called to make sure this window is on top
     def __bringToFront(self):
@@ -646,7 +637,6 @@ class gui(object):
         elif self.platform == self.WINDOWS:
             self.topLevel.lift()
         elif self.platform == self.LINUX:
-            self.warn("appJar (__bringToFront) untested on LINUX")
             self.topLevel.lift()
 
     def setFullscreen(self, container=None):
@@ -5374,6 +5364,7 @@ class SubWindow(Toplevel):
         Toplevel.__init__(self)
         self.escapeBindId = None # used to exit fullscreen
         self.stopFunction = None # used to stop
+        self.geometry("+%d+%d" % (100, 100))
 
     def __getattr__(self,name):
         def handlerFunction(*args,**kwargs):
