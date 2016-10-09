@@ -538,17 +538,14 @@ class gui(object):
             # get the apps requested width & height
             r_width=self.__getTopLevel().winfo_reqwidth()
             r_height=self.__getTopLevel().winfo_reqheight()
-            print("REQ", r_width, r_height)
 
             # get the current width & height
             w_width=self.__getTopLevel().winfo_width()
             w_height=self.__getTopLevel().winfo_height()
-            print("CUR", w_width, w_height)
             
             # get the window's width & height
             m_width = self.topLevel.winfo_screenwidth()
             m_height = self.topLevel.winfo_screenheight()
-            print("MAX", m_width, m_height)
             
             # determine best geom for OS
             if self.platform in [self.MAC, self.LINUX]:
@@ -815,42 +812,101 @@ class gui(object):
         nowFocus = self.topLevel.focus_get()
         if isinstance(nowFocus, Entry): nowFocus.select_range(0,END)
         return("break")
+    
+    def __textRightClick(self, event):
+        self.__rightClick(event, False)
+        
+    def __entryRightClick(self, event):
+        self.__rightClick(event)
+        
+    def __rightClick(self,event, entry=True):
 
-    def __rightClick(self,event):
         def rClick_Copy(event, apnd=0):
-            #event.widget.event_generate('<Control-c>')
-            try:
-                text = event.widget.selection_get()
-                self.topLevel.clipboard_clear()
-                #text = event.widget.get("sel.first", "sel.last")
-                self.topLevel.clipboard_append(text)
-            except TclError: pass
+            if self.platform in [self.WINDOWS, self.LINUX]:
+                event.widget.event_generate('<Control-c>')
+            else:
+                try:
+                    text = event.widget.selection_get()
+                    #text = event.widget.get("sel.first", "sel.last")
+                    self.topLevel.clipboard_clear()
+                    self.topLevel.clipboard_append(text)
+                except TclError:
+                    print("ERROR")
 
         def rClick_Cut(event):
-            #event.widget.event_generate('<Control-x>')
-            try:
-                text = event.widget.selection_get()
-                self.topLevel.clipboard_clear()
-                self.topLevel.clipboard_append(text)
-                event.widget.delete("sel.first", "sel.last")
-            except TclError: pass
+            if self.platform in [self.WINDOWS, self.LINUX]:
+                event.widget.event_generate('<Control-x>')
+            else:
+                try:
+                    text = event.widget.selection_get()
+                    self.topLevel.clipboard_clear()
+                    self.topLevel.clipboard_append(text)
+                    event.widget.delete("sel.first", "sel.last")
+                except TclError:
+                    print("ERROR")
 
         def rClick_Paste(event):
-            #event.widget.event_generate('<Control-v>')
-            text = self.topLevel.selection_get(selection='CLIPBOARD')
-            event.widget.insert('insert', text)
+            if self.platform in [self.WINDOWS, self.LINUX]:
+                event.widget.event_generate('<Control-v>')
+            else:
+                text = self.topLevel.selection_get(selection='CLIPBOARD')
+                event.widget.insert('insert', text)
+
+        def rClick_Undo(event):
+            try: event.widget.edit_undo()
+            except: self.containerStack[0]['container'].bell()
+            
+        def rClick_Redo(event):
+            try: event.widget.edit_redo()
+            except: self.containerStack[0]['container'].bell()
+
+        def rClick_Clear_Clip(event):
+            self.topLevel.clipboard_clear()
+
+        def rClick_Clear(event):
+            try: event.widget.delete(0.0, END)
+            except:
+                try: event.widget.delete(0, END)
+                except:self.containerStack[0]['container'].bell()
+        
+
+        def rClick_Reset(event):
+            event.widget.edit_reset()
+        def rClick_Separator(event):
+            event.widget.edit_separator()
 
         event.widget.focus()
 
-        nclst=[
+        eList=[
               (' Cut', lambda e=event: rClick_Cut(event)),
               (' Copy', lambda e=event: rClick_Copy(event)),
               (' Paste', lambda e=event: rClick_Paste(event)),
+              #(' Clear', lambda e=event: rClick_Clear_Clip(event)),
               ]
 
         rmenu = Menu(None, tearoff=0, takefocus=0)
-        for (txt, cmd) in nclst:
+        for (txt, cmd) in eList:
             rmenu.add_command(label=txt, command=cmd)
+
+        try: event.widget.selection_get()
+        except:
+            rmenu.entryconfig(" Copy", state="disabled")
+            rmenu.entryconfig(" Cut", state="disabled")
+
+        try: self.topLevel.clipboard_get()
+        except: rmenu.entryconfig(" Paste", state="disabled")
+
+        rmenu.add_separator()
+        rmenu.add_command(label=" Clear", command=lambda e=event: rClick_Clear(event))
+        
+        if not entry:
+            rmenu.add_separator()
+            rmenu.add_command(label=' Undo', command=lambda e=event: rClick_Undo(event))
+            rmenu.add_command(label=' Redo', command=lambda e=event: rClick_Redo(event))
+
+            if not event.widget.edit_modified():
+                rmenu.entryconfig(" Undo", state="disabled")
+                #rmenu.entryconfig(" Redo", state="disabled")
 
         rmenu.tk_popup(event.x_root+40, event.y_root+10,entry="0")
         event.widget.selection_clear()
@@ -2990,7 +3046,7 @@ class gui(object):
         self.__verifyItem(self.n_textAreas, title, True)
         if scrollable: text = scrolledtext.ScrolledText(frame)
         else: text = Text(frame)
-        text.config(font=self.taFont, width=20, height=10)
+        text.config(font=self.taFont, width=20, height=10, undo=True)
 
         if self.platform in [self.MAC, self.LINUX]:
             text.config(highlightbackground=self.__getContainerBg())
@@ -2998,8 +3054,8 @@ class gui(object):
         text.bind("<Tab>", self.__focusNextWindow)
         text.bind("<Shift-Tab>", self.__focusLastWindow)
 
-        text.bind('<Button-2>',self.__rightClick)
-        text.bind('<Button-3>',self.__rightClick)
+        text.bind('<Button-2>',self.__textRightClick)
+        text.bind('<Button-3>',self.__textRightClick)
 
         self.n_textAreas[title]=text
         self.logTextArea(title)
@@ -3154,8 +3210,8 @@ class gui(object):
         ent.bind("<Tab>", self.__focusNextWindow)
         ent.bind("<Shift-Tab>", self.__focusLastWindow)
 
-        ent.bind('<Button-2>',self.__rightClick)
-        ent.bind('<Button-3>',self.__rightClick)
+        ent.bind('<Button-2>',self.__entryRightClick)
+        ent.bind('<Button-3>',self.__entryRightClick)
         self.n_entries[title]=ent
         self.n_entryVars[title]=var
         return ent
