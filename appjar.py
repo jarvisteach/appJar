@@ -551,7 +551,7 @@ class gui(object):
             print("MAX", m_width, m_height)
             
             # determine best geom for OS
-            if self.platform == self.MAC:
+            if self.platform in [self.MAC, self.LINUX]:
                 b_width = r_width
                 b_height = r_height
             elif self.platform == self.WINDOWS:
@@ -559,9 +559,6 @@ class gui(object):
                 b_width = min(r_width, w_width)
                 h_height = max(r_height, w_height)
                 h_width = max(r_width, w_width)
-            elif self.platform == self.LINUX:
-                b_width = r_width
-                b_height = r_height
 
             # if a geom has not ben set
             if self.__getTopLevel().geom is None:
@@ -586,13 +583,10 @@ class gui(object):
                 if self.platform == self.WINDOWS:
                     x = (m_width - h_width) / 2
                     y = (m_height - h_height) / 2
-                elif self.platform == self.MAC:
+                elif self.platform in [self.MAC, self.LINUX]:
                     x = (m_width - width) / 2
                     y = (m_height - height) / 2
-                elif self.platform == self.LINUX:
-                    self.warn("Positioning not tested on LINUX")
-                    x = (m_width - width) / 2
-                    y = (m_height - height) / 2
+
                 self.setLocation(x,y)
 
     # called to update screen geometry
@@ -769,7 +763,7 @@ class gui(object):
         if self.platform == self.MAC:
             self.warn("Title bar hiding doesn't work on MAC - app may become unresponsive.")
         elif self.platform == self.LINUX:
-            self.warn("appJar (__doTitleBar) untested on LINUX")
+            self.warn("Title bar hiding doesn't work on LINUX - app may become unresponsive.")
         self.__getTopLevel().overrideredirect(not self.hasTitleBar)
 
     def hideTitleBar(self):
@@ -980,10 +974,7 @@ class gui(object):
                     if kind==self.LABEL:
                         if self.platform == self.MAC:
                             item.config(cursor="pointinghand")
-                        elif self.platform == self.WINDOWS:
-                            item.config(cursor="hand2")
-                        elif self.platform == self.LINUX:
-                            self.warn("appJar (setXXXDrag) untested on LINUX")
+                        elif self.platform in [self.WINDOWS, self.LINUX]:
                             item.config(cursor="hand2")
 
                         def getLabel(f):
@@ -1012,10 +1003,7 @@ class gui(object):
                     elif kind==self.LABEL or kind==self.IMAGE:
                         if self.platform == self.MAC:
                             item.config(cursor="pointinghand")
-                        elif self.platform == self.WINDOWS:
-                            item.config(cursor="hand2")
-                        elif self.platform == self.LINUX:
-                            self.warn("appJar (setXXXCommand) untested on LINUX")
+                        elif self.platform in [self.WINDOWS, self.LINUX]:
                             item.config(cursor="hand2")
 
                         item.bind("<Button-1>",self.MAKE_FUNC(value, name, True), add="+")
@@ -2840,10 +2828,7 @@ class gui(object):
               but.config( command=command )
               but.bind('<Return>', bindCommand)
 
-        if self.platform == self.MAC:
-            but.config(highlightbackground=self.__getContainerBg())
-        elif self.platform == self.LINUX:
-            self.warn("appJar (__buildButton) untested on LINUX")
+        if self.platform in [self.MAC, self.LINUX]:
             but.config(highlightbackground=self.__getContainerBg())
 
         #but.bind("<Tab>", self.__focusNextWindow)
@@ -3007,10 +2992,7 @@ class gui(object):
         else: text = Text(frame)
         text.config(font=self.taFont, width=20, height=10)
 
-        if self.platform == self.MAC:
-            text.config(highlightbackground=self.__getContainerBg())
-        elif self.platform == self.LINUX:
-            self.warn("appJar (__buildTestArea) untested on LINUX")
+        if self.platform in [self.MAC, self.LINUX]:
             text.config(highlightbackground=self.__getContainerBg())
 
         text.bind("<Tab>", self.__focusNextWindow)
@@ -3134,10 +3116,7 @@ class gui(object):
         mess.config(font=self.messageFont)
         mess.config( justify=LEFT, background=self.__getContainerBg() )
         if text is not None: mess.config(text=text)
-        if self.platform == self.MAC:
-            mess.config(highlightbackground=self.__getContainerBg())
-        elif self.platform == self.LINUX:
-            self.warn("appJar (addMessage) untested on LINUX")
+        if self.platform in [self.MAC, self.LINUX]:
             mess.config(highlightbackground=self.__getContainerBg())
 
         self.n_messages[title]=mess
@@ -3170,10 +3149,7 @@ class gui(object):
         ent.isNumeric=False
         ent.config(textvariable=var, font=self.entryFont)
         if secret: ent.config(show="*")
-        if self.platform == self.MAC:
-            ent.config(highlightbackground=self.__getContainerBg())
-        elif self.platform == self.LINUX:
-            self.warn("appJar (__buildEntry) untested on LINUX")
+        if self.platform in [self.MAC, self.LINUX]:
             ent.config(highlightbackground=self.__getContainerBg())
         ent.bind("<Tab>", self.__focusNextWindow)
         ent.bind("<Shift-Tab>", self.__focusLastWindow)
@@ -3546,24 +3522,23 @@ class gui(object):
                 # sysMenu must be added last, otherwise other menus vanish
                 sysMenu = Menu(self.menuBar, name='system', tearoff=False)
                 self.n_menus["SYSTEM"]=sysMenu
-            elif self.platform == self.LINUX:
-                self.warn("appJar (__initMenu) untested on LINUX")
 
     # add a single entry for a menu
     def addMenu(self, name, func):
         if self.platform == self.MAC:
             self.warn("Unable to make topLevel menus (" + name + ") on Mac")
-        elif self.platform == self.WINDOWS:
+        else:
             self.__initMenu()
             u = self.MAKE_FUNC(func, name, True)
             self.menuBar.add_command(label=name, command=u)
-        elif self.platform == self.LINUX:
-            self.warn("appJar (addMenu) untested on LINUX")
 
     # add a parent menu, for menu items
     def createMenu(self, title, tearable=False):
         self.__verifyItem(self.n_menus, title, True)
         self.__initMenu()
+        if self.platform==self.MAC and tearable:
+            self.warn("Tearable menus (" + title + ") not supported on MAC")
+            tearable=False
         menu = Menu(self.menuBar, tearoff=tearable)
         self.menuBar.add_cascade(label=title,menu=menu)
         self.n_menus[title]=menu
@@ -3589,11 +3564,8 @@ class gui(object):
         if shortcut is not None:
             if self.platform == self.MAC:
                 shortcut="Command-"+shortcut.lower()
-            elif self.platform == self.WINDOWS:
+            else:
                 shortcut=shortcut#.upper()
-            elif self.platform == self.LINUX:
-                self.warn("appJar (addMenuItem) untested on LINUX")
-                shortcut=shortcut
 
         if item == "-" or kind=="separator":
               menu.add_separator()
