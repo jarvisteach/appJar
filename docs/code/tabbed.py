@@ -1,14 +1,14 @@
 from appJar import gui
 
 app = gui()
-app.startNoteBook("book")
-app.startNoteTab("One")
+app.startTabbedFrame("book")
+app.startTab("One")
 app.addLabel("l1", "stuff")
-app.startNoteTab("Two")
+app.startTab("Two")
 app.addLabel("l2", "stuff")
-app.startNoteTab("Three")
+app.startTab("Three")
 app.addLabel("l3", "stuff")
-app.startNoteTab("Four")
+app.startTab("Four")
 app.addLabel("l4", "stuff")
 
 app.go()
