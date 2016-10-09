@@ -1341,6 +1341,17 @@ class gui(object):
             except:
                 pass # can't set an FG colour on this widget
 
+    @staticmethod
+    def TINT(widget, colour):
+        col=[]
+        for a, b in enumerate(widget.winfo_rgb(colour)):
+            t=int(min(max(0, b/256 + (255 - b/256) * .3), 255))
+            t = str(hex(t))[2:]
+            if len(t) == 1: t = '0'+t
+            elif len(t) == 0: t = '00'
+            col.append(t)
+        return "#" + "".join(col)
+
     # convenience method to set a widget's bg
     @staticmethod
     def SET_WIDGET_BG(widget, bg, external=False):
@@ -1360,6 +1371,10 @@ class gui(object):
         # always remove the border from scales
         if widgType == "Scale":
             widget.config(highlightbackground=bg)
+
+        # tint the background colour when active...
+        if widgType in ["Button", "OptionMenu", "Scale"]:
+            widget.config(activebackground=gui.TINT(widget, bg))
 
         # Mac specific colours
         if widgType in darwinBorders:
