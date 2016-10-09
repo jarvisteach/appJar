@@ -1364,7 +1364,7 @@ class gui(object):
             if external or widgType == "Scale":
                 widget.config(bg=bg)
 
-        # LInux specific colours
+        # Linux specific colours
         if widgType in linuxBorders:
             if isLinux:
                 widget.config(highlightbackground=bg)
@@ -1384,7 +1384,10 @@ class gui(object):
 
         # any other widgets
         elif external == True:
-            if platform() == "Darwin" and widgType not in ["OptionMenu"]:
+            if platform() == "Darwin":
+                if widgType not in ["OptionMenu"]:
+                    widget.config(bg=bg)
+            else:
                 widget.config(bg=bg)
         elif widgType not in noBg:
             widget.config(bg=bg)
