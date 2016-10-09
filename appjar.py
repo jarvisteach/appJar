@@ -448,7 +448,8 @@ class gui(object):
         self.__flash()
 
         # start the main loop
-        self.topLevel.mainloop()
+        try: self.topLevel.mainloop()
+        except: self.stop()
 
     def setStopFunction(self, function):
         """ set a funciton to call when the GUI is quit. Must return True or False """
@@ -2127,6 +2128,10 @@ class gui(object):
         except:
             try: maxSize = len(str(max(options)))
             except: maxSize = 0
+
+        # new bug?!? - doesn't fit anymore!
+        if self.platform == self.MAC:
+            maxSize +=2
 
         if kind == "ticks":
             if len(title) > maxSize:
