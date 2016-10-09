@@ -459,6 +459,10 @@ class gui(object):
         """ Closes the GUI. If a stop function is set, will only close the GUI if True """
         theFunc = self.__getTopLevel().stopFunction
         if theFunc is None or theFunc():
+            # stop the after loops
+            self.topLevel.after_cancel(self.pollId)
+            self.topLevel.after_cancel(self.flashId)
+            self.topLevel.after_cancel(self.preloadAnimatedImageId)
             # stop any sounds, ignore error when not on Windows
             try: self.stopSound()
             except: pass
@@ -483,7 +487,7 @@ class gui(object):
         for e in self.events:
               # execute the event
               e()
-        self.topLevel.after(self.pollTime, self.__poll)
+        self.pollId = self.topLevel.after(self.pollTime, self.__poll)
 
     # not used now, but called every time window is resized
     # may be used in the future...
@@ -825,32 +829,35 @@ class gui(object):
             if self.platform in [self.WINDOWS, self.LINUX]:
                 event.widget.event_generate('<Control-c>')
             else:
-                try:
-                    text = event.widget.selection_get()
-                    #text = event.widget.get("sel.first", "sel.last")
-                    self.topLevel.clipboard_clear()
-                    self.topLevel.clipboard_append(text)
-                except TclError:
-                    print("ERROR")
+                event.widget.event_generate('<Command-c>')
+#                try:
+#                    text = event.widget.selection_get()
+#                    #text = event.widget.get("sel.first", "sel.last")
+#                    self.topLevel.clipboard_clear()
+#                    self.topLevel.clipboard_append(text)
+#                except TclError:
+#                    print("ERROR")
 
         def rClick_Cut(event):
             if self.platform in [self.WINDOWS, self.LINUX]:
                 event.widget.event_generate('<Control-x>')
             else:
-                try:
-                    text = event.widget.selection_get()
-                    self.topLevel.clipboard_clear()
-                    self.topLevel.clipboard_append(text)
-                    event.widget.delete("sel.first", "sel.last")
-                except TclError:
-                    print("ERROR")
+                event.widget.event_generate('<Command-x>')
+#                try:
+#                    text = event.widget.selection_get()
+#                    self.topLevel.clipboard_clear()
+#                    self.topLevel.clipboard_append(text)
+#                    event.widget.delete("sel.first", "sel.last")
+#                except TclError:
+#                    print("ERROR")
 
         def rClick_Paste(event):
             if self.platform in [self.WINDOWS, self.LINUX]:
                 event.widget.event_generate('<Control-v>')
             else:
-                text = self.topLevel.selection_get(selection='CLIPBOARD')
-                event.widget.insert('insert', text)
+                event.widget.event_generate('<Command-v>')
+#                text = self.topLevel.selection_get(selection='CLIPBOARD')
+#                event.widget.insert('insert', text)
 
         def rClick_Undo(event):
             try: event.widget.edit_undo()
@@ -2362,7 +2369,7 @@ class gui(object):
             pic = PhotoImage(file=img.path, format="gif - {0}".format(img.anim_pos))
             img.pics.append(pic)
             img.anim_pos += 1
-            self.topLevel.after(0, self.__preloadAnimatedImage, img)
+            self.preloadAnimatedImageId = self.topLevel.after(0, self.__preloadAnimatedImage, img)
         # when all frames have been processed
         except TclError:
               img.anim_pos=0
@@ -2987,7 +2994,7 @@ class gui(object):
                     bg = lab.cget("background")
                     fg = lab.cget("foreground")
                     lab.config(background=fg, foreground=bg)
-        self.topLevel.after(250, self.__flash)
+        self.flashId = self.topLevel.after(250, self.__flash)
 
     def addFlashLabel(self, title, text=None, row=None, column=0, colspan=0, rowspan=0):
         self.addLabel(title, text, row, column, colspan, rowspan)
