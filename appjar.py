@@ -1341,6 +1341,15 @@ class gui(object):
             except:
                 pass # can't set an FG colour on this widget
 
+    @staticmethod
+    def TINT(widget, col, brightness_offset=1):
+        ''' dim or brighten the specified colour by the specified offset '''
+        # http://chase-seibert.github.io/blog/2011/07/29/python-calculate-lighterdarker-rgb-colors.html
+        rgb_hex = widget.winfo_rgb(col)
+        new_rgb_int = [hex_value + brightness_offset for hex_value in rgb_hex]
+        new_rgb_int = [min([65535, max([0, i])]) for i in new_rgb_int] # make sure new values are between 0 and 65535
+        return new_rgb_int
+
     # convenience method to set a widget's bg
     @staticmethod
     def SET_WIDGET_BG(widget, bg, external=False):
@@ -1356,6 +1365,11 @@ class gui(object):
         widgType = widget.__class__.__name__
         isDarwin = platform() == "Darwin"
         isLinux = platform() == "Linux"
+
+        if widgType == "Button":
+            hover = gui.TINT(widget, bg, 500)
+            colour = "#%4.4x%4.4x%4.4x" % (int(hover[0]), int(hover[1]), int(hover[2]))
+            widget.config(activebackground=colour)
 
         # Mac specific colours
         if widgType in darwinBorders:
