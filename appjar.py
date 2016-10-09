@@ -1384,7 +1384,8 @@ class gui(object):
 
         # any other widgets
         elif external == True:
-            widget.config(bg=bg)
+            if platform() == "Darwin" and widgType not in ["OptionMenu"]:
+                widget.config(bg=bg)
         elif widgType not in noBg:
             widget.config(bg=bg)
 
