@@ -729,7 +729,7 @@ class gui(object):
     # all widgets will then need to use it
     # and here we update all....
     def setFg(self, colour):
-        self.SET_WIDGET_FG(self.containerStack[-1]['container'], colour)
+        self.SET_WIDGET_FG(self.containerStack[-1]['container'], colour, True)
 
     # self.topLevel = Tk()
     # self.appWindow = Frame, fills all of self.topLevel
@@ -1326,13 +1326,15 @@ class gui(object):
 
         return row, column, colspan, rowspan
 
-    def SET_WIDGET_FG(self, widget, fg):
+    def SET_WIDGET_FG(self, widget, fg, external=False):
 
         widgType = widget.__class__.__name__
         isDarwin = platform() == "Darwin"
 
         if self.__isWidgetContainer(widget):
             self.containerStack[-1]['fg'] = fg
+        elif widgType == "Link" and not external:
+            pass
         else:
             try: widget.config(foreground=fg)
             except:
@@ -1346,8 +1348,8 @@ class gui(object):
         # cbs/rbs - activebackground
         # grids - background
 
-        darwinBorders = ["Text", "ScrolledText", "Entry"]#, "Button", "OptionMenu"]
-        linuxBorders = darwinBorders + ["Radiobutton", "Checkbuttton"]
+        darwinBorders = ["Text", "ScrolledText", "Entry", "Scale"]#, "Button", "OptionMenu"]
+        linuxBorders = darwinBorders + ["Radiobutton", "Checkbutton"]
         noBg = ["Button", "Spinbox", "ListBox", "SplitMeter", "DualMeter", "Meter", "ToggleFrame", "OptionMenu"]#, "Scale"]
 
         widgType = widget.__class__.__name__
@@ -1359,7 +1361,7 @@ class gui(object):
             if isDarwin:
                 widget.config(highlightbackground=bg)
 #               if widgType == "OptionMenu": widget.config(background=bg)
-            if external:
+            if external or widgType == "Scale":
                 widget.config(bg=bg)
 
         # LInux specific colours
@@ -4400,7 +4402,7 @@ class Grip(Label):
 class Link(Label):
     def __init__(self, *args, **kwargs):
         Label.__init__(self, *args, **kwargs)
-        self.config(fg="blue", takefocus=1, highlightthickness=1)
+        self.config(fg="blue", takefocus=1, highlightthickness=0)
         self.page=""
 
         if platform() == "Darwin":
