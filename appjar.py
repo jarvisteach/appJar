@@ -1349,13 +1349,17 @@ class gui(object):
         # cbs/rbs - activebackground
         # grids - background
 
-        darwinBorders = ["Text", "ScrolledText", "Entry", "Scale"]#, "Button", "OptionMenu"]
+        darwinBorders = ["Text", "ScrolledText", "Entry"]#, "Scale"]#, "Button", "OptionMenu"]
         linuxBorders = darwinBorders + ["Radiobutton", "Checkbutton"]
         noBg = ["Button", "Spinbox", "ListBox", "SplitMeter", "DualMeter", "Meter", "ToggleFrame", "OptionMenu"]#, "Scale"]
 
         widgType = widget.__class__.__name__
         isDarwin = platform() == "Darwin"
         isLinux = platform() == "Linux"
+
+        # always remove the border from scales
+        if widgType == "Scale":
+            widget.config(highlightbackground=bg)
 
         # Mac specific colours
         if widgType in darwinBorders:
