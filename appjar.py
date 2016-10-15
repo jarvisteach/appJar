@@ -966,7 +966,12 @@ class gui(object):
         if not isinstance(names, list): self.configureWidget(kind, names, option, value)
         else:
             for widg in names:
-                self.configureWidget(kind, widg, option, value)
+                # incase 2D array, eg. buttons
+                if isinstance(widg, list):
+                    for widg2 in widg:
+                        self.configureWidget(kind, widg2, option, value)
+                else:
+                    self.configureWidget(kind, widg, option, value)
 
     def getWidget(self, kind, name):
         # get the list of items for this type, and validate the widget is in the list
