@@ -4,8 +4,14 @@ The standard way of using appJar, is simply to place all widgets into a single w
 Everything is grouped into that single window, and any changes affect everything in that window.  
 
 It's sometimes desirable to group widgets together within a window.  
+Or to have multiple *pages* of widgets.  
 A number of options are provided to make this easier.  
 
+###Format  
+All of these methods work in the same way.  
+You call the `start` function when you want to start a container, then the `stop` function when you're done.  
+When you call `start` you can pass in positional arguments like any other widget (row, column, rowspan, colspan).  
+Any [GUI Options](pythonGuiOptions) you set, within the container, will only affect that container.  
 ###Label Frame
 ----
 A way of grouping widgets into a box, with a label at the top of the box.  
@@ -17,6 +23,7 @@ from appJar import gui
 app=gui()
 
 app.startLabelFrame("Login Details")
+# these only affect the labelFrame
 app.setSticky("ew")
 app.setFont(20)
 
@@ -77,70 +84,6 @@ app.go()
 ####Get Toggle Frames  
 * `.getToggleFrameState(title)`  
     Will return True if the ToggleFrame is open, else will return False.  
-
-###Paged Window
----
-A container that mimics a classic phone based interface.  
-It provides **PREVIOUS**/**NEXT** buttons to navigate through a series of pages.  
-It has an optional widget title, and shows the current page, in a page counter.  
-Keyboard bindings are provided to navigate with arrow key presses. CTRL-arrow will navigate to the beginning/end.  
-Events can be bound to page changes, the page can be changed via a funciton call, and the current page number can be queried.  
-![PagedWindow](img/layouts/1_pagedWindow.png)
-```
-from appJar import gui
-
-app=gui()
-
-app.setBg("DarkKhaki")
-app.setGeometry(280,400)
-
-app.startPagedWindow("Main Title")
-app.startPage()
-app.addLabel("l13", "Label 1")
-app.stopPage()
-
-app.startPage()
-app.addLabel("l21", "Label 2")
-app.stopPage()
-
-app.startPage()
-app.addLabel("l3", "Label 3")
-app.stopPage()
-
-app.startPage()
-app.addLabel("l4", "Label 4")
-app.stopPage()
-app.stopPagedWindow()
-
-app.go()
-```
-####Start/Stop Paged Windows
-* `.startPagedWindow(title)`  
-* `.stopPagedWindow()`  
-    Used to start and stop a PagedWindow.  
-    The `title` will be used in the title section of the widget.  
-* `.startPage()`  
-* `.stopPage()`  
-    Used to start and stop each new page.  
-    Navigation, page count, etc are all dealt with automatically.  
-####Set Paged Windows
-* `.setPagedWindowTitle(title, title)`  
-* `.setPagedWindowButtons(title, [buttons])`  
-    Used to change the text in the title and buttons.  
-    When changing the buttons, two values must be passed in: previous/next.  
-* `.setPagedWindowButtonsTop(title, top=True)`  
-    Used to position the navigation buttons.  By default, they are at the bottom.  
-    Call this funtion to move them to the top.  
-* `.setPagedWindowPage(title, pageNum)`  
-    Used to display the selected page.  
-* `.setPagedWindowFunction(title, function)`  
-    Declare a function to call, each time the page is changed.  
-* `.showPagedWindowPageNumber(title, show=True)`  
-* `.showPagedWindowTitle(title, show=True)`  
-    Use these to declare if you want the page title, page numbers to be shown.  
-####Get Paged Windows
-* `.getPagedWindowPageNumber(title)`  
-    Used to get the page number currently being shown.  
 
 ###Tabbed Frame
 ---
@@ -218,39 +161,202 @@ Or `.setTabBg(title, tab, 'colour')` at other times.
 * `.getTabbedFrameSelectedTab(title)`  
     Gets the name of the currently selected tab, for the named TabFrame.  
 
-###Paned Window
+###Paned Frame
 ---
-A way to arrange re-sizable frames, with drag-bars.  
+A way to present re-sizable panes, separated by drag-bars.  
+Once the first pane is placed, all additional panes should be placed inside it.  
+By default, panes will be placed side-by-side (horizontally).  
+This can be changed by setting the pane to vertical, then they'll be placed underneath each other.  
 
-* Call `.startPanedWindow(name)` to create the initial pane  
-* Then keep calling it to add additional panes  
-* Calling `.setPanedWindowVertical(name)` will change the layout to vertical, allowing more configurations.  
-####Horizontal Panes
+####Start/Stop Paned Frames  
+* `.startPanedFrame(name)`, `.startPanedFrameVertical(name)` & `.stopPanedFrame()`  
+    Used to start & stop *PanedFrames*, with the specified name.  
+    By default, any panes added to this pane will be added side-by-side (horizontally).  
+    Starting a vertical pane will cause additional panes to be stacked on top of each other.  
+
+####Horizontal Pane Layout  
 ![Horizontal Panes](img/layouts/pane1.png)  
 
-* Create an initial pane  
-* Keep adding panes to the initial pane  
-####Vertical Panes
+* Start an initial pane  
+* Start all additional panes inside the initial pane  
+
+```python
+from appJar import gui
+app = gui()
+
+# start initial pane
+app.startPanedFrame("p1")
+app.addLabel("l1", "Inside Pane 1")
+
+# start additional panes inside initial pane
+app.startPanedFrame("p2")
+app.addLabel("l2", "Inside Pane 2")
+app.stopPanedFrame()
+
+app.startPanedFrame("p3")
+app.addLabel("l3", "Inside Pane 3")
+app.stopPanedFrame()
+
+# stop initial pane
+app.stopPanedFrame()
+
+app.go()
+```
+
+####Vertical Pane Layout  
 ![Vertical Panes](img/layouts/pane2.png)  
 
-* Create an initial pane  
-* Make it vertical  
-* Add a second pane  
-* Keep adding panes to the initial pane  
-####E-Pane
+* Start an initial, vertical pane  
+* Start all additional panes inside the intial pane  
+
+```python
+from appJar import gui
+app = gui()
+
+# start initial, vertical pane
+app.startPanedFrameVertical("p1")
+app.addLabel("l1", "Inside Pane 1")
+
+# start additional panes inside initial pane
+app.startPanedFrame("p2")
+app.addLabel("l2", "Inside Pane 2")
+app.stopPanedFrame()
+
+app.startPanedFrame("p3")
+app.addLabel("l3", "Inside Pane 3")
+app.stopPanedFrame()
+
+# stop initial pane
+app.stopPanedFrame()
+
+app.go()
+```
+
+####E-Pane Layout  
 ![E-Panes](img/layouts/pane3.png)  
 
-* Create an initial pane  
-* Add a second pane
-* Make the second pane vertical  
-* The remaining panes are added to frame 2  
-####T-Pane
+* Start an initial pane  
+* Start a second, vertical pane inside the intial pane  
+* Start all additional panes inside the second pane  
+
+```python
+from appJar import gui
+app = gui()
+
+# start initial pane
+app.startPanedFrame("p1")
+app.addLabel("l1", "Inside Pane 1")
+
+# start second, vertical pane inside inital pane
+app.startPanedFrameVertical("p2")
+app.addLabel("l2", "Inside Pane 2")
+
+# start additional panes inside second pane
+app.startPanedFrame("p3")
+app.addLabel("l3", "Inside Pane 3")
+app.stopPanedFrame()
+
+# stop second & initial panes
+app.stopPanedFrame()
+app.stopPanedFrame()
+
+app.go()
+```
+
+####T-Pane Layout  
 ![T-Panes](img/layouts/pane4.png)  
 
-* Create an initial pane
-* Make it vertical
-* Add a second pane
-* Add the remaining panes to pane 2  
+* Start an initial, vertical pane  
+* Start a second pane, indside the initial pane  
+* Start additional panes inside the second pane  
+
+```python
+from appJar import gui
+app = gui()
+
+# start intial, vertical pane
+app.startPanedFrameVertical("p1")
+app.addLabel("l1", "Inside Pane 1")
+
+# start second pane
+app.startPanedFrame("p2")
+app.addLabel("l2", "Inside Pane 2")
+
+# start additional panes inside second pane 
+app.startPanedFrame("p3")
+app.addLabel("l3", "Inside Pane 3")
+app.stopPanedFrame()
+
+# stop second & initial panes
+app.stopPanedFrame()
+app.stopPanedFrame()
+
+app.go()
+```
+
+###Paged Window
+---
+A container that mimics a classic phone based interface.  
+It provides **PREVIOUS**/**NEXT** buttons to navigate through a series of pages.  
+It has an optional widget title, and shows the current page, in a page counter.  
+Keyboard bindings are provided to navigate with arrow key presses. CTRL-arrow will navigate to the beginning/end.  
+Events can be bound to page changes, the page can be changed via a funciton call, and the current page number can be queried.  
+![PagedWindow](img/layouts/1_pagedWindow.png)
+```
+from appJar import gui
+
+app=gui()
+
+app.setBg("DarkKhaki")
+app.setGeometry(280,400)
+
+app.startPagedWindow("Main Title")
+app.startPage()
+app.addLabel("l13", "Label 1")
+app.stopPage()
+
+app.startPage()
+app.addLabel("l21", "Label 2")
+app.stopPage()
+
+app.startPage()
+app.addLabel("l3", "Label 3")
+app.stopPage()
+
+app.startPage()
+app.addLabel("l4", "Label 4")
+app.stopPage()
+app.stopPagedWindow()
+
+app.go()
+```
+####Start/Stop Paged Windows
+* `.startPagedWindow(title)`  
+* `.stopPagedWindow()`  
+    Used to start and stop a PagedWindow.  
+    The `title` will be used in the title section of the widget.  
+* `.startPage()`  
+* `.stopPage()`  
+    Used to start and stop each new page.  
+    Navigation, page count, etc are all dealt with automatically.  
+####Set Paged Windows
+* `.setPagedWindowTitle(title, title)`  
+* `.setPagedWindowButtons(title, [buttons])`  
+    Used to change the text in the title and buttons.  
+    When changing the buttons, two values must be passed in: previous/next.  
+* `.setPagedWindowButtonsTop(title, top=True)`  
+    Used to position the navigation buttons.  By default, they are at the bottom.  
+    Call this funtion to move them to the top.  
+* `.setPagedWindowPage(title, pageNum)`  
+    Used to display the selected page.  
+* `.setPagedWindowFunction(title, function)`  
+    Declare a function to call, each time the page is changed.  
+* `.showPagedWindowPageNumber(title, show=True)`  
+* `.showPagedWindowTitle(title, show=True)`  
+    Use these to declare if you want the page title, page numbers to be shown.  
+####Get Paged Windows
+* `.getPagedWindowPageNumber(title)`  
+    Used to get the page number currently being shown.  
 
 ###Sub Window
 ---

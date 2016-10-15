@@ -92,15 +92,19 @@ app.go()
 
 Note, the parameters are read from left to right, so:  
 
-* If you're spcifying a column, you must first specify a row  
+* If you're specifying a column, you must first specify a row  
 * If you're specifying a row-span, you must first specify both the row & column  
 * And, if you're specifying a column-span, you must first specify a row, column & column-span  
 
-###Named Arguments
+###Layout Tricks  
+There are a few tricks you can employ, to make life a bit easier...
 
-If this all seems a bit complicated, and you just want to add widgets sequentially, with only 1 row containing 2 widgets, you can take advantage of Python's support for *Named Arguments*.  
+####Named Arguments  
+It can be annoying having to specify all of the positional parameters each time, so why not take advantage of Python's support for *Named Arguments*. These allow you to set specific parameters, using their name.  
+For example: `app.addLabel("l1", "text here", colspan=2)`, will set the `colspan` parameter, without having to set the preceeding ones.   
 
 ####Row Helpers
+If you combine that with having appJar telling you the row you're on, things get even easier.  
 
 * `.getRow()` or `.gr()`  
     Returns the row number currently being used.  
