@@ -462,6 +462,9 @@ app.go()
 * `.getListItems(title)`  
     Gets all of the selected items from the specified ListBox.  
 
+* `.getAllListItems(title)`  
+    Gets all of the items from the specified ListBox.  
+
 ##Scale
 ____
 A slider, that has a minimum & maximum value.  

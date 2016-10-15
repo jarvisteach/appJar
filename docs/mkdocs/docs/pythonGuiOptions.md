@@ -28,7 +28,17 @@ Some basic configuration for the size, position, transparency, etc. of the GUI.
 
 * `.exitFullscreen()`  
     Leave fullscreen, if set in the geometry.    
+    Returns True/False - if the app was able to leave fullscreen.
+    Can be called safely, even if app is not in fullscreen:
     `<Escape>` will call this automatically, while in fullscreen.  
+
+```python
+if app.exitFullscreen():
+    # do something
+else:
+    app.setGeometry("fullscreen")
+    # do something else
+```   
 
 * `.setResizable(canResize=True)`  
     Sets whether the GUI can be resized or not.  
