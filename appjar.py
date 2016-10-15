@@ -3605,6 +3605,18 @@ class gui(object):
         self.n_tbButts[name].config(image=image)
         self.n_tbButts[name].image = image
 
+    def setToolbarButtonEnabled(self, name): self.setToolbarButtonDisabled(name, False)
+    def setToolbarButtonDisabled(self, name, disabled=True):
+        if (name not in self.n_tbButts): raise Exception("Unknown toolbar name: " + name)
+        if disabled: self.n_tbButts[name].config(state=DISABLED)
+        else: self.n_tbButts[name].config(state=NORMAL)
+
+    def setToolbarEnabled(self): self.setToolbarDisabled(False)
+    def setToolbarDisabled(self, disabled=True):
+        for but in self.n_tbButts.keys():
+            if disabled: self.n_tbButts[but].config(state=DISABLED)
+            else: self.n_tbButts[but].config(state=NORMAL)
+
     # functions to hide & show the toolbar
     def hideToolbar(self):
         if self.hasTb: self.tb.pack_forget()
