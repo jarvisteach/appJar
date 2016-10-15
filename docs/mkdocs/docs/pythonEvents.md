@@ -52,9 +52,25 @@ app.go()
 
 ###GUI Interaction
 ----
+####Stopping the GUI
+To stop the GUI, simply call `app.stop()`  
+The user might also close the GUI by clicking the close icon or from an applicaiton menu.  
+If you want to check with the user, before stopping the GUI, then you can set a function to call.  
+
+* `.setStopFunction(function)`  
+    Set a function to call, before allowing the GUI to be stopped.  
+    This function should return True/False to confirm if the GUI should stop.  
+
+```python
+def checkStop():
+    return app.yesNoBox("Confirm Exit", "Are you sure you want to exit the application?")
+
+app.setStopFunction(checkStop)
+```
+
 ####Repeated Events
 When you start the GUI, it kicks off an infinte loop that is waiting for the user to do something.  
-That means, you should never have your own loops running, as that will stop the GUI from working properly.  
+That means, you should never have your own loops running, as they will stop the GUI from working properly.  
 Instead, if you want your own loop to run, you need to ask the GUi to run it for you:  
 
 * `.registerEvent(func)`  
@@ -64,6 +80,9 @@ Pass this a function, and the GUI will call that function every second.
 If you want your events to be called more or less frequently, set the frequency here.
 
 ####Enter Key
+Every time the <Enter> key is pressed, you can have the GUI call a function.  
+Useful if you want to be able to submit a form from anywhere.  
+
 * `.enableEnter(func)`  
 Link a function to the `<Enter>` key
 
@@ -71,6 +90,8 @@ Link a function to the `<Enter>` key
 Unlink a function form the `<Enter>`  key
 
 ####Other Keys
+You may also want to bind other keys to events.  
+
 * `.bindKey(key, func)`  
 Link the specified key to the specified function.
 
