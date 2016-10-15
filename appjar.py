@@ -1042,10 +1042,7 @@ class gui(object):
                     if len(value) != 2:
                         raise Exception("Invalid arguments, set<widget>DragFunction requires 1 ot 2 functions to be passed in.")
                     if kind==self.LABEL:
-                        if self.platform == self.MAC:
-                            item.config(cursor="pointinghand")
-                        elif self.platform in [self.WINDOWS, self.LINUX]:
-                            item.config(cursor="hand2")
+                        item.config(cursor="fleur")
 
                         def getLabel(f):
                             # loop through all labels
@@ -2923,12 +2920,11 @@ class gui(object):
     def removeListItem(self, title, item):
         lb = self.__verifyItem(self.n_lbs, title)
         items = lb.get(0, END)
-        lastPos=0
         for pos, val in enumerate(items):
               if val == item:
                     lb.delete(pos)
-                    lastPos=pos
-        # show & select this item
+                    break
+
         # show & select this item
         if pos >= lb.size(): pos-=1
         self.selectListItemPos(title, pos)
