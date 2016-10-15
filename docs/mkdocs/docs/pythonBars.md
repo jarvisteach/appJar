@@ -34,6 +34,12 @@ app.addToolbar(tools, tbFunc, True)
 * `.setToolbarImage(name, image)`  
     Will set an image for the corresponding button in the toolbar.  
 
+* `.setToolbarEnabled()` & `.setToolbarDisabled()`  
+    Will enable/disable all buttons on the toolbar.  
+
+* `.setToolbarButtonEnabled(name)` & `.setToolbarButtonDisabled(name)`  
+    Will enable/disable the named toolbar button.  
+
 * `.showToolbar()` & `.hideToolbar()`  
     Will show/hide the toolbar.  
 
