@@ -600,10 +600,10 @@ class gui(object):
         container = self.__getTopLevel()
         container.geom = geom
         if container.geom == "fullscreen":
-              self.setFullscreen()
+            self.setFullscreen()
         else:
-              self.exitFullscreen()
-              if container.geom is not None: container.geometry(container.geom)
+            self.exitFullscreen()
+            if container.geom is not None: container.geometry(container.geom)
 
     # called to set screen position
     def setLocation(self, x, y):
@@ -649,7 +649,13 @@ class gui(object):
             if container is None: container = self.__getTopLevel()
             container.attributes('-fullscreen', False)
             if container.escapeBindId is not None: container.unbind('<Escape>', container.escapeBindId)
+            myWarn = self.WARN
+            self.WARN=False
             self.__doTitleBar()
+            self.WARN=myWarn
+            return True
+        else:
+            return False
 
     # sets the padding around the border of the root container
     def setPadding(self, x, y):
@@ -1360,7 +1366,7 @@ class gui(object):
         # cbs/rbs - activebackground
         # grids - background
 
-        darwinBorders = ["Text", "ScrolledText", "Entry"]#, "Scale"]#, "Button", "OptionMenu"]
+        darwinBorders = ["Text", "ScrolledText", "Entry", "Button"]#, "Scale"]#, "Button", "OptionMenu"]
         linuxBorders = darwinBorders + ["Radiobutton", "Checkbutton"]
         noBg = ["Button", "Spinbox", "ListBox", "SplitMeter", "DualMeter", "Meter", "ToggleFrame", "OptionMenu"]#, "Scale"]
 
@@ -1401,6 +1407,11 @@ class gui(object):
             widget.config(bg=bg)
             for widg in widget.theWidgets:
                 gui.SET_WIDGET_BG(widg, bg)
+
+        elif widgType in ["LabelFrame", "PanedWindow", "Pane"]:
+            widget.config(bg=bg)
+            for child in widget.winfo_children():
+                gui.SET_WIDGET_BG(child, bg)
 
         # any other widgets
         elif external == True:
@@ -1558,13 +1569,13 @@ class gui(object):
             self.startContainer(self.C_PANEDFRAME, title)
         elif fType == self.C_PANEDFRAME:
             # create a frame, and add it to the pane
-            frame = Frame(self.containerStack[-1]['container'], bg=self.__getContainerBg())
-            frame.isContainer = True
-            self.containerStack[-1]['container'].add(frame)
-            self.n_panedFrames[title] = frame
+            pane = Pane(self.containerStack[-1]['container'], bg=self.__getContainerBg())
+            pane.isContainer = True
+            self.containerStack[-1]['container'].add(pane)
+            self.n_panedFrames[title] = pane
 
             # now, add to top of stack
-            self.__addContainer(self.C_PANEDFRAME, frame, 0, 1, sticky)
+            self.__addContainer(self.C_PANEDFRAME, pane, 0, 1, sticky)
         elif fType == self.C_SCROLLPANE:
             scrollPane = ScrollPane(self.containerStack[-1]['container'], bg=self.__getContainerBg(), width=100,height=100)
             scrollPane.isContainer = True
@@ -1626,6 +1637,19 @@ class gui(object):
         nb = self.__verifyItem(self.n_tabbedFrames, title)
         nb.disableTab(tab, disabled)
 
+    def setTabbedFrameDisableAllTabs(self, title, disabled=True):
+        nb = self.__verifyItem(self.n_tabbedFrames, title)
+        nb.disableAllTabs(disabled)
+    
+    def setTabBg(self, title, tab, colour):
+        nb = self.__verifyItem(self.n_tabbedFrames, title)
+        tab = nb.getTab(tab)
+        gui.SET_WIDGET_BG(tab, colour)
+        #tab.config(bg=colour)
+        #gui.SET_WIDGET_BG(tab, colour)
+        for child in tab.winfo_children():
+            gui.SET_WIDGET_BG(child, colour)
+
     def startTab(self, title):
         # auto close the previous TAB - keep it?
         if self.containerStack[-1]['type'] == self.C_TAB:
@@ -1634,6 +1658,10 @@ class gui(object):
         elif self.containerStack[-1]['type'] != self.C_TABBEDFRAME:
               raise Exception("Can't add a Tab to the current container: ", self.containerStack[-1]['type'])
         self.startContainer(self.C_TAB, title)
+
+    def getTabbedFrameSelectedTab(self, title):
+        nb = self.__verifyItem(self.n_tabbedFrames, title)
+        return nb.getSelectedTab()
 
     def stopTab(self):
         if self.containerStack[-1]['type'] != self.C_TAB:
@@ -2869,6 +2897,11 @@ class gui(object):
             values.append ( lb.get(items[loop]) )
         return values
 
+    def getAllListItems(self, title):
+        lb = self.__verifyItem(self.n_lbs, title)
+        items = lb.get(0,END)
+        return list(items)
+
     def getListItemsPos(self, title):
         lb = self.__verifyItem(self.n_lbs, title)
         items = lb.curselection()
@@ -3549,11 +3582,16 @@ class gui(object):
                 but.image = image
                 but.config(image=image, compound=TOP, text="", justify=LEFT) # works on Mac & Windows :)
             but.pack (side=LEFT, padx=2, pady=2)
-            self.__addTooltip(but, t, True)
+            but.tt_var = self.__addTooltip(but, t, True)
 
     def setToolbarIcon(self, name, icon):
+        if (name not in self.n_tbButts): raise Exception("Unknown toolbar name: " + name)
         imgFile = os.path.join(self.icon_path,icon.lower() + ".png")
+        myWarn = self.WARN
+        self.WARN=False
         self.setToolbarImage(name, imgFile)
+        self.WARN=myWarn
+        self.n_tbButts[name].tt_var.set(icon)
 
     def setToolbarImage(self, name, imgFile):
         if (name not in self.n_tbButts): raise Exception("Unknown toolbar name: " + name)
@@ -3891,8 +3929,11 @@ class gui(object):
             # turn off warnings about tooltips
             myWarn = self.WARN
             if hideWarn: self.WARN=False
-            tip = ToolTip(item, delay=500, follow_mouse=1, text=text)
+            var = StringVar(self.topLevel)
+            var.set(text)
+            tip = ToolTip(item, delay=500, follow_mouse=1, textvariable=var)
             self.WARN = myWarn
+            return var
         elif not hideWarn:
             self.warn("ToolTips unavailable - check tooltip.py is in the lib folder")
 
@@ -4308,6 +4349,12 @@ class TabbedFrame(Frame):
 
         return pane
 
+    def getTab(self, title):
+        if title not in self.widgetStore.keys():
+            raise Exception("Invalid tab name: " + title)
+        else:
+            return self.widgetStore[title][1]
+
     def expandTabs(self, fill=True):
         self.fill = fill
 
@@ -4337,6 +4384,10 @@ class TabbedFrame(Frame):
     def __focusOut(self, tabName):
         self.highlightedTab = None
         self.__colourTabs(False)
+
+    def disableAllTabs(self, disabled=True):
+        for tab in self.widgetStore.keys():
+            self.disableTab(tab, disabled)
 
     def disableTab(self, tabName, disabled=True):
         if tabName not in self.widgetStore.keys():
@@ -4372,7 +4423,11 @@ class TabbedFrame(Frame):
         self.selectedTab=tabName
         self.highlightedTab = tabName
         self.widgetStore[tabName][0].focus_set()
+        # this will also regrid the appropriate panes
         self.__colourTabs()
+
+    def getSelectedTab(self):
+        return self.selectedTab
 
     def __colourTabs(self, swap=True):
         # clear all tabs & remove if necessary
@@ -5093,6 +5148,10 @@ class ListBox(Frame):
     def __init__(self, parent, **opts):
         Frame.__init__(self, parent)
 
+class Pane(Frame):
+    def __init__(self, parent, **opts):
+        Frame.__init__(self, parent)
+
 #####################################
 ## scrollable frame...
 # http://effbot.org/zone/tkinter-autoscrollbar.htm
@@ -5116,7 +5175,7 @@ class AutoScrollbar(Scrollbar):
         raise Exception("cannot use place with this widget")
 
 #######################
-## Frame with uilt in scrollbars and canvas for placing stuff on
+## Frame with built in scrollbars and canvas for placing stuff on
 ## http://effbot.org/zone/tkinter-autoscrollbar.htm
 ## Modified with help from idlelib TreeWidget.py
 #######################
