@@ -3115,37 +3115,38 @@ class gui(object):
         self.stopFrame()
 
     # function to update DatePicker dropDowns
-    def __updateDatePickerDays(self, name):
-        if name.find("_DP_MonthOptionBox") > -1:
-            name = name.split("_DP_MonthOptionBox")[0]
-        elif name.find("_DP_YearOptionBox") > -1:
-            name = name.split("_DP_YearOptionBox")[0]
+    def __updateDatePickerDays(self, title):
+        if title.find("_DP_MonthOptionBox") > -1:
+            title = title.split("_DP_MonthOptionBox")[0]
+        elif title.find("_DP_YearOptionBox") > -1:
+            title = title.split("_DP_YearOptionBox")[0]
         else:
-            self.warn("Can't update days in DatePicker: " + name)
+            self.warn("Can't update days in DatePicker: " + title)
             return
 
-        day = self.getOptionBox(name+"_DP_DayOptionBox")
-        month = self.MONTH_NAMES.index(self.getOptionBox(name+"_DP_MonthOptionBox")) + 1
-        year = int(self.getOptionBox(name+"_DP_YearOptionBox"))
+        day = self.getOptionBox(title+"_DP_DayOptionBox")
+        month = self.MONTH_NAMES.index(self.getOptionBox(title+"_DP_MonthOptionBox")) + 1
+        year = int(self.getOptionBox(title+"_DP_YearOptionBox"))
         days = range(1, calendar.monthrange(year, month)[1]+1)
-        self.changeOptionBox(name+"_DP_DayOptionBox", days)
+        self.changeOptionBox(title+"_DP_DayOptionBox", days)
 
         # keep previous day if possible
         myWarn = self.WARN
         self.WARN=False
-        self.setOptionBox(name+"_DP_DayOptionBox", day)
+        self.setOptionBox(title+"_DP_DayOptionBox", day)
         self.WARN=myWarn
 
     # set a date for the named DatePicker
-    def setDatePicker(self, name, date):
-        self.setOptionBox(name+"_DP_YearOptionBox", str(date.year))
-        self.setOptionBox(name+"_DP_MonthOptionBox", date.month-1)
-        self.setOptionBox(name+"_DP_DayOptionBox", date.day-1)
+    def setDatePicker(self, title, date=None):
+        if date is None: date = datetime.date.today()
+        self.setOptionBox(title+"_DP_YearOptionBox", str(date.year))
+        self.setOptionBox(title+"_DP_MonthOptionBox", date.month-1)
+        self.setOptionBox(title+"_DP_DayOptionBox", date.day-1)
 
-    def getDatePicker(self, name):
-        day = int(self.getOptionBox(name+"_DP_DayOptionBox"))
-        month = self.MONTH_NAMES.index(self.getOptionBox(name+"_DP_MonthOptionBox")) + 1
-        year = int(self.getOptionBox(name+"_DP_YearOptionBox"))
+    def getDatePicker(self, title):
+        day = int(self.getOptionBox(title+"_DP_DayOptionBox"))
+        month = self.MONTH_NAMES.index(self.getOptionBox(title+"_DP_MonthOptionBox")) + 1
+        year = int(self.getOptionBox(title+"_DP_YearOptionBox"))
         date = datetime.date(year, month, day)
         return date
 
