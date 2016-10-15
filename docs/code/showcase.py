@@ -222,22 +222,26 @@ app.stopTab()
 
 app.startTab("Panes")
 
-app.startPanedWindow("a")
+app.startPanedFrame("a")
 app.setSticky("news")
 app.addLabel("p1", "Edit Pane")
 app.setLabelRelief("p1", "groove")
 app.addTextArea("t1")
-app.startPanedWindow("b")
+
+app.startPanedFrameVertical("b")
 app.addLabel("p2", "Pane 2")
-app.setPanedWindowVertical("b")
-app.startPanedWindow("c")
+
+app.startPanedFrame("c")
 app.addLabel("p3", "Pane 3")
-app.stopPanedWindow()
-app.startPanedWindow("d")
+app.stopPanedFrame()
+
+app.startPanedFrame("d")
 app.addLabel("p4", "Pane 4")
-app.stopPanedWindow()
-app.stopPanedWindow()
-app.stopPanedWindow()
+app.stopPanedFrame()
+
+app.stopPanedFrame()
+app.stopPanedFrame()
+
 app.stopTab()
 
 app.startTab("Labels")

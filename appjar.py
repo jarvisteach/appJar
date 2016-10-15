@@ -124,7 +124,7 @@ class gui(object):
 
     LABELFRAME=30
     TABBEDFRAME=31
-    PANEDWINDOW=32
+    PANEDFRAME=32
     SCROLLPANE=33
     PAGEDWINDOW=34
     TOGGLEFRAME=35
@@ -160,9 +160,9 @@ class gui(object):
     # 2 containers for tabbedFrame
     C_TABBEDFRAME='tabbedFrame'
     C_TAB='tab'
-    # 2 containers for panedWindow
-    C_PANEDWINDOW="panedWindow"
+    # 2 containers for panedFrame
     C_PANEDFRAME="panedFrame"
+    C_PANE="pane"
 
     C_SUBWINDOW="subWindow"
     C_SCROLLPANE="scrollPane"
@@ -172,7 +172,7 @@ class gui(object):
     WIDGETS = { LABEL:"Label", MESSAGE:"Message", BUTTON:"Button", ENTRY:"Entry", CB:"Cb", SCALE:"Scale", RB:"Rb", GRID:"Grid",
               LB:"Lb", SPIN:"SpinBox", OPTION:"OptionBox", TEXTAREA:"TextArea", LINK:"Link", METER:"Meter", IMAGE:"Image",
               RADIOBUTTON:"RadioButton", CHECKBOX:"CheckBox", LISTBOX:"ListBox", PIECHART:"PieChart", PROPERTIES:"Properties",
-              LABELFRAME:"LabelFrame", PANEDWINDOW:"PanedWindow", TOGGLEFRAME:"ToggleFrame", TABBEDFRAME:"TabbedFrame"}
+              LABELFRAME:"LabelFrame", PANEDFRAME:"PanedFrame", TOGGLEFRAME:"ToggleFrame", TABBEDFRAME:"TabbedFrame"}
 
     # music stuff
     BASIC_NOTES = {"A":440, "B":493, "C":261, "D":293, "E":329, "F":349, "G":392 }
@@ -280,7 +280,7 @@ class gui(object):
         self.labelFrameFont = font.Font(family="Helvetica", size=12)
         self.toggleFrameFont = font.Font(family="Helvetica", size=12)
         self.tabbedFrameFont = font.Font(family="Helvetica", size=12)
-        self.panedWindowFont = font.Font(family="Helvetica", size=12)
+        self.panedFrameFont = font.Font(family="Helvetica", size=12)
         self.scrollPaneFont = font.Font(family="Helvetica", size=12)
         self.propertiesFont = font.Font(family="Helvetica", size=12)
         self.gridFont = font.Font(family="Helvetica", size=12)
@@ -368,9 +368,9 @@ class gui(object):
         self.n_subWindows={}
         self.n_labelFrames={}
         self.n_tabbedFrames={}
-        self.n_panedWindows={}
-        self.n_pagedWindows={}
         self.n_panedFrames={}
+        self.n_panes={}
+        self.n_pagedWindows={}
         self.n_toggleFrames={}
         self.n_scrollPanes={}
         self.n_trees={}
@@ -417,7 +417,7 @@ class gui(object):
             self.warn("You didn't stop all containers")
             for i in range(len(self.containerStack)-1, 0, -1):
                 kind = self.containerStack[i]['type']
-                if kind not in [self.C_PANEDFRAME]:
+                if kind not in [self.C_PANE]:
                     self.warn("STOP: "+kind)
 
         if len(self.n_trees)>0:
@@ -710,7 +710,7 @@ class gui(object):
         self.labelFrameFont.config(family=font, size=size)
         self.toggleFrameFont.config(family=font, size=size)
         self.tabbedFrameFont.config(family=font, size=size)
-        self.panedWindowFont.config(family=font, size=size)
+        self.panedFrameFont.config(family=font, size=size)
         self.scrollPaneFont.config(family=font, size=size)
         self.gridFont.config(family=font, size=size)
 
@@ -950,7 +950,8 @@ class gui(object):
 
         elif kind == self.LABELFRAME: return self.n_labelFrames
         elif kind == self.TABBEDFRAME: return self.n_tabbedFrames
-        elif kind == self.PANEDWINDOW: return self.n_panedFrames
+        elif kind == self.PANEDFRAME: return self.n_panedFrames
+        elif kind == self.PANE: return self.n_panes
         elif kind == self.SCROLLPANE: return self.n_scrollPanes
         elif kind == self.PAGEDWINDOW: return self.n_pagedWindows
         elif kind == self.TOGGLEFRAME: return self.n_toggleFrames
@@ -1405,7 +1406,7 @@ class gui(object):
             for widg in widget.theWidgets:
                 gui.SET_WIDGET_BG(widg, bg)
 
-        elif widgType in ["LabelFrame", "PanedWindow", "Pane"]:
+        elif widgType in ["LabelFrame", "PanedFrame", "Pane"]:
             widget.config(bg=bg)
             for child in widget.winfo_children():
                 gui.SET_WIDGET_BG(child, bg)
@@ -1439,7 +1440,7 @@ class gui(object):
         self.SET_WIDGET_FG(widget, self.__getContainerFg())
 
         # alpha paned window placement
-        if self.containerStack[-1]['type'] ==self.C_PANEDWINDOW:
+        if self.containerStack[-1]['type'] ==self.C_PANEDFRAME:
             container.add(widget)
             self.containerStack[-1]['widgets']=True
             return
@@ -1476,8 +1477,8 @@ class gui(object):
         # expand that dictionary out as we pass it as a value
         widget.grid (**params)
         self.containerStack[-1]['widgets']=True
-        # if we're in a PANEDWINDOW - we need to set parent...
-        if self.containerStack[-1]['type'] ==self.C_PANEDFRAME:
+        # if we're in a PANEDFRAME - we need to set parent...
+        if self.containerStack[-1]['type'] ==self.C_PANE:
             self.containerStack[-2]['widgets']=True
 
         # configure the row/column to expand equally
@@ -1546,33 +1547,33 @@ class gui(object):
             # add to top of stack
             self.containerStack[-1]['widgets']=True
             self.__addContainer(self.C_TAB, self.containerStack[-1]['container'].addTab(title), 0, 1, sticky)
-        elif fType == self.C_PANEDWINDOW:
+        elif fType == self.C_PANEDFRAME:
             # if we previously put a frame for widgets
             # remove it
-            if self.containerStack[-1]['type'] == self.C_PANEDFRAME:
+            if self.containerStack[-1]['type'] == self.C_PANE:
                 self.stopContainer()
 
             # now, add the new pane
-            self.__verifyItem(self.n_panedWindows, title, True)
+            self.__verifyItem(self.n_panedFrames, title, True)
             pane = PanedWindow(self.containerStack[-1]['container'], showhandle=True, sashrelief="groove", bg=self.__getContainerBg())
             pane.isContainer = True
             self.__positionWidget(pane, row, column, colspan, rowspan, sticky=sticky)
-            self.n_panedWindows[title] = pane
-
-            # now, add to top of stack
-            self.__addContainer(self.C_PANEDWINDOW, pane, 0, 1, sticky)
-
-            # now, add a frame to the pane
-            self.startContainer(self.C_PANEDFRAME, title)
-        elif fType == self.C_PANEDFRAME:
-            # create a frame, and add it to the pane
-            pane = Pane(self.containerStack[-1]['container'], bg=self.__getContainerBg())
-            pane.isContainer = True
-            self.containerStack[-1]['container'].add(pane)
             self.n_panedFrames[title] = pane
 
             # now, add to top of stack
             self.__addContainer(self.C_PANEDFRAME, pane, 0, 1, sticky)
+
+            # now, add a frame to the pane
+            self.startContainer(self.C_PANE, title)
+        elif fType == self.C_PANE:
+            # create a frame, and add it to the pane
+            pane = Pane(self.containerStack[-1]['container'], bg=self.__getContainerBg())
+            pane.isContainer = True
+            self.containerStack[-1]['container'].add(pane)
+            self.n_panes[title] = pane
+
+            # now, add to top of stack
+            self.__addContainer(self.C_PANE, pane, 0, 1, sticky)
         elif fType == self.C_SCROLLPANE:
             scrollPane = ScrollPane(self.containerStack[-1]['container'], bg=self.__getContainerBg(), width=100,height=100)
             scrollPane.isContainer = True
@@ -1688,8 +1689,12 @@ class gui(object):
 
     ########################################
 
-    def startPanedWindow(self, title, row=None, column=0, colspan=0, rowspan=0, sticky="NSEW"):
-        self.startContainer(self.C_PANEDWINDOW, title, row, column, colspan, rowspan, sticky)
+    def startPanedFrame(self, title, row=None, column=0, colspan=0, rowspan=0, sticky="NSEW"):
+        self.startContainer(self.C_PANEDFRAME, title, row, column, colspan, rowspan, sticky)
+
+    def startPanedFrameVertical(self, title, row=None, column=0, colspan=0, rowspan=0, sticky="NSEW"):
+        self.startPanedFrame(title, row, column, colspan, rowspan, sticky)
+        self.setPanedFrameVertical(title)
 
     # sticky is alignment inside frame
     # frame will be added as other widgets
@@ -1797,11 +1802,11 @@ class gui(object):
               raise Exception("Can't stop a LABELFRAME, currently in:", self.containerStack[-1]['type'])
         self.stopContainer()
 
-    def stopPanedWindow(self):
-        if self.containerStack[-1]['type'] == self.C_PANEDFRAME:
+    def stopPanedFrame(self):
+        if self.containerStack[-1]['type'] == self.C_PANE:
               self.stopContainer()
-        if self.containerStack[-1]['type'] != self.C_PANEDWINDOW:
-              raise Exception("Can't stop a PANEDWINDOW, currently in:", self.containerStack[-1]['type'])
+        if self.containerStack[-1]['type'] != self.C_PANEDFRAME:
+              raise Exception("Can't stop a PANEDFRAME, currently in:", self.containerStack[-1]['type'])
         self.stopContainer()
 
     def stopScrollPane(self):
@@ -1809,9 +1814,9 @@ class gui(object):
               raise Exception("Can't stop a SCROLLPANE, currently in:", self.containerStack[-1]['type'])
         self.stopContainer()
 
-    def stopAllPanedWindows(self):
+    def stopAllPanedFrames(self):
         while True:
-              try: self.stopPanedWindow()
+              try: self.stopPanedFrame()
               except: break
 
     ### SUB WINDOWS ###
@@ -1877,9 +1882,9 @@ class gui(object):
             del self.n_subWindows[title]
     #### END SUB WINDOWS ####
 
-    # make a PanedWindow align vertically
-    def setPanedWindowVertical(self, window):
-        pane = self.__verifyItem(self.n_panedWindows, window )
+    # make a PanedFrame align vertically
+    def setPanedFrameVertical(self, window):
+        pane = self.__verifyItem(self.n_panedFrames, window )
         pane.config(orient=VERTICAL)
 
     # function to set position of title for label frame
