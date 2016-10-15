@@ -455,6 +455,8 @@ class gui(object):
         """ set a funciton to call when the GUI is quit. Must return True or False """
         tl = self.__getTopLevel()
         tl.stopFunction = function
+        # link to exit item in topMenu
+        tl.createcommand('exit', self.stop)
 
     def stop(self, event=None):
         """ Closes the GUI. If a stop function is set, will only close the GUI if True """
