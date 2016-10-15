@@ -24,12 +24,21 @@ def login(btn):
     elif btn == "Submit":
         app.infoBox("Success", "Access granted")
         app.setTabbedFrameDisableAllTabs("Tabs", False)
+        app.setToolbarEnabled()
+        app.setToolbarButtonDisabled("LOGOUT", False)
+
+# function to confirm logout
+def logoutFunction():
+    return app.yesNoBox("Confirm Exit", "Are you sure you want to exit?")
 
 # disable the tabs
 def logout(btn=None):
     app.setTabbedFrameDisableAllTabs("Tabs")
     app.setTabbedFrameDisabledTab("Tabs", "Login", False)
     app.setTabbedFrameSelectedTab("Tabs", "Login")
+    # disable toolbar
+    app.setToolbarDisabled()
+    app.setToolbarButtonEnabled("EXIT")
 
 # function to update the meters
 def meters():
@@ -213,11 +222,14 @@ app.addEmptyLabel("calculator")
 app.setLabelBg("calculator", "grey")
 app.setLabelRelief("calculator", "sunken")
 app.setLabelAlign("calculator", "e")
-app.addButtons([["1", "2", "3", "C"],
+buttons=[["1", "2", "3", "C"],
                 ["4", "5", "6", "+"],
                 ["7", "8", "9", "-"],
-                ["0", "*", "/", "="]],
-                calculator)
+                ["0", "*", "/", "="]]
+
+app.addButtons(buttons, calculator)
+app.setButtonWidths(buttons, 7)
+app.setButtonHeights(buttons, 7)
 app.stopTab()
 
 app.startTab("Panes")
@@ -284,4 +296,5 @@ app.stopSubWindow()
 
 # start the GUI
 logout()
+app.setStopFunction(logoutFunction)
 app.go()
