@@ -31,9 +31,16 @@ except ImportError:
 import os, sys, re, socket, hashlib, imghdr, time
 import __main__ as theMain
 from platform import system as platform
+
+# Links
 import webbrowser
+
+# ajTree
 from idlelib.TreeWidget import TreeItem, TreeNode
 from xml.dom.minidom import parseString
+# DatePicker
+import calendar
+import datetime
 
 #######################
 # import borrowed libraries - not compulsory
@@ -123,6 +130,7 @@ class gui(object):
     LB=70
 
     LABELFRAME=30
+    FRAME=36
     TABBEDFRAME=31
     PANEDFRAME=32
     SCROLLPANE=33
@@ -152,6 +160,7 @@ class gui(object):
     # containers
     C_ROOT='rootPage'
     C_LABELFRAME='labelFrame'
+    C_FRAME='frame'
     C_TOGGLEFRAME="toggleFrame"
 
     # 2 containers for pagedWindow
@@ -172,7 +181,7 @@ class gui(object):
     WIDGETS = { LABEL:"Label", MESSAGE:"Message", BUTTON:"Button", ENTRY:"Entry", CB:"Cb", SCALE:"Scale", RB:"Rb", GRID:"Grid",
               LB:"Lb", SPIN:"SpinBox", OPTION:"OptionBox", TEXTAREA:"TextArea", LINK:"Link", METER:"Meter", IMAGE:"Image",
               RADIOBUTTON:"RadioButton", CHECKBOX:"CheckBox", LISTBOX:"ListBox", PIECHART:"PieChart", PROPERTIES:"Properties",
-              LABELFRAME:"LabelFrame", PANEDFRAME:"PanedFrame", TOGGLEFRAME:"ToggleFrame", TABBEDFRAME:"TabbedFrame"}
+              FRAME:"Frame", LABELFRAME:"LabelFrame", PANEDFRAME:"PanedFrame", TOGGLEFRAME:"ToggleFrame", TABBEDFRAME:"TabbedFrame"}
 
     # music stuff
     BASIC_NOTES = {"A":440, "B":493, "C":261, "D":293, "E":329, "F":349, "G":392 }
@@ -278,6 +287,7 @@ class gui(object):
         self.meterFont = font.Font(family="Helvetica", size=12, weight='bold')
         self.linkFont = font.Font(family="Helvetica", size=12, weight='bold', underline=1)
         self.labelFrameFont = font.Font(family="Helvetica", size=12)
+        self.frameFont = font.Font(family="Helvetica", size=12)
         self.toggleFrameFont = font.Font(family="Helvetica", size=12)
         self.tabbedFrameFont = font.Font(family="Helvetica", size=12)
         self.panedFrameFont = font.Font(family="Helvetica", size=12)
@@ -367,6 +377,7 @@ class gui(object):
         self.n_meters={}
         self.n_subWindows={}
         self.n_labelFrames={}
+        self.n_ajFrame={}
         self.n_tabbedFrames={}
         self.n_panedFrames={}
         self.n_panes={}
@@ -710,6 +721,7 @@ class gui(object):
         self.meterFont.config(family=font, size=size)
         self.propertiesFont.config(family=font, size=size)
         self.labelFrameFont.config(family=font, size=size)
+        self.frameFont.config(family=font, size=size)
         self.toggleFrameFont.config(family=font, size=size)
         self.tabbedFrameFont.config(family=font, size=size)
         self.panedFrameFont.config(family=font, size=size)
@@ -951,6 +963,7 @@ class gui(object):
         elif kind == self.GRID: return self.n_grids
 
         elif kind == self.LABELFRAME: return self.n_labelFrames
+        elif kind == self.FRAME: return self.n_ajFrame
         elif kind == self.TABBEDFRAME: return self.n_tabbedFrames
         elif kind == self.PANEDFRAME: return self.n_panedFrames
         elif kind == self.PANE: return self.n_panes
@@ -1413,7 +1426,7 @@ class gui(object):
             for widg in widget.theWidgets:
                 gui.SET_WIDGET_BG(widg, bg)
 
-        elif widgType in ["LabelFrame", "PanedFrame", "Pane"]:
+        elif widgType in ["LabelFrame", "PanedFrame", "Pane", "ajFrame"]:
             widget.config(bg=bg)
             for child in widget.winfo_children():
                 gui.SET_WIDGET_BG(child, bg)
@@ -1541,6 +1554,18 @@ class gui(object):
 
             # now, add to top of stack
             self.__addContainer(self.C_LABELFRAME, container, 0, 1, sticky)
+        elif fType == self.C_FRAME:
+            # first, make a Frame, and position it correctly
+            self.__verifyItem(self.n_ajFrame, title, True)
+            container = ajFrame(self.containerStack[-1]['container'])
+            container.isContainer = True
+#            container.config(background=self.__getContainerBg(), font=self.frameFont, relief="groove")
+            container.config(background=self.__getContainerBg())
+            self.__positionWidget(container, row, column, colspan, rowspan, "nsew")
+            self.n_ajFrame[title] = container
+
+            # now, add to top of stack
+            self.__addContainer(self.C_FRAME, container, 0, 1, sticky)
         elif fType == self.C_TABBEDFRAME:
             self.__verifyItem(self.n_tabbedFrames, title, True)
             tabbedFrame = TabbedFrame(self.containerStack[-1]['container'], bg=self.__getContainerBg())
@@ -1804,6 +1829,11 @@ class gui(object):
     # functions to stop the various containers
     def stopContainer(self): self.__removeContainer()
 
+    def stopFrame(self):
+        if self.containerStack[-1]['type'] != self.C_FRAME:
+              raise Exception("Can't stop a FRAME, currently in:", self.containerStack[-1]['type'])
+        self.stopContainer()
+
     def stopLabelFrame(self):
         if self.containerStack[-1]['type'] != self.C_LABELFRAME:
               raise Exception("Can't stop a LABELFRAME, currently in:", self.containerStack[-1]['type'])
@@ -1825,6 +1855,9 @@ class gui(object):
         while True:
               try: self.stopPanedFrame()
               except: break
+
+    def startFrame(self, title, row=None, column=0, colspan=0, rowspan=0, sticky="NSEW"):
+        self.startContainer(self.C_FRAME, title, row, column, colspan, rowspan, sticky)
 
     ### SUB WINDOWS ###
 
@@ -2249,7 +2282,7 @@ class gui(object):
                 if not isinstance(index, int):
                     try: index = box.options.index(index)
                     except:
-                        self.warn("Inavlid selection option: " + str(index))
+                        self.warn("Invalid selection option: " + str(index))
                         return
 
                 if index < 0 or index > count-1:
@@ -3055,6 +3088,66 @@ class gui(object):
         grip = Grip(self.__getContainer())
         self.__positionWidget(grip, row, column, colspan, rowspan)
         self.__addTooltip(grip, "Drag here to move", True)
+
+#####################################
+## DatePicker Widget - using Form Container
+#####################################
+    def addDatePicker(self, name, row=None, column=0, colspan=0, rowspan=0):
+        # initial DatePicker has these dates
+        days = range(1,32)
+        self.MONTH_NAMES = calendar.month_name[1:]
+        years=range(1970, 2020)
+
+        # create a frame, and add the widgets
+        self.startFrame(name, row, column, colspan, rowspan)
+        self.setExpand("none")
+        self.addLabel(name+"_DP_DayLabel", "Day:", 0, 0)
+        self.setLabelAlign(name+"_DP_DayLabel", "w")
+        self.addOptionBox(name+"_DP_DayOptionBox", days, 0, 1)
+        self.addLabel(name+"_DP_MonthLabel", "Month:", 1, 0)
+        self.setLabelAlign(name+"_DP_MonthLabel", "w")
+        self.addOptionBox(name+"_DP_MonthOptionBox", self.MONTH_NAMES,1,1)
+        self.addLabel(name+"_DP_YearLabel", "Year:", 2, 0)
+        self.setLabelAlign(name+"_DP_YearLabel", "w")
+        self.addOptionBox(name+"_DP_YearOptionBox", years,2,1)
+        self.setOptionBoxFunction(name+"_DP_MonthOptionBox", self.__updateDatePickerDays)
+        self.setOptionBoxFunction(name+"_DP_YearOptionBox", self.__updateDatePickerDays)
+        self.stopFrame()
+
+    # function to update DatePicker dropDowns
+    def __updateDatePickerDays(self, name):
+        if name.find("_DP_MonthOptionBox") > -1:
+            name = name.split("_DP_MonthOptionBox")[0]
+        elif name.find("_DP_YearOptionBox") > -1:
+            name = name.split("_DP_YearOptionBox")[0]
+        else:
+            self.warn("Can't update days in DatePicker: " + name)
+            return
+
+        day = self.getOptionBox(name+"_DP_DayOptionBox")
+        month = self.MONTH_NAMES.index(self.getOptionBox(name+"_DP_MonthOptionBox")) + 1
+        year = int(self.getOptionBox(name+"_DP_YearOptionBox"))
+        days = range(1, calendar.monthrange(year, month)[1]+1)
+        self.changeOptionBox(name+"_DP_DayOptionBox", days)
+
+        # keep previous day if possible
+        myWarn = self.WARN
+        self.WARN=False
+        self.setOptionBox(name+"_DP_DayOptionBox", day)
+        self.WARN=myWarn
+
+    # set a date for the named DatePicker
+    def setDatePicker(self, name, date):
+        self.setOptionBox(name+"_DP_YearOptionBox", str(date.year))
+        self.setOptionBox(name+"_DP_MonthOptionBox", date.month-1)
+        self.setOptionBox(name+"_DP_DayOptionBox", date.day-1)
+
+    def getDatePicker(self, name):
+        day = int(self.getOptionBox(name+"_DP_DayOptionBox"))
+        month = self.MONTH_NAMES.index(self.getOptionBox(name+"_DP_MonthOptionBox")) + 1
+        year = int(self.getOptionBox(name+"_DP_YearOptionBox"))
+        date = datetime.date(year, month, day)
+        return date
 
 #####################################
 ## FUNCTIONS for labels
@@ -4607,6 +4700,13 @@ class Properties(LabelFrame):
             raise Exception("Property: " + str(prop) + " not found in Properties: " + self.title)
 
 #####################################
+## appJar Frame
+#####################################
+class ajFrame(Frame):
+    def __init__(self, parent, *args, **options):
+        Frame.__init__(self, parent, *args, **options)
+
+#####################################
 ## Simple Separator
 #####################################
 class Separator(Frame):
@@ -4851,8 +4951,6 @@ class ItemLookupError(LookupError):
 class InvalidURLError(ValueError):
     '''raise this when there's a lookup error for my app'''
     pass
-
-
 
 #####################################
 ## ToggleFrame - collapsable frame

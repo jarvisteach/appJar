@@ -31,13 +31,11 @@ def setDate(date):
 def showDate(btn):
     print(getDate())
 
-
-
-
 def buildWidgets():
     days = []
     years=range(STARTDATE, ENDDATE)
 
+    app.startFrame("Cal")
     app.addLabel("dl", "Day:", 0, 0)
     app.setLabelAlign("dl", "w")
     app.addOptionBox("Day", days, 0, 1)
@@ -50,6 +48,7 @@ def buildWidgets():
     app.setOptionBoxFunction("Month", updateDays)
     app.setOptionBoxFunction("Year", updateDays)
     app.addButton("GET", showDate, 3, 0, 2)
+    app.stopFrame()
 
     updateDays()
 
