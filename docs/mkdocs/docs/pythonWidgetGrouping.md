@@ -12,12 +12,13 @@ All of these methods work in the same way.
 You call the `start` function when you want to start a container, then the `stop` function when you're done.  
 When you call `start` you can pass in positional arguments like any other widget (row, column, rowspan, colspan).  
 Any [GUI Options](pythonGuiOptions) you set, within the container, will only affect that container.  
+
 ###Label Frame
 ----
 A way of grouping widgets into a box, with a label at the top of the box.  
 Position the *LabelFrame* within the grid, then position widgets inside the *LabelFrame*  
 ![LabelFrame](img/layouts/labelFrame.png)
-```
+```python
 from appJar import gui
 
 app=gui()
@@ -39,7 +40,7 @@ app.go()
 
 ####Start/Stop Label Frames  
 * `.startLabelFrame(name)` & `.stopLabelFrame()`  
-    Used to start and stop a LabelFrame  
+    Used to start and stop a *LabelFrame*  
     The specified title will be used as the label for the frame.  
 
 ####Set Label Frames  
@@ -55,7 +56,7 @@ By default, the contents of the frame are hidden.
 They can be revealed/hidden again by clicking an associated button.  
 ![ToggleFrame](img/layouts/1_toggleFrame.png)
 ![ToggleFrame](img/layouts/2_toggleFrame.png)
-```
+```python
 from appJar import gui
 
 app=gui()
@@ -73,24 +74,24 @@ app.go()
 ####Start/Stop Toggle Frames  
 * `.startToggleFrame(title)`  
 * `.stopToggleFrame(title)`  
-    Used to start and stop a ToggleFrame.  
-    The `title` will be used as the title for the ToggleFrame.  
+    Used to start and stop a *ToggleFrame*.  
+    The `title` will be used as the title for the *ToggleFrame*.  
 ####Set Toggle Frames  
 * `.toggleToggleFrame(title)`  
-    Will toggle the state of the specified ToggleFrame.  
+    Will toggle the state of the specified *ToggleFrame*.  
 * `.disableToggleFrame(title, disabled=True)`  
-    Will disable the specified ToggleFrame.  
-    If `disabled` is set to False, the ToggleFrame will be re-enabled.  
+    Will disable the specified *ToggleFrame*.  
+    If `disabled` is set to False, the *ToggleFrame* will be re-enabled.  
 ####Get Toggle Frames  
 * `.getToggleFrameState(title)`  
-    Will return True if the ToggleFrame is open, else will return False.  
+    Will return True if the *ToggleFrame* is open, else will return False.  
 
 ###Tabbed Frame
 ---
 A way to create a (basic) tabbed-style interface.  
 Position the *TabbedFrame* within the grid, start a *Tab*, then position widgets inside the *Tab*  
 ![TabbedFrame](img/layouts/tabbedFrame.png)  
-```
+```python
 from appJar import gui
 
 app=gui()
@@ -302,7 +303,7 @@ It has an optional widget title, and shows the current page, in a page counter.
 Keyboard bindings are provided to navigate with arrow key presses. CTRL-arrow will navigate to the beginning/end.  
 Events can be bound to page changes, the page can be changed via a funciton call, and the current page number can be queried.  
 ![PagedWindow](img/layouts/1_pagedWindow.png)
-```
+```python
 from appJar import gui
 
 app=gui()
@@ -333,7 +334,7 @@ app.go()
 ####Start/Stop Paged Windows
 * `.startPagedWindow(title)`  
 * `.stopPagedWindow()`  
-    Used to start and stop a PagedWindow.  
+    Used to start and stop a *PagedWindow*.  
     The `title` will be used in the title section of the widget.  
 * `.startPage()`  
 * `.stopPage()`  
@@ -362,7 +363,7 @@ app.go()
 ---
 A way to add additional windows, which can be hidden and shown.  
 ![SubWindow](img/layouts/subWin.png)
-```
+```python
 from appJar import gui
 
 def launch(win):
@@ -384,25 +385,38 @@ app.go()
 ```
 
 ####Start/Stop Sub Windows
-* `.startSubwindow(name, title=None, modal=False)`  
-* `.stopSubwindow()`  
+* `.startSubwindow(name, title=None, modal=False)` & `.stopSubwindow()`  
     Used to start and stop defining a *SubWindow*  
-    Setting a `title` will override the `name` as a title for the SubWindow. 
-    Setting `modal` to True, will prevent the user from interacting with the parent window until the SubWindow is closed.  
+    Setting a `title` will override the `name` as a title for the *SubWindow*.   
+    Setting `modal` to True, will prevent the user from interacting with the parent window until the *SubWindow* is closed.  
+
 ####Show/Hide Sub Windows
 * `.showSubWindow(title)`  
-    Will cause the specified SubWindow to be shown.  
-    If it is set as *modal* the parent window will become uninteractive until the SubWindow is closed.  
+    Will cause the specified *SubWindow* to be shown.  
+    If it is set as *modal* the parent window will become uninteractive until the *SubWindow* is closed.  
+
 * `.hideSubWindow(title)`  
     Used to hide the specified *SubWindow*.  
-    This will not destroy the SubWindow, so it can be shown again later.  
+    This will not destroy the *SubWindow*, so it can be shown again later.  
+
 * `.destroySubWindow(title)`  
-    This will hide and permanently destroy the specified SubWindow.  
+    This will hide and permanently destroy the specified *SubWindow*.  
     It cannot be shown again.  
-####Set Sub Windows
-Note, all functions available on the main window are also available on Sub Windows.  
-Simply call those functions after starting a Sub Window.  
+
+It's useful to be able to create a button that stops a SubWindow:  
+If you create a button, that calls `.hideSubWindow()` or `.destroySubWindow()`, and give it the same name as the *SubWindow*, then it will hide/destroy the *SubWindow*, and call any  associated `.stopFunction()`.  
+```python
+app.startSubWindow("Demo")
+app.addLabel("l1", "Press the button to close this window")
+# set the button's name to match the SubWindow's name
+app.addNamedButton("CLOSE", "Demo", app.hideSubWindow)
+app.stopSubWindow()
 ```
+
+####Set Sub Windows
+Note, all functions available on the main window are also available on *SubWindows*.  
+Simply call those functions after starting a *SubWindow*.  
+```python
 app.startSubWindow("one", modal=True)
 app.setBg("orange")
 app.setGeometry("400x400")
@@ -415,10 +429,18 @@ app.stopSubWindow()
 #Under Development
 ---
 
+###Frame
+A simple way of grouping together widgets.  
+Position the *Frame* within the grid, then position widgets inside the *Frame*  
+
+####Start/Stop Frames  
+* `.startFrame(name)` & `.stopFrame()`  
+    Used to start and stop a Frame  
+
 ###Scroll Pane  
 ---
-A scrollable frame, to contain widgets.
+A scrollable frame, to contain widgets.  
 
 * `.startScrollPane(title)`  
 * `.stopScrollPane()`  
-    Used to start and stop the ScrollPane.  
+    Used to start and stop the *ScrollPane*.  
