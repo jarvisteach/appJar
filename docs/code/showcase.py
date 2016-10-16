@@ -78,6 +78,8 @@ def toolbar(btn):
         else:
             app.setGeometry("fullscreen")
             app.setToolbarIcon("FULL-SCREEN", "FULL-SCREEN-EXIT")
+    elif btn == "CALENDAR": app.showSubWindow("DatePicker")
+    elif btn == "ADDRESS-BOOK": app.showSubWindow("AddressBook")
 
 # called when scale/meters are changed
 def scale(name):
@@ -118,7 +120,7 @@ def add(entry):
 app=gui("ShowCase")
 
 # add a simple toolbar
-app.addToolbar(["EXIT", "LOGOUT", "FILL", "PIE-CHART", "FULL-SCREEN"], toolbar, findIcon=True)
+app.addToolbar(["EXIT", "LOGOUT", "FILL", "PIE-CHART", "CALENDAR", "ADDRESS-BOOK", "FULL-SCREEN"], toolbar, findIcon=True)
 
 # start the tabbed frame
 app.startTabbedFrame("Tabs")
@@ -288,11 +290,30 @@ values={"German":20, "French":10, "English":60, "Dutch": 5, "Belgium":3, "Danish
 app.addPieChart("Nationality", values, size=250)
 app.addLabelOptionBox("Nationality", values.keys())
 app.addNumericEntry("Percentage")
-def changePie(bnt):
+def changePie(btn):
     app.setPieChart("Nationality", app.getOptionBox("Nationality"), app.getEntry("Percentage"))
 app.addButton("Update", changePie)
 app.stopSubWindow()
 
+# date picker
+app.startSubWindow("DatePicker")
+app.addDatePicker("dp")
+app.setDatePicker("dp")
+def getDate(btn=None):
+    print(app.getDatePicker("dp"))
+    return True
+app.addNamedButton("DONE", "DatePicker", app.hideSubWindow)
+app.setStopFunction(getDate)
+app.stopSubWindow()
+
+# paged window
+app.startSubWindow("AddressBook")
+app.startPagedWindow("AddressBook")
+app.startPage("Page 1")
+app.addLabel("PP1", "PP1")
+app.stopPage()
+app.stopPagedWindow()
+app.stopSubWindow()
 
 # start the GUI
 logout()

@@ -6,5 +6,6 @@ def showDate(btn):
 app=gui()
 app.addDatePicker("dp")
 app.addButton("GET", showDate)
+app.setDatePickerRange("dp",1900,2100)
 app.setDatePicker("dp")
 app.go()
