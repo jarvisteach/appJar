@@ -1,9 +1,9 @@
 # appJar
 Tools for teaching Python
 
-Download Here: https://github.com/jarvisteach/appJar/blob/master/releases/appJar.zip?raw=true
+Download Here: https://github.com/jarvisteach/appJar/raw/appJar/releases/appJar.zip
 
-Docs here: http://jarvisteach.github.io/appJar  
+Docs here: http://appJar.info
 
 Key tool right now is gui
 
