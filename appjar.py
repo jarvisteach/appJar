@@ -3994,7 +3994,7 @@ class gui(object):
 
     def setStatusBg(self, colour, field=None):
         self.warn("setStatusBg() is deprecated, please use setStatusbarBg()")
-        self.setStatusbarBg(self, colour, field)
+        self.setStatusbarBg(colour, field)
 
     def setStatusbarBg(self, colour, field=None):
         if self.hasStatus:
