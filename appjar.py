@@ -467,7 +467,9 @@ class gui(object):
         tl = self.__getTopLevel()
         tl.stopFunction = function
         # link to exit item in topMenu
-        tl.createcommand('exit', self.stop)
+        # only if in root
+        if self.containerStack[-1]['type'] != self.C_SUBWINDOW:
+            tl.createcommand('exit', self.stop)
 
     def stop(self, event=None):
         """ Closes the GUI. If a stop function is set, will only close the GUI if True """
@@ -2107,7 +2109,7 @@ class gui(object):
         var=StringVar(self.topLevel)
         self.n_optionVars[title]=var
 
-        maxSize, options = self.__configOptionBox(title, options, kind)
+        maxSize, options = self.__configOptionBoxList(title, options, kind)
 
         if len(options) > 0 and kind == "normal":
             option = OptionMenu(frame,var,*options)
@@ -2197,12 +2199,14 @@ class gui(object):
                 box["menu"].entryconfigure(pos, state="disabled")
 
 
-    def __configOptionBox(self, title, options, kind):
+    def __configOptionBoxList(self, title, options, kind):
         # deal with a dict_keys object - messy!!!!
         if not isinstance(options, list): options = list(options)
 
+        # make sure all options are strings
         options = [str(i) for i in options]
-        # create a title if necessary
+
+        # check for empty strings, replace first with message, remove rest
         found = False
         for pos, item in enumerate(options):
             if item == "":
@@ -2218,45 +2222,45 @@ class gui(object):
             try: maxSize = len(str(max(options)))
             except: maxSize = 0
 
-        # new bug?!? - doesn't fit anymore!
-        if self.platform == self.MAC:
-            maxSize +=2
-
+        # increase if ticks
         if kind == "ticks":
             if len(title) > maxSize:
                 maxSize = len(title)
 
+        # new bug?!? - doesn't fit anymore!
+        if self.platform == self.MAC:
+            maxSize +=3
         return maxSize, options
 
     # http://www.prasannatech.net/2009/06/tkinter-optionmenu-changing-choices.html
     def changeOptionBox(self, title, options, index=None):
-        self.__verifyItem(self.n_optionVars, title)
-
-        # get the relevant items
-        box = self.n_options[title]
+        # get the optionBox & associated var
+        box = self.__verifyItem(self.n_options, title)
         if box.kind == "ticks":
             self.warn("Unable to change TickOptionBoxes")
             return
         var = self.n_optionVars[title]
 
-        maxSize, options = self.__configOptionBox(title, options, "normal")
+        # tidy up list and get max size
+        maxSize, options = self.__configOptionBoxList(title, options, "normal")
 
         # warn if new options bigger
         if maxSize > box.maxSize:
-            self.warn("The new options are longer then the old ones. " + str(maxSize) + ">"+str(box.maxSize))
+            self.warn("The new options are wider then the old ones. " + str(maxSize) + ">"+str(box.maxSize))
 
         # delete the current options
         box['menu'].delete(0, 'end')
-        var.set(" ")
-        box.options = options
+        #var.set(" ")
 
         # add the new items
         for option in options:
               box["menu"].add_command(label=option, command=lambda temp = option: box.setvar(box.cget("textvariable"), value = temp))
+        box.options = options
 
         # disable any separators
         self.__disableOptionBoxSeparators(box)
 
+        var.set(options[0])
         # select the specified option
         self.setOptionBox(title, index)
 
@@ -3096,7 +3100,7 @@ class gui(object):
         # initial DatePicker has these dates
         days = range(1,32)
         self.MONTH_NAMES = calendar.month_name[1:]
-        years=range(1970, 2020)
+        years=range(1970, 2021)
 
         # create a frame, and add the widgets
         self.startFrame(name, row, column, colspan, rowspan)
@@ -3137,6 +3141,11 @@ class gui(object):
         self.WARN=myWarn
 
     # set a date for the named DatePicker
+    def setDatePickerRange(self, title, startYear, endYear=None):
+        if endYear is None: endYear = datetime.date.today().year
+        years = range(startYear, endYear+1)
+        self.changeOptionBox(title+"_DP_YearOptionBox", years)
+
     def setDatePicker(self, title, date=None):
         if date is None: date = datetime.date.today()
         self.setOptionBox(title+"_DP_YearOptionBox", str(date.year))
