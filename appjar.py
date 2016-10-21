@@ -664,13 +664,20 @@ class gui(object):
             if container is None: container = self.__getTopLevel()
             container.attributes('-fullscreen', False)
             if container.escapeBindId is not None: container.unbind('<Escape>', container.escapeBindId)
-            myWarn = self.WARN
-            self.WARN=False
+            myWarn = self.__pauseWarn()
             self.__doTitleBar()
-            self.WARN=myWarn
+            self.__resumeWarn(myWarn)
             return True
         else:
             return False
+
+    def __pauseWarn(self):
+        myWarn = self.WARN
+        self.WARN=False
+        return myWarn
+
+    def __resumeWarn(self, myWarn):
+        self.WARN=myWarn
 
     # sets the padding around the border of the root container
     def setPadding(self, x, y):
@@ -1385,6 +1392,8 @@ class gui(object):
         # spinBox - highlightBackground
         # cbs/rbs - activebackground
         # grids - background
+
+        if bg is None: return # ignore empty colours
 
         darwinBorders = ["Text", "ScrolledText", "Entry", "Button"]#, "Scale"]#, "Button", "OptionMenu"]
         linuxBorders = darwinBorders + ["Radiobutton", "Checkbutton"]
@@ -2232,6 +2241,7 @@ class gui(object):
             maxSize +=3
         return maxSize, options
 
+    # function to replace the current contents of an option box
     # http://www.prasannatech.net/2009/06/tkinter-optionmenu-changing-choices.html
     def changeOptionBox(self, title, options, index=None):
         # get the optionBox & associated var
@@ -3135,10 +3145,9 @@ class gui(object):
         self.changeOptionBox(title+"_DP_DayOptionBox", days)
 
         # keep previous day if possible
-        myWarn = self.WARN
-        self.WARN=False
+        myWarn = self.__pauseWarn()
         self.setOptionBox(title+"_DP_DayOptionBox", day)
-        self.WARN=myWarn
+        self.__resumeWarn(myWarn)
 
     # set a date for the named DatePicker
     def setDatePickerRange(self, title, startYear, endYear=None):
@@ -3673,12 +3682,11 @@ class gui(object):
 
             if findIcon:
                 # turn off warnings about PNGs
-                myWarn = self.WARN
-                self.WARN=False
+                myWarn = self.__pauseWarn()
                 imgFile = os.path.join(self.icon_path,t.lower() + ".png")
                 try: image = self.__getImage( imgFile )
                 except Exception as e: image = None
-                self.WARN=myWarn
+                self.__resumeWarn(myWarn)
 
             but = Button(self.tb)
             self.n_tbButts[t] = but
@@ -3698,10 +3706,9 @@ class gui(object):
     def setToolbarIcon(self, name, icon):
         if (name not in self.n_tbButts): raise Exception("Unknown toolbar name: " + name)
         imgFile = os.path.join(self.icon_path,icon.lower() + ".png")
-        myWarn = self.WARN
-        self.WARN=False
+        myWarn = self.__pauseWarn()
         self.setToolbarImage(name, imgFile)
-        self.WARN=myWarn
+        self.__resumeWarn(myWarn)
         self.n_tbButts[name].tt_var.set(icon)
 
     def setToolbarImage(self, name, imgFile):
@@ -3816,10 +3823,11 @@ class gui(object):
                 self.warn("Underlining menu items not available on MAC")
 
         if shortcut is not None:
-            if self.platform == self.MAC:
-                shortcut="Command-"+shortcut.lower()
-            else:
-                shortcut=shortcut#.upper()
+            MODIFIERS=["Control", "Ctrl", "Option", "Opt", "Alt", "Shift", "Command", "Cmd", "Meta"]
+#            if self.platform == self.MAC:
+#                shortcut="Command-"+shortcut.lower()
+#            else:
+#                shortcut=shortcut#.upper()
 
         if item == "-" or kind=="separator":
               menu.add_separator()
@@ -3866,6 +3874,21 @@ class gui(object):
         elif kind=="cb":
               if var.get() == "1": return True
               else: return False
+
+    # set align = "none" to remove text
+    def setMenuImage(self, menu, title, image, align="left"):
+        menu = self.__verifyItem(self.n_menus, menu)
+        imageObj = self.__getImage(image)
+        if 16 != imageObj.width()  or imageObj.width() != imageObj.height():
+            self.warn("Invalid image resolution for menu item " + title + " ("+image+") - should be 16x16")
+        # imageObj = imageObj.subsample(0,0)
+        menu.entryconfigure(title, image=imageObj, compound=align)
+
+    def setMenuIcon(self, menu, title, icon, align="left"):
+        image = os.path.join(self.icon_path,icon.lower() + ".png")
+        myWarn = self.__pauseWarn()
+        self.setMenuImage(menu, title, image, align)
+        self.__resumeWarn(myWarn)
 
     def getMenuCheckBox(self, menu, title):
         return self.__getMenu(menu, title, "cb")
@@ -4050,12 +4073,11 @@ class gui(object):
     def __addTooltip(self, item, text, hideWarn=False):
         if TOOLTIP_AVAILABLE:
             # turn off warnings about tooltips
-            myWarn = self.WARN
-            if hideWarn: self.WARN=False
+            if hideWarn: myWarn=self.__pauseWarn()
             var = StringVar(self.topLevel)
             var.set(text)
             tip = ToolTip(item, delay=500, follow_mouse=1, textvariable=var)
-            self.WARN = myWarn
+            if hideWarn: self.__resumeWarn(myWarn)
             return var
         elif not hideWarn:
             self.warn("ToolTips unavailable - check tooltip.py is in the lib folder")
@@ -5215,7 +5237,10 @@ class PagedWindow(Frame):
         self.__setLabel()
 
         # update the buttons
-        if self.currentPage == 0:
+        if len(self.frames) == 1:   # only 1 page - no buttons
+            self.prevButton.config(state="disabled")
+            self.nextButton.config(state="disabled")
+        elif self.currentPage == 0:
             self.prevButton.config(state="disabled")
             self.nextButton.config(state="normal")
         elif self.currentPage == len(self.frames)-1:
