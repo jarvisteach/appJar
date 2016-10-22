@@ -3739,25 +3739,6 @@ class gui(object):
 #####################################
 ## FUNCTIONS for menu bar
 #####################################
-    def addMenuList(self, menuName, names, funcs, tearable=False):
-        # deal with a dict_keys object - messy!!!!
-        if not isinstance(names, list): names = list(names)
-
-        # append some Nones, if it's a list and contains separators
-        if funcs is not None:
-            if not callable(funcs):
-                seps = names.count("-")
-                for i in range(seps): funcs.append(None)
-            singleFunc = self.__checkFunc(names, funcs)
-
-        # add menu items
-        for t in names:
-            if funcs is None: u = None
-            elif singleFunc is not None: u = self.MAKE_FUNC(singleFunc, t)
-            else: u = self.MAKE_FUNC(funcs.pop(0), t)
-
-            self.addMenuItem(menuName, t, u)
-
     def __initMenu(self):
         # create a menu bar - only shows if populated
         if not self.hasMenu:
@@ -3772,10 +3753,6 @@ class gui(object):
                 sysMenu = Menu(self.menuBar, name='system', tearoff=False)
                 self.n_menus["SYSTEM"]=sysMenu
 
-    # add a single entry for a menu
-    def addMenu(self, name, func):
-        self.addMenuItem(None, name, func, "topLevel", None, -1)
-
     # add a parent menu, for menu items
     def createMenu(self, title, tearable=False):
         self.__verifyItem(self.n_menus, title, True)
@@ -3787,14 +3764,6 @@ class gui(object):
         self.menuBar.add_cascade(label=title,menu=menu)
         self.n_menus[title]=menu
         return menu
-
-    def disableMenuItem(self, title, item):
-        menu = self.__verifyItem(self.n_menus, title)
-        menu.entryconfigure(item, state=DISABLED)
-
-    def enableMenuItem(self, title, item):
-        menu = self.__verifyItem(self.n_menus, title)
-        menu.entryconfigure(item, state=NORMAL)
 
     # add items to the named menu
     def addMenuItem(self, title, item, func=None, kind=None, shortcut=None, underline=-1):
@@ -3859,38 +3828,31 @@ class gui(object):
             else:
                 menu.add_command(label=item, accelerator=shortcut)
 
-    def __getMenu(self, menu, title, kind):
-        title=menu+kind+title
-        var = self.__verifyItem(self.n_menuVars, title)
-        if kind=="rb":
-              return var.get()
-        elif kind=="cb":
-              if var.get() == "1": return True
-              else: return False
-
-    # set align = "none" to remove text
-    def setMenuImage(self, menu, title, image, align="left"):
-        menu = self.__verifyItem(self.n_menus, menu)
-        imageObj = self.__getImage(image)
-        if 16 != imageObj.width()  or imageObj.width() != imageObj.height():
-            self.warn("Invalid image resolution for menu item " + title + " ("+image+") - should be 16x16")
-        # imageObj = imageObj.subsample(0,0)
-        menu.entryconfigure(title, image=imageObj, compound=align)
-
-    def setMenuIcon(self, menu, title, icon, align="left"):
-        image = os.path.join(self.icon_path,icon.lower() + ".png")
-        myWarn = self.__pauseWarn()
-        self.setMenuImage(menu, title, image, align)
-        self.__resumeWarn(myWarn)
-
-    def getMenuCheckBox(self, menu, title):
-        return self.__getMenu(menu, title, "cb")
-
-    def getMenuRadioButton(self, menu, title):
-        return self.__getMenu(menu, title, "rb")
-
     #################
     # wrappers for other menu types
+
+    def addMenuList(self, menuName, names, funcs, tearable=False):
+        # deal with a dict_keys object - messy!!!!
+        if not isinstance(names, list): names = list(names)
+
+        # append some Nones, if it's a list and contains separators
+        if funcs is not None:
+            if not callable(funcs):
+                seps = names.count("-")
+                for i in range(seps): funcs.append(None)
+            singleFunc = self.__checkFunc(names, funcs)
+
+        # add menu items
+        for t in names:
+            if funcs is None: u = None
+            elif singleFunc is not None: u = self.MAKE_FUNC(singleFunc, t)
+            else: u = self.MAKE_FUNC(funcs.pop(0), t)
+
+            self.addMenuItem(menuName, t, u)
+
+    # add a single entry for a menu
+    def addMenu(self, name, func):
+        self.addMenuItem(None, name, func, "topLevel", None, -1)
 
     def addMenuSeparator(self, menu):
         self.addMenuItem(menu, "-")
@@ -3918,6 +3880,47 @@ class gui(object):
 
     def setMenuRadioButton(self, menu, name, value):
         self.__setMenu(menu, name, value, "rb")
+
+    # set align = "none" to remove text
+    def setMenuImage(self, menu, title, image, align="left"):
+        menu = self.__verifyItem(self.n_menus, menu)
+        imageObj = self.__getImage(image)
+        if 16 != imageObj.width()  or imageObj.width() != imageObj.height():
+            self.warn("Invalid image resolution for menu item " + title + " ("+image+") - should be 16x16")
+        # imageObj = imageObj.subsample(0,0)
+        menu.entryconfigure(title, image=imageObj, compound=align)
+
+    def setMenuIcon(self, menu, title, icon, align="left"):
+        image = os.path.join(self.icon_path,icon.lower() + ".png")
+        myWarn = self.__pauseWarn()
+        self.setMenuImage(menu, title, image, align)
+        self.__resumeWarn(myWarn)
+
+    def disableMenuItem(self, title, item):
+        menu = self.__verifyItem(self.n_menus, title)
+        menu.entryconfigure(item, state=DISABLED)
+
+    def enableMenuItem(self, title, item):
+        menu = self.__verifyItem(self.n_menus, title)
+        menu.entryconfigure(item, state=NORMAL)
+
+    #################
+    # wrappers for getters
+
+    def __getMenu(self, menu, title, kind):
+        title=menu+kind+title
+        var = self.__verifyItem(self.n_menuVars, title)
+        if kind=="rb":
+              return var.get()
+        elif kind=="cb":
+              if var.get() == "1": return True
+              else: return False
+
+    def getMenuCheckBox(self, menu, title):
+        return self.__getMenu(menu, title, "cb")
+
+    def getMenuRadioButton(self, menu, title):
+        return self.__getMenu(menu, title, "rb")
 
     #################
     # wrappers for platform specific menus
@@ -3972,7 +3975,6 @@ class gui(object):
 #####################################
 ## FUNCTIONS for status bar
 #####################################
-    # TO DO - make multi fielded
     def addStatus(self, header="", fields=1, side=None):
         self.warn("addStatus() is deprecated, please use addStatusbar()")
         self.addStatusbar(header, fields, side)
