@@ -405,6 +405,7 @@ class gui(object):
         # menu stuff
         self.n_menus={}
         self.n_menuVars={}
+        self.n_accelerators=[]
 
     # function to generate warning messages
     def warn(self, message):
@@ -3739,9 +3740,6 @@ class gui(object):
 ## FUNCTIONS for menu bar
 #####################################
     def addMenuList(self, menuName, names, funcs, tearable=False):
-        self.__initMenu()
-        menu = Menu(self.menuBar, tearoff=tearable)
-
         # deal with a dict_keys object - messy!!!!
         if not isinstance(names, list): names = list(names)
 
@@ -3754,21 +3752,11 @@ class gui(object):
 
         # add menu items
         for t in names:
-              if t == "-":
-                    menu.add_separator()
-              else:
-                    if funcs is None:
-                        menu.add_command(label=t)
-                    else:
-                        if singleFunc is not None:
-                                u = self.MAKE_FUNC(singleFunc, t)
-                        else:
-                                u = self.MAKE_FUNC(funcs.pop(0), t)
+            if funcs is None: u = None
+            elif singleFunc is not None: u = self.MAKE_FUNC(singleFunc, t)
+            else: u = self.MAKE_FUNC(funcs.pop(0), t)
 
-                        menu.add_command(label=t, command=u )
-
-        self.menuBar.add_cascade(label=menuName,menu=menu)
-        self.n_menus[menuName]=menu
+            self.addMenuItem(menuName, t, u)
 
     def __initMenu(self):
         # create a menu bar - only shows if populated
@@ -3786,12 +3774,7 @@ class gui(object):
 
     # add a single entry for a menu
     def addMenu(self, name, func):
-        if self.platform == self.MAC:
-            self.warn("Unable to make topLevel menus (" + name + ") on Mac")
-        else:
-            self.__initMenu()
-            u = self.MAKE_FUNC(func, name, True)
-            self.menuBar.add_command(label=name, command=u)
+        self.addMenuItem(None, name, func, "topLevel", None, -1)
 
     # add a parent menu, for menu items
     def createMenu(self, title, tearable=False):
@@ -3803,6 +3786,7 @@ class gui(object):
         menu = Menu(self.menuBar, tearoff=tearable)
         self.menuBar.add_cascade(label=title,menu=menu)
         self.n_menus[title]=menu
+        return menu
 
     def disableMenuItem(self, title, item):
         menu = self.__verifyItem(self.n_menus, title)
@@ -3815,7 +3799,12 @@ class gui(object):
     # add items to the named menu
     def addMenuItem(self, title, item, func=None, kind=None, shortcut=None, underline=-1):
         self.__initMenu()
-        menu = self.__verifyItem(self.n_menus, title)
+
+        # get or create an initial menu
+        if title is not None:
+            try: menu = self.__verifyItem(self.n_menus, title, False)
+            except: menu = self.createMenu(title)
+
         var = None
 
         if underline > -1:
@@ -3823,48 +3812,52 @@ class gui(object):
                 self.warn("Underlining menu items not available on MAC")
 
         if shortcut is not None:
+            self.__verifyItem(self.n_accelerators, shortcut, True)
+            self.n_accelerators.append(shortcut)
             MODIFIERS=["Control", "Ctrl", "Option", "Opt", "Alt", "Shift", "Command", "Cmd", "Meta"]
-#            if self.platform == self.MAC:
-#                shortcut="Command-"+shortcut.lower()
-#            else:
-#                shortcut=shortcut#.upper()
 
         if item == "-" or kind=="separator":
               menu.add_separator()
+        elif kind=="topLevel" or title is None:
+            if self.platform == self.MAC:
+                self.warn("Unable to make topLevel menus (" + item + ") on Mac")
+            else:
+                u = self.MAKE_FUNC(func, item, True)
+                self.menuBar.add_command(label=item, command=u, accelerator=shortcut, underline=underline)
         # creates a var rb+item
         # uses func for the title of this radiobutotn
         elif kind == "rb":
-              varName = title+"rb"+item
-              newRb=False
-              if (varName in self.n_menuVars):
-                    var = self.n_menuVars[varName]
-              else:
-                    newRb=True
-                    var = StringVar(self.topLevel)
-                    self.n_menuVars[varName]=var
-              menu.add_radiobutton(label=func, variable=var, value=func, accelerator=shortcut, underline=underline)
-              if newRb: self.setMenuRadioButton(title, item, func)
+            varName = title+"rb"+item
+            newRb=False
+            if (varName in self.n_menuVars):
+                var = self.n_menuVars[varName]
+            else:
+                newRb=True
+                var = StringVar(self.topLevel)
+                self.n_menuVars[varName]=var
+            menu.add_radiobutton(label=func, variable=var, value=func, accelerator=shortcut, underline=underline)
+            if newRb: self.setMenuRadioButton(title, item, func)
         # creates a var cb+item
         elif kind == "cb":
-              varName = title+"cb"+item
-              self.__verifyItem(self.n_menuVars, varName, True)
-              var = StringVar(self.topLevel)
-              self.n_menuVars[varName]=var
-              menu.add_checkbutton(label=item, variable=var, onvalue=1, offvalue=0, accelerator=shortcut, underline=underline)
+            varName = title+"cb"+item
+            self.__verifyItem(self.n_menuVars, varName, True)
+            var = StringVar(self.topLevel)
+            self.n_menuVars[varName]=var
+            menu.add_checkbutton(label=item, variable=var, onvalue=1, offvalue=0, accelerator=shortcut, underline=underline)
         elif kind == "sub":
             self.__verifyItem(self.n_menus, item, True)
             subMenu = Menu(menu, tearoff=False)
             self.n_menus[item]=subMenu
             menu.add_cascade(menu=subMenu, label=item, accelerator=shortcut, underline=underline)
         else:
-              if func is not None:
-                    u = self.MAKE_FUNC(func, item, True)
-                    menu.add_command(label=item, command=u, accelerator=shortcut, underline=underline)
-                    if shortcut is not None:
-                        shortcut = "<"+shortcut+">"
-                        self.topLevel.bind(shortcut, u)
-              else:
-                    menu.add_command(label=item, accelerator=shortcut)
+            if func is not None:
+                u = self.MAKE_FUNC(func, item, True)
+                menu.add_command(label=item, command=u, accelerator=shortcut, underline=underline)
+#                if shortcut is not None:
+#                    shortcut = "<"+shortcut+">"
+#                    self.topLevel.bind(shortcut, u)
+            else:
+                menu.add_command(label=item, accelerator=shortcut)
 
     def __getMenu(self, menu, title, kind):
         title=menu+kind+title
