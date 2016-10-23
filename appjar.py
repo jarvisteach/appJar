@@ -3562,77 +3562,41 @@ class gui(object):
 #####################################
 ## FUNCTIONS for progress bars (meters)
 #####################################
-    ##############
-    # DUAL METERS
-    ##############
-    def addDualMeter(self, name, row=None, column=0, colspan=0, rowspan=0):
-        self.__verifyItem(self.n_meters, name, True)
-        meter = DualMeter(self.__getContainer(), font=self.meterFont)
-        self.n_meters[name] = meter
-        self.__positionWidget(meter, row, column, colspan, rowspan)
-
-    # update the value of the specified meter
-    # note: expects a value between -100 & 100
-    def setDualMeter(self, name, value=0.0, text=None):
-        item = self.__verifyItem(self.n_meters, name)
-        value = value/100
-        item.set(value, text)
-
-    def getDualMeter(self, name):
-        item = self.__verifyItem(self.n_meters, name)
-        return item.get()
-
-    def setDualMeterFill(self, name, colours):
-        item = self.__verifyItem(self.n_meters, name)
-        item.setFill(colours)
-
-    ##############
-    # SPLIT METERS
-    ##############
-    def addSplitMeter(self, name, row=None, column=0, colspan=0, rowspan=0):
-        self.__verifyItem(self.n_meters, name, True)
-        meter = SplitMeter(self.__getContainer(), font=self.meterFont)
-        self.n_meters[name] = meter
-        self.__positionWidget(meter, row, column, colspan, rowspan)
-
-    # update the value of the specified meter
-    # note: expects a value between -100 & 100
-    def setSplitMeter(self, name, value=0.0, text=None):
-        item = self.__verifyItem(self.n_meters, name)
-        value = value/100
-        item.set(value, text)
-
-    def getSplitMeter(self, name):
-        item = self.__verifyItem(self.n_meters, name)
-        return item.get()
-
-    def setSplitMeterFill(self, name, colours):
-        item = self.__verifyItem(self.n_meters, name)
-        item.setFill(colours)
-
-    ########
-    # METERS
-    ########
     def addMeter(self, name, row=None, column=0, colspan=0, rowspan=0):
+        self.__addMeter(name, "METER", row, column, colspan, rowspan)
+
+    def addSplitMeter(self, name, row=None, column=0, colspan=0, rowspan=0):
+        self.__addMeter(name, "SPLIT", row, column, colspan, rowspan)
+
+    def addDualMeter(self, name, row=None, column=0, colspan=0, rowspan=0):
+        self.__addMeter(name, "DUAL", row, column, colspan, rowspan)
+
+    def __addMeter(self, name, type="METER", row=None, column=0, colspan=0, rowspan=0):
         self.__verifyItem(self.n_meters, name, True)
-        meter = Meter(self.__getContainer(), font=self.meterFont)
+
+        if type == "SPLIT": meter = SplitMeter(self.__getContainer(), font=self.meterFont)
+        elif type == "DUAL": meter = DualMeter(self.__getContainer(), font=self.meterFont)
+        else: meter = Meter(self.__getContainer(), font=self.meterFont)
+
         self.n_meters[name] = meter
         self.__positionWidget(meter, row, column, colspan, rowspan)
-
-    # update the value of the specified meter
-    # note: expects a value between 0 & 100
-    def setMeter(self, name, value=0.0, text=None):
-        item = self.__verifyItem(self.n_meters, name)
-        value = value/100
-        item.set(value, text)
 
     def getMeter(self, name):
         item = self.__verifyItem(self.n_meters, name)
         return item.get()
 
+    # update the value of the specified meter
+    # note: expects a value between 0 (-100 for split/dual) & 100
+    def setMeter(self, name, value=0.0, text=None):
+        item = self.__verifyItem(self.n_meters, name)
+        value = value/100.0
+        item.set(value, text)
+
+    # a single colour for meters, a list of 2 colours for splits & duals
     def setMeterFill(self, name, colour):
         item = self.__verifyItem(self.n_meters, name)
-        item.configure(fill=colour)
+        if item.__class__.__name__ == "Meter": item.configure(fill=colour)
+        else: item.setFill(colour)
 
 #####################################
 ## FUNCTIONS for seperators
@@ -4231,7 +4195,11 @@ class Meter(Frame):
         self._canv.coords(self._rect, 0, 0, self._canv.winfo_width()*self._value, self._canv.winfo_height())
         self._canv.update_idletasks()
 
-    def get(self): return self._value, self._canv.itemcget(self._text, 'text')
+    def get(self):
+        val = self._value
+        try: txt = self._canv.itemcget(self._text, 'text')
+        except: txt=None
+        return val, txt
 
     def set(self, value=0.0, text=None):
         #make the value failsafe:
@@ -4245,6 +4213,14 @@ class Meter(Frame):
         self._canv.coords(self._rect, 0, 0, self._canv.winfo_width()*value, self._canv.winfo_height())
         self._canv.itemconfigure(self._text, text=text)
         self._canv.update_idletasks()
+
+    def tint(self, col, brightness_offset=1):
+        ''' dim or brighten the specified colour by the specified offset '''
+        # http://chase-seibert.github.io/blog/2011/07/29/python-calculate-lighterdarker-rgb-colors.html
+        rgb_hex = self._canv.winfo_rgb(col)
+        new_rgb_int = [hex_value + brightness_offset for hex_value in rgb_hex]
+        new_rgb_int = [min([65535, max([0, i])]) for i in new_rgb_int] # make sure new values are between 0 and 65535
+        return new_rgb_int
 
 #####################################
 ## SplitMeter Class extends the Meter above
@@ -4310,16 +4286,16 @@ class SplitMeter(Meter):
 
         # determine a direction & range
         if self._value<0:
-              direction=-1
-              limit=int(start-fin)
+            direction=-1
+            limit=int(start-fin)
         else:
-              direction=1
-              limit=int(fin-start)
+            direction=1
+            limit=int(fin-start)
 
         # if no lines to draw, end it here - with a midline
         if limit==0:
-              self._canv.create_line(start, 0, start, height, fill=self._midFill, tags=("midline",))
-              return
+            self._canv.create_line(start, 0, start, height, fill=self._midFill, tags=("midline",))
+            return
 
         # work out the ratios
         r_ratio = float(r2-r1) / limit
@@ -4329,24 +4305,16 @@ class SplitMeter(Meter):
         # loop through the range of lines, in the right direction
         modder = 0
         for i in range(int(start),int(fin),direction):
-              nr = int(r1 + (r_ratio * modder))
-              ng = int(g1 + (g_ratio * modder))
-              nb = int(b1 + (b_ratio * modder))
+            nr = int(r1 + (r_ratio * modder))
+            ng = int(g1 + (g_ratio * modder))
+            nb = int(b1 + (b_ratio * modder))
 
-              colour = "#%4.4x%4.4x%4.4x" % (nr,ng,nb)
-              self._canv.create_line(i,0,i,height, tags=("gradient",), fill=colour)
-              modder += 1
+            colour = "#%4.4x%4.4x%4.4x" % (nr,ng,nb)
+            self._canv.create_line(i,0,i,height, tags=("gradient",), fill=colour)
+            modder += 1
 
         self._canv.lower("gradient")
         self._canv.create_line(start, 0, start, height, fill=self._midFill, tags=("midline",))
-
-    def tint(self, col, brightness_offset=1):
-        ''' dim or brighten the specified colour by the specified offset '''
-        # http://chase-seibert.github.io/blog/2011/07/29/python-calculate-lighterdarker-rgb-colors.html
-        rgb_hex = self._canv.winfo_rgb(col)
-        new_rgb_int = [hex_value + brightness_offset for hex_value in rgb_hex]
-        new_rgb_int = [min([65535, max([0, i])]) for i in new_rgb_int] # make sure new values are between 0 and 65535
-        return new_rgb_int
 
     def set(self, value=0.0, text=None):
         #make the value failsafe:
