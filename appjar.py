@@ -441,7 +441,7 @@ class gui(object):
         if not self.hasMenu:
             self.addAppJarMenu()
         if self.platform == self.WINDOWS:
-            self.menuBar.add_cascade(menu=self.n_menus["SYSTEM"])
+            self.menuBar.add_cascade(menu=self.n_menus["WIN_SYS"])
         self.topLevel.config(menu=self.menuBar)
 
         # pack it all in & make sure it's drawn
@@ -3742,16 +3742,17 @@ class gui(object):
     def __initMenu(self):
         # create a menu bar - only shows if populated
         if not self.hasMenu:
+#            self.topLevel.option_add('*tearOff', FALSE)
             self.hasMenu = True
             self.menuBar = Menu(self.topLevel)
             if self.platform == self.MAC:
                 appmenu = Menu(self.menuBar, name='apple')
                 self.menuBar.add_cascade(menu=appmenu)
-                self.n_menus["APPMENU"]=appmenu
+                self.n_menus["MAC_APP"]=appmenu
             elif self.platform == self.WINDOWS:
                 # sysMenu must be added last, otherwise other menus vanish
                 sysMenu = Menu(self.menuBar, name='system', tearoff=False)
-                self.n_menus["SYSTEM"]=sysMenu
+                self.n_menus["WIN_SYS"]=sysMenu
 
     # add a parent menu, for menu items
     def createMenu(self, title, tearable=False):
@@ -3760,41 +3761,42 @@ class gui(object):
         if self.platform==self.MAC and tearable:
             self.warn("Tearable menus (" + title + ") not supported on MAC")
             tearable=False
-        menu = Menu(self.menuBar, tearoff=tearable)
-        self.menuBar.add_cascade(label=title,menu=menu)
-        self.n_menus[title]=menu
-        return menu
+        theMenu = Menu(self.menuBar, tearoff=tearable)
+        self.menuBar.add_cascade(label=title,menu=theMenu)
+        self.n_menus[title]=theMenu
+        return theMenu
 
     # add items to the named menu
-    def addMenuItem(self, title, item, func=None, kind=None, shortcut=None, underline=-1):
+    def addMenuItem(self, title, item, func=None, kind=None, shortcut=None, underline=-1, rb_id=None):
+        # set the initial menubar
         self.__initMenu()
 
         # get or create an initial menu
         if title is not None:
-            try: menu = self.__verifyItem(self.n_menus, title, False)
-            except: menu = self.createMenu(title)
+            try: theMenu = self.__verifyItem(self.n_menus, title, False)
+            except: theMenu = self.createMenu(title)
 
-        var = None
+        if underline > -1 and self.platform == self.MAC:
+            self.warn("Underlining menu items not available on MAC")
 
-        if underline > -1:
-            if self.platform == self.MAC:
-                self.warn("Underlining menu items not available on MAC")
+        if func is not None: u = self.MAKE_FUNC(func, item, True)
+        else: u=None
 
         if shortcut is not None:
+#            MODIFIERS=["Control", "Ctrl", "Option", "Opt", "Alt", "Shift", "Command", "Cmd", "Meta"]
             self.__verifyItem(self.n_accelerators, shortcut, True)
             self.n_accelerators.append(shortcut)
-            MODIFIERS=["Control", "Ctrl", "Option", "Opt", "Alt", "Shift", "Command", "Cmd", "Meta"]
+#            if u is not None:
+#                shortcut = "<"+shortcut+">"
+#                self.topLevel.bind(shortcut, u)
 
         if item == "-" or kind=="separator":
-              menu.add_separator()
+              theMenu.add_separator()
         elif kind=="topLevel" or title is None:
             if self.platform == self.MAC:
                 self.warn("Unable to make topLevel menus (" + item + ") on Mac")
             else:
-                u = self.MAKE_FUNC(func, item, True)
                 self.menuBar.add_command(label=item, command=u, accelerator=shortcut, underline=underline)
-        # creates a var rb+item
-        # uses func for the title of this radiobutotn
         elif kind == "rb":
             varName = title+"rb"+item
             newRb=False
@@ -3804,34 +3806,26 @@ class gui(object):
                 newRb=True
                 var = StringVar(self.topLevel)
                 self.n_menuVars[varName]=var
-            menu.add_radiobutton(label=func, variable=var, value=func, accelerator=shortcut, underline=underline)
-            if newRb: self.setMenuRadioButton(title, item, func)
-        # creates a var cb+item
+            theMenu.add_radiobutton(label=rb_id, command=u, variable=var, value=rb_id, accelerator=shortcut, underline=underline)
+            if newRb: self.setMenuRadioButton(title, item, rb_id)
         elif kind == "cb":
             varName = title+"cb"+item
             self.__verifyItem(self.n_menuVars, varName, True)
             var = StringVar(self.topLevel)
             self.n_menuVars[varName]=var
-            menu.add_checkbutton(label=item, variable=var, onvalue=1, offvalue=0, accelerator=shortcut, underline=underline)
+            theMenu.add_checkbutton(label=item, command=u, variable=var, onvalue=1, offvalue=0, accelerator=shortcut, underline=underline)
         elif kind == "sub":
             self.__verifyItem(self.n_menus, item, True)
-            subMenu = Menu(menu, tearoff=False)
+            subMenu = Menu(theMenu, tearoff=False)
             self.n_menus[item]=subMenu
-            menu.add_cascade(menu=subMenu, label=item, accelerator=shortcut, underline=underline)
+            theMenu.add_cascade(menu=subMenu, label=item)
         else:
-            if func is not None:
-                u = self.MAKE_FUNC(func, item, True)
-                menu.add_command(label=item, command=u, accelerator=shortcut, underline=underline)
-#                if shortcut is not None:
-#                    shortcut = "<"+shortcut+">"
-#                    self.topLevel.bind(shortcut, u)
-            else:
-                menu.add_command(label=item, accelerator=shortcut)
+            theMenu.add_command(label=item, command=u, accelerator=shortcut, underline=underline)
 
     #################
     # wrappers for other menu types
 
-    def addMenuList(self, menuName, names, funcs, tearable=False):
+    def addMenuList(self, menuName, names, funcs):
         # deal with a dict_keys object - messy!!!!
         if not isinstance(names, list): names = list(names)
 
@@ -3845,23 +3839,26 @@ class gui(object):
         # add menu items
         for t in names:
             if funcs is None: u = None
-            elif singleFunc is not None: u = self.MAKE_FUNC(singleFunc, t)
-            else: u = self.MAKE_FUNC(funcs.pop(0), t)
+            elif singleFunc is not None: u = singleFunc
+            else: u = funcs.pop(0)
 
             self.addMenuItem(menuName, t, u)
 
     # add a single entry for a menu
-    def addMenu(self, name, func):
-        self.addMenuItem(None, name, func, "topLevel", None, -1)
+    def addSubMenu(self, menu, subMenu):
+        self.addMenuItem(menu, subMenu, None, "sub")
+
+    def addMenu(self, name, func, shortcut=None, underline=-1):
+        self.addMenuItem(None, name, func, "topLevel", shortcut, underline)
 
     def addMenuSeparator(self, menu):
         self.addMenuItem(menu, "-")
 
-    def addMenuCheckBox(self, menu, name):
-        self.addMenuItem(menu, name, kind="cb")
+    def addMenuCheckBox(self, menu, name, func=None, shortcut=None, underline=-1):
+        self.addMenuItem(menu, name, func, "cb", shortcut, underline)
 
-    def addMenuRadioButton(self, menu, name, value):
-        self.addMenuItem(menu, name, value, kind="rb")
+    def addMenuRadioButton(self, menu, name, value, func=None, shortcut=None, underline=-1):
+        self.addMenuItem(menu, name, func, "rb", shortcut, underline, value)
 
     #################
     # wrappers for setters
@@ -3883,12 +3880,12 @@ class gui(object):
 
     # set align = "none" to remove text
     def setMenuImage(self, menu, title, image, align="left"):
-        menu = self.__verifyItem(self.n_menus, menu)
+        theMenu = self.__verifyItem(self.n_menus, menu)
         imageObj = self.__getImage(image)
         if 16 != imageObj.width()  or imageObj.width() != imageObj.height():
             self.warn("Invalid image resolution for menu item " + title + " ("+image+") - should be 16x16")
         # imageObj = imageObj.subsample(0,0)
-        menu.entryconfigure(title, image=imageObj, compound=align)
+        theMenu.entryconfigure(title, image=imageObj, compound=align)
 
     def setMenuIcon(self, menu, title, icon, align="left"):
         image = os.path.join(self.icon_path,icon.lower() + ".png")
@@ -3896,13 +3893,32 @@ class gui(object):
         self.setMenuImage(menu, title, image, align)
         self.__resumeWarn(myWarn)
 
+    def disableMenubar(self):
+        for theMenu in self.n_menus:
+            self.disableMenu(theMenu)
+
+    def enableMenubar(self):
+        for theMenu in self.n_menus:
+            self.enableMenu(theMenu)
+
+    def disableMenu(self, title): self.__changeMenuState(title, DISABLED)
+    def enableMenu(self, title): self.__changeMenuState(title, NORMAL)
+
+    def __changeMenuState(self, title, state):
+        theMenu = self.__verifyItem(self.n_menus, title)
+        numMenus = theMenu.index("end")
+        if numMenus is not None: # MAC_APP (and others?) returns None
+            for item in range(numMenus+1):
+                try: theMenu.entryconfigure(item, state=state)
+                except: pass # separator
+
     def disableMenuItem(self, title, item):
-        menu = self.__verifyItem(self.n_menus, title)
-        menu.entryconfigure(item, state=DISABLED)
+        theMenu = self.__verifyItem(self.n_menus, title)
+        theMenu.entryconfigure(item, state=DISABLED)
 
     def enableMenuItem(self, title, item):
-        menu = self.__verifyItem(self.n_menus, title)
-        menu.entryconfigure(item, state=NORMAL)
+        theMenu = self.__verifyItem(self.n_menus, title)
+        theMenu.entryconfigure(item, state=NORMAL)
 
     #################
     # wrappers for getters
@@ -3942,7 +3958,7 @@ class gui(object):
             self.menuBar.add_cascade(menu=helpMenu, label='Help')
             u = self.MAKE_FUNC(func, "help")
             self.topLevel.createcommand('tk::mac::ShowHelp', u)
-            self.n_menus["HELP"]=helpMenu
+            self.n_menus["MAC_HELP"]=helpMenu
         else:
             self.warn("The Help Menu is specific to Mac OSX")
 
@@ -3952,7 +3968,7 @@ class gui(object):
             self.__initMenu()
             windowMenu = Menu(self.menuBar, name='window')
             self.menuBar.add_cascade(menu=windowMenu, label='Window')
-            self.n_menus["WINDOW"]=windowMenu
+            self.n_menus["MAC_WIN"]=windowMenu
         else:
             self.warn("The Window Menu is specific to Mac OSX")
 
@@ -3964,13 +3980,13 @@ class gui(object):
 
     def addAppJarMenu(self):
         if self.platform == self.MAC:
-            self.addMenuItem("APPMENU", "About appJar", self.appJarAbout)
+            self.addMenuItem("MAC_APP", "About appJar", self.appJarAbout)
             self.addMenuWindow()
             self.addMenuHelp(self.appJarHelp)
         elif self.platform == self.WINDOWS:
-            self.addMenuSeparator('SYSTEM')
-            self.addMenuItem("SYSTEM", "About appJar", self.appJarAbout)
-            self.addMenuItem("SYSTEM", "appJar Help", self.appJarHelp)
+            self.addMenuSeparator('WIN_SYS')
+            self.addMenuItem("WIN_SYS", "About appJar", self.appJarAbout)
+            self.addMenuItem("WIN_SYS", "appJar Help", self.appJarHelp)
 
 #####################################
 ## FUNCTIONS for status bar

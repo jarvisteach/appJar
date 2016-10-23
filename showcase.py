@@ -26,6 +26,7 @@ def login(btn):
         app.setTabbedFrameDisableAllTabs("Tabs", False)
         app.setToolbarEnabled()
         app.setToolbarButtonDisabled("LOGOUT", False)
+        app.enableMenubar()
 
 # function to confirm logout
 def logoutFunction():
@@ -36,9 +37,11 @@ def logout(btn=None):
     app.setTabbedFrameDisableAllTabs("Tabs")
     app.setTabbedFrameDisabledTab("Tabs", "Login", False)
     app.setTabbedFrameSelectedTab("Tabs", "Login")
-    # disable toolbar
+    # disable toolbar
     app.setToolbarDisabled()
     app.setToolbarButtonEnabled("EXIT")
+    app.disableMenubar()
+    app.enableMenuItem("Test", "EXIT")
 
 # function to update the meters
 def meters():
@@ -68,6 +71,7 @@ def drop(lbl):
 
 # called by the toolbar buttons
 def toolbar(btn):
+    print(btn)
     if btn == "EXIT": app.stop()
     elif btn == "LOGOUT": logout()
     elif btn == "FILL": app.setTabBg("Tabs", app.getTabbedFrameSelectedTab("Tabs"), app.colourBox())
@@ -121,6 +125,43 @@ app=gui("ShowCase")
 
 # add a simple toolbar
 app.addToolbar(["EXIT", "LOGOUT", "FILL", "PIE-CHART", "CALENDAR", "ADDRESS-BOOK", "FULL-SCREEN"], toolbar, findIcon=True)
+#app.createMenu("Test")
+app.addMenuPreferences(toolbar)
+#app.addMenuItem("APPMENU", "About", toolbar)
+app.addMenuItem("Test", "EXIT", toolbar, shortcut="Option-Control-Shift-Alt-Command-B", underline=2)
+app.addMenuItem("Test", "LOGOUT", toolbar, shortcut="Shift-Command-B", underline=3)
+app.addMenuItem("Test", "FILL", toolbar, shortcut="Control-Shift-C", underline=1)
+app.addSubMenu("Test", "Bobs")
+app.addMenuItem("Bobs", "EXIT", toolbar)
+app.addMenuItem("Bobs", "LOGOUT", toolbar)
+app.addMenuItem("Bobs", "FILL", toolbar)
+app.addMenu("ZZZ", toolbar)
+app.addMenuCheckBox("Boxes", "Box 1", toolbar, "Command-1")
+app.addMenuCheckBox("Boxes", "Box 2", toolbar, "Command-2")
+app.addMenuCheckBox("Boxes", "Box 3", toolbar, "Command-3")
+app.addMenuCheckBox("Boxes", "Box 4", toolbar, "Command-4")
+app.addMenuCheckBox("Boxes", "Box 5", toolbar, "Command-5")
+
+app.addMenuRadioButton("Radios", "r1", "Radio 6", toolbar, "Command-6", 7)
+app.addMenuRadioButton("Radios", "r1", "Radio 7", toolbar, "Command-7", 7)
+app.addMenuRadioButton("Radios", "r1", "Radio 8", toolbar, "Command-8", 7)
+app.addMenuRadioButton("Radios", "r1", "Radio 9", toolbar, "Command-9", 7)
+app.addMenuRadioButton("Radios", "r1", "Radio 0", toolbar, "Command-0", 7)
+
+app.addMenuList("List Items", ["Item 1", "Item 2", "-", "Item 3", "Item 4", "Item 5", "Item 6", "Item 7"], toolbar)
+app.addMenuList("List Items", ["-", "aaa", "-", "bbb", "-", "ccc", "-", "ddd", "-"], toolbar)
+
+#app.addMenuItem("2222List Items", "FILL", toolbar, shortcut="Control-Shift-C")
+
+app.addMenuWindow()
+app.addMenuHelp(toolbar)
+
+app.setMenuIcon("Test", "EXIT", "EXIT", "left")
+app.setMenuIcon("Test", "LOGOUT", "LOGOUT", "right")
+app.setMenuIcon("Test", "FILL", "FILL", "none")
+
+app.disableMenuItem("List Items", "aaa")
+app.disableMenubar()
 
 # start the tabbed frame
 app.startTabbedFrame("Tabs")
