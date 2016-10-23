@@ -98,12 +98,19 @@ class gui(object):
         kw = dict((k.lower().strip(), v) for k, v in kw.items())
         return kw
 
-    built = False
-
     # globals for supported platforms
     WINDOWS=1
     MAC=2
     LINUX=3
+    @staticmethod
+    def GET_PLATFORM():
+        # get the platform
+        if platform() in [ "win32", "Windows"]: return gui.WINDOWS
+        elif platform() == "Darwin": return gui.MAC
+        elif platform() == "Linux": return gui.LINUX
+        else: raise Exception ("Unsupported platform: " + platform())
+
+    built = False
 
     # used to identify widgets in component configurations
     WINDOW=0
@@ -208,14 +215,7 @@ class gui(object):
 #####################################
     def __init__(self, title=None, geom=None, warn=True, debug=False):
         # first out, verify the platform
-        if platform() in [ "win32", "Windows"]:
-            self.platform = self.WINDOWS
-        elif platform() == "Darwin":
-            self.platform = self.MAC
-        elif platform() == "Linux":
-            self.platform = self.LINUX
-        else:
-            raise Exception ("Unsupported platform: " + platform())
+        self.platform = gui.GET_PLATFORM()
 
         self.WARN = warn
         self.DEBUG = debug
@@ -855,99 +855,7 @@ class gui(object):
         self.__rightClick(event)
         
     def __rightClick(self,event, entry=True):
-
-        def rClick_Copy(event, apnd=0):
-            if self.platform in [self.WINDOWS, self.LINUX]:
-                event.widget.event_generate('<Control-c>')
-            else:
-                event.widget.event_generate('<Command-c>')
-#                try:
-#                    text = event.widget.selection_get()
-#                    #text = event.widget.get("sel.first", "sel.last")
-#                    self.topLevel.clipboard_clear()
-#                    self.topLevel.clipboard_append(text)
-#                except TclError:
-#                    print("ERROR")
-
-        def rClick_Cut(event):
-            if self.platform in [self.WINDOWS, self.LINUX]:
-                event.widget.event_generate('<Control-x>')
-            else:
-                event.widget.event_generate('<Command-x>')
-#                try:
-#                    text = event.widget.selection_get()
-#                    self.topLevel.clipboard_clear()
-#                    self.topLevel.clipboard_append(text)
-#                    event.widget.delete("sel.first", "sel.last")
-#                except TclError:
-#                    print("ERROR")
-
-        def rClick_Paste(event):
-            if self.platform in [self.WINDOWS, self.LINUX]:
-                event.widget.event_generate('<Control-v>')
-            else:
-                event.widget.event_generate('<Command-v>')
-#                text = self.topLevel.selection_get(selection='CLIPBOARD')
-#                event.widget.insert('insert', text)
-
-        def rClick_Undo(event):
-            try: event.widget.edit_undo()
-            except: self.containerStack[0]['container'].bell()
-            
-        def rClick_Redo(event):
-            try: event.widget.edit_redo()
-            except: self.containerStack[0]['container'].bell()
-
-        def rClick_Clear_Clip(event):
-            self.topLevel.clipboard_clear()
-
-        def rClick_Clear(event):
-            try: event.widget.delete(0.0, END)
-            except:
-                try: event.widget.delete(0, END)
-                except:self.containerStack[0]['container'].bell()
-        
-
-        def rClick_Reset(event):
-            event.widget.edit_reset()
-        def rClick_Separator(event):
-            event.widget.edit_separator()
-
-        event.widget.focus()
-
-        eList=[
-              (' Cut', lambda e=event: rClick_Cut(event)),
-              (' Copy', lambda e=event: rClick_Copy(event)),
-              (' Paste', lambda e=event: rClick_Paste(event)),
-              #(' Clear', lambda e=event: rClick_Clear_Clip(event)),
-              ]
-
-        rmenu = Menu(None, tearoff=0, takefocus=0)
-        for (txt, cmd) in eList:
-            rmenu.add_command(label=txt, command=cmd)
-
-        try: event.widget.selection_get()
-        except:
-            rmenu.entryconfig(" Copy", state="disabled")
-            rmenu.entryconfig(" Cut", state="disabled")
-
-        try: self.topLevel.clipboard_get()
-        except: rmenu.entryconfig(" Paste", state="disabled")
-
-        rmenu.add_separator()
-        rmenu.add_command(label=" Clear", command=lambda e=event: rClick_Clear(event))
-        
-        if not entry:
-            rmenu.add_separator()
-            rmenu.add_command(label=' Undo', command=lambda e=event: rClick_Undo(event))
-            rmenu.add_command(label=' Redo', command=lambda e=event: rClick_Redo(event))
-
-            if not event.widget.edit_modified():
-                rmenu.entryconfig(" Undo", state="disabled")
-                #rmenu.entryconfig(" Redo", state="disabled")
-
-        rmenu.tk_popup(event.x_root+40, event.y_root+10,entry="0")
-        event.widget.selection_clear()
+        rMenu = RMenu(self.topLevel, event, entry)
         return("break")
 
 #####################################
@@ -1364,7 +1272,7 @@ class gui(object):
     def SET_WIDGET_FG(self, widget, fg, external=False):
 
         widgType = widget.__class__.__name__
-        isDarwin = platform() == "Darwin"
+        isDarwin = gui.GET_PLATFORM() == gui.MAC
 
         if self.__isWidgetContainer(widget):
             self.containerStack[-1]['fg'] = fg
@@ -1401,8 +1309,8 @@ class gui(object):
         noBg = ["Button", "Spinbox", "ListBox", "SplitMeter", "DualMeter", "Meter", "ToggleFrame", "OptionMenu"]#, "Scale"]
 
         widgType = widget.__class__.__name__
-        isDarwin = platform() == "Darwin"
-        isLinux = platform() == "Linux"
+        isDarwin = gui.GET_PLATFORM() == gui.MAC
+        isLinux = gui.GET_PLATFORM() == gui.LINUX
 
         # always remove the border from scales
         if widgType == "Scale":
@@ -1445,7 +1353,7 @@ class gui(object):
 
         # any other widgets
         elif external == True:
-            if platform() == "Darwin":
+            if gui.GET_PLATFORM() == gui.MAC:
                 if widgType not in ["OptionMenu"]:
                     widget.config(bg=bg)
             else:
@@ -4208,7 +4116,7 @@ class Meter(Frame):
         self._value = value
 
         #if no text is specified use the default percentage string:
-        if text == None: text = str(int(round(100 * value))) + ' %'
+        if text is None: text = str(int(round(100 * value))) + ' %'
 
         self._canv.coords(self._rect, 0, 0, self._canv.winfo_width()*value, self._canv.winfo_height())
         self._canv.itemconfigure(self._text, text=text)
@@ -4612,9 +4520,9 @@ class Link(Label):
         self.config(fg="blue", takefocus=1, highlightthickness=0)
         self.page=""
 
-        if platform() == "Darwin":
+        if gui.GET_PLATFORM() == gui.MAC:
               self.config(cursor="pointinghand")
-        elif platform() in [ "win32", "Windows", "Linux"]:
+        elif gui.GET_PLATFORM() in [ gui.WINDOWS, gui.LINUX]:
               self.config(cursor="hand2")
 
     def registerCallback(self, callback):
@@ -5006,7 +4914,7 @@ class ToggleFrame(Frame):
             self.titleFrame.config(bg=kw["bg"])
             self.titleLabel.config(bg=kw["bg"])
             self.subFrame.config(bg=kw["bg"])
-            if platform() == "Darwin": self.toggleButton.config(highlightbackground=kw["bg"])
+            if gui.GET_PLATFORM() == gui.MAC: self.toggleButton.config(highlightbackground=kw["bg"])
         if "state" in kw:
             if kw["state"]=="disabled":
                 if self.showing:
@@ -5091,7 +4999,7 @@ class PagedWindow(Frame):
         kw=gui.CLEAN_CONFIG_DICTIONARY(**kw)
 
         if "bg" in kw:
-            if platform() == "Darwin":
+            if gui.GET_PLATFORM() == gui.MAC:
                 self.prevButton.config(highlightbackground=kw["bg"])
                 self.nextButton.config(highlightbackground=kw["bg"])
             self.posLabel.config(bg=kw["bg"])
@@ -5377,7 +5285,7 @@ class ScrollPane(Frame):
     def __unbindIds(self):
       if len(self.b_ids) == 0: return
 
-      if platform() == "Linux":
+      if gui.GET_PLATFORM() == gui.LINUX:
         self.canvas.unbind("<4>", self.b_ids[0])
         self.canvas.unbind("<5>", self.b_ids[1])
       else: # Windows and MacOS
@@ -5388,7 +5296,7 @@ class ScrollPane(Frame):
     # bind mouse scroll to this widget only when mouse is over
     def __mouseEnter(self, event):
       self.__unbindIds()
-      if platform() == "Linux":
+      if gui.GET_PLATFORM() == gui.LINUX:
         self.b_ids.append(self.canvas.bind_all("<4>", self.__mouseScroll))
         self.b_ids.append(self.canvas.bind_all("<5>", self.__mouseScroll))
       else: # Windows and MacOS
@@ -5406,7 +5314,7 @@ class ScrollPane(Frame):
       newDelta = event.delta
 
       # if windows - make it the same as other platforms
-      if platform() in [ "win32", "Windows"]:
+      if gui.GET_PLATFORM() == gui.WINDOWS:
         newDelta = (newDelta/120) * -1
 
       # scrolled before
@@ -5424,8 +5332,8 @@ class ScrollPane(Frame):
             except: delta=self.oldDelta
 
             # windows/mac osx scroll event
-            if platform() in [ "win32", "Windows", "Darwin"]:
-                if platform() in [ "win32", "Windows"]:
+            if gui.GET_PLATFORM() in [gui.WINDOWS, gui.LINUX]:
+                if gui.GET_PLATFORM() == gui.WINDOWS:
                     val = delta * -1
                     if delta < 0: val = val * -1
                     if delta < 0: self.speed = self.speed * -1
@@ -5439,7 +5347,7 @@ class ScrollPane(Frame):
                 else: pass
 
             # linux scroll event
-            elif platform() == "Linux":
+            elif gui.GET_PLATFORM() == gui.LINUX:
                 if event.num == 4:
                     self.canvas.yview_scroll(-1*2, "units")
                 elif event.num == 5:
@@ -5706,7 +5614,7 @@ class SimpleGrid(Frame):
         self.mainCanvas.configure(xscrollcommand=hsb.set)
 
         # bind scroll events
-        if platform() == "Linux":
+        if gui.GET_PLATFORM() == gui.LINUX:
             self.mainCanvas.bind_all("<4>", lambda event, arg=title: self.__scrollGrid(event, arg))
             self.mainCanvas.bind_all("<5>", lambda event, arg=title: self.__scrollGrid(event, arg))
         else:
@@ -5807,8 +5715,8 @@ class SimpleGrid(Frame):
     # and checks the event.delta to determine where to scroll
     # https://www.daniweb.com/programming/software-development/code/217059/using-the-mouse-wheel-with-tkinter-python
     def __scrollGrid(self, event, title):
-        if platform() in [ "win32", "Windows", "Darwin"]:
-              if platform() in [ "win32", "Windows"]:
+        if gui.GET_PLATFORM() in [gui.WINDOWS, gui.LINUX]:
+              if gui.GET_PLATFORM() == gui.WINDOWS:
                   val = event.delta/120
               else:
                   val = event.delta
@@ -5820,7 +5728,7 @@ class SimpleGrid(Frame):
               elif event.delta in [2,-2]:
                   self.mainCanvas.xview_scroll(val, "units")
 
-        elif platform() == "Linux":
+        elif gui.GET_PLATFORM() == gui.LINUX:
                 if event.num == 4:
                     self.mainCanvas.yview_scroll(-1*2, "units")
                 elif event.num == 5:
@@ -5850,6 +5758,92 @@ class SimpleGrid(Frame):
         else:
             self.selectedCells[gridPos] = True
             cell.config(background=self.cellSelectedBg)
+
+##########################
+### RightClick Popup Menu
+##########################
+class RMenu(Menu):
+    def __init__(self, topLevel, event, entry=True):
+        Menu.__init__(self, topLevel, tearoff=0, takefocus=0)
+        self.topLevel = topLevel
+
+        if gui.GET_PLATFORM() == gui.MAC: shortcut="Command"
+        else: shortcut="Control"
+
+#        event.widget.focus()
+        eList=[ (' Cut', lambda e=event: self.cut(event), "X"),
+                (' Copy', lambda e=event: self.copy(event), "C"),
+                (' Paste', lambda e=event: self.paste(event), "V"),
+                (' Select All', lambda e=event: self.selectAll(event), "V") ]
+
+        for (txt, cmd, sc) in eList:
+            acc="<"+shortcut+"-"+sc+">"
+            self.add_command(label=txt, command=cmd, accelerator=acc)
+
+        # disable cut/copy if nothing selected
+        try: event.widget.selection_get()
+        except:
+            self.entryconfig(" Copy", state="disabled")
+            self.entryconfig(" Cut", state="disabled")
+
+        # disable paste if nothing to paste
+        try: self.topLevel.clipboard_get()
+        except: self.entryconfig(" Paste", state="disabled")
+
+        # add a clear option
+        self.add_separator()
+        self.add_command(label=" Clear", command=lambda e=event: self.clearText(event))
+        
+        # if it's a text - add undo/redo options
+        if not entry:
+            self.add_separator()
+            self.add_command(label=' Undo', command=lambda e=event: self.undo(event), accelerator="<"+shortcut+"-Z>")
+            self.add_command(label=' Redo', command=lambda e=event: self.redo(event), accelerator="<Shift-"+shortcut+"-Z>")
+
+            if not event.widget.edit_modified():
+                self.entryconfig(" Undo", state="disabled")
+                #self.entryconfig(" Redo", state="disabled")
+
+        self.tk_popup(event.x_root+40, event.y_root+10,entry="0")
+        event.widget.selection_clear()
+
+    def copy(self, event, apnd=0):
+        if gui.GET_PLATFORM() in [gui.WINDOWS, gui.LINUX]: event.widget.event_generate('<Control-c>')
+        else: event.widget.event_generate('<Command-c>')
+
+    def cut(self, event):
+        if gui.GET_PLATFORM() in [gui.WINDOWS, gui.LINUX]: event.widget.event_generate('<Control-x>')
+        else: event.widget.event_generate('<Command-x>')
+
+    def paste(self, event):
+        if gui.GET_PLATFORM() in [gui.WINDOWS, gui.LINUX]: event.widget.event_generate('<Control-v>')
+        else: event.widget.event_generate('<Command-v>')
+
+    def undo(self, event):
+        try: event.widget.edit_undo()
+        except: self.topLevel.bell()
+        
+    def redo(self, event):
+        try: event.widget.edit_redo()
+        except: self.topLevel.bell()
+
+    def clearClipboard(self, event):
+        self.topLevel.clipboard_clear()
+
+    def clearText(self, event):
+        try: event.widget.delete(0.0, END)
+        except:
+            try: event.widget.delete(0, END)
+            except:self.topLevel.bell()
+
+    def selectAll(self, event):
+        try: event.widget.select_range(0, END)
+        except:
+            try: event.widget.tag_add("sel","1.0","end")
+            except:self.topLevel.bell()
+
+    # clear the undo/redo stack
+    def resetStack(self, event): event.widget.edit_reset()
 
 #####################################
 ## MAIN - for testing
