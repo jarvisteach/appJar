@@ -1,7 +1,9 @@
 from appJar import gui
 
-app=gui("Scroll Pane", "500x300")
+app=gui("Scroll Pane", "900x300")
 app.setSticky("nsew")
+app.startPagedWindow("Pages")
+app.startPage()
 
 app.addLabel("l1", "Welcome to ScrollPane Demo", 0, 0, 3)
 app.setLabelBg("l1", "peru")
@@ -21,5 +23,11 @@ app.setLabelBg("l3", "peru")
 
 app.addLabel("l4", "", 4, 1)
 app.setLabelBg("l4", "peru")
+
+app.stopPage()
+app.startPage()
+app.addLabel("2","2")
+app.stopPage()
+app.stopPagedWindow()
 
 app.go()
