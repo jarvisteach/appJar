@@ -3735,7 +3735,6 @@ class gui(object):
     def __checkCopyAndPaste(self, event, widget=None):
         if self.copyAndPaste.inUse:
             self.disableMenu("EDIT")
-            self.enableMenuItem("EDIT", "Redo")
             if event is not None:
                 widget=event.widget
 
@@ -3752,6 +3751,7 @@ class gui(object):
                     self.enableMenuItem("EDIT", "Clear All")
                 if self.copyAndPaste.canUndo:
                     self.enableMenuItem("EDIT", "Undo")
+                if self.copyAndPaste.canRedo:
                     self.enableMenuItem("EDIT", "Redo")
             return True
         else:
@@ -3902,7 +3902,7 @@ class gui(object):
     # if inMenuBar is True - then show in menu too
     def addMenuEdit(self, inMenuBar=False):
         self.__initMenu()
-        editMenu = Menu(self.menuBar, name='help')
+        editMenu = Menu(self.menuBar, tearoff=False)
         if inMenuBar: self.menuBar.add_cascade(menu=editMenu, label='Edit ')
         self.n_menus["EDIT"]=editMenu
         self.copyAndPaste.inUse=True
@@ -3928,7 +3928,6 @@ class gui(object):
         self.addMenuItem("EDIT", 'Undo', lambda e: self.__copyAndPasteHelper("Undo"), shortcut=shortcut+"-Z")
         self.addMenuItem("EDIT", 'Redo', lambda e: self.__copyAndPasteHelper("Redo"), shortcut="Shift-"+shortcut+"-Z")
         self.disableMenu("EDIT")
-        self.enableMenuItem("EDIT", "Redo")
 
     def appJarAbout(self, menu=None):
         self.infoBox("About appJar", "appJar\nCopyright Richard Jarvis, 2016")
@@ -5864,6 +5863,7 @@ class CopyAndPaste():
         self.canCopy = False
         self.canSelect = False
         self.canUndo = False
+        self.canRedo = False
 
         try: self.canPaste = len(self.topLevel.clipboard_get()) > 0
         except: self.canPaste = False
@@ -5875,6 +5875,7 @@ class CopyAndPaste():
             if widget.tag_ranges("sel"): self.canCut = self.canCopy = True
             if widget.index("end-1c") != "1.0": self.canSelect = True
             if widget.edit_modified(): self.canUndo = True
+            self.canRedo = True
         elif self.widgetType == "OptionMenu":
             self.canCopy = True
             self.canPaste = False
