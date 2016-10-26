@@ -131,43 +131,22 @@ Shows two values, left & right
 
 ![SplitMeter](img/1_splitMeter.png)
 
+* `.addSplitMeter(title)`  
+
 ####DualMeter
 Shows percentage left & right  
 
-###DatePicker
----
-A widget to capture a date - will handle presenting accurate drop-downs, and return a date.  
-![DatePicker](img/dev/1_cal.png)  
+* `.addDualMeter(title)`  
 
-```python
-from appJar import gui
+####Set Meters  
 
-def showDate(btn):
-    print(app.getDatePicker("dp"))
+* `.setMeter(title, value, text=None)`  
+    Value should be between -100 & 100 for a SplitMeter
 
-app=gui()
-app.addDatePicker("dp")
-app.addButton("GET", showDate)
-app.setDatePickerRange("dp", 1900, 2100)
-app.setDatePicker("dp")
-app.go()
-```
-####Add DatePickers  
+* `.setMeterFill(title, colour(s))`  
+    Pass a single colour for a Meter.  
+    Pass a list of two colours for Dual & Split meters.  
 
-* `.addDatePicker(title)`  
-    Create a DatePicker, with a range from 1/1/1970 to 31/12/2020  
+####Get Meters  
 
-####Set DatePickers  
-
-* `.setDatePicker(title, date=None)`  
-    Will set the specified DatePicker to the specified date, or current date if no date is supplied.  
-
-* `.setDatePickerRange(title, startYear, endYear=None)`  
-    Set the range for the named DatePicker.  
-    If endYear is None, the current Year will be used.  
-
-####Get DatePickers  
-
-* `.getDatePicker(title)`  
-    Will return the currently selected date.  
-
+* `.getMeter(title)`  

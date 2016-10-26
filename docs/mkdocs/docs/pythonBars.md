@@ -67,6 +67,13 @@ These items can contain menu-items, radio buttons, check boxes, separators, or s
 * `.createMenu(menu, tearable=False)`  
     Will create a top-level menu, to add menu items to.
 
+* `.createRightClickMenu(menu, showInBar=False)`  
+    Will create a hidden menu, that can be shown when the user right-clicks a widget.  
+    If ```showInBar``` is set to ```True```, the Menu will also appear in the topLevel Menubar.  
+
+    To access the rightClickMenu, it must be bound to a widget:  
+    ```.setXXXRightClick(widgetName, MenuName)``` will bind the named menu to the named widget.  
+
 * `.addMenuItem(menu, item, func=None, shortcut=None, underline=-1)`  
     Add a menu item to the named menu, with the specified function.  
     If the named menu does not exist, it will be automatically created.  
@@ -127,9 +134,15 @@ These items can contain menu-items, radio buttons, check boxes, separators, or s
     Get the value of the specified radio button, from the named menu.  
     Returns the name of the checked radio button, for this group.  
 
-####Platform Specific Menus
-It's possible to interact with menus that are specific to particular platforms.  
+####Platform Specific/Custom Menus
+It's possible to interact with menus that are specific to particular platforms, or prebuilt for specific purposes.  
 Simply use the menu names given below when adding items to a menu.  
+
+* **Generic**  
+    * **Edit Menu** - `EDIT` provides a right-click, *cut & paste* menu for text, entry & option boxes.  
+        Call `.addMenuEdit(inMenuBar=False)` to enable the *Edit* menu.  
+        Set the parameter to True, to also show it in the menu bar.  
+        This menu does its best to show the appropriate options, for all situations - but doesn't know when you can't *redo* an action.  
 
 * **Windows**  
     * **System Menu** - `WIN_SYS` accessed by clicking the icon in the top left corner of the GUI.  

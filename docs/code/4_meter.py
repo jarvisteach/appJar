@@ -8,6 +8,7 @@ def update():
     val += 5
     splitVal += 5
     app.setMeter("p1", val)
+    app.setMeter("p11", val, str(val))
     app.setMeter("p2", splitVal)
     app.setMeter("p3", val)
     if val == 100: val = 0
@@ -23,6 +24,7 @@ app.setGeometry("200x150")
 app.setFont(20)
 
 app.addMeter("p1")
+app.addMeter("p11")
 app.addSplitMeter("p2")
 app.addDualMeter("p3")
 
