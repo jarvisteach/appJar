@@ -304,6 +304,7 @@ class gui(object):
         self.hasMenu = False
         self.hasStatus = False
         self.hasTb = False
+        self.copyAndPaste = CopyAndPaste(self.topLevel)
 
         # won't pack, if don't pack it here
         self.tb = Frame(self.appWindow, bd=1, relief=RAISED)
@@ -460,8 +461,9 @@ class gui(object):
         self.__flash()
 
         # start the main loop
-        try: self.topLevel.mainloop()
-        except: self.stop()
+        self.topLevel.mainloop()
+        #try: self.topLevel.mainloop()
+        #except: self.stop()
 
     def setStopFunction(self, function):
         """ set a funciton to call when the GUI is quit. Must return True or False """
@@ -848,15 +850,25 @@ class gui(object):
         if isinstance(nowFocus, Entry): nowFocus.select_range(0,END)
         return("break")
     
-    def __textRightClick(self, event):
-        self.__rightClick(event, False)
-        
-    def __entryRightClick(self, event):
-        self.__rightClick(event)
-        
-    def __rightClick(self,event, entry=True):
-        rMenu = RMenu(self.topLevel, event, entry)
-        return("break")
+    # creates relevant bindings on the widget
+    def __addRightClickMenu(self, widget):
+        widget.bind("<FocusIn>", self.__checkCopyAndPaste)
+        widget.bind("<FocusOut>", self.__checkCopyAndPaste)
+
+        if widget.var is None: #TEXT:
+            widget.bind('<KeyRelease>', self.__checkCopyAndPaste)
+            widget.bind('<<Paste>>', self.__checkCopyAndPaste)
+
+        else: widget.var.trace("w", lambda name, index, mode, e=None, w=widget: self.__checkCopyAndPaste(e,w)) #ENTRY/OPTION
+
+        if self.platform in [self.WINDOWS, self.LINUX]: widget.bind('<Button-3>',self.__rightClick)
+        else: widget.bind('<Button-2>',self.__rightClick)
+
+    def __rightClick(self, event):
+        event.widget.focus()
+        if self.__checkCopyAndPaste(event):
+            self.n_menus["EDIT"].tk_popup(event.x_root+40, event.y_root+10,entry="0")
+        return "break"
 
 #####################################
 ## FUNCTION to configure widgets
@@ -2069,6 +2081,9 @@ class gui(object):
         option.bind("<Tab>", self.__focusNextWindow)
         option.bind("<Shift-Tab>", self.__focusLastWindow)
 
+        # add a right click menu
+        self.__addRightClickMenu(option)
+
         self.__disableOptionBoxSeparators(option)
 
         # add to array list
@@ -3153,8 +3168,9 @@ class gui(object):
         text.bind("<Tab>", self.__focusNextWindow)
         text.bind("<Shift-Tab>", self.__focusLastWindow)
 
-        text.bind('<Button-2>',self.__textRightClick)
-        text.bind('<Button-3>',self.__textRightClick)
+        # add a right click menu
+        text.var = None
+        self.__addRightClickMenu(text)
 
         self.n_textAreas[title]=text
         self.logTextArea(title)
@@ -3309,8 +3325,9 @@ class gui(object):
         ent.bind("<Tab>", self.__focusNextWindow)
         ent.bind("<Shift-Tab>", self.__focusLastWindow)
 
-        ent.bind('<Button-2>',self.__entryRightClick)
-        ent.bind('<Button-3>',self.__entryRightClick)
+        # add a right click menu
+        self.__addRightClickMenu(ent)
+
         self.n_entries[title]=ent
         self.n_entryVars[title]=var
         return ent
@@ -3716,6 +3733,44 @@ class gui(object):
 
             self.addMenuItem(menuName, t, u)
 
+    def __checkCopyAndPaste(self, event, widget=None):
+        if self.copyAndPaste.inUse:
+            self.disableMenu("EDIT")
+            self.enableMenuItem("EDIT", "Redo")
+            if event is not None:
+                widget=event.widget
+
+            # 9 = ENTER/10 = LEAVE/4=RCLICK/3=PRESS/2=PASTE
+            if event is None or event.type in ["9", "3", "4", "2"]:
+                self.copyAndPaste.setUp(widget)
+                if self.copyAndPaste.canCopy: self.enableMenuItem("EDIT", "Copy")
+                if self.copyAndPaste.canCut: self.enableMenuItem("EDIT", "Cut")
+                if self.copyAndPaste.canPaste:
+                    self.enableMenuItem("EDIT", "Paste")
+                    self.enableMenuItem("EDIT", "Clear Clipboard")
+                if self.copyAndPaste.canSelect:
+                    self.enableMenuItem("EDIT", "Select All")
+                    self.enableMenuItem("EDIT", "Clear All")
+                if self.copyAndPaste.canUndo:
+                    self.enableMenuItem("EDIT", "Undo")
+                    self.enableMenuItem("EDIT", "Redo")
+            return True
+        else:
+            return False
+
+    def __copyAndPasteHelper(self, menu):
+        widget = self.topLevel.focus_get()
+        self.copyAndPaste.setUp(widget)
+
+        if menu == "Cut": self.copyAndPaste.cut()
+        elif menu == "Copy": self.copyAndPaste.copy()
+        elif menu == "Paste": self.copyAndPaste.paste()
+        elif menu == "Select All": self.copyAndPaste.selectAll()
+        elif menu == "Clear Clipboard": self.copyAndPaste.clearClipboard()
+        elif menu == "Clear All": self.copyAndPaste.clearText()
+        elif menu == "Undo": self.copyAndPaste.undo()
+        elif menu == "Redo": self.copyAndPaste.redo()
+
     # add a single entry for a menu
     def addSubMenu(self, menu, subMenu):
         self.addMenuItem(menu, subMenu, None, "sub")
@@ -3756,7 +3811,7 @@ class gui(object):
         imageObj = self.__getImage(image)
         if 16 != imageObj.width()  or imageObj.width() != imageObj.height():
             self.warn("Invalid image resolution for menu item " + title + " ("+image+") - should be 16x16")
-        # imageObj = imageObj.subsample(0,0)
+            #imageObj = imageObj.subsample(2,2)
         theMenu.entryconfigure(title, image=imageObj, compound=align)
 
     def setMenuIcon(self, menu, title, icon, align="left"):
@@ -3843,6 +3898,38 @@ class gui(object):
             self.n_menus["MAC_WIN"]=windowMenu
         else:
             self.warn("The Window Menu is specific to Mac OSX")
+
+    # adds an edit menu - by default only as a pop-up
+    # if inMenuBar is True - then show in menu too
+    def addMenuEdit(self, inMenuBar=False):
+        self.__initMenu()
+        editMenu = Menu(self.menuBar, name='help')
+        if inMenuBar: self.menuBar.add_cascade(menu=editMenu, label='Edit ')
+        self.n_menus["EDIT"]=editMenu
+        self.copyAndPaste.inUse=True
+
+        if gui.GET_PLATFORM() == gui.MAC: shortcut="Command"
+        else: shortcut="Control"
+
+        eList=[ ('Cut', lambda e: self.__copyAndPasteHelper("Cut"), "X"),
+                ('Copy', lambda e: self.__copyAndPasteHelper("Copy"), "C"),
+                ('Paste', lambda e: self.__copyAndPasteHelper("Paste"), "V"),
+                ('Select All', lambda e: self.__copyAndPasteHelper("Select All"), "A"),
+                ('Clear Clipboard', lambda e: self.__copyAndPasteHelper("Clear Clipboard"), "B") ]
+
+        for (txt, cmd, sc) in eList:
+            acc=shortcut+"-"+sc
+            self.addMenuItem("EDIT", txt, cmd, shortcut=acc)
+
+        # add a clear option
+        self.addMenuSeparator("EDIT")
+        self.addMenuItem("EDIT", "Clear All", lambda e: self.__copyAndPasteHelper("Clear All"))
+
+        self.addMenuSeparator("EDIT")
+        self.addMenuItem("EDIT", 'Undo', lambda e: self.__copyAndPasteHelper("Undo"), shortcut=shortcut+"-Z")
+        self.addMenuItem("EDIT", 'Redo', lambda e: self.__copyAndPasteHelper("Redo"), shortcut="Shift-"+shortcut+"-Z")
+        self.disableMenu("EDIT")
+        self.enableMenuItem("EDIT", "Redo")
 
     def appJarAbout(self, menu=None):
         self.infoBox("About appJar", "appJar\nCopyright Richard Jarvis, 2016")
@@ -5760,90 +5847,83 @@ class SimpleGrid(Frame):
             cell.config(background=self.cellSelectedBg)
 
 ##########################
-### RightClick Popup Menu
+### CopyAndPaste Organiser
 ##########################
-class RMenu(Menu):
-    def __init__(self, topLevel, event, entry=True):
-        Menu.__init__(self, topLevel, tearoff=0, takefocus=0)
+class CopyAndPaste():
+    def __init__(self, topLevel):
         self.topLevel = topLevel
+        self.inUse=False
 
-        if gui.GET_PLATFORM() == gui.MAC: shortcut="Command"
-        else: shortcut="Control"
+    def setUp(self, widget):
+        self.inUse=True
+        # store globals
+        self.widget = widget
+        self.widgetType = widget.__class__.__name__
 
-#        event.widget.focus()
-        eList=[ (' Cut', lambda e=event: self.cut(event), "X"),
-                (' Copy', lambda e=event: self.copy(event), "C"),
-                (' Paste', lambda e=event: self.paste(event), "V"),
-                (' Select All', lambda e=event: self.selectAll(event), "V") ]
+        # query widget
+        self.canCut = False
+        self.canCopy = False
+        self.canSelect = False
+        self.canUndo = False
 
-        for (txt, cmd, sc) in eList:
-            acc="<"+shortcut+"-"+sc+">"
-            self.add_command(label=txt, command=cmd, accelerator=acc)
+        try: self.canPaste = len(self.topLevel.clipboard_get()) > 0
+        except: self.canPaste = False
 
-        # disable cut/copy if nothing selected
-        try: event.widget.selection_get()
-        except:
-            self.entryconfig(" Copy", state="disabled")
-            self.entryconfig(" Cut", state="disabled")
+        if self.widgetType == "Entry":
+            if widget.selection_present(): self.canCut = self.canCopy = True
+            if widget.index(END) > 0: self.canSelect = True
+        elif self.widgetType == "Text":
+            if widget.tag_ranges("sel"): self.canCut = self.canCopy = True
+            if widget.index("end-1c") != "1.0": self.canSelect = True
+            if widget.edit_modified(): self.canUndo = True
+        elif self.widgetType == "OptionMenu":
+            self.canCopy = True
+            self.canPaste = False
 
-        # disable paste if nothing to paste
-        try: self.topLevel.clipboard_get()
-        except: self.entryconfig(" Paste", state="disabled")
+    def copy(self):
+        if self.widgetType == "OptionMenu":
+            self.topLevel.clipboard_clear()
+            self.topLevel.clipboard_append(self.widget.var.get())
+        else:
+            self.widget.event_generate('<<Copy>>')
+            self.widget.selection_clear()
 
-        # add a clear option
-        self.add_separator()
-        self.add_command(label=" Clear", command=lambda e=event: self.clearText(event))
-        
-        # if it's a text - add undo/redo options
-        if not entry:
-            self.add_separator()
-            self.add_command(label=' Undo', command=lambda e=event: self.undo(event), accelerator="<"+shortcut+"-Z>")
-            self.add_command(label=' Redo', command=lambda e=event: self.redo(event), accelerator="<Shift-"+shortcut+"-Z>")
+    def cut(self):
+        if self.widgetType == "OptionMenu":
+            self.topLevel.bell()
+        else:
+            self.widget.event_generate('<<Cut>>')
+            self.widget.selection_clear()
 
-            if not event.widget.edit_modified():
-                self.entryconfig(" Undo", state="disabled")
-                #self.entryconfig(" Redo", state="disabled")
+    def paste(self):
+        self.widget.event_generate('<<Paste>>')
+        self.widget.selection_clear()
 
-        self.tk_popup(event.x_root+40, event.y_root+10,entry="0")
-        event.widget.selection_clear()
-
-    def copy(self, event, apnd=0):
-        if gui.GET_PLATFORM() in [gui.WINDOWS, gui.LINUX]: event.widget.event_generate('<Control-c>')
-        else: event.widget.event_generate('<Command-c>')
-
-    def cut(self, event):
-        if gui.GET_PLATFORM() in [gui.WINDOWS, gui.LINUX]: event.widget.event_generate('<Control-x>')
-        else: event.widget.event_generate('<Command-x>')
-
-    def paste(self, event):
-        if gui.GET_PLATFORM() in [gui.WINDOWS, gui.LINUX]: event.widget.event_generate('<Control-v>')
-        else: event.widget.event_generate('<Command-v>')
-
-    def undo(self, event):
-        try: event.widget.edit_undo()
+    def undo(self):
+        try: self.widget.edit_undo()
         except: self.topLevel.bell()
         
-    def redo(self, event):
-        try: event.widget.edit_redo()
+    def redo(self):
+        try: self.widget.edit_redo()
         except: self.topLevel.bell()
 
-    def clearClipboard(self, event):
+    def clearClipboard(self):
         self.topLevel.clipboard_clear()
 
-    def clearText(self, event):
-        try: event.widget.delete(0.0, END)
+    def clearText(self):
+        try: self.widget.delete(0.0, END) # TEXT
         except:
-            try: event.widget.delete(0, END)
+            try: self.widget.delete(0, END) # ENTRY
             except:self.topLevel.bell()
 
-    def selectAll(self, event):
-        try: event.widget.select_range(0, END)
+    def selectAll(self):
+        try: self.widget.select_range(0, END) # ENTRY
         except:
-            try: event.widget.tag_add("sel","1.0","end")
-            except:self.topLevel.bell()
+            try: self.widget.tag_add("sel","1.0","end") # TEXT
+            except: self.topLevel.bell()
 
     # clear the undo/redo stack
-    def resetStack(self, event): event.widget.edit_reset()
+    def resetStack(self): self.widget.edit_reset()
 
 #####################################
 ## MAIN - for testing

@@ -1,6 +1,11 @@
 from appJar import gui
-
+def f1(e): print(e)
 app=gui()
 app.setFont(12)
+app.addLabel("l1", "Text here")
+app.addMenuEdit()
+app.addMenuItem("Other", "Other", f1, shortcut="Command-O")
+app.addEntry("e1")
+app.addOptionBox("o1", ["a", "b", "c", "d"])
 app.addTextArea("text")
 app.go()
