@@ -863,10 +863,13 @@ class gui(object):
         if self.platform in [self.WINDOWS, self.LINUX]: widget.bind('<Button-3>',self.__rightClick)
         else: widget.bind('<Button-2>',self.__rightClick)
 
-    def __rightClick(self, event):
+    def __rightClick(self, event, menu="EDIT"):
         event.widget.focus()
-        if self.__checkCopyAndPaste(event):
-            self.n_menus["EDIT"].tk_popup(event.x_root+40, event.y_root+10,entry="0")
+        if menu == "EDIT":
+            if self.__checkCopyAndPaste(event):
+                self.n_menus[menu].tk_popup(event.x_root+40, event.y_root+10,entry="0")
+        else:
+            self.n_menus[menu].tk_popup(event.x_root+40, event.y_root+10,entry="0")
         return "break"
 
 #####################################
@@ -1054,6 +1057,9 @@ class gui(object):
                     item.config(padx=value[0], pady=value[0])
                 elif option == 'ipadding':
                     item.config(ipadx=value[0], ipady=value[0])
+                elif option == 'rightClick':
+                    if self.platform in [self.WINDOWS, self.LINUX]: item.bind('<Button-3>',lambda e, menu=value: self.__rightClick(e, menu))
+                    else: item.bind('<Button-2>',lambda e, menu=value: self.__rightClick(e, menu))
             except TclError as e:
                 self.warn("Error configuring " + name + ": " + str(e))
 
@@ -1123,6 +1129,10 @@ class gui(object):
               # change the stickyness
               exec("def set"+v+"Sticky(self, name, pos): self.configureWidget("+str(k)+", name, 'sticky', pos)")
               exec("gui.set"+v+"Sticky=set" +v+ "Sticky")
+
+              # add right click
+              exec("def set"+v+"RightClick(self, name, menu): self.configureWidget("+str(k)+", name, 'rightClick', menu)")
+              exec("gui.set"+v+"RightClick=set" +v+ "RightClick")
 
               # functions to manage widgets
               exec("def show"+v+"(self, name): self.showWidget("+str(k)+", name)")
@@ -3643,16 +3653,19 @@ class gui(object):
                 self.n_menus["WIN_SYS"]=sysMenu
 
     # add a parent menu, for menu items
-    def createMenu(self, title, tearable=False):
+    def createMenu(self, title, tearable=False, showInBar=True):
         self.__verifyItem(self.n_menus, title, True)
         self.__initMenu()
         if self.platform==self.MAC and tearable:
             self.warn("Tearable menus (" + title + ") not supported on MAC")
             tearable=False
         theMenu = Menu(self.menuBar, tearoff=tearable)
-        self.menuBar.add_cascade(label=title,menu=theMenu)
+        if showInBar: self.menuBar.add_cascade(label=title,menu=theMenu)
         self.n_menus[title]=theMenu
         return theMenu
+
+    def createRightClickMenu(self, title, showInBar=False):
+        return self.createMenu(title, False, showInBar)
 
     # add items to the named menu
     def addMenuItem(self, title, item, func=None, kind=None, shortcut=None, underline=-1, rb_id=None):
@@ -3734,7 +3747,7 @@ class gui(object):
 
     def __checkCopyAndPaste(self, event, widget=None):
         if self.copyAndPaste.inUse:
-            self.disableMenu("EDIT")
+            self.disableMenu("EDIT", 10)
             if event is not None:
                 widget=event.widget
 
@@ -3827,14 +3840,15 @@ class gui(object):
         for theMenu in self.n_menus:
             self.enableMenu(theMenu)
 
-    def disableMenu(self, title): self.__changeMenuState(title, DISABLED)
-    def enableMenu(self, title): self.__changeMenuState(title, NORMAL)
+    def disableMenu(self, title, limit=None): self.__changeMenuState(title, DISABLED, limit)
+    def enableMenu(self, title, limit=None): self.__changeMenuState(title, NORMAL, limit)
 
-    def __changeMenuState(self, title, state):
+    def __changeMenuState(self, title, state, limit=None):
         theMenu = self.__verifyItem(self.n_menus, title)
         numMenus = theMenu.index("end")
         if numMenus is not None: # MAC_APP (and others?) returns None
             for item in range(numMenus+1):
+                if limit is not None and limit == item: break
                 try: theMenu.entryconfigure(item, state=state)
                 except: pass # separator
 
