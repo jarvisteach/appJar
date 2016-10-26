@@ -461,9 +461,8 @@ class gui(object):
         self.__flash()
 
         # start the main loop
-        self.topLevel.mainloop()
-        #try: self.topLevel.mainloop()
-        #except: self.stop()
+        try: self.topLevel.mainloop()
+        except (KeyboardInterrupt, SystemExit): self.stop()
 
     def setStopFunction(self, function):
         """ set a funciton to call when the GUI is quit. Must return True or False """
