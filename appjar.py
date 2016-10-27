@@ -3683,13 +3683,41 @@ class gui(object):
         if func is not None: u = self.MAKE_FUNC(func, item, True)
         else: u=None
 
+        a=b=None
         if shortcut is not None:
 #            MODIFIERS=["Control", "Ctrl", "Option", "Opt", "Alt", "Shift", "Command", "Cmd", "Meta"]
-            self.__verifyItem(self.n_accelerators, shortcut, True)
-            self.n_accelerators.append(shortcut)
-#            if u is not None:
-#                shortcut = "<"+shortcut+">"
-#                self.topLevel.bind(shortcut, u)
+        
+            # UGLY formatting of accelerator & shortcut
+            if gui.GET_PLATFORM() == gui.MAC: shortcut=shortcut.replace("-", "+")    
+            else: shortcut=shortcut.replace("+", "-")
+            
+            a = b = shortcut.lower()
+            
+            a=a.replace("control", "ctrl")
+            a=a.replace("command", "cmd")
+            a=a.replace("option", "opt")
+            
+            b=b.replace("ctrl", "Control")
+            b=b.replace("control", "Control")
+            b=b.replace("cmd", "Command")
+            b=b.replace("command", "Command")
+            b=b.replace("opt", "Option")
+            b=b.replace("option", "Option")
+            b=b.replace("alt", "Alt")
+            b=b.replace("shift", "Shift")
+            b=b.replace("meta", "Meta")
+
+            if gui.GET_PLATFORM() != gui.MAC:
+                a=a.replace("cmd", "ctrl")
+                b=b.replace("Command", "Control")
+
+            b = "<"+b+">"
+            a=a.title()
+
+            self.__verifyItem(self.n_accelerators, a, True)
+            self.n_accelerators.append(a)
+            if gui.GET_PLATFORM() != gui.MAC:
+                if u is not None: self.topLevel.bind_all(b, u)
 
         if item == "-" or kind=="separator":
               theMenu.add_separator()
@@ -3697,7 +3725,7 @@ class gui(object):
             if self.platform == self.MAC:
                 self.warn("Unable to make topLevel menus (" + item + ") on Mac")
             else:
-                self.menuBar.add_command(label=item, command=u, accelerator=shortcut, underline=underline)
+                self.menuBar.add_command(label=item, command=u, accelerator=a, underline=underline)
         elif kind == "rb":
             varName = title+"rb"+item
             newRb=False
@@ -3707,21 +3735,21 @@ class gui(object):
                 newRb=True
                 var = StringVar(self.topLevel)
                 self.n_menuVars[varName]=var
-            theMenu.add_radiobutton(label=rb_id, command=u, variable=var, value=rb_id, accelerator=shortcut, underline=underline)
+            theMenu.add_radiobutton(label=rb_id, command=u, variable=var, value=rb_id, accelerator=a, underline=underline)
             if newRb: self.setMenuRadioButton(title, item, rb_id)
         elif kind == "cb":
             varName = title+"cb"+item
             self.__verifyItem(self.n_menuVars, varName, True)
             var = StringVar(self.topLevel)
             self.n_menuVars[varName]=var
-            theMenu.add_checkbutton(label=item, command=u, variable=var, onvalue=1, offvalue=0, accelerator=shortcut, underline=underline)
+            theMenu.add_checkbutton(label=item, command=u, variable=var, onvalue=1, offvalue=0, accelerator=a, underline=underline)
         elif kind == "sub":
             self.__verifyItem(self.n_menus, item, True)
             subMenu = Menu(theMenu, tearoff=False)
             self.n_menus[item]=subMenu
             theMenu.add_cascade(menu=subMenu, label=item)
         else:
-            theMenu.add_command(label=item, command=u, accelerator=shortcut, underline=underline)
+            theMenu.add_command(label=item, command=u, accelerator=a, underline=underline)
 
     #################
     # wrappers for other menu types
@@ -3921,8 +3949,8 @@ class gui(object):
         self.n_menus["EDIT"]=editMenu
         self.copyAndPaste.inUse=True
 
-        if gui.GET_PLATFORM() == gui.MAC: shortcut="Command"
-        else: shortcut="Control"
+        if gui.GET_PLATFORM() == gui.MAC: shortcut="Cmd+"
+        else: shortcut="Control-"
 
         eList=[ ('Cut', lambda e: self.__copyAndPasteHelper("Cut"), "X"),
                 ('Copy', lambda e: self.__copyAndPasteHelper("Copy"), "C"),
@@ -3931,7 +3959,7 @@ class gui(object):
                 ('Clear Clipboard', lambda e: self.__copyAndPasteHelper("Clear Clipboard"), "B") ]
 
         for (txt, cmd, sc) in eList:
-            acc=shortcut+"-"+sc
+            acc=shortcut+sc
             self.addMenuItem("EDIT", txt, cmd, shortcut=acc)
 
         # add a clear option
@@ -3939,8 +3967,8 @@ class gui(object):
         self.addMenuItem("EDIT", "Clear All", lambda e: self.__copyAndPasteHelper("Clear All"))
 
         self.addMenuSeparator("EDIT")
-        self.addMenuItem("EDIT", 'Undo', lambda e: self.__copyAndPasteHelper("Undo"), shortcut=shortcut+"-Z")
-        self.addMenuItem("EDIT", 'Redo', lambda e: self.__copyAndPasteHelper("Redo"), shortcut="Shift-"+shortcut+"-Z")
+        self.addMenuItem("EDIT", 'Undo', lambda e: self.__copyAndPasteHelper("Undo"), shortcut=shortcut+"Z")
+        self.addMenuItem("EDIT", 'Redo', lambda e: self.__copyAndPasteHelper("Redo"), shortcut="Shift-"+shortcut+"Z")
         self.disableMenu("EDIT")
 
     def appJarAbout(self, menu=None):
