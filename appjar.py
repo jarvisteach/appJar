@@ -867,9 +867,9 @@ class gui(object):
         event.widget.focus()
         if menu == "EDIT":
             if self.__checkCopyAndPaste(event):
-                self.n_menus[menu].tk_popup(event.x_root+40, event.y_root+10,entry="0")
+                self.n_menus[menu].tk_popup(event.x_root-10, event.y_root-10)
         else:
-            self.n_menus[menu].tk_popup(event.x_root+40, event.y_root+10,entry="0")
+            self.n_menus[menu].tk_popup(event.x_root-10, event.y_root-10)
         return "break"
 
 #####################################
@@ -3665,7 +3665,10 @@ class gui(object):
         return theMenu
 
     def createRightClickMenu(self, title, showInBar=False):
-        return self.createMenu(title, False, showInBar)
+        men = self.createMenu(title, False, showInBar)
+        if gui.GET_PLATFORM() == gui.LINUX:
+            self.addMenuSeparator(title)
+        return men
 
     # add items to the named menu
     def addMenuItem(self, title, item, func=None, kind=None, shortcut=None, underline=-1, rb_id=None):
@@ -3946,6 +3949,9 @@ class gui(object):
         if inMenuBar: self.menuBar.add_cascade(menu=editMenu, label='Edit ')
         self.n_menus["EDIT"]=editMenu
         self.copyAndPaste.inUse=True
+
+        if gui.GET_PLATFORM() == gui.LINUX:
+            self.addMenuSeparator("EDIT")
 
         if gui.GET_PLATFORM() == gui.MAC: shortcut="Cmd+"
         else: shortcut="Control-"
