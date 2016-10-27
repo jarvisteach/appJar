@@ -3688,10 +3688,7 @@ class gui(object):
 #            MODIFIERS=["Control", "Ctrl", "Option", "Opt", "Alt", "Shift", "Command", "Cmd", "Meta"]
         
             # UGLY formatting of accelerator & shortcut
-            if gui.GET_PLATFORM() == gui.MAC: shortcut=shortcut.replace("-", "+")    
-            else: shortcut=shortcut.replace("+", "-")
-            
-            a = b = shortcut.lower()
+            a = b = shortcut.lower().replace("+", "-")
             
             a=a.replace("control", "ctrl")
             a=a.replace("command", "cmd")
@@ -3716,8 +3713,7 @@ class gui(object):
 
             self.__verifyItem(self.n_accelerators, a, True)
             self.n_accelerators.append(a)
-            if gui.GET_PLATFORM() != gui.MAC:
-                if u is not None: self.topLevel.bind_all(b, u)
+            if u is not None: self.topLevel.bind_all(b, u)
 
         if item == "-" or kind=="separator":
               theMenu.add_separator()
@@ -3775,7 +3771,9 @@ class gui(object):
 
     def __checkCopyAndPaste(self, event, widget=None):
         if self.copyAndPaste.inUse:
-            self.disableMenu("EDIT", 10)
+            if event is None or not (event.type == "10" and self.GET_PLATFORM() == self.LINUX):
+                self.disableMenu("EDIT", 10)
+
             if event is not None:
                 widget=event.widget
 
