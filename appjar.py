@@ -3985,7 +3985,7 @@ class gui(object):
         eList=[ ('Cut', lambda e: self.__copyAndPasteHelper("Cut"), "X", False),
                 ('Copy', lambda e: self.__copyAndPasteHelper("Copy"), "C", False),
                 ('Paste', lambda e: self.__copyAndPasteHelper("Paste"), "V", False),
-                ('Select All', lambda e: self.__copyAndPasteHelper("Select All"), "A", False),
+                ('Select All', lambda e: self.__copyAndPasteHelper("Select All"), "A", True if gui.GET_PLATFORM() == gui.MAC else False ),
                 ('Clear Clipboard', lambda e: self.__copyAndPasteHelper("Clear Clipboard"), "B", True) ]
 
         for (txt, cmd, sc, bind) in eList:
