@@ -110,6 +110,28 @@ class gui(object):
         elif platform() == "Linux": return gui.LINUX
         else: raise Exception ("Unsupported platform: " + platform())
 
+    @staticmethod
+    def CENTER(win):
+        """
+        centers a tkinter window
+        http://stackoverflow.com/questions/3352918/
+        :param win: the root or Toplevel window to center
+        """
+        win.attributes('-alpha', 0.0)  # hide the window
+        win.update_idletasks()
+        width = win.winfo_width()
+        frm_width = win.winfo_rootx() - win.winfo_x()
+        win_width = width + 2 * frm_width
+        height = win.winfo_height()
+        titlebar_height = win.winfo_rooty() - win.winfo_y()
+        win_height = height + titlebar_height + frm_width
+        x = win.winfo_screenwidth() // 2 - win_width // 2
+        y = win.winfo_screenheight() // 2 - win_height // 2
+        y=y-150
+        win.geometry('{}x{}+{}+{}'.format(width, height, x, y))
+        win.deiconify()
+        win.attributes('-alpha', 1.0)
+
     built = False
 
     # used to identify widgets in component configurations
@@ -455,6 +477,10 @@ class gui(object):
         # bring to front
         self.__bringToFront()
         self.topLevel.deiconify()
+
+        # required to make the gui reopen after minimising
+        if self.GET_PLATFORM() == self.MAC:
+            self.topLevel.createcommand('tk::mac::ReopenApplication', self.topLevel.deiconify)
 
         # start the call back & flash loops
         self.__poll()
@@ -3701,8 +3727,8 @@ class gui(object):
             b=b.replace("control", "Control")
             b=b.replace("cmd", "Command")
             b=b.replace("command", "Command")
-            b=b.replace("opt", "Option")
             b=b.replace("option", "Option")
+            b=b.replace("opt", "Option")
             b=b.replace("alt", "Alt")
             b=b.replace("shift", "Shift")
             b=b.replace("meta", "Meta")
@@ -5545,8 +5571,7 @@ class Dialog(Toplevel):
       if not self.initial_focus: self.initial_focus = self
 
       self.protocol("WM_DELETE_WINDOW", self.cancel)
-      self.geometry("+%d+%d" % (parent.winfo_rootx()+50,
-                              parent.winfo_rooty()+50))
+      gui.CENTER(self)
 
       self.initial_focus.focus_set()
       self.wait_window(self)
