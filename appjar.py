@@ -3697,7 +3697,7 @@ class gui(object):
         return men
 
     # add items to the named menu
-    def addMenuItem(self, title, item, func=None, kind=None, shortcut=None, underline=-1, rb_id=None):
+    def addMenuItem(self, title, item, func=None, kind=None, shortcut=None, underline=-1, rb_id=None, createBinding=True):
         # set the initial menubar
         self.__initMenu()
 
@@ -3742,7 +3742,7 @@ class gui(object):
 
             self.__verifyItem(self.n_accelerators, a, True)
             self.n_accelerators.append(a)
-            if u is not None: self.topLevel.bind_all(b, u)
+            if u is not None and createBinding: self.topLevel.bind_all(b, u)
 
         if item == "-" or kind=="separator":
               theMenu.add_separator()
@@ -3982,23 +3982,23 @@ class gui(object):
         if gui.GET_PLATFORM() == gui.MAC: shortcut="Cmd+"
         else: shortcut="Control-"
 
-        eList=[ ('Cut', lambda e: self.__copyAndPasteHelper("Cut"), "X"),
-                ('Copy', lambda e: self.__copyAndPasteHelper("Copy"), "C"),
-                ('Paste', lambda e: self.__copyAndPasteHelper("Paste"), "V"),
-                ('Select All', lambda e: self.__copyAndPasteHelper("Select All"), "A"),
-                ('Clear Clipboard', lambda e: self.__copyAndPasteHelper("Clear Clipboard"), "B") ]
+        eList=[ ('Cut', lambda e: self.__copyAndPasteHelper("Cut"), "X", False),
+                ('Copy', lambda e: self.__copyAndPasteHelper("Copy"), "C", False),
+                ('Paste', lambda e: self.__copyAndPasteHelper("Paste"), "V", False),
+                ('Select All', lambda e: self.__copyAndPasteHelper("Select All"), "A", False),
+                ('Clear Clipboard', lambda e: self.__copyAndPasteHelper("Clear Clipboard"), "B", True) ]
 
-        for (txt, cmd, sc) in eList:
+        for (txt, cmd, sc, bind) in eList:
             acc=shortcut+sc
-            self.addMenuItem("EDIT", txt, cmd, shortcut=acc)
+            self.addMenuItem("EDIT", txt, cmd, shortcut=acc, createBinding=bind)
 
         # add a clear option
         self.addMenuSeparator("EDIT")
         self.addMenuItem("EDIT", "Clear All", lambda e: self.__copyAndPasteHelper("Clear All"))
 
         self.addMenuSeparator("EDIT")
-        self.addMenuItem("EDIT", 'Undo', lambda e: self.__copyAndPasteHelper("Undo"), shortcut=shortcut+"Z")
-        self.addMenuItem("EDIT", 'Redo', lambda e: self.__copyAndPasteHelper("Redo"), shortcut="Shift-"+shortcut+"Z")
+        self.addMenuItem("EDIT", 'Undo', lambda e: self.__copyAndPasteHelper("Undo"), shortcut=shortcut+"Z", createBinding=False)
+        self.addMenuItem("EDIT", 'Redo', lambda e: self.__copyAndPasteHelper("Redo"), shortcut="Shift-"+shortcut+"Z", createBinding=True)
         self.disableMenu("EDIT")
 
     def appJarAbout(self, menu=None):
@@ -5942,7 +5942,7 @@ class CopyAndPaste():
         if self.widgetType == "Entry":
             if widget.selection_present(): self.canCut = self.canCopy = True
             if widget.index(END) > 0: self.canSelect = True
-        elif self.widgetType == "Text":
+        elif self.widgetType in ["ScrolledText", "Text"]:
             if widget.tag_ranges("sel"): self.canCut = self.canCopy = True
             if widget.index("end-1c") != "1.0": self.canSelect = True
             if widget.edit_modified(): self.canUndo = True
