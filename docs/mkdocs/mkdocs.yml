@@ -32,3 +32,6 @@ pages:
     - License: License.md
     - Acknowledgements: Thanks.md
     - Python: pythonBasics.md
+    - Algorithms: algorithms.md
+extra:
+    theme_inverse: false
