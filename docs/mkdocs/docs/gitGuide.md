@@ -1,16 +1,33 @@
-#Git Guide
-----
+# Git Guide
+----  
+Below are some useful commands for uing git & GitHub from the command line.  
 
-* git init - creates a new GIT repository in the current directory
-* git clone [URI] - clone a repo
+## Setting Up  
+* `git init`  
+Creates a new local git repository, in the current directory  
+* `git remote add origin [URI]`  
+This will link your newly created, local repository, with the one specified on GitHub  
+* `git clone [URI]`  
+This will copy a git repository, from GitHub, to the current directory  
 
-* git pull - get the latest version
-* git status - check current changes
+## Updating
+* `git pull`  
+This will get any changes from GitHub, and update your local copy  
 
-* git add [file] - add new files & stage any changes
-* git add . - will do the same as above but for all changes
+## Checking  
+* `git status`  
+This will compare your local copy, with the copy on GitHub, and tell you any differences.  
 
-* git commit -m 'message here' - commit changes to git
-* git commit -a -m "message here" - performs an add and then a commit - kills two birds wit one stone
+## Adding  
+* `git add [file]`  
+Add a new file to your local repository  
+* `git add .`  
+Add any changes youve made to your local repository  
+* `git commit -m "message here"`  
+Commit anything you've added to your local repository  
+* `git commit -a -m "message here"`  
+Combines `add` and `commit` Syncing all changes to your local repository  
 
-* git push -> pushes all cahnges to github
+# Pushing  
+* `git push`  
+Pushes all changes you've added & commited locally, to GitHub  
