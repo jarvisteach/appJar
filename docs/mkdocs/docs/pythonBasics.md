@@ -9,15 +9,16 @@ Help can be found at:
 * * *
 ## Data
 ### Variables
-Variables are the most important thing in programming.  
+Variables are the most important things in programming.  
 They let your program remember information.  
-Variables can store someone's name, their age, or even their favourite food.
+Variables can store someone's name, their age, or even their favourite food.  
+Variables simply point to a space in memory, where the data is stored.  
 
-A variable needs three things:
+A variable always has three things:
 
-* A **name** - the label given to the information
-* A **value** - the information the program needs to remember
-* A **data type** - this tells the program what type of data it is (words, numbers, lists, etc.)
+* An **identifier** - a name to refer to the variable by  
+* A **value** - the information the variable is storing  
+* A **data type** - the type of information being stored (words, numbers, lists, etc.)  
 
 ```python
 # this declares three variables: name, age, male
@@ -29,13 +30,13 @@ male = True
 
 Variables generally go through a three stage process:
 
-- **Create** - The variable name is declared, and the variable is initialised with a starting value
+- **Create** - The variable identifier is declared, and the variable is initialised with a starting value
 - **Change** - The variable's value is modified
 - **Check** - The variable's value is checked, in decisions & loops
 
 At various points along this route, the variable will be **used**.
 ### Constants
-Sometimes, variables don't change - these are known as **constants**.  
+Sometimes, you need to store data that doesn't change - these are known as **constants**.  
 They are *created* in the same way, but can't be *changed*.  
 In Python, it is common to write the name of constants in **all uppercase**.
 ```python
