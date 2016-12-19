@@ -9,3 +9,4 @@
 
 * git add [file] - add new files
 * git commit -m 'message here' - commit changes to github
+* git push
