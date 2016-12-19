@@ -33,5 +33,6 @@ pages:
     - Acknowledgements: Thanks.md
     - Python: pythonBasics.md
     - Algorithms: algorithms.md
+    - Git Guide: gitGuide.md
 extra:
     theme_inverse: false
