@@ -11,7 +11,7 @@ This will link your newly created, local repository, with the one specified on G
 This will copy a git repository, from GitHub, to the current directory  
 
 ## Updating
-# `git remote update`  
+* `git remote update`  
 This will update your log of remote changes  
 * `git pull`  
 This will get any changes from GitHub, and update your local copy  
