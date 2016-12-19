@@ -1,6 +1,6 @@
 site_name: appJar
 site_url: http://appjar.info
-site_favicon: img/favicon.ico
+site_favicon: /img/favicon.ico
 site_dir: ../../../jarvisteach.github.io/
 repo_url: https://github.com/jarvisteach/appJar
 google_analytics: ['UA-79206647-1', 'appjar.info']
@@ -26,6 +26,8 @@ pages:
     - Changing widgets: pythonWidgetOptions.md
     - GUI Options: pythonGuiOptions.md
     - GUI Events: pythonEvents.md
+- Examples:
+    - Simple Layout: examples/simple.md
 - About:
     - Set-up: Install.md
     - Support: Support.md
