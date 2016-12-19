@@ -20,6 +20,8 @@ Iteration:<br>For loop (count-up) | ![Iteration-FOR_UP](img/algorithms/11_for_up
 Iteration:<br>For loop (count-down) | ![Iteration-FOR_DOWN](img/algorithms/12_for_dn.png) | FOR 1 &#8592; 10 TO 1<br>&emsp;OUTPUT i<br>ENDFOR | for i in range(10, 0, -1):<br>&emsp;print(i) | for LDA i<br>&emsp;&emsp;OUT<br>&emsp;&emsp;SUB one<br>&emsp;&emsp;STA i<br>&emsp;&emsp;BRZ endfor<br>&emsp;&emsp;BRA for<br>endfor HLT<br>1 DAT 10<br>one DAT 1 | 5xx<br>902<br>2xx<br>3xx<br>7xx<br>6xx<br>000
 
 ##Links  
+Some useful links for both LMC & Pseudocode.  
+
 1. [Online LMC](http://www.gcsecomputing.org.uk/lmc/index.html)
 2. [LMC Explanation](http://www.yorku.ca/sychen/research/LMC/)
 3. [PseudoCode CheatSheet](/cheatSheets/PseudoCode%20CheatSheet.pdf)
@@ -27,6 +29,8 @@ Iteration:<br>For loop (count-down) | ![Iteration-FOR_DOWN](img/algorithms/12_fo
 5. [AQA PseudoCode Guidelines](http://filestore.aqa.org.uk/subjects/AQA-GCSE-COMPSCI-W-TRB-PSEU.PDF)
 
 ##LMC Instructions  
+Simple explanations for the various LMC commands.  
+
 Instructions | Mneumonic | Machine Code | Explanation
 - | - | - | - 
 Add | **ADD** | 1xx | Adds the contents of memory xx to the **ACCUMULATOR**.
