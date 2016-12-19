@@ -1,6 +1,6 @@
 # Git Guide
 ----  
-Below are some useful commands for uing git & GitHub from the command line.  
+Below are some useful commands for using git & GitHub from the command line.  
 
 ## Setting Up  
 * `git init`  
