@@ -1,5 +1,3 @@
-import sys
-sys.path.append("../../../../..")
 from appJar import gui
 
 # create the GUI & set a title

@@ -1,0 +1,3 @@
+recursive-include appJar/resources/icons *.png *.txt
+recursive-include appJar/lib *.py *.txt
+include showcase.py

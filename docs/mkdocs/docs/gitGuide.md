@@ -33,3 +33,18 @@ Combines `add` and `commit` Syncing all changes to your local repository
 # Pushing  
 * `git push`  
 Pushes all changes you've added & commited locally, to GitHub  
+
+# Tagging
+* `git tag -a vXXX -m "Tag description`  
+* `git push origin vXXX`  
+This tags the current build in Git  
+Then pushes it to GitHub
+
+# PyPI  
+* `pyhton setup.py register -r pypitest`  
+This will register the package with PyPI Test  
+* `python setup.py sdist upload -r pypitest`  
+This will upload the stuff to PyPI Test  
+* `pip install --verbose --index-url https://testpypi.python.org/pypi XXX  
+This will attempt to install from the PyPI test server  
+
