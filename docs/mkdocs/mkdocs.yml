@@ -7,7 +7,7 @@ google_analytics: ['UA-79206647-1', 'appjar.info']
 theme: united
 theme_dir: custom_united
 copyright: <p>Richard Jarvis, 2016</p>
-site_description: Python library for building simple tkinter guis
+site_description: Python library for building simple tkinter GUIs
 site_author: Richard Jarvis
 extra_css: [extra.css]
 strict: true

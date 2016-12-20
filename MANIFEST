@@ -3,7 +3,7 @@ setup.cfg
 setup.py
 appJar/__init__.py
 appJar/appjar.py
-appJar/showcase.py
+appJar/examples/showcase.py
 appJar/lib/README.txt
 appJar/lib/__init__.py
 appJar/lib/__init__.pyc
