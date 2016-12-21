@@ -1516,6 +1516,8 @@ class gui(object):
             container = LabelFrame(self.containerStack[-1]['container'], text=title)
             container.isContainer = True
             container.config(background=self.__getContainerBg(), font=self.labelFrameFont, relief="groove")
+            self.setPadX(5)
+            self.setPadY(5)
             self.__positionWidget(container, row, column, colspan, rowspan, "nsew")
             self.n_labelFrames[title] = container
 
@@ -3580,9 +3582,9 @@ class gui(object):
 #####################################
 ## FUNCTIONS for pie charts
 #####################################
-    def addPieChart(self, name, fracs, size=100, row=None, column=0, colspan=0, rowspan=0):
+    def addPieChart(self, name, fracs, row=None, column=0, colspan=0, rowspan=0):
         self.__verifyItem(self.n_pieCharts, name, True)
-        pie = PieChart(self.__getContainer(), fracs, size, self.__getContainerBg() )
+        pie = PieChart(self.__getContainer(), fracs, self.__getContainerBg() )
         self.n_pieCharts[name] = pie
         self.__positionWidget(pie, row, column, colspan, rowspan, sticky=None)
 
@@ -3626,7 +3628,7 @@ class gui(object):
                 but.image = image
                 but.config(image=image, compound=TOP, text="", justify=LEFT) # works on Mac & Windows :)
             but.pack (side=LEFT, padx=2, pady=2)
-            but.tt_var = self.__addTooltip(but, t, True)
+            but.tt_var = self.__addTooltip(but, t.title(), True)
 
     def setToolbarIcon(self, name, icon):
         if (name not in self.n_tbButts): raise Exception("Unknown toolbar name: " + name)
@@ -4816,27 +4818,56 @@ class PieChart(Canvas):
               "#11c638", "#8dd593", "#c6dec7", "#ead3c6", "#f0b98d", "#ef9708",
               "#0fcfc0", "#9cded6", "#d5eae7", "#f3e1eb", "#f6c4e1", "#f79cd4"]
 
-    def __init__(self, container, fracs, size, bg):
-        Canvas.__init__(self,container, width=size, height=size, bd=0, highlightthickness=0, bg=bg)
+    def __init__(self, container, fracs, bg="green"):
+        Canvas.__init__(self,container, bd=0, highlightthickness=0, bg=bg)
         self.fracs=fracs
-        self.size=size
-        self._drawPie()
+        self.arcs=[]
+        self.__drawPie()
+        self.bind("<Configure>", self.__drawPie)
 
-    def _drawPie(self):
-        pos = 0
-        col = 0
+    def __drawPie(self, event=None):
+        # remove the existing arcs
+        for arc in self.arcs:
+            self.delete(arc)
+        self.arcs=[]
+
+        # get the width * height
+        w = self.winfo_width()
+        h = self.winfo_height()
+
+        # scale h&w - so they don;t hit the edges
+        min_w = w *.05
+        max_w = w *.95
+        min_h = h *.05
+        max_h = h *.95
+
+        # if we're not in a square
+        # adjust them to make sure we get a circle
+        if w > h:
+            extra = (w*.9-h*.9)/2.0
+            min_w += extra
+            max_w -= extra
+        elif h > w:
+            extra = (h*.9-w*.9)/2.0
+            min_h += extra
+            max_h -= extra
+
+        coord=min_w, min_h, max_w, max_h
+
+        pos = col = 0
         for key, val in self.fracs.items():
             sliceId="slice"+str(col)
-            coord=self.size*.05,self.size*.05,self.size*.95,self.size*.95
             arc=self.create_arc(coord,
                               fill=self.COLOURS[col%len(self.COLOURS)],
                               start=self.frac(pos), extent=self.frac(val), activedash=(3,5),
                               activeoutline="grey", activewidth=3, tag=(sliceId,), width=1)
 
+            self.arcs.append(arc)
+
             # generate a tooltip
-            frac = int(val/sum(self.fracs.values())*100)
-            tip = key + ": " + str(val) + " (" + str(frac) + "%)"
             if TOOLTIP_AVAILABLE:
+                frac = int(val/sum(self.fracs.values())*100)
+                tip = key + ": " + str(val) + " (" + str(frac) + "%)"
                 tt=ToolTip(self,tip,delay=500, follow_mouse=1, specId=sliceId) 
 
             pos += val
@@ -4851,7 +4882,7 @@ class PieChart(Canvas):
         else:
             self.fracs[name]=value
 
-        self._drawPie()
+        self.__drawPie()
 
 #####################################
 ## Tree Widget Class
