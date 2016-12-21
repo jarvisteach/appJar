@@ -117,6 +117,12 @@ def add(entry):
     if entry=="animalsEntry": app.addListItem("Animals", app.getEntry("animalsEntry"))
     elif entry=="sportsEntry": app.addListItem("Sports", app.getEntry("sportsEntry"))
 
+# funciton to change the selected tab - called from menu
+def changeTab(tabName):
+    print("Changing to: ", tabName)
+    app.setTabbedFrameSelectedTab("Tabs", tabName)
+    print("done")
+
 ###########################
 ## GUI Code starts here ##
 ###########################
@@ -128,6 +134,7 @@ app.addToolbar(["EXIT", "LOGOUT", "FILL", "PIE-CHART", "CALENDAR", "ADDRESS-BOOK
 #app.createMenu("Test")
 app.addMenuPreferences(toolbar)
 #app.addMenuItem("APPMENU", "About", toolbar)
+app.addMenuList("Tabs", ["Login", "Lists", "Properties", "Meters", "Drag`nDrop", "Calculator", "Panes", "Labels"], changeTab)
 app.addMenuItem("Test", "EXIT", toolbar, shortcut="Option-Control-Shift-Alt-Command-B", underline=2)
 app.addMenuItem("Test", "LOGOUT", toolbar, shortcut="Shift-Command-B", underline=3)
 app.addMenuItem("Test", "FILL", toolbar, shortcut="Control-Shift-C", underline=1)
@@ -168,6 +175,7 @@ app.startTabbedFrame("Tabs")
 
 #### LOGIN TAB
 app.startTab("Login")
+app.setBg("SlateGray")
 app.startLabelFrame("Login Form")
 app.setSticky("ew")
 app.addLabel("username", "Username", 0, 0)
@@ -182,10 +190,10 @@ app.stopTab()
 #### LISTS TAB
 app.startTab("Lists")
 app.setSticky("ew")
-app.setExpand("none")
-app.setBg("Wheat")
+app.setExpand("all")
+app.setBg("OrangeRed")
 
-app.addListBox("Animals", ["Zebra", "Sheep", "Lion", "Guraffe", "Snake", "Fish"], 0, 0, 1, 4)
+app.addListBox("Animals", ["Zebra", "Sheep", "Lion", "Giraffe", "Snake", "Fish"], 0, 0, 1, 4)
 app.addListBox("Sports", ["Football", "Rugby", "Cricket", "Golf", "Cycling", "Netball", "Rounders"], 0, 2, 1, 4)
 
 app.addButton("<", move, 0, 1)
@@ -194,8 +202,13 @@ app.addButton(">>", move, 2, 1)
 app.addButton(">", move, 3, 1)
 
 app.addEntry("animalsEntry", 4, 0)
-app.setEntryFunction("animalsEntry", add)
 app.addEntry("sportsEntry", 4, 2)
+
+app.setListBoxBg("Animals", "Orange")
+app.setListBoxBg("Sports", "Orange")
+app.setEntryBg("animalsEntry", "LightGrey")
+app.setEntryBg("sportsEntry", "LightGrey")
+app.setEntryFunction("animalsEntry", add)
 app.setEntryFunction("sportsEntry", add)
 app.stopTab()
 
@@ -259,8 +272,8 @@ app.stopLabelFrame()
 app.stopTab()
 
 app.startTab("Calculator")
-app.setIPadX(10)
-app.setIPadY(10)
+app.setIPadX(5)
+app.setIPadY(5)
 app.addEmptyLabel("calculator")
 app.setLabelBg("calculator", "grey")
 app.setLabelRelief("calculator", "sunken")
@@ -271,8 +284,8 @@ buttons=[["1", "2", "3", "C"],
                 ["0", "*", "/", "="]]
 
 app.addButtons(buttons, calculator)
-app.setButtonWidths(buttons, 7)
-app.setButtonHeights(buttons, 7)
+app.setButtonWidths(buttons, 3)
+app.setButtonHeights(buttons, 3)
 app.stopTab()
 
 app.startTab("Panes")
@@ -324,11 +337,11 @@ app.stopTabbedFrame()
 
 # set up the sub window - by default it's hidden
 app.startSubWindow("Statistics")
-app.setBg("yellow")
-app.setSticky("ew")
+#app.setBg("yellow")
+app.setSticky("news")
 app.setGeometry("300x330")
 values={"German":20, "French":10, "English":60, "Dutch": 5, "Belgium":3, "Danish":2}
-app.addPieChart("Nationality", values, size=250)
+app.addPieChart("Nationality", values)
 app.addLabelOptionBox("Nationality", values.keys())
 app.addNumericEntry("Percentage")
 def changePie(btn):
