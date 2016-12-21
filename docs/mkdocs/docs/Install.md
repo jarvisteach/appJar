@@ -3,6 +3,14 @@
 This library was designed for use in schools - it therefore doesn't require *installation*.  
 Instead, it just needs to be [DOWNLOADED](https://github.com/RWBA/appJar/blob/appJar/releases/appJar.zip?raw=true) and unzipped somewhere accessible by the relevant users.  
 
+##Pip Installation  
+We are also now available through pip: `sudo pip3 install appjar`  
+This will automatically download appJar, and set it up in the **dist-packages** folder of your python installation.  
+```python
+# then just import the appJar library
+from appJar import gui
+```
+
 ##Single-user Set-up  
 If you're just programming on your own PC, copy the **appJar folder** into your **code folder**, and you're done!  
 (As long as it's in the same folder as your code, it'll work...)  
