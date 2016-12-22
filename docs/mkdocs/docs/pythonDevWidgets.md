@@ -15,15 +15,14 @@ The PieChart is purely for display purposes, and is not interactive.
 
     app=gui()
     app.addPieChart("p1", {"apples":50, "oranges":200, "grapes":75,
-                            "beef":300, "turkey":150}, size=300)
+                            "beef":300, "turkey":150})
     app.go()
 ```
 
 ####Add PieCharts  
-* `.addPieChart(title, values, size=100)`  
+* `.addPieChart(title, values)`  
     Takes a dictionary of names and values, which will be converted to percentages, and plotted on the chart.  
     The names will be used as part of tooltips that appear over each wedge of the PieChart.  
-    An optional size parameter can be passed, to adjust the size of the PieChart.  
 
 ####Set PieCharts  
 * `.setPieChart(title, name, value)`  
