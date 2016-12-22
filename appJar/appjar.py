@@ -1351,7 +1351,7 @@ class gui(object):
 
         if bg is None: return # ignore empty colours
 
-        darwinBorders = ["Text", "ScrolledText", "Entry", "Button"]#, "Scale"]#, "Button", "OptionMenu"]
+        darwinBorders = ["Text", "ScrolledText", "Entry", "AutoCompleteEntry", "Button"]#, "Scale"]#, "Button", "OptionMenu"]
         linuxBorders = darwinBorders + ["Radiobutton", "Checkbutton"]
         noBg = ["Button", "Spinbox", "ListBox", "SplitMeter", "DualMeter", "Meter", "ToggleFrame", "OptionMenu"]#, "Scale"]
 
@@ -6098,7 +6098,7 @@ class CopyAndPaste():
         try: self.canPaste = len(self.topLevel.clipboard_get()) > 0
         except: self.canPaste = False
 
-        if self.widgetType == "Entry":
+        if self.widgetType in ["Entry", "AutoCompleteEntry"]:
             if widget.selection_present(): self.canCut = self.canCopy = True
             if widget.index(END) > 0: self.canSelect = True
         elif self.widgetType in ["ScrolledText", "Text"]:

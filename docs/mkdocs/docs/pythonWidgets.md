@@ -101,7 +101,7 @@ There are three special-case entries:
 
 * NumericEntry - this only allows numbers to be typed in.
 * SecretEntry - this will show stars, instead of the letters typed - useful for capturing passwords.
-* AutoEntry - this takes a list of words to rpovide auto-completion.  
+* AutoEntry - this takes a list of words to provide auto-completion.  
 
 ![Entries](img/1_entries.gif)
 
