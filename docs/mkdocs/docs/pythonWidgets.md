@@ -97,10 +97,11 @@ See the relevant section for a description of what the widget does.
 ____
 Entries are used to capture input from the user. They take a single parameter - a title.
 
-There are two special-case entries:
+There are three special-case entries:
 
 * NumericEntry - this only allows numbers to be typed in.
 * SecretEntry - this will show stars, instead of the letters typed - useful for capturing passwords.
+* AutoEntry - this takes a list of words to rpovide auto-completion.  
 
 ![Entries](img/1_entries.gif)
 
@@ -124,6 +125,7 @@ app.go()
 * `.addEntry(title)`
 * `.addNumericEntry(title)`
 * `.addSecretEntry(title)`
+* `.addAutoEntry(title, words)`  
 
     Each of these will add the specified type of Entry, using the title provided.
 
