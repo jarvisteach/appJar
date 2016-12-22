@@ -1830,7 +1830,7 @@ class gui(object):
 
     ### SUB WINDOWS ###
 
-    def startSubWindow(self, name, title=None, modal=False):
+    def startSubWindow(self, name, title=None, modal=False, grouped=False):
         self.__verifyItem(self.n_subWindows, name, True)
         if title == None: title=name
         top = SubWindow()
@@ -1839,6 +1839,7 @@ class gui(object):
         top.protocol("WM_DELETE_WINDOW", self.MAKE_FUNC(self.hideSubWindow, name))
         top.withdraw()
         top.win = self
+        if not grouped: top.group(self.topLevel.group())
         self.n_subWindows[name] = top
 
         # now, add to top of stack
