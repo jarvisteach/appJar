@@ -877,8 +877,8 @@ class gui(object):
     
     # creates relevant bindings on the widget
     def __addRightClickMenu(self, widget):
-        widget.bind("<FocusIn>", self.__checkCopyAndPaste)
-        widget.bind("<FocusOut>", self.__checkCopyAndPaste)
+        widget.bind("<FocusIn>", self.__checkCopyAndPaste, add="+")
+        widget.bind("<FocusOut>", self.__checkCopyAndPaste, add="+")
 
         if widget.var is None: #TEXT:
             widget.bind('<KeyRelease>', self.__checkCopyAndPaste)
@@ -3347,16 +3347,21 @@ class gui(object):
 #####################################
 ## FUNCTIONS for entry boxes
 #####################################
-    def __buildEntry(self, title, frame, secret=False):
+    def __buildEntry(self, title, frame, secret=False, words=[]):
         self.__verifyItem(self.n_entries, title, True)
-        var=StringVar(self.topLevel)
-        ent = Entry(frame)
-        ent.var = var
+
+        if len(words) > 0:
+            ent = AutoCompleteEntry(words, frame)
+            ent.config(font=self.entryFont)
+        else:
+            ent = Entry(frame)
+            ent.var = StringVar(self.topLevel)
+            ent.config(textvariable=ent.var, font=self.entryFont)
+
         ent.inContainer = False
         ent.hasDefault = False
         ent.myTitle=title
         ent.isNumeric=False
-        ent.config(textvariable=var, font=self.entryFont)
         if secret: ent.config(show="*")
         if self.platform in [self.MAC, self.LINUX]:
             ent.config(highlightbackground=self.__getContainerBg())
@@ -3367,11 +3372,15 @@ class gui(object):
         self.__addRightClickMenu(ent)
 
         self.n_entries[title]=ent
-        self.n_entryVars[title]=var
+        self.n_entryVars[title]=ent.var
         return ent
 
     def addEntry(self, title, row=None, column=0, colspan=0, rowspan=0, secret=False):
         ent = self.__buildEntry(title, self.__getContainer(), secret)
+        self.__positionWidget(ent, row, column, colspan, rowspan)
+
+    def addAutoEntry(self, title, words, row=None, column=0, colspan=0, rowspan=0):
+        ent = self.__buildEntry(title, self.__getContainer(), secret=False, words=words)
         self.__positionWidget(ent, row, column, colspan, rowspan)
 
     def __validateNumericEntry(self, action, index, value_if_allowed, prior_value, text, validation_type, trigger_type, widget_name):
@@ -3471,8 +3480,8 @@ class gui(object):
         entry.oldFg=entry.cget('foreground')
         entry.config(justify='center', foreground='grey')
         command = self.MAKE_FUNC(self.__updateEntryDefault, name, True)
-        entry.bind("<FocusIn>", command)
-        entry.bind("<FocusOut>", command)
+        entry.bind("<FocusIn>", command, add="+")
+        entry.bind("<FocusOut>", command, add="+")
 
     def clearEntry(self, name):
         self.__verifyItem(self.n_entryVars, name)
@@ -5358,6 +5367,124 @@ class Page(Frame):
     def __init__(self, parent, **opts):
         Frame.__init__(self, parent)
         self.config(relief=RIDGE, borderwidth=2)
+
+#########################
+# Class to provide auto-completion on Entry boxes
+# inspired by: https://gist.github.com/uroshekic/11078820
+#########################
+class AutoCompleteEntry(Entry):
+    def __init__(self, words, *args, **kwargs):
+        import re
+        Entry.__init__(self, *args, **kwargs)
+        self.allWords = words
+        self.allWords.sort()
+        
+        # store variable - so we can see when it changes
+        self.var = self["textvariable"] = StringVar()
+        self.var.trace('w', self.textChanged)
+
+        # register events
+        self.bind("<Right>", self.selectWord)
+        self.bind("<Return>", self.selectWord)
+        self.bind("<Up>", self.moveUp)
+        self.bind("<Down>", self.moveDown)
+        self.bind("<FocusOut>", self.closeList, add="+")
+        
+        # no list box - yet
+        self.listBoxShowing = False
+
+    # function to see if words match
+    def checkMatch(self, fieldValue, acListEntry):
+        pattern = re.compile(re.escape(fieldValue) + '.*', re.IGNORECASE)
+        return re.match(pattern, acListEntry)
+
+    # function to get all matches as a list
+    def getMatches(self):
+        return [ w for w in self.allWords if self.checkMatch(self.var.get(), w) ]
+
+    # called when typed in entry
+    def textChanged(self, name, index, mode):
+        # if no text - close list
+        if self.var.get() == '':
+            self.closeList()
+        else:
+            if not self.listBoxShowing:
+                self.makeListBox()
+            self.popListBox()
+
+    # add words to the list
+    def popListBox(self):
+        if self.listBoxShowing:
+            self.listbox.delete(0, END)
+            shownWords = self.getMatches()
+            if shownWords:
+                for w in shownWords:
+                    self.listbox.insert(END,w)
+                self.selectItem(0)
+
+    # funciton to create & show an empty list box
+    def makeListBox(self):
+        self.listbox = Listbox(width=self["width"], height=8)
+        self.listbox.bind("<Button-1>", self.mouseClickBox)
+        self.listbox.bind("<Right>", self.selectWord)
+        self.listbox.bind("<Return>", self.selectWord)
+        self.listbox.place(x=self.winfo_x(), y=self.winfo_y() + self.winfo_height())
+        self.listBoxShowing = True
+
+    # funciton to handle a mouse click in the list box
+    def mouseClickBox(self, e=None):
+        self.selectItem(self.listbox.nearest(e.y))
+        self.selectWord(e)
+
+    #function to close/delete list box
+    def closeList(self, event=None):
+        if self.listBoxShowing:
+            self.listbox.destroy()
+            self.listBoxShowing = False
+        
+    #copy word from list to entry, close list
+    def selectWord(self, event):
+        if self.listBoxShowing:
+            self.var.set(self.listbox.get(ACTIVE))
+            self.icursor(END)
+            self.closeList()
+        return "break"
+
+    # wrappers for up/down arrows
+    def moveUp(self, event): return self.arrow("UP")
+    def moveDown(self, event): return self.arrow("DOWN")
+
+    # funciton for handling up/down keys
+    def arrow(self, direction):
+        if not self.listBoxShowing:
+            self.makeListBox()
+            self.popListBox()
+            curItem=0
+            numItems = self.listbox.size()
+        else:
+            numItems = self.listbox.size()
+            curItem = self.listbox.curselection()
+
+            if curItem == (): curItem = -1
+            else: curItem = int(curItem[0])
+
+            if direction == "UP" and curItem>0: curItem -= 1
+            elif direction == "UP" and curItem<=0: curItem = numItems-1
+            elif direction == "DOWN" and curItem < numItems - 1: curItem += 1
+            elif direction == "DOWN" and curItem == numItems - 1: curItem = 0
+
+        self.selectItem(curItem)
+
+        # stop the event propgating
+        return "break"
+
+    # funciton to select the specified item
+    def selectItem(self, position):
+        numItems = self.listbox.size()
+        self.listbox.selection_clear(0, numItems-1)
+        self.listbox.see(position) # Scroll!
+        self.listbox.selection_set(first=position)
+        self.listbox.activate(position)
 
 #####################################
 ## Named classes for containing groups
