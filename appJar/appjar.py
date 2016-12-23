@@ -28,7 +28,14 @@ except ImportError:
     PYTHON2 = False
     PY_NAME = "python3"
 
-import os, sys, re, socket, hashlib, imghdr, time
+import os
+import sys
+import re
+import socket
+import hashlib
+import imghdr
+import time
+
 import __main__ as theMain
 from platform import system as platform
 
@@ -47,9 +54,9 @@ import datetime
 #######################
 try:
     from appJar.lib.tooltip import ToolTip
-    TOOLTIP_AVAILABLE=True
+    TOOLTIP_AVAILABLE = True
 except:
-    TOOLTIP_AVAILABLE=False
+    TOOLTIP_AVAILABLE = False
 
 try:
     from appJar.lib.tkinter_png import *
@@ -99,9 +106,9 @@ class gui(object):
         return kw
 
     # globals for supported platforms
-    WINDOWS=1
-    MAC=2
-    LINUX=3
+    WINDOWS = 1
+    MAC = 2
+    LINUX = 3
     @staticmethod
     def GET_PLATFORM():
         # get the platform
@@ -127,7 +134,7 @@ class gui(object):
         win_height = height + titlebar_height + frm_width
         x = win.winfo_screenwidth() // 2 - win_width // 2
         y = win.winfo_screenheight() // 2 - win_height // 2
-        y=y-150
+        y = y-150
         win.geometry('{}x{}+{}+{}'.format(width, height, x, y))
         win.deiconify()
         win.attributes('-alpha', 1.0)
@@ -135,36 +142,36 @@ class gui(object):
     built = False
 
     # used to identify widgets in component configurations
-    WINDOW=0
-    LABEL=1
-    ENTRY=2
-    BUTTON=3
-    CHECKBOX=4
-    SCALE=5
-    RADIOBUTTON=6
-    LISTBOX=7
-    MESSAGE=8
-    SPIN=9
-    OPTION=10
-    TEXTAREA=11
-    LINK=12
-    METER=13
-    IMAGE=14
-    PIECHART=15
-    PROPERTIES=16
-    GRID=17
+    WINDOW = 0
+    LABEL = 1
+    ENTRY = 2
+    BUTTON = 3
+    CHECKBOX = 4
+    SCALE = 5
+    RADIOBUTTON = 6
+    LISTBOX = 7
+    MESSAGE = 8
+    SPIN = 9
+    OPTION = 10
+    TEXTAREA = 11
+    LINK = 12
+    METER = 13
+    IMAGE = 14
+    PIECHART = 15
+    PROPERTIES = 16
+    GRID = 17
 
-    RB=60
-    CB=40
-    LB=70
+    RB = 60
+    CB = 40
+    LB = 70
 
-    LABELFRAME=30
-    FRAME=36
-    TABBEDFRAME=31
-    PANEDFRAME=32
-    SCROLLPANE=33
-    PAGEDWINDOW=34
-    TOGGLEFRAME=35
+    LABELFRAME = 30
+    FRAME = 36
+    TABBEDFRAME = 31
+    PANEDFRAME = 32
+    SCROLLPANE = 33
+    PAGEDWINDOW = 34
+    TOGGLEFRAME = 35
 
     # positioning
     N = N
@@ -180,30 +187,30 @@ class gui(object):
     RIGHT = RIGHT
 
     # reliefs
-    SUNKEN=SUNKEN
-    RAISED=RAISED
-    GROOVE=GROOVE
-    RIDGE=RIDGE
-    FLAT=FLAT
+    SUNKEN = SUNKEN
+    RAISED = RAISED
+    GROOVE = GROOVE
+    RIDGE = RIDGE
+    FLAT = FLAT
 
     # containers
-    C_ROOT='rootPage'
-    C_LABELFRAME='labelFrame'
-    C_FRAME='frame'
-    C_TOGGLEFRAME="toggleFrame"
+    C_ROOT = rootPage'
+    C_LABELFRAME = labelFrame'
+    C_FRAME = frame'
+    C_TOGGLEFRAME = toggleFrame"
 
     # 2 containers for pagedWindow
-    C_PAGEDWINDOW="pagedWindow"
-    C_PAGE="page"
+    C_PAGEDWINDOW = pagedWindow"
+    C_PAGE = page"
     # 2 containers for tabbedFrame
-    C_TABBEDFRAME='tabbedFrame'
-    C_TAB='tab'
+    C_TABBEDFRAME = tabbedFrame'
+    C_TAB = tab'
     # 2 containers for panedFrame
-    C_PANEDFRAME="panedFrame"
-    C_PANE="pane"
+    C_PANEDFRAME = panedFrame"
+    C_PANE = pane"
 
-    C_SUBWINDOW="subWindow"
-    C_SCROLLPANE="scrollPane"
+    C_SUBWINDOW = subWindow"
+    C_SCROLLPANE = scrollPane"
 
     # names for each of the widgets defined above
     # used for defining functions
@@ -214,7 +221,7 @@ class gui(object):
 
     # music stuff
     BASIC_NOTES = {"A":440, "B":493, "C":261, "D":293, "E":329, "F":349, "G":392 }
-    NOTES={'f8': 5587, 'c#6': 1108, 'f4': 349, 'c7': 2093, 'd#2': 77, 'g8': 6271,
+    NOTES = {'f8': 5587, 'c#6': 1108, 'f4': 349, 'c7': 2093, 'd#2': 77, 'g8': 6271,
          'd4': 293, 'd7': 2349, 'd#7': 2489, 'g#4': 415, 'e7': 2637, 'd9': 9397,
          'b8': 7902, 'a#4': 466, 'b5': 987, 'b2': 123, 'g#9': 13289, 'g9': 12543,
          'f#2': 92, 'c4': 261, 'e1': 41, 'e6': 1318, 'a#8': 7458, 'c5': 523, 'd6': 1174,
@@ -230,12 +237,12 @@ class gui(object):
          'g3': 195, 'a4': 440, 'a#3': 233, 'd#1': 38, 'e2': 82, 'e4': 329, 'a5': 880, 'a#2': 116,
          'g5': 783, 'g#7': 3322, 'b6': 1975, 'c2': 65, 'f#1': 46}
 
-    DURATIONS={"BREVE":2000, "SEMIBREVE":1000, "MINIM":500, "CROTCHET":250, "QUAVER":125,"SEMIQUAVER":63, "DEMISEMIQUAVER":32, "HEMIDEMISEMIQUAVER":16}
+    DURATIONS = {"BREVE":2000, "SEMIBREVE":1000, "MINIM":500, "CROTCHET":250, "QUAVER":125,"SEMIQUAVER":63, "DEMISEMIQUAVER":32, "HEMIDEMISEMIQUAVER":16}
 
 #####################################
 ## CONSTRUCTOR - creates the GUI
 #####################################
-    def __init__(self, title=None, geom=None, warn=True, debug=False):
+    def __init__(self, title = None, geom = None, warn = True, debug = False):
         # first out, verify the platform
         self.platform = gui.GET_PLATFORM()
 
@@ -278,7 +285,7 @@ class gui(object):
 
         # create a frame to store all the widgets
         self.appWindow = Frame(self.topLevel)
-        self.appWindow.pack(fill=BOTH, expand=True)
+        self.appWindow.pack(fill = BOTH, expand = True)
 
         # set the windows title
         if title is None: title = self.exe_file
@@ -293,29 +300,29 @@ class gui(object):
         self.setResizable(True)
 
         # set up fonts
-        self.buttonFont = font.Font(family="Helvetica", size=12,)
-        self.labelFont = font.Font(family="Helvetica", size=12)
-        self.entryFont = font.Font(family="Helvetica", size=12)
-        self.messageFont = font.Font(family="Helvetica", size=12)
-        self.rbFont = font.Font(family="Helvetica", size=12)
-        self.cbFont = font.Font(family="Helvetica", size=12)
-        self.tbFont = font.Font(family="Helvetica", size=12)
-        self.scaleFont = font.Font(family="Helvetica", size=12)
-        self.statusFont = font.Font(family="Helvetica", size=12)
-        self.spinFont = font.Font(family="Helvetica", size=12)
-        self.optionFont = font.Font(family="Helvetica", size=12)
-        self.lbFont = font.Font(family="Helvetica", size=12)
-        self.taFont = font.Font(family="Helvetica", size=12)
-        self.meterFont = font.Font(family="Helvetica", size=12, weight='bold')
-        self.linkFont = font.Font(family="Helvetica", size=12, weight='bold', underline=1)
-        self.labelFrameFont = font.Font(family="Helvetica", size=12)
-        self.frameFont = font.Font(family="Helvetica", size=12)
-        self.toggleFrameFont = font.Font(family="Helvetica", size=12)
-        self.tabbedFrameFont = font.Font(family="Helvetica", size=12)
-        self.panedFrameFont = font.Font(family="Helvetica", size=12)
-        self.scrollPaneFont = font.Font(family="Helvetica", size=12)
-        self.propertiesFont = font.Font(family="Helvetica", size=12)
-        self.gridFont = font.Font(family="Helvetica", size=12)
+        self.buttonFont = font.Font(family = "Helvetica", size = 12,)
+        self.labelFont = font.Font(family = "Helvetica", size = 12)
+        self.entryFont = font.Font(family = "Helvetica", size = 12)
+        self.messageFont = font.Font(family = "Helvetica", size = 12)
+        self.rbFont = font.Font(family = "Helvetica", size = 12)
+        self.cbFont = font.Font(family = "Helvetica", size = 12)
+        self.tbFont = font.Font(family = "Helvetica", size = 12)
+        self.scaleFont = font.Font(family = "Helvetica", size = 12)
+        self.statusFont = font.Font(family = "Helvetica", size = 12)
+        self.spinFont = font.Font(family = "Helvetica", size = 12)
+        self.optionFont = font.Font(family = "Helvetica", size = 12)
+        self.lbFont = font.Font(family = "Helvetica", size = 12)
+        self.taFont = font.Font(family = "Helvetica", size = 12)
+        self.meterFont = font.Font(family = "Helvetica", size = 12, weight = 'bold')
+        self.linkFont = font.Font(family = "Helvetica", size = 12, weight = 'bold', underline = 1)
+        self.labelFrameFont = font.Font(family = "Helvetica", size = 12)
+        self.frameFont = font.Font(family = "Helvetica", size = 12)
+        self.toggleFrameFont = font.Font(family = "Helvetica", size = 12)
+        self.tabbedFrameFont = font.Font(family = "Helvetica", size = 12)
+        self.panedFrameFont = font.Font(family = "Helvetica", size = 12)
+        self.scrollPaneFont = font.Font(family = "Helvetica", size = 12)
+        self.propertiesFont = font.Font(family = "Helvetica", size = 12)
+        self.gridFont = font.Font(family = "Helvetica", size = 12)
 
 #        self.fgColour = self.topLevel.cget("foreground")
 #        self.buttonFgColour = self.topLevel.cget("foreground")
@@ -329,14 +336,14 @@ class gui(object):
         self.copyAndPaste = CopyAndPaste(self.topLevel)
 
         # won't pack, if don't pack it here
-        self.tb = Frame(self.appWindow, bd=1, relief=RAISED)
-        self.tb.pack(side=TOP, fill=X)
+        self.tb = Frame(self.appWindow, bd = 1, relief = RAISED)
+        self.tb.pack(side = TOP, fill = X)
 
         # create the main container for this GUI
         container = Frame(self.appWindow)
         #container = Label(self.appWindow) # made as a label, so we can set an image
-        container.config(padx=2, pady=2, background=self.topLevel.cget("bg"))
-        container.pack(fill=BOTH, expand=True)
+        container.config(padx = 2, pady = 2, background = self.topLevel.cget("bg"))
+        container.pack(fill = BOTH, expand = True)
         self.__addContainer(self.C_ROOT, container, 0, 1)
 
         # set up the main container to be able to host an image
@@ -488,7 +495,7 @@ class gui(object):
 
         # start the main loop
         try: self.topLevel.mainloop()
-        except (KeyboardInterrupt, SystemExit): self.stop()
+        except(KeyboardInterrupt, SystemExit): self.stop()
 
     def setStopFunction(self, function):
         """ set a funciton to call when the GUI is quit. Must return True or False """
@@ -740,7 +747,7 @@ class gui(object):
         elif exp.lower() == "column": self.containerStack[-1]['expand'] = "COLUMN"
         else: self.containerStack[-1]['expand'] = "ALL"
 
-    def getFonts(self): return list ( font.families() ). sort()
+    def getFonts(self): return list(font.families()).sort()
 
     def increaseButtonFont(self): self.setButtonFont(self.buttonFont['size'] + 1 )
     def decreaseButtonFont(self): self.setButtonFont(self.buttonFont['size'] - 1 )
@@ -939,7 +946,7 @@ class gui(object):
         elif kind == self.PAGEDWINDOW: return self.n_pagedWindows
         elif kind == self.TOGGLEFRAME: return self.n_toggleFrames
 
-        else: raise Exception ("Unknown widget type: " + str(kind))
+        else: raise Exception("Unknown widget type: " + str(kind))
 
     def configureAllWidgets(self, kind, option, value):
         items = list(self.__getItems(kind))
@@ -1474,7 +1481,7 @@ class gui(object):
             else: params["sticky"] = "ns"
 
         # expand that dictionary out as we pass it as a value
-        widget.grid (**params)
+        widget.grid(**params)
         self.containerStack[-1]['widgets']=True
         # if we're in a PANEDFRAME - we need to set parent...
         if self.containerStack[-1]['type'] ==self.C_PANE:
@@ -1494,7 +1501,7 @@ class gui(object):
 #####################################
     # adds the container to the container stack - makes this the current working container
     def __addContainer(self, cType, container, row, col, sticky=None):
-        self.containerStack.append (
+        self.containerStack.append(
             {'type':cType, 'container':container,'emptyRow':row, 'colCount':col, 'sticky':sticky,
             'padx':0, 'pady':0, 'ipadx':0, 'ipady':0, 'expand':"ALL", 'widgets':False, "fg": "black"}
         )
@@ -1959,7 +1966,7 @@ class gui(object):
 
         # now put the label in the frame
         lab.pack(side=LEFT, fill=Y)
-        #lab.grid ( row=0, column=0, sticky=W )
+        #lab.grid( row=0, column=0, sticky=W )
         #Grid.columnconfigure(frame, 0, weight=1)
         #Grid.rowconfigure(frame, 0, weight=1)
 
@@ -1970,7 +1977,7 @@ class gui(object):
         widget.pack(side=LEFT, fill=BOTH, expand=True)
         widget.inContainer = True
         frame.theWidget=widget
-        #widget.grid ( row=0, column=1, sticky=W+E )
+        #widget.grid( row=0, column=1, sticky=W+E )
         #Grid.columnconfigure(frame, 1, weight=1)
         #Grid.rowconfigure(frame, 0, weight=1)
 
@@ -1980,7 +1987,7 @@ class gui(object):
               self.labWidth = 0
               #loop through other labels and resize
               for na in self.n_frameLabs:
-                    size = len ( self.n_frameLabs[na].cget("text") )
+                    size = len(self.n_frameLabs[na].cget("text"))
                     if not self.n_frameLabs[na].hidden and size > self.labWidth: self.labWidth = size
               for na in self.n_frameLabs:
                     self.n_frameLabs[na].config(width=self.labWidth)
