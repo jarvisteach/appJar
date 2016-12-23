@@ -1,3 +1,6 @@
+import sys
+sys.path.append("../")
+
 EMPTY=""
 
 TEXT_ONE = "l_one_x"
