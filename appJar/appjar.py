@@ -194,23 +194,23 @@ class gui(object):
     FLAT = FLAT
 
     # containers
-    C_ROOT = rootPage'
-    C_LABELFRAME = labelFrame'
-    C_FRAME = frame'
-    C_TOGGLEFRAME = toggleFrame"
+    C_ROOT = 'rootPage'
+    C_LABELFRAME = 'labelFrame'
+    C_FRAME = 'frame'
+    C_TOGGLEFRAME = 'toggleFrame'
 
     # 2 containers for pagedWindow
-    C_PAGEDWINDOW = pagedWindow"
-    C_PAGE = page"
+    C_PAGEDWINDOW = 'pagedWindow'
+    C_PAGE = 'page'
     # 2 containers for tabbedFrame
-    C_TABBEDFRAME = tabbedFrame'
-    C_TAB = tab'
+    C_TABBEDFRAME = 'tabbedFrame'
+    C_TAB = 'tab'
     # 2 containers for panedFrame
-    C_PANEDFRAME = panedFrame"
-    C_PANE = pane"
+    C_PANEDFRAME = 'panedFrame'
+    C_PANE = 'pane'
 
-    C_SUBWINDOW = subWindow"
-    C_SCROLLPANE = scrollPane"
+    C_SUBWINDOW = 'subWindow'
+    C_SCROLLPANE = 'scrollPane'
 
     # names for each of the widgets defined above
     # used for defining functions
