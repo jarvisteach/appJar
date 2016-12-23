@@ -16,6 +16,9 @@ COL_ONE = "red"
 COL_TWO = "yellow"
 COL_THREE = "green"
 
+LIST_ONE = ["a", "b", "c", "d", "e"]
+LIST_TWO = ["v", "d", "s", "t", "z"]
+
 from appJar import gui 
 app=gui()
 
@@ -178,10 +181,82 @@ def test_options():
 
 def test_spins():
     print("\tTesting spins")
-    print(" >> not implemented...")
+
+    app.addSpinBox("s1", ["a", "b", "c", "d", "e"])
+    app.addSpinBox("s2", ["a", "b", "c", "d", "e"])
+    app.addSpinBoxRange("s3", 5, 200)
+    app.addSpinBoxRange("s4", 25, 200)
+
+    assert app.getSpinBox("s1") == "a"
+    assert app.getSpinBox("s2") == "a"
+    assert app.getSpinBox("s3") == "5"
+    assert app.getSpinBox("s4") == "25"
+
+    app.setSpinBox("s1", "b")
+    app.setSpinBox("s2", "d")
+    app.setSpinBox("s3", "200")
+    app.setSpinBox("s4", "150")
+
+    assert app.getSpinBox("s1") == "b"
+    assert app.getSpinBox("s2") == "d"
+    assert app.getSpinBox("s3") == "200"
+    assert app.getSpinBox("s4") == "150"
+
+    print("\t>> all tests complete")
 
 def test_lists():
     print("\tTesting lists")
+
+    app.addListBox("l1", LIST_ONE)
+    app.addListBox("l2", LIST_TWO)
+
+    assert app.getListItems("l1") == []
+    assert app.getListItems("l2") == []
+
+    assert app.getAllListItems("l1") == LIST_ONE
+    assert app.getAllListItems("l2") == LIST_TWO
+
+    app.addListItem("l1", "f")
+    assert app.getListItems("l1") == ["f"]
+    assert app.getAllListItems("l1") == LIST_ONE+["f"]
+
+    app.addListItems("l2", LIST_ONE)
+    assert app.getAllListItems("l2") == LIST_TWO+LIST_ONE
+    assert app.getListItems("l2") == [LIST_ONE[len(LIST_ONE)-1]]
+
+    app.setListBoxRows("l1", 2)
+    app.setListBoxRows("l2", 10)
+
+    assert app.getListItems("l2") == [LIST_ONE[len(LIST_ONE)-1]]
+#    print(app.getListItems("l1"))
+#    assert app.getListItems("l1") == ["f"]
+
+    app.clearListBox("l1")
+    assert app.getListItems("l1") == []
+    assert app.getListItems("l2") == [LIST_ONE[len(LIST_ONE)-1]]
+
+    app.updateListItems("l1", LIST_ONE)
+    app.selectListItem("l1", LIST_ONE[0])
+    app.selectListItem("l1", LIST_ONE[3])
+    assert app.getListItems("l1") == [LIST_ONE[3]]
+
+    app.setListBoxMulti("l1")
+    app.selectListItem("l1", LIST_ONE[0])
+    app.selectListItem("l1", LIST_ONE[3])
+#    print(app.getListItems("l1"))
+#    assert app.getListItems("l1") == [LIST_ONE[0], LIST_ONE[3]]
+
+    app.updateListItems("l2", LIST_TWO)
+    assert app.getAllListItems("l2") == LIST_TWO
+#    print(app.getListItems("l2"))
+#    assert app.getListItems("l2") == []
+# SELECTING THE LAST ONE...
+
+    app.removeListItem("l2", LIST_TWO[1])
+    TMP_LIST = LIST_TWO
+    LIST_TWO.remove(LIST_TWO[1])
+    assert app.getAllListItems("l2") == TMP_LIST
+
     print(" >> not implemented...")
 
 def test_scales():

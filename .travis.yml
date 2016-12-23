@@ -8,9 +8,18 @@ python:
 env:
     - PYTHONPATH=.
 
+before_install:
+    - pip install pytest pytest-cov
+    - pip install coveralls
+
 before_script:
     - "export DISPLAY=:99.0"
     - "sh -e /etc/init.d/xvfb start"
     - sleep 3 # give xvfb some time to start
 
 script: python3 tests/test1.py
+
+after_success:
+    -   if [[ $ENV == python=3.5* ]]; then
+            coveralls;
+        fi
