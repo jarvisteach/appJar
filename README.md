@@ -1,3 +1,9 @@
+# appJar  
+
+Simple tTkinter GUIs in Python  
+
+---
+
 [![PyPI Downloads][pypi-dl-image]][pypi-dl-link]
 [![PyPI Version][pypi-v-image]][pypi-v-link]
 
@@ -6,14 +12,12 @@
 [pypi-v-image]: https://img.shields.io/pypi/v/appJar.png
 [pypi-v-link]: https://pypi.python.org/pypi/appJar
 
-# appJar
-Tools for teaching Python
+
 
 Download Here: https://github.com/jarvisteach/appJar/raw/appJar/releases/appJar.zip
 
 Docs here: http://appJar.info
 
-Key tool right now is gui
 
 This provides a library for implementing easy GUIs...
 
