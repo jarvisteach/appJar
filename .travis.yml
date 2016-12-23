@@ -1,9 +1,6 @@
 language: python
 python:
     - "2.7"
-    - "3.2"
-    - "3.3"
-    - "3.4"
     - "3.5"
 env:
     - PYTHONPATH=.
@@ -20,6 +17,4 @@ before_script:
 script: python3 tests/test1.py
 
 after_success:
-    -   if [[ $ENV == python=3.5* ]]; then
-            coveralls;
-        fi
+    - coveralls
