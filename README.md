@@ -4,13 +4,16 @@ Simple tTkinter GUIs in Python
 
 ---
 
-[![PyPI Downloads][pypi-dl-image]][pypi-dl-link]
 [![PyPI Version][pypi-v-image]][pypi-v-link]
+[![Build Status][travis-image]][travis-link]
+[![PyPI Downloads][pypi-dl-image]][pypi-dl-link]
 
-[pypi-dl-image]: https://img.shields.io/pypi/dm/appJar.png
-[pypi-dl-link]: https://pypi.python.org/pypi/appJar
 [pypi-v-image]: https://img.shields.io/pypi/v/appJar.png
 [pypi-v-link]: https://pypi.python.org/pypi/appJar
+[travis-image]: https://travis-ci.org/jarvisteach/appJar.svg?branch=appJar
+[travis-link]: https://travis-ci.org/jarvisteach/appJar
+[pypi-dl-image]: https://img.shields.io/pypi/dm/appJar.png
+[pypi-dl-link]: https://pypi.python.org/pypi/appJar
 
 
 
