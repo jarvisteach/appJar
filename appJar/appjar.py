@@ -1132,8 +1132,10 @@ class gui(object):
               exec("gui.set"+v+"State=set" +v+ "State")
               exec("def set"+v+"Padding(self, name, x, y): self.configureWidgets("+str(k)+", name, 'padding', [x, y])")
               exec("gui.set"+v+"Padding=set" +v+ "Padding")
+
               exec("def set"+v+"IPadding(self, name, x, y): self.configureWidgets("+str(k)+", name, 'ipadding', [x, y])")
-              exec("gui.set"+v+"IPadding=set" +v+ "InPadding")
+              exec("gui.set"+v+"IPadding=set" +v+ "IPadding")
+
               exec("def set"+v+"InPadding(self, name, x, y): self.configureWidgets("+str(k)+", name, 'ipadding', [x, y])")
               exec("gui.set"+v+"InPadding=set" +v+ "InPadding")
 
