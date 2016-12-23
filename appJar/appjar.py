@@ -53,17 +53,17 @@ except:
 
 try:
     from appJar.lib.tkinter_png import *
-    TKINTERPNG_AVAILABLE=True
+    TKINTERPNG_AVAILABLE = True
 except:
-    TKINTERPNG_AVAILABLE=False
+    TKINTERPNG_AVAILABLE = False
 try:
     from appJar.lib import nanojpeg
-    NANOJPEG_AVAILABLE=True
+    NANOJPEG_AVAILABLE = True
 except:
-    NANOJPEG_AVAILABLE=False
+    NANOJPEG_AVAILABLE = False
 
 # only try to import winsound if we're on windows
-if platform() in [ "win32", "Windows"]:
+if platform() in ["win32", "Windows"]:
     import winsound
 
 # details
@@ -105,10 +105,10 @@ class gui(object):
     @staticmethod
     def GET_PLATFORM():
         # get the platform
-        if platform() in [ "win32", "Windows"]: return gui.WINDOWS
+        if platform() in ["win32", "Windows"]: return gui.WINDOWS
         elif platform() == "Darwin": return gui.MAC
         elif platform() == "Linux": return gui.LINUX
-        else: raise Exception ("Unsupported platform: " + platform())
+        else: raise Exception("Unsupported platform: " + platform())
 
     @staticmethod
     def CENTER(win):
@@ -230,7 +230,7 @@ class gui(object):
          'g3': 195, 'a4': 440, 'a#3': 233, 'd#1': 38, 'e2': 82, 'e4': 329, 'a5': 880, 'a#2': 116,
          'g5': 783, 'g#7': 3322, 'b6': 1975, 'c2': 65, 'f#1': 46}
 
-    DURATIONS={"BREVE":2000, "SEMIBREVE":1000, "MINIM":500, "CROTCHET":250,  "QUAVER":125,"SEMIQUAVER":63, "DEMISEMIQUAVER":32, "HEMIDEMISEMIQUAVER":16}
+    DURATIONS={"BREVE":2000, "SEMIBREVE":1000, "MINIM":500, "CROTCHET":250, "QUAVER":125,"SEMIQUAVER":63, "DEMISEMIQUAVER":32, "HEMIDEMISEMIQUAVER":16}
 
 #####################################
 ## CONSTRUCTOR - creates the GUI
@@ -714,16 +714,26 @@ class gui(object):
     # set the current container's external grid padding
     def setPadX(self, x=0): self.containerStack[-1]['padx'] = x
     def setPadY(self, y=0): self.containerStack[-1]['pady'] = y
+    def setPadding(self, padding):
+        self.containerStack[-1]['padx'] = padding[0]
+        self.containerStack[-1]['pady'] = padding[1]
 
     # sets the current containers internal padding
-    def setIPadX(self, x=0): self.containerStack[-1]['ipadx'] = x
-    def setIPadY(self, y=0): self.containerStack[-1]['ipady'] = y
+    def setIPadX(self, x=0): self.setInPadX(x)
+    def setIPadY(self, y=0): self.setInPadY(x)
+    def setIPadding(self, padding): self.setInPadding(padding)
+    def setInPadX(self, x=0): self.containerStack[-1]['ipadx'] = x
+    def setInPadY(self, y=0): self.containerStack[-1]['ipady'] = y
+    def setInPadding(self, padding):
+        self.containerStack[-1]['ipadx'] = padding[0]
+        self.containerStack[-1]['ipady'] = padding[1]
 
     # set an override sticky for this container
     def setSticky(self, sticky):
         self.containerStack[-1]['sticky'] = sticky
 
     # this tells widgets what to do when GUI is resized
+    def setStretch(self, exp): self.setExpand(exp)
     def setExpand(self, exp):
         if exp.lower() == "none": self.containerStack[-1]['expand'] = "NONE"
         elif exp.lower() == "row": self.containerStack[-1]['expand'] = "ROW"
@@ -736,14 +746,14 @@ class gui(object):
     def decreaseButtonFont(self): self.setButtonFont(self.buttonFont['size'] - 1 )
 
     def setButtonFont(self, size, font=None):
-        if font == None: font = self.buttonFont['family']
+        if font is None: font = self.buttonFont['family']
         self.buttonFont.config(family=font, size=size)
 
     def increaseLabelFont(self): self.setLabelFont(self.labelFont['size'] + 1 )
     def decreaseLabelFont(self): self.setLabelFont(self.labelFont['size'] -1 )
 
     def setLabelFont(self, size, font=None):
-        if font == None: font = self.labelFont['family']
+        if font is None: font = self.labelFont['family']
         self.labelFont.config(family=font, size=size)
         self.entryFont.config(family=font, size=size)
         self.rbFont.config(family=font, size=size)
@@ -767,7 +777,7 @@ class gui(object):
 
         # need tbetter way to register font change events on grids
         for grid in self.n_grids:
-            self.n_grids[grid].config(font=self.gridFont) 
+            self.n_grids[grid].config(font=self.gridFont)
 
     def increaseFont(self):
          self.increaseLabelFont()
@@ -841,10 +851,10 @@ class gui(object):
     def setIcon(self, image):
         container = self.__getTopLevel()
         if image.endswith('.ico'):
-              container.wm_iconbitmap(image)
+            container.wm_iconbitmap(image)
         else:
-              icon = self.__getImage(image)
-              container.iconphoto(True, icon)
+            icon = self.__getImage(image)
+            container.iconphoto(True, icon)
 
     def __getTopLevel(self):
         if len(self.containerStack) > 1 and self.containerStack[-1]['type'] == self.C_SUBWINDOW:
@@ -1038,7 +1048,7 @@ class gui(object):
                         item.config( command=self.MAKE_FUNC(value,name, True) )
                     elif kind==self.OPTION:
                         # need to trace the variable??
-                        item.var.trace('w',  self.MAKE_FUNC(value,name, True))
+                        item.var.trace('w', self.MAKE_FUNC(value,name, True))
                     elif kind==self.ENTRY:
                         if key is None: key =name
                         item.bind('<Return>', self.MAKE_FUNC(value, key, True))
@@ -1123,7 +1133,9 @@ class gui(object):
               exec("def set"+v+"Padding(self, name, x, y): self.configureWidgets("+str(k)+", name, 'padding', [x, y])")
               exec("gui.set"+v+"Padding=set" +v+ "Padding")
               exec("def set"+v+"IPadding(self, name, x, y): self.configureWidgets("+str(k)+", name, 'ipadding', [x, y])")
-              exec("gui.set"+v+"IPadding=set" +v+ "IPadding")
+              exec("gui.set"+v+"IPadding=set" +v+ "InPadding")
+              exec("def set"+v+"InPadding(self, name, x, y): self.configureWidgets("+str(k)+", name, 'ipadding', [x, y])")
+              exec("gui.set"+v+"InPadding=set" +v+ "InPadding")
 
               # might not all be necessary, could make exclusion list
               exec("def set"+v+"Relief(self, name, val): self.configureWidget("+str(k)+", name, 'relief', val)")
@@ -3670,7 +3682,7 @@ class gui(object):
     def hideToolbar(self):
         if self.hasTb: self.tb.pack_forget()
     def showToolbar(self):
-        if self.hasTb: self.tb.pack(before=self.containerStack[0]['container'], side=TOP, fill=X) 
+        if self.hasTb: self.tb.pack(before=self.containerStack[0]['container'], side=TOP, fill=X)
 
 #####################################
 ## FUNCTIONS for menu bar
@@ -4460,7 +4472,7 @@ class TabbedFrame(Frame):
             self.tabContainer.grid(row=0, sticky=W)
         self.paneContainer.grid(row=1,sticky="NESW")
 
-        # nain store dictionary: name = [tab, pane] 
+        # nain store dictionary: name = [tab, pane]
         from collections import OrderedDict
         self.widgetStore=OrderedDict()
 
@@ -4485,7 +4497,7 @@ class TabbedFrame(Frame):
 
     def configure(self, cnf=None, **kw):
         kw=gui.CLEAN_CONFIG_DICTIONARY(**kw)
-        # configure fgs 
+        # configure fgs
         if "activeforeground" in kw:
             self.activeFg=kw.pop("activeforeground")
             for key in list(self.widgetStore.keys()):
@@ -4878,7 +4890,7 @@ class PieChart(Canvas):
             if TOOLTIP_AVAILABLE:
                 frac = int(val/sum(self.fracs.values())*100)
                 tip = key + ": " + str(val) + " (" + str(frac) + "%)"
-                tt=ToolTip(self,tip,delay=500, follow_mouse=1, specId=sliceId) 
+                tt=ToolTip(self,tip,delay=500, follow_mouse=1, specId=sliceId)
 
             pos += val
             col+=1
@@ -5451,8 +5463,11 @@ class AutoCompleteEntry(Entry):
         return "break"
 
     # wrappers for up/down arrows
-    def moveUp(self, event): return self.arrow("UP")
-    def moveDown(self, event): return self.arrow("DOWN")
+    def moveUp(self, event):
+        return self.arrow("UP")
+
+    def moveDown(self, event):
+        return self.arrow("DOWN")
 
     # funciton for handling up/down keys
     def arrow(self, direction):
