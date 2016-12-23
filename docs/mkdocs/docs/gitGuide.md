@@ -1,6 +1,6 @@
 # Git Guide
 ----  
-Below are some useful commands for using git & GitHub from the command line.  
+Below are some useful commands for using git, GitHub & PyPI from the command line.  
 
 ## Setting Up  
 * `git init`  
@@ -41,10 +41,9 @@ This tags the current build in Git
 Then pushes it to GitHub
 
 # PyPI  
-* `pyhton setup.py register -r pypitest`  
+* `python setup.py register -r pypitest`  
 This will register the package with PyPI Test  
 * `python setup.py sdist upload -r pypitest`  
 This will upload the stuff to PyPI Test  
-* `pip install --verbose --index-url https://testpypi.python.org/pypi XXX  
+* `pip install --verbose --index-url https://testpypi.python.org/pypi appJar  `  
 This will attempt to install from the PyPI test server  
-

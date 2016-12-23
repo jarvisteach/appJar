@@ -1,4 +1,4 @@
-#Container Options
+#Grouping Widgets  
 ----
 The standard way of using appJar, is simply to place all widgets into a single window.  
 Everything is grouped into that single window, and any changes affect everything in that window.  

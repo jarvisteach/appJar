@@ -1,5 +1,7 @@
 # Python Basics
 * * *
+Below is a bunch of stuff explaining the basics of Python...  
+
 ## Cheat Sheets
 Help can be found at:
 

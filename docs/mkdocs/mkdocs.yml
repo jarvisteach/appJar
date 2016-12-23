@@ -20,13 +20,14 @@ pages:
     - Bars: pythonBars.md
     - Pop-ups: pythonDialogs.md
     - In the works...: pythonDevWidgets.md
-- Presentation:
+- Configuration:
     - Arranging widgets: pythonWidgetLayout.md
     - Grouping widgets: pythonWidgetGrouping.md
     - Changing widgets: pythonWidgetOptions.md
     - GUI Options: pythonGuiOptions.md
     - GUI Events: pythonEvents.md
 - Examples:
+    - Raspberry Pi Minecraft: examples/minecraft.md
     - Simple Layout: examples/simple.md
 - About:
     - Set-up: Install.md

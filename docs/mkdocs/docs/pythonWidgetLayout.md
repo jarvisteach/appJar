@@ -137,3 +137,119 @@ for loop in range(3, 6):
 
 app.go()
 ```
+
+
+## Widget Positioning
+----
+
+Once you've laid out your widgets, the next most important thing is how they line up in their rows and columns.  
+
+There are two things you can configure:    
+
+* How columns and rows stretch to fill the GUI - **stretchiness**  
+* How widgets stretch to fill their cells - **stickiness**  
+
+Note, you can also cange these settings for [individual widgets](pythonWidgetOptions/#advanced-looks)
+
+####Set Stretch & Sticky
+
+* `.setStretch(sides)`  
+    This tells rows & columns how to stretch when the GUI is resized.  
+    It allows them to adjust to fill the available space:
+    * `none` - don't stretch  
+    * `row` - only rows should stretch down  
+    * `column` - only columns should stretch across  
+    * `both` - stretch rows & columns  
+* `.setSticky(sides)`  
+    This determines which sides of the grid-cell the widget will stick to.  
+    It should be a string, made up of any combination of `n`, `e`, `s` or `w`  
+    By default, most widgets use `"ew"`
+
+### Columns & Rows Stretchiness
+
+By default, the columns stretch (equally) to fill the width of the GUI, but rows don't - they take up the minimum space required.    
+
+![Expand](img/conf/exp1.png)  
+
+It's possible to tell the rows to stretch too:
+
+![Expand](img/conf/exp1.png)  
+```python
+app.setStretch("both")
+``` 
+
+But, as you can see - this doesn't make much difference...
+
+###Widget Stickiness
+
+Even if the cells in the columns & rows are stretching, the widgets inside them might not.  
+
+Widges have a **stickiness** which tells them which sides of their cells to stick to.  
+
+Again, widgets are configured to stick to the left & right, but not the top & bottom.  
+
+To change this, you need to set a new stickiness:  
+
+![Expand](img/conf/exp2.png)  
+```python
+app.setStretch("both")
+app.setSticky("nesw")
+```
+
+If you remove all stickiness, you end up with this:
+
+![Expand](img/conf/exp3.png)  
+```python
+app.setStretch("both")
+app.setSticky("")
+```  
+
+It's even possible to give each widget its own *stickiness*:  
+![Expand](img/conf/exp4.png)  
+```python
+from appJar import gui
+
+app=gui()
+
+app.setBg("blue")
+app.setStretch("both")
+
+app.setSticky("nw")
+app.addLabel("l1", "One", 0, 0)
+app.setLabelBg("l1", "yellow")
+
+app.setSticky("ne")
+app.addLabel("l2", "Two", 0, 1)
+app.setLabelBg("l2", "green")
+
+app.setSticky("sw")
+app.addLabel("l3", "Three", 1, 0)
+app.setLabelBg("l3", "pink")
+
+app.setSticky("se")
+app.addLabel("l4", "Four", 1, 1)
+app.setLabelBg("l4", "Orange")
+
+app.go()
+```  
+
+##Widget Padding
+It's possible to configure how much empty space is around a widget.  
+This is known as padding. You can put padding both inside and outside a widget...  
+
+![Padding](img/conf/pos1.png)
+```python
+app.setPadding([20,20]) # 20 pixels padding outside the widget [X, Y]
+app.setInPadding([20,20]) # 20 pixels padding inside the widget [X, Y]
+```
+####Set Padding & InPadding  
+* `.setPadding([x,y])`
+    This sets the X & Y padding outside a widget.  
+* `.setInPadding([x,y])`
+    This sets the X & Y padding inside a widget.  
+
+![Padding](img/conf/pos2.png)
+```python
+app.setPadding([20,20]) # padding outside the widget
+app.setInPadding([40,20]) # padding inside the widget
+```

@@ -1,14 +1,17 @@
 #Events  
 ---
-It's possible to call functions when the user performs certain actions.  
-It's also possible to configure functions to be called automatically, in a loop.  
+The whole point of GUIs is [events](https://en.wikipedia.org/wiki/Event-driven_programming)!   
 
-###Widget Interaction
+We want events to be generated whenever the user does something, such as clicking a button, moving a scale, or pressing a key...
+
+We also, sometimes, want events to happen repeatedly...
+
+##Make stuff happen...
 ----
-The following allow widgets to be interacted with:
+To make something happen you have to set a function for a widget:  
 
-* `.set XXX Function(name, value, key=None)`  
-    This binds a function to the widget.  
+* `.set XXX Function(title, function, key=None)`  
+    This binds a function to the named widget.  
     The function will be called every time an interactive-widget changes.  
     The function will be called when some widgets are clicked.  
 
@@ -25,7 +28,7 @@ app.setRadioButtonFunction("song", songChanged)
 app.go()
 ```
 
-* `.set XXX OverFunction(name, values)`  
+* `.set XXX OverFunction(name, [inFunction, outFunction])`  
     Set functions to call whenever the mouse enters (goes over) or leaves the specified widget.  
     The first function is called when the mouse first enters the widget.  
     The second function is called when the mouse leaves the widget.  
@@ -44,18 +47,62 @@ app.go()
     app.setLabelOverFunction("l1", [enter, leave])
     app.go()
 ```  
-* `.set XXX DragFunction(name, values)`  
+* `.set XXX DragFunction(name, [startDragFunction, stopDragFunction])`  
     Set functions to call whenever the mouse button is clicked and dragged.  
     The first function will be called when the mouse is initially clicked.  
     The second function will be called when the mouse is released.  
     The same rules for passing functions apply as above.  
 
-###GUI Interaction
-----
-####Stopping the GUI
+##Binding Keys
+As well as chaning widgets, we sometimes want keys to trigger events.  
+
+The classic example is the <Enter> key, we often want to be able to hit the <Enter> key to submit a form...
+
+* `.enableEnter(function)`  
+Link a function to the `<Enter>` key
+
+* `.disableEnter()`  
+Unlink a function form the `<Enter>`  key
+
+You may also want to bind other keys to events.  
+
+* `.bindKey(key, function)`  
+Link the specified key to the specified function.
+
+* `.unbindKey(key)`  
+Unlink the specified key from any functions bound to it.
+
+##Repeating Events  
+Sometimes, you want events to keep happening in the background.  
+GUIs aren't so great at this - if you have a loop in your prgram, the GUI will *hang* (stop working until the loop finishes).  
+Luckily, we have a solution,,,
+
+* `.registerEvent(function)`  
+This will cause the GUI to keep repeating the named function in the background.  
+The function should repeat every second.  
+
+* `.setPollTime(time)`  
+If you want your events to be called more or less frequently, set the frequency here.
+
+This is great for updating statuses, checking for messages, etc...
+```python
+#function to set the status bar
+def getLocation():
+    x,y,z = mc.player.getPos()
+    app.setStatusbar("X: "+ str(round(x,3)), 0)
+    app.setStatusbar("Y: "+ str(round(y,3)), 1)
+    app.setStatusbar("Z: "+ str(round(z,3)), 2)
+
+# call the getLocation function every second
+app.registerEvent(getLocation)
+```
+
+##Stopping the GUI
+Usually the user just presses the **close icon** to stop the GUI.  
+However, you might want to let them do it in other ways - maybe by pressing a button...
 To stop the GUI, simply call `app.stop()`  
-The user might also close the GUI by clicking the close icon or from an applicaiton menu.  
-If you want to check with the user, before stopping the GUI, then you can set a function to call.  
+
+If you want to add a feature to confirm the user really wants to exit, or to save some data, then you'll need a **stop function**.  
 
 * `.setStopFunction(function)`  
     Set a function to call, before allowing the GUI to be stopped.  
@@ -67,33 +114,3 @@ def checkStop():
 
 app.setStopFunction(checkStop)
 ```
-
-####Repeated Events
-When you start the GUI, it kicks off an infinte loop that is waiting for the user to do something.  
-That means, you should never have your own loops running, as they will stop the GUI from working properly.  
-Instead, if you want your own loop to run, you need to ask the GUi to run it for you:  
-
-* `.registerEvent(func)`  
-Pass this a function, and the GUI will call that function every second.
-
-* `.setPollTime(time)`  
-If you want your events to be called more or less frequently, set the frequency here.
-
-####Enter Key
-Every time the <Enter> key is pressed, you can have the GUI call a function.  
-Useful if you want to be able to submit a form from anywhere.  
-
-* `.enableEnter(func)`  
-Link a function to the `<Enter>` key
-
-* `.disableEnter()`  
-Unlink a function form the `<Enter>`  key
-
-####Other Keys
-You may also want to bind other keys to events.  
-
-* `.bindKey(key, func)`  
-Link the specified key to the specified function.
-
-* `.unbindKey(key)`  
-Unlink the specified key from any functions bound to it.

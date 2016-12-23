@@ -1,6 +1,6 @@
-#Widget Options
+#Changing Widgets  
 ----
-There are a lot of things that can be configured on a widget.  
+There are a lot of things that can be change in a widget.  
 There is a pattern to how this works, you simply specify the widget type and the parameter, eg:
 
 * `.setLabelBg(name, value)`
@@ -10,7 +10,7 @@ There is a pattern to how this works, you simply specify the widget type and the
 The list of widgets is defined in `gui.WIDGETS`, it contains:
 Label, Message, Button, Entry, Scale, SpinBox, OptionBox, TextArea, Link, Meter, Image, RadioButton, CheckBox, ListBox, LabelFrame, PanedWindow, NoteBook
 
-###Basic Appearance
+###Basic  Looks
 ----
 The following options are available for all widgets:
 
@@ -29,26 +29,13 @@ The following options are available for all widgets:
 * `.set XXX Height(name, value)`  
     Set the height of the named widget.
 
-###Extended Appearance
----
-* `.set XXX Tooltip(name, value)`  
-    Sets a tooltip for the widget.
-    The specified text will be displayed in a small pop-up, when the mouse is left over the widget.
-
-* `.set XXX Cursor(name, value)`  
-    Sets the cursor shown, when the mouse goes over this widget.  
-    There are lots of cursors available, for different platforms, see [here](http://infohost.nmt.edu/tcc/help/pubs/tkinter/web/cursors.html)
-
 * `.set XXX Relief(name, value)`  
-    Sets the border for the widget. One of: `SUNKEN`, `RAISED`, `GROOVE`, `RIDGE`, `FLAT`  
+    Sets the border of the named widget. One of: `SUNKEN`, `RAISED`, `GROOVE`, `RIDGE`, `FLAT`  
 
 * `.set XXX State(name, value)`  
     Sets the state of the named widget. One of: `NORMAL`, `ACTIVE`, `DISABLED`  
 
-* `.set XXX Focus(name)`  
-    Gives focus to the specified widget. This is the widget where the user will be able to start typing.
-
-###Advanced Appearance
+###Advanced Looks  
 ----
 The following are supported by most widgets:
 
@@ -64,12 +51,31 @@ The following are supported by most widgets:
 * `.set XXX Padding(name, [x, y])`  
     Set external padding of the named widget.  
 
-* `.set XXX IPadding(name, [x, y])`  
+* `.set XXX InPadding(name, [x, y])`  
     Set internal padding of the named widget.  
+
+###Fancy Options  
+---
+* `.set XXX Tooltip(name, value)`  
+    Sets a tooltip for the widget.
+    The specified text will be displayed in a small pop-up, when the mouse is left over the widget.
+
+* `.set XXX Cursor(name, value)`  
+    Sets the cursor shown, when the mouse goes over this widget.  
+    There are lots of cursors available, for different platforms, see [here](http://infohost.nmt.edu/tcc/help/pubs/tkinter/web/cursors.html)
+
+* `.set XXX Focus(name)`  
+    Gives focus to the specified widget. This is the widget where the user will be able to start typing.
 
 ###Widget Manipulation
 ----
 The following allow widgets to be manipulated on screen:
+
+* `.disable XXX (name)`  
+    Disable the widget - stops the user from interacting with it, but keeps it visible.
+
+* `.enable XXX (name)`  
+    Enable a disabled widget.
 
 * `.hide XXX (name)`  
     Temporarily hides the widget from view.
@@ -82,12 +88,6 @@ The following allow widgets to be manipulated on screen:
 
 * `.removeAllWidgets()`  
     Permanently remove all widgets.
-
-* `.disable XXX (name)`  
-    Disable the widget - stops the user from interacting with it, but keeps it visible.
-
-* `.enable XXX (name)`  
-    Enable a disabled widget.
 
 ###Grouped Options
 ----
