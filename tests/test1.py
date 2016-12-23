@@ -1,8 +1,14 @@
+EMPTY=""
+
 TEXT_ONE = "l_one_x"
 TEXT_TWO = "l_one_y"
+
 NUM_ONE = 23123
 NUM_TWO = 33221
-EMPTY=""
+
+COL_ONE = "red"
+COL_TWO = "yellow"
+COL_THREE = "green"
 
 from appJar import gui 
 app=gui()
@@ -81,5 +87,26 @@ def test_entries():
     assert app.getEntry("se1") == EMPTY
     assert app.getEntry("ae1") == EMPTY
 
+def test_sets():
+    app.setLabelBg("l1", COL_ONE)
+    app.setLabelFg("l1", COL_TWO)
+    app.setLabelDisabledFg("l1", COL_THREE)
+    app.setLabelWidth("l1", 77)
+    app.setLabelHeight("l1", 33)
+    app.setLabelRelief("l1", "sunken")
+    app.setLabelState("l1", "disabled")
+
+    lab = app.getLabelWidget("l1")
+
+    assert lab.cget("bg") == COL_ONE
+    assert lab.cget("fg") == COL_TWO
+    assert lab.cget("disabledforeground") == COL_THREE
+    assert lab.cget("width") == 77
+    assert lab.cget("height") == 33
+    assert lab.cget("relief") == "sunken"
+    assert lab.cget("state") == "disabled"
+
+
 test_labels()
 test_entries()
+test_sets()
