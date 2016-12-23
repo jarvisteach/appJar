@@ -21,7 +21,7 @@ app=gui()
 
 
 def test_labels():
-    print("Testing labels")
+    print("\tTesting labels")
     app.addEmptyLabel("el1")
     app.addLabel("l1", TEXT_ONE)
     app.addFlashLabel("fl1", TEXT_ONE)
@@ -45,9 +45,10 @@ def test_labels():
     assert app.getLabel("el1") == EMPTY
     assert app.getLabel("l1") == EMPTY
     assert app.getLabel("fl1") == EMPTY
-    print(" >> all tests complete")
+    print("\t >> all tests complete")
 
 def test_entries():
+    print("\tTesting entries")
     app.addEntry("e1")
     app.addNumericEntry("ne1")
     app.addSecretEntry("se1")
@@ -94,8 +95,10 @@ def test_entries():
 #    assert app.getEntry("ne1") == EMPTY
     assert app.getEntry("se1") == EMPTY
     assert app.getEntry("ae1") == EMPTY
+    print("\t >> all tests complete")
 
 def test_buttons():
+    print("\tTesting buttons")
     app.addButton("b1", None)
     app.addButtons(["bb1", "bb2", "bb3", "bb4"], None)
     app.addButtons([["a2b1", "a2b2", "a2b3", "a2b4"], ["b2b1", "b2b2", "b2b3", "b2b4"], ["c2b1", "c2b2", "c2b3", "c2b4"]], None)
@@ -109,8 +112,10 @@ def test_buttons():
     assert but2.cget("text") == "bb1"
     assert but3.cget("text") == "a2b1"
 #    assert but4.cget("text") == "butName"
+    print("\t >> all tests complete")
 
 def test_sets():
+    print("\tTesting setters")
     app.setLabelBg("l1", COL_ONE)
     app.setLabelFg("l1", COL_TWO)
     app.setLabelDisabledFg("l1", COL_THREE)
@@ -128,8 +133,10 @@ def test_sets():
     assert lab.cget("height") == 33
     assert lab.cget("relief") == "sunken"
     assert lab.cget("state") == "disabled"
+    print("\t >> all tests complete")
 
 def test_radios():
+    print("\tTesting radios")
     app.addRadioButton("rb", TEXT_ONE)
     app.addRadioButton("rb", TEXT_TWO)
     app.addRadioButton("rb", TEXT_THREE)
@@ -144,8 +151,10 @@ def test_radios():
 
     app.setRadioButton("rb", TEXT_THREE)
     assert app.getRadioButton("rb") == TEXT_THREE
+    print("\t >> all tests complete")
 
 def test_checks():
+    print("\tTesting checks")
     app.addCheckBox(TEXT_ONE)
     app.addCheckBox(TEXT_TWO)
     app.addCheckBox(TEXT_THREE)
@@ -161,17 +170,22 @@ def test_checks():
     assert app.getCheckBox(TEXT_ONE) == True
     assert app.getCheckBox(TEXT_TWO) == True
     assert app.getCheckBox(TEXT_THREE) == False
+    print("\t >> all tests complete")
 
 def test_options():
-    pass
+    print("\tTesting options")
+    print(" >> not implemented...")
 
 def test_spins():
-    pass
+    print("\tTesting spins")
+    print(" >> not implemented...")
 
 def test_lists():
-    pass
+    print("\tTesting lists")
+    print(" >> not implemented...")
 
 def test_scales():
+    print("\tTesting scales")
     app.addScale("s1")
     app.addScale("s2")
     app.addScale("s3")
@@ -192,19 +206,40 @@ def test_scales():
     assert app.getScale("s3") == 100
     assert app.getScale("s4") == 100
 
-    app.setScalaRange("s1", 44, 88)
+    app.setScaleRange("s1", 44, 88)
     app.setScaleRange("s2", 22, 55, 33)
-#    print(app.getScale("s1"))
-#    assert app.getScale("s1") == 44
+    assert app.getScale("s1") == 44
     assert app.getScale("s2") == 33
 
-    app.setScaleIntervals("s3", 5)
-    app.setScaleValue("s4", 101)
+    app.showScaleIntervals("s3", 5)
+    app.showScaleValue("s4", 101)
     assert app.getScale("s3") == 100
     assert app.getScale("s4") == 100
 
+    app.setScaleHorizontal("s1")
+    app.setScaleVertical("s2")
+    app.setScaleHorizontal("s3")
+    app.setScaleVertical("s4")
+
+    assert app.getScale("s1") == 44
+    assert app.getScale("s2") == 33
+    assert app.getScale("s3") == 100
+    assert app.getScale("s4") == 100
+
+    app.setScaleWidth("s1", 220)
+    app.setScaleLength("s1", 110)
+    app.setScaleWidth("s3", 47)
+    app.setScaleLength("s4", 88)
+
+    assert app.getScale("s1") == 44
+    assert app.getScale("s2") == 33
+    assert app.getScale("s3") == 100
+    assert app.getScale("s4") == 100
+
+    print("\t >> all tests complete")
 
 def test_messages():
+    print("\tTesting messages")
     app.addMessage("m1", TEXT_ONE)
     app.addMessage("m2", TEXT_TWO)
     app.addEmptyMessage("m3")
@@ -232,8 +267,10 @@ def test_messages():
     assert app.getMessageWidget("m2").cget("text") == EMPTY
     assert app.getMessageWidget("m3").cget("text") == EMPTY
     assert app.getMessageWidget("m4").cget("text") == EMPTY
+    print("\t >> all tests complete")
 
 def test_text_areas():
+    print("\tTesting text areas")
     app.addTextArea("t1")
     app.addTextArea("t2")
     app.addScrolledTextArea("st1")
@@ -261,33 +298,45 @@ def test_text_areas():
     assert app.getTextArea("t2") == EMPTY
     assert app.getTextArea("st1") == EMPTY
     assert app.getTextArea("st2") == TEXT_FOUR
+    print("\t >> all tests complete")
 
 def test_meters():
+    print("\tTesting meters")
     app.addMeter("m1")
-#    print(app.getMeter("m1"))
+#    print("\tpp.getMeter("m1"))
     assert app.getMeter("m1")[0] == 0
     app.setMeter("m1", 45)
-#    print(app.getMeter("m1"))
+#    print("\tpp.getMeter("m1"))
     assert app.getMeter("m1")[0] == 0.45
+    print("\t >> all tests complete")
 
 def test_properties():
-    pass
+    print("\tTesting properties")
+    print(" >> not implemented...")
 
 def test_separators():
+    print("\tTesting separators")
     app.addHorizontalSeparator()
     app.addVerticalSeparator()
+    print("\t >> all tests complete")
 
 def test_links():
+    print("\tTesting links")
     app.addLink("l1", None)
     app.addWebLink("l1", "http://appJar.info")
+    print("\t >> all tests complete")
 
 def test_grips():
+    print("\tTesting grips")
     app.addGrip()
     app.addGrip()
+    print("\t >> all tests complete")
 
 def test_date_pickers():
-    pass
+    print("\tTesting date pickers")
+    print(" >> not implemented...")
 
+print("<<<Starting test suite>>>")
 test_labels()
 test_entries()
 test_buttons()
@@ -305,5 +354,5 @@ test_separators()
 test_links()
 test_grips()
 test_date_pickers()
-
 test_sets()
+print("<<<Test suite complete>>>")
