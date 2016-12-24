@@ -1,4 +1,5 @@
 import sys
+import datetime
 sys.path.append("../")
 
 EMPTY=""
@@ -18,6 +19,9 @@ COL_THREE = "green"
 
 LIST_ONE = ["a", "b", "c", "d", "e"]
 LIST_TWO = ["v", "d", "s", "t", "z"]
+
+HASH_ONE = { "a":True, "b": False, "c": True }
+HASH_TWO = { "x":False, "y": True, "z": False }
 
 from appJar import gui 
 app=gui()
@@ -177,6 +181,35 @@ def test_checks():
 
 def test_options():
     print("\tTesting options")
+    app.addOptionBox("l1", LIST_ONE)
+    app.addOptionBox("l2", LIST_TWO)
+
+    assert app.getOptionBox("l1") == LIST_ONE[0]
+    assert app.getOptionBox("l2") == LIST_TWO[0]
+
+    app.setOptionBox("l1", 2)
+    app.setOptionBox("l2", 3)
+
+    assert app.getOptionBox("l1") == LIST_ONE[2]
+    assert app.getOptionBox("l2") == LIST_TWO[3]
+
+    app.setOptionBox("l1", LIST_ONE[3])
+    app.setOptionBox("l2", LIST_TWO[1])
+
+    assert app.getOptionBox("l1") == LIST_ONE[3]
+    assert app.getOptionBox("l2") == LIST_TWO[1]
+
+    app.changeOptionBox("l1", LIST_TWO)
+    assert app.getOptionBox("l1") == LIST_TWO[0]
+    assert app.getOptionBox("l2") == LIST_TWO[1]
+
+    app.addTickOptionBox("tl1", LIST_ONE)
+    app.addTickOptionBox("tl2", LIST_TWO)
+
+    tl1_options = (app.getOptionBox("tl1"))
+    tl2_options = (app.getOptionBox("tl2"))
+
+    print(app.getOptionBox("tl1"))
     print(" >> not implemented...")
 
 def test_spins():
@@ -257,7 +290,7 @@ def test_lists():
     LIST_TWO.remove(LIST_TWO[1])
     assert app.getAllListItems("l2") == TMP_LIST
 
-    print(" >> not implemented...")
+    print("\t>> all tests complete")
 
 def test_scales():
     print("\tTesting scales")
@@ -385,9 +418,49 @@ def test_meters():
     assert app.getMeter("m1")[0] == 0.45
     print("\t >> all tests complete")
 
+def compareDictionaries(d1, d2):
+    for key in d1.keys():
+        if d1[key] != d2[key]: return False
+    for key in d2.keys():
+        if d1[key] != d2[key]: return False
+    return True
+
+def validateProp(p, d):
+    for key in d.keys():
+        assert app.getProperty(p, key) == d[key]
+
 def test_properties():
     print("\tTesting properties")
-    print(" >> not implemented...")
+    app.addProperties("p1", HASH_ONE)
+    app.addProperties("p2")
+
+    assert compareDictionaries(app.getProperties("p1"), HASH_ONE)
+    assert app.getProperties("p2") == {}
+
+    validateProp("p1", HASH_ONE)
+
+    app.setProperties("p2", HASH_TWO)
+    validateProp("p2", HASH_TWO)
+    assert compareDictionaries(app.getProperties("p2"), HASH_TWO)
+
+    hash_all = HASH_ONE.copy()
+    hash_all.update(HASH_TWO)
+
+    app.setProperties("p2", HASH_ONE)
+    validateProp("p2", hash_all)
+    assert compareDictionaries(app.getProperties("p2"), hash_all)
+
+    for key in hash_all.keys():
+        hash_all[key] = False
+
+    assert not compareDictionaries(app.getProperties("p2"), hash_all)
+    app.setProperties("p2", hash_all)
+    assert compareDictionaries(app.getProperties("p2"), hash_all)
+
+    app.setProperty("p2", "a", True)
+    assert app.getProperty("p2", "a") == True
+
+    print("\t >> all tests complete")
 
 def test_separators():
     print("\tTesting separators")
@@ -409,9 +482,41 @@ def test_grips():
 
 def test_date_pickers():
     print("\tTesting date pickers")
-    print(" >> not implemented...")
+    app.addDatePicker("d1")
+    app.addDatePicker("d2")
+    app.addDatePicker("d3")
 
-print("<<<Starting test suite>>>")
+    assert app.getDatePicker("d1") == datetime.date(1970,1,1)
+    assert app.getDatePicker("d2") == datetime.date(1970,1,1)
+    assert app.getDatePicker("d3") == datetime.date(1970,1,1)
+
+    app.setDatePicker("d1")
+    app.setDatePicker("d2", datetime.date(1980,5,5))
+    app.setDatePicker("d3", datetime.date(1990,10,10))
+
+    assert app.getDatePicker("d1") == datetime.date.today()
+    assert app.getDatePicker("d2") == datetime.date(1980,5,5)
+    assert app.getDatePicker("d3") == datetime.date(1990,10,10)
+
+    app.setDatePickerRange("d1", 1940, 1960)
+    app.setDatePickerRange("d2", 1980, 2020)
+    app.setDatePickerRange("d3", 2020, 2040)
+
+    assert app.getDatePicker("d1") == datetime.date(1940, datetime.date.today().month, datetime.date.today().day)
+    assert app.getDatePicker("d2") == datetime.date(1980,5,5)
+    assert app.getDatePicker("d3") == datetime.date(2020,10,10)
+
+    app.setDatePicker("d1", datetime.date(1950,5,5))
+    app.setDatePicker("d2", datetime.date(1990,5,5))
+    app.setDatePicker("d3", datetime.date(2021,10,10))
+
+    assert app.getDatePicker("d1") == datetime.date(1950,5,5)
+    assert app.getDatePicker("d2") == datetime.date(1990,5,5)
+    assert app.getDatePicker("d3") == datetime.date(2021,10,10)
+
+    print("\t >> all tests complete")
+
+print("<<<Starting Widget Test Suite>>>")
 test_labels()
 test_entries()
 test_buttons()
@@ -430,4 +535,4 @@ test_links()
 test_grips()
 test_date_pickers()
 test_sets()
-print("<<<Test suite complete>>>")
+print("<<<Widget Test Suite Complete>>>")
