@@ -64,6 +64,11 @@ The following are supported by most widgets:
     Sets the cursor shown, when the mouse goes over this widget.  
     There are lots of cursors available, for different platforms, see [here](http://infohost.nmt.edu/tcc/help/pubs/tkinter/web/cursors.html)
 
+* `.set XXX RightClickMenu(name, menu)`  
+    Links the right-click menu to the specified widget.  
+    Make sure you have created a right-click menu first, `.createRightClickMenu(menu)` and added some menu-items to it.  
+    See [Menubars](/pythonBars/#menubar) for more info.  
+
 * `.set XXX Focus(name)`  
     Gives focus to the specified widget. This is the widget where the user will be able to start typing.
 

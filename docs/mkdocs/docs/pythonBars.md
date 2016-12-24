@@ -48,74 +48,57 @@ ___
 Adds a standard Menubar along the top of the GUI.  
 On Windows/Linux a menubar will only be shown, once the first menu has been added.  
 On Mac, a menubar is always present.  
-Menubars are made up of a series of menus, each conaining a list of items.  
-These items can contain menu-items, radio buttons, check boxes, separators, or sub-menus.  
-
-####Optional Features:  
-
-* `shortcut` These are keyboard shortcuts to call a menu item.  
-    These should always be a combination of *special keys* and a *regular key*, separated by dashes.  
-    e.g. `"Control-s"` or `"Control-Shift-z"`  
-    The following *special keys* are available: `Control`, `Option`, `Alt`, `Shift`, `Command`, `Meta`  
-
-* `underline` If set to an Integer, the corresponding character will be underlined.  
-
-* `tearable` If this is set to True, it's possible to undock the menu.  
+Menubars are made up of a series of menus, each conaining a list of names.  
+These names can be menu-items, radio buttons, check boxes, separators, or sub-menus.  
 
 ####Create Menus
 
+* `.addMenuList(menu, names, functions)`  
+    Will create a new menu, with the specified title, containing the list of names.  
+    Pass a single function - all names will call that function, passing their name.  
+    Or a list of functions (the same length as the names), each menu will call the corresponding function.  
+    If a name is ```-```, then a separator will be added to the menu.  
+
 * `.createMenu(menu, tearable=False)`  
-    Will create a top-level menu, to add menu items to.
+    Will create a new, empty menu, to add menu-items to.
 
-* `.createRightClickMenu(menu, showInBar=False)`  
-    Will create a hidden menu, that can be shown when the user right-clicks a widget.  
-    If ```showInBar``` is set to ```True```, the Menu will also appear in the topLevel Menubar.  
-
-    To access the rightClickMenu, it must be bound to a widget:  
-    ```.setXXXRightClick(widgetName, MenuName)``` will bind the named menu to the named widget.  
-
-* `.addMenuItem(menu, item, func=None, shortcut=None, underline=-1)`  
-    Add a menu item to the named menu, with the specified function.  
+* `.addMenuItem(menu, name, function=None, shortcut=None, underline=-1)`  
+    Add a menu-item to the named menu, with the specified function.  
     If the named menu does not exist, it will be automatically created.  
-    If the item name is a ```-```, then a separator will be added to the menu.  
-
-* `.addMenuList(menu, items, functions)`  
-    Will create a top-level menu, with the specified menu.  
-    Within the menu will be the list of items, each calling the corresponding function in the function list.  
-    If only one function is provided, all items will call the same function.  
-    If an item name is a ```-```, then a separator will be added to the menu.  
-
-* `.addSubMenu(menu, subMenu)`  
-    Adds a sub-menu to the specified menu.  
+    If the name is ```-```, then a separator will be added to the menu.  
 
 * `.addMenuSeparator(menu)`  
     Add a separator to the named menu.  
 
-* `.addMenuCheckBox(menu, item, function=None, shortcut=None, underline=-1)`  
-    Add a check box, to the named menu, with the specified item name.  
+* `.addMenuCheckBox(menu, name, function=None, shortcut=None, underline=-1)`  
+    Add a check box, to the named menu, with the specified name.  
 
-* `.addMenuRadioButton(menu, item, value, function=None, shortcut=None, underline=-1)`  
-    Add a radio button, to the named menu, grouped by item name, with the specified value.  
+* `.addMenuRadioButton(menu, name, value, function=None, shortcut=None, underline=-1)`  
+    Add a radio button, to the named menu, grouped by name, with the specified value.  
+
+* `.addSubMenu(menu, subMenu)`  
+    Adds a sub-menu to the specified menu.  
+    Then add menu-items to this menu (using its name).  
 
 * `.addMenu(menu, function, shortcut=None, underline=-1)`  
-    Adds a single menu option, that will call the specified function.  
+    Adds a single menu, with no list of menu-items,  that will call the specified function.  
 
 ####Set Menus
 
-* `.setMenuCheckBox(menu, item)`  
+* `.setMenuCheckBox(menu, name)`  
     Inverts the specified check box, in the named menu.
 
-* `.setMenuRadioButton(menu, item, value)`  
+* `.setMenuRadioButton(menu, name, value)`  
     Selects the specified value, of the specified radio button, in the named menu.
 
-* `.setMenuImage(menu, item, image, align='text')`  
-    Will set the specified image for the specified menu item.  
+* `.setMenuImage(menu, name, image, align='text')`  
+    Will set the specified image for the specified menu-item.  
 
-* `.setMenuIcon(menu, item, icon, align='text')`  
-    Will set the specified icon for the specified menu item.  
+* `.setMenuIcon(menu, name, icon, align='text')`  
+    Will set the specified icon for the specified menu-item.  
 
-* `.disableMenuItem(menu, item)` & `.enableMenuItem(menu, item)`  
-    Will enable/disable the specified menu item.  
+* `.disableMenuItem(menu, name)` & `.enableMenuItem(menu, name)`  
+    Will enable/disable the specified menu name.  
 
 * `.disableMenu(menu)` & `.enableMenu(menu)`  
     Will disable/enable the specified menu.  
@@ -126,20 +109,42 @@ These items can contain menu-items, radio buttons, check boxes, separators, or s
 
 ####Get Menus
 
-* `.getMenuCheckBox(menu, item)`  
+* `.getMenuCheckBox(menu, name)`  
     Get the value of the specified check box, from the named menu.  
     Returns True or False.  
 
-* `.getMenuRadioButton(menu, item)`  
+* `.getMenuRadioButton(menu, name)`  
     Get the value of the specified radio button, from the named menu.  
     Returns the name of the checked radio button, for this group.  
 
+----
+
+####Extra Features:  
+
+* `shortcut` These are keyboard shortcuts to call a menu-item.  
+    These should always be a combination of *special keys* and a *regular key*, separated by dashes.  
+    e.g. `"Control-s"` or `"Control-Shift-z"`  
+    The following *special keys* are available: `Control`, `Option`, `Alt`, `Shift`, `Command`, `Meta`  
+
+* `underline` If set to an Integer, the corresponding character will be underlined.  
+
+* `tearable` If this is set to True, it's possible to undock the menu.  
+
+---
+
 ####Platform Specific/Custom Menus
 It's possible to interact with menus that are specific to particular platforms, or prebuilt for specific purposes.  
-Simply use the menu names given below when adding items to a menu.  
+Simply use the menu names given below when adding menu-items to a menu.  
 
 * **Generic**  
-    * **Edit Menu** - `EDIT` provides a right-click, *cut & paste* menu for text, entry & option boxes.  
+    * **Right-click Menu**  
+        Call `.createRightClickMenu(menu, showInBar=False)` to create an empty **right-click menu**   
+        If ```showInBar``` is set to ```True```, the Menu will also appear in the topLevel Menubar.  
+        The right-click menu can be populated the same way as a regular menu.  
+
+        To link the **right-click menu** to a widget, call ```.setXXXRightClick(widgetName, menu)```  
+
+    * **Edit Menu** - `EDIT` provides a right-click, *cut & paste* menu automatically linked to all **text**, **entry** & **option boxes**.  
         Call `.addMenuEdit(inMenuBar=False)` to enable the *Edit* menu.  
         Set the parameter to True, to also show it in the menu bar.  
         This menu does its best to show the appropriate options, for all situations - but doesn't know when you can't *redo* an action.  
@@ -147,15 +152,15 @@ Simply use the menu names given below when adding items to a menu.
 * **Windows**  
     * **System Menu** - `WIN_SYS` accessed by clicking the icon in the top left corner of the GUI.  
 
-* **Mac** - there are three *default* menus, each containing platform specific menus item.   
-    There are also a couple of menu items the user can/should provide.  
+* **Mac** - there are three *default* menus, each containing platform specific menus-item.   
+    There are also a couple of menu-items the user can/should provide.  
     * **Application Menu** - `MAC_APP` after the Apple logo (), usuaully called *Python*.  
         This menu is always present, and connot be renamed - no matter how much I wish it could!  
-        Call `.addMenuPreferences(func)` to enable the *Preferences* menu item, within the *Application Menu*.  
-    * **Window Menu** - `MAC_WIN` contains menu items relaed to windows.   
+        Call `.addMenuPreferences(function)` to enable the *Preferences* menu-item, within the *Application Menu*.  
+    * **Window Menu** - `MAC_WIN` contains menu-items related to windows.   
         To access this menu, you must first call `.addMenuWindow()`  
-    * **Help Menu** - `MAC_HELP` provides a *Search* item   
-        To access this menu, you must first call `.addMenuHelp(func)`, passing the function to call for the default *Python Help* item.  
+    * **Help Menu** - `MAC_HELP` provides a *Search* menu-item   
+        To access this menu, you must first call `.addMenuHelp(function)`, passing the function to call for the default *Python Help* menu-item.  
 
 * **Linux**  
     * n/a  
@@ -187,7 +192,7 @@ app.setStatusbarFg("white", 2)
 
 ####Create Statusbars  
 
-* `.addStatusBar(header="", fields=1, side=None)`  
+* `.addStatusbar(header="", fields=1, side=None)`  
     This turns the statusbar on, and if a header is supplied, will prepend the header before every status.  
     If ```fields``` is populated, it's possible to have multiple status boxes, each addressable by a number.  
     ```side``` can be set as LEFT/RIGHT to make the fields appear from the left or right side, otherwise they will stretch equally.  
