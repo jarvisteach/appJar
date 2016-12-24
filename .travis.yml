@@ -13,8 +13,11 @@ before_script:
     - "export DISPLAY=:99.0"
     - "sh -e /etc/init.d/xvfb start"
     - sleep 3 # give xvfb some time to start
+    - VERS=`python -c 'import sys; print(".".join(map(str, sys.version_info[:2])))'`
 
-script: python3 tests/test1.py
+script:
+    - python tests/widget_test.py
+    - python tests/bar_test.py
 
 after_success:
-    - coveralls
+    - IF [ $VERS = 3.5 ]; then coveralls; fi
