@@ -99,7 +99,7 @@ Entries are used to capture input from the user. They take a single parameter - 
 
 There are three special-case entries:
 
-* NumericEntry - this only allows numbers to be typed in.
+* NumericEntry - this only allows numbers to be typed in - always returns a float.
 * SecretEntry - this will show stars, instead of the letters typed - useful for capturing passwords.
 * AutoEntry - this takes a list of words to provide auto-completion.  
 
@@ -150,6 +150,7 @@ app.go()
 #### Get Entries
 * `.getEntry(title)`  
     This will return the contents of the specified entry box.
+    NB. *numericEntries* always return a float.  
 
 ##Button
 ____
@@ -613,6 +614,7 @@ app.go()
 ####Get Meters
 * `getMeter(name)`  
     Gets the value of the specified meter.  
+    As meters convert their data to a value between 0 and 1, this will return a list of two values: `(0.45, '45 %')`  
 
 ##Properties
 A compound widget that shows multiple CheckButtons linked to a dictionary.  

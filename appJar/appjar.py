@@ -2997,7 +2997,7 @@ class gui(object):
 
         #but.bind("<Tab>", self.__focusNextWindow)
         #but.bind("<Shift-Tab>", self.__focusLastWindow)
-        self.n_buttons[name]=but
+        self.n_buttons[title]=but
 
         return but
 

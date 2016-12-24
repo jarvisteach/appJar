@@ -62,7 +62,7 @@ def test_entries():
     app.addAutoEntry("ae1", ["a", "b", "c"])
 
     assert app.getEntry("e1") == EMPTY
-#    assert app.getEntry("ne1") == EMPTY
+    assert app.getEntry("ne1") == 0
     assert app.getEntry("se1") == EMPTY
     assert app.getEntry("ae1") == EMPTY
 
@@ -72,7 +72,7 @@ def test_entries():
     app.setEntry("ae1", TEXT_ONE)
 
     assert app.getEntry("e1") == TEXT_ONE
-#    assert app.getEntry("ne1") == NUM_ONE
+    assert app.getEntry("ne1") == float(NUM_ONE)
     assert app.getEntry("se1") == TEXT_ONE
     assert app.getEntry("ae1") == TEXT_ONE
 
@@ -82,7 +82,7 @@ def test_entries():
     app.clearEntry("ae1")
 
     assert app.getEntry("e1") == EMPTY
-#    assert app.getEntry("ne1") == EMPTY
+    assert app.getEntry("ne1") == 0
     assert app.getEntry("se1") == EMPTY
     assert app.getEntry("ae1") == EMPTY
 
@@ -92,14 +92,14 @@ def test_entries():
     app.setEntry("ae1", TEXT_TWO)
 
     assert app.getEntry("e1") == TEXT_TWO
-#    assert app.getEntry("ne1") == NUM_TWO
+    assert app.getEntry("ne1") == float(NUM_TWO)
     assert app.getEntry("se1") == TEXT_TWO
     assert app.getEntry("ae1") == TEXT_TWO
 
     app.clearAllEntries()
 
     assert app.getEntry("e1") == EMPTY
-#    assert app.getEntry("ne1") == EMPTY
+    assert app.getEntry("ne1") == 0
     assert app.getEntry("se1") == EMPTY
     assert app.getEntry("ae1") == EMPTY
     print("\t >> all tests complete")
@@ -114,11 +114,12 @@ def test_buttons():
     but1 = app.getButtonWidget("b1")
     but2 = app.getButtonWidget("bb1")
     but3 = app.getButtonWidget("a2b1")
-#    but4 = app.getButtonWidget("nb1")
+    but4 = app.getButtonWidget("nb1")
+
     assert but1.cget("text") == "b1"
     assert but2.cget("text") == "bb1"
     assert but3.cget("text") == "a2b1"
-#    assert but4.cget("text") == "butName"
+    assert but4.cget("text") == "butName"
     print("\t >> all tests complete")
 
 def test_sets():
@@ -209,7 +210,7 @@ def test_options():
     tl1_options = (app.getOptionBox("tl1"))
     tl2_options = (app.getOptionBox("tl2"))
 
-    print(app.getOptionBox("tl1"))
+#    print(app.getOptionBox("tl1"))
     print(" >> not implemented...")
 
 def test_spins():
@@ -411,11 +412,11 @@ def test_text_areas():
 def test_meters():
     print("\tTesting meters")
     app.addMeter("m1")
-#    print("\tpp.getMeter("m1"))
     assert app.getMeter("m1")[0] == 0
+
     app.setMeter("m1", 45)
-#    print("\tpp.getMeter("m1"))
     assert app.getMeter("m1")[0] == 0.45
+
     print("\t >> all tests complete")
 
 def compareDictionaries(d1, d2):
