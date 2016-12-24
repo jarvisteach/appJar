@@ -516,6 +516,25 @@ def test_date_pickers():
 
     print("\t >> all tests complete")
 
+def test_pies():
+    print("\tTesting Pies")
+    app.addPieChart("p1", {"apples":50, "oranges":200, "grapes":75, "beef":300, "turkey":150})
+    app.setPieChart("p1", "beef", 5)
+    app.setPieChart("p1", "fish", 20)
+    app.setPieChart("p1", "apples", 0)
+    print(" >> not implemented...")
+    #print("\t >> all tests complete")
+
+def test_trees():
+    print("\tTesting Trees")
+    print(" >> not implemented...")
+    #print("\t >> all tests complete")
+
+def test_grids():
+    print("\tTesting Grids")
+    print(" >> not implemented...")
+    #print("\t >> all tests complete")
+
 print("<<<Starting Widget Test Suite>>>")
 test_labels()
 test_entries()
@@ -534,5 +553,10 @@ test_separators()
 test_links()
 test_grips()
 test_date_pickers()
+
+test_pies()
+test_trees()
+test_grids()
+
 test_sets()
 print("<<<Widget Test Suite Complete>>>")
