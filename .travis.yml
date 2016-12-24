@@ -20,4 +20,4 @@ script:
     - python tests/bar_test.py
 
 after_success:
-    - IF [ $VERS = 3.5 ]; then coveralls; fi
+    - bash tests/run_coveralls.sh

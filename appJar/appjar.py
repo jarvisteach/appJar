@@ -4768,7 +4768,8 @@ class Properties(LabelFrame):
         kw.pop("disabledforeground", None)
         kw.pop("command", None)
 
-        super(LabelFrame, self).config(cnf, **kw)
+        if PYTHON2: LabelFrame.config(self, cnf, **kw)
+        else: super(LabelFrame, self).config(cnf, **kw)
 
     def addProperties(self, props):
 
