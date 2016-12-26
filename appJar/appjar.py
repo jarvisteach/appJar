@@ -615,16 +615,16 @@ class gui(object):
                 self.warn("Invalid config section: " + section)
                 continue
 
-            if kind in [self.SCALE]:
+            if kind in [self.SCALE, self.ENTRY]:
                 self.warn("No text is displayed in " + section + ". Maybe it has a Label?")
                 continue
             elif kind in [self.TEXTAREA, self.METER]:
                 self.warn("No text is displayed in " + section)
                 continue
-            elif kind in [self.LISTBOX, self.SPIN, self.OPTION]:
+            elif kind in [self.LISTBOX, self.SPIN, self.OPTION, self.PROPERTIES, self.RADIOBUTTON]:
                 self.warn(section + " - list-style widgets are currently not supported")
                 continue
-            elif kind in [self.RADIOBUTTON, self.PIECHART, self.PROPERTIES, self.GRID]:
+            elif kind in [self.PIECHART, self.GRID]:
                 self.warn(section + " - widgets not yet implemented")
                 continue
 
