@@ -6,6 +6,7 @@ from appJar import gui
 def press(btn):
     app.changeLanguage(btn)
 app=gui()
+app.showSplash()
 
 app.addLabel("l1", "default text")
 app.addButtons(["English", "Korean", "French"], press)
