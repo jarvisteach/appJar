@@ -583,27 +583,87 @@ class gui(object):
         self.n_menuVars = {}
         self.n_accelerators = []
 
+    def setLanguage(self, language):
+        from configparser import ConfigParser
+        self.config = ConfigParser()
+        self.changeLanguage(language)
+
+    # function to update languages
+    def changeLanguage(self, language):
+
+        language = language.upper()
+        if not self.config.read(language+".ini"):
+            self.warn("Invalid language: " + language)
+            return
+
+        print("Switching to:", language)
+        # loop through each section, get the relative set of widgets
+        # change the text
+        for section in self.config.sections():
+            section = section.upper()
+            # skip the config section (for now)
+            if section == "CONFIG":
+                continue
+
+            print("\t", section)
+
+            # convert the section title to its code
+            try:
+                kind = vars(gui)[section]
+                texts = self.config[section]
+            except KeyError:
+                self.warn("Invalid config section: " + section)
+                continue
+
+            if kind in [self.SCALE]:
+                self.warn("No text is displayed in " + section + ". Maybe it has a Label?")
+                continue
+            elif kind in [self.TEXTAREA, self.METER]:
+                self.warn("No text is displayed in " + section)
+                continue
+            elif kind in [self.LISTBOX, self.SPIN, self.OPTION]:
+                self.warn(section + " - list-style widgets are currently not supported")
+                continue
+            elif kind in [self.RADIOBUTTON, self.PIECHART, self.PROPERTIES, self.GRID]:
+                self.warn(section + " - widgets not yet implemented")
+                continue
+
+            # use the code to get the widget list
+            widgets = self.__getItems(kind)
+
+            # relabel each widget
+            for k in widgets.keys():
+                widg = widgets[k]
+                widg.config(text=texts.get(k, widg.DEFAULT_TEXT))
+                print("\t\t", k, "=", widg.cget("text"))
+
     # function to generate warning messages
     def warn(self, message):
         if self.WARN:
             print("Warning -", message)
-    # function to turn off warning messages
 
+    # function to turn off warning messages
     def disableWarnings(self): self.WARN = False
 
     # function to generate warning messages
     def debug(self, message):
         if self.DEBUG:
             print("Debug -", message)
-    # function to turn on debug messages
 
+    # function to turn on debug messages
     def enableDebug(self): self.DEBUG = True
 
 #####################################
 # Event Loop - must always be called at end
 #####################################
-    def go(self):
+    def go(self, language=None):
         """ Most important function! Start the GUI """
+
+        # if language is populated, we are in internationalisation mode
+        # call the setLanguage function - to re-badge all the widgets
+        if language is not None:
+            self.setLanguage(language)
+
         # check the containers have all been stopped
         if len(self.containerStack) > 1:
             self.warn("You didn't stop all containers")
@@ -1174,7 +1234,6 @@ class gui(object):
             return self.n_props
         elif kind == self.GRID:
             return self.n_grids
-
         elif kind == self.LABELFRAME:
             return self.n_labelFrames
         elif kind == self.FRAME:
@@ -1191,7 +1250,6 @@ class gui(object):
             return self.n_pagedWindows
         elif kind == self.TOGGLEFRAME:
             return self.n_toggleFrames
-
         else:
             raise Exception("Unknown widget type: " + str(kind))
 
@@ -2797,6 +2855,8 @@ class gui(object):
             font=self.labelFont,
             background=self.__getContainerBg())
 #            lab.config( width=self.labWidth)
+        lab.DEFAULT_TEXT=title
+
         self.n_labels[title] = lab
         self.n_frameLabs[title] = lab
 
@@ -2842,6 +2902,7 @@ class gui(object):
             font=self.cbFont,
             background=self.__getContainerBg(),
             activebackground=self.__getContainerBg())
+        cb.DEFAULT_TEXT=title
         cb.config(anchor=W)
         cb.bind("<Button-1>", self.__grabFocus)
         self.n_cbs[title] = cb
@@ -4082,6 +4143,7 @@ class gui(object):
         but = Button(frame)
 
         but.config(text=name, font=self.buttonFont)
+        but.DEFAULT_TEXT=name
 
         if func is not None:
             command = self.MAKE_FUNC(func, title)
@@ -4332,6 +4394,9 @@ class gui(object):
         lab.inContainer = False
         if text is not None:
             lab.config(text=text)
+            lab.DEFAULT_TEXT=text
+        else:
+            lab.DEFAULT_TEXT=""
         lab.config(
             justify=LEFT,
             font=self.labelFont,
@@ -4545,6 +4610,10 @@ class gui(object):
         mess.config(justify=LEFT, background=self.__getContainerBg())
         if text is not None:
             mess.config(text=text)
+            mess.DEFAULT_TEXT=text
+        else:
+            mess.DEFAULT_TEXT=""
+
         if self.platform in [self.MAC, self.LINUX]:
             mess.config(highlightbackground=self.__getContainerBg())
 
@@ -6407,6 +6476,7 @@ class Link(Label):
         Label.__init__(self, *args, **kwargs)
         self.config(fg="blue", takefocus=1, highlightthickness=0)
         self.page = ""
+        self.DEFAULT_TEXT = ""
 
         if gui.GET_PLATFORM() == gui.MAC:
             self.config(cursor="pointinghand")
@@ -6434,6 +6504,16 @@ class Link(Label):
         self.bind("<Return>", self.launchBrowser)
         self.bind("<space>", self.launchBrowser)
 
+    def config(self, **kw):
+        self.configure(**kw)
+
+    def configure(self, **kw):
+        if "text" in kw:
+            self.DEFAULT_TEXT=kw["text"]
+        if PYTHON2:
+            Label.config(self, **kw)
+        else:
+            super(Label, self).config(**kw)
 
 #####################################
 # Properties Widget
