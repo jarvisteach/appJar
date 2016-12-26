@@ -149,7 +149,7 @@ app.go()
 
 #### Get Entries
 * `.getEntry(title)`  
-    This will return the contents of the specified entry box.
+    This will return the contents of the specified entry box.  
     NB. *numericEntries* always return a float.  
 
 ##Button
