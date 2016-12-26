@@ -182,36 +182,54 @@ def test_checks():
 
 def test_options():
     print("\tTesting options")
+    # add two option boxes
     app.addOptionBox("l1", LIST_ONE)
     app.addOptionBox("l2", LIST_TWO)
 
     assert app.getOptionBox("l1") == LIST_ONE[0]
     assert app.getOptionBox("l2") == LIST_TWO[0]
 
+    # select new items - by position
     app.setOptionBox("l1", 2)
     app.setOptionBox("l2", 3)
 
     assert app.getOptionBox("l1") == LIST_ONE[2]
     assert app.getOptionBox("l2") == LIST_TWO[3]
 
+    # select new items - by value
     app.setOptionBox("l1", LIST_ONE[3])
     app.setOptionBox("l2", LIST_TWO[1])
 
     assert app.getOptionBox("l1") == LIST_ONE[3]
     assert app.getOptionBox("l2") == LIST_TWO[1]
 
+    # change the contents of l1
     app.changeOptionBox("l1", LIST_TWO)
     assert app.getOptionBox("l1") == LIST_TWO[0]
     assert app.getOptionBox("l2") == LIST_TWO[1]
 
+    # delete option 1 from l1
+    app.deleteOptionBox("l1", 1)
+    app.setOptionBox("l1", 1)
+    assert app.getOptionBox("l2") == LIST_TWO[1]
+    assert app.getOptionBox("l1") == LIST_TWO[2]
+
     app.addTickOptionBox("tl1", LIST_ONE)
     app.addTickOptionBox("tl2", LIST_TWO)
 
-    tl1_options = (app.getOptionBox("tl1"))
-    tl2_options = (app.getOptionBox("tl2"))
+    for item in LIST_ONE:
+        assert app.getOptionBox("tl1")[item] == False
 
-#    print(app.getOptionBox("tl1"))
-    print(" >> not implemented...")
+    for item in LIST_TWO:
+        assert app.getOptionBox("tl2")[item] == False
+
+    app.setOptionBox("tl1", LIST_ONE[1], True)
+    app.setOptionBox("tl2", LIST_TWO[2], True)
+
+    assert app.getOptionBox("tl1")[LIST_ONE[1]] == True
+    assert app.getOptionBox("tl2")[LIST_TWO[2]] == True
+
+    print("\t>> all tests complete")
 
 def test_spins():
     print("\tTesting spins")
@@ -287,9 +305,9 @@ def test_lists():
 # SELECTING THE LAST ONE...
 
     app.removeListItem("l2", LIST_TWO[1])
-    TMP_LIST = LIST_TWO
-    LIST_TWO.remove(LIST_TWO[1])
-    assert app.getAllListItems("l2") == TMP_LIST
+    tmp_list = LIST_TWO
+    tmp_list.remove(tmp_list[1])
+    assert app.getAllListItems("l2") == tmp_list
 
     print("\t>> all tests complete")
 
