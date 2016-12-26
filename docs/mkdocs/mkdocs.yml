@@ -26,6 +26,7 @@ pages:
     - Changing widgets: pythonWidgetOptions.md
     - GUI Options: pythonGuiOptions.md
     - GUI Events: pythonEvents.md
+    - Internationalisation: pythonInternationalisation.md
 - Examples:
     - Raspberry Pi Minecraft: examples/minecraft.md
     - Simple Layout: examples/simple.md
