@@ -1,12 +1,12 @@
 from appJar import gui
 
 # global variable to remember what's being dragged
-dragged="dd"
+dragged = "dd"
 # globals to remember the meter's values
 meter1 = 0
 meter2 = 100
 # some useful colours
-colours=["red", "orange", "green", "pink", "purple"]
+colours = ["red", "orange", "green", "pink", "purple"]
 
 # calculator function
 calcVal = 0
@@ -33,7 +33,7 @@ def logoutFunction():
     return app.yesNoBox("Confirm Exit", "Are you sure you want to exit?")
 
 # disable the tabs
-def logout(btn=None):
+def logout(btn = None):
     app.setTabbedFrameDisableAllTabs("Tabs")
     app.setTabbedFrameDisabledTab("Tabs", "Login", False)
     app.setTabbedFrameSelectedTab("Tabs", "Login")
@@ -114,8 +114,8 @@ def move(direction):
         app.clearListBox("Animals")
 
 def add(entry):
-    if entry=="animalsEntry": app.addListItem("Animals", app.getEntry("animalsEntry"))
-    elif entry=="sportsEntry": app.addListItem("Sports", app.getEntry("sportsEntry"))
+    if entry == "animalsEntry": app.addListItem("Animals", app.getEntry("animalsEntry"))
+    elif entry == "sportsEntry": app.addListItem("Sports", app.getEntry("sportsEntry"))
 
 # funciton to change the selected tab - called from menu
 def changeTab(tabName):
@@ -127,7 +127,7 @@ def changeTab(tabName):
 ## GUI Code starts here ##
 ###########################
 
-app=gui("ShowCase")
+app = gui("ShowCase")
 
 # add a simple toolbar
 app.addToolbar(["EXIT", "LOGOUT", "FILL", "PIE-CHART", "CALENDAR", "ADDRESS-BOOK", "FULL-SCREEN"], toolbar, findIcon=True)
