@@ -5524,9 +5524,23 @@ class gui(object):
         for theMenu in self.n_menus:
             self.disableMenu(theMenu)
 
+        # loop through top level menus
+        # and diable any that got missed
+        numMenus = self.menuBar.index("end")
+        if numMenus is not None:
+            for item in range(numMenus+1):
+                self.menuBar.entryconfig(item, state=DISABLED)
+
     def enableMenubar(self):
         for theMenu in self.n_menus:
             self.enableMenu(theMenu)
+
+        # loop through toplevel menus
+        # and enable anythat got missed
+        numMenus = self.menuBar.index("end")
+        if numMenus is not None:
+            for item in range(numMenus+1):
+                self.menuBar.entryconfig(item, state=NORMAL)
 
     def disableMenu(
         self,
@@ -5555,6 +5569,12 @@ class gui(object):
                     theMenu.entryconfigure(item, state=state)
                 except:
                     pass  # separator
+        # also diable the toplevel menu that matches this one
+        try:
+            self.menuBar.entryconfig(self.menuBar.index(title), state=state)
+        except TclError:
+            # ignore if we fail...
+            pass
 
     def disableMenuItem(self, title, item):
         theMenu = self.__verifyItem(self.n_menus, title)
@@ -8323,7 +8343,6 @@ class SimpleGrid(Frame):
 class SplashScreen(Toplevel):
     def __init__(self, parent, text="appJar"):
         Toplevel.__init__(self, parent)
-        self.overrideredirect(1)
 
         lab = Label(self, bg = 'black', fg="white", text=text, height=3, width=50)
         lab.config(font=("Courier", 44))
@@ -8336,6 +8355,7 @@ class SplashScreen(Toplevel):
 
         self.attributes("-alpha", 0.95)
         self.attributes("-fullscreen", True)
+        self.overrideredirect(1)
 
         self.update()
 
