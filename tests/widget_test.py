@@ -20,8 +20,8 @@ COL_THREE = "green"
 LIST_ONE = ["a", "b", "c", "d", "e"]
 LIST_TWO = ["v", "d", "s", "t", "z"]
 
-HASH_ONE = { "a":True, "b": False, "c": True }
-HASH_TWO = { "x":False, "y": True, "z": False }
+HASH_ONE = { "a": True, "b": False, "c": True }
+HASH_TWO = { "x": False, "y": True, "z": False }
 
 from appJar import gui 
 app=gui()
@@ -66,6 +66,16 @@ def test_entries():
     assert app.getEntry("se1") == EMPTY
     assert app.getEntry("ae1") == EMPTY
 
+    app.setEntryDefault("e1", TEXT_TWO)
+    app.setEntryDefault("ne1", NUM_TWO)
+    app.setEntryDefault("se1", TEXT_THREE)
+    app.setEntryDefault("ae1", TEXT_FOUR)
+
+    assert app.getEntry("e1") == EMPTY
+    assert app.getEntry("ne1") == 0
+    assert app.getEntry("se1") == EMPTY
+    assert app.getEntry("ae1") == EMPTY
+
     app.setEntry("e1", TEXT_ONE)
     app.setEntry("ne1", NUM_ONE)
     app.setEntry("se1", TEXT_ONE)
@@ -102,13 +112,27 @@ def test_entries():
     assert app.getEntry("ne1") == 0
     assert app.getEntry("se1") == EMPTY
     assert app.getEntry("ae1") == EMPTY
+
+    app.setEntry("e1", TEXT_ONE)
+    app.setEntry("ne1", NUM_ONE)
+    app.setEntry("se1", TEXT_ONE)
+    app.setEntry("ae1", TEXT_ONE)
+
+    assert app.getEntry("e1") == TEXT_ONE
+    assert app.getEntry("ne1") == float(NUM_ONE)
+    assert app.getEntry("se1") == TEXT_ONE
+    assert app.getEntry("ae1") == TEXT_ONE
     print("\t >> all tests complete")
 
 def test_buttons():
     print("\tTesting buttons")
     app.addButton("b1", None)
     app.addButtons(["bb1", "bb2", "bb3", "bb4"], None)
-    app.addButtons([["a2b1", "a2b2", "a2b3", "a2b4"], ["b2b1", "b2b2", "b2b3", "b2b4"], ["c2b1", "c2b2", "c2b3", "c2b4"]], None)
+    app.addButtons(
+        [["a2b1", "a2b2", "a2b3", "a2b4"],
+        ["b2b1", "b2b2", "b2b3", "b2b4"],
+        ["c2b1", "c2b2", "c2b3", "c2b4"]],
+        None)
     app.addNamedButton("butName", "nb1", None) # name/title
 
     but1 = app.getButtonWidget("b1")
@@ -167,17 +191,17 @@ def test_checks():
     app.addCheckBox(TEXT_TWO)
     app.addCheckBox(TEXT_THREE)
 
-    assert app.getCheckBox(TEXT_ONE) == False
-    assert app.getCheckBox(TEXT_TWO) == False
-    assert app.getCheckBox(TEXT_THREE) == False
+    assert app.getCheckBox(TEXT_ONE) is False
+    assert app.getCheckBox(TEXT_TWO) is False
+    assert app.getCheckBox(TEXT_THREE) is False
 
     app.setCheckBox(TEXT_ONE)
     app.setCheckBox(TEXT_TWO, True)
     app.setCheckBox(TEXT_THREE, False)
 
-    assert app.getCheckBox(TEXT_ONE) == True
-    assert app.getCheckBox(TEXT_TWO) == True
-    assert app.getCheckBox(TEXT_THREE) == False
+    assert app.getCheckBox(TEXT_ONE) is True
+    assert app.getCheckBox(TEXT_TWO) is True
+    assert app.getCheckBox(TEXT_THREE) is False
     print("\t >> all tests complete")
 
 def test_options():
@@ -218,16 +242,16 @@ def test_options():
     app.addTickOptionBox("tl2", LIST_TWO)
 
     for item in LIST_ONE:
-        assert app.getOptionBox("tl1")[item] == False
+        assert app.getOptionBox("tl1")[item] is False
 
     for item in LIST_TWO:
-        assert app.getOptionBox("tl2")[item] == False
+        assert app.getOptionBox("tl2")[item] is False
 
     app.setOptionBox("tl1", LIST_ONE[1], True)
     app.setOptionBox("tl2", LIST_TWO[2], True)
 
-    assert app.getOptionBox("tl1")[LIST_ONE[1]] == True
-    assert app.getOptionBox("tl2")[LIST_TWO[2]] == True
+    assert app.getOptionBox("tl1")[LIST_ONE[1]] is True
+    assert app.getOptionBox("tl2")[LIST_TWO[2]] is True
 
     print("\t>> all tests complete")
 
@@ -477,7 +501,7 @@ def test_properties():
     assert compareDictionaries(app.getProperties("p2"), hash_all)
 
     app.setProperty("p2", "a", True)
-    assert app.getProperty("p2", "a") == True
+    assert app.getProperty("p2", "a") is True
 
     print("\t >> all tests complete")
 
