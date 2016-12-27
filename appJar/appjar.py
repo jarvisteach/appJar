@@ -999,33 +999,48 @@ class gui(object):
     def __resumeWarn(self, myWarn):
         self.WARN = myWarn
 
-    # sets the padding around the border of the root container
-    def setPadding(self, x, y):
-        self.containerStack[0]['container'].config(padx=x, pady=y)
-
     # set the current container's external grid padding
     def setPadX(self, x=0): self.containerStack[-1]['padx'] = x
 
     def setPadY(self, y=0): self.containerStack[-1]['pady'] = y
 
-    def setPadding(self, padding):
-        self.containerStack[-1]['padx'] = padding[0]
-        self.containerStack[-1]['pady'] = padding[1]
+    # sets the padding around the border of the root container
+    def setPadding(self, x, y=None):
+        if y is None:
+            if isinstance(x, list):
+                self.containerStack[-1]['padx'] = x[0]
+                self.containerStack[-1]['pady'] = x[1]
+        else:
+            self.containerStack[-1]['padx'] = x
+            self.containerStack[-1]['pady'] = y
+
+    def setGuiPadding(self, x, y=None):
+        if y is None:
+            if isinstance(x, list):
+                self.containerStack[0]['container'].config(padx=x[0], pady=x[1])
+        else:
+            self.containerStack[0]['container'].config(padx=x, pady=y)
 
     # sets the current containers internal padding
     def setIPadX(self, x=0): self.setInPadX(x)
 
-    def setIPadY(self, y=0): self.setInPadY(x)
+    def setIPadY(self, y=0): self.setInPadY(y)
 
-    def setIPadding(self, padding): self.setInPadding(padding)
+    def setIPadding(self, x, y=None): self.setInPadding(x, y)
 
     def setInPadX(self, x=0): self.containerStack[-1]['ipadx'] = x
 
     def setInPadY(self, y=0): self.containerStack[-1]['ipady'] = y
 
-    def setInPadding(self, padding):
-        self.containerStack[-1]['ipadx'] = padding[0]
-        self.containerStack[-1]['ipady'] = padding[1]
+    def setInPadding(self, x, y=None):
+        if y is None:
+            if isinstance(x, list):
+                self.containerStack[-1]['ipadx'] = x[0]
+                self.containerStack[-1]['ipady'] = x[1]
+        else:
+            self.containerStack[-1]['ipadx'] = x
+            self.containerStack[-1]['ipady'] = y
+
 
     # set an override sticky for this container
     def setSticky(self, sticky):
