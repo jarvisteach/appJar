@@ -24,20 +24,24 @@ This will compare your local copy, with the copy on GitHub, and tell you any dif
 * `git add [file]`  
 Add a new file to your local repository  
 * `git add .`  
-Add any changes youve made to your local repository  
+Add any changes you've made to your local repository  
 * `git commit -m "message here"`  
 Commit anything you've added to your local repository  
 * `git commit -a -m "message here"`  
 Combines `add` and `commit` Syncing all changes to your local repository  
 
+## Undoing  
+* `git checkout XXX`  
+This will restore a file to the latest version in Git.  
+
 # Pushing  
 * `git push`  
-Pushes all changes you've added & commited locally, to GitHub  
+Pushes all changes you've added & committed locally, to GitHub  
 
 # Tagging
 * `git tag -a vXXX -m "Tag description`  
 * `git push origin vXXX`  
-This tags the current build in Git  
+This tags the current build in git  
 Then pushes it to GitHub
 
 # PyPI  

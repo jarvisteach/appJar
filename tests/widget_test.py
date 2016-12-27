@@ -2,7 +2,7 @@ import sys
 import datetime
 sys.path.append("../")
 
-EMPTY=""
+EMPTY = ""
 
 TEXT_ONE = "l_one_x"
 TEXT_TWO = "l_one_y"
@@ -20,11 +20,11 @@ COL_THREE = "green"
 LIST_ONE = ["a", "b", "c", "d", "e"]
 LIST_TWO = ["v", "d", "s", "t", "z"]
 
-HASH_ONE = { "a":True, "b": False, "c": True }
-HASH_TWO = { "x":False, "y": True, "z": False }
+HASH_ONE = {"a": True, "b": False, "c": True}
+HASH_TWO = {"x": False, "y": True, "z": False}
 
-from appJar import gui 
-app=gui()
+from appJar import gui
+app = gui()
 
 
 def test_labels():
@@ -54,12 +54,23 @@ def test_labels():
     assert app.getLabel("fl1") == EMPTY
     print("\t >> all tests complete")
 
+
 def test_entries():
     print("\tTesting entries")
     app.addEntry("e1")
     app.addNumericEntry("ne1")
     app.addSecretEntry("se1")
     app.addAutoEntry("ae1", ["a", "b", "c"])
+
+    assert app.getEntry("e1") == EMPTY
+    assert app.getEntry("ne1") == 0
+    assert app.getEntry("se1") == EMPTY
+    assert app.getEntry("ae1") == EMPTY
+
+    app.setEntryDefault("e1", TEXT_TWO)
+    app.setEntryDefault("ne1", NUM_TWO)
+    app.setEntryDefault("se1", TEXT_THREE)
+    app.setEntryDefault("ae1", TEXT_FOUR)
 
     assert app.getEntry("e1") == EMPTY
     assert app.getEntry("ne1") == 0
@@ -102,14 +113,29 @@ def test_entries():
     assert app.getEntry("ne1") == 0
     assert app.getEntry("se1") == EMPTY
     assert app.getEntry("ae1") == EMPTY
+
+    app.setEntry("e1", TEXT_ONE)
+    app.setEntry("ne1", NUM_ONE)
+    app.setEntry("se1", TEXT_ONE)
+    app.setEntry("ae1", TEXT_ONE)
+
+    assert app.getEntry("e1") == TEXT_ONE
+    assert app.getEntry("ne1") == float(NUM_ONE)
+    assert app.getEntry("se1") == TEXT_ONE
+    assert app.getEntry("ae1") == TEXT_ONE
     print("\t >> all tests complete")
+
 
 def test_buttons():
     print("\tTesting buttons")
     app.addButton("b1", None)
     app.addButtons(["bb1", "bb2", "bb3", "bb4"], None)
-    app.addButtons([["a2b1", "a2b2", "a2b3", "a2b4"], ["b2b1", "b2b2", "b2b3", "b2b4"], ["c2b1", "c2b2", "c2b3", "c2b4"]], None)
-    app.addNamedButton("butName", "nb1", None) # name/title
+    app.addButtons(
+            [["a2b1", "a2b2", "a2b3", "a2b4"],
+            ["b2b1", "b2b2", "b2b3", "b2b4"],
+            ["c2b1", "c2b2", "c2b3", "c2b4"]],
+        None)
+    app.addNamedButton("butName", "nb1", None)  # name/title
 
     but1 = app.getButtonWidget("b1")
     but2 = app.getButtonWidget("bb1")
@@ -121,6 +147,7 @@ def test_buttons():
     assert but3.cget("text") == "a2b1"
     assert but4.cget("text") == "butName"
     print("\t >> all tests complete")
+
 
 def test_sets():
     print("\tTesting setters")
@@ -143,6 +170,7 @@ def test_sets():
     assert lab.cget("state") == "disabled"
     print("\t >> all tests complete")
 
+
 def test_radios():
     print("\tTesting radios")
     app.addRadioButton("rb", TEXT_ONE)
@@ -161,24 +189,26 @@ def test_radios():
     assert app.getRadioButton("rb") == TEXT_THREE
     print("\t >> all tests complete")
 
+
 def test_checks():
     print("\tTesting checks")
     app.addCheckBox(TEXT_ONE)
     app.addCheckBox(TEXT_TWO)
     app.addCheckBox(TEXT_THREE)
 
-    assert app.getCheckBox(TEXT_ONE) == False
-    assert app.getCheckBox(TEXT_TWO) == False
-    assert app.getCheckBox(TEXT_THREE) == False
+    assert app.getCheckBox(TEXT_ONE) is False
+    assert app.getCheckBox(TEXT_TWO) is False
+    assert app.getCheckBox(TEXT_THREE) is False
 
     app.setCheckBox(TEXT_ONE)
     app.setCheckBox(TEXT_TWO, True)
     app.setCheckBox(TEXT_THREE, False)
 
-    assert app.getCheckBox(TEXT_ONE) == True
-    assert app.getCheckBox(TEXT_TWO) == True
-    assert app.getCheckBox(TEXT_THREE) == False
+    assert app.getCheckBox(TEXT_ONE) is True
+    assert app.getCheckBox(TEXT_TWO) is True
+    assert app.getCheckBox(TEXT_THREE) is False
     print("\t >> all tests complete")
+
 
 def test_options():
     print("\tTesting options")
@@ -218,18 +248,19 @@ def test_options():
     app.addTickOptionBox("tl2", LIST_TWO)
 
     for item in LIST_ONE:
-        assert app.getOptionBox("tl1")[item] == False
+        assert app.getOptionBox("tl1")[item] is False
 
     for item in LIST_TWO:
-        assert app.getOptionBox("tl2")[item] == False
+        assert app.getOptionBox("tl2")[item] is False
 
     app.setOptionBox("tl1", LIST_ONE[1], True)
     app.setOptionBox("tl2", LIST_TWO[2], True)
 
-    assert app.getOptionBox("tl1")[LIST_ONE[1]] == True
-    assert app.getOptionBox("tl2")[LIST_TWO[2]] == True
+    assert app.getOptionBox("tl1")[LIST_ONE[1]] is True
+    assert app.getOptionBox("tl2")[LIST_TWO[2]] is True
 
     print("\t>> all tests complete")
+
 
 def test_spins():
     print("\tTesting spins")
@@ -255,6 +286,7 @@ def test_spins():
     assert app.getSpinBox("s4") == "150"
 
     print("\t>> all tests complete")
+
 
 def test_lists():
     print("\tTesting lists")
@@ -311,6 +343,7 @@ def test_lists():
 
     print("\t>> all tests complete")
 
+
 def test_scales():
     print("\tTesting scales")
     app.addScale("s1")
@@ -365,6 +398,7 @@ def test_scales():
 
     print("\t >> all tests complete")
 
+
 def test_messages():
     print("\tTesting messages")
     app.addMessage("m1", TEXT_ONE)
@@ -395,6 +429,7 @@ def test_messages():
     assert app.getMessageWidget("m3").cget("text") == EMPTY
     assert app.getMessageWidget("m4").cget("text") == EMPTY
     print("\t >> all tests complete")
+
 
 def test_text_areas():
     print("\tTesting text areas")
@@ -427,6 +462,7 @@ def test_text_areas():
     assert app.getTextArea("st2") == TEXT_FOUR
     print("\t >> all tests complete")
 
+
 def test_meters():
     print("\tTesting meters")
     app.addMeter("m1")
@@ -437,16 +473,21 @@ def test_meters():
 
     print("\t >> all tests complete")
 
+
 def compareDictionaries(d1, d2):
     for key in d1.keys():
-        if d1[key] != d2[key]: return False
+        if d1[key] != d2[key]:
+            return False
     for key in d2.keys():
-        if d1[key] != d2[key]: return False
+        if d1[key] != d2[key]:
+            return False
     return True
+
 
 def validateProp(p, d):
     for key in d.keys():
         assert app.getProperty(p, key) == d[key]
+
 
 def test_properties():
     print("\tTesting properties")
@@ -477,9 +518,10 @@ def test_properties():
     assert compareDictionaries(app.getProperties("p2"), hash_all)
 
     app.setProperty("p2", "a", True)
-    assert app.getProperty("p2", "a") == True
+    assert app.getProperty("p2", "a") is True
 
     print("\t >> all tests complete")
+
 
 def test_separators():
     print("\tTesting separators")
@@ -487,11 +529,13 @@ def test_separators():
     app.addVerticalSeparator()
     print("\t >> all tests complete")
 
+
 def test_links():
     print("\tTesting links")
     app.addLink("l1", None)
     app.addWebLink("l1", "http://appJar.info")
     print("\t >> all tests complete")
+
 
 def test_grips():
     print("\tTesting grips")
@@ -499,55 +543,59 @@ def test_grips():
     app.addGrip()
     print("\t >> all tests complete")
 
+
 def test_date_pickers():
     print("\tTesting date pickers")
     app.addDatePicker("d1")
     app.addDatePicker("d2")
     app.addDatePicker("d3")
 
-    assert app.getDatePicker("d1") == datetime.date(1970,1,1)
-    assert app.getDatePicker("d2") == datetime.date(1970,1,1)
-    assert app.getDatePicker("d3") == datetime.date(1970,1,1)
+    assert app.getDatePicker("d1") == datetime.date(1970, 1, 1)
+    assert app.getDatePicker("d2") == datetime.date(1970, 1, 1)
+    assert app.getDatePicker("d3") == datetime.date(1970, 1, 1)
 
     app.setDatePicker("d1")
-    app.setDatePicker("d2", datetime.date(1980,5,5))
-    app.setDatePicker("d3", datetime.date(1990,10,10))
+    app.setDatePicker("d2", datetime.date(1980, 5, 5))
+    app.setDatePicker("d3", datetime.date(1990, 10, 10))
 
     assert app.getDatePicker("d1") == datetime.date.today()
-    assert app.getDatePicker("d2") == datetime.date(1980,5,5)
-    assert app.getDatePicker("d3") == datetime.date(1990,10,10)
+    assert app.getDatePicker("d2") == datetime.date(1980, 5, 5)
+    assert app.getDatePicker("d3") == datetime.date(1990, 10, 10)
 
     app.setDatePickerRange("d1", 1940, 1960)
     app.setDatePickerRange("d2", 1980, 2020)
     app.setDatePickerRange("d3", 2020, 2040)
 
     assert app.getDatePicker("d1") == datetime.date(1940, datetime.date.today().month, datetime.date.today().day)
-    assert app.getDatePicker("d2") == datetime.date(1980,5,5)
-    assert app.getDatePicker("d3") == datetime.date(2020,10,10)
+    assert app.getDatePicker("d2") == datetime.date(1980, 5, 5)
+    assert app.getDatePicker("d3") == datetime.date(2020, 10, 10)
 
-    app.setDatePicker("d1", datetime.date(1950,5,5))
-    app.setDatePicker("d2", datetime.date(1990,5,5))
-    app.setDatePicker("d3", datetime.date(2021,10,10))
+    app.setDatePicker("d1", datetime.date(1950, 5, 5))
+    app.setDatePicker("d2", datetime.date(1990, 5, 5))
+    app.setDatePicker("d3", datetime.date(2021, 10, 10))
 
-    assert app.getDatePicker("d1") == datetime.date(1950,5,5)
-    assert app.getDatePicker("d2") == datetime.date(1990,5,5)
-    assert app.getDatePicker("d3") == datetime.date(2021,10,10)
+    assert app.getDatePicker("d1") == datetime.date(1950, 5, 5)
+    assert app.getDatePicker("d2") == datetime.date(1990, 5, 5)
+    assert app.getDatePicker("d3") == datetime.date(2021, 10, 10)
 
     print("\t >> all tests complete")
 
+
 def test_pies():
     print("\tTesting Pies")
-    app.addPieChart("p1", {"apples":50, "oranges":200, "grapes":75, "beef":300, "turkey":150})
+    app.addPieChart("p1", {"apples": 50, "oranges": 200, "grapes": 75, "beef": 300, "turkey": 150})
     app.setPieChart("p1", "beef", 5)
     app.setPieChart("p1", "fish", 20)
     app.setPieChart("p1", "apples", 0)
     print(" >> not implemented...")
     #print("\t >> all tests complete")
 
+
 def test_trees():
     print("\tTesting Trees")
     print(" >> not implemented...")
     #print("\t >> all tests complete")
+
 
 def test_grids():
     print("\tTesting Grids")
