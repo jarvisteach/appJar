@@ -645,7 +645,11 @@ class gui(object):
                 for (key, val) in self.config.items(section):
                     keys = key.split("-")
 
-                    rbs = self.n_rbs[keys[0]]
+                    try:
+                        rbs = self.n_rbs[keys[0]]
+                    except KeyError:
+                        self.warn("Invalid RADIOBUTTON key: " + keys[0])
+                        continue
                     for rb in rbs:
                         if rb.DEFAULT_TEXT == keys[1]:
                             rb["text"] = val
