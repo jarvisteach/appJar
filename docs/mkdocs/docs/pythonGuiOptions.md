@@ -46,7 +46,7 @@ else:
 * `.setLocation(x, y)`  
     Sets the position of the GUI.  
 
-* `.setPadding(x, y)`  
+* `.setGuiPadding(x, y)`  
     Sets the size of the border inside the GUI - defaults to 2.  
 
 * `.hideTitleBar()` & `.showTitleBar()`  
