@@ -3,6 +3,11 @@ engines:
     enabled: true
   pep8:
     enabled: true
+    checks:
+        E501:
+            enabled: false
+        E265:
+            enabled: false
   duplication:
     enabled: true
     config:

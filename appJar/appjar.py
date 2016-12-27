@@ -533,6 +533,9 @@ class gui(object):
         # records if we're in fullscreen - stops hideTitle from breaking
         self.isFullscreen = False
 
+        # splash screen?
+        self.splashOn = False
+
         # collections of widgets, widget name is key
         self.n_frames = []  # un-named, so no direct access
         self.n_labels = {}
@@ -592,7 +595,11 @@ class gui(object):
     def changeLanguage(self, language):
 
         language = language.upper()
-        if not self.config.read(language+".ini"):
+        import codecs
+        try:
+            with codecs.open(language + ".ini", "r", "utf8") as langFile:
+                self.config.read_file(langFile)
+        except FileNotFoundError:
             self.warn("Invalid language: " + language)
             return
 
@@ -634,7 +641,7 @@ class gui(object):
             # relabel each widget
             for k in widgets.keys():
                 widg = widgets[k]
-                widg.config(text=texts.get(k, widg.DEFAULT_TEXT))
+                widg.config(text = texts.get(k, widg.DEFAULT_TEXT))
                 print("\t\t", k, "=", widg.cget("text"))
 
     # function to generate warning messages
@@ -653,11 +660,19 @@ class gui(object):
     # function to turn on debug messages
     def enableDebug(self): self.DEBUG = True
 
+    # function to turn on the splash screen
+    def showSplash(self): self.splashOn = True
+
 #####################################
 # Event Loop - must always be called at end
 #####################################
     def go(self, language=None):
         """ Most important function! Start the GUI """
+
+        if self.splashOn:
+            self.topLevel.withdraw()
+            splash = SplashScreen(self.topLevel)
+            self.__bringToFront(splash)
 
         # if language is populated, we are in internationalisation mode
         # call the setLanguage function - to re-badge all the widgets
@@ -692,6 +707,10 @@ class gui(object):
         # if necessary
         self.__dimensionWindow()
 
+        if self.splashOn:
+            time.sleep(3)
+            splash.destroy()
+
         # bring to front
         self.__bringToFront()
         self.topLevel.deiconify()
@@ -713,7 +732,7 @@ class gui(object):
             self.stop()
 
     def setStopFunction(self, function):
-        """ set a funciton to call when the GUI is quit. Must return True or False """
+        """ set a function to call when the GUI is quit. Must return True or False """
         tl = self.__getTopLevel()
         tl.stopFunction = function
         # link to exit item in topMenu
@@ -903,22 +922,23 @@ class gui(object):
         self.__getTopLevel().geometry("+%d+%d" % (x, y))
 
     # called to make sure this window is on top
-    def __bringToFront(self):
+    def __bringToFront(self, win=None):
+        if win is None: win = self.topLevel
         if self.platform == self.MAC:
             import subprocess
             tmpl = 'tell application "System Events" to set frontmost of every process whose unix id is {} to true'
             script = tmpl.format(os.getpid())
             output = subprocess.check_call(
                 ['/usr/bin/osascript', '-e', script])
-            self.topLevel.after(
-                0, lambda: self.topLevel.attributes(
+            win.after(
+                0, lambda: win.attributes(
                     "-topmost", False))
 #            val=os.system('''/usr/bin/osascript -e 'tell app "Finder" to set frontmost of process "''' + PY_NAME + '''" to true' ''')
-            self.topLevel.lift()
+            win.lift()
         elif self.platform == self.WINDOWS:
-            self.topLevel.lift()
+            win.lift()
         elif self.platform == self.LINUX:
-            self.topLevel.lift()
+            win.lift()
 
     def setFullscreen(self, container=None):
         if not self.isFullscreen:
@@ -1145,7 +1165,7 @@ class gui(object):
             self.__getTopLevel().attributes("-alpha", percentage)
 
 ##############################
-# funcitons to deal with tabbing and right clicking
+# functions to deal with tabbing and right clicking
 ##############################
     def __focusNextWindow(self, event):
         event.widget.tk_focusNext().focus_set()
@@ -2855,7 +2875,7 @@ class gui(object):
             font=self.labelFont,
             background=self.__getContainerBg())
 #            lab.config( width=self.labWidth)
-        lab.DEFAULT_TEXT=title
+        lab.DEFAULT_TEXT = title
 
         self.n_labels[title] = lab
         self.n_frameLabs[title] = lab
@@ -2902,7 +2922,7 @@ class gui(object):
             font=self.cbFont,
             background=self.__getContainerBg(),
             activebackground=self.__getContainerBg())
-        cb.DEFAULT_TEXT=title
+        cb.DEFAULT_TEXT = title
         cb.config(anchor=W)
         cb.bind("<Button-1>", self.__grabFocus)
         self.n_cbs[title] = cb
@@ -4143,7 +4163,7 @@ class gui(object):
         but = Button(frame)
 
         but.config(text=name, font=self.buttonFont)
-        but.DEFAULT_TEXT=name
+        but.DEFAULT_TEXT = name
 
         if func is not None:
             command = self.MAKE_FUNC(func, title)
@@ -4394,9 +4414,9 @@ class gui(object):
         lab.inContainer = False
         if text is not None:
             lab.config(text=text)
-            lab.DEFAULT_TEXT=text
+            lab.DEFAULT_TEXT = text
         else:
-            lab.DEFAULT_TEXT=""
+            lab.DEFAULT_TEXT = ""
         lab.config(
             justify=LEFT,
             font=self.labelFont,
@@ -4610,9 +4630,9 @@ class gui(object):
         mess.config(justify=LEFT, background=self.__getContainerBg())
         if text is not None:
             mess.config(text=text)
-            mess.DEFAULT_TEXT=text
+            mess.DEFAULT_TEXT = text
         else:
-            mess.DEFAULT_TEXT=""
+            mess.DEFAULT_TEXT = ""
 
         if self.platform in [self.MAC, self.LINUX]:
             mess.config(highlightbackground=self.__getContainerBg())
@@ -6509,7 +6529,7 @@ class Link(Label):
 
     def configure(self, **kw):
         if "text" in kw:
-            self.DEFAULT_TEXT=kw["text"]
+            self.DEFAULT_TEXT = kw["text"]
         if PYTHON2:
             Label.config(self, **kw)
         else:
@@ -7243,7 +7263,7 @@ class PagedWindow(Frame):
     # get current page number
     def getPageNumber(self): return self.currentPage + 1
 
-    # register a funciton to call when the page changes
+    # register a function to call when the page changes
     def registerPageChangeEvent(self, event):
         self.pageChangeEvent = event
 
@@ -7418,7 +7438,7 @@ class AutoCompleteEntry(Entry):
                     self.listbox.insert(END, w)
                 self.selectItem(0)
 
-    # funciton to create & show an empty list box
+    # function to create & show an empty list box
     def makeListBox(self):
         self.listbox = Listbox(width=self["width"], height=8)
         self.listbox.bind("<Button-1>", self.mouseClickBox)
@@ -7430,7 +7450,7 @@ class AutoCompleteEntry(Entry):
             self.winfo_height())
         self.listBoxShowing = True
 
-    # funciton to handle a mouse click in the list box
+    # function to handle a mouse click in the list box
     def mouseClickBox(self, e=None):
         self.selectItem(self.listbox.nearest(e.y))
         self.selectWord(e)
@@ -7456,7 +7476,7 @@ class AutoCompleteEntry(Entry):
     def moveDown(self, event):
         return self.arrow("DOWN")
 
-    # funciton for handling up/down keys
+    # function for handling up/down keys
     def arrow(self, direction):
         if not self.listBoxShowing:
             self.makeListBox()
@@ -7486,7 +7506,7 @@ class AutoCompleteEntry(Entry):
         # stop the event propgating
         return "break"
 
-    # funciton to select the specified item
+    # function to select the specified item
     def selectItem(self, position):
         numItems = self.listbox.size()
         self.listbox.selection_clear(0, numItems - 1)
@@ -8210,6 +8230,31 @@ class SimpleGrid(Frame):
         else:
             self.selectedCells[gridPos] = True
             cell.config(background=self.cellSelectedBg)
+
+
+##########################
+# Simple SplashScreen
+##########################
+
+
+class SplashScreen(Toplevel):
+    def __init__(self, parent, text="appJar"):
+        Toplevel.__init__(self, parent)
+        self.overrideredirect(1)
+
+        lab = Label(self, bg = 'black', fg="white", text=text, height=3, width=50)
+        lab.config(font=("Courier", 44))
+        lab.place(relx=0.5, rely=0.5, anchor=CENTER)
+
+        width = str(self.winfo_screenwidth())
+        height = str(self.winfo_screenheight())
+        self.geometry(width+"x"+height)
+        self.config(bg="red")
+
+        self.attributes("-alpha", 0.95)
+        self.attributes("-fullscreen", True)
+
+        self.update()
 
 ##########################
 # CopyAndPaste Organiser
