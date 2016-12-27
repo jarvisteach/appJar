@@ -50,7 +50,7 @@ These will look for a file called `LANGUAGE.ini`
 
 ### Widget Support
 Not all widget's are supported, and some require a bit more effort to get them to work properly.  
-Note, changing the text of a widget through `setXXX()` method's will work, bit will not be rememberd if the language is changed.  
+Note, changing the text of a widget through `setXXX()` method's will work, but will not be rememberd if the language is changed.  
 
 * **Auto-labelled Widgets**  
     Any widgets created with an **auto-label** can be changed under the `[LABEL]` option below.  
@@ -79,3 +79,12 @@ Note, changing the text of a widget through `setXXX()` method's will work, bit w
 
 * `[EXTERNAL]`  
     It will be possible to request translations for non appJar data.  
+
+### Platform Support
+Note, your platform might not support the characters you want to display.  
+In which case, you'll need to install the relevant font.  
+For example, to get Korean characters to show on raspberry Pi, try:  
+`sudo apt-get install fonts-nanum`  
+
+If you're after other languages, you can try:  
+`apt-cache search chinese` and then install a likely looking font...  
