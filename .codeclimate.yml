@@ -19,5 +19,4 @@ ratings:
   - "**.py"
 
 exclude_paths:
-- Lessons
-- docs
+- "docs/"
