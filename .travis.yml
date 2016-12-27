@@ -23,3 +23,7 @@ script:
 
 after_success:
     - bash tests/run_coveralls.sh
+
+addons:
+    code_climate:
+        repo_token: 3b1c31ab1ba5ee5eb7aaf75efd1245ee00e38a070f7a82fece4b5f7b9ca5f7f7
