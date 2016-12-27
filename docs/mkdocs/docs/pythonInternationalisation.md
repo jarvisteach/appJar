@@ -59,27 +59,23 @@ Note, changing the text of a widget through `setXXX()` method's will work, bit w
     The label id, followed by the text to put in it.  
     Any widgets added with labels `.addLabelEntry()` are also changed here.  
 
-* `[SCALE]`, `[TEXTAREA]`, `[METER]`, `[ENTRY]`  
+* `[RADIOBUTTON]`  
+    Radio-buttons are a little tricky. The key has two parts: the *group* & *item*  
+    If you used: `.addRadioButton("Food", "f1")` the entry in the `.ini` file would be:
+    `Food-f1: french_food_name`  
+
+* `[ENTRY]`  
+    The text provided here wil be used for the default value, if one is being used.  
+
+* `[SCALE]`, `[TEXTAREA]`, `[METER]`  
     These widgets have no text to change.  
-    The `[ENTRY]` does have default text, which will be supprted in a later release.  
 
-* `[LISTBOX]`, `[SPIN]`, `[OPTION]`, `[PROPERTIES]`, `[RADIOBUTTON]`  
-    Contain lists of items, need additional development.  
-
-* `[LABELFRAME]`, `[TABBEDFRAME]`, `[PAGEDWINDOW]`, `[TOGGLEFRAME]`  
-    Not standard widgets, need additional development.  
-
-* `[MENUBAR]`, `[STATUSBAR]`, `[TOOLBAR]`, `[TOOLTIP]`, `[TITLE]`  
-    Not standard widgets, need additional development.  
-
-* `[POPUP]`  
-    Not supported yet.  
-
-* `[SOUND]` & `[IMAGE]`  
-    Not supported yet.  
-
-* `[PIECHART]`, `[TREE]`, `[GRID]`  
-    Widgets in developemnt - not supported yet.  
+* The following are currently not supported:  
+    `[LISTBOX]`, `[SPIN]`, `[OPTION]`, `[PROPERTIES]`  
+    `[POPUP]`, `[PIECHART]`, `[TREE]`, `[GRID]`  
+    `[LABELFRAME]`, `[TABBEDFRAME]`, `[PAGEDWINDOW]`, `[TOGGLEFRAME]`  
+    `[MENUBAR]`, `[STATUSBAR]`, `[TOOLBAR]`, `[TOOLTIP]`, `[TITLE]`  
+    `[SOUND]` & `[IMAGE]`  
 
 * `[EXTERNAL]`  
     It will be possible to request translations for non appJar data.  
