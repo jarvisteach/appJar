@@ -23,6 +23,9 @@ LIST_TWO = ["v", "d", "s", "t", "z"]
 HASH_ONE = {"a": True, "b": False, "c": True}
 HASH_TWO = {"x": False, "y": True, "z": False}
 
+def tester_function(btn):
+    print(btn)
+
 from appJar import gui
 app = gui()
 
@@ -146,28 +149,6 @@ def test_buttons():
     assert but2.cget("text") == "bb1"
     assert but3.cget("text") == "a2b1"
     assert but4.cget("text") == "butName"
-    print("\t >> all tests complete")
-
-
-def test_sets():
-    print("\tTesting setters")
-    app.setLabelBg("l1", COL_ONE)
-    app.setLabelFg("l1", COL_TWO)
-    app.setLabelDisabledFg("l1", COL_THREE)
-    app.setLabelWidth("l1", 77)
-    app.setLabelHeight("l1", 33)
-    app.setLabelRelief("l1", "sunken")
-    app.setLabelState("l1", "disabled")
-
-    lab = app.getLabelWidget("l1")
-
-    assert lab.cget("bg") == COL_ONE
-    assert lab.cget("fg") == COL_TWO
-    assert lab.cget("disabledforeground") == COL_THREE
-    assert lab.cget("width") == 77
-    assert lab.cget("height") == 33
-    assert lab.cget("relief") == "sunken"
-    assert lab.cget("state") == "disabled"
     print("\t >> all tests complete")
 
 
@@ -602,7 +583,108 @@ def test_grids():
     print(" >> not implemented...")
     #print("\t >> all tests complete")
 
+
+def test_gui_options():
+    print("\tTesting gui options")
+    app.setTitle("New title")
+    app.setTransparency(50)
+
+    app.setGeometry("100x100")
+    app.setGeometry(200,200)
+    app.setGeometry("fullscreen")
+    app.exitFullscreen()
+    app.setResizable()
+    app.setResizable(True)
+    app.setResizable(False)
+    app.setLocation(200,200)
+    app.setGuiPadding(20,20)
+    app.setGuiPadding([20,20])
+    app.hideTitleBar()
+    app.showTitleBar()
+
+    app.setBg("green")
+    app.setFont(20)
+    app.decreaseFont()
+    app.increaseFont()
+    app.setLabelFont(20)
+    app.increaseLabelFont()
+    app.decreaseLabelFont()
+    app.setButtonFont(20)
+    app.increaseButtonFont()
+    app.decreaseButtonFont()
+
+    print(" >> not implemented...")
+    #print("\t >> all tests complete")
+
+
+def test_widget_arranging():
+    print("\tTesting widget arranging")
+
+    app.setStretch("none")
+    app.setStretch("row")
+    app.setStretch("column")
+    app.setStretch("both")
+
+    app.setSticky("n")
+    app.setSticky("ne")
+    app.setSticky("nw")
+    app.setSticky("ew")
+    app.setSticky("news")
+    app.setSticky("")
+
+    app.setPadding(5,10)
+    app.setInPadding(5,10)
+
+    app.setPadding([5,10])
+    app.setInPadding([5,10])
+
+    print(" >> not implemented...")
+    #print("\t >> all tests complete")
+
+
+def test_events():
+    print("\tTesting events")
+
+    app.enableEnter(tester_function)
+    app.disableEnter()
+
+    app.bindKey("b", tester_function)
+    app.unbindKey("b")
+
+    app.registerEvent(tester_function)
+    app.setPollTime(2)
+    app.setPollTime(0.5)
+
+    app.setStopFunction(tester_function)
+
+    print(" >> not implemented...")
+    #print("\t >> all tests complete")
+
+def test_sets():
+    print("\tTesting setters")
+    app.setLabelBg("l1", COL_ONE)
+    app.setLabelFg("l1", COL_TWO)
+    app.setLabelDisabledFg("l1", COL_THREE)
+    app.setLabelWidth("l1", 77)
+    app.setLabelHeight("l1", 33)
+    app.setLabelRelief("l1", "sunken")
+    app.setLabelState("l1", "disabled")
+
+    lab = app.getLabelWidget("l1")
+
+    assert lab.cget("bg") == COL_ONE
+    assert lab.cget("fg") == COL_TWO
+    assert lab.cget("disabledforeground") == COL_THREE
+    assert lab.cget("width") == 77
+    assert lab.cget("height") == 33
+    assert lab.cget("relief") == "sunken"
+    assert lab.cget("state") == "disabled"
+    print("\t >> all tests complete")
+
+
 print("<<<Starting Widget Test Suite>>>")
+test_gui_options()
+test_widget_arranging()
 test_labels()
 test_entries()
 test_buttons()
@@ -612,6 +694,7 @@ test_options()
 test_spins()
 test_lists()
 test_scales()
+test_widget_arranging()
 test_messages()
 test_text_areas()
 test_meters()
@@ -626,4 +709,7 @@ test_trees()
 test_grids()
 
 test_sets()
+test_gui_options()
+test_events()
+test_widget_arranging()
 print("<<<Widget Test Suite Complete>>>")
