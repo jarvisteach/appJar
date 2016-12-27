@@ -622,27 +622,52 @@ class gui(object):
                 self.warn("Invalid config section: " + section)
                 continue
 
-            if kind in [self.SCALE, self.ENTRY]:
+            # use the code to get the widget list
+            widgets = self.__getItems(kind)
+
+            if kind in [self.SCALE]:
                 self.warn("No text is displayed in " + section + ". Maybe it has a Label?")
                 continue
             elif kind in [self.TEXTAREA, self.METER]:
                 self.warn("No text is displayed in " + section)
                 continue
-            elif kind in [self.LISTBOX, self.SPIN, self.OPTION, self.PROPERTIES, self.RADIOBUTTON]:
+            elif kind in [self.SPIN, self.OPTION, self.PROPERTIES]:
                 self.warn(section + " - list-style widgets are currently not supported")
-                continue
+            elif kind in [self.LISTBOX]:
+                for k in widgets.keys():
+                    lb = widgets[k]
+                    # convert data to a list
+                    data = texts.get(k, lb.DEFAULT_TEXT).strip().split("\n")
+                    # tidy up the list
+                    data = [item.strip() for item in data if len(item.strip()) > 0]
+                    self.updateListItems(k, data)
+            elif kind in [self.RADIOBUTTON]:
+                for (key, val) in self.config.items(section):
+                    keys = key.split("-")
+
+                    rbs = self.n_rbs[keys[0]]
+                    for rb in rbs:
+                        if rb.DEFAULT_TEXT == keys[1]:
+                            rb["text"] = val
+                            break
             elif kind in [self.PIECHART, self.GRID]:
                 self.warn(section + " - widgets not yet implemented")
                 continue
-
-            # use the code to get the widget list
-            widgets = self.__getItems(kind)
-
-            # relabel each widget
-            for k in widgets.keys():
-                widg = widgets[k]
-                widg.config(text = texts.get(k, widg.DEFAULT_TEXT))
-                print("\t\t", k, "=", widg.cget("text"))
+            elif kind == self.ENTRY:
+                for k in widgets.keys():
+                    ent = widgets[k]
+                    self.updateDefaultText(k, texts.get(k, ent.DEFAULT_TEXT))
+                    print("\t\t", k, "=", ent.default)
+            elif kind in [self.LABEL, self.BUTTON, self.CHECKBOX, self.MESSAGE, self.LINK]:
+                # relabel each widget
+                for k in widgets.keys():
+                    widg = widgets[k]
+                    widg.config(text = texts.get(k, widg.DEFAULT_TEXT))
+                    print("\t\t", k, "=", widg.cget("text"))
+            else:
+                self.warn("Unsupported widget: " + section)
+                continue
+                
 
     # function to generate warning messages
     def warn(self, message):
@@ -1339,7 +1364,7 @@ class gui(object):
             items = [items[name]]
 
         # loop through each item, and try to reconfigure it
-        # this will often faile - widgets have varied config options
+        # this will often fail - widgets have varied config options
         for item in items:
             try:
                 if option == 'background':
@@ -1349,7 +1374,7 @@ class gui(object):
                         gui.SET_WIDGET_BG(item, value, True)
                 elif option == 'foreground':
                     if kind == self.ENTRY:
-                        if item.hasDefault:
+                        if item.showingDefault:
                             item.oldFg = value
                         else:
                             item.config(foreground=value)
@@ -3048,7 +3073,7 @@ class gui(object):
             for o in options:
                 vals[o] = BooleanVar()
                 option['menu'].add_checkbutton(
-                    label=o, onvalue=1, offvalue=False, variable=vals[o])
+                    label=o, onvalue=True, offvalue=False, variable=vals[o])
             self.n_optionVars[title] = vals
             option.kind = "ticks"
         else:
@@ -3088,7 +3113,6 @@ class gui(object):
 
         # add to array list
         self.n_options[title] = option
-        print(options)
         return option
 
     def addOptionBox(
@@ -3147,7 +3171,7 @@ class gui(object):
         if isinstance(val, dict):
             retVal = {}
             for k, v in val.items():
-                retVal[k] = v.get()
+                retVal[k] = bool(v.get())
             return retVal
         else:
             val = val.get().strip()
@@ -3936,22 +3960,30 @@ class gui(object):
             rowspan=0):
         var = None
         newRb = False
+        # title - is the grouper
+        # so, if we already have an entry in n_rbVars - get it
         if (title in self.n_rbVars):
             var = self.n_rbVars[title]
+            # also get the list of rbVals
             vals = self.n_rbVals[title]
+            # and if we already have the new item in that list - reject it
             if name in vals:
                 raise Exception(
                     "Invalid radio button: " +
                     name +
                     " already exists")
+            # otherwise - append it to the list of vals
             else:
                 vals.append(name)
         else:
+            # if this is a new grouper - set it all up
             var = StringVar(self.topLevel)
             vals = [name]
             self.n_rbVars[title] = var
             self.n_rbVals[title] = vals
             newRb = True
+
+        # finally, create the actual RadioButton
         rb = Radiobutton(self.__getContainer())
         rb.config(
             text=name,
@@ -3960,15 +3992,21 @@ class gui(object):
             background=self.__getContainerBg(),
             activebackground=self.__getContainerBg(),
             font=self.rbFont,
-            indicatoron=1)
-        rb.config(anchor=W)
+            indicatoron = 1)
+        rb.config(anchor = W)
         rb.bind("<Button-1>", self.__grabFocus)
+        rb.DEFAULT_TEXT = name
+
+        # either append to existing widget list
         if (title in self.n_rbs):
             self.n_rbs[title].append(rb)
+        # or create a new one
         else:
             self.n_rbs[title] = [rb]
         #rb.bind("<Tab>", self.__focusNextWindow)
         #rb.bind("<Shift-Tab>", self.__focusLastWindow)
+
+        # and select it, if it's the first item in the list
         if newRb:
             rb.select()
         self.__positionWidget(rb, row, column, colspan, rowspan, EW)
@@ -4030,7 +4068,9 @@ class gui(object):
         lb.config(font=self.lbFont)
         self.n_lbs[name] = lb
 
+        lb.DEFAULT_TEXT=""
         if values is not None:
+            lb.DEFAULT_TEXT="\n".join(values)
             for name in values:
                 lb.insert(END, name)
 
@@ -4661,6 +4701,7 @@ class gui(object):
     def __buildEntry(self, title, frame, secret=False, words=[]):
         self.__verifyItem(self.n_entries, title, True)
 
+        # if we are an autocompleter
         if len(words) > 0:
             ent = AutoCompleteEntry(words, frame)
             ent.config(font=self.entryFont)
@@ -4670,7 +4711,8 @@ class gui(object):
             ent.config(textvariable=ent.var, font=self.entryFont)
 
         ent.inContainer = False
-        ent.hasDefault = False
+        ent.showingDefault = False
+        ent.DEFAULT_TEXT = ""
         ent.myTitle = title
         ent.isNumeric = False
         if secret:
@@ -4825,8 +4867,11 @@ class gui(object):
     def getEntry(self, name):
         self.__verifyItem(self.n_entryVars, name)
         entry = self.__verifyItem(self.n_entries, name)
-        if entry.hasDefault:
-            return ""
+        if entry.showingDefault:
+            if entry.isNumeric:
+                return 0
+            else:
+                return ""
         else:
             val = self.n_entryVars[name].get()
             if entry.isNumeric:
@@ -4839,6 +4884,7 @@ class gui(object):
 
     def setEntry(self, name, text):
         self.__verifyItem(self.n_entryVars, name)
+        self.__updateEntryDefault(name)
         self.n_entryVars[name].set(text)
 
     def __updateEntryDefault(self, name):
@@ -4846,24 +4892,40 @@ class gui(object):
         entry = self.__verifyItem(self.n_entries, name)
         current = self.n_entryVars[name].get()
 
-        if entry.hasDefault:  # True when never clicked
+        if entry.showingDefault:  # True when never clicked
             self.n_entryVars[name].set("")
-            entry.hasDefault = False
+            entry.showingDefault = False
             entry.config(justify=entry.oldJustify, foreground=entry.oldFg)
         elif current == "":  # empty if they didn't type??
             self.n_entryVars[name].set(entry.default)
             entry.config(justify='center', foreground='grey')
-            entry.hasDefault = True
+            entry.showingDefault = True
+
+    def updateDefaultText(self, name, text):
+        self.__verifyItem(self.n_entryVars, name)
+        entry = self.__verifyItem(self.n_entries, name)
+        current = self.n_entryVars[name].get()
+
+        if entry.showingDefault:
+            self.n_entryVars[name].set(text)
+        entry.default = text
 
     def setEntryDefault(self, name, text="default"):
         entry = self.__verifyItem(self.n_entries, name)
         self.__verifyItem(self.n_entryVars, name)
-        self.n_entryVars[name].set(text)
-        entry.default = text
-        entry.hasDefault = True
+
+        # remember current settings - to return to
         entry.oldJustify = entry.cget('justify')
         entry.oldFg = entry.cget('foreground')
         entry.config(justify='center', foreground='grey')
+
+        # show the new text
+        self.n_entryVars[name].set(text)
+        entry.showingDefault = True
+        entry.default = text
+        entry.DEFAULT_TEXT = text
+
+        # bind commands to show/remove the default
         command = self.MAKE_FUNC(self.__updateEntryDefault, name, True)
         entry.bind("<FocusIn>", command, add="+")
         entry.bind("<FocusOut>", command, add="+")
@@ -4871,11 +4933,13 @@ class gui(object):
     def clearEntry(self, name):
         self.__verifyItem(self.n_entryVars, name)
         self.n_entryVars[name].set("")
+        self.__updateEntryDefault(name)
         self.setFocus(name)
 
     def clearAllEntries(self):
         for entry in self.n_entryVars:
             self.n_entryVars[entry].set("")
+            self.__updateEntryDefault(entry)
 
     def setFocus(self, name):
         self.__verifyItem(self.n_entries, name)
@@ -6619,12 +6683,12 @@ class Properties(LabelFrame):
     def getProperties(self):
         vals = {}
         for k, v in self.props.items():
-            vals[k] = v.get()
+            vals[k] = bool(v.get())
         return vals
 
     def getProperty(self, prop):
         if prop in self.props:
-            return self.props[prop].get()
+            return bool(self.props[prop].get())
         else:
             raise Exception(
                 "Property: " +
