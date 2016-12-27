@@ -1,3 +1,5 @@
+import sys
+sys.path.append("../../")
 from appJar import gui
 
 # global variable to remember what's being dragged
@@ -176,6 +178,7 @@ app.startTabbedFrame("Tabs")
 #### LOGIN TAB
 app.startTab("Login")
 app.setBg("SlateGray")
+app.setSticky("NEW")
 app.startLabelFrame("Login Form")
 app.setSticky("ew")
 app.addLabel("username", "Username", 0, 0)
