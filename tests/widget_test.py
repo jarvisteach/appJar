@@ -690,6 +690,55 @@ def test_images():
     #print("\t >> all tests complete")
 
 
+def test_status():
+    print("\tTesting Statusbar")
+
+    app.addStatusbar()
+    app.setStatusbar(TEXT_ONE)
+    app.clearStatusbar()
+    app.setStatusbarWidth(40)
+
+    print(" >> not implemented...")
+    #print("\t >> all tests complete")
+
+
+def test_menus():
+    print("\tTesting Menubar")
+
+    app.addMenuList("a", LIST_ONE, tester_function)
+
+    print(" >> not implemented...")
+    #print("\t >> all tests complete")
+
+
+def test_toolbars():
+    print("\tTesting Toolbar")
+
+    app.addToolbar(["a", "b", "c"],tester_function) 
+
+    app.setToolbarEnabled()
+    app.setToolbarDisabled()
+    app.setToolbarEnabled()
+
+    app.setToolbarButtonEnabled("a")
+    app.setToolbarButtonDisabled("a")
+    app.setToolbarButtonEnabled("a")
+
+    app.showToolbar()
+    app.hideToolbar()
+    app.showToolbar()
+
+    app.setToolbarImage("a", "1_entries.gif")
+    app.setToolbarImage("b", "1_checks.png")
+
+    app.setToolbarIcon("a", "web")
+    app.setToolbarIcon("b", "weight")
+    app.setToolbarIcon("c", "wi-fi")
+
+    print(" >> not implemented...")
+    #print("\t >> all tests complete")
+
+
 def test_langs():
     print("\tTesting langs")
     app.setLanguage("FRENCH")
@@ -741,6 +790,10 @@ test_separators()
 test_links()
 test_grips()
 test_date_pickers()
+
+test_status()
+test_menus()
+test_toolbars()
 
 test_pies()
 test_trees()

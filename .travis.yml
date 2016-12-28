@@ -10,6 +10,7 @@ env:
 before_install:
     - pip install pytest pytest-cov
     - pip install coveralls
+    - pip install codeclimate-test-reporter
 
 before_script:
     - "export DISPLAY=:99.0"
@@ -19,7 +20,6 @@ before_script:
 
 script:
     - coverage run --source=appJar tests/widget_test.py
-    - coverage run --source=appJar tests/bar_test.py
 
 after_success:
     - bash tests/run_coveralls.sh
