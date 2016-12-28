@@ -660,6 +660,44 @@ def test_events():
     print(" >> not implemented...")
     #print("\t >> all tests complete")
 
+
+def test_images():
+    print("\tTesting images")
+
+    app.addImage("im1", "1_flash.gif")
+    app.addImage("im2", "1_entries.gif")
+    app.addImage("im3", "1_checks.png")
+
+# jpeg...
+
+
+    app.setImage("im3", "1_entries.gif")
+    app.setImageMouseOver("im1", "1_checks.png")
+    app.setImageSize("im2", 40, 40)
+    app.zoomImage("im1", 2)
+
+    app.shrinkImage("im3", 2)
+    app.growImage("im3", 2)
+
+#    app.setBgImage("1_checks.png")
+#    app.removeBgImage()
+
+#    app.setAnimationSpeed(xxx, 10)
+#    app.startAnimation(xxx)
+#    app.stopAnimation(xxx)
+
+    print(" >> not implemented...")
+    #print("\t >> all tests complete")
+
+
+def test_langs():
+    print("\tTesting langs")
+    app.setLanguage("FRENCH")
+    app.changeLanguage("ENGLISH")
+    print(" >> not implemented...")
+    #print("\t >> all tests complete")
+
+
 def test_sets():
     print("\tTesting setters")
     app.setLabelBg("l1", COL_ONE)
@@ -707,6 +745,9 @@ test_date_pickers()
 test_pies()
 test_trees()
 test_grids()
+
+test_images()
+test_langs()
 
 test_sets()
 test_gui_options()
