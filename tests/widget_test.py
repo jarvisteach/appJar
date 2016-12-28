@@ -665,11 +665,15 @@ def test_images():
     print("\tTesting images")
 
     app.addImage("im1", "1_flash.gif")
+
+    app.setAnimationSpeed("im1", 10)
+    app.startAnimation("im1")
+    app.stopAnimation("im1")
+
     app.addImage("im2", "1_entries.gif")
     app.addImage("im3", "1_checks.png")
 
 # jpeg...
-
 
     app.setImage("im3", "1_entries.gif")
     app.setImageMouseOver("im1", "1_checks.png")
@@ -681,10 +685,6 @@ def test_images():
 
 #    app.setBgImage("1_checks.png")
 #    app.removeBgImage()
-
-#    app.setAnimationSpeed(xxx, 10)
-#    app.startAnimation(xxx)
-#    app.stopAnimation(xxx)
 
     print(" >> not implemented...")
     #print("\t >> all tests complete")
