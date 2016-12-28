@@ -18,8 +18,8 @@ before_script:
     - VERS=`python -c 'import sys; print(".".join(map(str, sys.version_info[:2])))'`
 
 script:
-    - python tests/widget_test.py
-    - python tests/bar_test.py
+    - coverage run --source=appJar python tests/widget_test.py
+    - coverage run --source=appJar python tests/bar_test.py
 
 after_success:
     - bash tests/run_coveralls.sh
