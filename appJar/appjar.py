@@ -587,12 +587,20 @@ class gui(object):
         self.n_accelerators = []
 
     def setLanguage(self, language):
-        from configparser import ConfigParser
+        try:
+            from configparser import ConfigParser
+        except:
+            self.warn("Internationalisaiton not supported")
+            self.config = None
+            return
         self.config = ConfigParser()
         self.changeLanguage(language)
 
     # function to update languages
     def changeLanguage(self, language):
+        if self.config is None:
+            self.warn("Internationalisaiton not supported")
+            return
 
         language = language.upper()
         import codecs
