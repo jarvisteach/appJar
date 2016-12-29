@@ -5850,6 +5850,7 @@ class gui(object):
             var = StringVar(self.topLevel)
             var.set(text)
             tip = ToolTip(item, delay=500, follow_mouse=1, textvariable=var)
+            item.tooltip = tip
             if hideWarn:
                 self.__resumeWarn(myWarn)
             return var
