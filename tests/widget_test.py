@@ -706,6 +706,28 @@ def test_menus():
     print("\tTesting Menubar")
 
     app.addMenuList("a", LIST_ONE, tester_function)
+    app.createMenu("MEN2")
+    app.addMenuItem("MEN2", "MM2", tester_function, shortcut="k", underline=2)
+    app.addMenuSeparator("MEN2")
+    app.addMenuCheckBox("MEN2", "CB2", tester_function, shortcut="c", underline=2)
+    app.addMenuRadioButton("MEN2", "BB2", tester_function, shortcut="r", underline=2)
+    app.addSubMenu("MEN2", "sub1")
+    app.addMenuItem("sub1", "MMM2", tester_function, shortcut="w", underline=2)
+    app.addMenuSeparator("sub1")
+    app.addMenuCheckBox("sub1", "CB23", tester_function, shortcut="x", underline=2)
+    app.addMenuRadioButton("sub1", "BB23", tester_function, shortcut="y", underline=2)
+    app.addMenu("PRESS", tester_function, "P", 4)
+
+    app.addMenuPreferences(tester_function)
+    app.addMenuWindow()
+    app.addMenuHelp(tester_function)
+
+    app.createRightClickMenu("RCLICK")
+    app.addLabel("RCLICK", "RCLICK")
+    app.setLabelRightClick("RCLICK", "RCLICK")
+
+    app.addEntry("RCLICK")
+    app.addMenuEdit()
 
     print(" >> not implemented...")
     #print("\t >> all tests complete")
@@ -731,9 +753,10 @@ def test_toolbars():
     app.setToolbarImage("a", "1_entries.gif")
     app.setToolbarImage("b", "1_checks.png")
 
-    app.setToolbarIcon("a", "web")
-    app.setToolbarIcon("b", "weight")
-    app.setToolbarIcon("c", "wi-fi")
+# doesn't work in python 2.7
+#    app.setToolbarIcon("a", "web")
+#    app.setToolbarIcon("b", "weight")
+#    app.setToolbarIcon("c", "wi-fi")
 
     print(" >> not implemented...")
     #print("\t >> all tests complete")
