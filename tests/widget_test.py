@@ -28,12 +28,16 @@ def tester_function(btn):
 
 from appJar import gui
 app = gui()
+app.showSplash()
 
 
 def test_labels():
     print("\tTesting labels")
     app.addEmptyLabel("el1")
     app.addLabel("l1", TEXT_ONE)
+    row = app.getRow()
+    app.addLabel("rowl1", TEXT_ONE, row)
+    assert app.gr() == row + 1
     app.addFlashLabel("fl1", TEXT_ONE)
 
     assert app.getLabel("el1") == EMPTY
@@ -371,6 +375,8 @@ def test_scales():
     app.setScaleLength("s1", 110)
     app.setScaleWidth("s3", 47)
     app.setScaleLength("s4", 88)
+    app.orientScaleHor("s2")
+    app.orientScaleHor("s2", False)
 
     assert app.getScale("s1") == 44
     assert app.getScale("s2") == 33
@@ -588,21 +594,32 @@ def test_gui_options():
     print("\tTesting gui options")
     app.setTitle("New title")
     app.setTransparency(50)
+    app.setTransparency(50)
 
     app.setGeometry("100x100")
     app.setGeometry(200,200)
     app.setGeometry("fullscreen")
     app.exitFullscreen()
+
     app.setResizable()
+    assert app.getResizable() is True
     app.setResizable(True)
+    assert app.getResizable() is True
     app.setResizable(False)
+    assert app.getResizable() is False
+    app.setResizable()
+    assert app.getResizable() is True
+
+    app.setLocation(-200,2000)
     app.setLocation(200,200)
+
     app.setGuiPadding(20,20)
     app.setGuiPadding([20,20])
     app.hideTitleBar()
     app.showTitleBar()
 
     app.setBg("green")
+    app.setFg("orange")
     app.setFont(20)
     app.decreaseFont()
     app.increaseFont()
@@ -812,6 +829,10 @@ def test_toolbars():
 
 def test_langs():
     print("\tTesting langs")
+    # test exception handling
+    app.changeLanguage("ENGLISH")
+    app.setLanguage("GERMAN")
+    # test real stuff
     app.setLanguage("FRENCH")
     app.changeLanguage("ENGLISH")
     print(" >> not implemented...")
@@ -830,11 +851,44 @@ def test_tooltips():
     #print("\t >> all tests complete")
 
 
+def test_messages():
+    print("\tTesting messages")
+    app.warn("warn message")
+    app.debug("debug message")
+
+    app.disableWarnings()
+    app.warn("warn message")
+    app.debug("debug message")
+
+    app.enableDebug()
+    app.warn("warn message")
+    app.debug("debug message")
+    print(" >> not implemented...")
+    #print("\t >> all tests complete")
+
+
 def test_sounds():
     print("\tTesting sounds")
 # only support windows
 #    app.soundError()
 #    app.soundWarning()
+    print(" >> not implemented...")
+    #print("\t >> all tests complete")
+
+
+def test_hideShow():
+    print("\tTesting hideshow")
+
+    app.disableLabel("l1")
+    app.enableLabel("l1")
+
+    app.hideLabel("l1")
+    app.hideLabel("l1")
+    app.showLabel("l1")
+    app.removeLabel("l1")
+
+    app.removeAllWidgets()
+
     print(" >> not implemented...")
     #print("\t >> all tests complete")
 
@@ -999,9 +1053,13 @@ test_tooltips()
 test_langs()
 
 test_containers()
+test_messages()
+
 
 test_sets()
 test_gui_options()
 test_events()
 test_widget_arranging()
+
+test_hideShow()
 print("<<<Widget Test Suite Complete>>>")
