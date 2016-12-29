@@ -1,16 +1,25 @@
 language: python
-python:
-    - "2.7"
-    - "3.3"
-    - "3.4"
-    - "3.5"
-os:
-    - linux
-    - osx
+
+matrix:
+    include:
+        - os: linux
+        sudo: required
+        python:
+            - "2.7"
+            - "3.3"
+            - "3.4"
+            - "3.5"
+        - os: osx
+        language: generic
+
 env:
     - PYTHONPATH=.
 
 before_install:
+    - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update          ; fi
+    - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install python3; fi
+    - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then virtualenv venv -p python3; fi
+    - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then source venv/bin/activate; fi
     - pip install pytest pytest-cov
     - pip install coveralls
     - pip install codeclimate-test-reporter
