@@ -818,6 +818,27 @@ def test_langs():
     #print("\t >> all tests complete")
 
 
+def test_tooltips():
+    print("\tTesting tooltip")
+    app.setLabelTooltip("l1", "message")
+    lab = app.getLabelWidget("l1")
+    tip = lab.tooltip
+    tip.enter()
+    tip.leave()
+    tip.motion()
+    print(" >> not implemented...")
+    #print("\t >> all tests complete")
+
+
+def test_sounds():
+    print("\tTesting sounds")
+# only support windows
+#    app.soundError()
+#    app.soundWarning()
+    print(" >> not implemented...")
+    #print("\t >> all tests complete")
+
+
 def test_sets():
     print("\tTesting setters")
     app.setLabelBg("l1", COL_ONE)
@@ -840,7 +861,7 @@ def test_sets():
     print("\t >> all tests complete")
 
 def test_containers():
-    print("\tTesting setters")
+    print("\tTesting containers")
 
     app.startLabelFrame("lf1")
     app.addLabel("lf1_l1", TEXT_ONE)
@@ -921,9 +942,9 @@ def test_containers():
     app.showPagedWindowTitle("pg1", True)
 
 # breaks under python2.7
-#    app.startSubWindow("sb1")
-#    app.addLabel("sb1_l", TEXT_ONE)
-#    app.stopSubWindow()
+    app.startSubWindow("sb1")
+    app.addLabel("sb1_l", TEXT_ONE)
+    app.stopSubWindow()
 
 #    app.showSubWindow("sb1")
 #    app.hideSubWindow("sb1")
@@ -973,6 +994,8 @@ test_trees()
 test_grids()
 
 test_images()
+test_sounds()
+test_tooltips()
 test_langs()
 
 test_containers()
