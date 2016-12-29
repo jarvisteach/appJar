@@ -672,6 +672,7 @@ def test_images():
 
     app.addImage("im2", "1_entries.gif")
     app.addImage("im3", "1_checks.png")
+    app.addImage("im4", "sc.jpg")
 
 # jpeg...
 
