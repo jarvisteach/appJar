@@ -134,7 +134,7 @@ app.go()
     Set disabled to False to re-enable it.  
     This will also change the displayed tab, if the disaplyed tab is being disabled.  
 
-* `.setTabbedFrameDisabledAllTabs(title, disabled=True)`  
+* `.setTabbedFrameDisableAllTabs(title, disabled=True)`  
     Will disable all tabs for the named TabFrame.  
     Or, enable them if disabled is set to False.  
 
