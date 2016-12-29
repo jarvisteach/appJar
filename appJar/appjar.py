@@ -8061,10 +8061,11 @@ class SubWindow(Toplevel):
         self.stopFunction = None  # used to stop
         self.geometry("+%d+%d" % (100, 100))
 
-    def __getattr__(self, name):
-        def handlerFunction(*args, **kwargs):
-            print("Unknown function:", name, args, kwargs)
-        return handlerFunction
+# removed for python2.7
+#    def __getattr__(self, name):
+#        def handlerFunction(*args, **kwargs):
+#            print("Unknown function:", name, args, kwargs)
+#        return handlerFunction
 
 #####################################
 # SimpleGrid Stuff

@@ -946,9 +946,9 @@ def test_containers():
     app.addLabel("sb1_l", TEXT_ONE)
     app.stopSubWindow()
 
-#    app.showSubWindow("sb1")
-#    app.hideSubWindow("sb1")
-#    app.destroySubWindow("sb1")
+    app.showSubWindow("sb1")
+    app.hideSubWindow("sb1")
+    app.destroySubWindow("sb1")
 
     app.startFrame("fr1")
     app.addLabel("fr1_l", TEXT_ONE)
