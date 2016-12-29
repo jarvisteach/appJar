@@ -33,7 +33,7 @@ before_install:
     - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then virtualenv venv -p python3; fi
     - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then source venv/bin/activate; fi
     - pip install pytest pytest-cov
-    - pip install 'coverage<4'
+    - pip install coverage<4
     - pip install coveralls
     - pip install codeclimate-test-reporter
 
