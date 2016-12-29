@@ -877,6 +877,49 @@ def test_containers():
     app.setTabbedFrameDisabledTab("tbf1", "tab3")
     app.setTabbedFrameDisableAllTabs("tbf1")
 
+    app.startPanedFrame("p1")
+    app.addLabel("p1_l1", TEXT_ONE)
+    app.startPanedFrame("p2")
+    app.addLabel("p2_l1", TEXT_ONE)
+    app.stopPanedFrame()
+    app.startPanedFrameVertical("p3")
+    app.addLabel("p3_l1", TEXT_ONE)
+    app.stopPanedFrame()
+    app.stopPanedFrame()
+
+    app.startPagedWindow("pg1")
+    app.startPage()
+    app.addLabel("pg1_l1", TEXT_ONE)
+    app.stopPage()
+    app.startPage()
+    app.addLabel("pg2_l1", TEXT_ONE)
+    app.stopPage()
+    app.startPage()
+    app.addLabel("pg3_l1", TEXT_ONE)
+    app.stopPage()
+    app.stopPagedWindow()
+
+    assert app.getPagedWindowPageNumber("pg1") == 1
+    app.setPagedWindowPage("pg1", 2)
+    assert app.getPagedWindowPageNumber("pg1") == 2
+    app.setPagedWindowPage("pg1", 3)
+    assert app.getPagedWindowPageNumber("pg1") == 3
+
+    app.setPagedWindowTitle("pg1", TEXT_TWO)
+    app.setPagedWindowButtons("pg1", ["A", "B"])
+    app.setPagedWindowButtonsTop("pg1")
+    app.setPagedWindowButtonsTop("pg1", False)
+    app.setPagedWindowFunction("pg1", tester_function)
+
+    app.showPagedWindowPageNumber("pg1")
+    app.showPagedWindowPageNumber("pg1", False)
+    app.showPagedWindowPageNumber("pg1", True)
+
+    app.showPagedWindowTitle("pg1")
+    app.showPagedWindowTitle("pg1", False)
+    app.showPagedWindowTitle("pg1", True)
+
+
     print(" >> not implemented...")
     #print("\t >> all tests complete")
 
