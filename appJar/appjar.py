@@ -6419,7 +6419,10 @@ class TabbedFrame(Frame):
             self.__colourTabs(False)
 
         # propagate any left over confs
-        super(Frame, self).config(cnf, **kw)
+        if PYTHON2:
+            Frame.config(self, cnf, **kw)
+        else:
+            super(Frame, self).config(cnf, **kw)
 
     def addTab(self, text, **kwargs):
         # check for duplicates
@@ -7163,7 +7166,10 @@ class ToggleFrame(Frame):
             self.toggleButton.config(state=kw["state"])
             del(kw["state"])
 
-        super(Frame, self).config(cnf, **kw)
+        if PYTHON2:
+            Frame.config(self, cnf, **kw)
+        else:
+            super(Frame, self).config(cnf, **kw)
 
     def toggle(self):
         if not self.showing:
@@ -7285,7 +7291,10 @@ class PagedWindow(Frame):
             self.titleLabel.config(fg=kw["fg"])
             kw.pop("fg")
 
-        super(Frame, self).config(cnf, **kw)
+        if PYTHON2:
+            Frame.config(self, cnf, **kw)
+        else:
+            super(Frame, self).config(cnf, **kw)
 
 #    def setBg(self, colour):
 #        self.config(bg=colour)
