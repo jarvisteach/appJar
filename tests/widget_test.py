@@ -920,6 +920,23 @@ def test_containers():
     app.showPagedWindowTitle("pg1", False)
     app.showPagedWindowTitle("pg1", True)
 
+# breaks under python2.7
+#    app.startSubWindow("sb1")
+#    app.addLabel("sb1_l", TEXT_ONE)
+#    app.stopSubWindow()
+
+#    app.showSubWindow("sb1")
+#    app.hideSubWindow("sb1")
+#    app.destroySubWindow("sb1")
+
+    app.startFrame("fr1")
+    app.addLabel("fr1_l", TEXT_ONE)
+    app.stopFrame()
+
+    app.startScrollPane("sp1")
+    app.addLabel("sp_l", TEXT_ONE)
+    app.stopScrollPane()
+
 
     print(" >> not implemented...")
     #print("\t >> all tests complete")
