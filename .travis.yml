@@ -36,7 +36,7 @@ before_install:
 
 before_script:
     - "export DISPLAY=:99.0"
-    - "sh -e /etc/init.d/xvfb start"
+    - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then sh -e /opt/X11/bin/Xvfb start; else sh -e /etc/init.d/xvfb start; fi
     - sleep 3 # give xvfb some time to start
     - VERS=`python -c 'import sys; print(".".join(map(str, sys.version_info[:2])))'`
 
