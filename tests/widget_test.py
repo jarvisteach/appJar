@@ -711,12 +711,42 @@ def test_menus():
     app.addMenuSeparator("MEN2")
     app.addMenuCheckBox("MEN2", "CB2", tester_function, shortcut="c", underline=2)
     app.addMenuRadioButton("MEN2", "BB2", tester_function, shortcut="r", underline=2)
+    app.addMenuRadioButton("MEN2", "BB3", tester_function)
     app.addSubMenu("MEN2", "sub1")
     app.addMenuItem("sub1", "MMM2", tester_function, shortcut="w", underline=2)
     app.addMenuSeparator("sub1")
     app.addMenuCheckBox("sub1", "CB23", tester_function, shortcut="x", underline=2)
     app.addMenuRadioButton("sub1", "BB23", tester_function, shortcut="y", underline=2)
+    app.addMenuRadioButton("sub1", "BB33", tester_function, underline=0)
     app.addMenu("PRESS", tester_function, "P", 4)
+
+    assert app.getMenuCheckBox("MEN2", "CB2") is False
+    assert app.getMenuCheckBox("sub1", "CB23") is False
+
+    print( app.getMenuRadioButton("MEN2", "BB2") )
+#    assert app.getMenuRadioButton("MEN2", "BB2") is False
+#    assert app.getMenuRadioButton("MEN2", "BB3") is True
+#    assert app.getMenuRadioButton("sub1", "BB23") is True
+#    assert app.getMenuRadioButton("sub1", "BB33") is False
+
+    app.setMenuCheckBox("MEN2", "CB2")
+
+    app.setMenuRadioButton("MEN2", "BB3", True)
+
+    assert app.getMenuCheckBox("MEN2", "CB2") is True
+    assert app.getMenuCheckBox("sub1", "CB23") is False
+
+#    assert app.getMenuRadioButton("MEN2", "BB2") is False
+#    assert app.getMenuRadioButton("MEN2", "BB3") is True
+#    assert app.getMenuRadioButton("sub1", "BB23") is True
+#    assert app.getMenuRadioButton("sub1", "BB33") is False
+
+    app.setMenuRadioButton("sub1", "BB33", True)
+
+#    assert app.getMenuRadioButton("MEN2", "BB2") is False
+#    assert app.getMenuRadioButton("MEN2", "BB3") is True
+#    assert app.getMenuRadioButton("sub1", "BB23") is False
+#    assert app.getMenuRadioButton("sub1", "BB33") is True
 
     app.addMenuPreferences(tester_function)
     app.addMenuWindow()
@@ -728,6 +758,17 @@ def test_menus():
 
     app.addEntry("RCLICK")
     app.addMenuEdit()
+
+    app.disableMenuBar()
+    app.enableMenuBar()
+
+    app.enableMenu("MEN2")
+    app.disableMenu("MEN2")
+    app.enableMenu("MEN2")
+
+    app.enableMenuItem("MEN2", "MM2")
+    app.disableMenuItem("MEN2", "MM2")
+    app.enableMenuItem("MEN2", "MM2")
 
     print(" >> not implemented...")
     #print("\t >> all tests complete")
