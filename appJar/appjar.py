@@ -5501,13 +5501,18 @@ class gui(object):
         if kind == "rb":
             var.set(value)
         elif kind == "cb":
-            if var.get() == "1":
+            if value is True:
+                var.set("1")
+            elif value is False:
                 var.set("0")
             else:
-                var.set("1")
+                if var.get() == "1":
+                    var.set("0")
+                else:
+                    var.set("1")
 
-    def setMenuCheckBox(self, menu, name):
-        self.__setMenu(menu, name, None, "cb")
+    def setMenuCheckBox(self, menu, name, value=None):
+        self.__setMenu(menu, name, value, "cb")
 
     def setMenuRadioButton(self, menu, name, value):
         self.__setMenu(menu, name, value, "rb")
