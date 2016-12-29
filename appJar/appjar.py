@@ -395,6 +395,9 @@ class gui(object):
         # dynamically create lots of functions for configuring stuff
         self.__buildConfigFuncs()
 
+        # language parser
+        self.config = None
+
         # set up some default path locations
         self.lib_file = os.path.abspath(__file__)
         self.exe_file = os.path.basename(theMain.__file__)
