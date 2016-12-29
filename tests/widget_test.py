@@ -838,6 +838,48 @@ def test_sets():
     assert lab.cget("state") == "disabled"
     print("\t >> all tests complete")
 
+def test_containers():
+    print("\tTesting setters")
+
+    app.startLabelFrame("lf1")
+    app.addLabel("lf1_l1", TEXT_ONE)
+    app.stopLabelFrame()
+
+    app.startToggleFrame("tf1")
+    app.addLabel("tf1_l1", TEXT_ONE)
+    app.stopToggleFrame()
+
+    assert app.getToggleFrameState("tf1") is False
+
+    app.toggleToggleFrame("tf1")
+    assert app.getToggleFrameState("tf1") is True
+    app.toggleToggleFrame("tf1")
+    assert app.getToggleFrameState("tf1") is False
+
+    app.disableToggleFrame("tf1")
+
+    app.startTabbedFrame("tbf1")
+    app.startTab("tab1")
+    app.addLabel("tbf1_l1", TEXT_ONE)
+    app.stopTab()
+    app.startTab("tab2")
+    app.addLabel("tbf2_l1", TEXT_ONE)
+    app.stopTab()
+    app.startTab("tab3")
+    app.addLabel("tbf3_l1", TEXT_ONE)
+    app.stopTab()
+    app.stopTabbedFrame()
+
+    assert app.getTabbedFrameSelectedTab("tbf1") == "tab1"
+    app.setTabbedFrameSelectedTab("tbf1", "tab2")
+    assert app.getTabbedFrameSelectedTab("tbf1") == "tab2"
+
+    app.setTabbedFrameDisabledTab("tbf1", "tab3")
+    app.setTabbedFrameDisableAllTabs("tbf1")
+
+    print(" >> not implemented...")
+    #print("\t >> all tests complete")
+
 
 print("<<<Starting Widget Test Suite>>>")
 test_gui_options()
@@ -871,6 +913,8 @@ test_grids()
 
 test_images()
 test_langs()
+
+test_containers()
 
 test_sets()
 test_gui_options()
