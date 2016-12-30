@@ -580,12 +580,46 @@ def test_pies():
 
 def test_trees():
     print("\tTesting Trees")
+    app.addTree("t1",
+        """<people>
+        <person><name>Fred</name><age>45</age><gender>Male</gender></person>
+        <person><name>Tina</name><age>37</age><gender>Female</gender></person>
+        <person><name>CLive</name><age>28</age><gender>Male</gender></person>
+        <person><name>Betty</name><age>51</age><gender>Female</gender></person>
+        </people>""")
+
+    app.setTreeDoubleClickFunction("t1", tester_function)
+    app.setTreeEditFunction("t1", tester_function)
+    app.setTreeEditable("t1", True)
+    app.setTreeEditable("t1", False)
+    app.setTreeBg("t1", "red")
+    app.setTreeFg("t1", "yellow")
+    app.setTreeHighlightBg("t1", "orange")
+    app.setTreeHighlightFg("t1", "pink")
+    app.getTreeXML("t1")
+    app.getTreeSelected("t1")
+    app.getTreeSelectedXML("t1")
+
+
     print(" >> not implemented...")
     #print("\t >> all tests complete")
 
 
 def test_grids():
     print("\tTesting Grids")
+    app.addGrid("g1",
+        [["Name", "Age", "Gender"],
+        ["Fred", 45, "Male"],
+        ["Tina", 37, "Female"],
+        ["Clive", 28, "Male"],
+        ["Betty", 51, "Female"]],
+        action=tester_function,
+        addRow=True)
+
+    app.getGridEntries("g1")
+    app.getGridSelectedCells("g1")
+    app.addGridRow("g1", ["aaa", 22, "Male"])
+
     print(" >> not implemented...")
     #print("\t >> all tests complete")
 
