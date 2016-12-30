@@ -35,6 +35,7 @@ app.showSplash()
 def test_labels():
     print("\tTesting labels")
     app.addEmptyLabel("el1")
+    app.addLabel("l0", TEXT_ONE)
     app.addLabel("l1", TEXT_ONE)
     row = app.getRow()
     app.addLabel("rowl1", TEXT_ONE, row)
@@ -545,6 +546,19 @@ def test_grips():
     print("\t >> all tests complete")
 
 
+def test_auto_labels():
+    print("\tTesting auto_labels")
+    app.addLabelEntry("lab_ent")
+    app.addLabelNumericEntry("lab_num_ent")
+    app.addLabelSecretEntry("lab_sec_ent")
+    app.addLabelScale("lab_scale")
+    app.addLabelOptionBox("lab_opt_box", LIST_ONE)
+    app.addLabelTickOptionBox("lab_tick_box", LIST_ONE)
+    app.addLabelSpinBox("lab_spin_box", LIST_ONE)
+    app.addLabelSpinBoxRange("lab_spin_box_range", 0, 20)
+    print("\t >> all tests complete")
+
+
 def test_date_pickers():
     print("\tTesting date pickers")
     app.addDatePicker("d1")
@@ -733,7 +747,8 @@ def test_images():
 
     app.setAnimationSpeed("im1", 10)
     app.startAnimation("im1")
-#    app.stopAnimation("im1")
+    app.stopAnimation("im1")
+    app.startAnimation("im1")
 
     app.addImage("im2", "1_entries.gif")
     app.addImage("im3", "1_checks.png")
@@ -927,15 +942,13 @@ def test_sounds():
 def test_hideShow():
     print("\tTesting hideshow")
 
-    app.disableLabel("l1")
-    app.enableLabel("l1")
+    app.disableLabel("l0")
+    app.enableLabel("l0")
 
-    app.hideLabel("l1")
-    app.hideLabel("l1")
-    app.showLabel("l1")
-    app.removeLabel("l1")
-
-    app.removeAllWidgets()
+    app.hideLabel("l0")
+    app.hideLabel("l0")
+    app.showLabel("l0")
+    app.removeLabel("l0")
 
     print(" >> not implemented...")
     #print("\t >> all tests complete")
@@ -981,6 +994,7 @@ def test_containers():
     assert app.getToggleFrameState("tf1") is False
 
     app.disableToggleFrame("tf1")
+    app.enableToggleFrame("tf1")
 
     app.startTabbedFrame("tbf1")
     app.startTab("tab1")
@@ -1050,7 +1064,9 @@ def test_containers():
 
     app.showSubWindow("sb1")
     app.hideSubWindow("sb1")
-    app.destroySubWindow("sb1")
+# causes problems - children still in config dicitonaries...
+# setLang, etc will try to modify them
+#    app.destroySubWindow("sb1")
 
     app.startFrame("fr1")
     app.addLabel("fr1_l", TEXT_ONE)
@@ -1091,6 +1107,8 @@ test_status()
 test_menus()
 test_toolbars()
 
+test_auto_labels()
+
 test_pies()
 test_trees()
 test_grids()
@@ -1111,16 +1129,26 @@ test_widget_arranging()
 
 test_hideShow()
 
-doStop = False
-def ender(btn=None):
+doStop = 0
+def test_gui(btn=None):
     global doStop
-    if not doStop:
-        doStop = True
+    if doStop == 2:
+        test_sets()
+        test_langs()
+        test_widget_arranging()
+        test_gui_options()
+        doStop += 1
+    elif doStop == 3:
+        app.removeAllWidgets()
+        doStop += 1
+    elif doStop < 5:
+        doStop += 1
+        print("Waiting", doStop)
     else:
         app.stop()
 
-app.registerEvent(ender)
-app.setPollTime(5)
+app.registerEvent(test_gui)
+app.setPollTime(1000)
 app.go()
 
 print("<<<Widget Test Suite Complete>>>")
