@@ -6987,13 +6987,20 @@ class ajTreeNode(TreeNode):
     # override parent function, so that we can change the label's background
     # colour
     def drawtext(self):
-        super().drawtext()
+        if PYTHON2:
+            TreeNode.drawtext(self)
+        else:
+            super().drawtext()
+
         self.colourLabels()
 
     # override parent function, so that we can generate an event on finish
     # editing
     def edit_finish(self, event=None):
-        super().edit_finish(event)
+        if PYTHON2:
+            TreeNode.edit_finish(self, event)
+        else:
+            super().edit_finish(event)
         if self.editEvent is not None:
             self.editEvent()
 
