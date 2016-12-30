@@ -23,8 +23,9 @@ LIST_TWO = ["v", "d", "s", "t", "z"]
 HASH_ONE = {"a": True, "b": False, "c": True}
 HASH_TWO = {"x": False, "y": True, "z": False}
 
-def tester_function(btn):
+def tester_function(btn=None):
     print(btn)
+    return True
 
 from appJar import gui
 app = gui()
@@ -458,7 +459,20 @@ def test_meters():
     app.setMeter("m1", 45)
     assert app.getMeter("m1")[0] == 0.45
 
-    print("\t >> all tests complete")
+    app.addSplitMeter("spm")
+    app.addDualMeter("dum")
+
+    app.setMeter("spm", 50)
+    app.setMeter("dum", 50)
+
+    app.setMeterFill("spm", ["red", "green"])
+    app.setMeterFill("dum", ["red", "pink"])
+
+    app.getMeter("spm")
+    app.getMeter("dum")
+
+    print(" >> not implemented...")
+    #print("\t >> all tests complete")
 
 
 def compareDictionaries(d1, d2):
@@ -719,7 +733,7 @@ def test_images():
 
     app.setAnimationSpeed("im1", 10)
     app.startAnimation("im1")
-    app.stopAnimation("im1")
+#    app.stopAnimation("im1")
 
     app.addImage("im2", "1_entries.gif")
     app.addImage("im3", "1_checks.png")
@@ -1096,4 +1110,17 @@ test_events()
 test_widget_arranging()
 
 test_hideShow()
+
+doStop = False
+def ender(btn=None):
+    global doStop
+    if not doStop:
+        doStop = True
+    else:
+        app.stop()
+
+app.registerEvent(ender)
+app.setPollTime(5)
+app.go()
+
 print("<<<Widget Test Suite Complete>>>")
