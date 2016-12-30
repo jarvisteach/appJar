@@ -21,3 +21,9 @@ ____
 
 * [http://www.mkdocs.org](http://www.mkdocs.org) - used to generate this documentation
 * [http://lab.hakim.se/reveal-js/](http://lab.hakim.se/reveal-js/) - used to generate the slides
+
+##Development
+
+* [https://travis-ci.org](https://travis-ci.org) - used to perform i& monitor unit testing  
+* [https://coveralls.io](https://coveralls.io) - used to monitor how good the testing is  
+* [https://codeclimate.com](https://codeclimate.com) - used to check quality of code  
