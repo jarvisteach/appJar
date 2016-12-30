@@ -677,6 +677,7 @@ class gui(object):
                 # relabel each widget
                 for k in widgets.keys():
                     widg = widgets[k]
+                    print("\t\t", k, "---->",  texts.get(k, widg.DEFAULT_TEXT))
                     widg.config(text = texts.get(k, widg.DEFAULT_TEXT))
                     print("\t\t", k, "=", widg.cget("text"))
             else:
@@ -1940,6 +1941,8 @@ class gui(object):
             self.n_flashLabs.remove(item)
             if len(self.n_flashLabs) == 0:
                 self.doFlash = False
+
+        # animated images...
 
         if self.__widgetHasContainer(kind, item):
             # destroy the parent
@@ -3550,7 +3553,11 @@ class gui(object):
 #####################################
     # looks up label containing image
     def __animateImage(self, title, firstTime=False):
-        lab = self.__verifyItem(self.n_images, title)
+        try:
+            lab = self.__verifyItem(self.n_images, title)
+        except ItemLookupError:
+            # image destroyed...
+            return
         if not lab.image.animating or (
                 firstTime and lab.image.alreadyAnimated):
             return
