@@ -291,6 +291,7 @@ def test_lists():
 
     app.addListBox("l1", LIST_ONE)
     app.addListBox("l2", LIST_TWO)
+    app.setListBoxFunction("l1", tester_function)
 
     assert app.getListItems("l1") == []
     assert app.getListItems("l2") == []
@@ -939,6 +940,7 @@ def test_messages():
     app.debug("debug message")
     print(" >> not implemented...")
     #print("\t >> all tests complete")
+    app.disableDebug()
 
 
 def test_sounds():
