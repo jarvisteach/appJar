@@ -62,7 +62,7 @@ These names can be menu-items, radio buttons, check boxes, separators, or sub-me
 * `.createMenu(menu, tearable=False)`  
     Will create a new, empty menu, to add menu-items to.
 
-* `.addMenuItem(menu, name, function=None, shortcut=None, underline=-1)`  
+* `.addMenuItem(menu, name, func=None, shortcut=None, underline=-1)`  
     Add a menu-item to the named menu, with the specified function.  
     If the named menu does not exist, it will be automatically created.  
     If the name is ```-```, then a separator will be added to the menu.  
