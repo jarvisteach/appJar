@@ -4748,12 +4748,16 @@ class gui(object):
             ent.config(textvariable=ent.var, font=self.entryFont)
 
         ent.inContainer = False
-        ent.showingDefault = False
-        ent.DEFAULT_TEXT = ""
-        ent.myTitle = title
-        ent.isNumeric = False
+        ent.showingDefault = False  # current status of entry
+        ent.default = ""  # the default value to show (if set)
+        ent.DEFAULT_TEXT = ""  # the default value for language support
+        ent.myTitle = title  # thr title of the entry
+        ent.isNumeric = False  # if the entry is numeric
+
+        # configure it to be secret
         if secret:
             ent.config(show="*")
+
         if self.platform in [self.MAC, self.LINUX]:
             ent.config(highlightbackground=self.__getContainerBg())
         ent.bind("<Tab>", self.__focusNextWindow)
@@ -4805,8 +4809,13 @@ class gui(object):
         if action == "1":
             if text in '0123456789.-+':
                 try:
-                    float(value_if_allowed)
-                    return True
+                    if len(value_if_allowed) == 1 and value_if_allowed in '.-':
+                        return True
+                    elif len(value_if_allowed) == 2 and value_if_allowed == '-.':
+                        return True
+                    else:
+                        float(value_if_allowed)
+                        return True
                 except ValueError:
                     self.containerStack[0]['container'].bell()
                     return False
@@ -4912,7 +4921,7 @@ class gui(object):
         else:
             val = self.n_entryVars[name].get()
             if entry.isNumeric:
-                if len(val) == 0:
+                if len(val) == 0 or (len(val) == 1 and val in '.-') or (len(val) == 2 and val == "-."):
                     return 0
                 else:
                     return float(val)
@@ -4921,19 +4930,31 @@ class gui(object):
 
     def setEntry(self, name, text):
         self.__verifyItem(self.n_entryVars, name)
-        self.__updateEntryDefault(name)
+        self.__updateEntryDefault(name, mode="set")
         self.n_entryVars[name].set(text)
 
-    def __updateEntryDefault(self, name):
+    def __entryIn(self, name):
+        self.__updateEntryDefault(name, "in")
+
+    def __entryOut(self, name):
+        self.__updateEntryDefault(name, "out")
+
+    def __updateEntryDefault(self, name, mode=None):
         self.__verifyItem(self.n_entryVars, name)
         entry = self.__verifyItem(self.n_entries, name)
+
+        # ignore this if no default to apply
+        if entry.default == "":
+            return
+
         current = self.n_entryVars[name].get()
 
-        if entry.showingDefault:  # True when never clicked
+        # clear & remove default 
+        if mode == "set" or (mode in [ "in", "clear"] and entry.showingDefault):
             self.n_entryVars[name].set("")
             entry.showingDefault = False
             entry.config(justify=entry.oldJustify, foreground=entry.oldFg)
-        elif current == "":  # empty if they didn't type??
+        elif mode == "out" and current == "":
             self.n_entryVars[name].set(entry.default)
             entry.config(justify='center', foreground='grey')
             entry.showingDefault = True
@@ -4963,20 +4984,21 @@ class gui(object):
         entry.DEFAULT_TEXT = text
 
         # bind commands to show/remove the default
-        command = self.MAKE_FUNC(self.__updateEntryDefault, name, True)
-        entry.bind("<FocusIn>", command, add="+")
-        entry.bind("<FocusOut>", command, add="+")
+        in_command = self.MAKE_FUNC(self.__entryIn, name, True)
+        out_command = self.MAKE_FUNC(self.__entryOut, name, True)
+        entry.bind("<FocusIn>", in_command, add="+")
+        entry.bind("<FocusOut>", out_command, add="+")
 
     def clearEntry(self, name):
         self.__verifyItem(self.n_entryVars, name)
         self.n_entryVars[name].set("")
-        self.__updateEntryDefault(name)
+        self.__updateEntryDefault(name, mode="clear")
         self.setFocus(name)
 
     def clearAllEntries(self):
         for entry in self.n_entryVars:
             self.n_entryVars[entry].set("")
-            self.__updateEntryDefault(entry)
+            self.__updateEntryDefault(entry, mode="clear")
 
     def setFocus(self, name):
         self.__verifyItem(self.n_entries, name)
