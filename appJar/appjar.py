@@ -47,7 +47,7 @@ try:
     from idlelib.TreeWidget import TreeItem, TreeNode
 except:
     try:
-        from idlelib.tree_widget import TreeItem, TreeNode
+        from idlelib.tree import TreeItem, TreeNode
     except:
         raise Exception("Unsupported python build, unable to access idlelib")
 
