@@ -40,6 +40,12 @@ matrix:
           - COVERALLS_PARALLEL=true
         - os: linux
           sudo: required
+          python: nightly
+          env:
+          - PYTHONPATH=.
+          - COVERALLS_PARALLEL=true
+        - os: linux
+          sudo: required
           python: pypy
           env:
           - PYTHONPATH=.
@@ -53,6 +59,7 @@ matrix:
         - os: osx
         - python: 3.6
         - python: 3.6-dev
+        - python: nightly
         - python: pypy
 before_install:
     - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update          ; fi
@@ -62,6 +69,7 @@ before_install:
     - pip install pytest pytest-cov
     - pip install coveralls
     - pip install codeclimate-test-reporter
+    - sudo apt-get install python-tk
 
 before_script:
     - "export DISPLAY=:99.0"
