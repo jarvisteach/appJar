@@ -1553,6 +1553,8 @@ class gui(object):
                         # make it look like it's pressed
                         #item.bind("<Button-1>",lambda e: item.config(relief=down), add="+")
                         #item.bind("<ButtonRelease-1>",lambda e: item.config(relief=up))
+                    elif kind == self.LISTBOX:
+                        item.bind('<<ListboxSelect>>', self.MAKE_FUNC(value, name, True))
                     else:
                         item.config(command=self.MAKE_FUNC(value, name))
                 elif option == 'sticky':
