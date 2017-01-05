@@ -43,7 +43,14 @@ from platform import system as platform
 import webbrowser
 
 # ajTree
-from idlelib.TreeWidget import TreeItem, TreeNode
+try:
+    from idlelib.TreeWidget import TreeItem, TreeNode
+except:
+    try:
+        from idlelib.tree_widget import TreeItem, TreeNode
+    except:
+        raise Exception("Unsupported python build, unable to access idlelib")
+
 from xml.dom.minidom import parseString
 # DatePicker
 import calendar
