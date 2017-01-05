@@ -621,7 +621,7 @@ class gui(object):
             self.warn("Invalid language: " + language)
             return
 
-        print("Switching to:", language)
+        self.debug("Switching to: " + language)
         # loop through each section, get the relative set of widgets
         # change the text
         for section in self.config.sections():
@@ -630,7 +630,7 @@ class gui(object):
             if section == "CONFIG":
                 continue
 
-            print("\t", section)
+            self.debug("\t" + section)
 
             # convert the section title to its code
             try:
@@ -679,14 +679,14 @@ class gui(object):
                 for k in widgets.keys():
                     ent = widgets[k]
                     self.updateDefaultText(k, texts.get(k, ent.DEFAULT_TEXT))
-                    print("\t\t", k, "=", ent.default)
+                    self.debug("\t\t" + k + "=" + ent.default)
             elif kind in [self.LABEL, self.BUTTON, self.CHECKBOX, self.MESSAGE, self.LINK]:
                 # relabel each widget
                 for k in widgets.keys():
                     widg = widgets[k]
-                    print("\t\t", k, "---->",  texts.get(k, widg.DEFAULT_TEXT))
+                    self.debug("\t\t" + k + "---->" +  texts.get(k, widg.DEFAULT_TEXT))
                     widg.config(text = texts.get(k, widg.DEFAULT_TEXT))
-                    print("\t\t", k, "=", widg.cget("text"))
+                    self.debug("\t\t" + k + "=" + widg.cget("text"))
             else:
                 self.warn("Unsupported widget: " + section)
                 continue
@@ -698,7 +698,8 @@ class gui(object):
             print("Warning -", message)
 
     # function to turn off warning messages
-    def disableWarnings(self): self.WARN = False
+    def disableWarnings(self):
+        self.WARN = False
 
     # function to generate warning messages
     def debug(self, message):
@@ -706,10 +707,16 @@ class gui(object):
             print("Debug -", message)
 
     # function to turn on debug messages
-    def enableDebug(self): self.DEBUG = True
+    def enableDebug(self):
+        self.DEBUG = True
+
+
+    def disableDebug(self):
+        self.DEBUG = False
 
     # function to turn on the splash screen
-    def showSplash(self): self.splashOn = True
+    def showSplash(self):
+        self.splashOn = True
 
 #####################################
 # Event Loop - must always be called at end
