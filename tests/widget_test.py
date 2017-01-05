@@ -86,8 +86,19 @@ def test_entries():
     assert app.getEntry("se1") == EMPTY
     assert app.getEntry("ae1") == EMPTY
 
-    app.setEntry("e1", TEXT_ONE)
+    app.setEntry("ne1", "-")
+    assert app.getEntry("ne1") == 0
+    app.setEntry("ne1", ".")
+    assert app.getEntry("ne1") == 0
+    app.setEntry("ne1", "0.0")
+    assert app.getEntry("ne1") == 0
+    app.setEntry("ne1", "-0.0")
+    assert app.getEntry("ne1") == 0
+    app.setEntry("ne1", ".")
+    assert app.getEntry("ne1") == 0
+
     app.setEntry("ne1", NUM_ONE)
+    app.setEntry("e1", TEXT_ONE)
     app.setEntry("se1", TEXT_ONE)
     app.setEntry("ae1", TEXT_ONE)
 
