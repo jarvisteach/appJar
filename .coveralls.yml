@@ -1,1 +1,2 @@
 service-name: travis-ci
+parallel: true

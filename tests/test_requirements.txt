@@ -1,0 +1,3 @@
+pytest
+coveralls
+codeclimate-test-reporter
