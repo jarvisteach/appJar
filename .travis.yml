@@ -55,7 +55,7 @@ matrix:
         - python: nightly
         - python: pypy
 before_install:
-    - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then test/osx.sh; fi
+    - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then tests/osx.sh; fi
     - pip install pytest pytest-cov
     - pip install coveralls
     - pip install codeclimate-test-reporter
