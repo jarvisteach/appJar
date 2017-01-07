@@ -77,7 +77,36 @@ Python allows you to easily perform maths on your data
 % | Remainder division | a = b % c
 ** | Exponent | a**b
 round() | Round | Rounds the number to the nearest place
+floor() | Round-down | Rounds the number down  
+ceil() | Round-Up | Rounds the number up  
 sum() | Sum | Adds together all the items in the list
+
+### String Operations  
+Python also lets us perform various actions on Strings.
+
+ | | 
+-|-|-
+```varName.upper()``` | Uppercase | Makes the entire string uppercase
+```varName.lower()``` | Lowercase | Makes the entire string lowercase
+```varName.split(" ")``` | Split into a list | Converts the String into a list, using spaces
+```varName.split(",")``` | Split into a list | Converts the String into a list, using commas
+```varName.count("a")``` | Counts occurences of the text | Counts how many times **a** appears in the String
+```varName.index("a")``` | Finds the first position of the text | Finds the first position of **a**
+```varName.startswith("Mr.")``` | Checks what the String starts with | Returns True if the String starts with **Mr.**
+```varName.endswith("Jarvis")``` | Checks what the String ends with | Returns True if the String ends with**Jarvis**
+
+### String Splicing    
+Remember, Strings are just lists of characters.  
+It's also possible to access parts of a String using array square brackets.  
+
+ | | 
+-|-|-
+```varName[2]``` | Gets a character | Returns the thrid character
+```varName[2:5]``` | Gets a substring | Returns characters from 2 to 4
+```varName[2:]``` | Gets a substring | Returns characters from 2 to the end
+```varName[:5]``` | Gets a substring | Returns characters from the beginning to 4
+```varName[2:10:2]``` | Gets a substring | Returns characters from 2 to 9, skipping every other character
+```varName[::-1]``` | Reverse a String | Returns the String in reverse order
 
 * * *
 ## Selection & Operators
@@ -91,6 +120,22 @@ else:
     print("You can't vote")
 ```
 Making decisions is all about comparing things; is one variable bigger than another, are two other variables the same...
+
+```python
+# if they are 18 or over, print "You can vote"
+if favArtist == "Picasso":
+    print("You like cubist paintings.")
+elif favArtist == "Rembrandt":
+    print("You like realistic paintings.")
+elif favArtist == "Monet":
+    print("You like impressionist paintings.")
+elif favArtist == "Rembrandt":
+    print("You like realistic paintings.")
+elif favArtist == "Cezanne":
+    print("You like post-impresionistic paintings.")
+else:
+    print("Unrecognised artist")
+```
 
 To compare things we use standard operators, just like in maths.
 

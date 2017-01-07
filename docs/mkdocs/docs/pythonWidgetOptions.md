@@ -14,14 +14,24 @@ Label, Message, Button, Entry, Scale, SpinBox, OptionBox, TextArea, Link, Meter,
 ----
 The following options are available for all widgets:
 
-* `.set XXX Bg(name, value)`  
-    Sets the background colour of the named widget.
-
 * `.set XXX Fg(name, value)`  
     Sets the foreground colour (usually the text) of the named widget.
 
+* `.set XXX Bg(name, value)`  
+    Sets the background colour of the named widget.
+
 * `.set XXX DisabledFg(name, value)`  
     Sets the disabled foreground colour (usually the text) of the named widget.
+
+* `.set XXX DisabledBg(name, value)`  
+    Sets the disabled background colour of the named widget.
+
+* `.set XXX ActiveFg(name, value)`  
+    Sets the active foreground colour (usually the text) of the named widget.
+
+* `.set XXX ActiveBg(name, value)`  
+    Sets the active background colour of the named widget.
+
 
 * `.set XXX Width(name, value)`  
     Sets the width of the named widget.
@@ -30,23 +40,24 @@ The following options are available for all widgets:
     Set the height of the named widget.
 
 * `.set XXX Relief(name, value)`  
-    Sets the border of the named widget. One of: `SUNKEN`, `RAISED`, `GROOVE`, `RIDGE`, `FLAT`  
+    Sets the border of the named widget. One of: `"sunken"`, `"raised"`, `"groove"`, `"ridge"`, `"flat"`  
 
 * `.set XXX State(name, value)`  
-    Sets the state of the named widget. One of: `NORMAL`, `ACTIVE`, `DISABLED`  
+    Sets the state of the named widget. One of: `"normal"`, `"active"`, `"disabled"`  
 
 ###Advanced Looks  
 ----
 The following are supported by most widgets:
 
 * `.set XXX Align(name, value)`  
-    Specifies how to align text within the widget: `LEFT`, `RIGHT`, `CENTER`
+    Specifies how to align text within the widget: `"left"`, `"right"`, `"center"`  
+    Calls `justify` on the Entry widget, and anchor on all others (converting left/right into e/w)  .  
 
 * `.set XXX Anchor(name, value)`  
-    Sets where the text is positioned within the widget. One of: `CENTER`, `N`, `S`, `E`, `W`, `NE`, `NW`, `SE`, `SW`  
+    Sets where the text is positioned within the widget. One of: `"center"`, `"n"`, `"s"`, `"e"`, `"w"`, `"ne"`, `"nw"`, `"se"`, `"sw"`  
 
 * `.set XXX Sticky(name, value)`  
-    Specifies which side of the cell to stick the widget to, as the GUI expands: `LEFT`, `RIGHT`, `BOTH`
+    Specifies which side of the cell to stick the widget to, as the GUI expands: `"left"`, `"right"`, `"both"`
 
 * `.set XXX Padding(name, [x, y])`  
     Set external padding of the named widget.  
