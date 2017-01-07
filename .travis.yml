@@ -34,12 +34,6 @@ matrix:
           - COVERALLS_PARALLEL=true
         - os: linux
           sudo: required
-          python: 3.6-dev
-          env:
-          - PYTHONPATH=.
-          - COVERALLS_PARALLEL=true
-        - os: linux
-          sudo: required
           python: nightly
           env:
           - PYTHONPATH=.
