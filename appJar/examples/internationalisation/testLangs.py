@@ -17,6 +17,8 @@ app.addLabelScale("s1")
 app.addMessage("m1", "Default message text")
 
 app.addListBox("fruits", ["apples", "oranges", "tomatoes"])
+app.addOptionBox("fruits", ["apples", "oranges", "tomatoes"])
+app.addSpinBox("fruits", ["apples", "oranges", "tomatoes"])
 
 app.addCheckBox("b1")
 app.addCheckBox("b2")

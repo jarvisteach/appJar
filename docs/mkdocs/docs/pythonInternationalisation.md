@@ -70,10 +70,21 @@ Note, changing the text of a widget through `setXXX()` method's will work, but w
 * `[SCALE]`, `[TEXTAREA]`, `[METER]`  
     These widgets have no text to change.  
 
-* The following are currently not supported:  
-    `[LISTBOX]`, `[SPIN]`, `[OPTION]`, `[PROPERTIES]`  
-    `[POPUP]`, `[PIECHART]`, `[TREE]`, `[GRID]`  
+* `[LISTBOX]`, `[SPIN]`, `[OPTION]`  
+    Each value should be on a new line  
+    Doesn't work for SpinBoxes, when generated from a range.  
+```
+[LISTBOX]
+fruits:
+    apples
+    pears
+    grapes
+    bananas
+```
+
+* The following are currently in development:  
     `[LABELFRAME]`, `[TABBEDFRAME]`, `[PAGEDWINDOW]`, `[TOGGLEFRAME]`  
+    `[PROPERTIES]`, `[POPUP]`, `[PIECHART]`, `[TREE]`, `[GRID]`  
     `[MENUBAR]`, `[STATUSBAR]`, `[TOOLBAR]`, `[TOOLTIP]`, `[TITLE]`  
     `[SOUND]` & `[IMAGE]`  
 
