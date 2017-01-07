@@ -277,6 +277,10 @@ def test_options():
     assert app.getOptionBox("tl1")[LIST_ONE[1]] is True
     assert app.getOptionBox("tl2")[LIST_TWO[2]] is True
 
+    # call generic setter functions
+    test_setters("OptionBox", "l1")
+
+
     print("\t>> all tests complete")
 
 
@@ -302,6 +306,10 @@ def test_spins():
     assert app.getSpinBox("s2") == "d"
     assert app.getSpinBox("s3") == "200"
     assert app.getSpinBox("s4") == "150"
+
+    # call generic setter functions
+    test_setters("SpinBox", "s1")
+
 
     print("\t>> all tests complete")
 
@@ -360,6 +368,9 @@ def test_lists():
     tmp_list.remove(tmp_list[1])
     assert app.getAllListItems("l2") == tmp_list
 
+    # call generic setter functions
+    test_setters("ListBox", "l1")
+
     print("\t>> all tests complete")
 
 
@@ -417,6 +428,9 @@ def test_scales():
     assert app.getScale("s3") == 100
     assert app.getScale("s4") == 100
 
+    # call generic setter functions
+    test_setters("Scale", "s1")
+
     print("\t >> all tests complete")
 
 
@@ -449,6 +463,10 @@ def test_messages():
     assert app.getMessageWidget("m2").cget("text") == EMPTY
     assert app.getMessageWidget("m3").cget("text") == EMPTY
     assert app.getMessageWidget("m4").cget("text") == EMPTY
+
+    # call generic setter functions
+    test_setters("Message", "m1")
+
     print("\t >> all tests complete")
 
 
@@ -481,6 +499,10 @@ def test_text_areas():
     assert app.getTextArea("t2") == EMPTY
     assert app.getTextArea("st1") == EMPTY
     assert app.getTextArea("st2") == TEXT_FOUR
+
+    # call generic setter functions
+    test_setters("TextArea", "t1")
+
     print("\t >> all tests complete")
 
 
@@ -503,6 +525,9 @@ def test_meters():
 
     app.getMeter("spm")
     app.getMeter("dum")
+
+    # call generic setter functions
+    test_setters("Meter", "m1")
 
     print(" >> not implemented...")
     #print("\t >> all tests complete")
@@ -554,6 +579,9 @@ def test_properties():
     app.setProperty("p2", "a", True)
     assert app.getProperty("p2", "a") is True
 
+    # call generic setter functions
+    test_setters("Properties", "p1")
+
     print("\t >> all tests complete")
 
 
@@ -568,6 +596,10 @@ def test_links():
     print("\tTesting links")
     app.addLink("l1", None)
     app.addWebLink("l1", "http://appJar.info")
+
+    # call generic setter functions
+    test_setters("Link", "l1")
+
     print("\t >> all tests complete")
 
 
@@ -625,6 +657,9 @@ def test_date_pickers():
     assert app.getDatePicker("d2") == datetime.date(1990, 5, 5)
     assert app.getDatePicker("d3") == datetime.date(2021, 10, 10)
 
+    # call generic setter functions
+    test_setters("DatePicker", "d1")
+
     print("\t >> all tests complete")
 
 
@@ -634,6 +669,10 @@ def test_pies():
     app.setPieChart("p1", "beef", 5)
     app.setPieChart("p1", "fish", 20)
     app.setPieChart("p1", "apples", 0)
+
+    # call generic setter functions
+    test_setters("Pie", "p1")
+
     print(" >> not implemented...")
     #print("\t >> all tests complete")
 
@@ -660,6 +699,8 @@ def test_trees():
     app.getTreeSelected("t1")
     app.getTreeSelectedXML("t1")
 
+    # call generic setter functions
+    test_setters("Tree", "t1")
 
     print(" >> not implemented...")
     #print("\t >> all tests complete")
@@ -679,6 +720,9 @@ def test_grids():
     app.getGridEntries("g1")
     app.getGridSelectedCells("g1")
     app.addGridRow("g1", ["aaa", 22, "Male"])
+
+    # call generic setter functions
+    test_setters("Grid", "g1")
 
     print(" >> not implemented...")
     #print("\t >> all tests complete")
