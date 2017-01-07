@@ -600,7 +600,7 @@ class gui(object):
         try:
             from configparser import ConfigParser
         except:
-            self.warn("Internationalisaiton not supported")
+            self.warn("Internationalisation not supported")
             self.config = None
             return
         self.config = ConfigParser()
@@ -609,7 +609,7 @@ class gui(object):
     # function to update languages
     def changeLanguage(self, language):
         if self.config is None:
-            self.warn("Internationalisaiton not supported")
+            self.warn("Internationalisation not supported")
             return
 
         language = language.upper()
@@ -700,6 +700,11 @@ class gui(object):
     # function to turn off warning messages
     def disableWarnings(self):
         self.WARN = False
+
+
+    def enableWarnings(self):
+        self.WARN = True
+
 
     # function to generate warning messages
     def debug(self, message):
@@ -1588,9 +1593,9 @@ class gui(object):
                         info["sticky"] = side
                     self.__repackWidget(item, info)
                 elif option == 'padding':
-                    item.config(padx=value[0], pady=value[0])
+                    item.config(padx=value[0], pady=value[1])
                 elif option == 'ipadding':
-                    item.config(ipadx=value[0], ipady=value[0])
+                    item.config(ipadx=value[0], ipady=value[1])
                 elif option == 'rightClick':
                     if self.platform in [self.WINDOWS, self.LINUX]:
                         item.bind(
