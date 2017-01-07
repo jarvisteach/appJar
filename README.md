@@ -1,6 +1,6 @@
 # appJar  
 
-Simple tTkinter GUIs in Python  
+Simple tKinter GUIs in Python  
 
 ---
 
