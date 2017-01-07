@@ -3035,6 +3035,7 @@ class gui(object):
             orient=HORIZONTAL,
             showvalue=False,
             highlightthickness=1)
+        scale.inContainer = False
         self.n_scales[title] = scale
         scale.bind("<Button-1>", self.__grabFocus)
         return scale
