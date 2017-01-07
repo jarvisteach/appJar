@@ -649,7 +649,7 @@ class gui(object):
             elif kind in [self.TEXTAREA, self.METER]:
                 self.warn("No text is displayed in " + section)
                 continue
-            elif kind in [self.SPIN, self.OPTION, self.PROPERTIES]:
+            elif kind in [self.PROPERTIES]:
                 self.warn(section + " - list-style widgets are currently not supported")
             elif kind in [self.LISTBOX]:
                 for k in widgets.keys():
@@ -659,6 +659,22 @@ class gui(object):
                     # tidy up the list
                     data = [item.strip() for item in data if len(item.strip()) > 0]
                     self.updateListItems(k, data)
+            elif kind in [self.SPIN]:
+                for k in widgets.keys():
+                    sb = widgets[k]
+                    # convert data to a list
+                    data = texts.get(k, sb.DEFAULT_TEXT).strip().split("\n")
+                    # tidy up the list
+                    data = [item.strip() for item in data if len(item.strip()) > 0]
+                    self.changeSpinBox(k, data)
+            elif kind in [self.OPTION]:
+                for k in widgets.keys():
+                    ob = widgets[k]
+                    # convert data to a list
+                    data = texts.get(k, ob.DEFAULT_TEXT).strip().split("\n")
+                    # tidy up the list
+                    data = [item.strip() for item in data if len(item.strip()) > 0]
+                    self.changeOptionBox(k, data)
             elif kind in [self.RADIOBUTTON]:
                 for (key, val) in self.config.items(section):
                     keys = key.split("-")
@@ -3128,6 +3144,7 @@ class gui(object):
             option = OptionMenu(frame, var, *options)
             var.set(options[0])
             option.kind = "normal"
+
         elif kind == "ticks":
             # http://stackoverflow.com/questions/29019760/how-to-create-a-combobox-that-includes-checkbox-for-each-item
             option = OptionMenu(frame, variable=var, value="")
@@ -3141,6 +3158,7 @@ class gui(object):
                     label=o, onvalue=True, offvalue=False, variable=vals[o])
             self.n_optionVars[title] = vals
             option.kind = "ticks"
+
         else:
             option = OptionMenu(frame, var, [])
             option.kind = "normal"
@@ -3159,6 +3177,10 @@ class gui(object):
         option.maxSize = maxSize
         option.inContainer = False
         option.options = options
+
+        option.DEFAULT_TEXT=""
+        if options is not None:
+            option.DEFAULT_TEXT="\n".join(options)
 
         # configure the drop-down too
         dropDown = option.nametowidget(option.menuname)
@@ -3429,12 +3451,10 @@ class gui(object):
                 title +
                 ". Invalid values: " +
                 str(vals))
-        vals = list(vals)
-        vals.reverse()
-        vals = tuple(vals)
 
         spin = Spinbox(frame)
         spin.inContainer = False
+        spin.isRange = False
         spin.config(font=self.entryFont, highlightthickness=0)
 
 # adds bg colour under spinners
@@ -3444,7 +3464,18 @@ class gui(object):
         spin.bind("<Tab>", self.__focusNextWindow)
         spin.bind("<Shift-Tab>", self.__focusLastWindow)
 
+        # store the vals in DEFAULT_TEXT
+        spin.DEFAULT_TEXT=""
+        if vals is not None:
+            spin.DEFAULT_TEXT="\n".join(vals)
+
+        # make sure it's a list
+        # reverse it, so the spin box functions properly
+        vals = list(vals)
+        vals.reverse()
+        vals = tuple(vals)
         spin.config(values=vals)
+
         # prevent invalid entries
         if self.validateSpinBox is None:
             self.validateSpinBox = (
@@ -3467,6 +3498,7 @@ class gui(object):
         spin = self.__buildSpinBox(self.__getContainer(), title, values)
         self.__positionWidget(spin, row, column, colspan, rowspan)
         self.setSpinBoxPos(title, 0)
+        return spin
 
     def addSpinBox(
             self,
@@ -3476,7 +3508,7 @@ class gui(object):
             column=0,
             colspan=0,
             rowspan=0):
-        self.__addSpinBox(title, values, row, column, colspan, rowspan)
+        return self.__addSpinBox(title, values, row, column, colspan, rowspan)
 
     def addLabelSpinBox(
             self,
@@ -3491,6 +3523,7 @@ class gui(object):
         self.__packLabelBox(frame, spin)
         self.__positionWidget(frame, row, column, colspan, rowspan)
         self.setSpinBoxPos(title, 0)
+        return spin
 
     def addSpinBoxRange(
             self,
@@ -3502,7 +3535,8 @@ class gui(object):
             colspan=0,
             rowspan=0):
         vals = list(range(fromVal, toVal + 1))
-        self.__addSpinBox(title, vals, row, column, colspan, rowspan)
+        spin = self.__addSpinBox(title, vals, row, column, colspan, rowspan)
+        spin.isRange = True
 
     def addLabelSpinBoxRange(
             self,
@@ -3514,7 +3548,8 @@ class gui(object):
             colspan=0,
             rowspan=0):
         vals = list(range(fromVal, toVal + 1))
-        self.addLabelSpinBox(title, vals, row, column, colspan, rowspan)
+        spin = self.addLabelSpinBox(title, vals, row, column, colspan, rowspan)
+        spin.isRange = True
 
     def getSpinBox(self, title):
         spin = self.__verifyItem(self.n_spins, title)
@@ -3541,11 +3576,13 @@ class gui(object):
 
     # is it going to be a hash or list??
     def __getSpinBoxValsAsList(self, vals):
-        if "{" in vals:
-            vals = vals[1:-1]
-            vals = vals.split("} {")
-        else:
-            vals = vals.split()
+        vals.replace("{", "")
+        vals.replace("}", "")
+#        if "{" in vals:
+#            vals = vals[1:-1]
+#            vals = vals.split("} {")
+#        else:
+        vals = vals.split()
         return vals
 
     def setSpinBox(self, title, value):
@@ -3566,7 +3603,9 @@ class gui(object):
     def setSpinBoxPos(self, title, pos):
         spin = self.__verifyItem(self.n_spins, title)
         vals = spin.cget("values")  # .split()
+        print(vals)
         vals = self.__getSpinBoxValsAsList(vals)
+        print(vals)
         pos = int(pos)
         if pos < 0 or pos >= len(vals):
             raise Exception(
@@ -3579,6 +3618,19 @@ class gui(object):
         pos = len(vals) - 1 - pos
         val = vals[pos]
         self.__setSpinBoxVal(spin, val)
+
+    def changeSpinBox(self, title, vals):
+        spin = self.__verifyItem(self.n_spins, title)
+        if spin.isRange:
+            self.warn("Can't convert " + title + " RangeSpinBox to SpinBox")
+        else:
+            print(vals)
+            vals = list(vals)
+            vals.reverse()
+            print(vals)
+            vals = tuple(vals)
+            spin.config(values=vals)
+            self.setSpinBoxPos(title, 0)
 
 #####################################
 # FUNCTION to add images
