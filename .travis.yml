@@ -65,7 +65,6 @@ before_install:
 before_script:
     - "export DISPLAY=:99.0"
     - if [[ "$TRAVIS_OS_NAME" != "osx" ]]; then sh -e /etc/init.d/xvfb start; fi
-    - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then Xvfb :99 -ac -screen 0 1024x768x8 -extension GLX -kb &; fi
     - sleep 3 # give xvfb some time to start
     - VERS=`python -c 'import sys; print(".".join(map(str, sys.version_info[:2])))'`
 
