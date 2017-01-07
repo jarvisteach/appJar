@@ -439,7 +439,7 @@ def test_scales():
     print("\t >> all tests complete")
 
 
-def test_messages():
+def test_message_boxes():
     print("\tTesting messages")
     app.addMessage("m1", TEXT_ONE)
     app.addMessage("m2", TEXT_TWO)
@@ -1249,7 +1249,7 @@ test_spins()
 test_lists()
 test_scales()
 test_widget_arranging()
-test_messages()
+test_message_boxes()
 test_text_areas()
 test_meters()
 test_properties()
@@ -1286,6 +1286,7 @@ test_hideShow()
 
 doStop = 0
 def test_gui(btn=None):
+    print("Testing GUI")
     global doStop
     if doStop == 2:
         test_sets()
@@ -1294,16 +1295,42 @@ def test_gui(btn=None):
         test_gui_options()
         doStop += 1
     elif doStop == 3:
-        app.removeAllWidgets()
+#        app.removeAllWidgets()
         doStop += 1
     elif doStop < 5:
         doStop += 1
         print("Waiting", doStop)
     else:
-        app.stop()
+        print("Stopping app")
+        try:
+            app.stop()
+        except:
+            print("weird error...")
 
 app.registerEvent(test_gui)
 app.setPollTime(1000)
 app.go("CANADIAN")
 
 print("<<<Widget Test Suite Complete>>>")
+del app
+
+doStop = 0
+def test_gui2(btn=None):
+    print("Testing GUI2")
+    global doStop
+    if doStop == 5:
+        print("Stopping app2")
+        app2.stop()
+    else:
+        doStop += 1
+
+app2 = gui()
+app2.startLabelFrame("l1")
+app2.addLabel("l1", "here")
+app2.registerEvent(test_gui2)
+app2.setPollTime(1000)
+app2.setGeometry("fullscreen")
+app2.go()
+
+print("<<<Widget Test Suite Complete>>>")
+
