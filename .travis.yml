@@ -69,7 +69,8 @@ before_script:
     - VERS=`python -c 'import sys; print(".".join(map(str, sys.version_info[:2])))'`
 
 script:
-    - coverage run --source=appJar tests/widget_test.py
+    - cd tests
+    - coverage run --source=appJar widget_test.py
 
 after_success:
     - coveralls
