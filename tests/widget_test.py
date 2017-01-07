@@ -923,6 +923,7 @@ def test_toolbars():
 
 
 def test_langs():
+    app.enableDebug()
     print("\tTesting langs")
     # test exception handling
     app.changeLanguage("ENGLISH")
@@ -932,6 +933,7 @@ def test_langs():
     app.changeLanguage("ENGLISH")
     print(" >> not implemented...")
     #print("\t >> all tests complete")
+    app.disableDebug()
 
 
 def test_tooltips():
@@ -961,6 +963,7 @@ def test_messages():
     print(" >> not implemented...")
     #print("\t >> all tests complete")
     app.disableDebug()
+    app.enableWarnings()
 
 
 def test_sounds():
@@ -1221,6 +1224,6 @@ def test_gui(btn=None):
 
 app.registerEvent(test_gui)
 app.setPollTime(1000)
-app.go()
+app.go("CANADIAN")
 
 print("<<<Widget Test Suite Complete>>>")
