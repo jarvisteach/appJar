@@ -586,6 +586,7 @@ class gui(object):
         self.n_rbVals = {}
         self.n_images = {}        # image label widgets
         self.n_imageCache = {}    # image file objects
+        self.n_imageAnimationIds = {} # stores after ids
         self.n_taHashes = {}      # for monitoring textAreas
 
         # for simple grids
@@ -824,6 +825,11 @@ class gui(object):
             self.topLevel.after_cancel(self.pollId)
             self.topLevel.after_cancel(self.flashId)
             self.topLevel.after_cancel(self.preloadAnimatedImageId)
+
+            # stop any animations
+            for key in self.n_imageAnimationIds:
+                self.topLevel.after_cancel(self.n_imageAnimationIds[key])
+
             # stop any sounds, ignore error when not on Windows
             try:
                 self.stopSound()
@@ -3637,10 +3643,14 @@ class gui(object):
             lab = self.__verifyItem(self.n_images, title)
         except ItemLookupError:
             # image destroyed...
+            del self.n_imageAnimationIds[title]
             return
-        if not lab.image.animating or (
-                firstTime and lab.image.alreadyAnimated):
+        if not lab.image.animating:
+            del self.n_imageAnimationIds[title]
             return
+        if firstTime and lab.image.alreadyAnimated:
+            return
+
         lab.image.alreadyAnimated = True
         try:
             if lab.image.cached:
@@ -3651,10 +3661,11 @@ class gui(object):
                 lab.image.pics.append(pic)
             lab.image.anim_pos += 1
             lab.config(image=pic)
-            self.topLevel.after(
+            anim_id = self.topLevel.after(
                 lab.image.anim_speed,
                 self.__animateImage,
                 title)
+            self.n_imageAnimationIds[title] = anim_id
         except:
             lab.image.anim_pos = 0
             lab.image.cached = True
@@ -3706,7 +3717,8 @@ class gui(object):
         img = self.__verifyItem(self.n_images, name).image
         if not img.animating:
             img.animating = True
-            self.topLevel.after(img.anim_speed, self.__animateImage, name)
+            anim_id = self.topLevel.after(img.anim_speed, self.__animateImage, name)
+            self.n_imageAnimationIds[name] = anim_id
 
     def addAnimatedImage(
             self,
@@ -3823,11 +3835,12 @@ class gui(object):
         label.image = image  # keep a reference!
 
         if image.isAnimated:
-            self.topLevel.after(
+            anim_id = self.topLevel.after(
                 image.anim_speed + 100,
                 self.__animateImage,
                 name,
                 True)
+            self.n_imageAnimationIds[name] = anim_id
 
         # removed - keep the label the same size, and crop images
         #h = image.height()
@@ -3864,8 +3877,9 @@ class gui(object):
         self.n_images[name] = label
         self.__positionWidget(label, row, column, colspan, rowspan)
         if img.isAnimated:
-            self.topLevel.after(
+            anim_id = self.topLevel.after(
                 img.anim_speed, self.__animateImage, name, True)
+            self.n_imageAnimationIds[name] = anim_id
 
     def setImageSize(self, name, width, height):
         img = self.__verifyItem(self.n_images, name)
