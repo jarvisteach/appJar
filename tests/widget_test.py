@@ -61,6 +61,10 @@ def test_labels():
     assert app.getLabel("el1") == EMPTY
     assert app.getLabel("l1") == EMPTY
     assert app.getLabel("fl1") == EMPTY
+
+    # call generic setter functions
+    test_setters("Label", "l1")
+
     print("\t >> all tests complete")
 
 
@@ -143,6 +147,10 @@ def test_entries():
     assert app.getEntry("ne1") == float(NUM_ONE)
     assert app.getEntry("se1") == TEXT_ONE
     assert app.getEntry("ae1") == TEXT_ONE
+
+    # call generic setter functions
+    test_setters("Entry", "e1")
+
     print("\t >> all tests complete")
 
 
@@ -166,6 +174,10 @@ def test_buttons():
     assert but2.cget("text") == "bb1"
     assert but3.cget("text") == "a2b1"
     assert but4.cget("text") == "butName"
+
+    # call generic setter functions
+    test_setters("Button", "b1")
+
     print("\t >> all tests complete")
 
 
@@ -185,6 +197,10 @@ def test_radios():
 
     app.setRadioButton("rb", TEXT_THREE)
     assert app.getRadioButton("rb") == TEXT_THREE
+
+    # call generic setter functions
+    test_setters("RadioButton", "rb")
+
     print("\t >> all tests complete")
 
 
@@ -205,6 +221,10 @@ def test_checks():
     assert app.getCheckBox(TEXT_ONE) is True
     assert app.getCheckBox(TEXT_TWO) is True
     assert app.getCheckBox(TEXT_THREE) is False
+
+    # call generic setter functions
+    test_setters("CheckBox", TEXT_ONE)
+
     print("\t >> all tests complete")
 
 
@@ -963,6 +983,45 @@ def test_hideShow():
     app.showLabel("l0")
     app.removeLabel("l0")
 
+    print(" >> not implemented...")
+    #print("\t >> all tests complete")
+
+
+def test_setters(widg_type, widg_id):
+    print("\tTesting setters")
+    exec("app.set" + widg_type + "Bg(\""+widg_id +"\", \"red\")")
+    exec("app.set" + widg_type + "Fg(\""+widg_id +"\", \"red\")")
+    exec("app.set" + widg_type + "DisabledFg(\""+widg_id +"\", \"red\")")
+    exec("app.set" + widg_type + "DisabledBg(\""+widg_id +"\", \"red\")")
+    exec("app.set" + widg_type + "ActiveFg(\""+widg_id +"\", \"red\")")
+    exec("app.set" + widg_type + "ActiveBg(\""+widg_id +"\", \"red\")")
+    exec("app.set" + widg_type + "InactiveFg(\""+widg_id +"\", \"red\")")
+    exec("app.set" + widg_type + "InactiveBg(\""+widg_id +"\", \"red\")")
+    exec("app.set" + widg_type + "Width(\""+widg_id +"\", 20)")
+    exec("app.set" + widg_type + "Height(\""+widg_id +"\", 20)")
+#    exec("app.set" + widg_type + "Padding(\""+widg_id +"\", [20,20])")
+#    exec("app.set" + widg_type + "IPadding(\""+widg_id +"\", [20,20])")
+#    exec("app.set" + widg_type + "InPadding(\""+widg_id +"\", [20,20])")
+    exec("app.set" + widg_type + "Relief(\""+widg_id +"\", 'SUNKEN')")
+    exec("app.set" + widg_type + "Align(\""+widg_id +"\", 'LEFT')")
+    exec("app.set" + widg_type + "Anchor(\""+widg_id +"\", 'CENTER')")
+    exec("app.set" + widg_type + "DragFunction(\""+widg_id +"\", tester_function )")
+    exec("app.set" + widg_type + "OverFunction(\""+widg_id +"\", tester_function)")
+    exec("app.set" + widg_type + "Command(\""+widg_id +"\", tester_function)")
+    exec("app.set" + widg_type + "Func(\""+widg_id +"\", tester_function)")
+    exec("app.set" + widg_type + "Function(\""+widg_id +"\", tester_function)")
+    exec("app.set" + widg_type + "Cursor(\""+widg_id +"\", \"plus\")")
+    exec("app.set" + widg_type + "Focus(\""+widg_id +"\")")
+    exec("app.set" + widg_type + "Sticky(\""+widg_id +"\", 'LEFT')")
+    exec("app.set" + widg_type + "RightClick(\""+widg_id +"\", tester_function)")
+
+    exec("app.get"+widg_type+"Widget(\""+widg_id+"\")")
+
+#    exec("app.show" + widg_type+ "(\""+widg_id +"\")")
+#    exec("app.hide" + widg_type+ "(\""+widg_id +"\")")
+#    exec("app.enable" + widg_type+ "(\""+widg_id +"\")")
+#    exec("app.disable" + widg_type+ "(\""+widg_id +"\")")
+#    exec("app.remove" + widg_type+ "(\""+widg_id +"\")")
     print(" >> not implemented...")
     #print("\t >> all tests complete")
 
