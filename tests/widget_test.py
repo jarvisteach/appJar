@@ -150,6 +150,8 @@ def test_entries():
 
     # call generic setter functions
     test_setters("Entry", "e1")
+    app.clearEntry("ne1")
+    test_setters("Entry", "ne1")
 
     print("\t >> all tests complete")
 
@@ -200,6 +202,7 @@ def test_radios():
 
     # call generic setter functions
     test_setters("RadioButton", "rb")
+    test_setters("Rb", "rb")
 
     print("\t >> all tests complete")
 
@@ -224,6 +227,7 @@ def test_checks():
 
     # call generic setter functions
     test_setters("CheckBox", TEXT_ONE)
+    test_setters("Cb", TEXT_ONE)
 
     print("\t >> all tests complete")
 
@@ -370,6 +374,7 @@ def test_lists():
 
     # call generic setter functions
     test_setters("ListBox", "l1")
+    test_setters("Lb", "l1")
 
     print("\t>> all tests complete")
 
@@ -671,7 +676,7 @@ def test_pies():
     app.setPieChart("p1", "apples", 0)
 
     # call generic setter functions
-    test_setters("Pie", "p1")
+    test_setters("PieChart", "p1")
 
     print(" >> not implemented...")
     #print("\t >> all tests complete")
@@ -1042,24 +1047,55 @@ def test_setters(widg_type, widg_id):
     exec("app.set" + widg_type + "DisabledBg(\""+widg_id +"\", \"red\")")
     exec("app.set" + widg_type + "ActiveFg(\""+widg_id +"\", \"red\")")
     exec("app.set" + widg_type + "ActiveBg(\""+widg_id +"\", \"red\")")
-    exec("app.set" + widg_type + "InactiveFg(\""+widg_id +"\", \"red\")")
-    exec("app.set" + widg_type + "InactiveBg(\""+widg_id +"\", \"red\")")
+
+# only applicable for tabbed panes
+#    exec("app.set" + widg_type + "InactiveFg(\""+widg_id +"\", \"red\")")
+#    exec("app.set" + widg_type + "InactiveBg(\""+widg_id +"\", \"red\")")
+
     exec("app.set" + widg_type + "Width(\""+widg_id +"\", 20)")
     exec("app.set" + widg_type + "Height(\""+widg_id +"\", 20)")
-#    exec("app.set" + widg_type + "Padding(\""+widg_id +"\", [20,20])")
-#    exec("app.set" + widg_type + "IPadding(\""+widg_id +"\", [20,20])")
-#    exec("app.set" + widg_type + "InPadding(\""+widg_id +"\", [20,20])")
-    exec("app.set" + widg_type + "Relief(\""+widg_id +"\", 'SUNKEN')")
-    exec("app.set" + widg_type + "Align(\""+widg_id +"\", 'LEFT')")
-    exec("app.set" + widg_type + "Anchor(\""+widg_id +"\", 'CENTER')")
+
+    exec("app.set" + widg_type + "Padding(\""+widg_id +"\", [20, 20])")
+    exec("app.set" + widg_type + "IPadding(\""+widg_id +"\", [20, 20])")
+    exec("app.set" + widg_type + "InPadding(\""+widg_id +"\", [20, 20])")
+    exec("app.set" + widg_type + "Padding(\""+widg_id +"\", 20, 20)")
+    exec("app.set" + widg_type + "IPadding(\""+widg_id +"\", 20, 20)")
+    exec("app.set" + widg_type + "InPadding(\""+widg_id +"\", 20, 20)")
+
+    exec("app.set" + widg_type + "Relief(\""+widg_id +"\", 'sunken')")
+    exec("app.set" + widg_type + "Relief(\""+widg_id +"\", 'raised')")
+    exec("app.set" + widg_type + "Relief(\""+widg_id +"\", 'groove')")
+    exec("app.set" + widg_type + "Relief(\""+widg_id +"\", 'ridge')")
+    exec("app.set" + widg_type + "Relief(\""+widg_id +"\", 'flat')")
+
+    exec("app.set" + widg_type + "Align(\""+widg_id +"\", 'left')")
+    exec("app.set" + widg_type + "Align(\""+widg_id +"\", 'center')")
+    exec("app.set" + widg_type + "Align(\""+widg_id +"\", 'right')")
+
+    exec("app.set" + widg_type + "Anchor(\""+widg_id +"\", 'n')")
+    exec("app.set" + widg_type + "Anchor(\""+widg_id +"\", 'ne')")
+    exec("app.set" + widg_type + "Anchor(\""+widg_id +"\", 'nw')")
+    exec("app.set" + widg_type + "Anchor(\""+widg_id +"\", 'e')")
+    exec("app.set" + widg_type + "Anchor(\""+widg_id +"\", 's')")
+    exec("app.set" + widg_type + "Anchor(\""+widg_id +"\", 'se')")
+    exec("app.set" + widg_type + "Anchor(\""+widg_id +"\", 'sw')")
+    exec("app.set" + widg_type + "Anchor(\""+widg_id +"\", 'w')")
+    exec("app.set" + widg_type + "Anchor(\""+widg_id +"\", 'center')")
+
+    exec("app.set" + widg_type + "Cursor(\""+widg_id +"\", 'plus')")
+    exec("app.set" + widg_type + "Focus(\""+widg_id +"\")")
+
+    exec("app.set" + widg_type + "Sticky(\""+widg_id +"\", 'left')")
+    exec("app.set" + widg_type + "Sticky(\""+widg_id +"\", 'right')")
+    exec("app.set" + widg_type + "Sticky(\""+widg_id +"\", 'both')")
+
     exec("app.set" + widg_type + "DragFunction(\""+widg_id +"\", tester_function )")
+    exec("app.set" + widg_type + "DragFunction(\""+widg_id +"\", [tester_function,tester_function] )")
     exec("app.set" + widg_type + "OverFunction(\""+widg_id +"\", tester_function)")
+    exec("app.set" + widg_type + "OverFunction(\""+widg_id +"\", [tester_function, tester_function])")
     exec("app.set" + widg_type + "Command(\""+widg_id +"\", tester_function)")
     exec("app.set" + widg_type + "Func(\""+widg_id +"\", tester_function)")
     exec("app.set" + widg_type + "Function(\""+widg_id +"\", tester_function)")
-    exec("app.set" + widg_type + "Cursor(\""+widg_id +"\", \"plus\")")
-    exec("app.set" + widg_type + "Focus(\""+widg_id +"\")")
-    exec("app.set" + widg_type + "Sticky(\""+widg_id +"\", 'LEFT')")
     exec("app.set" + widg_type + "RightClick(\""+widg_id +"\", tester_function)")
 
     exec("app.get"+widg_type+"Widget(\""+widg_id+"\")")
