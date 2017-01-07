@@ -60,10 +60,12 @@ before_install:
     - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install python3; fi
     - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then virtualenv venv -p python3; fi
     - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then source venv/bin/activate; fi
+    - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then sudo port install firefox-x11; fi
     - pip install pytest pytest-cov
     - pip install coveralls
     - pip install codeclimate-test-reporter
-    - sudo apt-get install python-tk
+    - if [[ "$TRAVIS_OS_NAME" != "osx" ]]; then sudo apt-get install python-tk; fi
+
 
 before_script:
     - "export DISPLAY=:99.0"
