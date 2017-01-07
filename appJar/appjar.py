@@ -1467,6 +1467,10 @@ class gui(object):
                             value = RIGHT
                         item.config(justify=value)
                     else:
+                        if value == LEFT:
+                            value = "w"
+                        elif value == RIGHT:
+                            value = "e"
                         item.config(anchor=value)
                 elif option == 'anchor':
                     item.config(anchor=value)
@@ -1593,9 +1597,15 @@ class gui(object):
                         info["sticky"] = side
                     self.__repackWidget(item, info)
                 elif option == 'padding':
-                    item.config(padx=value[0], pady=value[1])
+                    if value[1] is None:
+                        item.config(padx=value[0][0], pady=value[0][1])
+                    else:
+                        item.config(padx=value[0], pady=value[1])
                 elif option == 'ipadding':
-                    item.config(ipadx=value[0], ipady=value[1])
+                    if value[1] is None:
+                        item.config(ipadx=value[0][0], ipady=value[0][1])
+                    else:
+                        item.config(ipadx=value[0], ipady=value[1])
                 elif option == 'rightClick':
                     if self.platform in [self.WINDOWS, self.LINUX]:
                         item.bind(
@@ -1703,7 +1713,7 @@ class gui(object):
             exec(
                 "def set" +
                 v +
-                "Padding(self, name, x, y): self.configureWidgets(" +
+                "Padding(self, name, x, y=None): self.configureWidgets(" +
                 str(k) +
                 ", name, 'padding', [x, y])")
             exec("gui.set" + v + "Padding=set" + v + "Padding")
@@ -1711,7 +1721,7 @@ class gui(object):
             exec(
                 "def set" +
                 v +
-                "IPadding(self, name, x, y): self.configureWidgets(" +
+                "IPadding(self, name, x, y=None): self.configureWidgets(" +
                 str(k) +
                 ", name, 'ipadding', [x, y])")
             exec("gui.set" + v + "IPadding=set" + v + "IPadding")
@@ -1719,7 +1729,7 @@ class gui(object):
             exec(
                 "def set" +
                 v +
-                "InPadding(self, name, x, y): self.configureWidgets(" +
+                "InPadding(self, name, x, y=None): self.configureWidgets(" +
                 str(k) +
                 ", name, 'ipadding', [x, y])")
             exec("gui.set" + v + "InPadding=set" + v + "InPadding")
