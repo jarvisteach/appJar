@@ -3180,7 +3180,7 @@ class gui(object):
 
         option.DEFAULT_TEXT=""
         if options is not None:
-            option.DEFAULT_TEXT="\n".join(options)
+            option.DEFAULT_TEXT='\n'.join(str(x) for x in options)
 
         # configure the drop-down too
         dropDown = option.nametowidget(option.menuname)
@@ -3467,7 +3467,7 @@ class gui(object):
         # store the vals in DEFAULT_TEXT
         spin.DEFAULT_TEXT=""
         if vals is not None:
-            spin.DEFAULT_TEXT="\n".join(vals)
+            spin.DEFAULT_TEXT='\n'.join(str(x) for x in vals)
 
         # make sure it's a list
         # reverse it, so the spin box functions properly
@@ -3603,9 +3603,7 @@ class gui(object):
     def setSpinBoxPos(self, title, pos):
         spin = self.__verifyItem(self.n_spins, title)
         vals = spin.cget("values")  # .split()
-        print(vals)
         vals = self.__getSpinBoxValsAsList(vals)
-        print(vals)
         pos = int(pos)
         if pos < 0 or pos >= len(vals):
             raise Exception(
@@ -3624,10 +3622,8 @@ class gui(object):
         if spin.isRange:
             self.warn("Can't convert " + title + " RangeSpinBox to SpinBox")
         else:
-            print(vals)
             vals = list(vals)
             vals.reverse()
-            print(vals)
             vals = tuple(vals)
             spin.config(values=vals)
             self.setSpinBoxPos(title, 0)
@@ -4191,7 +4187,7 @@ class gui(object):
 
         lb.DEFAULT_TEXT=""
         if values is not None:
-            lb.DEFAULT_TEXT="\n".join(values)
+            lb.DEFAULT_TEXT='\n'.join(str(x) for x in values)
             for name in values:
                 lb.insert(END, name)
 
