@@ -1217,8 +1217,28 @@ def test_containers():
     app.addLabel("sb1_l", TEXT_ONE)
     app.stopSubWindow()
 
+    app.setSubWindowLocation("sb1", 50,50)
+
     app.showSubWindow("sb1")
     app.hideSubWindow("sb1")
+
+    def stopper(btn=None):
+        return True
+
+# modal stops the popup from closing....
+    app.startSubWindow("sb2", modal=False, grouped=True)
+    app.addLabel("sb2_l", TEXT_ONE)
+    app.setStopFunction(stopper)
+    app.stopSubWindow()
+
+#    def stopSubWindow(btn=None):
+#        app.hideSubWindow("sb2")
+#
+#    app.registerEvent(stopSubWindow)
+    app.showSubWindow("sb2")
+    print("5-here.......")
+    app.hideSubWindow("sb2")
+    print("6-here.......")
 # causes problems - children still in config dicitonaries...
 # setLang, etc will try to modify them
 #    app.destroySubWindow("sb1")
@@ -1295,7 +1315,11 @@ def test_gui(btn=None):
         test_gui_options()
         doStop += 1
     elif doStop == 3:
-#        app.removeAllWidgets()
+        try:
+            app.removeAllWidgets()
+        except:
+# test_gui is sitll in evne tloop for second GUI - causes this to be called - but no app...
+            print("weird error")
         doStop += 1
     elif doStop < 5:
         doStop += 1
