@@ -19,6 +19,7 @@ pages:
     - Sounds: pythonSound.md
     - Bars: pythonBars.md
     - Pop-ups: pythonDialogs.md
+    - Splashscreen: splash.md
     - In the works...: pythonDevWidgets.md
 - Configuration:
     - Arranging widgets: pythonWidgetLayout.md
