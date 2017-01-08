@@ -835,6 +835,7 @@ class gui(object):
                 self.stopSound()
             except:
                 pass
+            self.topLevel.quit()
             self.topLevel.destroy()
 
 #####################################
@@ -3643,7 +3644,8 @@ class gui(object):
             lab = self.__verifyItem(self.n_images, title)
         except ItemLookupError:
             # image destroyed...
-            del self.n_imageAnimationIds[title]
+            try: del self.n_imageAnimationIds[title]
+            except: pass
             return
         if not lab.image.animating:
             del self.n_imageAnimationIds[title]
@@ -4794,11 +4796,12 @@ class gui(object):
             column=0,
             colspan=0,
             rowspan=0):
-        if (title in self.n_messages):
-            raise Exception("Invalid name:", title, "already exists")
+
+        self.__verifyItem(self.n_messages, title, True)
         mess = Message(self.__getContainer())
         mess.config(font=self.messageFont)
         mess.config(justify=LEFT, background=self.__getContainerBg())
+
         if text is not None:
             mess.config(text=text)
             mess.DEFAULT_TEXT = text
@@ -4817,14 +4820,11 @@ class gui(object):
         self.addMessage(title, None, row, column, colspan, rowspan)
 
     def setMessage(self, title, text):
-        if (title not in self.n_messages):
-            raise Exception("Invalid message:", title)
-        self.n_messages[title].config(text=text)
+        mess = self.__verifyItem(self.n_messages, title)
+        mess.config(text=text)
 
     def clearMessage(self, title):
-        if (title not in self.n_messages):
-            raise Exception("Invalid message:", title)
-        self.n_messages[title].config(text="")
+        self.setMessage(title, "")
 
 #####################################
 # FUNCTIONS for entry boxes
