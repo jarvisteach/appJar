@@ -544,7 +544,7 @@ class gui(object):
         self.isFullscreen = False
 
         # splash screen?
-        self.splashOn = False
+        self.splashConfig = None
 
         # collections of widgets, widget name is key
         self.n_frames = []  # un-named, so no direct access
@@ -737,8 +737,8 @@ class gui(object):
         self.DEBUG = False
 
     # function to turn on the splash screen
-    def showSplash(self):
-        self.splashOn = True
+    def showSplash(self, text="appJar", fill="red", stripe="black", fg="white", font=44):
+            self.splashConfig= {'text':text, 'fill':fill, 'stripe':stripe, 'fg':fg, 'font':font}
 
 #####################################
 # Event Loop - must always be called at end
@@ -746,9 +746,16 @@ class gui(object):
     def go(self, language=None):
         """ Most important function! Start the GUI """
 
-        if self.splashOn:
+        if self.splashConfig is not None:
+            splash = SplashScreen(
+                            self.topLevel,
+                            self.splashConfig['text'],
+                            self.splashConfig['fill'],
+                            self.splashConfig['stripe'],
+                            self.splashConfig['fg'],
+                            self.splashConfig['font']
+                            )
             self.topLevel.withdraw()
-            splash = SplashScreen(self.topLevel)
             self.__bringToFront(splash)
 
         # if language is populated, we are in internationalisation mode
@@ -784,7 +791,7 @@ class gui(object):
         # if necessary
         self.__dimensionWindow()
 
-        if self.splashOn:
+        if self.splashConfig is not None:
             time.sleep(3)
             splash.destroy()
 
@@ -8498,17 +8505,17 @@ class SimpleGrid(Frame):
 
 
 class SplashScreen(Toplevel):
-    def __init__(self, parent, text="appJar"):
+    def __init__(self, parent, text="appJar", fill="red", stripe="black", fg="white", font=44):
         Toplevel.__init__(self, parent)
 
-        lab = Label(self, bg = 'black', fg="white", text=text, height=3, width=50)
-        lab.config(font=("Courier", 44))
+        lab = Label(self, bg=stripe, fg=fg, text=text, height=3, width=50)
+        lab.config(font=("Courier", font))
         lab.place(relx=0.5, rely=0.5, anchor=CENTER)
 
         width = str(self.winfo_screenwidth())
         height = str(self.winfo_screenheight())
         self.geometry(width+"x"+height)
-        self.config(bg="red")
+        self.config(bg=fill)
 
         self.attributes("-alpha", 0.95)
         self.attributes("-fullscreen", True)
