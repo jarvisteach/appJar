@@ -615,12 +615,20 @@ class gui(object):
 
         language = language.upper()
         import codecs
-        try:
-            with codecs.open(language + ".ini", "r", "utf8") as langFile:
-                self.config.read_file(langFile)
-        except FileNotFoundError:
-            self.warn("Invalid language: " + language)
-            return
+        if not PYTHON2:
+            try:
+                with codecs.open(language + ".ini", "r", "utf8") as langFile:
+                    self.config.read_file(langFile)
+            except FileNotFoundError:
+                self.warn("Invalid language: " + language)
+                return
+        else:
+            try:
+                with codecs.open(language + ".ini", "r", "utf8") as langFile:
+                    self.config.read_file(langFile)
+            except IOError:
+                self.warn("Invalid language: " + language)
+                return
 
         self.debug("Switching to: " + language)
         # loop through each section, get the relative set of widgets
