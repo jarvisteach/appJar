@@ -2,11 +2,9 @@
 ---
 This is a Python library for creating **quick** and **easy** GUIs, designed primarily for use in the **classroom**.  
 
-It hasn't been officially released yet - we're always looking for more beta testers...  
-
 It has no dependencies, other than [Python 3.x](https://www.python.org/downloads/) (although it mostly works on 2.7) and relies on Python's built-in [tkinter](https://docs.python.org/3.5/library/tkinter.html) library.  
 
-See the [installation guidelines](Install.md) for more information.
+It's very easy to set-up, specifically with schools in mind. See the [installation guidelines](Install.md) for more information.
 
 ###Let's make a sandwich
 ---
