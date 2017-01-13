@@ -2328,6 +2328,14 @@ class gui(object):
                                     'widgets': False,
                                     "fg": "black"})
 
+    def openContainer(self, kind, title):
+            # now, add to top of stack
+        widgs = self.__getItems(kind)
+        print(widgs)
+        widg = widgs[title]
+        print(widg)
+        self.__addContainer(self.C_LABELFRAME, widg, 0, 1)
+
     # returns the current working container
     def __getContainer(self):
         container = self.containerStack[-1]['container']
