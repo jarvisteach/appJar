@@ -1367,22 +1367,35 @@ class gui(object):
             return self.n_props
         elif kind == self.GRID:
             return self.n_grids
-        elif kind == self.LABELFRAME:
+
+        elif kind in [ self.LABELFRAME, self.C_LABELFRAME ]:
             return self.n_labelFrames
-        elif kind == self.FRAME:
+        elif kind in [ self.FRAME, self.C_FRAME ]:
             return self.n_ajFrame
-        elif kind == self.TABBEDFRAME:
-            return self.n_tabbedFrames
-        elif kind == self.PANEDFRAME:
-            return self.n_panedFrames
-        elif kind == self.PANE:
-            return self.n_panes
-        elif kind == self.SCROLLPANE:
-            return self.n_scrollPanes
-        elif kind == self.PAGEDWINDOW:
-            return self.n_pagedWindows
-        elif kind == self.TOGGLEFRAME:
+        elif kind in [ self.TOGGLEFRAME, self.C_TOGGLEFRAME ]:
             return self.n_toggleFrames
+
+        elif kind in [ self.PAGEDWINDOW, self.C_PAGEDWINDOW ]:
+            return self.n_pagedWindows
+        elif kind in [ self.C_PAGE ]:
+            # no dict of pages - the container manages them...
+            raise Exception("Unfinished widget type: " + str(kind))
+
+        elif kind in [ self.TABBEDFRAME, self.C_TABBEDFRAME ]:
+            return self.n_tabbedFrames
+        elif kind in [ self.C_TAB ]:
+            # no dict of tabs - the container manages them...
+            raise Exception("Unfinished widget type: " + str(kind))
+
+        elif kind in [ self.PANEDFRAME ]:
+            return self.n_panedFrames
+        elif kind in [ self.PANE, self.C_PANE ]:
+            return self.n_panes
+
+        elif kind in [ self.C_SUBWINDOW ]:
+            return self.n_subWindows
+        elif kind in [ self.SCROLLPANE, self.C_SCROLLPANE ]:
+            return self.n_scrollPanes
         else:
             raise Exception("Unknown widget type: " + str(kind))
 
@@ -2328,13 +2341,14 @@ class gui(object):
                                     'widgets': False,
                                     "fg": "black"})
 
+    # function to reload the specified container
     def openContainer(self, kind, title):
-            # now, add to top of stack
+        # now, add to top of stack
         widgs = self.__getItems(kind)
-        print(widgs)
+        print(kind, ":", widgs)
         widg = widgs[title]
         print(widg)
-        self.__addContainer(self.C_LABELFRAME, widg, 0, 1)
+        self.__addContainer(kind, widg, 0, 1)
 
     # returns the current working container
     def __getContainer(self):
