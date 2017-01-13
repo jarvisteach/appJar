@@ -8,7 +8,6 @@ Simple tKinter GUIs in Python
 [![Build Status][travis-image]][travis-link]
 [![Test Coverage][coveralls-image]][coveralls-link]
 [![Code Health][landscape-image]][landscape-link]
-
 [![Code Climate][climate-image]][climate-link]
 
 [pypi-v-image]: https://img.shields.io/pypi/v/appJar.png
