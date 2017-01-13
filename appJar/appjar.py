@@ -506,7 +506,10 @@ class gui(object):
         self.pollTime = 250
         self.built = True
         if self.platform == self.WINDOWS:
-            self.topLevel.wm_iconbitmap(self.appJarIcon)
+            try:
+                self.topLevel.wm_iconbitmap(self.appJarIcon)
+            except: # file not found
+                self.debug("Error setting Windows default icon")
 
     def __configBg(self, container):
         # set up a background image holder
