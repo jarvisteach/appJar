@@ -7,6 +7,8 @@ Simple tKinter GUIs in Python
 [![PyPI Version][pypi-v-image]][pypi-v-link]
 [![Build Status][travis-image]][travis-link]
 [![Test Coverage][coveralls-image]][coveralls-link]
+[![Code Health][landscape-image]][landscape-link]
+
 [![Code Climate][climate-image]][climate-link]
 
 [pypi-v-image]: https://img.shields.io/pypi/v/appJar.png
@@ -15,6 +17,8 @@ Simple tKinter GUIs in Python
 [travis-link]: https://travis-ci.org/jarvisteach/appJar
 [climate-image]: https://codeclimate.com/github/jarvisteach/appJar/badges/gpa.svg
 [climate-link]: https://codeclimate.com/github/jarvisteach/appJar
+[landscape-image]: https://landscape.io/github/jarvisteach/appJar/appJar/landscape.svg?style=flat
+[landscape-link]: https://landscape.io/github/jarvisteach/appJar/appJar
 [coveralls-image]: https://coveralls.io/repos/github/jarvisteach/appJar/badge.svg
 [coveralls-link]: https://coveralls.io/github/jarvisteach/appJar
 
