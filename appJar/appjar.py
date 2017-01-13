@@ -31,7 +31,6 @@ except ImportError:
 import os
 import sys
 import re
-import socket
 import hashlib
 import imghdr
 import time
@@ -44,10 +43,10 @@ import webbrowser
 
 # ajTree
 try:
-    from idlelib.TreeWidget import TreeItem, TreeNode
+    from idlelib.TreeWidget import TreeItem, TreeNode, ZoomHeight
 except:
     try:
-        from idlelib.tree import TreeItem, TreeNode
+        from idlelib.tree import TreeItem, TreeNode, ZoomHeight
     except:
         raise Exception("Unsupported python build, unable to access idlelib")
 
@@ -7131,7 +7130,7 @@ class ajTreeNode(TreeNode):
         if PYTHON2:
             TreeNode.drawtext(self)
         else:
-            super().drawtext()
+            super(ajTreeNode, self).drawtext()
 
         self.colourLabels()
 
@@ -7141,7 +7140,7 @@ class ajTreeNode(TreeNode):
         if PYTHON2:
             TreeNode.edit_finish(self, event)
         else:
-            super().edit_finish(event)
+            super(ajTreeNode, self).edit_finish(event)
         if self.editEvent is not None:
             self.editEvent()
 
@@ -7667,7 +7666,6 @@ class Page(Frame):
 class AutoCompleteEntry(Entry):
 
     def __init__(self, words, *args, **kwargs):
-        import re
         Entry.__init__(self, *args, **kwargs)
         self.allWords = words
         self.allWords.sort()
@@ -7857,7 +7855,6 @@ class AutoScrollbar(Scrollbar):
 
 
 class ScrollPane(Frame):
-
     def __init__(self, parent, **opts):
         Frame.__init__(self, parent)
         self.config(padx=5, pady=5, width=100, height=100)
@@ -8248,7 +8245,7 @@ class SimpleGrid(Frame):
                 size=font.actual("size") + 2,
                 weight="bold")
         if "buttonFont" in kw:
-            buttonFont = opts.pop("buttonFont")
+            buttonFont = kw.pop("buttonFont")
             self.buttonFont.configure(
                 family=buttonFont.actual("family"),
                 size=buttonFont.actual("size"))
