@@ -1382,13 +1382,13 @@ class gui(object):
             return self.n_pagedWindows
         elif kind in [ self.C_PAGE ]:
             # no dict of pages - the container manages them...
-            raise Exception("Unfinished widget type: " + str(kind))
+            return self.n_pagedWindows
 
         elif kind in [ self.TABBEDFRAME, self.C_TABBEDFRAME ]:
             return self.n_tabbedFrames
         elif kind in [ self.C_TAB ]:
             # no dict of tabs - the container manages them...
-            raise Exception("Unfinished widget type: " + str(kind))
+            return self.n_tabbedFrames
 
         elif kind in [ self.PANEDFRAME ]:
             return self.n_panedFrames
@@ -2331,26 +2331,75 @@ class gui(object):
     # adds the container to the container stack - makes this the current
     # working container
     def __addContainer(self, cType, container, row, col, sticky=None):
-        self.containerStack.append({'type': cType,
-                                    'container': container,
-                                    'emptyRow': row,
-                                    'colCount': col,
-                                    'sticky': sticky,
-                                    'padx': 0,
-                                    'pady': 0,
-                                    'ipadx': 0,
-                                    'ipady': 0,
-                                    'expand': "ALL",
-                                    'widgets': False,
-                                    "fg": "black"})
+        containerData = {'type': cType,
+                    'container': container,
+                    'emptyRow': row,
+                    'colCount': col,
+                    'sticky': sticky,
+                    'padx': 0,
+                    'pady': 0,
+                    'ipadx': 0,
+                    'ipady': 0,
+                    'expand': "ALL",
+                    'widgets': False,
+                    "fg": "black"}
+        self.containerStack.append(containerData)
+
+    def openRootPage(self, title):
+        self.__openContainer(self.C_ROOT, title)
+
+    def openLabelFrame(self, title):
+        self.__openContainer(self.C_LABELFRAME, title)
+
+    def openFrame(self, title):
+        self.__openContainer(self.C_FRAME, title)
+
+    def openToggleFrame(self, title):
+        self.__openContainer(self.C_TOGGLEFRAME, title)
+
+    def openPagedWindow(self, title):
+        self.__openContainer(self.C_PAGEDWINDOW, title)
+
+    def openPage(self, windowTitle, pageTitle):
+        self.__openContainer(self.C_PAGE, windowTitle, pageTitle)
+
+    def openTabbedFrame(self, title):
+        self.__openContainer(self.C_TABBEDFRAME, title)
+
+    def openTab(self, frameTitle, tabTitle):
+        self.__openContainer(self.C_TAB, frameTitle, tabTitle)
+
+    def openPanedFrame(self, title):
+        self.__openContainer(self.C_PANEDFRAME, title)
+
+    def openPane(self, title):
+        self.__openContainer(self.C_PANE, title)
+
+    def openSubWindow(self, title):
+        self.__openContainer(self.C_SUBWINDOW, title)
+
+    def openScrollPane(self, title):
+        self.__openContainer(self.C_SCROLLPANE, title)
 
     # function to reload the specified container
-    def openContainer(self, kind, title):
+    def __openContainer(self, kind, title, child=None):
+
+        if kind in [ self.C_PAGE, self.C_TAB ] and child is None: 
+            raise Exception("For " + kind + " you must also specify a child window")
+            
         # now, add to top of stack
         widgs = self.__getItems(kind)
-        print(kind, ":", widgs)
-        widg = widgs[title]
-        print(widg)
+
+        try:
+            widg = widgs[title]
+        except KeyError:
+            raise Exception("Attempted to open invalid " + kind + ": " + str(title))
+
+        if kind == self.C_PAGE: 
+            widg = widg.getPage(child)
+        elif kind == self.C_TAB: 
+            widg = widg.getTab(child)
+            
         self.__addContainer(kind, widg, 0, 1)
 
     # returns the current working container
@@ -7513,10 +7562,8 @@ class PagedWindow(Frame):
             self.posLabel.grid_remove()
             self.nextButton.grid_remove()
 
-            self.frames[
-                self.currentPage].grid(
-                row=int(
-                    not self.navPos) + 1,
+            self.frames[self.currentPage].grid(
+                row=int(not self.navPos) + 1,
                 column=0,
                 columnspan=3,
                 sticky=N + S + E + W,
@@ -7567,10 +7614,16 @@ class PagedWindow(Frame):
             self.posLabel.config(text="")
 
     # get the current frame being shown - for adding widgets
-    def getPage(self): return self.frames[self.currentPage]
+    def getPage(self):
+        return self.frames[self.currentPage]
+
+    # get the named frame - for adding widgets
+    def getPage(self, num):
+        return self.frames[num]
 
     # get current page number
-    def getPageNumber(self): return self.currentPage + 1
+    def getPageNumber(self):
+        return self.currentPage + 1
 
     # register a function to call when the page changes
     def registerPageChangeEvent(self, event):
