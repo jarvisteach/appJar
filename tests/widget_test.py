@@ -651,7 +651,9 @@ def test_date_pickers():
     app.setDatePickerRange("d2", 1980, 2020)
     app.setDatePickerRange("d3", 2020, 2040)
 
-    assert app.getDatePicker("d1") == datetime.date(1940, datetime.date.today().month, datetime.date.today().day)
+    assert app.getDatePicker("d1") == datetime.date(1940,
+                                        datetime.date.today().month,
+                                        datetime.date.today().day)
     assert app.getDatePicker("d2") == datetime.date(1980, 5, 5)
     assert app.getDatePicker("d3") == datetime.date(2020, 10, 10)
 
@@ -1138,6 +1140,10 @@ def test_containers():
     app.addLabel("lf1_l1", TEXT_ONE)
     app.stopLabelFrame()
 
+    app.openLabelFrame("lf1")
+    app.addLabel("lf1_l2", TEXT_ONE)
+    app.stopLabelFrame()
+
     app.startToggleFrame("tf1")
     app.addLabel("tf1_l1", TEXT_ONE)
     app.stopToggleFrame()
@@ -1148,6 +1154,10 @@ def test_containers():
     assert app.getToggleFrameState("tf1") is True
     app.toggleToggleFrame("tf1")
     assert app.getToggleFrameState("tf1") is False
+
+    app.openToggleFrame("tf1")
+    app.addLabel("tf1_l2", TEXT_ONE)
+    app.stopToggleFrame()
 
     app.disableToggleFrame("tf1")
     app.enableToggleFrame("tf1")
@@ -1167,6 +1177,16 @@ def test_containers():
     assert app.getTabbedFrameSelectedTab("tbf1") == "tab1"
     app.setTabbedFrameSelectedTab("tbf1", "tab2")
     assert app.getTabbedFrameSelectedTab("tbf1") == "tab2"
+
+    app.openTabbedFrame("tbf1")
+    app.startTab("tab4")
+    app.addLabel("tbf4_l1", TEXT_ONE)
+    app.stopTab()
+    app.stopTabbedFrame()
+
+    app.openTab("tbf1", "tab4")
+    app.addLabel("tbf4_l2", TEXT_ONE)
+    app.stopTab()
 
     app.setTabbedFrameDisabledTab("tbf1", "tab3")
     app.setTabbedFrameDisableAllTabs("tbf1")
@@ -1213,9 +1233,23 @@ def test_containers():
     app.showPagedWindowTitle("pg1", False)
     app.showPagedWindowTitle("pg1", True)
 
+    app.openPagedWindow("pg1")
+    app.startPage()
+    app.addLabel("pg4_l1", TEXT_ONE)
+    app.stopPage()
+    app.stopPagedWindow()
+
+#    app.openPage("pg1", 2)
+#    app.addLabel("pg2_np", TEXT_ONE)
+#    app.stopPage()
+
 # breaks under python2.7
     app.startSubWindow("sb1")
     app.addLabel("sb1_l", TEXT_ONE)
+    app.stopSubWindow()
+
+    app.openSubWindow("sb1")
+    app.addLabel("sb1_l2", TEXT_ONE)
     app.stopSubWindow()
 
     app.setSubWindowLocation("sb1", 50,50)
