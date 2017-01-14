@@ -46,7 +46,8 @@ try:
     from idlelib.TreeWidget import TreeItem, TreeNode, ZoomHeight
 except:
     try:
-        from idlelib.tree import TreeItem, TreeNode, ZoomHeight
+        from idlelib.tree import TreeItem, TreeNode
+        from idlelib.zoomheight import ZoomHeight
     except:
         raise Exception("Unsupported python build, unable to access idlelib")
 
@@ -6513,6 +6514,7 @@ class TabbedFrame(Frame):
         self.selectedTab = None
         self.highlightedTab = None
         self.changeOnFocus = changeOnFocus
+        self.changeEvent = None
 
         # selected tab & all panes
         self.activeFg = "blue"
@@ -6556,7 +6558,9 @@ class TabbedFrame(Frame):
         if "bg" in kw:
             self.tabContainer.configure(bg=kw["bg"])
             self.paneContainer.configure(bg=kw["bg"])
-            pass
+
+        if "command" in kw:
+            self.changeEvent = kw.pop("command")
 
         # update tabs if we have any
         if self.selectedTab is not None:
@@ -6678,6 +6682,10 @@ class TabbedFrame(Frame):
         self.__colourTabs()
 
     def changeTab(self, tabName):
+        # quit changing the tab, if it's already selected
+        if self.focus_get() == self.widgetStore[tabName][0]:
+            return
+
         if tabName not in self.widgetStore.keys():
             raise Exception("Invalid tab name: " + tabName)
 
@@ -6689,6 +6697,9 @@ class TabbedFrame(Frame):
         self.widgetStore[tabName][0].focus_set()
         # this will also regrid the appropriate panes
         self.__colourTabs()
+
+        if self.changeEvent is not None:
+            self.changeEvent()
 
     def getSelectedTab(self):
         return self.selectedTab
