@@ -2360,8 +2360,8 @@ class gui(object):
     def openPagedWindow(self, title):
         self.__openContainer(self.C_PAGEDWINDOW, title)
 
-    def openPage(self, windowTitle, pageTitle):
-        self.__openContainer(self.C_PAGE, windowTitle, pageTitle)
+    def openPage(self, windowTitle, pageNumber):
+        self.__openContainer(self.C_PAGE, windowTitle, pageNumber)
 
     def openTabbedFrame(self, title):
         self.__openContainer(self.C_TABBEDFRAME, title)
