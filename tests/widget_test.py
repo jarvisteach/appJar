@@ -1021,8 +1021,11 @@ def test_messages():
 def test_sounds():
     print("\tTesting sounds")
 # only support windows
-#    app.soundError()
-#    app.soundWarning()
+    try:
+        app.soundError()
+        app.soundWarning()
+    except:
+        print("Sound not supported on this platform")
     print(" >> not implemented...")
     #print("\t >> all tests complete")
 
@@ -1239,9 +1242,9 @@ def test_containers():
     app.stopPage()
     app.stopPagedWindow()
 
-#    app.openPage("pg1", 2)
-#    app.addLabel("pg2_np", TEXT_ONE)
-#    app.stopPage()
+    app.openPage("pg1", 2)
+    app.addLabel("pg2_np", TEXT_ONE)
+    app.stopPage()
 
 # breaks under python2.7
     app.startSubWindow("sb1")
