@@ -2854,12 +2854,21 @@ class gui(object):
             sticky="nw")
 
     def stopPage(self):
+        # get a handle on the page object
+        page = self.containerStack[-1]['container']
+
         if self.containerStack[-1]['type'] == self.C_PAGE:
             self.stopContainer()
         else:
             raise Exception("Can't stop PAGE, currently in:",
                             self.containerStack[-1]['type'])
-        self.containerStack[-1]['container'].stopPage()
+
+        # call the stopPage function on the paged window
+        if self.containerStack[-1]['type'] == self.C_PAGEDWINDOW:
+            self.containerStack[-1]['container'].stopPage()
+        else:
+            # we need to find the container and call stopPage
+            page.container.stopPage()
 
     def stopPagedWindow(self):
         if self.containerStack[-1]['type'] == self.C_PAGE:
@@ -7742,6 +7751,7 @@ class Page(Frame):
     def __init__(self, parent, **opts):
         Frame.__init__(self, parent)
         self.config(relief=RIDGE, borderwidth=2)
+        self.container = parent
 
 #########################
 # Class to provide auto-completion on Entry boxes
