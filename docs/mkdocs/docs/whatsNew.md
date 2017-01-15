@@ -1,6 +1,11 @@
 #What's New?
 ---
 
+* Version 0.041  
+    * Continuous Integration - added [landscape.io](https://landscape.io/github/jarvisteach/appJar/) to monitor code quality
+    * Minor fixes based off landscape report
+    * Issues Resolved:
+        * 84 - Removed requirement for appJar icon in Windows
 * Version 0.04  
     * [Internationalisation](/pythonInternationalisation) - it's now possible to support multiple languages, by adding simple config files.
     * [Splashscreen](/splash) - a simple splashscreen is now available.  
