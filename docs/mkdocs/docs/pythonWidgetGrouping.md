@@ -13,6 +13,19 @@ You call the `start` function when you want to start a container, then the `stop
 When you call `start` you can pass in positional arguments like any other widget (row, column, rowspan, colspan).  
 Any [GUI Options](pythonGuiOptions) you set, within the container, will only affect that container.  
 
+####Reopening Containers  
+If you want to dynamically add widgets to a container, once the gui has been started, you can open a specific container, perform the desired actions, then stop it again.
+```python
+def addRows(btn):
+    count = app.getEntry("numRows")
+    app.openTab("tabbedPane", "Details Tab") # open the required tab
+    for rowLoop in range(count):
+        # add a new label, with a unique ID
+        # make sure to put it in the right place
+        app.addLabel("dyn"+str(rowLoop), "Dynamic Label", rowLoop+5)
+    app.stopTab()
+```
+
 ###Label Frame
 ----
 A way of grouping widgets into a box, with a label at the top of the box.  
@@ -43,6 +56,9 @@ app.go()
     Used to start and stop a *LabelFrame*  
     The specified title will be used as the label for the frame.  
 
+* `.openLabelFrame(title)`  
+    Used to reopen the named *LabelFrame*.  
+
 ####Set Label Frames  
 * `.setSticky(coords)`  
     By default, widgets in the frame will align on the left.  
@@ -72,13 +88,16 @@ app.stopToggleFrame()
 app.go()
 ```
 ####Start/Stop Toggle Frames  
-* `.startToggleFrame(title)`  
-* `.stopToggleFrame(title)`  
+* `.startToggleFrame(title)` & `.stopToggleFrame(title)`  
     Used to start and stop a *ToggleFrame*.  
     The `title` will be used as the title for the *ToggleFrame*.  
+
+* `.openToggleFrame(title)`  
+    Used to reopen the named *ToggleFrame*.  
 ####Set Toggle Frames  
 * `.toggleToggleFrame(title)`  
     Will toggle the state of the specified *ToggleFrame*.  
+
 * `.disableToggleFrame(title, disabled=True)`  
     Will disable the specified *ToggleFrame*.  
     If `disabled` is set to False, the *ToggleFrame* will be re-enabled.  
@@ -119,6 +138,9 @@ app.go()
 * `.startTab(name)` & `.stopTab()`  
     Used to start and stop each of the tabs in the *TabbedFrame*.  
     The title for the tab will be the specified *name*.  
+
+* `.openTabbedFrame(title)` & `.openTab(frameTitle, tabTitle)`  
+    Used to reopen the named *TabbedFrame* or named *Tab*.  
 
 ####Set TabbedFrame
 * `.setTabbedFrameTabExpand(title, expand=True)`  
@@ -174,6 +196,9 @@ This can be changed by setting the pane to vertical, then they'll be placed unde
     Used to start & stop *PanedFrames*, with the specified name.  
     By default, any panes added to this pane will be added side-by-side (horizontally).  
     Starting a vertical pane will cause additional panes to be stacked on top of each other.  
+
+* `.openPanedFrame(title)`  
+    Used to reopen the named *PanedFrame*.  
 
 ####Horizontal Pane Layout  
 ![Horizontal Panes](img/layouts/pane1.png)  
@@ -332,28 +357,32 @@ app.stopPagedWindow()
 app.go()
 ```
 ####Start/Stop Paged Windows
-* `.startPagedWindow(title)`  
-* `.stopPagedWindow()`  
+* `.startPagedWindow(title)` & `.stopPagedWindow()`  
     Used to start and stop a *PagedWindow*.  
     The `title` will be used in the title section of the widget.  
-* `.startPage()`  
-* `.stopPage()`  
+
+* `.startPage()` & `.stopPage()`  
     Used to start and stop each new page.  
     Navigation, page count, etc are all dealt with automatically.  
+
+* `.openPagedWindow(title)` & `.openPage(windowTitle, pageNumber)`   
+    Used to reopen the named *PagedWindow* or *Page*.  
 ####Set Paged Windows
-* `.setPagedWindowTitle(title, title)`  
-* `.setPagedWindowButtons(title, [buttons])`  
+* `.setPagedWindowTitle(title, title)` & `.setPagedWindowButtons(title, [buttons])`  
     Used to change the text in the title and buttons.  
     When changing the buttons, two values must be passed in: previous/next.  
+
 * `.setPagedWindowButtonsTop(title, top=True)`  
     Used to position the navigation buttons.  By default, they are at the bottom.  
     Call this funtion to move them to the top.  
+
 * `.setPagedWindowPage(title, pageNum)`  
     Used to display the selected page.  
+
 * `.setPagedWindowFunction(title, function)`  
     Declare a function to call, each time the page is changed.  
-* `.showPagedWindowPageNumber(title, show=True)`  
-* `.showPagedWindowTitle(title, show=True)`  
+
+* `.showPagedWindowPageNumber(title, show=True)` & `.showPagedWindowTitle(title, show=True)`  
     Use these to declare if you want the page title, page numbers to be shown.  
 ####Get Paged Windows
 * `.getPagedWindowPageNumber(title)`  
@@ -389,6 +418,9 @@ app.go()
     Used to start and stop defining a *SubWindow*  
     Setting a `title` will override the `name` as a title for the *SubWindow*.   
     Setting `modal` to True, will prevent the user from interacting with the parent window until the *SubWindow* is closed.  
+
+* `.openSubWindow(title)`  
+    Used to reopen the named *SubWindow*.  
 
 ####Show/Hide Sub Windows
 * `.showSubWindow(title)`  
@@ -435,12 +467,17 @@ Position the *Frame* within the grid, then position widgets inside the *Frame*
 
 ####Start/Stop Frames  
 * `.startFrame(name)` & `.stopFrame()`  
-    Used to start and stop a Frame  
+    Used to start and stop a *Frame*.  
+
+* `.openFrame(title)`  
+    Used to reopen the named *Frame*.  
 
 ###Scroll Pane  
 ---
-A scrollable frame, to contain widgets.  
+A scrollable pane, to contain widgets.  
 
-* `.startScrollPane(title)`  
-* `.stopScrollPane()`  
+* `.startScrollPane(title)` & `.stopScrollPane()`  
     Used to start and stop the *ScrollPane*.  
+
+* `.openScrollPane(title)`  
+    Used to reopen the named *ScrollPane*.  
