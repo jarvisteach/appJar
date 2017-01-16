@@ -1187,6 +1187,9 @@ def test_containers():
     app.stopTab()
     app.stopTabbedFrame()
 
+    app.setTabbedFrameInactiveFg("tbf1", "red")
+    app.setTabbedFrameInactiveBg("tbf1", "red")
+
     app.openTab("tbf1", "tab4")
     app.addLabel("tbf4_l2", TEXT_ONE)
     app.stopTab()
@@ -1356,7 +1359,7 @@ def test_gui(btn=None):
         try:
             app.removeAllWidgets()
         except:
-# test_gui is sitll in evne tloop for second GUI - causes this to be called - but no app...
+# test_gui is sitll in event loop for second GUI - causes this to be called - but no app...
             print("weird error")
         doStop += 1
     elif doStop < 5:
