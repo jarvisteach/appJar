@@ -1,0 +1,11 @@
+doc-warnings: false
+test-warnings: false
+strictness: medium
+max-line-length: 
+python-targets:
+    - 2
+    - 3
+pylint:
+    disable:
+        - unused-argument
+        - too-many-arguments

@@ -749,7 +749,7 @@ class gui(object):
 
     # function to turn on the splash screen
     def showSplash(self, text="appJar", fill="red", stripe="black", fg="white", font=44):
-            self.splashConfig= {'text':text, 'fill':fill, 'stripe':stripe, 'fg':fg, 'font':font}
+        self.splashConfig= {'text':text, 'fill':fill, 'stripe':stripe, 'fg':fg, 'font':font}
 
 #####################################
 # Event Loop - must always be called at end
@@ -915,7 +915,8 @@ class gui(object):
             return False
 
     # function to give a clicked widget the keyboard focus
-    def __grabFocus(self, e): e.widget.focus_set()
+    def __grabFocus(self, e):
+        e.widget.focus_set()
 
 #####################################
 # FUNCTIONS for configuring GUI settings
@@ -1029,11 +1030,8 @@ class gui(object):
             import subprocess
             tmpl = 'tell application "System Events" to set frontmost of every process whose unix id is {} to true'
             script = tmpl.format(os.getpid())
-            output = subprocess.check_call(
-                ['/usr/bin/osascript', '-e', script])
-            win.after(
-                0, lambda: win.attributes(
-                    "-topmost", False))
+            subprocess.check_call(['/usr/bin/osascript', '-e', script])
+            win.after( 0, lambda: win.attributes("-topmost", False))
 #            val=os.system('''/usr/bin/osascript -e 'tell app "Finder" to set frontmost of process "''' + PY_NAME + '''" to true' ''')
             win.lift()
         elif self.platform == self.WINDOWS:
@@ -1076,9 +1074,11 @@ class gui(object):
         self.WARN = myWarn
 
     # set the current container's external grid padding
-    def setPadX(self, x=0): self.containerStack[-1]['padx'] = x
+    def setPadX(self, x=0):
+        self.containerStack[-1]['padx'] = x
 
-    def setPadY(self, y=0): self.containerStack[-1]['pady'] = y
+    def setPadY(self, y=0):
+        self.containerStack[-1]['pady'] = y
 
     # sets the padding around the border of the root container
     def setPadding(self, x, y=None):
@@ -1098,15 +1098,20 @@ class gui(object):
             self.containerStack[0]['container'].config(padx=x, pady=y)
 
     # sets the current containers internal padding
-    def setIPadX(self, x=0): self.setInPadX(x)
+    def setIPadX(self, x=0):
+        self.setInPadX(x)
 
-    def setIPadY(self, y=0): self.setInPadY(y)
+    def setIPadY(self, y=0):
+        self.setInPadY(y)
 
-    def setIPadding(self, x, y=None): self.setInPadding(x, y)
+    def setIPadding(self, x, y=None):
+        self.setInPadding(x, y)
 
-    def setInPadX(self, x=0): self.containerStack[-1]['ipadx'] = x
+    def setInPadX(self, x=0):
+        self.containerStack[-1]['ipadx'] = x
 
-    def setInPadY(self, y=0): self.containerStack[-1]['ipady'] = y
+    def setInPadY(self, y=0):
+        self.containerStack[-1]['ipady'] = y
 
     def setInPadding(self, x, y=None):
         if y is None:
@@ -1123,7 +1128,8 @@ class gui(object):
         self.containerStack[-1]['sticky'] = sticky
 
     # this tells widgets what to do when GUI is resized
-    def setStretch(self, exp): self.setExpand(exp)
+    def setStretch(self, exp):
+        self.setExpand(exp)
 
     def setExpand(self, exp):
         if exp.lower() == "none":
@@ -1135,22 +1141,25 @@ class gui(object):
         else:
             self.containerStack[-1]['expand'] = "ALL"
 
-    def getFonts(self): return list(font.families()).sort()
+    def getFonts(self):
+        return list(font.families()).sort()
 
-    def increaseButtonFont(self): self.setButtonFont(
-        self.buttonFont['size'] + 1)
+    def increaseButtonFont(self):
+        self.setButtonFont( self.buttonFont['size'] + 1)
 
-    def decreaseButtonFont(self): self.setButtonFont(
-        self.buttonFont['size'] - 1)
+    def decreaseButtonFont(self):
+        self.setButtonFont( self.buttonFont['size'] - 1)
 
     def setButtonFont(self, size, font=None):
         if font is None:
             font = self.buttonFont['family']
         self.buttonFont.config(family=font, size=size)
 
-    def increaseLabelFont(self): self.setLabelFont(self.labelFont['size'] + 1)
+    def increaseLabelFont(self):
+        self.setLabelFont(self.labelFont['size'] + 1)
 
-    def decreaseLabelFont(self): self.setLabelFont(self.labelFont['size'] - 1)
+    def decreaseLabelFont(self):
+        self.setLabelFont(self.labelFont['size'] - 1)
 
     def setLabelFont(self, size, font=None):
         if font is None:
@@ -1683,288 +1692,177 @@ class gui(object):
         # loop through all the available widgets
         # and make all the below functons for each one
         for k, v in self.WIDGETS.items():
-            exec(
-                "def set" +
-                v +
+            exec( "def set" + v +
                 "Bg(self, name, val): self.configureWidgets(" +
-                str(k) +
-                ", name, 'background', val)")
+                str(k) + ", name, 'background', val)")
             exec("gui.set" + v + "Bg=set" + v + "Bg")
-            exec(
-                "def set" +
-                v +
+            exec( "def set" + v +
                 "Fg(self, name, val): self.configureWidgets(" +
-                str(k) +
-                ", name, 'foreground', val)")
+                str(k) + ", name, 'foreground', val)")
             exec("gui.set" + v + "Fg=set" + v + "Fg")
 
-            exec(
-                "def set" +
-                v +
+            exec( "def set" + v +
                 "DisabledFg(self, name, val): self.configureWidgets(" +
-                str(k) +
-                ", name, 'disabledforeground', val)")
+                str(k) + ", name, 'disabledforeground', val)")
             exec("gui.set" + v + "DisabledFg=set" + v + "DisabledFg")
-            exec(
-                "def set" +
-                v +
+            exec( "def set" + v +
                 "DisabledBg(self, name, val): self.configureWidgets(" +
-                str(k) +
-                ", name, 'disabledbackground', val)")
+                str(k) + ", name, 'disabledbackground', val)")
             exec("gui.set" + v + "DisabledBg=set" + v + "DisabledBg")
 
-            exec(
-                "def set" +
-                v +
+            exec( "def set" + v +
                 "ActiveFg(self, name, val): self.configureWidgets(" +
-                str(k) +
-                ", name, 'activeforeground', val)")
+                str(k) + ", name, 'activeforeground', val)")
             exec("gui.set" + v + "ActiveFg=set" + v + "ActiveFg")
-            exec(
-                "def set" +
-                v +
+            exec( "def set" + v +
                 "ActiveBg(self, name, val): self.configureWidgets(" +
-                str(k) +
-                ", name, 'activebackground', val)")
+                str(k) + ", name, 'activebackground', val)")
             exec("gui.set" + v + "ActiveBg=set" + v + "ActiveBg")
 
-            exec(
-                "def set" +
-                v +
+            exec( "def set" + v +
                 "InactiveFg(self, name, val): self.configureWidgets(" +
-                str(k) +
-                ", name, 'inactiveforeground', val)")
+                str(k) + ", name, 'inactiveforeground', val)")
             exec("gui.set" + v + "InactiveFg=set" + v + "InactiveFg")
-            exec(
-                "def set" +
-                v +
+            exec( "def set" + v +
                 "InactiveBg(self, name, val): self.configureWidgets(" +
-                str(k) +
-                ", name, 'inactivebackground', val)")
+                str(k) + ", name, 'inactivebackground', val)")
             exec("gui.set" + v + "InactiveBg=set" + v + "InactiveBg")
 
-            exec(
-                "def set" +
-                v +
+            exec( "def set" + v +
                 "Width(self, name, val): self.configureWidgets(" +
-                str(k) +
-                ", name, 'width', val)")
+                str(k) + ", name, 'width', val)")
             exec("gui.set" + v + "Width=set" + v + "Width")
-            exec(
-                "def set" +
-                v +
+            exec( "def set" + v +
                 "Height(self, name, val): self.configureWidgets(" +
-                str(k) +
-                ", name, 'height', val)")
+                str(k) + ", name, 'height', val)")
             exec("gui.set" + v + "Height=set" + v + "Height")
-            exec(
-                "def set" +
-                v +
+            exec( "def set" + v +
                 "State(self, name, val): self.configureWidgets(" +
-                str(k) +
-                ", name, 'state', val)")
+                str(k) + ", name, 'state', val)")
             exec("gui.set" + v + "State=set" + v + "State")
-            exec(
-                "def set" +
-                v +
+            exec( "def set" + v +
                 "Padding(self, name, x, y=None): self.configureWidgets(" +
-                str(k) +
-                ", name, 'padding', [x, y])")
+                str(k) + ", name, 'padding', [x, y])")
             exec("gui.set" + v + "Padding=set" + v + "Padding")
 
-            exec(
-                "def set" +
-                v +
+            exec( "def set" + v +
                 "IPadding(self, name, x, y=None): self.configureWidgets(" +
-                str(k) +
-                ", name, 'ipadding', [x, y])")
+                str(k) + ", name, 'ipadding', [x, y])")
             exec("gui.set" + v + "IPadding=set" + v + "IPadding")
 
-            exec(
-                "def set" +
-                v +
+            exec( "def set" + v +
                 "InPadding(self, name, x, y=None): self.configureWidgets(" +
-                str(k) +
-                ", name, 'ipadding', [x, y])")
+                str(k) + ", name, 'ipadding', [x, y])")
             exec("gui.set" + v + "InPadding=set" + v + "InPadding")
 
             # might not all be necessary, could make exclusion list
-            exec(
-                "def set" +
-                v +
+            exec( "def set" + v +
                 "Relief(self, name, val): self.configureWidget(" +
-                str(k) +
-                ", name, 'relief', val)")
+                str(k) + ", name, 'relief', val)")
             exec("gui.set" + v + "Relief=set" + v + "Relief")
-            exec(
-                "def set" +
-                v +
+            exec( "def set" + v +
                 "Align(self, name, val): self.configureWidget(" +
-                str(k) +
-                ", name, 'align', val)")
+                str(k) + ", name, 'align', val)")
             exec("gui.set" + v + "Align=set" + v + "Align")
-            exec(
-                "def set" +
-                v +
+            exec( "def set" + v +
                 "Anchor(self, name, val): self.configureWidget(" +
-                str(k) +
-                ", name, 'anchor', val)")
+                str(k) + ", name, 'anchor', val)")
             exec("gui.set" + v + "Anchor=set" + v + "Anchor")
-            exec(
-                "def set" +
-                v +
+            exec( "def set" + v +
                 "Tooltip(self, name, val): self.configureWidget(" +
-                str(k) +
-                ", name, 'tooltip', val)")
+                str(k) + ", name, 'tooltip', val)")
             exec("gui.set" + v + "Tooltip=set" + v + "Tooltip")
-            exec(
-                "def set" +
-                v +
+            exec( "def set" + v +
                 "Function(self, name, val, key=None): self.configureWidget(" +
-                str(k) +
-                ", name, 'command', val, key)")
+                str(k) + ", name, 'command', val, key)")
             exec("gui.set" + v + "Function=set" + v + "Function")
-            exec(
-                "def set" +
-                v +
+            exec( "def set" + v +
                 "DragFunction(self, name, val): self.configureWidget(" +
-                str(k) +
-                ", name, 'drag', val)")
+                str(k) + ", name, 'drag', val)")
             exec("gui.set" + v + "DragFunction=set" + v + "DragFunction")
-            exec(
-                "def set" +
-                v +
+            exec( "def set" + v +
                 "OverFunction(self, name, val): self.configureWidget(" +
-                str(k) +
-                ", name, 'over', val)")
+                str(k) + ", name, 'over', val)")
             exec("gui.set" + v + "OverFunction=set" + v + "OverFunction")
 # deprecated, but left in for backwards compatability
-            exec(
-                "def set" +
-                v +
+            exec( "def set" + v +
                 "Command(self, name, val, key=None): self.configureWidget(" +
-                str(k) +
-                ", name, 'command', val, key, deprecated='Function')")
+                str(k) + ", name, 'command', val, key, deprecated='Function')")
             exec("gui.set" + v + "Command=set" + v + "Command")
-            exec(
-                "def set" +
-                v +
+            exec( "def set" + v +
                 "Func(self, name, val, key=None): self.configureWidget(" +
-                str(k) +
-                ", name, 'command', val, key, deprecated='Function')")
+                str(k) + ", name, 'command', val, key, deprecated='Function')")
             exec("gui.set" + v + "Func=set" + v + "Func")
 # end deprecated
             # http://infohost.nmt.edu/tcc/help/pubs/tkinter/web/cursors.html
-            exec(
-                "def set" +
-                v +
+            exec( "def set" + v +
                 "Cursor(self, name, val): self.configureWidget(" +
-                str(k) +
-                ", name, 'cursor', val)")
+                str(k) + ", name, 'cursor', val)")
             exec("gui.set" + v + "Cursor=set" + v + "Cursor")
-            exec(
-                "def set" +
-                v +
+            exec( "def set" + v +
                 "Focus(self, name): self.configureWidget(" +
-                str(k) +
-                ", name, 'focus', None)")
+                str(k) + ", name, 'focus', None)")
             exec("gui.set" + v + "Focus=set" + v + "Focus")
 
             # change the stickyness
-            exec(
-                "def set" +
-                v +
+            exec( "def set" + v +
                 "Sticky(self, name, pos): self.configureWidget(" +
-                str(k) +
-                ", name, 'sticky', pos)")
+                str(k) + ", name, 'sticky', pos)")
             exec("gui.set" + v + "Sticky=set" + v + "Sticky")
 
             # add right click
-            exec(
-                "def set" +
-                v +
+            exec( "def set" + v +
                 "RightClick(self, name, menu): self.configureWidget(" +
-                str(k) +
-                ", name, 'rightClick', menu)")
+                str(k) + ", name, 'rightClick', menu)")
             exec("gui.set" + v + "RightClick=set" + v + "RightClick")
 
             # functions to manage widgets
-            exec(
-                "def show" +
-                v +
+            exec( "def show" + v +
                 "(self, name): self.showWidget(" +
-                str(k) +
-                ", name)")
+                str(k) + ", name)")
             exec("gui.show" + v + "=show" + v)
-            exec(
-                "def hide" +
-                v +
+            exec( "def hide" + v +
                 "(self, name): self.hideWidget(" +
-                str(k) +
-                ", name)")
+                str(k) + ", name)")
             exec("gui.hide" + v + "=hide" + v)
-            exec(
-                "def remove" +
-                v +
+            exec( "def remove" + v +
                 "(self, name): self.removeWidget(" +
-                str(k) +
-                ", name)")
+                str(k) + ", name)")
             exec("gui.remove" + v + "=remove" + v)
 
             # convenience functions for enable/disable
             # might not all be necessary, could make exclusion list
-            exec(
-                "def enable" +
-                v +
+            exec( "def enable" + v +
                 "(self, name): self.configureWidget(" +
-                str(k) +
-                ", name, 'state', 'normal')")
+                str(k) + ", name, 'state', 'normal')")
             exec("gui.enable" + v + "=enable" + v)
-            exec(
-                "def disable" +
-                v +
+            exec( "def disable" + v +
                 "(self, name): self.configureWidget(" +
-                str(k) +
-                ", name, 'state', 'disabled')")
+                str(k) + ", name, 'state', 'disabled')")
             exec("gui.disable" + v + "=disable" + v)
 
             # group functions
-            exec(
-                "def set" +
-                v +
+            exec( "def set" + v +
                 "Widths(self, names, val): self.configureWidgets(" +
-                str(k) +
-                ", names, 'width', val)")
+                str(k) + ", names, 'width', val)")
             exec("gui.set" + v + "Widths=set" + v + "Widths")
-            exec(
-                "def setAll" +
-                v +
+            exec( "def setAll" + v +
                 "Widths(self, val): self.configureAllWidgets(" +
-                str(k) +
-                ", 'width', val)")
+                str(k) + ", 'width', val)")
             exec("gui.setAll" + v + "Widths=setAll" + v + "Widths")
 
-            exec(
-                "def set" +
-                v +
+            exec( "def set" + v +
                 "Heights(self, names, val): self.configureWidgets(" +
-                str(k) +
-                ", names, 'height', val)")
+                str(k) + ", names, 'height', val)")
             exec("gui.set" + v + "Heights=set" + v + "Heights")
-            exec(
-                "def setAll" +
-                v +
+            exec( "def setAll" + v +
                 "Heights(self, val): self.configureAllWidgets(" +
-                str(k) +
-                ", 'height', val)")
+                str(k) + ", 'height', val)")
             exec("gui.setAll" + v + "Heights=setAll" + v + "Heights")
 
-            exec(
-                "def get" +
-                v +
+            exec( "def get" + v +
                 "Widget(self, name): return self.getWidget(" +
-                str(k) +
-                ", name)")
+                str(k) + ", name)")
             exec("gui.get" + v + "Widget=get" + v + "Widget")
 
 #####################################
@@ -2090,7 +1988,8 @@ class gui(object):
     def getRow(self):
         return self.containerStack[-1]['emptyRow']
 
-    def gr(self): return self.getRow()
+    def gr(self):
+        return self.getRow()
 
     def __repackWidget(self, widget, params):
         if widget.winfo_manager() == "grid":
@@ -2123,7 +2022,6 @@ class gui(object):
     def SET_WIDGET_FG(self, widget, fg, external=False):
 
         widgType = widget.__class__.__name__
-        isDarwin = gui.GET_PLATFORM() == gui.MAC
 
         if self.__isWidgetContainer(widget):
             self.containerStack[-1]['fg'] = fg
@@ -2851,7 +2749,7 @@ class gui(object):
             column,
             colspan,
             rowspan,
-            sticky="nw")
+            sticky=sticky)
 
     def stopPage(self):
         # get a handle on the page object
@@ -3069,9 +2967,8 @@ class gui(object):
         if len(title) > self.labWidth:
             self.labWidth = len(title)
             # loop through other labels and resize
-            for na in self.n_frameLabs:
-                #                        self.n_frameLabs[na].config(width=self.labWidth)
-                pass
+#            for na in self.n_frameLabs:
+#                self.n_frameLabs[na].config(width=self.labWidth)
 
         # next make the label
         lab = Label(frame)
@@ -3453,7 +3350,6 @@ class gui(object):
 
     def deleteOptionBox(self, title, index):
         self.__verifyItem(self.n_optionVars, title)
-        box = self.n_options[title]
         self.setOptionBox(title, index, None)
 
     # select the option at the specified position
@@ -3990,7 +3886,6 @@ class gui(object):
 
     # if +ve then grow, else shrink...
     def zoomImage(self, name, x, y=''):
-        img = self.__verifyItem(self.n_images, name)
         if x <= 0:
             self.shrinkImage(name, x * -1, y * -1)
         else:
@@ -4044,11 +3939,11 @@ class gui(object):
 
             # determine a file name & type
             if nanojpeg.njIsColor():
-                fileName = image.split('.jpg', 1)[0] + '.ppm'
+#                fileName = image.split('.jpg', 1)[0] + '.ppm'
                 param = 6
             else:
-                fileName = image.split('.jpg', 1)[0] + '.pgm'
-                fileName = "test3.pgm"
+#                fileName = image.split('.jpg', 1)[0] + '.pgm'
+#                fileName = "test3.pgm"
                 param = 5
 
             # create a string, starting with the header
@@ -4109,7 +4004,7 @@ class gui(object):
             if self.userSounds is not None and sound is not None:
                 sound = os.path.join(self.userSounds, sound)
             if isFile:
-                if False == os.path.isfile(sound):
+                if os.path.isfile(sound) is False:
                     raise Exception("Can't find sound: " + sound)
                 if not sound.lower().endswith('.wav'):
                     raise Exception("Invalid sound format: " + sound)
@@ -4341,7 +4236,7 @@ class gui(object):
 
     def selectListItemPos(self, title, pos):
         lb = self.__verifyItem(self.n_lbs, title)
-        sel = lb.curselection()
+#        sel = lb.curselection()
         lb.selection_clear(0, END)
         # show & select this item
         if pos >= 0:
@@ -5427,9 +5322,8 @@ class gui(object):
         self.n_tbButts[name].config(image=image)
         self.n_tbButts[name].image = image
 
-    def setToolbarButtonEnabled(
-        self, name): self.setToolbarButtonDisabled(
-        name, False)
+    def setToolbarButtonEnabled(self, name):
+        self.setToolbarButtonDisabled(name, False)
 
     def setToolbarButtonDisabled(self, name, disabled=True):
         if (name not in self.n_tbButts):
@@ -5439,7 +5333,8 @@ class gui(object):
         else:
             self.n_tbButts[name].config(state=NORMAL)
 
-    def setToolbarEnabled(self): self.setToolbarDisabled(False)
+    def setToolbarEnabled(self):
+        self.setToolbarDisabled(False)
 
     def setToolbarDisabled(self, disabled=True):
         for but in self.n_tbButts.keys():
@@ -6172,11 +6067,11 @@ class gui(object):
         options['initialdir'] = dirName
         options['title'] = title
         options['mustexist'] = False
-        file = filedialog.askdirectory(**options)
-        if file == "":
+        fileName = filedialog.askdirectory(**options)
+        if fileName == "":
             return None
         else:
-            return file
+            return fileName
 
     def colourBox(self, colour='#ff0000'):
         self.topLevel.update_idletasks()
@@ -6190,7 +6085,8 @@ class gui(object):
         self.topLevel.update_idletasks()
         return TextDialog(self.topLevel, title, question).result
 
-    def numberBox(self, title, question): self.numBox(title, question)
+    def numberBox(self, title, question):
+        self.numBox(title, question)
 
     def numBox(self, title, question):
         self.topLevel.update_idletasks()
@@ -7546,9 +7442,11 @@ class PagedWindow(Frame):
 #        self.titleLabel.config(fg=colour)
 
     # functions to change the labels of the two buttons
-    def setPrevButton(self, title): self.prevButton.config(text=title)
+    def setPrevButton(self, title):
+        self.prevButton.config(text=title)
 
-    def setNextButton(self, title): self.nextButton.config(text=title)
+    def setNextButton(self, title):
+        self.nextButton.config(text=title)
 
     def setNavPositionTop(self, top=True):
         oldNavPos = self.navPos
@@ -8015,7 +7913,6 @@ class ScrollPane(Frame):
             # update the inner frame's width to fill the canvas
             self.canvas.itemconfigure(
                 self.interior_id, width=self.canvas.winfo_width())
-            pass
 
     # unbind any saved bind ids
     def __unbindIds(self):
