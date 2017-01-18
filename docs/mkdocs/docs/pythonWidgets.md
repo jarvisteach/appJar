@@ -497,6 +497,7 @@ app.go()
 
 * `.showScaleIntervals(title, intervals)`  
     Configures the Scale to show interval labels along its length.  
+    ![Scale](img/4_scale.png)  
 
 * `.showScaleValue(title, show=True)`  
     Configures the Scale to show the currently selected value.  
