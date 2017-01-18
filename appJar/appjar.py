@@ -1519,9 +1519,6 @@ class gui(object):
                 elif option == 'height':
                     item.config(height=value)
                 elif option == 'state':
-                    # make entries readonly - can still copy/paste
-                    if value == "disabled" and kind == self.ENTRY:
-                        value = "readonly"
                     item.config(state=value)
                 elif option == 'relief':
                     item.config(relief=value)
