@@ -29,6 +29,13 @@ def changePic(btn):
         app.setAnimationSpeed("animated", app.getScale("Speed"))
     elif btn == "Zoom":
         app.zoomImage("Zoom", int(app.getSpinBox("Zoom")))
+    elif btn == "Open":
+        imgPath = app.openBox(title="hello")
+        if imgPath != "":
+            try:
+                app.setImage("Open", imgPath)
+            except:
+                app.errorBox("File error", "Unable to open image: " + str(imgPath))
 
 app=gui("Image Test")
 
@@ -80,8 +87,10 @@ app.setScaleFunction("Speed", changePic)
 app.addButton("Stop", changePic)
 app.stopLabelFrame()
 
-app.startLabelFrame("JPEG", 1, 3)
-app.addImage("jpeg", "balloons3.jpg")
+app.startLabelFrame("Open", 1, 3)
+app.setSticky("ew")
+app.addImage("Open", "balloons3.jpg")
+app.addButton("Open", changePic)
 app.stopLabelFrame()
 
 app.go()
