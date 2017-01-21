@@ -3736,9 +3736,12 @@ class gui(object):
     # function to set an alternative image, when a mouse goes over
     def setImageMouseOver(self, title, overImg):
         lab = self.__verifyItem(self.n_images, title)
+        # first check over image & cache it
+        fullPath = self.getImagePath(overImg)
+        self.topLevel.after(0, self.__getImage, fullPath)
         leaveImg = lab.image.originalPath
         lab.bind("<Leave>", lambda e: self.setImage(title, leaveImg))
-        lab.bind("<Enter>", lambda e: self.setImage(title, overImg))
+        lab.bind("<Enter>", lambda e: self.setImage(title, fullPath))
 
     # function to set an image location
     def setImageLocation(self, location):
