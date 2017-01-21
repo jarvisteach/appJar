@@ -3736,6 +3736,7 @@ class gui(object):
     # function to set an alternative image, when a mouse goes over
     def setImageMouseOver(self, title, overImg):
         lab = self.__verifyItem(self.n_images, title)
+
         # first check over image & cache it
         fullPath = self.getImagePath(overImg)
         self.topLevel.after(0, self.__getImage, fullPath)
@@ -3766,6 +3767,9 @@ class gui(object):
     def hasImageChanged(self, originalImage, newImage):
         newAbsImage = self.getImagePath(newImage)
 
+        if originalImage is None:
+            return True
+
         # filename has changed
         if originalImage.path != newAbsImage:
             return True
@@ -3789,13 +3793,21 @@ class gui(object):
         # get the full image path
         imagePath = self.getImagePath(imagePath)
 
-        # if we're caching, and we have a non-None entry in the cache - use it...
+        # if we're caching, and we have a non-None entry in the cache - get it...
+        photo = None
         if checkCache and imagePath in self.n_imageCache and self.n_imageCache[imagePath] is not None:
             photo = self.n_imageCache[imagePath]
+
+        # if the image hasn't changed, use the cache
+        if not self.hasImageChanged(photo, imagePath):
+            pass
+        # else load a new one
         elif os.path.isfile(imagePath):
             if os.access(imagePath, os.R_OK):
                 imgType = imghdr.what(imagePath)
-                if not imagePath.lower().endswith(imgType) and not (
+                if imgType is None:
+                    raise Exception( "Invalid file: " + imagePath + " is not a valid image")
+                elif not imagePath.lower().endswith(imgType) and not (
                         imgType == "jpeg" and imagePath.lower().endswith("jpg")):
                         # the image has been saved with the wrong extension
                     raise Exception(
@@ -3864,6 +3876,8 @@ class gui(object):
         # only set the image if it's different
         if label.image.path == imageFile:
             self.warn("Not updating " + str(name) + ", " + str(imageFile) + " hasn't changed." )
+            return
+        elif imageFile is None:
             return
         else:
             image = self.__getImage(imageFile)
