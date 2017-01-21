@@ -6081,12 +6081,16 @@ class gui(object):
             title=None,
             fileName=None,
             dirName=None,
-            fileExt=".txt",
+            fileExt="",
             fileTypes=None,
             asFile=False):
+
         self.topLevel.update_idletasks()
         if fileTypes is None:
-            fileTypes = [('all files', '.*'), ('text files', '.txt')]
+            fileTypes = []
+        if dirName is None:
+            dirName = self.exe_loc
+
         # define options for opening
         options = {}
         options['defaultextension'] = fileExt
