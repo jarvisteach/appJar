@@ -7916,15 +7916,11 @@ class AutoScrollbar(Scrollbar):
 class ScrollPane(Frame):
     def __init__(self, parent, **opts):
         Frame.__init__(self, parent)
-        self.config(padx=5, pady=5, width=100, height=100)
+        self.config(padx=5, pady=5)
 
         # make the ScrollPane expandable
         self.grid_rowconfigure(0, weight=1)
         self.grid_columnconfigure(0, weight=1)
-
-        if 'yscrollincrement' not in opts:
-            opts['yscrollincrement'] = 17
-        opts['height'] = 100
 
         vscrollbar = Scrollbar(self)
         hscrollbar = Scrollbar(self, orient=HORIZONTAL)
@@ -7956,28 +7952,13 @@ class ScrollPane(Frame):
         self.interior_id = self.canvas.create_window(
             0, 0, window=interior, anchor=NW)
 
-        # removed - was cropping label's width
-        #self.canvas.bind('<Configure>', self.__configureCanvas)
         self.interior.bind('<Configure>', self.__configureInterior)
 
     # track changes to the canvas and frame width and sync them,
-    # also updating the scrollbar
     # http://www.scriptscoop2.com/t/35d742299f35/python-tkinter-scrollbar-for-frame.html
     def __configureInterior(self, event):
-        # update the scrollbars to match the size of the inner frame
-        size = (
-            self.interior.winfo_reqwidth(),
-            self.interior.winfo_reqheight())
+        size = (self.interior.winfo_reqwidth(), self.interior.winfo_reqheight())
         self.canvas.config(scrollregion="0 0 %s %s" % size)
-        if self.interior.winfo_reqwidth() != self.canvas.winfo_width():
-            # update the canvas's width to fit the inner frame
-            self.canvas.config(width=self.interior.winfo_reqwidth())
-
-    def __configureCanvas(self, event):
-        if self.interior.winfo_reqwidth() != self.canvas.winfo_width():
-            # update the inner frame's width to fill the canvas
-            self.canvas.itemconfigure(
-                self.interior_id, width=self.canvas.winfo_width())
 
     # unbind any saved bind ids
     def __unbindIds(self):
@@ -7989,6 +7970,7 @@ class ScrollPane(Frame):
             self.canvas.unbind("<5>", self.b_ids[1])
         else:  # Windows and MacOS
             self.canvas.unbind("<MouseWheel>", self.b_ids[0])
+            self.canvas.unbind("<Shift-MouseWheel>", self.b_ids[1])
 
         self.b_ids = []
 
@@ -7996,93 +7978,45 @@ class ScrollPane(Frame):
     def __mouseEnter(self, event):
         self.__unbindIds()
         if gui.GET_PLATFORM() == gui.LINUX:
-            self.b_ids.append(self.canvas.bind_all("<4>", self.__mouseScroll))
-            self.b_ids.append(self.canvas.bind_all("<5>", self.__mouseScroll))
+            self.b_ids.append(self.canvas.bind_all("<4>", self.__horizMouseScroll))
+            self.b_ids.append(self.canvas.bind_all("<5>", self.__horizMouseScroll))
         else:  # Windows and MacOS
-            self.b_ids.append(
-                self.canvas.bind_all(
-                    "<MouseWheel>",
-                    self.__mouseScroll))
+            self.b_ids.append(self.canvas.bind_all("<MouseWheel>", self.__vertMouseScroll))
+            self.b_ids.append(self.canvas.bind_all("<Shift-MouseWheel>", self.__horizMouseScroll))
 
     # remove mouse scroll binding, when mouse leaves
     def __mouseLeave(self, event):
         self.__unbindIds()
 
-    # https://www.daniweb.com/programming/software-development/code/217059/using-the-mouse-wheel-with-tkinter-python
-    def __mouseScroll(self, event):
-        timer = round(time.time(), 1)
+    def __horizMouseScroll(self, event):
+        self.__mouseScroll(True, event)
 
-        # get the mouse scroll direciton value
-        newDelta = event.delta
+    def __vertMouseScroll(self, event):
+        self.__mouseScroll(False, event)
 
-        # if windows - make it the same as other platforms
-        if gui.GET_PLATFORM() == gui.WINDOWS:
-            newDelta = (newDelta / 120) * -1
+    def __mouseScroll(self, horiz, event):
+        direction = 0
 
-        # scrolled before
-        if hasattr(self, 'lastScrollTime'):
-
-            # too soon to scroll
-            if self.lastScrollTime == timer:
-                if newDelta in [1, -1, 2, -2]:
-                    self.times.append(newDelta)
-                self.speed += 1
-
-            # time to scroll
-            else:
-                # get the delta
-                try:
-                    delta = max(set(self.times), key=self.times.count)
-                except:
-                    delta = self.oldDelta
-
-                # windows/mac osx scroll event
-                if gui.GET_PLATFORM() in [gui.WINDOWS, gui.LINUX]:
-                    if gui.GET_PLATFORM() == gui.WINDOWS:
-                        val = delta * -1
-                        if delta < 0:
-                            val = val * -1
-                        if delta < 0:
-                            self.speed = self.speed * -1
-                    else:
-                        val = (self.times.count(delta))
-                        if delta > 0:
-                            val = val * -1
-                        if delta > 0:
-                            self.speed = self.speed * -1
-
-                    if delta in [1, -1]:
-                        self.canvas.yview_scroll(self.speed, "units")
-                    elif delta in [2, -2]:
-                        self.canvas.xview_scroll(self.speed, "units")
-                    else:
-                        pass
-
-                # linux scroll event
-                elif gui.GET_PLATFORM() == gui.LINUX:
-                    if event.num == 4:
-                        self.canvas.yview_scroll(-1 * 2, "units")
-                    elif event.num == 5:
-                        self.canvas.yview_scroll(2, "units")
-                # unknown platform scroll event
-                else:
-                    pass
-
-                # finally, set some stuff
-                self.times = []
-                self.oldDelta = delta
-                if newDelta in [1, -1, 2, -2]:
-                    self.times.append(newDelta)
-                self.lastScrollTime = timer
-                self.speed = 1
-
-        # no lastScrollTime set
+        # get direction
+        if event.num == 4:
+            direction = -1
+        elif event.num == 5:
+            direction = 1
+        elif event.delta > 100: 
+            direction = int(-1 * (event.delta/120))
+        elif event.delta > 0: 
+            direction = -1 * event.delta
+        elif event.delta < -100:
+            direction = int(-1 * (event.delta/120))
+        elif event.delta < 0:
+            direction = -1 * event.delta
         else:
-            self.times = []
-            if newDelta in [1, -1, 2, -2]:
-                self.times.append(newDelta)
-            self.lastScrollTime = timer
-            self.speed = 1
+            return  # shouldn't happen
+
+        if horiz:
+            self.canvas.xview_scroll(direction, "units")
+        else:
+            self.canvas.yview_scroll(direction, "units")
 
     def getPane(self):
         return self.canvas
@@ -8518,7 +8452,7 @@ class SimpleGrid(Frame):
     # and checks the event.delta to determine where to scroll
     # https://www.daniweb.com/programming/software-development/code/217059/using-the-mouse-wheel-with-tkinter-python
     def __scrollGrid(self, event, title):
-        if gui.GET_PLATFORM() in [gui.WINDOWS, gui.LINUX]:
+        if gui.GET_PLATFORM() in [gui.WINDOWS, gui.MAC]:
             if gui.GET_PLATFORM() == gui.WINDOWS:
                 val = event.delta / 120
             else:
