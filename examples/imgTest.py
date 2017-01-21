@@ -37,7 +37,6 @@ def changePic(btn):
                 app.errorBox("File error", "Unable to open image: " + str(imgPath))
 
 app=gui("Image Test")
-
 app.setImageLocation("images")
 
 app.startLabelFrame("Simple", 0, 0)
@@ -55,15 +54,15 @@ app.setImageFunction("clickme", changePic)
 app.stopLabelFrame()
 
 app.startLabelFrame("Zoom", 0, 3)
-app.setPadding([10,10])
+app.setPadding([5,5])
 app.setSticky("ew")
+app.startScrollPane("sp")
 app.addImage("Zoom", "balloons.gif")
-app.setImageSize("Zoom", 200,200)
-app.addLabelSpinBox("Zoom", [5, 4, 3, 2, 1, -2, -3, -4, -5, -6, -7, -8, -9])
+app.stopScrollPane()
+app.addLabelSpinBox("Zoom", [20,5, 4, 3, 2, 1, -2, -3, -4, -5, -6, -7, -8, -9])
 app.setSpinBox("Zoom", 1)
 app.setSpinBoxFunction("Zoom", changePic)
 app.stopLabelFrame()
-
 
 app.startLabelFrame("No reload", 1, 0)
 app.setSticky("ew")

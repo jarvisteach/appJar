@@ -1,3 +1,5 @@
+import sys
+sys.path.append("../")
 from appJar import gui
 def press(btn): print(btn)
 def press2(btn): print("EDIT", btn)

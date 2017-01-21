@@ -1,3 +1,5 @@
+import sys
+sys.path.append("../")
 from appJar import gui
 canEdit=True
 def edited(btn):
