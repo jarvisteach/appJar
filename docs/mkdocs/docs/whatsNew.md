@@ -6,7 +6,9 @@
     * [Reload Image](/pythonImages/#change-images) - funciton to force a reload of an image, bypassing the cache (issue 87)  
     * Minor fixes based off landscape report
     * Issues Resolved:
-        * 84 - Removed requirement for appJar icon in Windows
+        * 87 - reloadImage()
+        * 84 - Removed requirement for appJar icon in Windows  
+
 * Version 0.04  
     * [Internationalisation](/pythonInternationalisation) - it's now possible to support multiple languages, by adding simple config files.
     * [Splashscreen](/splash) - a simple splashscreen is now available.  
