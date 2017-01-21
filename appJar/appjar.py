@@ -3706,6 +3706,9 @@ class gui(object):
 
     def setAnimationSpeed(self, name, speed):
         img = self.__verifyItem(self.n_images, name).image
+        if speed < 1:
+            speed = 1
+            self.warn("Setting " + str(name) + " speed to 1. Minimum animation speed is 1.")
         img.anim_speed = speed
 
     def stopAnimation(self, name):
