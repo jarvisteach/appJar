@@ -839,6 +839,7 @@ def test_images():
 # jpeg...
 
     app.setImage("im3", "1_entries.gif")
+    app.reloadImage("im3", "1_entries.gif")
     app.setImageMouseOver("im1", "1_checks.png")
     app.setImageSize("im2", 40, 40)
     app.zoomImage("im1", 2)
@@ -848,6 +849,9 @@ def test_images():
 
 #    app.setBgImage("1_checks.png")
 #    app.removeBgImage()
+
+    app.setImageLocation("images")
+    app.addImage("iml", "1_entries.gif")
 
     print(" >> not implemented...")
     #print("\t >> all tests complete")
