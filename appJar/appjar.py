@@ -3744,20 +3744,47 @@ class gui(object):
         else:
             raise Exception("Invalid image location: " + location)
 
+    # get the full path of an image (including image folder)
+    def getImagePath(self, imagePath):
+        if imagePath is None:
+            return None
+
+        if self.userImages is not None:
+            imagePath = os.path.join(self.userImages, imagePath)
+
+        absPath = os.path.abspath(imagePath)
+        return absPath
+
+    # function to see if an image has changed
+    def hasImageChanged(self, originalImage, newImage):
+        newAbsImage = self.getImagePath(newImage)
+
+        # filename has changed
+        if originalImage.originalPath != newAbsImage:
+            return True
+
+        # modification time has changed
+        if originalImage.modTime != os.path.getmtime(newAbsImage):
+            return True
+
+        # no changes
+        return False
+
     # function to remove image objects form cache
     def clearImageCache(self):
         self.n_imageCache = {}
 
     # internal function to check/build image object
-    def __getImage(self, imagePath, cache=True):
+    def __getImage(self, imagePath, checkCache=True, addToCache=True):
         if imagePath is None:
             return None
-        originalPath = imagePath
-        if self.userImages is not None:
-            imagePath = os.path.join(self.userImages, imagePath)
 
-        if cache and imagePath in self.n_imageCache and self.n_imageCache[
-                imagePath] is not None:
+        originalPath = imagePath
+        # get the full image path
+        imagePath = self.getImagePath(imagePath)
+
+        # if we're caching, and we have a non-None entry in the cache - use it...
+        if checkCache and imagePath in self.n_imageCache and self.n_imageCache[imagePath] is not None:
             photo = self.n_imageCache[imagePath]
         elif os.path.isfile(imagePath):
             if os.access(imagePath, os.R_OK):
@@ -3792,8 +3819,7 @@ class gui(object):
                         png.convert()
                         photo = png.image
                     else:
-                        raise Exception(
-                            "PNG images only supported in python 3: " + imagePath)
+                        raise Exception("PNG images only supported in python 3: " + imagePath)
                 else:
                     raise Exception("Invalid image type: " + imagePath)
             else:
@@ -3801,8 +3827,13 @@ class gui(object):
         else:
             raise Exception("Image " + imagePath + " does not exist")
 
+        # used for animating
         photo.path = imagePath
+        # used for checking if image changed
         photo.originalPath = originalPath
+
+        # store the modification time
+        photo.modTime = os.path.getmtime(imagePath)
 
         # sort out if it's an animated images
         if self.__checkIsAnimated(imagePath):
@@ -3811,7 +3842,7 @@ class gui(object):
         else:
             photo.isAnimated = False
             photo.animating = False
-            if cache:
+            if addToCache:
                 self.n_imageCache[imagePath] = photo
 
         return photo
@@ -3984,7 +4015,7 @@ class gui(object):
     # make sure this is done before everything else, otherwise it will cover
     # other widgets
     def setBgImage(self, image):
-        image = self.__getImage(image, False)  # make sure it's not cached
+        image = self.__getImage(image, False, False)  # make sure it's not using the cache
         # self.containerStack[0]['container'].config(image=image) # window as a
         # label doesn't work...
         self.bgLabel.config(image=image)
