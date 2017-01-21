@@ -14,7 +14,7 @@ def changePic(btn):
     elif btn == "No reload":
         app.setImage("no_reload", "balloons.gif")
     elif btn == "Reload":
-        app.reloadImage("no_reload", "balloons.gif")
+        app.reloadImage("reload", "balloons.gif")
     elif btn == "Stop":
         global animated
         if animated:
@@ -50,6 +50,7 @@ app.stopLabelFrame()
 
 app.startLabelFrame("Zoom", 0, 3)
 app.addImage("Zoom", "balloons.gif")
+app.setImageSize("Zoom", 200,200)
 app.addLabelSpinBox("Zoom", [5, 4, 3, 2, 1, -2, -3, -4, -5, -6, -7, -8, -9])
 app.setSpinBox("Zoom", 1)
 app.setSpinBoxFunction("Zoom", changePic)
@@ -77,6 +78,10 @@ app.showScaleIntervals("Speed", 50)
 app.setScaleRange("Speed", 1, 200, 50)
 app.setScaleFunction("Speed", changePic)
 app.addButton("Stop", changePic)
+app.stopLabelFrame()
+
+app.startLabelFrame("JPEG", 1, 3)
+app.addImage("jpeg", "balloons3.jpg")
 app.stopLabelFrame()
 
 app.go()
