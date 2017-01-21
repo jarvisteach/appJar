@@ -31,7 +31,6 @@ except ImportError:
 import os
 import sys
 import re
-import socket
 import hashlib
 import imghdr
 import time
@@ -44,10 +43,11 @@ import webbrowser
 
 # ajTree
 try:
-    from idlelib.TreeWidget import TreeItem, TreeNode
+    from idlelib.TreeWidget import TreeItem, TreeNode, ZoomHeight
 except:
     try:
         from idlelib.tree import TreeItem, TreeNode
+        from idlelib.zoomheight import ZoomHeight
     except:
         raise Exception("Unsupported python build, unable to access idlelib")
 
@@ -506,7 +506,10 @@ class gui(object):
         self.pollTime = 250
         self.built = True
         if self.platform == self.WINDOWS:
-            self.topLevel.wm_iconbitmap(self.appJarIcon)
+            try:
+                self.topLevel.wm_iconbitmap(self.appJarIcon)
+            except: # file not found
+                self.debug("Error setting Windows default icon")
 
     def __configBg(self, container):
         # set up a background image holder
@@ -3834,16 +3837,28 @@ class gui(object):
 
         return photo
 
+    # force replace the current image, with a new one
+    def reloadImage(self, name, imageFile):
+        label = self.__verifyItem(self.n_images, name)
+        image = self.__getImage(imageFile, False)
+        self.__populateImage(name, image)
+
     # replace the current image, with a new one
     def setImage(self, name, imageFile):
         label = self.__verifyItem(self.n_images, name)
         # only set the image if it's different
         if label.image.originalPath == imageFile:
+            self.warn("Not updating " + str(name) + ", " + str(imageFile) + " hasn't changed." )
             return
+        else:
+            image = self.__getImage(imageFile)
+            self.__populateImage(name, image)
+
+    # internal function to update the image in a label
+    def __populateImage(self, name, image):
+        label = self.__verifyItem(self.n_images, name)
 
         label.image.animating = False
-        image = self.__getImage(imageFile)
-
         label.config(image=image)
         label.config(
             anchor=CENTER,
@@ -6511,6 +6526,7 @@ class TabbedFrame(Frame):
         self.selectedTab = None
         self.highlightedTab = None
         self.changeOnFocus = changeOnFocus
+        self.changeEvent = None
 
         # selected tab & all panes
         self.activeFg = "blue"
@@ -6554,7 +6570,9 @@ class TabbedFrame(Frame):
         if "bg" in kw:
             self.tabContainer.configure(bg=kw["bg"])
             self.paneContainer.configure(bg=kw["bg"])
-            pass
+
+        if "command" in kw:
+            self.changeEvent = kw.pop("command")
 
         # update tabs if we have any
         if self.selectedTab is not None:
@@ -6676,6 +6694,10 @@ class TabbedFrame(Frame):
         self.__colourTabs()
 
     def changeTab(self, tabName):
+        # quit changing the tab, if it's already selected
+        if self.focus_get() == self.widgetStore[tabName][0]:
+            return
+
         if tabName not in self.widgetStore.keys():
             raise Exception("Invalid tab name: " + tabName)
 
@@ -6687,6 +6709,9 @@ class TabbedFrame(Frame):
         self.widgetStore[tabName][0].focus_set()
         # this will also regrid the appropriate panes
         self.__colourTabs()
+
+        if self.changeEvent is not None:
+            self.changeEvent()
 
     def getSelectedTab(self):
         return self.selectedTab
@@ -7128,7 +7153,7 @@ class ajTreeNode(TreeNode):
         if PYTHON2:
             TreeNode.drawtext(self)
         else:
-            super().drawtext()
+            super(ajTreeNode, self).drawtext()
 
         self.colourLabels()
 
@@ -7138,7 +7163,7 @@ class ajTreeNode(TreeNode):
         if PYTHON2:
             TreeNode.edit_finish(self, event)
         else:
-            super().edit_finish(event)
+            super(ajTreeNode, self).edit_finish(event)
         if self.editEvent is not None:
             self.editEvent()
 
@@ -7664,7 +7689,6 @@ class Page(Frame):
 class AutoCompleteEntry(Entry):
 
     def __init__(self, words, *args, **kwargs):
-        import re
         Entry.__init__(self, *args, **kwargs)
         self.allWords = words
         self.allWords.sort()
@@ -7854,7 +7878,6 @@ class AutoScrollbar(Scrollbar):
 
 
 class ScrollPane(Frame):
-
     def __init__(self, parent, **opts):
         Frame.__init__(self, parent)
         self.config(padx=5, pady=5, width=100, height=100)
@@ -8245,7 +8268,7 @@ class SimpleGrid(Frame):
                 size=font.actual("size") + 2,
                 weight="bold")
         if "buttonFont" in kw:
-            buttonFont = opts.pop("buttonFont")
+            buttonFont = kw.pop("buttonFont")
             self.buttonFont.configure(
                 family=buttonFont.actual("family"),
                 size=buttonFont.actual("size"))
