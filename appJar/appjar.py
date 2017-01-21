@@ -3739,7 +3739,8 @@ class gui(object):
         # first check over image & cache it
         fullPath = self.getImagePath(overImg)
         self.topLevel.after(0, self.__getImage, fullPath)
-        leaveImg = lab.image.originalPath
+
+        leaveImg = lab.image.path
         lab.bind("<Leave>", lambda e: self.setImage(title, leaveImg))
         lab.bind("<Enter>", lambda e: self.setImage(title, fullPath))
 
@@ -3766,7 +3767,7 @@ class gui(object):
         newAbsImage = self.getImagePath(newImage)
 
         # filename has changed
-        if originalImage.originalPath != newAbsImage:
+        if originalImage.path != newAbsImage:
             return True
 
         # modification time has changed
@@ -3785,7 +3786,6 @@ class gui(object):
         if imagePath is None:
             return None
 
-        originalPath = imagePath
         # get the full image path
         imagePath = self.getImagePath(imagePath)
 
@@ -3833,11 +3833,8 @@ class gui(object):
         else:
             raise Exception("Image " + imagePath + " does not exist")
 
-        # used for animating
+        # store the full poath to this image
         photo.path = imagePath
-        # used for checking if image changed
-        photo.originalPath = originalPath
-
         # store the modification time
         photo.modTime = os.path.getmtime(imagePath)
 
@@ -3862,8 +3859,10 @@ class gui(object):
     # replace the current image, with a new one
     def setImage(self, name, imageFile):
         label = self.__verifyItem(self.n_images, name)
+        imageFile = self.getImagePath(imageFile)
+
         # only set the image if it's different
-        if label.image.originalPath == imageFile:
+        if label.image.path == imageFile:
             self.warn("Not updating " + str(name) + ", " + str(imageFile) + " hasn't changed." )
             return
         else:
