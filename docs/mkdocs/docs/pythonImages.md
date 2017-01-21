@@ -24,6 +24,11 @@ Or, create an image folder and set it using the `.setImageLocation(location)` fu
 
 * `.setImage(title, image)`  
     This will replace the existing image with the new one.  
+    If the image has the same path, it will not be changed.  
+
+* `.reloadImage(title, image)`  
+    This will replace the existing image with the new one.  
+    This will force an image reload, even if the file name hasn't changed.  
 
 * `.setImageMouseOver(title, image)`  
     Set an image to show, instead of the stored image, while the mouse is over this widget.  

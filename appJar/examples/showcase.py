@@ -1,5 +1,5 @@
 import sys
-sys.path.append("../")
+sys.path.append("../../")
 from appJar import gui
 
 # global variable to remember what's being dragged
@@ -130,6 +130,7 @@ def changeTab(tabName):
 ###########################
 
 app = gui("ShowCase")
+app.showSplash("appJar Showcase")
 
 # add a simple toolbar
 app.addToolbar(["EXIT", "LOGOUT", "FILL", "PIE-CHART", "CALENDAR", "ADDRESS-BOOK", "FULL-SCREEN"], toolbar, findIcon=True)

@@ -3816,16 +3816,28 @@ class gui(object):
 
         return photo
 
+    # force replace the current image, with a new one
+    def reloadImage(self, name, imageFile):
+        label = self.__verifyItem(self.n_images, name)
+        image = self.__getImage(imageFile, False)
+        self.__populateImage(name, image)
+
     # replace the current image, with a new one
     def setImage(self, name, imageFile):
         label = self.__verifyItem(self.n_images, name)
         # only set the image if it's different
         if label.image.originalPath == imageFile:
+            self.warn("Not updating " + str(name) + ", " + str(imageFile) + " hasn't changed." )
             return
+        else:
+            image = self.__getImage(imageFile)
+            self.__populateImage(name, image)
+
+    # internal function to update the image in a label
+    def __populateImage(self, name, image):
+        label = self.__verifyItem(self.n_images, name)
 
         label.image.animating = False
-        image = self.__getImage(imageFile)
-
         label.config(image=image)
         label.config(
             anchor=CENTER,
