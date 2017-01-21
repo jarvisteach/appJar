@@ -4,6 +4,11 @@
 * Version 0.05  
     * [Open Container](/pythonWidgetGrouping/#reopening-containers) - implemented issue 83, now possible to reopen a container, perform operations on it, and close it again.  
     * Changed disable entry to readonly, allows entries to be copied (#86)
+    * Issues Resolved:
+        * 89 - minimum speed for animated image
+        * 88 - preload mouse over images
+        • 86 - disabled entry now readonly
+        * 83 - can now reopen container  
 
 * Version 0.041  
     * Continuous Integration - added [landscape.io](https://landscape.io/github/jarvisteach/appJar/) to monitor code quality
