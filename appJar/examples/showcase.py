@@ -130,6 +130,7 @@ def changeTab(tabName):
 ###########################
 
 app = gui("ShowCase")
+app.showSplash("appJar Showcase")
 
 # add a simple toolbar
 app.addToolbar(["EXIT", "LOGOUT", "FILL", "PIE-CHART", "CALENDAR", "ADDRESS-BOOK", "FULL-SCREEN"], toolbar, findIcon=True)
