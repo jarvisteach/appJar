@@ -59,6 +59,12 @@ These names can be menu-items, radio buttons, check boxes, separators, or sub-me
     Or a list of functions (the same length as the names), each menu will call the corresponding function.  
     If a name is ```-```, then a separator will be added to the menu.  
 
+![MenuList](img/menu_1.png)    
+```python
+fileMenus = ["Open", "Save", "Save as...", "-", "Export", "Print", "-", "Close"]
+app.addMenuList("File", fileMenus, menuPress)
+```
+
 * `.createMenu(menu, tearable=False)`  
     Will create a new, empty menu, to add menu-items to.
 
@@ -76,9 +82,31 @@ These names can be menu-items, radio buttons, check boxes, separators, or sub-me
 * `.addMenuRadioButton(menu, name, value, function=None, shortcut=None, underline=-1)`  
     Add a radio button, to the named menu, grouped by name, with the specified value.  
 
+![MenuRB_CB](img/menu_2.png)
+```python
+app.createMenu("Config")
+
+for i in range(5):
+    app.addMenuRadioButton("Config", "font", "1" + str(i), menuPress)
+
+app.addMenuSeparator("Config")
+
+for i in range(5):
+    app.addMenuCheckBox("Config", "Size 1" + str(i), menuPress)
+```
+
 * `.addSubMenu(menu, subMenu)`  
     Adds a sub-menu to the specified menu.  
     Then add menu-items to this menu (using its name).  
+
+![SubMenu](img/menu_3.png)
+```python
+app.createMenu("Config")
+app.addSubMenu("Config", "Font Size")
+for i in range(5):
+    app.addMenuRadioButton("Font Size", "font", "1" + str(i), menuPress)
+
+```
 
 * `.addMenu(menu, function, shortcut=None, underline=-1)`  
     Adds a single menu, with no list of menu-items,  that will call the specified function.  

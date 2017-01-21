@@ -1,3 +1,5 @@
+import sys
+sys.path.append("../")
 from appJar import gui
 
 def menuPress(men=None):

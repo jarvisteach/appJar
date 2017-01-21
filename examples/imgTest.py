@@ -29,7 +29,7 @@ def changePic(btn):
     elif btn == "Zoom":
         app.zoomImage("Zoom", int(app.getSpinBox("Zoom")))
     elif btn == "Open":
-        imgPath = app.openBox(fileTypes=[('images', '*.png'), ('images', '*.jpg'), ('images', '*.gif')])
+        imgPath = app.openBox(title="Open Image", dirName="images", fileTypes=[('images', '*.png'), ('images', '*.jpg'), ('images', '*.gif'), ('images', '*.jpeg'), ('all', '*')])
         if imgPath != "":
             try:
                 app.setImage("Open", imgPath)
