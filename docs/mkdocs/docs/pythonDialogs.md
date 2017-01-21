@@ -41,8 +41,21 @@ A number of pop-ups (aka dialogs) are available, to add a different user experie
     ![NumberBox](img/dialogs/num.gif)
 
 ### File Boxes
-* `.openBox()`
-* `.saveBox()`
+* `.openBox(title=None, dirName=None, fileTypes=None, asFile=False)`  
+    Shows an open file dialog.  
+
+    ![OpenBox](img/dialogs/openBox_1.png)  
+    Various parameters can be provided (although they don't work on all platforms):  
+
+    * ```title``` this will set a title for the dialog  
+    * `dirName` this will set a starting directory, defaults to the current working directory  
+    * `fileTypes=[('images', '*.png'), ('images', '*.jpg')]`  
+    This will set the allowed file extensions, it should be a list of tuples. They will be grouped by the name.  
+    * `asFile` this will determine whether a path or actual Python file object is returned, defaults to filename   
+
+* `.saveBox()`  
+    Shows a save file dialog.  
+
 * `.directoryBox()`
 
 ### Other Boxes
