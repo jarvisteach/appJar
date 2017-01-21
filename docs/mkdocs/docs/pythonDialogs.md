@@ -45,6 +45,7 @@ A number of pop-ups (aka dialogs) are available, to add a different user experie
     Shows an open file dialog.  
 
     ![OpenBox](img/dialogs/openBox_1.png)  
+    ![OpenBox](img/dialogs/openBox_2.png)  
     Various parameters can be provided (although they don't work on all platforms):  
 
     * ```title``` this will set a title for the dialog  
