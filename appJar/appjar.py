@@ -6079,25 +6079,21 @@ class gui(object):
     def openBox(
             self,
             title=None,
-            fileName=None,
             dirName=None,
-            fileExt="",
             fileTypes=None,
             asFile=False):
 
         self.topLevel.update_idletasks()
-        if fileTypes is None:
-            fileTypes = []
-        if dirName is None:
-            dirName = self.exe_loc
 
         # define options for opening
         options = {}
-        options['defaultextension'] = fileExt
-        options['filetypes'] = fileTypes
-        options['initialdir'] = dirName
-        options['initialfile'] = fileName
-        options['title'] = title
+
+        if title is not None:
+            options['title'] = title
+        if dirName is not None:
+            options['initialdir'] = dirName
+        if fileTypes is not None:
+            options['filetypes'] = fileTypes
 
         if asFile:
             return filedialog.askopenfile(mode="r", **options)
