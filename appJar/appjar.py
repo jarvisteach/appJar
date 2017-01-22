@@ -7968,6 +7968,8 @@ class ScrollPane(Frame):
         if gui.GET_PLATFORM() == gui.LINUX:
             self.canvas.unbind("<4>", self.b_ids[0])
             self.canvas.unbind("<5>", self.b_ids[1])
+            self.canvas.unbind("<Shift-4>", self.b_ids[2])
+            self.canvas.unbind("<Shift-5>", self.b_ids[3])
         else:  # Windows and MacOS
             self.canvas.unbind("<MouseWheel>", self.b_ids[0])
             self.canvas.unbind("<Shift-MouseWheel>", self.b_ids[1])
@@ -7978,8 +7980,10 @@ class ScrollPane(Frame):
     def __mouseEnter(self, event):
         self.__unbindIds()
         if gui.GET_PLATFORM() == gui.LINUX:
-            self.b_ids.append(self.canvas.bind_all("<4>", self.__horizMouseScroll))
-            self.b_ids.append(self.canvas.bind_all("<5>", self.__horizMouseScroll))
+            self.b_ids.append(self.canvas.bind_all("<4>", self.__vertMouseScroll))
+            self.b_ids.append(self.canvas.bind_all("<5>", self.__vertMouseScroll))
+            self.b_ids.append(self.canvas.bind_all("<Shift-4>", self.__horizMouseScroll))
+            self.b_ids.append(self.canvas.bind_all("<Shift-5>", self.__horizMouseScroll))
         else:  # Windows and MacOS
             self.b_ids.append(self.canvas.bind_all("<MouseWheel>", self.__vertMouseScroll))
             self.b_ids.append(self.canvas.bind_all("<Shift-MouseWheel>", self.__horizMouseScroll))
