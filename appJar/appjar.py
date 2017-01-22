@@ -7906,6 +7906,20 @@ class AutoScrollbar(Scrollbar):
     def place(self, **kw):
         raise Exception("cannot use place with this widget")
 
+
+#######################
+# Widget to look like a label, but allow selection...
+#######################
+
+
+class SelectableLabel(Entry):
+    def __init__(self, parent, **opts):
+        Entry.__init__(self, parent)
+        self.configure(relief=FLAT, state="readonly", readonlybackground='white', fg='black')
+#        var = parent.StringVar()
+#        self.configure(textvariable=var)
+        
+
 #######################
 # Frame with built in scrollbars and canvas for placing stuff on
 # http://effbot.org/zone/tkinter-autoscrollbar.htm
