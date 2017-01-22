@@ -7951,20 +7951,23 @@ class ScrollPane(Frame):
         vscrollbar.config(command=self.canvas.yview)
         hscrollbar.config(command=self.canvas.xview)
 
-        self.canvas.bind("<Key-Prior>", self.page_up)
-        self.canvas.bind("<Key-Next>", self.page_down)
-        self.canvas.bind("<Key-Up>", self.unit_up)
-        self.canvas.bind("<Key-Down>", self.unit_down)
-        self.canvas.bind("<Alt-Key-2>", self.zoom_height)
-        self.canvas.focus_set()
+        self.canvas.bind("<Key-Prior>", self.__keyPressed)
+        self.canvas.bind("<Key-Next>", self.__keyPressed)
+        self.canvas.bind("<Key-Up>", self.__keyPressed)
+        self.canvas.bind("<Key-Down>", self.__keyPressed)
+        self.canvas.bind("<Key-Left>", self.__keyPressed)
+        self.canvas.bind("<Key-Right>", self.__keyPressed)
+        self.canvas.bind("<Home>", self.__keyPressed)
+        self.canvas.bind("<End>", self.__keyPressed)
 
         self.canvas.bind("<Enter>", self.__mouseEnter)
         self.canvas.bind("<Leave>", self.__mouseLeave)
         self.b_ids = []
+        self.canvas.focus_set()
 
-        self.interior = interior = Frame(self.canvas)
+        self.interior = Frame(self.canvas)
         self.interior_id = self.canvas.create_window(
-            0, 0, window=interior, anchor=NW)
+            0, 0, window=self.interior, anchor=NW)
 
         self.interior.bind('<Configure>', self.__configureInterior)
 
@@ -7973,6 +7976,7 @@ class ScrollPane(Frame):
     def __configureInterior(self, event):
         size = (self.interior.winfo_reqwidth(), self.interior.winfo_reqheight())
         self.canvas.config(scrollregion="0 0 %s %s" % size)
+        print("here")
 
     # unbind any saved bind ids
     def __unbindIds(self):
@@ -7982,6 +7986,8 @@ class ScrollPane(Frame):
         if gui.GET_PLATFORM() == gui.LINUX:
             self.canvas.unbind("<4>", self.b_ids[0])
             self.canvas.unbind("<5>", self.b_ids[1])
+            self.canvas.unbind("<Shift-4>", self.b_ids[2])
+            self.canvas.unbind("<Shift-5>", self.b_ids[3])
         else:  # Windows and MacOS
             self.canvas.unbind("<MouseWheel>", self.b_ids[0])
             self.canvas.unbind("<Shift-MouseWheel>", self.b_ids[1])
@@ -7992,8 +7998,10 @@ class ScrollPane(Frame):
     def __mouseEnter(self, event):
         self.__unbindIds()
         if gui.GET_PLATFORM() == gui.LINUX:
-            self.b_ids.append(self.canvas.bind_all("<4>", self.__horizMouseScroll))
-            self.b_ids.append(self.canvas.bind_all("<5>", self.__horizMouseScroll))
+            self.b_ids.append(self.canvas.bind_all("<4>", self.__vertMouseScroll))
+            self.b_ids.append(self.canvas.bind_all("<5>", self.__vertMouseScroll))
+            self.b_ids.append(self.canvas.bind_all("<Shift-4>", self.__horizMouseScroll))
+            self.b_ids.append(self.canvas.bind_all("<Shift-5>", self.__horizMouseScroll))
         else:  # Windows and MacOS
             self.b_ids.append(self.canvas.bind_all("<MouseWheel>", self.__vertMouseScroll))
             self.b_ids.append(self.canvas.bind_all("<Shift-MouseWheel>", self.__horizMouseScroll))
@@ -8035,25 +8043,66 @@ class ScrollPane(Frame):
     def getPane(self):
         return self.canvas
 
-    def page_up(self, event):
-        self.canvas.yview_scroll(-1, "page")
-        return "break"
+    def __keyPressed(self, event):
+        # work out if alt/ctrl/shift are pressed
+        state = event.state
+        ctrl  = (state & 0x4) != 0
+        alt   = (state & 0x8) != 0 or (state & 0x80) != 0 # buggy
+        shift = (state & 0x1) != 0
 
-    def page_down(self, event):
-        self.canvas.yview_scroll(1, "page")
-        return "break"
+        if event.type == "2":
+            # up and down arrows
+            if event.keysym == "Up": # event.keycode == 38
+                if ctrl:
+                    self.canvas.yview_scroll(-1, "pages")
+                else:
+                    self.canvas.yview_scroll(-1, "units")
+            elif event.keysym == "Down": # event.keycode == 40
+                if ctrl:
+                    self.canvas.yview_scroll(1, "pages")
+                else:
+                    self.canvas.yview_scroll(1, "units")
 
-    def unit_up(self, event):
-        self.canvas.yview_scroll(-1, "unit")
-        return "break"
+            # left and right arrows
+            elif event.keysym == "Left": # event.keycode == 37
+                if ctrl:
+                    self.canvas.xview_scroll(-1, "pages")
+                else:
+                    self.canvas.xview_scroll(-1, "units")
+            elif event.keysym == "Right": # event.keycode == 39
+                if ctrl:
+                    self.canvas.xview_scroll(1, "pages")
+                else:
+                    self.canvas.xview_scroll(1, "units")
 
-    def unit_down(self, event):
-        self.canvas.yview_scroll(1, "unit")
-        return "break"
+            # page-up & page-down keys
+            elif event.keysym == "Prior": # event.keycode == 33
+                if ctrl:
+                    self.canvas.xview_scroll(-1, "pages")
+                else:
+                    self.canvas.yview_scroll(-1, "pages")
+            elif event.keysym == "Next": # event.keycode == 34
+                if ctrl:
+                    self.canvas.xview_scroll(1, "pages")
+                else:
+                    self.canvas.yview_scroll(1, "pages")
+            
+            # home & end keys
+            elif event.keysym == "Home": # event.keycode == 36
+                if ctrl:
+                    self.canvas.xview_moveto(0.0)
+                else:
+                    self.canvas.yview_moveto(0.0)
+            elif event.keysym == "End": # event.keycode == 35
+                if ctrl:
+                    self.canvas.xview_moveto(1.0)
+                else:
+                    self.canvas.yview_moveto(1.0)
+            
+            return "break"
+        else:
+            pass # shouldn't happen
 
-    def zoom_height(self, event):
-        ZoomHeight.zoom_height(self.master)
-        return "break"
 
 #################################
 # Additional Dialog Classes
