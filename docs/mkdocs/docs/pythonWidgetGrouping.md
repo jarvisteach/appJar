@@ -476,6 +476,18 @@ Position the *Frame* within the grid, then position widgets inside the *Frame*
 ---
 A scrollable pane, to contain widgets.  
 
+* Will respond to horizontal & vertical scroll events on Mac & Windows.  
+* Will respond to horizontal scroll events, and interpret SHIFT-horizontal scroll events as vertical scroll events on Linux.  
+* Will also respond to key presses:  
+    * Up & Down: Move up or down the equivalent of a line  
+    * Left & Right: Move left or right the equivalent of a line  
+    * PageUp & PageDown: Move up or down the equivalent of a page  
+    * Ctrl-PageUp & Ctrl-PageDown: Move left or right the equivalent of a page  
+    * Ctrl-Up & Ctrl-Down: Move up or down the equivalent of a page  
+    * Ctrl-Left & Ctrl-Right: Move left or right the equivalent of a page   
+    * Home & End: Move to the top or bottom  
+    * Ctrl-Home & Ctrl-End: Move to the far-left or the far-right  
+
 * `.startScrollPane(title)` & `.stopScrollPane()`  
     Used to start and stop the *ScrollPane*.  
 
