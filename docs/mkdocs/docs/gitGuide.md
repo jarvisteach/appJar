@@ -2,7 +2,7 @@
 ----  
 Below are some useful commands for using git, GitHub & PyPI from the command line.  
 
-##Simple Set-up
+###Simple Set-up
 
 [Git](https://git-scm.com/) provides local version control - allowing you to keep backups of previous versions of your code.  
 
@@ -30,8 +30,6 @@ Then copy your repo's address, and **add** it to your local git account:
 Then, once you've **commited** local changes, you can **push** them to GitHub:  
 
 * `git push` - send your local changes to your online GitHub repository.  
-
-##Reference
 
 ### Setting Up  
 * `git init`  
@@ -68,6 +66,37 @@ This will restore a file to the latest version in Git.
 ### Pushing  
 * `git push`  
 Pushes all changes you've added & committed locally, to GitHub  
+
+### Branching & Merging  
+
+Branching is useful to allow you to develop a new feature, without affecting the main branch.  
+That way, your main branch remains untouched, until you are ready to add in your new feature.  
+This is useful, as it means the main branch always matches what is currently released, and it also lets you release emergency fixes on the main branch, without having to include whatever new feature is currently being worked on.  
+
+* `git branch`  
+List all the branches in your repo  
+
+* `git checkout <branch>`  
+Switch to the named branch  
+
+* `git branch <branch>`  
+Create a new branch called <branch>  
+
+* `git checkout -b <new-branch>`  
+Create and switch to a <new-branch>  
+
+* `git branch -d <branch>`  
+Delete the branch called <branch>  
+
+Once your branch is complete, ie. you finished your new feature and are ready to add it to your main branch for a new release.  
+You simply merge your feature branch back into the main branch.  
+
+1. First you have to checkout the master branch: `git checkout master` followed by a `git pull` to get any missing fixes.  
+2. Then, there are two options:  
+    * Merge in your feature branch: `git merge <branch>`  
+    * Or pull down your feature branch: `git pull origin <branch>`  
+3. Once you have added your feature branch into the main branch, you then push it all back again: `git push`  
+4. You now have a new version - so you should tag it with a version number  
 
 ### Tagging
 * `git tag -a vXXX -m "Tag description`  
