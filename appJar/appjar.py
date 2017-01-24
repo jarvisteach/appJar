@@ -3785,6 +3785,15 @@ class gui(object):
     def clearImageCache(self):
         self.n_imageCache = {}
 
+    # internal function to build an image function from a string
+    def __getImageData(self, imageData):
+        imgObj = PhotoImage(data=imageData)
+        imgObj.path = None
+        imgObj.modTime = datetime.datetime.now()
+        imgObj.isAnimated = False
+        imgObj.animating = False
+        return imgObj
+
     # internal function to check/build image object
     def __getImage(self, imagePath, checkCache=True, addToCache=True):
         if imagePath is None:
@@ -3868,6 +3877,14 @@ class gui(object):
         image = self.__getImage(imageFile, False)
         self.__populateImage(name, image)
 
+    def reloadImageData(self, name, imageData):
+        self.setImageData(name, imageData)
+
+    def setImageData(self, name, imageData):
+        label = self.__verifyItem(self.n_images, name)
+        image = self.__getImageData(imageData)
+        self.__populateImage(name, image)
+
     # replace the current image, with a new one
     def setImage(self, name, imageFile):
         label = self.__verifyItem(self.n_images, name)
@@ -3909,6 +3926,13 @@ class gui(object):
         #label.config(height=h, width=w)
         self.topLevel.update_idletasks()
 
+    # load image from base-64 encoded GIF
+    # use base64 module to convert binary data to base64
+    def addImageData(self, name, imageData, row=None, column=0, colspan=0, rowspan=0):
+        self.__verifyItem(self.n_images, name, True)
+        imgObj = self.__getImageData(imageData)
+        self.__addImageObj(name, imgObj, row, column, colspan, rowspan)
+
     # must be GIF or PNG
     def addImage(
             self,
@@ -3920,8 +3944,10 @@ class gui(object):
             rowspan=0):
         #image = re.escape(image)
         self.__verifyItem(self.n_images, name, True)
-        img = self.__getImage(imageFile)
+        imgObj = self.__getImage(imageFile)
+        self.__addImageObj(name, imgObj, row, column, colspan, rowspan)
 
+    def __addImageObj(self, name, img, row=None, column=0, colspan=0, rowspan=0):
         label = Label(self.__getContainer())
         label.config(
             anchor=CENTER,
@@ -3988,7 +4014,7 @@ class gui(object):
     def convertJpgToBmp(self, image):
         if not NANOJPEG_AVAILABLE:
             raise Exception(
-                "nanjpeg library not found, unable to display jpeg files: " + image)
+                "nanojpeg library not found, unable to display jpeg files: " + image)
         elif sys.version_info < (2, 7):
             raise Exception(
                 "JPG images only supported in python 2.7+: " + image)
@@ -7976,7 +8002,6 @@ class ScrollPane(Frame):
     def __configureInterior(self, event):
         size = (self.interior.winfo_reqwidth(), self.interior.winfo_reqheight())
         self.canvas.config(scrollregion="0 0 %s %s" % size)
-        print("here")
 
     # unbind any saved bind ids
     def __unbindIds(self):

@@ -18,6 +18,10 @@ Or, create an image folder and set it using the `.setImageLocation(location)` fu
     appJar will confirm the file is valid, and will also check the file contains the type specified.  
     If an animated `.GIF` is found, then it will be animated within the GUI.  
 
+* `.addImageData(title, imgData)`  
+    As above, but receives raw image data.  
+    Currently only supports base64 encoded GIF images.  
+
 ```python
 app.startLabelFrame("Simple", 0, 0)
 app.addImage("simple", "balloons.gif")
@@ -30,11 +34,12 @@ app.stopLabelFrame()
 
 ###Change Images
 
-* `.setImage(title, image)`  
+* `.setImage(title, image)` & `.setImageData(title, imgData)`  
     This will replace the existing image with the new one.  
     If the image has the same path, it will not be changed.  
+    If imgData, will always be reloaded.  
 
-* `.reloadImage(title, image)`  
+* `.reloadImage(title, image)` & `.reloadImageData(title, imgData)`  
     This will replace the existing image with the new one.  
     It will force an image reload, even if the file name hasn't changed.  
     Useful if an outside agency modifies the image file.  

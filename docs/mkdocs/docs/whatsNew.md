@@ -2,9 +2,11 @@
 ---
 
 * Version 0.05  
-    * [Open Container](/pythonWidgetGrouping/#reopening-containers) - implemented issue 83, now possible to reopen a container, perform operations on it, and close it again.  
-    * Changed disable entry to readonly, allows entries to be copied (#86)
-    * Issues Resolved:
+    * [Open Container](/pythonWidgetGrouping/#reopening-containers) - implemented issue 83, can now reopen a container, perform operations on it, and close it.  
+    * Changed disable entry to readonly, allows entries to be copied (#86)  
+    * Images now support [raw image data](/pythonImages/#add-images).
+    * Issues Resolved:.
+        * 90 - raw image data  
         * 89 - minimum speed for animated image
         * 88 - preload mouse over images
         • 86 - disabled entry now readonly
