@@ -1602,14 +1602,20 @@ class gui(object):
                     # this will discard the scale value, as default function
                     # can't handle it
                     if kind == self.SCALE:
-                        item.config(command=self.MAKE_FUNC(value, name, True))
+                        cmd = self.MAKE_FUNC(value, name, True)
+                        item.config(command=cmd)
+                        item.cmd = cmd
                     elif kind == self.OPTION:
                         # need to trace the variable??
-                        item.var.trace('w', self.MAKE_FUNC(value, name, True))
+                        cmd = self.MAKE_FUNC(value, name, True)
+                        item.var.trace('w', cmd)
+                        item.cmd = cmd
                     elif kind == self.ENTRY:
                         if key is None:
                             key = name
-                        item.bind('<Return>', self.MAKE_FUNC(value, key, True))
+                        cmd = self.MAKE_FUNC(value, key, True)
+                        item.bind('<Return>', cmd)
+                        item.cmd = cmd
                     elif kind == self.BUTTON:
                         item.config(command=self.MAKE_FUNC(value, name))
                         item.bind(
@@ -1622,13 +1628,9 @@ class gui(object):
                         elif self.platform in [self.WINDOWS, self.LINUX]:
                             item.config(cursor="hand2")
 
-                        item.bind(
-                            "<Button-1>",
-                            self.MAKE_FUNC(
-                                value,
-                                name,
-                                True),
-                            add="+")
+                        cmd = self.MAKE_FUNC(value, name, True)
+                        item.bind("<Button-1>", cmd, add="+")
+                        item.cmd = cmd
                         # these look good, but break when dialogs take focus
                         #up = item.cget("relief").lower()
                         # down="sunken"
@@ -1636,9 +1638,13 @@ class gui(object):
                         #item.bind("<Button-1>",lambda e: item.config(relief=down), add="+")
                         #item.bind("<ButtonRelease-1>",lambda e: item.config(relief=up))
                     elif kind == self.LISTBOX:
-                        item.bind('<<ListboxSelect>>', self.MAKE_FUNC(value, name, True))
+                        cmd = self.MAKE_FUNC(value, name, True)
+                        item.bind('<<ListboxSelect>>', cmd)
+                        item.cmd = cmd
                     else:
-                        item.config(command=self.MAKE_FUNC(value, name))
+                        cmd = self.MAKE_FUNC(value, name)
+                        item.config(command=cmd)
+                        item.cmd = cmd
                 elif option == 'sticky':
                     info = {}
                     # need to reposition the widget in its grid
@@ -3088,6 +3094,8 @@ class gui(object):
     def setScale(self, title, pos):
         sc = self.__verifyItem(self.n_scales, title)
         sc.set(pos)
+        # now call function
+        sc.cmd()
 
     def setScaleWidth(self, title, width):
         sc = self.__verifyItem(self.n_scales, title)
@@ -3786,8 +3794,23 @@ class gui(object):
         self.n_imageCache = {}
 
     # internal function to build an image function from a string
-    def __getImageData(self, imageData):
-        imgObj = PhotoImage(data=imageData)
+    def __getImageData(self, imageData, fmt="gif"):
+        if fmt=="png":
+            if not TKINTERPNG_AVAILABLE:
+                raise Exception(
+                    "TKINTERPNG library not found, PNG files not supported: " + imagePath)
+            if sys.version_info >= (2, 7):
+                self.warn(
+                    "Image processing for .PNGs is slow. .GIF is the recommended format")
+#                png = PngImageTk(imagePath)
+#                png.convert()
+#                photo = png.image
+            else:
+                raise Exception("PNG images only supported in python 3: " + imagePath)
+
+        else:
+            imgObj = PhotoImage(data=imageData)
+
         imgObj.path = None
         imgObj.modTime = datetime.datetime.now()
         imgObj.isAnimated = False
@@ -3928,9 +3951,9 @@ class gui(object):
 
     # load image from base-64 encoded GIF
     # use base64 module to convert binary data to base64
-    def addImageData(self, name, imageData, row=None, column=0, colspan=0, rowspan=0):
+    def addImageData(self, name, imageData, row=None, column=0, colspan=0, rowspan=0, fmt="gif"):
         self.__verifyItem(self.n_images, name, True)
-        imgObj = self.__getImageData(imageData)
+        imgObj = self.__getImageData(imageData, fmt)
         self.__addImageObj(name, imgObj, row, column, colspan, rowspan)
 
     # must be GIF or PNG
