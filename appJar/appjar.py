@@ -3095,7 +3095,8 @@ class gui(object):
         sc = self.__verifyItem(self.n_scales, title)
         sc.set(pos)
         # now call function
-        sc.cmd()
+        if hasattr(sc, 'cmd'):
+            sc.cmd()
 
     def setScaleWidth(self, title, width):
         sc = self.__verifyItem(self.n_scales, title)
@@ -3585,6 +3586,9 @@ class gui(object):
         var = StringVar(self.topLevel)
         var.set(val)
         spin.config(textvariable=var)
+        # now call function
+        if hasattr(spin, 'cmd'):
+            spin.cmd()
 
     # is it going to be a hash or list??
     def __getSpinBoxValsAsList(self, vals):
