@@ -3058,6 +3058,9 @@ class gui(object):
             cb.select()
         else:
             cb.deselect()
+        # now call function
+        if hasattr(cb, 'cmd'):
+            cb.cmd()
 
 #####################################
 # FUNCTION for scales
@@ -4269,6 +4272,11 @@ class gui(object):
         var = self.n_rbVars[title]
         var.set(value)
 
+        # now call function
+        item = self.__verifyItem(self.n_rbs, title)[0]
+        if hasattr(item, 'cmd'):
+            item.cmd()
+
     def setRadioTick(self, title, tick=True):
         radios = self.__verifyItem(self.n_rbs, title)
         for rb in radios:
@@ -4350,6 +4358,9 @@ class gui(object):
             for pos in range(len(items)):
                 if items[pos] == item:
                     self.selectListItemPos(title, pos)
+                    # now call function
+                    if hasattr(lb, 'cmd'):
+                        lb.cmd()
                     break
 
     def selectListItemPos(self, title, pos):
