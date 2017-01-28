@@ -433,7 +433,7 @@ app.go()
     Replace the contents of the specified ListBox with the new values.  
 
 * `.removeListItem(title, item)`  
-    Remove the specified item from teh specified ListBox.  
+    Remove the specified item from the  specified ListBox.  
 
 ```python
 from appJar import gui
