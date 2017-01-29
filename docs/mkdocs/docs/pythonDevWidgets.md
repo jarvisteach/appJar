@@ -120,32 +120,3 @@ It is possible to include buttons at the end of each row, and an additional row 
 * `.addGridRow(title, data)`  
     Add a single row of data to the existing grid.  
     It will be positioned at the bottom of the grid, above the entry boxes if present.  
-
-###Meters
----
-Working on some different styles for the Meter.  
-And, a better look - gradated colour...  
-####SplitMeter
-Shows two values, left & right  
-
-![SplitMeter](img/1_splitMeter.png)
-
-* `.addSplitMeter(title)`  
-
-####DualMeter
-Shows percentage left & right  
-
-* `.addDualMeter(title)`  
-
-####Set Meters  
-
-* `.setMeter(title, value, text=None)`  
-    Value should be between -100 & 100 for a SplitMeter
-
-* `.setMeterFill(title, colour(s))`  
-    Pass a single colour for a Meter.  
-    Pass a list of two colours for Dual & Split meters.  
-
-####Get Meters  
-
-* `.getMeter(title)`  

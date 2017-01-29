@@ -1482,7 +1482,7 @@ class gui(object):
             try:
                 if option == 'background':
                     if kind == self.METER:
-                        item.config(backfill=value)
+                        item.config(bg=value)
                     else:
                         gui.SET_WIDGET_BG(item, value, True)
                 elif option == 'foreground':
@@ -5268,15 +5268,6 @@ class gui(object):
 #####################################
 # FUNCTIONS for progress bars (meters)
 #####################################
-    def addMeter(self, name, row=None, column=0, colspan=0, rowspan=0):
-        self.__addMeter(name, "METER", row, column, colspan, rowspan)
-
-    def addSplitMeter(self, name, row=None, column=0, colspan=0, rowspan=0):
-        self.__addMeter(name, "SPLIT", row, column, colspan, rowspan)
-
-    def addDualMeter(self, name, row=None, column=0, colspan=0, rowspan=0):
-        self.__addMeter(name, "DUAL", row, column, colspan, rowspan)
-
     def __addMeter(
             self,
             name,
@@ -5297,24 +5288,29 @@ class gui(object):
         self.n_meters[name] = meter
         self.__positionWidget(meter, row, column, colspan, rowspan)
 
-    def getMeter(self, name):
-        item = self.__verifyItem(self.n_meters, name)
-        return item.get()
+    def addMeter(self, name, row=None, column=0, colspan=0, rowspan=0):
+        self.__addMeter(name, "METER", row, column, colspan, rowspan)
+
+    def addSplitMeter(self, name, row=None, column=0, colspan=0, rowspan=0):
+        self.__addMeter(name, "SPLIT", row, column, colspan, rowspan)
+
+    def addDualMeter(self, name, row=None, column=0, colspan=0, rowspan=0):
+        self.__addMeter(name, "DUAL", row, column, colspan, rowspan)
 
     # update the value of the specified meter
     # note: expects a value between 0 (-100 for split/dual) & 100
     def setMeter(self, name, value=0.0, text=None):
         item = self.__verifyItem(self.n_meters, name)
-        value = value / 100.0
         item.set(value, text)
+
+    def getMeter(self, name):
+        item = self.__verifyItem(self.n_meters, name)
+        return item.get()
 
     # a single colour for meters, a list of 2 colours for splits & duals
     def setMeterFill(self, name, colour):
         item = self.__verifyItem(self.n_meters, name)
-        if item.__class__.__name__ == "Meter":
-            item.configure(fill=colour)
-        else:
-            item.setFill(colour)
+        item.configure(fill=colour)
 
 #####################################
 # FUNCTIONS for seperators
@@ -6224,58 +6220,45 @@ class gui(object):
 #####################################
 # ProgressBar Class
 # from: http://tkinter.unpythonic.net/wiki/ProgressMeter
+# A gradient fill will be applied to the Meter
 #####################################
-
-
 class Meter(Frame):
 
-    def __init__(
-            self,
-            master,
-            width=100,
-            height=20,
-            bg='white',
-            fillColour='orchid1',
-            value=0.0,
-            text=None,
-            font=None,
-            textColour='black',
-            *args,
-            **kw):
-        Frame.__init__(
-            self,
-            master,
-            bg=bg,
-            width=width,
-            height=height,
-            *args,
-            **kw)
-        self._value = value
-        self.config(relief='ridge', bd=3)
+    def __init__(self, master, width=100, height=20,
+            bg='white', fillColour='orchid1',
+            value=0.0, text=None, font=None,
+            fg='black', *args, **kw):
 
-#            self._canv = Canvas(self, bg=self['bg'], height=self['height'], highlightthickness=0, relief='flat', bd=0)
-        self._canv = Canvas(
-            self,
-            bg=self['bg'],
-            width=self['width'],
-            height=self['height'],
-            highlightthickness=0,
-            relief='flat',
-            bd=0)
+        # call the super constructor
+        Frame.__init__(self, master, bg=bg,
+            width=width, height=height, relief='ridge', bd=3, *args, **kw)
+
+        # remember the starting value
+        self._value = value
+        self._colour = fillColour
+        self._midFill = fg
+
+        # create the canvas
+        self._canv = Canvas(self, bg=self['bg'],
+            width=self['width'], height=self['height'],
+            highlightthickness=0, relief='flat', bd=0)
         self._canv.pack(fill='both', expand=1)
-        self._rect = self._canv.create_rectangle(
-            0, 0, 0, self._canv.winfo_reqheight(), fill=fillColour, width=0)
+
+        # create the text
+        width, height = self.getWH(self._canv)
         self._text = self._canv.create_text(
-            self._canv.winfo_reqwidth() / 2,
-            self._canv.winfo_reqheight() / 2,
-            text='',
-            fill=textColour)
+            width / 2, height / 2, text='', fill=fg)
+
         if font:
             self._canv.itemconfigure(self._text, font=font)
 
         self.set(value, text)
+        self.moveText()
+
+        # bind refresh event
         self.bind('<Configure>', self._update_coords)
 
+    # customised config setters
     def config(self, cnf=None, **kw):
         self.configure(cnf, **kw)
 
@@ -6284,15 +6267,20 @@ class Meter(Frame):
         kw = gui.CLEAN_CONFIG_DICTIONARY(**kw)
 
         if "fill" in kw:
-            self._canv.itemconfigure(self._rect, fill=kw.pop("fill"))
+            self._colour = kw.pop("fill")
         if "fg" in kw:
-            self._canv.itemconfigure(self._text, fill=kw.pop("fg"))
-        if "backfill" in kw:
-            self._canv.config(bg=kw.pop("backfill"))
+            col = kw.pop("fg")
+            self._canv.itemconfigure(self._text, fill=col)
+            self._midFill = col
+        if "bg" in kw:
+            self._canv.config(bg=kw.pop("bg"))
+
         if "width" in kw:
             self._canv.config(width=kw.pop("width"))
         if "height" in kw:
             self._canv.config(height=kw.pop("height"))
+        if "font" in kw:
+            self._canv.itemconfigure(self._text, font=kw.pop("fillColour"))
 
         # propagate anything left
         if PYTHON2:
@@ -6300,27 +6288,16 @@ class Meter(Frame):
         else:
             super(Frame, self).config(cnf, **kw)
 
+        self.makeBar()
+
+    # called when resized
     def _update_coords(self, event):
-        '''Updates the position of the text and rectangle inside the canvas when the size of the widget gets changed.'''
-        self._setCanvas()
+        '''Updates the position of the text and rectangle inside the canvas
+            when the size of the widget gets changed.'''
+        self.makeBar()
+        self.moveText()
 
-    def _setCanvas(self):
-        # looks like we have to call update_idletasks() twice to make sure
-        # to get the results we expect
-        self._canv.update_idletasks()
-        self._canv.coords(
-            self._text,
-            self._canv.winfo_width() / 2,
-            self._canv.winfo_height() / 2)
-        self._canv.coords(
-            self._rect,
-            0,
-            0,
-            self._canv.winfo_width() *
-            self._value,
-            self._canv.winfo_height())
-        self._canv.update_idletasks()
-
+    # getter
     def get(self):
         val = self._value
         try:
@@ -6329,8 +6306,10 @@ class Meter(Frame):
             txt = None
         return val, txt
 
+    # update the variables, then call makeBar
     def set(self, value=0.0, text=None):
         # make the value failsafe:
+        value = value / 100.0
         if value < 0.0:
             value = 0.0
         elif value > 1.0:
@@ -6341,16 +6320,74 @@ class Meter(Frame):
         if text is None:
             text = str(int(round(100 * value))) + ' %'
 
-        self._canv.coords(
-            self._rect,
-            0,
-            0,
-            self._canv.winfo_width() *
-            value,
-            self._canv.winfo_height())
+        # set the new text
         self._canv.itemconfigure(self._text, text=text)
+        self.makeBar()
+
+    # draw the bar
+    def makeBar(self):
+        width, height = self.getWH(self._canv)
+        start = 0
+        fin = width * self._value
+
+        self.drawLines(width, height, start, fin, self._value, self._colour)
         self._canv.update_idletasks()
 
+    # move the text
+    def moveText(self):
+        width, height = self.getWH(self._canv)
+        if hasattr(self, "_text"):
+            self._canv.coords( self._text, width/2, height/2)
+
+    # draw gradated lines, in given coordinates
+    # using the specified colour
+    def drawLines(self, width, height, start, fin, val, col, tags="gradient"):
+        '''Draw a gradient'''
+        # http://stackoverflow.com/questions/26178869/is-it-possible-to-apply-gradient-colours-to-bg-of-tkinter-python-widgets
+
+        # remove the lines & midline
+        self._canv.delete(tags)
+        self._canv.delete("midline")
+
+        # determine start & end colour
+        (r1, g1, b1) = self.tint(col, -30000)
+        (r2, g2, b2) = self.tint(col, 30000)
+
+        # determine a direction & range
+        if val < 0:
+            direction = -1
+            limit = int(start - fin)
+        else:
+            direction = 1
+            limit = int(fin - start)
+
+        # if lines to draw
+        if limit != 0:
+            # work out the ratios
+            r_ratio = float(r2 - r1) / limit
+            g_ratio = float(g2 - g1) / limit
+            b_ratio = float(b2 - b1) / limit
+
+            # loop through the range of lines, in the right direction
+            modder = 0
+            for i in range(int(start), int(fin), direction):
+                nr = int(r1 + (r_ratio * modder))
+                ng = int(g1 + (g_ratio * modder))
+                nb = int(b1 + (b_ratio * modder))
+
+                colour = "#%4.4x%4.4x%4.4x" % (nr, ng, nb)
+                self._canv.create_line(
+                    i, 0, i, height, tags=(tags,), fill=colour)
+                modder += 1
+            self._canv.lower(tags)
+
+        # draw a midline
+        self._canv.create_line(start, 0, start, height,
+            fill=self._midFill, tags=("midline",))
+
+        self._canv.update_idletasks()
+
+    # function to calculate a tint
     def tint(self, col, brightness_offset=1):
         ''' dim or brighten the specified colour by the specified offset '''
         # http://chase-seibert.github.io/blog/2011/07/29/python-calculate-lighterdarker-rgb-colors.html
@@ -6360,225 +6397,144 @@ class Meter(Frame):
         new_rgb_int = [min([65535, max([0, i])]) for i in new_rgb_int]
         return new_rgb_int
 
+    def getWH(self, widg):
+        # ISSUES HERE:
+        # on MAC & LINUX, w_width/w_height always 1
+        # on WIN, w_height is bigger then r_height - leaving empty space
+
+        self._canv.update_idletasks()
+
+        r_width = widg.winfo_reqwidth()
+        r_height = widg.winfo_reqheight()
+        w_width = widg.winfo_width()
+        w_height = widg.winfo_height()
+
+        min_height = min(r_height, w_height)
+        min_width = min(r_width, w_width)
+        max_height = max(r_height, w_height)
+        max_width = max(r_width, w_width)
+
+        # determine best geom for OS
+        if gui.GET_PLATFORM() in [gui.MAC, gui.LINUX]:
+            b_width = max_width
+            b_height = max_height
+        elif gui.GET_PLATFORM() == gui.WINDOWS:
+            b_width = min_width
+            b_height = min_height
+
+        return (b_width, b_height)
+
+
 #####################################
 # SplitMeter Class extends the Meter above
-#  Used to allow bi-directional metering, starting from a mid point
+# Will fill in the empty space with a second fill colour
 # Two colours should be provided - left & right fill
-#  A gradient fill will be applied to the Meter
 #####################################
-
-
 class SplitMeter(Meter):
 
-    def __init__(
-            self,
-            master,
-            width=100,
-            height=20,
-            bg='white',
-            leftfillColour='red',
-            rightfillColour='blue',
-            value=0.0,
-            text=None,
-            font=None,
-            textColour='white',
-            *args,
-            **kw):
-
-        Frame.__init__(
-            self,
-            master,
-            bg=bg,
-            width=width,
-            height=height,
-            *args,
-            **kw)
-
-        self._value = value
-        self.config(relief='ridge', bd=3)
+    def __init__(self, master, width=100, height=20,
+            bg='white', leftfillColour='red', rightfillColour='blue',
+            value=0.0, text=None, font=None, fg='black', *args, **kw):
 
         self._leftFill = leftfillColour
         self._rightFill = rightfillColour
-        self._midFill = textColour
 
-        self._canv = Canvas(
-            self,
-            bg=self['bg'],
-            width=self['width'],
-            height=self['height'],
-            highlightthickness=0,
-            relief='flat',
-            bd=0)
-        self._canv.pack(fill='both', expand=1)
+        Meter.__init__(self, master, width=width, height=height, 
+                    bg=bg, value=value, text=text, font=font,
+                    fg=fg, *args, **kw)
 
-        self.bind('<Configure>', self._update_coords)
+    # override the handling of fill
+    # list of two colours
+    def configure(self, cnf=None, **kw):
+        kw = gui.CLEAN_CONFIG_DICTIONARY(**kw)
+        if "fill" in kw:
+            cols = kw.pop("fill")
+            if not isinstance(cols, list):
+                raise Exception("SplitMeter requires a list of two colours")
+            else:
+                self._leftFill = cols[0]
+                self._rightFill = cols[1]
 
-    def _update_coords(self, event):
-        '''Updates the position of the text and rectangle inside the canvas when the size of the widget gets changed.'''
-        self._setCanvas()
-
-    def setFill(self, cols):
-        self._leftFill = cols[0]
-        self._rightFill = cols[1]
-        self._setCanvas()
-
-    def setFg(self, col):
-        self._midFill = col
-        self._setCanvas()
-
-    def _setCanvas(self):
-        self._canv.update_idletasks()
-        self.drawLines()
-        self._canv.update_idletasks()
-
-    def drawLines(self):
-        '''Draw a gradient'''
-        # http://stackoverflow.com/questions/26178869/is-it-possible-to-apply-gradient-colours-to-bg-of-tkinter-python-widgets
-
-        self._canv.delete("gradient")
-        self._canv.delete("midline")
-
-        # get range to draw lines
-        width = self._canv.winfo_width()
-        height = self._canv.winfo_height()
-        start = width / 2
-        fin = start + (start * self._value)
-
-        # determine start & end colour
-        if self._value == 0:
-            col = self._midFill
-        elif self._value < 0:
-            col = self._leftFill
+        # propagate any left over confs
+        if PYTHON2:
+            Meter.configure(self, cnf, **kw)
         else:
-            col = self._rightFill
-        (r1, g1, b1) = self.tint(col, -30000)
-        (r2, g2, b2) = self.tint(col, 30000)
-
-        # determine a direction & range
-        if self._value < 0:
-            direction = -1
-            limit = int(start - fin)
-        else:
-            direction = 1
-            limit = int(fin - start)
-
-        # if no lines to draw, end it here - with a midline
-        if limit == 0:
-            self._canv.create_line(
-                start,
-                0,
-                start,
-                height,
-                fill=self._midFill,
-                tags=(
-                    "midline",
-                ))
-            return
-
-        # work out the ratios
-        r_ratio = float(r2 - r1) / limit
-        g_ratio = float(g2 - g1) / limit
-        b_ratio = float(b2 - b1) / limit
-
-        # loop through the range of lines, in the right direction
-        modder = 0
-        for i in range(int(start), int(fin), direction):
-            nr = int(r1 + (r_ratio * modder))
-            ng = int(g1 + (g_ratio * modder))
-            nb = int(b1 + (b_ratio * modder))
-
-            colour = "#%4.4x%4.4x%4.4x" % (nr, ng, nb)
-            self._canv.create_line(
-                i, 0, i, height, tags=(
-                    "gradient",), fill=colour)
-            modder += 1
-
-        self._canv.lower("gradient")
-        self._canv.create_line(
-            start,
-            0,
-            start,
-            height,
-            fill=self._midFill,
-            tags=(
-                "midline",
-            ))
+            super(SplitMeter, self).configure(cnf, **kw)
 
     def set(self, value=0.0, text=None):
         # make the value failsafe:
-        if value < -1:
-            value = -1.0
-        elif value > 1.0:
-            value = 1.0
-        self._value = value
-        self._setCanvas()
-
-
-class DualMeter(SplitMeter):
-
-    def __init__(
-            self,
-            master,
-            width=100,
-            height=20,
-            bg='white',
-            leftfillColour='pink',
-            rightfillColour='green',
-            value=0.5,
-            text=None,
-            font=None,
-            textColour='white',
-            *args,
-            **kw):
-
-        Frame.__init__(
-            self,
-            master,
-            bg=bg,
-            width=width,
-            height=height,
-            *args,
-            **kw)
-
-        self._value = value
-        self.config(relief='ridge', bd=3)
-
-        self._leftFill = leftfillColour
-        self._rightFill = rightfillColour
-        self._midFill = textColour
-
-        self._canv = Canvas(
-            self,
-            bg=self['bg'],
-            width=self['width'],
-            height=self['height'],
-            highlightthickness=0,
-            relief='flat',
-            bd=0)
-        width = self._canv.winfo_width()
-        mid = width * self._value
-        self._r_rect = self._canv.create_rectangle(
-            0, 0, width, self._canv.winfo_reqheight(), fill=self._rightFill, width=0)
-        self._l_rect = self._canv.create_rectangle(
-            0, 0, mid, self._canv.winfo_reqheight(), fill=self._leftFill, width=0)
-        self._canv.pack(fill='both', expand=1)
-
-        self.bind('<Configure>', self._update_coords)
-
-    def set(self, value=0.0, text=None):
-        # make the value failsafe:
+        value = value / 100.0
         if value < 0.0:
             value = 0.0
         elif value > 1.0:
             value = 1.0
         self._value = value
-        self._setCanvas()
+        self.makeBar()
 
-    def drawLines(self):
-        width = self._canv.winfo_width()
+    # override the makeBar function
+    def makeBar(self):
+        width, height = self.getWH(self._canv)
         mid = width * self._value
-        self._canv.coords(self._l_rect, 0, 0, mid, self._canv.winfo_height())
-        self._canv.coords(self._r_rect, 0, 0, width, self._canv.winfo_height())
+
+        self.drawLines(width, height, 0, mid, self._value, self._leftFill, tags="left")
+        self.drawLines(width, height, mid, width, self._value, self._rightFill, tags="right")
+
+
+#####################################
+# SplitMeter Class extends the Meter above
+# Used to allow bi-directional metering, starting from a mid point
+# Two colours should be provided - left & right fill
+# A gradient fill will be applied to the Meter
+#####################################
+class DualMeter(SplitMeter):
+
+    def __init__(self, master, width=100, height=20, bg='white',
+            leftfillColour='pink', rightfillColour='green',
+            value=None, text=None,
+            font=None, fg='black', *args, **kw):
+
+        SplitMeter.__init__(self, master, width=width, height=height,
+                    bg=bg, leftfillColour=leftfillColour,
+                    rightfillColour=rightfillColour,
+                    value=value, text=text, font=font,
+                    fg=fg, *args, **kw)
+
+    def set(self, value=[0,0], text=None):
+        if value is None:
+            value=[0,0]
+        if not isinstance(value, list):
+            raise Exception("DualMeter.set() requires a list of two arguments")
+
+        # make copy, and reduce to decimal
+        vals = [value[0]/100, value[1]/100]
+
+        # normalise
+        if vals[0] < -1: vals[0] = -1.0
+        elif vals[0] > 0: vals[0] = vals[0] * -1
+
+        if vals[1] > 1.0: vals[1] = 1.0
+        elif vals[1] < 0: vals[1] = 0
+        elif vals[1] < -1: vals[1] = -1.0
+
+        self._value = vals
+
+        # if no text is specified use the default percentage string:
+        if text is not None:
+            # set the new text
+            self._canv.itemconfigure(self._text, text=text)
+
+        self.makeBar()
+
+    def makeBar(self):
+        # get range to draw lines
+        width, height = self.getWH(self._canv)
+
+        start = width / 2
+        l_fin = start + (start * self._value[0])
+        r_fin = start + (start * self._value[1])
+
+        self.drawLines(width, height, start, l_fin, self._value[0], self._leftFill, tags="left")
+        self.drawLines(width, height, start, r_fin, self._value[1], self._rightFill, tags="right")
 
 
 #################################

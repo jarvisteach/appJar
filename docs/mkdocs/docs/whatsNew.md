@@ -4,15 +4,17 @@
 * Version 0.05  
     * [Open Container](/pythonWidgetGrouping/#reopening-containers) - implemented issue 83, can now reopen a container, perform operations on it, and close it.  
     * Changed disable entry to readonly, allows entries to be copied (#86)  
-    * Images now support [raw image data](/pythonImages/#add-images).
-    * Setters now call any registered functions
-    * Issues Resolved:.
+    * Images now support [raw image data](/pythonImages/#add-images).  
+    * Setters now call any registered functions  
+    * Rewrite of [Meters](/pythonWidgets/#meter), proper inheritance, all use gradated fill, Dual/Split Meter swapped (#65).  
+    * Issues Resolved:  
         * 90 - raw image data  
-        * 89 - minimum speed for animated image
-        * 88 - preload mouse over images
-        • 86 - disabled entry now readonly
-        * 85 - setters now call function (if available)
+        * 89 - minimum speed for animated image  
+        * 88 - preload mouse over images  
+        * 86 - disabled entry now readonly  
+        * 85 - setters now call function (if available)  
         * 83 - can now reopen container  
+        * 65 - Meter rewrite  
 
 * Version 0.041  
     * Continuous Integration - added [landscape.io](https://landscape.io/github/jarvisteach/appJar/) to monitor code quality
