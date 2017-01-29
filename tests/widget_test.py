@@ -524,7 +524,7 @@ def test_meters():
     app.addDualMeter("dum")
 
     app.setMeter("spm", 50)
-    app.setMeter("dum", 50)
+    app.setMeter("dum", [50, 10])
 
     app.setMeterFill("spm", ["red", "green"])
     app.setMeterFill("dum", ["red", "pink"])
