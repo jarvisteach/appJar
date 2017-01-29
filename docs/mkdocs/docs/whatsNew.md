@@ -7,6 +7,7 @@
     * Images now support [raw image data](/pythonImages/#add-images).  
     * Setters now call any registered functions  
     * Rewrite of [Meters](/pythonWidgets/#meter), proper inheritance, all use gradated fill, Dual/Split Meter swapped (#65).  
+    * Rewrite of [ScrollPane](/pythonWidgetGrouping/#scroll-pane), mult-platform scrolling...
     * Issues Resolved:  
         * 90 - raw image data  
         * 89 - minimum speed for animated image  
@@ -15,6 +16,7 @@
         * 85 - setters now call function (if available)  
         * 83 - can now reopen container  
         * 65 - Meter rewrite  
+        * 34/35 - ScrollPane rewrite
 
 * Version 0.041  
     * Continuous Integration - added [landscape.io](https://landscape.io/github/jarvisteach/appJar/) to monitor code quality
