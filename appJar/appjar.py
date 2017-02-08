@@ -178,6 +178,7 @@ class gui(object):
     PIECHART = 15
     PROPERTIES = 16
     GRID = 17
+    PLOTS = 18
 
     RB = 60
     CB = 40
@@ -562,6 +563,7 @@ class gui(object):
         self.n_tbButts = {}
         self.n_spins = {}
         self.n_props = {}
+        self.n_plots = {}
         self.n_options = {}
         self.n_frameLabs = {}
         self.n_textAreas = {}
@@ -1377,6 +1379,8 @@ class gui(object):
             return self.n_pieCharts
         elif kind == self.PROPERTIES:
             return self.n_props
+        elif kind == self.PLOTS:
+            return self.n_plots
         elif kind == self.GRID:
             return self.n_grids
 
@@ -3408,6 +3412,47 @@ class gui(object):
             else:
                 var.set("")
                 self.warn("No items to select from: " + title)
+
+#####################################
+# FUNCTION for matplotlib
+#####################################
+    def addPlot(
+            self,
+            title,
+            t, s,
+            row=None,
+            column=0,
+            colspan=0,
+            rowspan=0):
+        self.__verifyItem(self.n_plots, title, True)
+
+        from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+        from matplotlib.figure import Figure
+        
+        fig = Figure()
+
+        axes = fig.add_subplot(111)
+        axes.plot(t,s)
+
+        canvas = FigureCanvasTkAgg(fig, self.__getContainer())
+        canvas.fig = fig
+        canvas.axes = axes
+        canvas.show()
+#        canvas.get_tk_widget().pack(side=TOP, fill=BOTH, expand=1)
+        canvas._tkcanvas.pack(side=TOP, fill=BOTH, expand=1)
+
+        self.__positionWidget(canvas.get_tk_widget(), row, column, colspan, rowspan)
+        self.n_plots[title] = canvas
+        return axes
+
+    def updatePlot(self, title, t, s):
+        canvas = self.__verifyItem(self.n_plots, title)
+
+        axes = canvas.axes
+        axes.clear()
+        axes.plot(t, s)
+#        canvas.draw()
+
 
 #####################################
 # FUNCTION to manage Properties Widgets
