@@ -166,9 +166,12 @@ app.addMenuList("List Items", ["-", "aaa", "-", "bbb", "-", "ccc", "-", "ddd", "
 app.addMenuWindow()
 app.addMenuHelp(toolbar)
 
-app.setMenuIcon("Test", "EXIT", "EXIT", "left")
-app.setMenuIcon("Test", "LOGOUT", "LOGOUT", "right")
-app.setMenuIcon("Test", "FILL", "FILL", "none")
+try:
+    app.setMenuIcon("Test", "EXIT", "EXIT", "left")
+    app.setMenuIcon("Test", "LOGOUT", "LOGOUT", "right")
+    app.setMenuIcon("Test", "FILL", "FILL", "none")
+except:
+    pass
 
 app.disableMenuItem("List Items", "aaa")
 app.disableMenubar()
