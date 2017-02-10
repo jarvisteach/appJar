@@ -2971,7 +2971,10 @@ class gui(object):
         if self.built and not hasattr(
                 self, name):  # would this create a new attribute?
             raise AttributeError("Creating new attributes is not allowed!")
-        super(gui, self).__setattr__(name, value)
+        if PYTHON2:
+            object.__setattr__(self, name, value)
+        else:
+            super(gui, self).__setattr__(name, value)
 
 #####################################
 # FUNCTION to add labels before a widget
@@ -8162,7 +8165,10 @@ class SimpleEntryDialog(Dialog):
     def __init__(self, parent, title, question):
         self.error = False
         self.question = question
-        super(SimpleEntryDialog, self).__init__(parent, title)
+        if PYTHON2:
+            Dialog.__init__(self, parent, title)
+        else:
+            super(SimpleEntryDialog, self).__init__(parent, title)
 
     def clearError(self, e):
         if self.error:
@@ -8191,7 +8197,10 @@ class SimpleEntryDialog(Dialog):
 class TextDialog(SimpleEntryDialog):
 
     def __init__(self, parent, title, question):
-        super(TextDialog, self).__init__(parent, title, question)
+        if PYTHON2:
+            SimpleEntryDialog.__init__(self, parent, title, question)
+        else:
+            super(TextDialog, self).__init__(parent, title, question)
 
     def validate(self):
         res = self.e1.get()
@@ -8208,7 +8217,10 @@ class TextDialog(SimpleEntryDialog):
 class NumDialog(SimpleEntryDialog):
 
     def __init__(self, parent, title, question):
-        super(NumDialog, self).__init__(parent, title, question)
+        if PYTHON2:
+            SimpleEntryDialog.__init__(self, parent, title, question)
+        else:
+            super(NumDialog, self).__init__(parent, title, question)
 
     def validate(self):
         res = self.e1.get()
