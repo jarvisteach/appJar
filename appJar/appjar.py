@@ -6125,7 +6125,8 @@ class gui(object):
         self.topLevel.update_idletasks()
         return TextDialog(self.topLevel, title, question).result
 
-    def numberBox(self, title, question): self.numBox(title, question)
+    def numberBox(self, title, question):
+        return self.numBox(title, question)
 
     def numBox(self, title, question):
         self.topLevel.update_idletasks()
@@ -8132,7 +8133,7 @@ class Dialog(Toplevel):
 
     # called when ok button pressed
     def ok(self, event=None):
-        # only continue of validate() returns True
+        # only continue if validate() returns True
         if not self.validate():
             self.initial_focus.focus_set()  # put focus back
             return
