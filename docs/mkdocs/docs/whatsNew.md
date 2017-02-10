@@ -1,9 +1,14 @@
 #What's New?
 ---
 
+* Version 0.042  
+    * Issues Resolved:
+        * 95 - fixed issue launching ShowCase under Python 2 (removed icons)  
+        * 93 - fixeed issue with numDialog/textDialog under python 2  
+
 * Version 0.041  
     * Continuous Integration - added [landscape.io](https://landscape.io/github/jarvisteach/appJar/) to monitor code quality
-    * [Reload Image](/pythonImages/#change-images) - funciton to force a reload of an image, bypassing the cache (issue 87)  
+    * [Reload Image](/pythonImages/#change-images) - function to force a reload of an image, bypassing the cache (issue 87)  
     * Minor fixes based off landscape report
     * Issues Resolved:
         * 87 - reloadImage()
