@@ -2962,7 +2962,10 @@ class gui(object):
         if self.built and not hasattr(
                 self, name):  # would this create a new attribute?
             raise AttributeError("Creating new attributes is not allowed!")
-        super(gui, self).__setattr__(name, value)
+        if PYTHON2:
+            object.__setattr__(self, name, value)
+        else:
+            super(gui, self).__setattr__(name, value)
 
 #####################################
 # FUNCTION to add labels before a widget
@@ -6280,7 +6283,7 @@ class gui(object):
         return TextDialog(self.topLevel, title, question).result
 
     def numberBox(self, title, question):
-        self.numBox(title, question)
+        return self.numBox(title, question)
 
     def numBox(self, title, question):
         self.topLevel.update_idletasks()
@@ -8249,7 +8252,7 @@ class Dialog(Toplevel):
 
     # called when ok button pressed
     def ok(self, event=None):
-        # only continue of validate() returns True
+        # only continue if validate() returns True
         if not self.validate():
             self.initial_focus.focus_set()  # put focus back
             return
@@ -8282,7 +8285,10 @@ class SimpleEntryDialog(Dialog):
     def __init__(self, parent, title, question):
         self.error = False
         self.question = question
-        super(SimpleEntryDialog, self).__init__(parent, title)
+        if PYTHON2:
+            Dialog.__init__(self, parent, title)
+        else:
+            super(SimpleEntryDialog, self).__init__(parent, title)
 
     def clearError(self, e):
         if self.error:
@@ -8311,7 +8317,10 @@ class SimpleEntryDialog(Dialog):
 class TextDialog(SimpleEntryDialog):
 
     def __init__(self, parent, title, question):
-        super(TextDialog, self).__init__(parent, title, question)
+        if PYTHON2:
+            SimpleEntryDialog.__init__(self, parent, title, question)
+        else:
+            super(TextDialog, self).__init__(parent, title, question)
 
     def validate(self):
         res = self.e1.get()
@@ -8328,7 +8337,10 @@ class TextDialog(SimpleEntryDialog):
 class NumDialog(SimpleEntryDialog):
 
     def __init__(self, parent, title, question):
-        super(NumDialog, self).__init__(parent, title, question)
+        if PYTHON2:
+            SimpleEntryDialog.__init__(self, parent, title, question)
+        else:
+            super(NumDialog, self).__init__(parent, title, question)
 
     def validate(self):
         res = self.e1.get()
