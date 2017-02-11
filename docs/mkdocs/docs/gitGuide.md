@@ -77,16 +77,16 @@ This is useful, as it means the main branch always matches what is currently rel
 List all the branches in your repo  
 
 * `git checkout <branch>`  
-Switch to the named branch  
+Switch to the named *&lt;branch&gt;*  
 
 * `git branch <branch>`  
-Create a new branch called <branch>  
+Create a new branch called *&lt;branch&gt;*  
 
 * `git checkout -b <new-branch>`  
-Create and switch to a <new-branch>  
+Create and switch to a *&lt;new-branch&gt;*  
 
 * `git branch -d <branch>`  
-Delete the branch called <branch>  
+Delete the branch called *&lt;branch&gt;*  
 
 Once your branch is complete, ie. you finished your new feature and are ready to add it to your main branch for a new release.  
 You simply merge your feature branch back into the main branch.  
@@ -100,7 +100,7 @@ You simply merge your feature branch back into the main branch.
 
 ### Tagging
 * `git tag -a vXXX -m "Tag description`  
-* `git push origin vXXX`  
+`git push origin vXXX`  
 This tags the current build in git  
 Then pushes it to GitHub
 
