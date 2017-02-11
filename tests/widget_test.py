@@ -326,6 +326,9 @@ def test_lists():
     app.addListBox("l2", LIST_TWO)
     app.setListBoxFunction("l1", tester_function)
 
+    app.setListItemBg("l1", LIST_ONE[1], "red")
+    app.setListItemFg("l1", LIST_ONE[1], "green")
+
     assert app.getListItems("l1") == []
     assert app.getListItems("l2") == []
 

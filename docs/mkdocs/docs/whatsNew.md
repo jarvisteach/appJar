@@ -8,7 +8,9 @@
     * Setters now call any registered functions  
     * Rewrite of [Meters](/pythonWidgets/#meter), proper inheritance, all use gradated fill, Dual/Split Meter swapped (#65).  
     * Rewrite of [ScrollPane](/pythonWidgetGrouping/#scroll-pane), mult-platform scrolling...
+    * Added functions to [change the bg/fg](/pythonWidgets/#listbox) of ListBox items (#97).  
     * Issues Resolved:  
+        * 97 - ability to set bg/fg colour of list items
         * 90 - raw image data  
         * 89 - minimum speed for animated image  
         * 88 - preload mouse over images  

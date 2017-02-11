@@ -16,7 +16,8 @@ def btnPress(btnName):
             app.selectListItem("colours", RGB)
         else:
             app.addListItem("colours", RGB)
-            app.configListItem("colours", RGB, RGB)
+            app.setListItemBg("colours", RGB, RGB)
+            app.setListItemFg("colours", RGB, "yellow")
     elif btnName == "colours":
         RGB = app.getListItems("colours")
         if len(RGB) > 0:

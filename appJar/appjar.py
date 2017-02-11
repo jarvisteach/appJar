@@ -4490,16 +4490,27 @@ class gui(object):
         self.selectListItemPos(title, pos)
 
     # functions to config 
-    def configListItemAtPos(self, title, pos, col):
+    def setListItemAtPosBg(self, title, pos, col):
         lb = self.__verifyItem(self.n_lbs, title)
         lb.itemconfig(pos, bg=col)
+
+    def setListItemAtPosFg(self, title, pos, col):
+        lb = self.__verifyItem(self.n_lbs, title)
+        lb.itemconfig(pos, fg=col)
  
-    def configListItem(self, title, item, col):
+    def setListItemBg(self, title, item, col):
         lb = self.__verifyItem(self.n_lbs, title)
         items = lb.get(0, END)
         for pos, val in enumerate(items):
             if val == item:
-                self.configListItemAtPos(title, pos, col)
+                self.setListItemAtPosBg(title, pos, col)
+
+    def setListItemFg(self, title, item, col):
+        lb = self.__verifyItem(self.n_lbs, title)
+        items = lb.get(0, END)
+        for pos, val in enumerate(items):
+            if val == item:
+                self.setListItemAtPosFg(title, pos, col)
 
 
     def clearListBox(self, title):

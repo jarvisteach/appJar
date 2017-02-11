@@ -461,6 +461,11 @@ app.go()
 * `.selectListItem(title, item)`  
     Selects the specified item in the specified ListBox.  
 
+* `.setListItemBg(title, item, colour)` & `.setListItemFg(title, item, colour)`  
+    `.setListItemAtPosBg(title, item, colour)` & `.setListItemAtPosFg(title, item, colour)`  
+    Sets the background or foreground colours the specified ListBox item.  
+    Can either specify a named item (will update all with that name) or the position of an item.  
+
 ####Get ListBoxes
 * `.getListItems(title)`  
     Gets all of the selected items from the specified ListBox.  
