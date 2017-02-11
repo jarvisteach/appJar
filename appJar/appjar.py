@@ -4489,6 +4489,19 @@ class gui(object):
             pos -= 1
         self.selectListItemPos(title, pos)
 
+    # functions to config 
+    def configListItemAtPos(self, title, pos, col):
+        lb = self.__verifyItem(self.n_lbs, title)
+        lb.itemconfig(pos, bg=col)
+ 
+    def configListItem(self, title, item, col):
+        lb = self.__verifyItem(self.n_lbs, title)
+        items = lb.get(0, END)
+        for pos, val in enumerate(items):
+            if val == item:
+                self.configListItemAtPos(title, pos, col)
+
+
     def clearListBox(self, title):
         lb = self.__verifyItem(self.n_lbs, title)
         lb.delete(0, END)  # clear

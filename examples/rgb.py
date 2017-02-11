@@ -2,16 +2,31 @@ import sys
 sys.path.append("../")
 from appJar import gui
 
+alreadyDone = False
+
 # funciton to handle the button presses
 def btnPress(btnName):
     if btnName == "Reset":
         app.setSpinBox("redSpin", 0)
         app.setSpinBox("greSpin", 0)
         app.setSpinBox("bluSpin", 0)
-        app.clearEntry("colCode")
-    elif btnName == "Convert":
+    elif btnName == "Log":
         RGB = getRGB()
-        app.setEntry("colCode", RGB)
+        if RGB in app.getAllListItems("colours"):
+            app.selectListItem("colours", RGB)
+        else:
+            app.addListItem("colours", RGB)
+            app.configListItem("colours", RGB, RGB)
+    elif btnName == "colours":
+        RGB = app.getListItems("colours")
+        if len(RGB) > 0:
+            RGB = RGB[0]
+            app.setLabelBg("colBox", RGB)
+            app.setEntry("colCode", RGB)
+            loadRGB(RGB)
+    elif btnName == "Clear":
+        app.clearListBox("colours")
+
 
 # function to convert the scale values to an RGB hex code
 def getRGB():
@@ -31,8 +46,26 @@ def getRGB():
 
     return RGB
 
+def loadRGB(RGB):
+    # split the RGB string, then convert to ints
+    R = int(RGB[1:3], 16)
+    G = int(RGB[3:5], 16)
+    B = int(RGB[5:7], 16)
+
+    app.setScale("redScale", R)
+    app.setScale("greScale", G)
+    app.setScale("bluScale", B)
+
 # funciton to update widgets
 def updateRGB(name):
+    # this stops the changes in slider/spin from constantly calling each other
+    global alreadyDone
+    if alreadyDone:
+        alreadyDone = False
+        return
+    else:
+        alreadyDone = True
+
     # split the widget's name into the type & colour
     colour = name[0:3]
     widg = name[3:]
@@ -52,7 +85,7 @@ def updateRGB(name):
     app.setLabelBg("colBox", RGB)
     app.setEntry("colCode", RGB)
 
-app = gui()
+app = gui("RGB COlours")
 app.setBg("#B8DEE2")
 app.setGuiPadding(5,5)
 app.setFont(18)
@@ -60,10 +93,11 @@ app.setFont(18)
 # frame to contain sliders
 app.startLabelFrame("Colour Codes")
 app.setSticky("news")
+app.setPadding(5,5)
 
-app.addLabel("redLab", "Red Color (R):", 0, 0)
-app.addLabel("greLab", "Green Color (G):", 1, 0)
-app.addLabel("bluLab", "Blue Color (B):", 2, 0)
+app.addLabel("redLab", "Red (R):", 0, 0)
+app.addLabel("greLab", "Green (G):", 1, 0)
+app.addLabel("bluLab", "Blue (B):", 2, 0)
 
 app.setLabelAlign("redLab", "left")
 app.setLabelAlign("greLab", "left")
@@ -97,25 +131,26 @@ app.stopLabelFrame()
 
 # frame to hold coloured label
 app.startLabelFrame("Colour Preview")
-
-app.setInPadding(5,5)
+app.setPadding(5,5)
 app.setSticky("news")
-app.addEmptyLabel("colBox", 3, 0, 3)
+app.addEmptyLabel("colBox", colspan=3)
 app.setLabelHeight("colBox", 5)
 app.setLabelWidth("colBox", 25)
 app.setLabelRelief("colBox", "ridge")
-
+app.addHorizontalSeparator(colspan=3)
+app.addLabel("colCodeLab", "HEX Colour Code:", column=0)
+app.addEntry("colCode", row=2, column=1)
+app.addButton("Reset", btnPress, row=2, column=2)
+app.disableEntry("colCode")
 app.stopLabelFrame()
 
-# frame with result & buttons
-app.startLabelFrame("Actions")
-
-app.addLabel("colCodeLab", "HEX colour code:", 0, 0)
-app.addEntry("colCode", 0, 1)
-app.disableEntry("colCode")
+app.startLabelFrame("Colour History")
+app.setPadding(5,5)
 app.setSticky("EW")
-app.addButtons(["Convert", "Reset"], btnPress, 1, 0, 2)
-
+app.addListBox("colours", [])
+app.setListBoxRows("colours", 4)
+app.setListBoxFunction("colours", btnPress)
+app.addButtons(["Log", "Clear"], btnPress)
 app.stopLabelFrame()
 
 app.go()
