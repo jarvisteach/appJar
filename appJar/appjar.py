@@ -10,7 +10,7 @@ from __future__ import print_function
 try:
     # for Python2
     from Tkinter import *
-    import tkMessageBox as messagebox
+    import tkMessageBox as MessageBox
     from tkColorChooser import askcolor
     import tkFileDialog as filedialog
     import ScrolledText as scrolledtext
@@ -20,7 +20,7 @@ try:
 except ImportError:
     # for Python3
     from tkinter import *
-    from tkinter import messagebox
+    from tkinter import messagebox as MessageBox
     from tkinter.colorchooser import askcolor
     from tkinter import filedialog
     from tkinter import scrolledtext
@@ -383,6 +383,7 @@ class gui(object):
         "DEMISEMIQUAVER": 32,
         "HEMIDEMISEMIQUAVER": 16}
 
+
 #####################################
 # CONSTRUCTOR - creates the GUI
 #####################################
@@ -429,6 +430,11 @@ class gui(object):
         # temporarily hide it
         self.topLevel.withdraw()
         self.locationSet = False
+
+        # used to keep a handle on the last pop-up dialog
+        # allows the dialog to be closed remotely
+        # mainly for test-automation
+        self.topLevel.POP_UP = None
 
         # create a frame to store all the widgets
         self.appWindow = Frame(self.topLevel)
@@ -6177,36 +6183,40 @@ class gui(object):
 #####################################
 # FUNCTIONS to show pop-up dialogs
 #####################################
+    # function to access the last made pop_up
+    def getPopUp(self):
+        return self.topLevel.POP_UP
+
     def infoBox(self, title, message):
         self.topLevel.update_idletasks()
-        messagebox.showinfo(title, message)
+        MessageBox.showinfo(title, message)
         self.__bringToFront()
 
     def errorBox(self, title, message):
         self.topLevel.update_idletasks()
-        messagebox.showerror(title, message)
+        MessageBox.showerror(title, message)
         self.__bringToFront()
 
     def warningBox(self, title, message):
         self.topLevel.update_idletasks()
-        messagebox.showwarning(title, message)
+        MessageBox.showwarning(title, message)
         self.__bringToFront()
 
     def yesNoBox(self, title, message):
         self.topLevel.update_idletasks()
-        return messagebox.askyesno(title, message)
+        return MessageBox.askyesno(title, message)
 
     def questionBox(self, title, message):
         self.topLevel.update_idletasks()
-        return messagebox.askquestion(title, message)
+        return MessageBox.askquestion(title, message)
 
     def okBox(self, title, message):
         self.topLevel.update_idletasks()
-        return messagebox.askokcancel(title, message)
+        return MessageBox.askokcancel(title, message)
 
     def retryBox(self, title, message):
         self.topLevel.update_idletasks()
-        return messagebox.askretrycancel(title, message)
+        return MessageBox.askretrycancel(title, message)
 
     def openBox(
             self,
@@ -8200,12 +8210,12 @@ class ScrollPane(Frame):
 #################################
 # the main dialog class to be extended
 
-
 class Dialog(Toplevel):
 
     def __init__(self, parent, title=None):
         Toplevel.__init__(self, parent)
         self.transient(parent)
+        parent.POP_UP = self
 
         if title:
             self.title(title)

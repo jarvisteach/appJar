@@ -1303,6 +1303,26 @@ def test_containers():
     print(" >> not implemented...")
     #print("\t >> all tests complete")
 
+def closePop():
+    POP_UP = app.getPopUp()
+    print("closing:", app.getPopUp())
+    if POP_UP is not None: POP_UP.cancel()
+
+
+def test_pop_ups():
+    print("\tTesting popups")
+    print("Registering event:")
+    app.topLevel.after(500, closePop)
+    a = app.textBox("a", "a") 
+    assert a is None
+    print("Registering event:")
+    app.topLevel.after(500, closePop)
+    a = app.numberBox("a", "a")
+    assert a is None
+
+    print(" >> not implemented...")
+    #print("\t >> all tests complete")
+
 
 print("<<<Starting Widget Test Suite>>>")
 test_gui_options()
@@ -1356,6 +1376,8 @@ doStop = 0
 def test_gui(btn=None):
     print("Testing GUI")
     global doStop
+    if doStop == 0:
+        test_pop_ups()
     if doStop == 2:
         test_sets()
         test_langs()
