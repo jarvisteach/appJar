@@ -1363,4 +1363,3 @@ app2.setGeometry("fullscreen")
 app2.go()
 
 print("<<<Widget Test Suite Complete>>>")
-
