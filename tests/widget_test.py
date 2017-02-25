@@ -1180,7 +1180,7 @@ def test_containers():
     app.addLabel("tbf2_l1", TEXT_ONE)
     app.stopTab()
     app.startTab("tab3")
-    app.addLabel("tbf3_l1", TEXT_ONE)
+    # empty tab
     app.stopTab()
     app.stopTabbedFrame()
 

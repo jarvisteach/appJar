@@ -24,7 +24,6 @@ app.addButton("addLabel", add)
 app.stopPage()
 
 app.startPage()
-app.addLabel("l21", "Label 2")
 app.stopPage()
 
 app.startPage()

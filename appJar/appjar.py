@@ -2330,11 +2330,12 @@ class gui(object):
     def __removeContainer(self):
         if len(self.containerStack) == 1:
             raise Exception("Can't remove container, already in root window.")
-        elif not self.containerStack[-1]['widgets']:
-            raise Exception(
-                "Put something in the container, before removing it.")
         else:
             container = self.containerStack.pop()
+            if not container['widgets']:
+                self.warn("Closing empty container: " + container['title'])
+#                raise Exception("Put something in the container, before removing it.")
+
             # store the container so that it can be re-opened later
             name = container["type"] + "__" + container["title"]
             self.n_usedContainers[name] = container
