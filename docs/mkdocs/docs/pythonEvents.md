@@ -53,6 +53,13 @@ app.go()
     The second function will be called when the mouse is released.  
     The same rules for passing functions apply as above.  
 
+### Registering Other Event Types  
+
+It's possible to register any ot the standard event types with appJar widgets  
+```python
+app.getEntryWidget("widget_name").bind("<FocusOut>", function_name, add="+")
+```
+
 ##Binding Keys
 As well as chaning widgets, we sometimes want keys to trigger events.  
 
