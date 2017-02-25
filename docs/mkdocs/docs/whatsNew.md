@@ -7,7 +7,7 @@
 * Images now support [raw image data](/pythonImages/#add-images).  
 * Setters now call any registered functions  
 * Rewrite of [Meters](/pythonWidgets/#meter), proper inheritance, all use gradated fill, Dual/Split Meter swapped ([#65](https://github.com/jarvisteach/appJar/issues/65)).  
-* Rewrite of [ScrollPane](/pythonWidgetGrouping/#scroll-pane), mult-platform scrolling...
+* Rewrite of [ScrollPane](/pythonWidgetGrouping/#scroll-pane), multi-platform scrolling...
 * Added functions to [change the bg/fg](/pythonWidgets/#listbox) of ListBox items ([#97](https://github.com/jarvisteach/appJar/issues/97)).  
 * Issues Resolved:  
     * [#97](https://github.com/jarvisteach/appJar/issues/97) - ability to set bg/fg colour of list items
