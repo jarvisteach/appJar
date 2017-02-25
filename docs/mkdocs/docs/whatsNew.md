@@ -10,6 +10,7 @@
 * Rewrite of [ScrollPane](/pythonWidgetGrouping/#scroll-pane), multi-platform scrolling...
 * Added functions to [change the bg/fg](/pythonWidgets/#listbox) of ListBox items ([#97](https://github.com/jarvisteach/appJar/issues/97)).  
 * Issues Resolved:  
+    * [#99](https://github.com/jarvisteach/appJar/issues/99) - ability to create empty containers  
     * [#97](https://github.com/jarvisteach/appJar/issues/97) - ability to set bg/fg colour of list items
     * [#90](https://github.com/jarvisteach/appJar/issues/90) - raw image data  
     * [#89](https://github.com/jarvisteach/appJar/issues/89) - minimum speed for animated image  
