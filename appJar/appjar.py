@@ -503,7 +503,7 @@ class gui(object):
         # image
         container.config(padx=2, pady=2, background=self.topLevel.cget("bg"))
         container.pack(fill=BOTH, expand=True)
-        self.__addContainer(self.C_ROOT, container, 0, 1)
+        self.__addContainer("root", self.C_ROOT, container, 0, 1)
 
         # set up the main container to be able to host an image
         self.__configBg(container)
@@ -588,6 +588,9 @@ class gui(object):
         self.n_flashLabs = []
         self.n_pieCharts = {}
         self.n_separators = []
+
+        # completed containers - in case we want to open them again
+        self.n_usedContainers = {}
 
         # variables associated with widgets
         self.n_entryVars = {}
@@ -2247,8 +2250,9 @@ class gui(object):
 #####################################
     # adds the container to the container stack - makes this the current
     # working container
-    def __addContainer(self, cType, container, row, col, sticky=None):
+    def __addContainer(self, cTitle, cType, container, row, col, sticky=None):
         containerData = {'type': cType,
+                    'title': cTitle,
                     'container': container,
                     'emptyRow': row,
                     'colCount': col,
@@ -2278,13 +2282,13 @@ class gui(object):
         self.__openContainer(self.C_PAGEDWINDOW, title)
 
     def openPage(self, windowTitle, pageNumber):
-        self.__openContainer(self.C_PAGE, windowTitle, pageNumber)
+        self.__openContainer(self.C_PAGE, windowTitle+"__"+str(pageNumber))
 
     def openTabbedFrame(self, title):
         self.__openContainer(self.C_TABBEDFRAME, title)
 
     def openTab(self, frameTitle, tabTitle):
-        self.__openContainer(self.C_TAB, frameTitle, tabTitle)
+        self.__openContainer(self.C_TAB, frameTitle+"__"+tabTitle)
 
     def openPanedFrame(self, title):
         self.__openContainer(self.C_PANEDFRAME, title)
@@ -2299,25 +2303,16 @@ class gui(object):
         self.__openContainer(self.C_SCROLLPANE, title)
 
     # function to reload the specified container
-    def __openContainer(self, kind, title, child=None):
+    def __openContainer(self, kind, title):
 
-        if kind in [ self.C_PAGE, self.C_TAB ] and child is None: 
-            raise Exception("For " + kind + " you must also specify a child window")
-            
-        # now, add to top of stack
-        widgs = self.__getItems(kind)
-
+        # get the cached container config for this container
+        cName = kind + "__" + title
         try:
-            widg = widgs[title]
+            cConf = self.n_usedContainers[cName]
         except KeyError:
             raise Exception("Attempted to open invalid " + kind + ": " + str(title))
 
-        if kind == self.C_PAGE: 
-            widg = widg.getPage(child)
-        elif kind == self.C_TAB: 
-            widg = widg.getTab(child)
-            
-        self.__addContainer(kind, widg, 0, 1)
+        self.containerStack.append(cConf)
 
     # returns the current working container
     def __getContainer(self):
@@ -2339,7 +2334,11 @@ class gui(object):
             raise Exception(
                 "Put something in the container, before removing it.")
         else:
-            return self.containerStack.pop()
+            container = self.containerStack.pop()
+            # store the container so that it can be re-opened later
+            name = container["type"] + "__" + container["title"]
+            self.n_usedContainers[name] = container
+            return container
 
     # functions to start the various containers
     def startContainer(
@@ -2368,7 +2367,7 @@ class gui(object):
             self.n_labelFrames[title] = container
 
             # now, add to top of stack
-            self.__addContainer(self.C_LABELFRAME, container, 0, 1, sticky)
+            self.__addContainer(title, self.C_LABELFRAME, container, 0, 1, sticky)
         elif fType == self.C_FRAME:
             # first, make a Frame, and position it correctly
             self.__verifyItem(self.n_ajFrame, title, True)
@@ -2381,7 +2380,7 @@ class gui(object):
             self.n_ajFrame[title] = container
 
             # now, add to top of stack
-            self.__addContainer(self.C_FRAME, container, 0, 1, sticky)
+            self.__addContainer(title, self.C_FRAME, container, 0, 1, sticky)
         elif fType == self.C_TABBEDFRAME:
             self.__verifyItem(self.n_tabbedFrames, title, True)
             tabbedFrame = TabbedFrame(
@@ -2397,11 +2396,12 @@ class gui(object):
             self.n_tabbedFrames[title] = tabbedFrame
 
             # now, add to top of stack
-            self.__addContainer(self.C_TABBEDFRAME, tabbedFrame, 0, 1, sticky)
+            self.__addContainer(title, self.C_TABBEDFRAME, tabbedFrame, 0, 1, sticky)
         elif fType == self.C_TAB:
             # add to top of stack
             self.containerStack[-1]['widgets'] = True
-            self.__addContainer(
+            tabTitle = self.containerStack[-1]['title'] + "__" + title
+            self.__addContainer(tabTitle, 
                 self.C_TAB, self.containerStack[-1]['container'].addTab(title), 0, 1, sticky)
         elif fType == self.C_PANEDFRAME:
             # if we previously put a frame for widgets
@@ -2423,7 +2423,7 @@ class gui(object):
             self.n_panedFrames[title] = pane
 
             # now, add to top of stack
-            self.__addContainer(self.C_PANEDFRAME, pane, 0, 1, sticky)
+            self.__addContainer(title, self.C_PANEDFRAME, pane, 0, 1, sticky)
 
             # now, add a frame to the pane
             self.startContainer(self.C_PANE, title)
@@ -2436,7 +2436,7 @@ class gui(object):
             self.n_panes[title] = pane
 
             # now, add to top of stack
-            self.__addContainer(self.C_PANE, pane, 0, 1, sticky)
+            self.__addContainer(title, self.C_PANE, pane, 0, 1, sticky)
         elif fType == self.C_SCROLLPANE:
             scrollPane = ScrollPane(
                 self.containerStack[-1]['container'], bg=self.__getContainerBg(), width=100, height=100)
@@ -2452,7 +2452,7 @@ class gui(object):
             self.n_scrollPanes[title] = scrollPane
 
             # now, add to top of stack
-            self.__addContainer(self.C_SCROLLPANE, scrollPane, 0, 1, sticky)
+            self.__addContainer(title, self.C_SCROLLPANE, scrollPane, 0, 1, sticky)
         elif fType == self.C_TOGGLEFRAME:
             toggleFrame = ToggleFrame(
                 self.containerStack[-1]['container'], title=title, bg=self.__getContainerBg())
@@ -2465,7 +2465,7 @@ class gui(object):
                 colspan,
                 rowspan,
                 sticky=sticky)
-            self.__addContainer(self.C_TOGGLEFRAME, toggleFrame, 0, 1, "nw")
+            self.__addContainer(title, self.C_TOGGLEFRAME, toggleFrame, 0, 1, "nw")
             self.n_toggleFrames[title] = toggleFrame
         elif fType == self.C_PAGEDWINDOW:
             # create the paged window
@@ -2490,12 +2490,12 @@ class gui(object):
                 colspan,
                 rowspan,
                 sticky=sticky)
-            self.__addContainer(self.C_PAGEDWINDOW, pagedWindow, 0, 1, "nw")
+            self.__addContainer(title, self.C_PAGEDWINDOW, pagedWindow, 0, 1, "nw")
             self.n_pagedWindows[title] = pagedWindow
         elif fType == self.C_PAGE:
             page = self.containerStack[-1]['container'].addPage()
             page.isContainer = True
-            self.__addContainer(self.C_PAGE, page, 0, 1, sticky)
+            self.__addContainer(title, self.C_PAGE, page, 0, 1, sticky)
             self.containerStack[-1]['expand'] = "None"
         else:
             raise Exception("Unknown container: " + fType)
@@ -2761,9 +2761,14 @@ class gui(object):
                             self.containerStack[-1]['type'])
 
         self.containerStack[-1]['widgets'] = True
+
+        # generate a page title
+        pageNum = len(self.containerStack[-1]['container'].frames) + 1
+        pageTitle = self.containerStack[-1]['title'] + "__" + str(pageNum)
+
         self.startContainer(
             self.C_PAGE,
-            None,
+            pageTitle,
             row,
             column,
             colspan,
@@ -2890,7 +2895,7 @@ class gui(object):
         self.n_subWindows[name] = top
 
         # now, add to top of stack
-        self.__addContainer(self.C_SUBWINDOW, top, 0, 1, "")
+        self.__addContainer(name, self.C_SUBWINDOW, top, 0, 1, "")
 
     def stopSubWindow(self):
         if self.containerStack[-1]['type'] == self.C_SUBWINDOW:

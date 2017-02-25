@@ -1,4 +1,14 @@
+import sys
+sys.path.append("../")
 from appJar import gui
+
+lid = 0
+def add(btn):
+    global lid
+    app.openPage("Main Title", app.getSpinBox("spin"))
+    app.addLabel(str(lid), str(lid))
+    lid +=1
+    app.stopPage()
 
 app=gui()
 
@@ -9,6 +19,8 @@ app.startPagedWindow("Main Title")
 
 app.startPage()
 app.addLabel("l13", "Label 1")
+app.addSpinBoxRange("spin", 1, 5)
+app.addButton("addLabel", add)
 app.stopPage()
 
 app.startPage()
