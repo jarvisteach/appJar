@@ -60,7 +60,7 @@ before_install:
     - pip install coveralls
     - pip install codeclimate-test-reporter
     - pip install numpy
-    - pip install matplotlib
+    - if [[ "$TRAVIS_PYTHON_VERSION" != 3.3 ]]; then pip install matplotlib ; fi
     - if [[ "$TRAVIS_OS_NAME" != "osx" ]]; then sudo apt-get install python-tk; fi
     - if [[ "$TRAVIS_OS_NAME" != "osx" ]]; then sudo apt-get install python3-tk; fi
 
