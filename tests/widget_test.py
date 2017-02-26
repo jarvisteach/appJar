@@ -1,7 +1,7 @@
 import sys
 import datetime
 sys.path.append("../")
-PY_VER = str(sys.version_info[0]) + str(sys.version_info[1])
+PY_VER = str(sys.version_info[0]) + "." + str(sys.version_info[1])
 
 EMPTY = ""
 
@@ -1310,7 +1310,7 @@ def closePop():
     if POP_UP is not None: POP_UP.cancel()
 
 def test_plots():
-    print("\tTesting plots")
+    print("\tTesting plots:", PY_VER)
     if PY_VER == "3.3":
         print("cancelling - plots not supported")
     else:
