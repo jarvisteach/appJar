@@ -1308,6 +1308,18 @@ def closePop():
     print("closing:", app.getPopUp())
     if POP_UP is not None: POP_UP.cancel()
 
+def test_plots():
+    print("\tTesting plots")
+    print("Registering event:")
+    x = [1,2,3,4,5]
+    y = [2,4,6,8,10]
+    axes = app.addPlot("p1", x, y)
+    axes.legend(["key data"])
+    app.refreshPlot("p1")
+    app.updatePlot("p1", x, y)
+    print(" >> not implemented...")
+    #print("\t >> all tests complete")
+
 
 def test_pop_ups():
     print("\tTesting popups")
@@ -1345,6 +1357,7 @@ test_separators()
 test_links()
 test_grips()
 test_date_pickers()
+test_plots()
 
 test_status()
 test_menus()

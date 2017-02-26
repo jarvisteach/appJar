@@ -59,6 +59,8 @@ before_install:
     - pip install pytest pytest-cov
     - pip install coveralls
     - pip install codeclimate-test-reporter
+    - pip install numpy
+    - pip install matplotlib
     - if [[ "$TRAVIS_OS_NAME" != "osx" ]]; then sudo apt-get install python-tk; fi
 
 

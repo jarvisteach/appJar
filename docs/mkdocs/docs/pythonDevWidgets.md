@@ -120,3 +120,32 @@ It is possible to include buttons at the end of each row, and an additional row 
 * `.addGridRow(title, data)`  
     Add a single row of data to the existing grid.  
     It will be positioned at the bottom of the grid, above the entry boxes if present.  
+
+###MatPlotLib
+---
+
+Support for embedding very basic [MatPlotLib](http://matplotlib.org) plots.  
+
+![Plot](img/1_plot.png)  
+```python
+from numpy import sin, pi, arange
+from appJar import gui
+
+x = arange(0.0, 3.0, 0.01)
+y = sin(2*pi*x)
+
+app = gui()
+axes = app.addPlot("p1", x, y)
+axes.legend(['key data'])
+app.go()
+```
+
+* `.addPlot(title, x, y)`  
+    Create a plot with the specified x and y values.  
+    Returns the plot object, to allow further customisation.  
+
+* `.updatePlot(title, x, y)`  
+    Update the specified plot with the specified x and y values.
+
+* `.refreshPlot(title)`  
+    Redraw the plot, call after changing the axes object...  

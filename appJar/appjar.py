@@ -178,7 +178,7 @@ class gui(object):
     PIECHART = 15
     PROPERTIES = 16
     GRID = 17
-    PLOTS = 18
+    PLOT = 18
 
     RB = 60
     CB = 40
@@ -248,6 +248,7 @@ class gui(object):
         TEXTAREA: "TextArea",
         LINK: "Link",
         METER: "Meter",
+        PLOT: "Plot",
         IMAGE: "Image",
         RADIOBUTTON: "RadioButton",
         CHECKBOX: "CheckBox",
@@ -1388,7 +1389,7 @@ class gui(object):
             return self.n_pieCharts
         elif kind == self.PROPERTIES:
             return self.n_props
-        elif kind == self.PLOTS:
+        elif kind == self.PLOT:
             return self.n_plots
         elif kind == self.GRID:
             return self.n_grids
@@ -3460,13 +3461,15 @@ class gui(object):
         self.n_plots[title] = canvas
         return axes
 
-    def updatePlot(self, title, t, s):
+    def refreshPlot(self, title):
         canvas = self.__verifyItem(self.n_plots, title)
+        canvas.draw()
 
-        axes = canvas.axes
+    def updatePlot(self, title, t, s):
+        axes = self.__verifyItem(self.n_plots, title).axes
         axes.clear()
         axes.plot(t, s)
-#        canvas.draw()
+        self.refreshPlot(title)
 
 
 #####################################
