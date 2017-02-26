@@ -12,6 +12,7 @@
 * Issues Resolved:  
     * [#99](https://github.com/jarvisteach/appJar/issues/99) - ability to create empty containers  
     * [#97](https://github.com/jarvisteach/appJar/issues/97) - ability to set bg/fg colour of list items
+    * [#94](https://github.com/jarvisteach/appJar/issues/94) - basic support for [MatPlotLib](/pythonDevWidgets/#matplotlib)  
     * [#90](https://github.com/jarvisteach/appJar/issues/90) - raw image data  
     * [#89](https://github.com/jarvisteach/appJar/issues/89) - minimum speed for animated image  
     * [#88](https://github.com/jarvisteach/appJar/issues/88) - preload mouse over images  
