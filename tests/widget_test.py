@@ -1,6 +1,7 @@
 import sys
 import datetime
 sys.path.append("../")
+PY_VER = str(sys.version_info[0]) + str(sys.version_info[1])
 
 EMPTY = ""
 
@@ -1310,15 +1311,17 @@ def closePop():
 
 def test_plots():
     print("\tTesting plots")
-    print("Registering event:")
-    x = [1,2,3,4,5]
-    y = [2,4,6,8,10]
-    axes = app.addPlot("p1", x, y)
-    axes.legend(["key data"])
-    app.refreshPlot("p1")
-    app.updatePlot("p1", x, y)
-    print(" >> not implemented...")
-    #print("\t >> all tests complete")
+    if PY_VER == "3.3":
+        print("cancelling - plots not supported")
+    else:
+        x = [1,2,3,4,5]
+        y = [2,4,6,8,10]
+        axes = app.addPlot("p1", x, y)
+        axes.legend(["key data"])
+        app.refreshPlot("p1")
+        app.updatePlot("p1", x, y)
+        print(" >> not implemented...")
+        #print("\t >> all tests complete")
 
 
 def test_pop_ups():
