@@ -62,6 +62,7 @@ before_install:
     - pip install numpy
     - pip install matplotlib
     - if [[ "$TRAVIS_OS_NAME" != "osx" ]]; then sudo apt-get install python-tk; fi
+    - if [[ "$TRAVIS_OS_NAME" != "osx" ]]; then sudo apt-get install python3-tk; fi
 
 
 before_script:
@@ -77,7 +78,6 @@ script:
 after_success:
     - coveralls
     - CODECLIMATE_REPO_TOKEN=3b1c31ab1ba5ee5eb7aaf75efd1245ee00e38a070f7a82fece4b5f7b9ca5f7f7 codeclimate-test-reporter
-
 
 addons:
     code_climate:
