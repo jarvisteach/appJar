@@ -5098,6 +5098,20 @@ class gui(object):
             secret=False,
             words=words)
         self.__positionWidget(ent, row, column, colspan, rowspan)
+        
+    def addLabelAutoEntry(
+            self,
+            title,
+            words,
+            row=None,
+            column=0,
+            colspan=0,
+            rowspan=0,
+            secret=False):
+        frame = self.__getLabelBox(title)
+        ent = self.__buildEntry(title, frame, secret, words=words)
+        self.__packLabelBox(frame, ent)
+        self.__positionWidget(frame, row, column, colspan, rowspan)
 
     def __validateNumericEntry(
             self,
