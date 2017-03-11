@@ -2441,7 +2441,7 @@ class gui(object):
             self.__addContainer(title, self.C_PANE, pane, 0, 1, sticky)
         elif fType == self.C_SCROLLPANE:
             scrollPane = ScrollPane(
-                self.containerStack[-1]['container'], bg=self.__getContainerBg(), width=100, height=100)
+                self.containerStack[-1]['container'], bg=self.__getContainerBg())#, width=100, height=100)
             scrollPane.isContainer = True
 #                self.containerStack[-1]['container'].add(scrollPane)
             self.__positionWidget(
@@ -3963,6 +3963,10 @@ class gui(object):
                 self.n_imageCache[imagePath] = photo
 
         return photo
+
+    def getImageDimensions(self, name):
+        img = self.__verifyItem(self.n_images, name).image
+        return img.width(), img.height()
 
     # force replace the current image, with a new one
     def reloadImage(self, name, imageFile):
@@ -6500,20 +6504,10 @@ class Meter(Frame):
         w_width = widg.winfo_width()
         w_height = widg.winfo_height()
 
-        min_height = min(r_height, w_height)
-        min_width = min(r_width, w_width)
         max_height = max(r_height, w_height)
         max_width = max(r_width, w_width)
 
-        # determine best geom for OS
-        if gui.GET_PLATFORM() in [gui.MAC, gui.LINUX]:
-            b_width = max_width
-            b_height = max_height
-        elif gui.GET_PLATFORM() == gui.WINDOWS:
-            b_width = min_width
-            b_height = min_height
-
-        return (b_width, b_height)
+        return (max_width, max_height)
 
 
 #####################################
