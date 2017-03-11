@@ -77,6 +77,16 @@ def test_entries():
     app.addSecretEntry("se1")
     app.addAutoEntry("ae1", ["a", "b", "c"])
 
+    app.addLabelEntry("le1")
+    app.addLabelNumericEntry("lne1")
+    app.addLabelSecretEntry("lse1")
+    app.addLabelAutoEntry("lae1", ["a", "b", "c"])
+
+    assert app.getEntry("le1") == EMPTY
+    assert app.getEntry("lne1") == 0
+    assert app.getEntry("lse1") == EMPTY
+    assert app.getEntry("lae1") == EMPTY
+
     assert app.getEntry("e1") == EMPTY
     assert app.getEntry("ne1") == 0
     assert app.getEntry("se1") == EMPTY
@@ -87,10 +97,20 @@ def test_entries():
     app.setEntryDefault("se1", TEXT_THREE)
     app.setEntryDefault("ae1", TEXT_FOUR)
 
+    app.setEntryDefault("le1", TEXT_TWO)
+    app.setEntryDefault("lne1", NUM_TWO)
+    app.setEntryDefault("lse1", TEXT_THREE)
+    app.setEntryDefault("lae1", TEXT_FOUR)
+
     assert app.getEntry("e1") == EMPTY
     assert app.getEntry("ne1") == 0
     assert app.getEntry("se1") == EMPTY
     assert app.getEntry("ae1") == EMPTY
+
+    assert app.getEntry("le1") == EMPTY
+    assert app.getEntry("lne1") == 0
+    assert app.getEntry("lse1") == EMPTY
+    assert app.getEntry("lae1") == EMPTY
 
     app.setEntry("ne1", "-")
     assert app.getEntry("ne1") == 0
@@ -103,35 +123,76 @@ def test_entries():
     app.setEntry("ne1", ".")
     assert app.getEntry("ne1") == 0
 
+    app.setEntry("lne1", "-")
+    assert app.getEntry("lne1") == 0
+    app.setEntry("lne1", ".")
+    assert app.getEntry("lne1") == 0
+    app.setEntry("lne1", "0.0")
+    assert app.getEntry("lne1") == 0
+    app.setEntry("lne1", "-0.0")
+    assert app.getEntry("lne1") == 0
+    app.setEntry("lne1", ".")
+    assert app.getEntry("lne1") == 0
+
     app.setEntry("ne1", NUM_ONE)
     app.setEntry("e1", TEXT_ONE)
     app.setEntry("se1", TEXT_ONE)
     app.setEntry("ae1", TEXT_ONE)
+
+    app.setEntry("lne1", NUM_ONE)
+    app.setEntry("le1", TEXT_ONE)
+    app.setEntry("lse1", TEXT_ONE)
+    app.setEntry("lae1", TEXT_ONE)
 
     assert app.getEntry("e1") == TEXT_ONE
     assert app.getEntry("ne1") == float(NUM_ONE)
     assert app.getEntry("se1") == TEXT_ONE
     assert app.getEntry("ae1") == TEXT_ONE
 
+    assert app.getEntry("le1") == TEXT_ONE
+    assert app.getEntry("lne1") == float(NUM_ONE)
+    assert app.getEntry("lse1") == TEXT_ONE
+    assert app.getEntry("lae1") == TEXT_ONE
+
     app.clearEntry("e1")
     app.clearEntry("ne1")
     app.clearEntry("se1")
     app.clearEntry("ae1")
+
+    app.clearEntry("le1")
+    app.clearEntry("lne1")
+    app.clearEntry("lse1")
+    app.clearEntry("lae1")
 
     assert app.getEntry("e1") == EMPTY
     assert app.getEntry("ne1") == 0
     assert app.getEntry("se1") == EMPTY
     assert app.getEntry("ae1") == EMPTY
 
+    assert app.getEntry("le1") == EMPTY
+    assert app.getEntry("lne1") == 0
+    assert app.getEntry("lse1") == EMPTY
+    assert app.getEntry("lae1") == EMPTY
+
     app.setEntry("e1", TEXT_TWO)
     app.setEntry("ne1", NUM_TWO)
     app.setEntry("se1", TEXT_TWO)
     app.setEntry("ae1", TEXT_TWO)
 
+    app.setEntry("le1", TEXT_TWO)
+    app.setEntry("lne1", NUM_TWO)
+    app.setEntry("lse1", TEXT_TWO)
+    app.setEntry("lae1", TEXT_TWO)
+
     assert app.getEntry("e1") == TEXT_TWO
     assert app.getEntry("ne1") == float(NUM_TWO)
     assert app.getEntry("se1") == TEXT_TWO
     assert app.getEntry("ae1") == TEXT_TWO
+
+    assert app.getEntry("le1") == TEXT_TWO
+    assert app.getEntry("lne1") == float(NUM_TWO)
+    assert app.getEntry("lse1") == TEXT_TWO
+    assert app.getEntry("lae1") == TEXT_TWO
 
     app.clearAllEntries()
 
@@ -140,15 +201,30 @@ def test_entries():
     assert app.getEntry("se1") == EMPTY
     assert app.getEntry("ae1") == EMPTY
 
+    assert app.getEntry("le1") == EMPTY
+    assert app.getEntry("lne1") == 0
+    assert app.getEntry("lse1") == EMPTY
+    assert app.getEntry("lae1") == EMPTY
+
     app.setEntry("e1", TEXT_ONE)
     app.setEntry("ne1", NUM_ONE)
     app.setEntry("se1", TEXT_ONE)
     app.setEntry("ae1", TEXT_ONE)
 
+    app.setEntry("le1", TEXT_ONE)
+    app.setEntry("lne1", NUM_ONE)
+    app.setEntry("lse1", TEXT_ONE)
+    app.setEntry("lae1", TEXT_ONE)
+
     assert app.getEntry("e1") == TEXT_ONE
     assert app.getEntry("ne1") == float(NUM_ONE)
     assert app.getEntry("se1") == TEXT_ONE
     assert app.getEntry("ae1") == TEXT_ONE
+
+    assert app.getEntry("le1") == TEXT_ONE
+    assert app.getEntry("lne1") == float(NUM_ONE)
+    assert app.getEntry("lse1") == TEXT_ONE
+    assert app.getEntry("lae1") == TEXT_ONE
 
     # call generic setter functions
     test_setters("Entry", "e1")
@@ -625,6 +701,7 @@ def test_auto_labels():
     app.addLabelEntry("lab_ent")
     app.addLabelNumericEntry("lab_num_ent")
     app.addLabelSecretEntry("lab_sec_ent")
+    app.addLabelAutoEntry("lab_auto_ent", LIST_ONE)
     app.addLabelScale("lab_scale")
     app.addLabelOptionBox("lab_opt_box", LIST_ONE)
     app.addLabelTickOptionBox("lab_tick_box", LIST_ONE)
@@ -956,7 +1033,7 @@ def test_menus():
 def test_toolbars():
     print("\tTesting Toolbar")
 
-    app.addToolbar(["a", "b", "c"],tester_function) 
+    app.addToolbar(["a", "b", "c"],tester_function)
 
     app.setToolbarEnabled()
     app.setToolbarDisabled()
@@ -1328,7 +1405,7 @@ def test_pop_ups():
     print("\tTesting popups")
     print("Registering event:")
     app.topLevel.after(500, closePop)
-    a = app.textBox("a", "a") 
+    a = app.textBox("a", "a")
     assert a is None
     print("Registering event:")
     app.topLevel.after(500, closePop)

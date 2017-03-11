@@ -719,7 +719,7 @@ class gui(object):
                 for k in widgets.keys():
                     ent = widgets[k]
                     self.updateDefaultText(k, texts.get(k, ent.DEFAULT_TEXT))
-                    self.debug("\t\t" + k + "=" + ent.default)
+                    self.debug("\t\t" + k + "=" + str(ent.default))
             elif kind in [self.LABEL, self.BUTTON, self.CHECKBOX, self.MESSAGE, self.LINK]:
                 # relabel each widget
                 for k in widgets.keys():
@@ -5102,6 +5102,20 @@ class gui(object):
             secret=False,
             words=words)
         self.__positionWidget(ent, row, column, colspan, rowspan)
+        
+    def addLabelAutoEntry(
+            self,
+            title,
+            words,
+            row=None,
+            column=0,
+            colspan=0,
+            rowspan=0,
+            secret=False):
+        frame = self.__getLabelBox(title)
+        ent = self.__buildEntry(title, frame, secret, words=words)
+        self.__packLabelBox(frame, ent)
+        self.__positionWidget(frame, row, column, colspan, rowspan)
 
     def __validateNumericEntry(
             self,
