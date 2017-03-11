@@ -701,7 +701,7 @@ def test_auto_labels():
     app.addLabelEntry("lab_ent")
     app.addLabelNumericEntry("lab_num_ent")
     app.addLabelSecretEntry("lab_sec_ent")
-    app.addLabelAutoEntry("lab_auto_ent")
+    app.addLabelAutoEntry("lab_auto_ent", LIST_ONE)
     app.addLabelScale("lab_scale")
     app.addLabelOptionBox("lab_opt_box", LIST_ONE)
     app.addLabelTickOptionBox("lab_tick_box", LIST_ONE)
