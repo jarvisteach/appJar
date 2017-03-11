@@ -11,9 +11,14 @@ We also, sometimes, want events to happen repeatedly...
 To make something happen you have to set a function for a widget:  
 
 * `.set XXX Function(title, function, key=None)`  
-    This binds a function to the named widget.  
-    The function will be called every time an interactive-widget changes.  
-    The function will be called when some widgets are clicked.  
+
+    This binds a function to the named widget:  
+
+    * For Scales, OptionBoxes, SpinBoxes, ListBoxes, RadioButtons & CheckButtons the function will be called each time the widget is changed.  
+    * For Entries it binds a function to the ```<Return>``` key, allowing the Entry to be *submitted*.  
+    * For Buttons it binds a function to the ```<Return>``` key.  
+    * For Labels & Images it binds a function to the ```<Left-Mouse-Button>```, making the widget clickable.  
+    * For other widgets, it will set the *command* property for the underlying tkinter widget.  
 
 ```python
 from appJar import gui
@@ -53,16 +58,22 @@ app.go()
     The second function will be called when the mouse is released.  
     The same rules for passing functions apply as above.  
 
-##Binding Keys
-As well as chaning widgets, we sometimes want keys to trigger events.  
+### Registering Other Event Types  
 
-The classic example is the <Enter> key, we often want to be able to hit the <Enter> key to submit a form...
+It's possible to register any ot the standard event types with appJar widgets  
+```python
+app.getEntryWidget("widget_name").bind("<FocusOut>", function_name, add="+")
+```
+
+##Binding Keys
+As well as changing widgets, we sometimes want keys to trigger events.  
+The classic example is the ```<Return>``` key, we often want to be able to hit the ```<Return>``` key to submit a form...
 
 * `.enableEnter(function)`  
-Link a function to the `<Enter>` key
+Link a function to the ```<Return>``` key
 
 * `.disableEnter()`  
-Unlink a function form the `<Enter>`  key
+Unlink a function form the ```<Return>```  key
 
 You may also want to bind other keys to events.  
 

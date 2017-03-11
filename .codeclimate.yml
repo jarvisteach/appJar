@@ -20,3 +20,4 @@ ratings:
 
 exclude_paths:
 - "docs/"
+- "examples/"

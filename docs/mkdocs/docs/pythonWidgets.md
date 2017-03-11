@@ -292,7 +292,7 @@ app.go()
 ##OptionBox
 ____
 Creates a simple drop-down box.  
-It is only possible to select one option form this drop-down.  
+It is only possible to select one option from this drop-down.  
 Pass in a list of values to show in the drop-down box.  
 They will be added in the same order, with the first item shown.  
 If the first item is empty, a simple title `- options -` will be created.  
@@ -433,7 +433,7 @@ app.go()
     Replace the contents of the specified ListBox with the new values.  
 
 * `.removeListItem(title, item)`  
-    Remove the specified item from teh specified ListBox.  
+    Remove the specified item from the  specified ListBox.  
 
 ```python
 from appJar import gui
@@ -460,6 +460,13 @@ app.go()
 
 * `.selectListItem(title, item)`  
     Selects the specified item in the specified ListBox.  
+
+* `.setListItemBg(title, item, colour)` & `.setListItemFg(title, item, colour)`  
+    `.setListItemAtPosBg(title, item, colour)` & `.setListItemAtPosFg(title, item, colour)`  
+    Sets the background or foreground colours the specified ListBox item.  
+    Can either specify a named item (will update all with that name) or the position of an item.  
+
+![LB Colours](img/lbCols.png)  
 
 ####Get ListBoxes
 * `.getListItems(title)`  
@@ -497,6 +504,7 @@ app.go()
 
 * `.showScaleIntervals(title, intervals)`  
     Configures the Scale to show interval labels along its length.  
+    ![Scale](img/4_scale.png)  
 
 * `.showScaleValue(title, show=True)`  
     Configures the Scale to show the currently selected value.  
@@ -585,38 +593,65 @@ app.go()
 
 ##Meter  
 ____
-Shows a simple progress meter  
+Various styles of progress meter:  
 
-![Meter](img/1_meter.png)  
+* #### Meter  
+
+    ![Meter](img/1_meter.png)  
+    A simple meter for showing progress from 0% to 100%.  
+
+* #### SplitMeter  
+
+    ![Meter](img/2_meter.png)  
+    A possesion style meter, showing percentages on either side.  
+
+* #### DualMeter  
+
+    ![Meter](img/3_meter.png)  
+    Two separate meters, expanding out from the middle.  
 
 ```python
 from appJar import gui
 
 app=gui()
-app.setGeometry("200x50")
-app.setFont(20)
 app.addMeter("progress")
+app.setMeterFill("progress", "blue")
 app.go()
 ```
 
 ####Add Meters
-* `addMeter(name)`  
-    Adds a meter with the specified name.  
+* `addMeter(name)` & `.addSplitMeter(name)` &  `.addDualMeter(name)`  
+    Adds a meter with the specified name, of the specified type..  
 ####Set Meters
 * `setMeter(name, value, text=None)`  
-    Changes the specified meter to the specified value, between 0 and 100, with the optional text.  
-    ![Meter](img/2_meter.png)  
+    Changes the specified meter to the specified value.  
+    For `Meter` & `SplitMeter`should be a value between 0 and 100.  
+    For `DualMeter` should be a list of two values, each between 0 and 100.  
 
 * `setMeterFill(name, colour)`  
     Changes the fill colour of the specified meter.  
-    ![Meter](img/3_meter.png)  
+    For `SplitMeter` & `DualMeter`should be a list of two colours.  
 
 ####Get Meters
 * `getMeter(name)`  
     Gets the value of the specified meter.  
     As meters convert their data to a value between 0 and 1, this will return a list of two values: `(0.45, '45 %')`  
 
+####Background Processing  
+Meters are designed to show progress over time.  
+One common solution is to register a function that is constantly updating a meter.  
+This should then be monitoring/updating a global variable:  
+
+```python
+def updateMeter():
+    app.setMeter("progress", percentComplete)
+
+# schedue function to be called regularly
+app.registerEvent(updateMeter)
+```
+
 ##Properties
+____
 A compound widget that shows multiple CheckButtons linked to a dictionary.  
 Note, dictionaries have no order, so when added as a dictionary, the items will be automatically sorted.  
 

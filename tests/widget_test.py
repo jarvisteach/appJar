@@ -1,6 +1,7 @@
 import sys
 import datetime
 sys.path.append("../")
+PY_VER = str(sys.version_info[0]) + "." + str(sys.version_info[1])
 
 EMPTY = ""
 
@@ -326,6 +327,9 @@ def test_lists():
     app.addListBox("l2", LIST_TWO)
     app.setListBoxFunction("l1", tester_function)
 
+    app.setListItemBg("l1", LIST_ONE[1], "red")
+    app.setListItemFg("l1", LIST_ONE[1], "green")
+
     assert app.getListItems("l1") == []
     assert app.getListItems("l2") == []
 
@@ -524,7 +528,7 @@ def test_meters():
     app.addDualMeter("dum")
 
     app.setMeter("spm", 50)
-    app.setMeter("dum", 50)
+    app.setMeter("dum", [50, 10])
 
     app.setMeterFill("spm", ["red", "green"])
     app.setMeterFill("dum", ["red", "pink"])
@@ -651,7 +655,9 @@ def test_date_pickers():
     app.setDatePickerRange("d2", 1980, 2020)
     app.setDatePickerRange("d3", 2020, 2040)
 
-    assert app.getDatePicker("d1") == datetime.date(1940, datetime.date.today().month, datetime.date.today().day)
+    assert app.getDatePicker("d1") == datetime.date(1940,
+                                        datetime.date.today().month,
+                                        datetime.date.today().day)
     assert app.getDatePicker("d2") == datetime.date(1980, 5, 5)
     assert app.getDatePicker("d3") == datetime.date(2020, 10, 10)
 
@@ -1023,8 +1029,11 @@ def test_messages():
 def test_sounds():
     print("\tTesting sounds")
 # only support windows
-#    app.soundError()
-#    app.soundWarning()
+    try:
+        app.soundError()
+        app.soundWarning()
+    except:
+        print("Sound not supported on this platform")
     print(" >> not implemented...")
     #print("\t >> all tests complete")
 
@@ -1142,6 +1151,10 @@ def test_containers():
     app.addLabel("lf1_l1", TEXT_ONE)
     app.stopLabelFrame()
 
+    app.openLabelFrame("lf1")
+    app.addLabel("lf1_l2", TEXT_ONE)
+    app.stopLabelFrame()
+
     app.startToggleFrame("tf1")
     app.addLabel("tf1_l1", TEXT_ONE)
     app.stopToggleFrame()
@@ -1152,6 +1165,10 @@ def test_containers():
     assert app.getToggleFrameState("tf1") is True
     app.toggleToggleFrame("tf1")
     assert app.getToggleFrameState("tf1") is False
+
+    app.openToggleFrame("tf1")
+    app.addLabel("tf1_l2", TEXT_ONE)
+    app.stopToggleFrame()
 
     app.disableToggleFrame("tf1")
     app.enableToggleFrame("tf1")
@@ -1164,13 +1181,26 @@ def test_containers():
     app.addLabel("tbf2_l1", TEXT_ONE)
     app.stopTab()
     app.startTab("tab3")
-    app.addLabel("tbf3_l1", TEXT_ONE)
+    # empty tab
     app.stopTab()
     app.stopTabbedFrame()
 
     assert app.getTabbedFrameSelectedTab("tbf1") == "tab1"
     app.setTabbedFrameSelectedTab("tbf1", "tab2")
     assert app.getTabbedFrameSelectedTab("tbf1") == "tab2"
+
+    app.openTabbedFrame("tbf1")
+    app.startTab("tab4")
+    app.addLabel("tbf4_l1", TEXT_ONE)
+    app.stopTab()
+    app.stopTabbedFrame()
+
+    app.setTabbedFrameInactiveFg("tbf1", "red")
+    app.setTabbedFrameInactiveBg("tbf1", "red")
+
+    app.openTab("tbf1", "tab4")
+    app.addLabel("tbf4_l2", TEXT_ONE)
+    app.stopTab()
 
     app.setTabbedFrameDisabledTab("tbf1", "tab3")
     app.setTabbedFrameDisableAllTabs("tbf1")
@@ -1217,9 +1247,23 @@ def test_containers():
     app.showPagedWindowTitle("pg1", False)
     app.showPagedWindowTitle("pg1", True)
 
+    app.openPagedWindow("pg1")
+    app.startPage()
+    app.addLabel("pg4_l1", TEXT_ONE)
+    app.stopPage()
+    app.stopPagedWindow()
+
+    app.openPage("pg1", 2)
+    app.addLabel("pg2_np", TEXT_ONE)
+    app.stopPage()
+
 # breaks under python2.7
     app.startSubWindow("sb1")
     app.addLabel("sb1_l", TEXT_ONE)
+    app.stopSubWindow()
+
+    app.openSubWindow("sb1")
+    app.addLabel("sb1_l2", TEXT_ONE)
     app.stopSubWindow()
 
     app.setSubWindowLocation("sb1", 50,50)
@@ -1260,6 +1304,40 @@ def test_containers():
     print(" >> not implemented...")
     #print("\t >> all tests complete")
 
+def closePop():
+    POP_UP = app.getPopUp()
+    print("closing:", app.getPopUp())
+    if POP_UP is not None: POP_UP.cancel()
+
+def test_plots():
+    print("\tTesting plots:", PY_VER)
+    if PY_VER == "3.3":
+        print("cancelling - plots not supported")
+    else:
+        x = [1,2,3,4,5]
+        y = [2,4,6,8,10]
+        axes = app.addPlot("p1", x, y)
+        axes.legend(["key data"])
+        app.refreshPlot("p1")
+        app.updatePlot("p1", x, y)
+        print(" >> not implemented...")
+        #print("\t >> all tests complete")
+
+
+def test_pop_ups():
+    print("\tTesting popups")
+    print("Registering event:")
+    app.topLevel.after(500, closePop)
+    a = app.textBox("a", "a") 
+    assert a is None
+    print("Registering event:")
+    app.topLevel.after(500, closePop)
+    a = app.numberBox("a", "a")
+    assert a is None
+
+    print(" >> not implemented...")
+    #print("\t >> all tests complete")
+
 
 print("<<<Starting Widget Test Suite>>>")
 test_gui_options()
@@ -1282,6 +1360,7 @@ test_separators()
 test_links()
 test_grips()
 test_date_pickers()
+test_plots()
 
 test_status()
 test_menus()
@@ -1313,6 +1392,8 @@ doStop = 0
 def test_gui(btn=None):
     print("Testing GUI")
     global doStop
+    if doStop == 0:
+        test_pop_ups()
     if doStop == 2:
         test_sets()
         test_langs()
@@ -1323,7 +1404,7 @@ def test_gui(btn=None):
         try:
             app.removeAllWidgets()
         except:
-# test_gui is sitll in evne tloop for second GUI - causes this to be called - but no app...
+# test_gui is sitll in event loop for second GUI - causes this to be called - but no app...
             print("weird error")
         doStop += 1
     elif doStop < 5:

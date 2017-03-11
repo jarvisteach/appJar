@@ -10,7 +10,7 @@ from __future__ import print_function
 try:
     # for Python2
     from Tkinter import *
-    import tkMessageBox as messagebox
+    import tkMessageBox as MessageBox
     from tkColorChooser import askcolor
     import tkFileDialog as filedialog
     import ScrolledText as scrolledtext
@@ -20,7 +20,7 @@ try:
 except ImportError:
     # for Python3
     from tkinter import *
-    from tkinter import messagebox
+    from tkinter import messagebox as MessageBox
     from tkinter.colorchooser import askcolor
     from tkinter import filedialog
     from tkinter import scrolledtext
@@ -178,6 +178,7 @@ class gui(object):
     PIECHART = 15
     PROPERTIES = 16
     GRID = 17
+    PLOT = 18
 
     RB = 60
     CB = 40
@@ -247,6 +248,7 @@ class gui(object):
         TEXTAREA: "TextArea",
         LINK: "Link",
         METER: "Meter",
+        PLOT: "Plot",
         IMAGE: "Image",
         RADIOBUTTON: "RadioButton",
         CHECKBOX: "CheckBox",
@@ -382,6 +384,7 @@ class gui(object):
         "DEMISEMIQUAVER": 32,
         "HEMIDEMISEMIQUAVER": 16}
 
+
 #####################################
 # CONSTRUCTOR - creates the GUI
 #####################################
@@ -428,6 +431,11 @@ class gui(object):
         # temporarily hide it
         self.topLevel.withdraw()
         self.locationSet = False
+
+        # used to keep a handle on the last pop-up dialog
+        # allows the dialog to be closed remotely
+        # mainly for test-automation
+        self.topLevel.POP_UP = None
 
         # create a frame to store all the widgets
         self.appWindow = Frame(self.topLevel)
@@ -496,7 +504,7 @@ class gui(object):
         # image
         container.config(padx=2, pady=2, background=self.topLevel.cget("bg"))
         container.pack(fill=BOTH, expand=True)
-        self.__addContainer(self.C_ROOT, container, 0, 1)
+        self.__addContainer("root", self.C_ROOT, container, 0, 1)
 
         # set up the main container to be able to host an image
         self.__configBg(container)
@@ -562,6 +570,7 @@ class gui(object):
         self.n_tbButts = {}
         self.n_spins = {}
         self.n_props = {}
+        self.n_plots = {}
         self.n_options = {}
         self.n_frameLabs = {}
         self.n_textAreas = {}
@@ -580,6 +589,9 @@ class gui(object):
         self.n_flashLabs = []
         self.n_pieCharts = {}
         self.n_separators = []
+
+        # completed containers - in case we want to open them again
+        self.n_usedContainers = {}
 
         # variables associated with widgets
         self.n_entryVars = {}
@@ -749,7 +761,7 @@ class gui(object):
 
     # function to turn on the splash screen
     def showSplash(self, text="appJar", fill="red", stripe="black", fg="white", font=44):
-            self.splashConfig= {'text':text, 'fill':fill, 'stripe':stripe, 'fg':fg, 'font':font}
+        self.splashConfig= {'text':text, 'fill':fill, 'stripe':stripe, 'fg':fg, 'font':font}
 
 #####################################
 # Event Loop - must always be called at end
@@ -915,7 +927,8 @@ class gui(object):
             return False
 
     # function to give a clicked widget the keyboard focus
-    def __grabFocus(self, e): e.widget.focus_set()
+    def __grabFocus(self, e):
+        e.widget.focus_set()
 
 #####################################
 # FUNCTIONS for configuring GUI settings
@@ -1029,11 +1042,8 @@ class gui(object):
             import subprocess
             tmpl = 'tell application "System Events" to set frontmost of every process whose unix id is {} to true'
             script = tmpl.format(os.getpid())
-            output = subprocess.check_call(
-                ['/usr/bin/osascript', '-e', script])
-            win.after(
-                0, lambda: win.attributes(
-                    "-topmost", False))
+            subprocess.check_call(['/usr/bin/osascript', '-e', script])
+            win.after( 0, lambda: win.attributes("-topmost", False))
 #            val=os.system('''/usr/bin/osascript -e 'tell app "Finder" to set frontmost of process "''' + PY_NAME + '''" to true' ''')
             win.lift()
         elif self.platform == self.WINDOWS:
@@ -1076,9 +1086,11 @@ class gui(object):
         self.WARN = myWarn
 
     # set the current container's external grid padding
-    def setPadX(self, x=0): self.containerStack[-1]['padx'] = x
+    def setPadX(self, x=0):
+        self.containerStack[-1]['padx'] = x
 
-    def setPadY(self, y=0): self.containerStack[-1]['pady'] = y
+    def setPadY(self, y=0):
+        self.containerStack[-1]['pady'] = y
 
     # sets the padding around the border of the root container
     def setPadding(self, x, y=None):
@@ -1098,15 +1110,20 @@ class gui(object):
             self.containerStack[0]['container'].config(padx=x, pady=y)
 
     # sets the current containers internal padding
-    def setIPadX(self, x=0): self.setInPadX(x)
+    def setIPadX(self, x=0):
+        self.setInPadX(x)
 
-    def setIPadY(self, y=0): self.setInPadY(y)
+    def setIPadY(self, y=0):
+        self.setInPadY(y)
 
-    def setIPadding(self, x, y=None): self.setInPadding(x, y)
+    def setIPadding(self, x, y=None):
+        self.setInPadding(x, y)
 
-    def setInPadX(self, x=0): self.containerStack[-1]['ipadx'] = x
+    def setInPadX(self, x=0):
+        self.containerStack[-1]['ipadx'] = x
 
-    def setInPadY(self, y=0): self.containerStack[-1]['ipady'] = y
+    def setInPadY(self, y=0):
+        self.containerStack[-1]['ipady'] = y
 
     def setInPadding(self, x, y=None):
         if y is None:
@@ -1123,7 +1140,8 @@ class gui(object):
         self.containerStack[-1]['sticky'] = sticky
 
     # this tells widgets what to do when GUI is resized
-    def setStretch(self, exp): self.setExpand(exp)
+    def setStretch(self, exp):
+        self.setExpand(exp)
 
     def setExpand(self, exp):
         if exp.lower() == "none":
@@ -1135,22 +1153,25 @@ class gui(object):
         else:
             self.containerStack[-1]['expand'] = "ALL"
 
-    def getFonts(self): return list(font.families()).sort()
+    def getFonts(self):
+        return list(font.families()).sort()
 
-    def increaseButtonFont(self): self.setButtonFont(
-        self.buttonFont['size'] + 1)
+    def increaseButtonFont(self):
+        self.setButtonFont( self.buttonFont['size'] + 1)
 
-    def decreaseButtonFont(self): self.setButtonFont(
-        self.buttonFont['size'] - 1)
+    def decreaseButtonFont(self):
+        self.setButtonFont( self.buttonFont['size'] - 1)
 
     def setButtonFont(self, size, font=None):
         if font is None:
             font = self.buttonFont['family']
         self.buttonFont.config(family=font, size=size)
 
-    def increaseLabelFont(self): self.setLabelFont(self.labelFont['size'] + 1)
+    def increaseLabelFont(self):
+        self.setLabelFont(self.labelFont['size'] + 1)
 
-    def decreaseLabelFont(self): self.setLabelFont(self.labelFont['size'] - 1)
+    def decreaseLabelFont(self):
+        self.setLabelFont(self.labelFont['size'] - 1)
 
     def setLabelFont(self, size, font=None):
         if font is None:
@@ -1368,24 +1389,39 @@ class gui(object):
             return self.n_pieCharts
         elif kind == self.PROPERTIES:
             return self.n_props
+        elif kind == self.PLOT:
+            return self.n_plots
         elif kind == self.GRID:
             return self.n_grids
-        elif kind == self.LABELFRAME:
+
+        elif kind in [ self.LABELFRAME, self.C_LABELFRAME ]:
             return self.n_labelFrames
-        elif kind == self.FRAME:
+        elif kind in [ self.FRAME, self.C_FRAME ]:
             return self.n_ajFrame
-        elif kind == self.TABBEDFRAME:
-            return self.n_tabbedFrames
-        elif kind == self.PANEDFRAME:
-            return self.n_panedFrames
-        elif kind == self.PANE:
-            return self.n_panes
-        elif kind == self.SCROLLPANE:
-            return self.n_scrollPanes
-        elif kind == self.PAGEDWINDOW:
-            return self.n_pagedWindows
-        elif kind == self.TOGGLEFRAME:
+        elif kind in [ self.TOGGLEFRAME, self.C_TOGGLEFRAME ]:
             return self.n_toggleFrames
+
+        elif kind in [ self.PAGEDWINDOW, self.C_PAGEDWINDOW ]:
+            return self.n_pagedWindows
+        elif kind in [ self.C_PAGE ]:
+            # no dict of pages - the container manages them...
+            return self.n_pagedWindows
+
+        elif kind in [ self.TABBEDFRAME, self.C_TABBEDFRAME ]:
+            return self.n_tabbedFrames
+        elif kind in [ self.C_TAB ]:
+            # no dict of tabs - the container manages them...
+            return self.n_tabbedFrames
+
+        elif kind in [ self.PANEDFRAME ]:
+            return self.n_panedFrames
+        elif kind in [ self.PANE, self.C_PANE ]:
+            return self.n_panes
+
+        elif kind in [ self.C_SUBWINDOW ]:
+            return self.n_subWindows
+        elif kind in [ self.SCROLLPANE, self.C_SCROLLPANE ]:
+            return self.n_scrollPanes
         else:
             raise Exception("Unknown widget type: " + str(kind))
 
@@ -1460,7 +1496,7 @@ class gui(object):
             try:
                 if option == 'background':
                     if kind == self.METER:
-                        item.config(backfill=value)
+                        item.config(bg=value)
                     else:
                         gui.SET_WIDGET_BG(item, value, True)
                 elif option == 'foreground':
@@ -1497,6 +1533,9 @@ class gui(object):
                 elif option == 'height':
                     item.config(height=value)
                 elif option == 'state':
+                    # make entries readonly - can still copy/paste
+                    if value == "disabled" and kind == self.ENTRY:
+                        value = "readonly"
                     item.config(state=value)
                 elif option == 'relief':
                     item.config(relief=value)
@@ -1577,14 +1616,20 @@ class gui(object):
                     # this will discard the scale value, as default function
                     # can't handle it
                     if kind == self.SCALE:
-                        item.config(command=self.MAKE_FUNC(value, name, True))
+                        cmd = self.MAKE_FUNC(value, name, True)
+                        item.config(command=cmd)
+                        item.cmd = cmd
                     elif kind == self.OPTION:
                         # need to trace the variable??
-                        item.var.trace('w', self.MAKE_FUNC(value, name, True))
+                        cmd = self.MAKE_FUNC(value, name, True)
+                        item.var.trace('w', cmd)
+                        item.cmd = cmd
                     elif kind == self.ENTRY:
                         if key is None:
                             key = name
-                        item.bind('<Return>', self.MAKE_FUNC(value, key, True))
+                        cmd = self.MAKE_FUNC(value, key, True)
+                        item.bind('<Return>', cmd)
+                        item.cmd = cmd
                     elif kind == self.BUTTON:
                         item.config(command=self.MAKE_FUNC(value, name))
                         item.bind(
@@ -1597,13 +1642,9 @@ class gui(object):
                         elif self.platform in [self.WINDOWS, self.LINUX]:
                             item.config(cursor="hand2")
 
-                        item.bind(
-                            "<Button-1>",
-                            self.MAKE_FUNC(
-                                value,
-                                name,
-                                True),
-                            add="+")
+                        cmd = self.MAKE_FUNC(value, name, True)
+                        item.bind("<Button-1>", cmd, add="+")
+                        item.cmd = cmd
                         # these look good, but break when dialogs take focus
                         #up = item.cget("relief").lower()
                         # down="sunken"
@@ -1611,9 +1652,13 @@ class gui(object):
                         #item.bind("<Button-1>",lambda e: item.config(relief=down), add="+")
                         #item.bind("<ButtonRelease-1>",lambda e: item.config(relief=up))
                     elif kind == self.LISTBOX:
-                        item.bind('<<ListboxSelect>>', self.MAKE_FUNC(value, name, True))
+                        cmd = self.MAKE_FUNC(value, name, True)
+                        item.bind('<<ListboxSelect>>', cmd)
+                        item.cmd = cmd
                     else:
-                        item.config(command=self.MAKE_FUNC(value, name))
+                        cmd = self.MAKE_FUNC(value, name)
+                        item.config(command=cmd)
+                        item.cmd = cmd
                 elif option == 'sticky':
                     info = {}
                     # need to reposition the widget in its grid
@@ -1670,288 +1715,177 @@ class gui(object):
         # loop through all the available widgets
         # and make all the below functons for each one
         for k, v in self.WIDGETS.items():
-            exec(
-                "def set" +
-                v +
+            exec( "def set" + v +
                 "Bg(self, name, val): self.configureWidgets(" +
-                str(k) +
-                ", name, 'background', val)")
+                str(k) + ", name, 'background', val)")
             exec("gui.set" + v + "Bg=set" + v + "Bg")
-            exec(
-                "def set" +
-                v +
+            exec( "def set" + v +
                 "Fg(self, name, val): self.configureWidgets(" +
-                str(k) +
-                ", name, 'foreground', val)")
+                str(k) + ", name, 'foreground', val)")
             exec("gui.set" + v + "Fg=set" + v + "Fg")
 
-            exec(
-                "def set" +
-                v +
+            exec( "def set" + v +
                 "DisabledFg(self, name, val): self.configureWidgets(" +
-                str(k) +
-                ", name, 'disabledforeground', val)")
+                str(k) + ", name, 'disabledforeground', val)")
             exec("gui.set" + v + "DisabledFg=set" + v + "DisabledFg")
-            exec(
-                "def set" +
-                v +
+            exec( "def set" + v +
                 "DisabledBg(self, name, val): self.configureWidgets(" +
-                str(k) +
-                ", name, 'disabledbackground', val)")
+                str(k) + ", name, 'disabledbackground', val)")
             exec("gui.set" + v + "DisabledBg=set" + v + "DisabledBg")
 
-            exec(
-                "def set" +
-                v +
+            exec( "def set" + v +
                 "ActiveFg(self, name, val): self.configureWidgets(" +
-                str(k) +
-                ", name, 'activeforeground', val)")
+                str(k) + ", name, 'activeforeground', val)")
             exec("gui.set" + v + "ActiveFg=set" + v + "ActiveFg")
-            exec(
-                "def set" +
-                v +
+            exec( "def set" + v +
                 "ActiveBg(self, name, val): self.configureWidgets(" +
-                str(k) +
-                ", name, 'activebackground', val)")
+                str(k) + ", name, 'activebackground', val)")
             exec("gui.set" + v + "ActiveBg=set" + v + "ActiveBg")
 
-            exec(
-                "def set" +
-                v +
+            exec( "def set" + v +
                 "InactiveFg(self, name, val): self.configureWidgets(" +
-                str(k) +
-                ", name, 'inactiveforeground', val)")
+                str(k) + ", name, 'inactiveforeground', val)")
             exec("gui.set" + v + "InactiveFg=set" + v + "InactiveFg")
-            exec(
-                "def set" +
-                v +
+            exec( "def set" + v +
                 "InactiveBg(self, name, val): self.configureWidgets(" +
-                str(k) +
-                ", name, 'inactivebackground', val)")
+                str(k) + ", name, 'inactivebackground', val)")
             exec("gui.set" + v + "InactiveBg=set" + v + "InactiveBg")
 
-            exec(
-                "def set" +
-                v +
+            exec( "def set" + v +
                 "Width(self, name, val): self.configureWidgets(" +
-                str(k) +
-                ", name, 'width', val)")
+                str(k) + ", name, 'width', val)")
             exec("gui.set" + v + "Width=set" + v + "Width")
-            exec(
-                "def set" +
-                v +
+            exec( "def set" + v +
                 "Height(self, name, val): self.configureWidgets(" +
-                str(k) +
-                ", name, 'height', val)")
+                str(k) + ", name, 'height', val)")
             exec("gui.set" + v + "Height=set" + v + "Height")
-            exec(
-                "def set" +
-                v +
+            exec( "def set" + v +
                 "State(self, name, val): self.configureWidgets(" +
-                str(k) +
-                ", name, 'state', val)")
+                str(k) + ", name, 'state', val)")
             exec("gui.set" + v + "State=set" + v + "State")
-            exec(
-                "def set" +
-                v +
+            exec( "def set" + v +
                 "Padding(self, name, x, y=None): self.configureWidgets(" +
-                str(k) +
-                ", name, 'padding', [x, y])")
+                str(k) + ", name, 'padding', [x, y])")
             exec("gui.set" + v + "Padding=set" + v + "Padding")
 
-            exec(
-                "def set" +
-                v +
+            exec( "def set" + v +
                 "IPadding(self, name, x, y=None): self.configureWidgets(" +
-                str(k) +
-                ", name, 'ipadding', [x, y])")
+                str(k) + ", name, 'ipadding', [x, y])")
             exec("gui.set" + v + "IPadding=set" + v + "IPadding")
 
-            exec(
-                "def set" +
-                v +
+            exec( "def set" + v +
                 "InPadding(self, name, x, y=None): self.configureWidgets(" +
-                str(k) +
-                ", name, 'ipadding', [x, y])")
+                str(k) + ", name, 'ipadding', [x, y])")
             exec("gui.set" + v + "InPadding=set" + v + "InPadding")
 
             # might not all be necessary, could make exclusion list
-            exec(
-                "def set" +
-                v +
+            exec( "def set" + v +
                 "Relief(self, name, val): self.configureWidget(" +
-                str(k) +
-                ", name, 'relief', val)")
+                str(k) + ", name, 'relief', val)")
             exec("gui.set" + v + "Relief=set" + v + "Relief")
-            exec(
-                "def set" +
-                v +
+            exec( "def set" + v +
                 "Align(self, name, val): self.configureWidget(" +
-                str(k) +
-                ", name, 'align', val)")
+                str(k) + ", name, 'align', val)")
             exec("gui.set" + v + "Align=set" + v + "Align")
-            exec(
-                "def set" +
-                v +
+            exec( "def set" + v +
                 "Anchor(self, name, val): self.configureWidget(" +
-                str(k) +
-                ", name, 'anchor', val)")
+                str(k) + ", name, 'anchor', val)")
             exec("gui.set" + v + "Anchor=set" + v + "Anchor")
-            exec(
-                "def set" +
-                v +
+            exec( "def set" + v +
                 "Tooltip(self, name, val): self.configureWidget(" +
-                str(k) +
-                ", name, 'tooltip', val)")
+                str(k) + ", name, 'tooltip', val)")
             exec("gui.set" + v + "Tooltip=set" + v + "Tooltip")
-            exec(
-                "def set" +
-                v +
+            exec( "def set" + v +
                 "Function(self, name, val, key=None): self.configureWidget(" +
-                str(k) +
-                ", name, 'command', val, key)")
+                str(k) + ", name, 'command', val, key)")
             exec("gui.set" + v + "Function=set" + v + "Function")
-            exec(
-                "def set" +
-                v +
+            exec( "def set" + v +
                 "DragFunction(self, name, val): self.configureWidget(" +
-                str(k) +
-                ", name, 'drag', val)")
+                str(k) + ", name, 'drag', val)")
             exec("gui.set" + v + "DragFunction=set" + v + "DragFunction")
-            exec(
-                "def set" +
-                v +
+            exec( "def set" + v +
                 "OverFunction(self, name, val): self.configureWidget(" +
-                str(k) +
-                ", name, 'over', val)")
+                str(k) + ", name, 'over', val)")
             exec("gui.set" + v + "OverFunction=set" + v + "OverFunction")
 # deprecated, but left in for backwards compatability
-            exec(
-                "def set" +
-                v +
+            exec( "def set" + v +
                 "Command(self, name, val, key=None): self.configureWidget(" +
-                str(k) +
-                ", name, 'command', val, key, deprecated='Function')")
+                str(k) + ", name, 'command', val, key, deprecated='Function')")
             exec("gui.set" + v + "Command=set" + v + "Command")
-            exec(
-                "def set" +
-                v +
+            exec( "def set" + v +
                 "Func(self, name, val, key=None): self.configureWidget(" +
-                str(k) +
-                ", name, 'command', val, key, deprecated='Function')")
+                str(k) + ", name, 'command', val, key, deprecated='Function')")
             exec("gui.set" + v + "Func=set" + v + "Func")
 # end deprecated
             # http://infohost.nmt.edu/tcc/help/pubs/tkinter/web/cursors.html
-            exec(
-                "def set" +
-                v +
+            exec( "def set" + v +
                 "Cursor(self, name, val): self.configureWidget(" +
-                str(k) +
-                ", name, 'cursor', val)")
+                str(k) + ", name, 'cursor', val)")
             exec("gui.set" + v + "Cursor=set" + v + "Cursor")
-            exec(
-                "def set" +
-                v +
+            exec( "def set" + v +
                 "Focus(self, name): self.configureWidget(" +
-                str(k) +
-                ", name, 'focus', None)")
+                str(k) + ", name, 'focus', None)")
             exec("gui.set" + v + "Focus=set" + v + "Focus")
 
             # change the stickyness
-            exec(
-                "def set" +
-                v +
+            exec( "def set" + v +
                 "Sticky(self, name, pos): self.configureWidget(" +
-                str(k) +
-                ", name, 'sticky', pos)")
+                str(k) + ", name, 'sticky', pos)")
             exec("gui.set" + v + "Sticky=set" + v + "Sticky")
 
             # add right click
-            exec(
-                "def set" +
-                v +
+            exec( "def set" + v +
                 "RightClick(self, name, menu): self.configureWidget(" +
-                str(k) +
-                ", name, 'rightClick', menu)")
+                str(k) + ", name, 'rightClick', menu)")
             exec("gui.set" + v + "RightClick=set" + v + "RightClick")
 
             # functions to manage widgets
-            exec(
-                "def show" +
-                v +
+            exec( "def show" + v +
                 "(self, name): self.showWidget(" +
-                str(k) +
-                ", name)")
+                str(k) + ", name)")
             exec("gui.show" + v + "=show" + v)
-            exec(
-                "def hide" +
-                v +
+            exec( "def hide" + v +
                 "(self, name): self.hideWidget(" +
-                str(k) +
-                ", name)")
+                str(k) + ", name)")
             exec("gui.hide" + v + "=hide" + v)
-            exec(
-                "def remove" +
-                v +
+            exec( "def remove" + v +
                 "(self, name): self.removeWidget(" +
-                str(k) +
-                ", name)")
+                str(k) + ", name)")
             exec("gui.remove" + v + "=remove" + v)
 
             # convenience functions for enable/disable
             # might not all be necessary, could make exclusion list
-            exec(
-                "def enable" +
-                v +
+            exec( "def enable" + v +
                 "(self, name): self.configureWidget(" +
-                str(k) +
-                ", name, 'state', 'normal')")
+                str(k) + ", name, 'state', 'normal')")
             exec("gui.enable" + v + "=enable" + v)
-            exec(
-                "def disable" +
-                v +
+            exec( "def disable" + v +
                 "(self, name): self.configureWidget(" +
-                str(k) +
-                ", name, 'state', 'disabled')")
+                str(k) + ", name, 'state', 'disabled')")
             exec("gui.disable" + v + "=disable" + v)
 
             # group functions
-            exec(
-                "def set" +
-                v +
+            exec( "def set" + v +
                 "Widths(self, names, val): self.configureWidgets(" +
-                str(k) +
-                ", names, 'width', val)")
+                str(k) + ", names, 'width', val)")
             exec("gui.set" + v + "Widths=set" + v + "Widths")
-            exec(
-                "def setAll" +
-                v +
+            exec( "def setAll" + v +
                 "Widths(self, val): self.configureAllWidgets(" +
-                str(k) +
-                ", 'width', val)")
+                str(k) + ", 'width', val)")
             exec("gui.setAll" + v + "Widths=setAll" + v + "Widths")
 
-            exec(
-                "def set" +
-                v +
+            exec( "def set" + v +
                 "Heights(self, names, val): self.configureWidgets(" +
-                str(k) +
-                ", names, 'height', val)")
+                str(k) + ", names, 'height', val)")
             exec("gui.set" + v + "Heights=set" + v + "Heights")
-            exec(
-                "def setAll" +
-                v +
+            exec( "def setAll" + v +
                 "Heights(self, val): self.configureAllWidgets(" +
-                str(k) +
-                ", 'height', val)")
+                str(k) + ", 'height', val)")
             exec("gui.setAll" + v + "Heights=setAll" + v + "Heights")
 
-            exec(
-                "def get" +
-                v +
+            exec( "def get" + v +
                 "Widget(self, name): return self.getWidget(" +
-                str(k) +
-                ", name)")
+                str(k) + ", name)")
             exec("gui.get" + v + "Widget=get" + v + "Widget")
 
 #####################################
@@ -2077,7 +2011,8 @@ class gui(object):
     def getRow(self):
         return self.containerStack[-1]['emptyRow']
 
-    def gr(self): return self.getRow()
+    def gr(self):
+        return self.getRow()
 
     def __repackWidget(self, widget, params):
         if widget.winfo_manager() == "grid":
@@ -2110,7 +2045,6 @@ class gui(object):
     def SET_WIDGET_FG(self, widget, fg, external=False):
 
         widgType = widget.__class__.__name__
-        isDarwin = gui.GET_PLATFORM() == gui.MAC
 
         if self.__isWidgetContainer(widget):
             self.containerStack[-1]['fg'] = fg
@@ -2317,19 +2251,69 @@ class gui(object):
 #####################################
     # adds the container to the container stack - makes this the current
     # working container
-    def __addContainer(self, cType, container, row, col, sticky=None):
-        self.containerStack.append({'type': cType,
-                                    'container': container,
-                                    'emptyRow': row,
-                                    'colCount': col,
-                                    'sticky': sticky,
-                                    'padx': 0,
-                                    'pady': 0,
-                                    'ipadx': 0,
-                                    'ipady': 0,
-                                    'expand': "ALL",
-                                    'widgets': False,
-                                    "fg": "black"})
+    def __addContainer(self, cTitle, cType, container, row, col, sticky=None):
+        containerData = {'type': cType,
+                    'title': cTitle,
+                    'container': container,
+                    'emptyRow': row,
+                    'colCount': col,
+                    'sticky': sticky,
+                    'padx': 0,
+                    'pady': 0,
+                    'ipadx': 0,
+                    'ipady': 0,
+                    'expand': "ALL",
+                    'widgets': False,
+                    "fg": "black"}
+        self.containerStack.append(containerData)
+
+    def openRootPage(self, title):
+        self.__openContainer(self.C_ROOT, title)
+
+    def openLabelFrame(self, title):
+        self.__openContainer(self.C_LABELFRAME, title)
+
+    def openFrame(self, title):
+        self.__openContainer(self.C_FRAME, title)
+
+    def openToggleFrame(self, title):
+        self.__openContainer(self.C_TOGGLEFRAME, title)
+
+    def openPagedWindow(self, title):
+        self.__openContainer(self.C_PAGEDWINDOW, title)
+
+    def openPage(self, windowTitle, pageNumber):
+        self.__openContainer(self.C_PAGE, windowTitle+"__"+str(pageNumber))
+
+    def openTabbedFrame(self, title):
+        self.__openContainer(self.C_TABBEDFRAME, title)
+
+    def openTab(self, frameTitle, tabTitle):
+        self.__openContainer(self.C_TAB, frameTitle+"__"+tabTitle)
+
+    def openPanedFrame(self, title):
+        self.__openContainer(self.C_PANEDFRAME, title)
+
+    def openPane(self, title):
+        self.__openContainer(self.C_PANE, title)
+
+    def openSubWindow(self, title):
+        self.__openContainer(self.C_SUBWINDOW, title)
+
+    def openScrollPane(self, title):
+        self.__openContainer(self.C_SCROLLPANE, title)
+
+    # function to reload the specified container
+    def __openContainer(self, kind, title):
+
+        # get the cached container config for this container
+        cName = kind + "__" + title
+        try:
+            cConf = self.n_usedContainers[cName]
+        except KeyError:
+            raise Exception("Attempted to open invalid " + kind + ": " + str(title))
+
+        self.containerStack.append(cConf)
 
     # returns the current working container
     def __getContainer(self):
@@ -2347,11 +2331,16 @@ class gui(object):
     def __removeContainer(self):
         if len(self.containerStack) == 1:
             raise Exception("Can't remove container, already in root window.")
-        elif not self.containerStack[-1]['widgets']:
-            raise Exception(
-                "Put something in the container, before removing it.")
         else:
-            return self.containerStack.pop()
+            container = self.containerStack.pop()
+            if not container['widgets']:
+                self.warn("Closing empty container: " + container['title'])
+#                raise Exception("Put something in the container, before removing it.")
+
+            # store the container so that it can be re-opened later
+            name = container["type"] + "__" + container["title"]
+            self.n_usedContainers[name] = container
+            return container
 
     # functions to start the various containers
     def startContainer(
@@ -2380,7 +2369,7 @@ class gui(object):
             self.n_labelFrames[title] = container
 
             # now, add to top of stack
-            self.__addContainer(self.C_LABELFRAME, container, 0, 1, sticky)
+            self.__addContainer(title, self.C_LABELFRAME, container, 0, 1, sticky)
         elif fType == self.C_FRAME:
             # first, make a Frame, and position it correctly
             self.__verifyItem(self.n_ajFrame, title, True)
@@ -2393,7 +2382,7 @@ class gui(object):
             self.n_ajFrame[title] = container
 
             # now, add to top of stack
-            self.__addContainer(self.C_FRAME, container, 0, 1, sticky)
+            self.__addContainer(title, self.C_FRAME, container, 0, 1, sticky)
         elif fType == self.C_TABBEDFRAME:
             self.__verifyItem(self.n_tabbedFrames, title, True)
             tabbedFrame = TabbedFrame(
@@ -2409,11 +2398,12 @@ class gui(object):
             self.n_tabbedFrames[title] = tabbedFrame
 
             # now, add to top of stack
-            self.__addContainer(self.C_TABBEDFRAME, tabbedFrame, 0, 1, sticky)
+            self.__addContainer(title, self.C_TABBEDFRAME, tabbedFrame, 0, 1, sticky)
         elif fType == self.C_TAB:
             # add to top of stack
             self.containerStack[-1]['widgets'] = True
-            self.__addContainer(
+            tabTitle = self.containerStack[-1]['title'] + "__" + title
+            self.__addContainer(tabTitle, 
                 self.C_TAB, self.containerStack[-1]['container'].addTab(title), 0, 1, sticky)
         elif fType == self.C_PANEDFRAME:
             # if we previously put a frame for widgets
@@ -2435,7 +2425,7 @@ class gui(object):
             self.n_panedFrames[title] = pane
 
             # now, add to top of stack
-            self.__addContainer(self.C_PANEDFRAME, pane, 0, 1, sticky)
+            self.__addContainer(title, self.C_PANEDFRAME, pane, 0, 1, sticky)
 
             # now, add a frame to the pane
             self.startContainer(self.C_PANE, title)
@@ -2448,10 +2438,10 @@ class gui(object):
             self.n_panes[title] = pane
 
             # now, add to top of stack
-            self.__addContainer(self.C_PANE, pane, 0, 1, sticky)
+            self.__addContainer(title, self.C_PANE, pane, 0, 1, sticky)
         elif fType == self.C_SCROLLPANE:
             scrollPane = ScrollPane(
-                self.containerStack[-1]['container'], bg=self.__getContainerBg(), width=100, height=100)
+                self.containerStack[-1]['container'], bg=self.__getContainerBg())#, width=100, height=100)
             scrollPane.isContainer = True
 #                self.containerStack[-1]['container'].add(scrollPane)
             self.__positionWidget(
@@ -2464,7 +2454,7 @@ class gui(object):
             self.n_scrollPanes[title] = scrollPane
 
             # now, add to top of stack
-            self.__addContainer(self.C_SCROLLPANE, scrollPane, 0, 1, sticky)
+            self.__addContainer(title, self.C_SCROLLPANE, scrollPane, 0, 1, sticky)
         elif fType == self.C_TOGGLEFRAME:
             toggleFrame = ToggleFrame(
                 self.containerStack[-1]['container'], title=title, bg=self.__getContainerBg())
@@ -2477,7 +2467,7 @@ class gui(object):
                 colspan,
                 rowspan,
                 sticky=sticky)
-            self.__addContainer(self.C_TOGGLEFRAME, toggleFrame, 0, 1, "nw")
+            self.__addContainer(title, self.C_TOGGLEFRAME, toggleFrame, 0, 1, "nw")
             self.n_toggleFrames[title] = toggleFrame
         elif fType == self.C_PAGEDWINDOW:
             # create the paged window
@@ -2502,12 +2492,12 @@ class gui(object):
                 colspan,
                 rowspan,
                 sticky=sticky)
-            self.__addContainer(self.C_PAGEDWINDOW, pagedWindow, 0, 1, "nw")
+            self.__addContainer(title, self.C_PAGEDWINDOW, pagedWindow, 0, 1, "nw")
             self.n_pagedWindows[title] = pagedWindow
         elif fType == self.C_PAGE:
             page = self.containerStack[-1]['container'].addPage()
             page.isContainer = True
-            self.__addContainer(self.C_PAGE, page, 0, 1, sticky)
+            self.__addContainer(title, self.C_PAGE, page, 0, 1, sticky)
             self.containerStack[-1]['expand'] = "None"
         else:
             raise Exception("Unknown container: " + fType)
@@ -2773,22 +2763,36 @@ class gui(object):
                             self.containerStack[-1]['type'])
 
         self.containerStack[-1]['widgets'] = True
+
+        # generate a page title
+        pageNum = len(self.containerStack[-1]['container'].frames) + 1
+        pageTitle = self.containerStack[-1]['title'] + "__" + str(pageNum)
+
         self.startContainer(
             self.C_PAGE,
-            None,
+            pageTitle,
             row,
             column,
             colspan,
             rowspan,
-            sticky="nw")
+            sticky=sticky)
 
     def stopPage(self):
+        # get a handle on the page object
+        page = self.containerStack[-1]['container']
+
         if self.containerStack[-1]['type'] == self.C_PAGE:
             self.stopContainer()
         else:
             raise Exception("Can't stop PAGE, currently in:",
                             self.containerStack[-1]['type'])
-        self.containerStack[-1]['container'].stopPage()
+
+        # call the stopPage function on the paged window
+        if self.containerStack[-1]['type'] == self.C_PAGEDWINDOW:
+            self.containerStack[-1]['container'].stopPage()
+        else:
+            # we need to find the container and call stopPage
+            page.container.stopPage()
 
     def stopPagedWindow(self):
         if self.containerStack[-1]['type'] == self.C_PAGE:
@@ -2893,7 +2897,7 @@ class gui(object):
         self.n_subWindows[name] = top
 
         # now, add to top of stack
-        self.__addContainer(self.C_SUBWINDOW, top, 0, 1, "")
+        self.__addContainer(name, self.C_SUBWINDOW, top, 0, 1, "")
 
     def stopSubWindow(self):
         if self.containerStack[-1]['type'] == self.C_SUBWINDOW:
@@ -2992,9 +2996,8 @@ class gui(object):
         if len(title) > self.labWidth:
             self.labWidth = len(title)
             # loop through other labels and resize
-            for na in self.n_frameLabs:
-                #                        self.n_frameLabs[na].config(width=self.labWidth)
-                pass
+#            for na in self.n_frameLabs:
+#                self.n_frameLabs[na].config(width=self.labWidth)
 
         # next make the label
         lab = Label(frame)
@@ -3075,6 +3078,9 @@ class gui(object):
             cb.select()
         else:
             cb.deselect()
+        # now call function
+        if hasattr(cb, 'cmd'):
+            cb.cmd()
 
 #####################################
 # FUNCTION for scales
@@ -3111,6 +3117,9 @@ class gui(object):
     def setScale(self, title, pos):
         sc = self.__verifyItem(self.n_scales, title)
         sc.set(pos)
+        # now call function
+        if hasattr(sc, 'cmd'):
+            sc.cmd()
 
     def setScaleWidth(self, title, width):
         sc = self.__verifyItem(self.n_scales, title)
@@ -3376,7 +3385,6 @@ class gui(object):
 
     def deleteOptionBox(self, title, index):
         self.__verifyItem(self.n_optionVars, title)
-        box = self.n_options[title]
         self.setOptionBox(title, index, None)
 
     # select the option at the specified position
@@ -3420,6 +3428,49 @@ class gui(object):
             else:
                 var.set("")
                 self.warn("No items to select from: " + title)
+
+#####################################
+# FUNCTION for matplotlib
+#####################################
+    def addPlot(
+            self,
+            title,
+            t, s,
+            row=None,
+            column=0,
+            colspan=0,
+            rowspan=0):
+        self.__verifyItem(self.n_plots, title, True)
+
+        from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+        from matplotlib.figure import Figure
+        
+        fig = Figure()
+
+        axes = fig.add_subplot(111)
+        axes.plot(t,s)
+
+        canvas = FigureCanvasTkAgg(fig, self.__getContainer())
+        canvas.fig = fig
+        canvas.axes = axes
+        canvas.show()
+#        canvas.get_tk_widget().pack(side=TOP, fill=BOTH, expand=1)
+        canvas._tkcanvas.pack(side=TOP, fill=BOTH, expand=1)
+
+        self.__positionWidget(canvas.get_tk_widget(), row, column, colspan, rowspan)
+        self.n_plots[title] = canvas
+        return axes
+
+    def refreshPlot(self, title):
+        canvas = self.__verifyItem(self.n_plots, title)
+        canvas.draw()
+
+    def updatePlot(self, title, t, s):
+        axes = self.__verifyItem(self.n_plots, title).axes
+        axes.clear()
+        axes.plot(t, s)
+        self.refreshPlot(title)
+
 
 #####################################
 # FUNCTION to manage Properties Widgets
@@ -3601,6 +3652,9 @@ class gui(object):
         var = StringVar(self.topLevel)
         var.set(val)
         spin.config(textvariable=var)
+        # now call function
+        if hasattr(spin, 'cmd'):
+            spin.cmd()
 
     # is it going to be a hash or list??
     def __getSpinBoxValsAsList(self, vals):
@@ -3730,6 +3784,9 @@ class gui(object):
 
     def setAnimationSpeed(self, name, speed):
         img = self.__verifyItem(self.n_images, name).image
+        if speed < 1:
+            speed = 1
+            self.warn("Setting " + str(name) + " speed to 1. Minimum animation speed is 1.")
         img.anim_speed = speed
 
     def stopAnimation(self, name):
@@ -3757,9 +3814,14 @@ class gui(object):
     # function to set an alternative image, when a mouse goes over
     def setImageMouseOver(self, title, overImg):
         lab = self.__verifyItem(self.n_images, title)
-        leaveImg = lab.image.originalPath
+
+        # first check over image & cache it
+        fullPath = self.getImagePath(overImg)
+        self.topLevel.after(0, self.__getImage, fullPath)
+
+        leaveImg = lab.image.path
         lab.bind("<Leave>", lambda e: self.setImage(title, leaveImg))
-        lab.bind("<Enter>", lambda e: self.setImage(title, overImg))
+        lab.bind("<Enter>", lambda e: self.setImage(title, fullPath))
 
     # function to set an image location
     def setImageLocation(self, location):
@@ -3768,25 +3830,86 @@ class gui(object):
         else:
             raise Exception("Invalid image location: " + location)
 
+    # get the full path of an image (including image folder)
+    def getImagePath(self, imagePath):
+        if imagePath is None:
+            return None
+
+        if self.userImages is not None:
+            imagePath = os.path.join(self.userImages, imagePath)
+
+        absPath = os.path.abspath(imagePath)
+        return absPath
+
+    # function to see if an image has changed
+    def hasImageChanged(self, originalImage, newImage):
+        newAbsImage = self.getImagePath(newImage)
+
+        if originalImage is None:
+            return True
+
+        # filename has changed
+        if originalImage.path != newAbsImage:
+            return True
+
+        # modification time has changed
+        if originalImage.modTime != os.path.getmtime(newAbsImage):
+            return True
+
+        # no changes
+        return False
+
     # function to remove image objects form cache
     def clearImageCache(self):
         self.n_imageCache = {}
 
+    # internal function to build an image function from a string
+    def __getImageData(self, imageData, fmt="gif"):
+        if fmt=="png":
+            if not TKINTERPNG_AVAILABLE:
+                raise Exception(
+                    "TKINTERPNG library not found, PNG files not supported: " + imagePath)
+            if sys.version_info >= (2, 7):
+                self.warn(
+                    "Image processing for .PNGs is slow. .GIF is the recommended format")
+#                png = PngImageTk(imagePath)
+#                png.convert()
+#                photo = png.image
+            else:
+                raise Exception("PNG images only supported in python 3: " + imagePath)
+
+        else:
+            imgObj = PhotoImage(data=imageData)
+
+        imgObj.path = None
+        imgObj.modTime = datetime.datetime.now()
+        imgObj.isAnimated = False
+        imgObj.animating = False
+        return imgObj
+
     # internal function to check/build image object
-    def __getImage(self, imagePath, cache=True):
+    def __getImage(self, imagePath, checkCache=True, addToCache=True):
         if imagePath is None:
             return None
-        originalPath = imagePath
-        if self.userImages is not None:
-            imagePath = os.path.join(self.userImages, imagePath)
 
-        if cache and imagePath in self.n_imageCache and self.n_imageCache[
-                imagePath] is not None:
+        # get the full image path
+        imagePath = self.getImagePath(imagePath)
+
+        # if we're caching, and we have a non-None entry in the cache - get it...
+        photo = None
+        if checkCache and imagePath in self.n_imageCache and self.n_imageCache[imagePath] is not None:
             photo = self.n_imageCache[imagePath]
+
+        # if the image hasn't changed, use the cache
+        if not self.hasImageChanged(photo, imagePath):
+            pass
+        # else load a new one
         elif os.path.isfile(imagePath):
             if os.access(imagePath, os.R_OK):
                 imgType = imghdr.what(imagePath)
-                if not imagePath.lower().endswith(imgType) and not (
+                if imgType is None:
+                    raise Exception( "Invalid file: " + imagePath + " is not a valid image")
+                elif not imagePath.lower().endswith(imgType) and not (
                         imgType == "jpeg" and imagePath.lower().endswith("jpg")):
                         # the image has been saved with the wrong extension
                     raise Exception(
@@ -3816,8 +3939,7 @@ class gui(object):
                         png.convert()
                         photo = png.image
                     else:
-                        raise Exception(
-                            "PNG images only supported in python 3: " + imagePath)
+                        raise Exception("PNG images only supported in python 3: " + imagePath)
                 else:
                     raise Exception("Invalid image type: " + imagePath)
             else:
@@ -3825,8 +3947,10 @@ class gui(object):
         else:
             raise Exception("Image " + imagePath + " does not exist")
 
+        # store the full poath to this image
         photo.path = imagePath
-        photo.originalPath = originalPath
+        # store the modification time
+        photo.modTime = os.path.getmtime(imagePath)
 
         # sort out if it's an animated images
         if self.__checkIsAnimated(imagePath):
@@ -3835,10 +3959,14 @@ class gui(object):
         else:
             photo.isAnimated = False
             photo.animating = False
-            if cache:
+            if addToCache:
                 self.n_imageCache[imagePath] = photo
 
         return photo
+
+    def getImageDimensions(self, name):
+        img = self.__verifyItem(self.n_images, name).image
+        return img.width(), img.height()
 
     # force replace the current image, with a new one
     def reloadImage(self, name, imageFile):
@@ -3846,12 +3974,24 @@ class gui(object):
         image = self.__getImage(imageFile, False)
         self.__populateImage(name, image)
 
+    def reloadImageData(self, name, imageData):
+        self.setImageData(name, imageData)
+
+    def setImageData(self, name, imageData):
+        label = self.__verifyItem(self.n_images, name)
+        image = self.__getImageData(imageData)
+        self.__populateImage(name, image)
+
     # replace the current image, with a new one
     def setImage(self, name, imageFile):
         label = self.__verifyItem(self.n_images, name)
+        imageFile = self.getImagePath(imageFile)
+
         # only set the image if it's different
-        if label.image.originalPath == imageFile:
+        if label.image.path == imageFile:
             self.warn("Not updating " + str(name) + ", " + str(imageFile) + " hasn't changed." )
+            return
+        elif imageFile is None:
             return
         else:
             image = self.__getImage(imageFile)
@@ -3883,6 +4023,13 @@ class gui(object):
         #label.config(height=h, width=w)
         self.topLevel.update_idletasks()
 
+    # load image from base-64 encoded GIF
+    # use base64 module to convert binary data to base64
+    def addImageData(self, name, imageData, row=None, column=0, colspan=0, rowspan=0, fmt="gif"):
+        self.__verifyItem(self.n_images, name, True)
+        imgObj = self.__getImageData(imageData, fmt)
+        self.__addImageObj(name, imgObj, row, column, colspan, rowspan)
+
     # must be GIF or PNG
     def addImage(
             self,
@@ -3894,8 +4041,10 @@ class gui(object):
             rowspan=0):
         #image = re.escape(image)
         self.__verifyItem(self.n_images, name, True)
-        img = self.__getImage(imageFile)
+        imgObj = self.__getImage(imageFile)
+        self.__addImageObj(name, imgObj, row, column, colspan, rowspan)
 
+    def __addImageObj(self, name, img, row=None, column=0, colspan=0, rowspan=0):
         label = Label(self.__getContainer())
         label.config(
             anchor=CENTER,
@@ -3925,7 +4074,6 @@ class gui(object):
 
     # if +ve then grow, else shrink...
     def zoomImage(self, name, x, y=''):
-        img = self.__verifyItem(self.n_images, name)
         if x <= 0:
             self.shrinkImage(name, x * -1, y * -1)
         else:
@@ -3963,7 +4111,7 @@ class gui(object):
     def convertJpgToBmp(self, image):
         if not NANOJPEG_AVAILABLE:
             raise Exception(
-                "nanjpeg library not found, unable to display jpeg files: " + image)
+                "nanojpeg library not found, unable to display jpeg files: " + image)
         elif sys.version_info < (2, 7):
             raise Exception(
                 "JPG images only supported in python 2.7+: " + image)
@@ -3979,11 +4127,11 @@ class gui(object):
 
             # determine a file name & type
             if nanojpeg.njIsColor():
-                fileName = image.split('.jpg', 1)[0] + '.ppm'
+#                fileName = image.split('.jpg', 1)[0] + '.ppm'
                 param = 6
             else:
-                fileName = image.split('.jpg', 1)[0] + '.pgm'
-                fileName = "test3.pgm"
+#                fileName = image.split('.jpg', 1)[0] + '.pgm'
+#                fileName = "test3.pgm"
                 param = 5
 
             # create a string, starting with the header
@@ -4009,7 +4157,7 @@ class gui(object):
     # make sure this is done before everything else, otherwise it will cover
     # other widgets
     def setBgImage(self, image):
-        image = self.__getImage(image, False)  # make sure it's not cached
+        image = self.__getImage(image, False, False)  # make sure it's not using the cache
         # self.containerStack[0]['container'].config(image=image) # window as a
         # label doesn't work...
         self.bgLabel.config(image=image)
@@ -4044,7 +4192,7 @@ class gui(object):
             if self.userSounds is not None and sound is not None:
                 sound = os.path.join(self.userSounds, sound)
             if isFile:
-                if False == os.path.isfile(sound):
+                if os.path.isfile(sound) is False:
                     raise Exception("Can't find sound: " + sound)
                 if not sound.lower().endswith('.wav'):
                     raise Exception("Invalid sound format: " + sound)
@@ -4191,6 +4339,11 @@ class gui(object):
         var = self.n_rbVars[title]
         var.set(value)
 
+        # now call function
+        item = self.__verifyItem(self.n_rbs, title)[0]
+        if hasattr(item, 'cmd'):
+            item.cmd()
+
     def setRadioTick(self, title, tick=True):
         radios = self.__verifyItem(self.n_rbs, title)
         for rb in radios:
@@ -4272,11 +4425,14 @@ class gui(object):
             for pos in range(len(items)):
                 if items[pos] == item:
                     self.selectListItemPos(title, pos)
+                    # now call function
+                    if hasattr(lb, 'cmd'):
+                        lb.cmd()
                     break
 
     def selectListItemPos(self, title, pos):
         lb = self.__verifyItem(self.n_lbs, title)
-        sel = lb.curselection()
+#        sel = lb.curselection()
         lb.selection_clear(0, END)
         # show & select this item
         if pos >= 0:
@@ -4354,6 +4510,30 @@ class gui(object):
         if pos >= lb.size():
             pos -= 1
         self.selectListItemPos(title, pos)
+
+    # functions to config 
+    def setListItemAtPosBg(self, title, pos, col):
+        lb = self.__verifyItem(self.n_lbs, title)
+        lb.itemconfig(pos, bg=col)
+
+    def setListItemAtPosFg(self, title, pos, col):
+        lb = self.__verifyItem(self.n_lbs, title)
+        lb.itemconfig(pos, fg=col)
+ 
+    def setListItemBg(self, title, item, col):
+        lb = self.__verifyItem(self.n_lbs, title)
+        items = lb.get(0, END)
+        for pos, val in enumerate(items):
+            if val == item:
+                self.setListItemAtPosBg(title, pos, col)
+
+    def setListItemFg(self, title, item, col):
+        lb = self.__verifyItem(self.n_lbs, title)
+        items = lb.get(0, END)
+        for pos, val in enumerate(items):
+            if val == item:
+                self.setListItemAtPosFg(title, pos, col)
+
 
     def clearListBox(self, title):
         lb = self.__verifyItem(self.n_lbs, title)
@@ -5179,15 +5359,6 @@ class gui(object):
 #####################################
 # FUNCTIONS for progress bars (meters)
 #####################################
-    def addMeter(self, name, row=None, column=0, colspan=0, rowspan=0):
-        self.__addMeter(name, "METER", row, column, colspan, rowspan)
-
-    def addSplitMeter(self, name, row=None, column=0, colspan=0, rowspan=0):
-        self.__addMeter(name, "SPLIT", row, column, colspan, rowspan)
-
-    def addDualMeter(self, name, row=None, column=0, colspan=0, rowspan=0):
-        self.__addMeter(name, "DUAL", row, column, colspan, rowspan)
-
     def __addMeter(
             self,
             name,
@@ -5208,24 +5379,29 @@ class gui(object):
         self.n_meters[name] = meter
         self.__positionWidget(meter, row, column, colspan, rowspan)
 
-    def getMeter(self, name):
-        item = self.__verifyItem(self.n_meters, name)
-        return item.get()
+    def addMeter(self, name, row=None, column=0, colspan=0, rowspan=0):
+        self.__addMeter(name, "METER", row, column, colspan, rowspan)
+
+    def addSplitMeter(self, name, row=None, column=0, colspan=0, rowspan=0):
+        self.__addMeter(name, "SPLIT", row, column, colspan, rowspan)
+
+    def addDualMeter(self, name, row=None, column=0, colspan=0, rowspan=0):
+        self.__addMeter(name, "DUAL", row, column, colspan, rowspan)
 
     # update the value of the specified meter
     # note: expects a value between 0 (-100 for split/dual) & 100
     def setMeter(self, name, value=0.0, text=None):
         item = self.__verifyItem(self.n_meters, name)
-        value = value / 100.0
         item.set(value, text)
+
+    def getMeter(self, name):
+        item = self.__verifyItem(self.n_meters, name)
+        return item.get()
 
     # a single colour for meters, a list of 2 colours for splits & duals
     def setMeterFill(self, name, colour):
         item = self.__verifyItem(self.n_meters, name)
-        if item.__class__.__name__ == "Meter":
-            item.configure(fill=colour)
-        else:
-            item.setFill(colour)
+        item.configure(fill=colour)
 
 #####################################
 # FUNCTIONS for seperators
@@ -5362,9 +5538,8 @@ class gui(object):
         self.n_tbButts[name].config(image=image)
         self.n_tbButts[name].image = image
 
-    def setToolbarButtonEnabled(
-        self, name): self.setToolbarButtonDisabled(
-        name, False)
+    def setToolbarButtonEnabled(self, name):
+        self.setToolbarButtonDisabled(name, False)
 
     def setToolbarButtonDisabled(self, name, disabled=True):
         if (name not in self.n_tbButts):
@@ -5374,7 +5549,8 @@ class gui(object):
         else:
             self.n_tbButts[name].config(state=NORMAL)
 
-    def setToolbarEnabled(self): self.setToolbarDisabled(False)
+    def setToolbarEnabled(self):
+        self.setToolbarDisabled(False)
 
     def setToolbarDisabled(self, disabled=True):
         for but in self.n_tbButts.keys():
@@ -6020,55 +6196,59 @@ class gui(object):
 #####################################
 # FUNCTIONS to show pop-up dialogs
 #####################################
+    # function to access the last made pop_up
+    def getPopUp(self):
+        return self.topLevel.POP_UP
+
     def infoBox(self, title, message):
         self.topLevel.update_idletasks()
-        messagebox.showinfo(title, message)
+        MessageBox.showinfo(title, message)
         self.__bringToFront()
 
     def errorBox(self, title, message):
         self.topLevel.update_idletasks()
-        messagebox.showerror(title, message)
+        MessageBox.showerror(title, message)
         self.__bringToFront()
 
     def warningBox(self, title, message):
         self.topLevel.update_idletasks()
-        messagebox.showwarning(title, message)
+        MessageBox.showwarning(title, message)
         self.__bringToFront()
 
     def yesNoBox(self, title, message):
         self.topLevel.update_idletasks()
-        return messagebox.askyesno(title, message)
+        return MessageBox.askyesno(title, message)
 
     def questionBox(self, title, message):
         self.topLevel.update_idletasks()
-        return messagebox.askquestion(title, message)
+        return MessageBox.askquestion(title, message)
 
     def okBox(self, title, message):
         self.topLevel.update_idletasks()
-        return messagebox.askokcancel(title, message)
+        return MessageBox.askokcancel(title, message)
 
     def retryBox(self, title, message):
         self.topLevel.update_idletasks()
-        return messagebox.askretrycancel(title, message)
+        return MessageBox.askretrycancel(title, message)
 
     def openBox(
             self,
             title=None,
-            fileName=None,
             dirName=None,
-            fileExt=".txt",
             fileTypes=None,
             asFile=False):
+
         self.topLevel.update_idletasks()
-        if fileTypes is None:
-            fileTypes = [('all files', '.*'), ('text files', '.txt')]
+
         # define options for opening
         options = {}
-        options['defaultextension'] = fileExt
-        options['filetypes'] = fileTypes
-        options['initialdir'] = dirName
-        options['initialfile'] = fileName
-        options['title'] = title
+
+        if title is not None:
+            options['title'] = title
+        if dirName is not None:
+            options['initialdir'] = dirName
+        if fileTypes is not None:
+            options['filetypes'] = fileTypes
 
         if asFile:
             return filedialog.askopenfile(mode="r", **options)
@@ -6107,11 +6287,11 @@ class gui(object):
         options['initialdir'] = dirName
         options['title'] = title
         options['mustexist'] = False
-        file = filedialog.askdirectory(**options)
-        if file == "":
+        fileName = filedialog.askdirectory(**options)
+        if fileName == "":
             return None
         else:
-            return file
+            return fileName
 
     def colourBox(self, colour='#ff0000'):
         self.topLevel.update_idletasks()
@@ -6135,58 +6315,45 @@ class gui(object):
 #####################################
 # ProgressBar Class
 # from: http://tkinter.unpythonic.net/wiki/ProgressMeter
+# A gradient fill will be applied to the Meter
 #####################################
-
-
 class Meter(Frame):
 
-    def __init__(
-            self,
-            master,
-            width=100,
-            height=20,
-            bg='white',
-            fillColour='orchid1',
-            value=0.0,
-            text=None,
-            font=None,
-            textColour='black',
-            *args,
-            **kw):
-        Frame.__init__(
-            self,
-            master,
-            bg=bg,
-            width=width,
-            height=height,
-            *args,
-            **kw)
-        self._value = value
-        self.config(relief='ridge', bd=3)
+    def __init__(self, master, width=100, height=20,
+            bg='white', fillColour='orchid1',
+            value=0.0, text=None, font=None,
+            fg='black', *args, **kw):
 
-#            self._canv = Canvas(self, bg=self['bg'], height=self['height'], highlightthickness=0, relief='flat', bd=0)
-        self._canv = Canvas(
-            self,
-            bg=self['bg'],
-            width=self['width'],
-            height=self['height'],
-            highlightthickness=0,
-            relief='flat',
-            bd=0)
+        # call the super constructor
+        Frame.__init__(self, master, bg=bg,
+            width=width, height=height, relief='ridge', bd=3, *args, **kw)
+
+        # remember the starting value
+        self._value = value
+        self._colour = fillColour
+        self._midFill = fg
+
+        # create the canvas
+        self._canv = Canvas(self, bg=self['bg'],
+            width=self['width'], height=self['height'],
+            highlightthickness=0, relief='flat', bd=0)
         self._canv.pack(fill='both', expand=1)
-        self._rect = self._canv.create_rectangle(
-            0, 0, 0, self._canv.winfo_reqheight(), fill=fillColour, width=0)
+
+        # create the text
+        width, height = self.getWH(self._canv)
         self._text = self._canv.create_text(
-            self._canv.winfo_reqwidth() / 2,
-            self._canv.winfo_reqheight() / 2,
-            text='',
-            fill=textColour)
+            width / 2, height / 2, text='', fill=fg)
+
         if font:
             self._canv.itemconfigure(self._text, font=font)
 
         self.set(value, text)
+        self.moveText()
+
+        # bind refresh event
         self.bind('<Configure>', self._update_coords)
 
+    # customised config setters
     def config(self, cnf=None, **kw):
         self.configure(cnf, **kw)
 
@@ -6195,15 +6362,20 @@ class Meter(Frame):
         kw = gui.CLEAN_CONFIG_DICTIONARY(**kw)
 
         if "fill" in kw:
-            self._canv.itemconfigure(self._rect, fill=kw.pop("fill"))
+            self._colour = kw.pop("fill")
         if "fg" in kw:
-            self._canv.itemconfigure(self._text, fill=kw.pop("fg"))
-        if "backfill" in kw:
-            self._canv.config(bg=kw.pop("backfill"))
+            col = kw.pop("fg")
+            self._canv.itemconfigure(self._text, fill=col)
+            self._midFill = col
+        if "bg" in kw:
+            self._canv.config(bg=kw.pop("bg"))
+
         if "width" in kw:
             self._canv.config(width=kw.pop("width"))
         if "height" in kw:
             self._canv.config(height=kw.pop("height"))
+        if "font" in kw:
+            self._canv.itemconfigure(self._text, font=kw.pop("fillColour"))
 
         # propagate anything left
         if PYTHON2:
@@ -6211,27 +6383,16 @@ class Meter(Frame):
         else:
             super(Frame, self).config(cnf, **kw)
 
+        self.makeBar()
+
+    # called when resized
     def _update_coords(self, event):
-        '''Updates the position of the text and rectangle inside the canvas when the size of the widget gets changed.'''
-        self._setCanvas()
+        '''Updates the position of the text and rectangle inside the canvas
+            when the size of the widget gets changed.'''
+        self.makeBar()
+        self.moveText()
 
-    def _setCanvas(self):
-        # looks like we have to call update_idletasks() twice to make sure
-        # to get the results we expect
-        self._canv.update_idletasks()
-        self._canv.coords(
-            self._text,
-            self._canv.winfo_width() / 2,
-            self._canv.winfo_height() / 2)
-        self._canv.coords(
-            self._rect,
-            0,
-            0,
-            self._canv.winfo_width() *
-            self._value,
-            self._canv.winfo_height())
-        self._canv.update_idletasks()
-
+    # getter
     def get(self):
         val = self._value
         try:
@@ -6240,8 +6401,10 @@ class Meter(Frame):
             txt = None
         return val, txt
 
+    # update the variables, then call makeBar
     def set(self, value=0.0, text=None):
         # make the value failsafe:
+        value = value / 100.0
         if value < 0.0:
             value = 0.0
         elif value > 1.0:
@@ -6252,16 +6415,74 @@ class Meter(Frame):
         if text is None:
             text = str(int(round(100 * value))) + ' %'
 
-        self._canv.coords(
-            self._rect,
-            0,
-            0,
-            self._canv.winfo_width() *
-            value,
-            self._canv.winfo_height())
+        # set the new text
         self._canv.itemconfigure(self._text, text=text)
+        self.makeBar()
+
+    # draw the bar
+    def makeBar(self):
+        width, height = self.getWH(self._canv)
+        start = 0
+        fin = width * self._value
+
+        self.drawLines(width, height, start, fin, self._value, self._colour)
         self._canv.update_idletasks()
 
+    # move the text
+    def moveText(self):
+        width, height = self.getWH(self._canv)
+        if hasattr(self, "_text"):
+            self._canv.coords( self._text, width/2, height/2)
+
+    # draw gradated lines, in given coordinates
+    # using the specified colour
+    def drawLines(self, width, height, start, fin, val, col, tags="gradient"):
+        '''Draw a gradient'''
+        # http://stackoverflow.com/questions/26178869/is-it-possible-to-apply-gradient-colours-to-bg-of-tkinter-python-widgets
+
+        # remove the lines & midline
+        self._canv.delete(tags)
+        self._canv.delete("midline")
+
+        # determine start & end colour
+        (r1, g1, b1) = self.tint(col, -30000)
+        (r2, g2, b2) = self.tint(col, 30000)
+
+        # determine a direction & range
+        if val < 0:
+            direction = -1
+            limit = int(start - fin)
+        else:
+            direction = 1
+            limit = int(fin - start)
+
+        # if lines to draw
+        if limit != 0:
+            # work out the ratios
+            r_ratio = float(r2 - r1) / limit
+            g_ratio = float(g2 - g1) / limit
+            b_ratio = float(b2 - b1) / limit
+
+            # loop through the range of lines, in the right direction
+            modder = 0
+            for i in range(int(start), int(fin), direction):
+                nr = int(r1 + (r_ratio * modder))
+                ng = int(g1 + (g_ratio * modder))
+                nb = int(b1 + (b_ratio * modder))
+
+                colour = "#%4.4x%4.4x%4.4x" % (nr, ng, nb)
+                self._canv.create_line(
+                    i, 0, i, height, tags=(tags,), fill=colour)
+                modder += 1
+            self._canv.lower(tags)
+
+        # draw a midline
+        self._canv.create_line(start, 0, start, height,
+            fill=self._midFill, tags=("midline",))
+
+        self._canv.update_idletasks()
+
+    # function to calculate a tint
     def tint(self, col, brightness_offset=1):
         ''' dim or brighten the specified colour by the specified offset '''
         # http://chase-seibert.github.io/blog/2011/07/29/python-calculate-lighterdarker-rgb-colors.html
@@ -6271,225 +6492,134 @@ class Meter(Frame):
         new_rgb_int = [min([65535, max([0, i])]) for i in new_rgb_int]
         return new_rgb_int
 
+    def getWH(self, widg):
+        # ISSUES HERE:
+        # on MAC & LINUX, w_width/w_height always 1
+        # on WIN, w_height is bigger then r_height - leaving empty space
+
+        self._canv.update_idletasks()
+
+        r_width = widg.winfo_reqwidth()
+        r_height = widg.winfo_reqheight()
+        w_width = widg.winfo_width()
+        w_height = widg.winfo_height()
+
+        max_height = max(r_height, w_height)
+        max_width = max(r_width, w_width)
+
+        return (max_width, max_height)
+
+
 #####################################
 # SplitMeter Class extends the Meter above
-#  Used to allow bi-directional metering, starting from a mid point
+# Will fill in the empty space with a second fill colour
 # Two colours should be provided - left & right fill
-#  A gradient fill will be applied to the Meter
 #####################################
-
-
 class SplitMeter(Meter):
 
-    def __init__(
-            self,
-            master,
-            width=100,
-            height=20,
-            bg='white',
-            leftfillColour='red',
-            rightfillColour='blue',
-            value=0.0,
-            text=None,
-            font=None,
-            textColour='white',
-            *args,
-            **kw):
-
-        Frame.__init__(
-            self,
-            master,
-            bg=bg,
-            width=width,
-            height=height,
-            *args,
-            **kw)
-
-        self._value = value
-        self.config(relief='ridge', bd=3)
+    def __init__(self, master, width=100, height=20,
+            bg='white', leftfillColour='red', rightfillColour='blue',
+            value=0.0, text=None, font=None, fg='black', *args, **kw):
 
         self._leftFill = leftfillColour
         self._rightFill = rightfillColour
-        self._midFill = textColour
 
-        self._canv = Canvas(
-            self,
-            bg=self['bg'],
-            width=self['width'],
-            height=self['height'],
-            highlightthickness=0,
-            relief='flat',
-            bd=0)
-        self._canv.pack(fill='both', expand=1)
+        Meter.__init__(self, master, width=width, height=height, 
+                    bg=bg, value=value, text=text, font=font,
+                    fg=fg, *args, **kw)
 
-        self.bind('<Configure>', self._update_coords)
+    # override the handling of fill
+    # list of two colours
+    def configure(self, cnf=None, **kw):
+        kw = gui.CLEAN_CONFIG_DICTIONARY(**kw)
+        if "fill" in kw:
+            cols = kw.pop("fill")
+            if not isinstance(cols, list):
+                raise Exception("SplitMeter requires a list of two colours")
+            else:
+                self._leftFill = cols[0]
+                self._rightFill = cols[1]
 
-    def _update_coords(self, event):
-        '''Updates the position of the text and rectangle inside the canvas when the size of the widget gets changed.'''
-        self._setCanvas()
-
-    def setFill(self, cols):
-        self._leftFill = cols[0]
-        self._rightFill = cols[1]
-        self._setCanvas()
-
-    def setFg(self, col):
-        self._midFill = col
-        self._setCanvas()
-
-    def _setCanvas(self):
-        self._canv.update_idletasks()
-        self.drawLines()
-        self._canv.update_idletasks()
-
-    def drawLines(self):
-        '''Draw a gradient'''
-        # http://stackoverflow.com/questions/26178869/is-it-possible-to-apply-gradient-colours-to-bg-of-tkinter-python-widgets
-
-        self._canv.delete("gradient")
-        self._canv.delete("midline")
-
-        # get range to draw lines
-        width = self._canv.winfo_width()
-        height = self._canv.winfo_height()
-        start = width / 2
-        fin = start + (start * self._value)
-
-        # determine start & end colour
-        if self._value == 0:
-            col = self._midFill
-        elif self._value < 0:
-            col = self._leftFill
+        # propagate any left over confs
+        if PYTHON2:
+            Meter.configure(self, cnf, **kw)
         else:
-            col = self._rightFill
-        (r1, g1, b1) = self.tint(col, -30000)
-        (r2, g2, b2) = self.tint(col, 30000)
-
-        # determine a direction & range
-        if self._value < 0:
-            direction = -1
-            limit = int(start - fin)
-        else:
-            direction = 1
-            limit = int(fin - start)
-
-        # if no lines to draw, end it here - with a midline
-        if limit == 0:
-            self._canv.create_line(
-                start,
-                0,
-                start,
-                height,
-                fill=self._midFill,
-                tags=(
-                    "midline",
-                ))
-            return
-
-        # work out the ratios
-        r_ratio = float(r2 - r1) / limit
-        g_ratio = float(g2 - g1) / limit
-        b_ratio = float(b2 - b1) / limit
-
-        # loop through the range of lines, in the right direction
-        modder = 0
-        for i in range(int(start), int(fin), direction):
-            nr = int(r1 + (r_ratio * modder))
-            ng = int(g1 + (g_ratio * modder))
-            nb = int(b1 + (b_ratio * modder))
-
-            colour = "#%4.4x%4.4x%4.4x" % (nr, ng, nb)
-            self._canv.create_line(
-                i, 0, i, height, tags=(
-                    "gradient",), fill=colour)
-            modder += 1
-
-        self._canv.lower("gradient")
-        self._canv.create_line(
-            start,
-            0,
-            start,
-            height,
-            fill=self._midFill,
-            tags=(
-                "midline",
-            ))
+            super(SplitMeter, self).configure(cnf, **kw)
 
     def set(self, value=0.0, text=None):
         # make the value failsafe:
-        if value < -1:
-            value = -1.0
-        elif value > 1.0:
-            value = 1.0
-        self._value = value
-        self._setCanvas()
-
-
-class DualMeter(SplitMeter):
-
-    def __init__(
-            self,
-            master,
-            width=100,
-            height=20,
-            bg='white',
-            leftfillColour='pink',
-            rightfillColour='green',
-            value=0.5,
-            text=None,
-            font=None,
-            textColour='white',
-            *args,
-            **kw):
-
-        Frame.__init__(
-            self,
-            master,
-            bg=bg,
-            width=width,
-            height=height,
-            *args,
-            **kw)
-
-        self._value = value
-        self.config(relief='ridge', bd=3)
-
-        self._leftFill = leftfillColour
-        self._rightFill = rightfillColour
-        self._midFill = textColour
-
-        self._canv = Canvas(
-            self,
-            bg=self['bg'],
-            width=self['width'],
-            height=self['height'],
-            highlightthickness=0,
-            relief='flat',
-            bd=0)
-        width = self._canv.winfo_width()
-        mid = width * self._value
-        self._r_rect = self._canv.create_rectangle(
-            0, 0, width, self._canv.winfo_reqheight(), fill=self._rightFill, width=0)
-        self._l_rect = self._canv.create_rectangle(
-            0, 0, mid, self._canv.winfo_reqheight(), fill=self._leftFill, width=0)
-        self._canv.pack(fill='both', expand=1)
-
-        self.bind('<Configure>', self._update_coords)
-
-    def set(self, value=0.0, text=None):
-        # make the value failsafe:
+        value = value / 100.0
         if value < 0.0:
             value = 0.0
         elif value > 1.0:
             value = 1.0
         self._value = value
-        self._setCanvas()
+        self.makeBar()
 
-    def drawLines(self):
-        width = self._canv.winfo_width()
+    # override the makeBar function
+    def makeBar(self):
+        width, height = self.getWH(self._canv)
         mid = width * self._value
-        self._canv.coords(self._l_rect, 0, 0, mid, self._canv.winfo_height())
-        self._canv.coords(self._r_rect, 0, 0, width, self._canv.winfo_height())
+
+        self.drawLines(width, height, 0, mid, self._value, self._leftFill, tags="left")
+        self.drawLines(width, height, mid, width, self._value, self._rightFill, tags="right")
+
+
+#####################################
+# SplitMeter Class extends the Meter above
+# Used to allow bi-directional metering, starting from a mid point
+# Two colours should be provided - left & right fill
+# A gradient fill will be applied to the Meter
+#####################################
+class DualMeter(SplitMeter):
+
+    def __init__(self, master, width=100, height=20, bg='white',
+            leftfillColour='pink', rightfillColour='green',
+            value=None, text=None,
+            font=None, fg='black', *args, **kw):
+
+        SplitMeter.__init__(self, master, width=width, height=height,
+                    bg=bg, leftfillColour=leftfillColour,
+                    rightfillColour=rightfillColour,
+                    value=value, text=text, font=font,
+                    fg=fg, *args, **kw)
+
+    def set(self, value=[0,0], text=None):
+        if value is None:
+            value=[0,0]
+        if not isinstance(value, list):
+            raise Exception("DualMeter.set() requires a list of two arguments")
+
+        # make copy, and reduce to decimal
+        vals = [value[0]/100, value[1]/100]
+
+        # normalise
+        if vals[0] < -1: vals[0] = -1.0
+        elif vals[0] > 0: vals[0] = vals[0] * -1
+
+        if vals[1] > 1.0: vals[1] = 1.0
+        elif vals[1] < 0: vals[1] = 0
+        elif vals[1] < -1: vals[1] = -1.0
+
+        self._value = vals
+
+        # if no text is specified use the default percentage string:
+        if text is not None:
+            # set the new text
+            self._canv.itemconfigure(self._text, text=text)
+
+        self.makeBar()
+
+    def makeBar(self):
+        # get range to draw lines
+        width, height = self.getWH(self._canv)
+
+        start = width / 2
+        l_fin = start + (start * self._value[0])
+        r_fin = start + (start * self._value[1])
+
+        self.drawLines(width, height, start, l_fin, self._value[0], self._leftFill, tags="left")
+        self.drawLines(width, height, start, r_fin, self._value[1], self._rightFill, tags="right")
 
 
 #################################
@@ -7482,9 +7612,11 @@ class PagedWindow(Frame):
 #        self.titleLabel.config(fg=colour)
 
     # functions to change the labels of the two buttons
-    def setPrevButton(self, title): self.prevButton.config(text=title)
+    def setPrevButton(self, title):
+        self.prevButton.config(text=title)
 
-    def setNextButton(self, title): self.nextButton.config(text=title)
+    def setNextButton(self, title):
+        self.nextButton.config(text=title)
 
     def setNavPositionTop(self, top=True):
         oldNavPos = self.navPos
@@ -7507,10 +7639,8 @@ class PagedWindow(Frame):
             self.posLabel.grid_remove()
             self.nextButton.grid_remove()
 
-            self.frames[
-                self.currentPage].grid(
-                row=int(
-                    not self.navPos) + 1,
+            self.frames[self.currentPage].grid(
+                row=int(not self.navPos) + 1,
                 column=0,
                 columnspan=3,
                 sticky=N + S + E + W,
@@ -7561,10 +7691,16 @@ class PagedWindow(Frame):
             self.posLabel.config(text="")
 
     # get the current frame being shown - for adding widgets
-    def getPage(self): return self.frames[self.currentPage]
+    def getPage(self):
+        return self.frames[self.currentPage]
+
+    # get the named frame - for adding widgets
+    def getPage(self, num):
+        return self.frames[num]
 
     # get current page number
-    def getPageNumber(self): return self.currentPage + 1
+    def getPageNumber(self):
+        return self.currentPage + 1
 
     # register a function to call when the page changes
     def registerPageChangeEvent(self, event):
@@ -7683,6 +7819,7 @@ class Page(Frame):
     def __init__(self, parent, **opts):
         Frame.__init__(self, parent)
         self.config(relief=RIDGE, borderwidth=2)
+        self.container = parent
 
 #########################
 # Class to provide auto-completion on Entry boxes
@@ -7874,6 +8011,20 @@ class AutoScrollbar(Scrollbar):
     def place(self, **kw):
         raise Exception("cannot use place with this widget")
 
+
+#######################
+# Widget to look like a label, but allow selection...
+#######################
+
+
+class SelectableLabel(Entry):
+    def __init__(self, parent, **opts):
+        Entry.__init__(self, parent)
+        self.configure(relief=FLAT, state="readonly", readonlybackground='white', fg='black')
+#        var = parent.StringVar()
+#        self.configure(textvariable=var)
+        
+
 #######################
 # Frame with built in scrollbars and canvas for placing stuff on
 # http://effbot.org/zone/tkinter-autoscrollbar.htm
@@ -7884,15 +8035,11 @@ class AutoScrollbar(Scrollbar):
 class ScrollPane(Frame):
     def __init__(self, parent, **opts):
         Frame.__init__(self, parent)
-        self.config(padx=5, pady=5, width=100, height=100)
+        self.config(padx=5, pady=5)
 
         # make the ScrollPane expandable
         self.grid_rowconfigure(0, weight=1)
         self.grid_columnconfigure(0, weight=1)
-
-        if 'yscrollincrement' not in opts:
-            opts['yscrollincrement'] = 17
-        opts['height'] = 100
 
         vscrollbar = Scrollbar(self)
         hscrollbar = Scrollbar(self, orient=HORIZONTAL)
@@ -7909,44 +8056,31 @@ class ScrollPane(Frame):
         vscrollbar.config(command=self.canvas.yview)
         hscrollbar.config(command=self.canvas.xview)
 
-        self.canvas.bind("<Key-Prior>", self.page_up)
-        self.canvas.bind("<Key-Next>", self.page_down)
-        self.canvas.bind("<Key-Up>", self.unit_up)
-        self.canvas.bind("<Key-Down>", self.unit_down)
-        self.canvas.bind("<Alt-Key-2>", self.zoom_height)
-        self.canvas.focus_set()
+        self.canvas.bind("<Key-Prior>", self.__keyPressed)
+        self.canvas.bind("<Key-Next>", self.__keyPressed)
+        self.canvas.bind("<Key-Up>", self.__keyPressed)
+        self.canvas.bind("<Key-Down>", self.__keyPressed)
+        self.canvas.bind("<Key-Left>", self.__keyPressed)
+        self.canvas.bind("<Key-Right>", self.__keyPressed)
+        self.canvas.bind("<Home>", self.__keyPressed)
+        self.canvas.bind("<End>", self.__keyPressed)
 
         self.canvas.bind("<Enter>", self.__mouseEnter)
         self.canvas.bind("<Leave>", self.__mouseLeave)
         self.b_ids = []
+        self.canvas.focus_set()
 
-        self.interior = interior = Frame(self.canvas)
+        self.interior = Frame(self.canvas)
         self.interior_id = self.canvas.create_window(
-            0, 0, window=interior, anchor=NW)
+            0, 0, window=self.interior, anchor=NW)
 
-        # removed - was cropping label's width
-        #self.canvas.bind('<Configure>', self.__configureCanvas)
         self.interior.bind('<Configure>', self.__configureInterior)
 
     # track changes to the canvas and frame width and sync them,
-    # also updating the scrollbar
     # http://www.scriptscoop2.com/t/35d742299f35/python-tkinter-scrollbar-for-frame.html
     def __configureInterior(self, event):
-        # update the scrollbars to match the size of the inner frame
-        size = (
-            self.interior.winfo_reqwidth(),
-            self.interior.winfo_reqheight())
+        size = (self.interior.winfo_reqwidth(), self.interior.winfo_reqheight())
         self.canvas.config(scrollregion="0 0 %s %s" % size)
-        if self.interior.winfo_reqwidth() != self.canvas.winfo_width():
-            # update the canvas's width to fit the inner frame
-            self.canvas.config(width=self.interior.winfo_reqwidth())
-
-    def __configureCanvas(self, event):
-        if self.interior.winfo_reqwidth() != self.canvas.winfo_width():
-            # update the inner frame's width to fill the canvas
-            self.canvas.itemconfigure(
-                self.interior_id, width=self.canvas.winfo_width())
-            pass
 
     # unbind any saved bind ids
     def __unbindIds(self):
@@ -7956,8 +8090,11 @@ class ScrollPane(Frame):
         if gui.GET_PLATFORM() == gui.LINUX:
             self.canvas.unbind("<4>", self.b_ids[0])
             self.canvas.unbind("<5>", self.b_ids[1])
+            self.canvas.unbind("<Shift-4>", self.b_ids[2])
+            self.canvas.unbind("<Shift-5>", self.b_ids[3])
         else:  # Windows and MacOS
             self.canvas.unbind("<MouseWheel>", self.b_ids[0])
+            self.canvas.unbind("<Shift-MouseWheel>", self.b_ids[1])
 
         self.b_ids = []
 
@@ -7965,128 +8102,123 @@ class ScrollPane(Frame):
     def __mouseEnter(self, event):
         self.__unbindIds()
         if gui.GET_PLATFORM() == gui.LINUX:
-            self.b_ids.append(self.canvas.bind_all("<4>", self.__mouseScroll))
-            self.b_ids.append(self.canvas.bind_all("<5>", self.__mouseScroll))
+            self.b_ids.append(self.canvas.bind_all("<4>", self.__vertMouseScroll))
+            self.b_ids.append(self.canvas.bind_all("<5>", self.__vertMouseScroll))
+            self.b_ids.append(self.canvas.bind_all("<Shift-4>", self.__horizMouseScroll))
+            self.b_ids.append(self.canvas.bind_all("<Shift-5>", self.__horizMouseScroll))
         else:  # Windows and MacOS
-            self.b_ids.append(
-                self.canvas.bind_all(
-                    "<MouseWheel>",
-                    self.__mouseScroll))
+            self.b_ids.append(self.canvas.bind_all("<MouseWheel>", self.__vertMouseScroll))
+            self.b_ids.append(self.canvas.bind_all("<Shift-MouseWheel>", self.__horizMouseScroll))
 
     # remove mouse scroll binding, when mouse leaves
     def __mouseLeave(self, event):
         self.__unbindIds()
 
-    # https://www.daniweb.com/programming/software-development/code/217059/using-the-mouse-wheel-with-tkinter-python
-    def __mouseScroll(self, event):
-        timer = round(time.time(), 1)
+    def __horizMouseScroll(self, event):
+        self.__mouseScroll(True, event)
 
-        # get the mouse scroll direciton value
-        newDelta = event.delta
+    def __vertMouseScroll(self, event):
+        self.__mouseScroll(False, event)
 
-        # if windows - make it the same as other platforms
-        if gui.GET_PLATFORM() == gui.WINDOWS:
-            newDelta = (newDelta / 120) * -1
+    def __mouseScroll(self, horiz, event):
+        direction = 0
 
-        # scrolled before
-        if hasattr(self, 'lastScrollTime'):
-
-            # too soon to scroll
-            if self.lastScrollTime == timer:
-                if newDelta in [1, -1, 2, -2]:
-                    self.times.append(newDelta)
-                self.speed += 1
-
-            # time to scroll
-            else:
-                # get the delta
-                try:
-                    delta = max(set(self.times), key=self.times.count)
-                except:
-                    delta = self.oldDelta
-
-                # windows/mac osx scroll event
-                if gui.GET_PLATFORM() in [gui.WINDOWS, gui.LINUX]:
-                    if gui.GET_PLATFORM() == gui.WINDOWS:
-                        val = delta * -1
-                        if delta < 0:
-                            val = val * -1
-                        if delta < 0:
-                            self.speed = self.speed * -1
-                    else:
-                        val = (self.times.count(delta))
-                        if delta > 0:
-                            val = val * -1
-                        if delta > 0:
-                            self.speed = self.speed * -1
-
-                    if delta in [1, -1]:
-                        self.canvas.yview_scroll(self.speed, "units")
-                    elif delta in [2, -2]:
-                        self.canvas.xview_scroll(self.speed, "units")
-                    else:
-                        pass
-
-                # linux scroll event
-                elif gui.GET_PLATFORM() == gui.LINUX:
-                    if event.num == 4:
-                        self.canvas.yview_scroll(-1 * 2, "units")
-                    elif event.num == 5:
-                        self.canvas.yview_scroll(2, "units")
-                # unknown platform scroll event
-                else:
-                    pass
-
-                # finally, set some stuff
-                self.times = []
-                self.oldDelta = delta
-                if newDelta in [1, -1, 2, -2]:
-                    self.times.append(newDelta)
-                self.lastScrollTime = timer
-                self.speed = 1
-
-        # no lastScrollTime set
+        # get direction
+        if event.num == 4:
+            direction = -1
+        elif event.num == 5:
+            direction = 1
+        elif event.delta > 100: 
+            direction = int(-1 * (event.delta/120))
+        elif event.delta > 0: 
+            direction = -1 * event.delta
+        elif event.delta < -100:
+            direction = int(-1 * (event.delta/120))
+        elif event.delta < 0:
+            direction = -1 * event.delta
         else:
-            self.times = []
-            if newDelta in [1, -1, 2, -2]:
-                self.times.append(newDelta)
-            self.lastScrollTime = timer
-            self.speed = 1
+            return  # shouldn't happen
+
+        if horiz:
+            self.canvas.xview_scroll(direction, "units")
+        else:
+            self.canvas.yview_scroll(direction, "units")
 
     def getPane(self):
         return self.canvas
 
-    def page_up(self, event):
-        self.canvas.yview_scroll(-1, "page")
-        return "break"
+    def __keyPressed(self, event):
+        # work out if alt/ctrl/shift are pressed
+        state = event.state
+        ctrl  = (state & 0x4) != 0
+        alt   = (state & 0x8) != 0 or (state & 0x80) != 0 # buggy
+        shift = (state & 0x1) != 0
 
-    def page_down(self, event):
-        self.canvas.yview_scroll(1, "page")
-        return "break"
+        if event.type == "2":
+            # up and down arrows
+            if event.keysym == "Up": # event.keycode == 38
+                if ctrl:
+                    self.canvas.yview_scroll(-1, "pages")
+                else:
+                    self.canvas.yview_scroll(-1, "units")
+            elif event.keysym == "Down": # event.keycode == 40
+                if ctrl:
+                    self.canvas.yview_scroll(1, "pages")
+                else:
+                    self.canvas.yview_scroll(1, "units")
 
-    def unit_up(self, event):
-        self.canvas.yview_scroll(-1, "unit")
-        return "break"
+            # left and right arrows
+            elif event.keysym == "Left": # event.keycode == 37
+                if ctrl:
+                    self.canvas.xview_scroll(-1, "pages")
+                else:
+                    self.canvas.xview_scroll(-1, "units")
+            elif event.keysym == "Right": # event.keycode == 39
+                if ctrl:
+                    self.canvas.xview_scroll(1, "pages")
+                else:
+                    self.canvas.xview_scroll(1, "units")
 
-    def unit_down(self, event):
-        self.canvas.yview_scroll(1, "unit")
-        return "break"
+            # page-up & page-down keys
+            elif event.keysym == "Prior": # event.keycode == 33
+                if ctrl:
+                    self.canvas.xview_scroll(-1, "pages")
+                else:
+                    self.canvas.yview_scroll(-1, "pages")
+            elif event.keysym == "Next": # event.keycode == 34
+                if ctrl:
+                    self.canvas.xview_scroll(1, "pages")
+                else:
+                    self.canvas.yview_scroll(1, "pages")
+            
+            # home & end keys
+            elif event.keysym == "Home": # event.keycode == 36
+                if ctrl:
+                    self.canvas.xview_moveto(0.0)
+                else:
+                    self.canvas.yview_moveto(0.0)
+            elif event.keysym == "End": # event.keycode == 35
+                if ctrl:
+                    self.canvas.xview_moveto(1.0)
+                else:
+                    self.canvas.yview_moveto(1.0)
+            
+            return "break"
+        else:
+            pass # shouldn't happen
 
-    def zoom_height(self, event):
-        ZoomHeight.zoom_height(self.master)
-        return "break"
 
 #################################
 # Additional Dialog Classes
 #################################
 # the main dialog class to be extended
 
-
 class Dialog(Toplevel):
 
     def __init__(self, parent, title=None):
         Toplevel.__init__(self, parent)
         self.transient(parent)
+        parent.POP_UP = self
 
         if title:
             self.title(title)
@@ -8496,7 +8628,7 @@ class SimpleGrid(Frame):
     # and checks the event.delta to determine where to scroll
     # https://www.daniweb.com/programming/software-development/code/217059/using-the-mouse-wheel-with-tkinter-python
     def __scrollGrid(self, event, title):
-        if gui.GET_PLATFORM() in [gui.WINDOWS, gui.LINUX]:
+        if gui.GET_PLATFORM() in [gui.WINDOWS, gui.MAC]:
             if gui.GET_PLATFORM() == gui.WINDOWS:
                 val = event.delta / 120
             else:

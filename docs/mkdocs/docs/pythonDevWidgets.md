@@ -121,31 +121,31 @@ It is possible to include buttons at the end of each row, and an additional row 
     Add a single row of data to the existing grid.  
     It will be positioned at the bottom of the grid, above the entry boxes if present.  
 
-###Meters
+###MatPlotLib
 ---
-Working on some different styles for the Meter.  
-And, a better look - gradated colour...  
-####SplitMeter
-Shows two values, left & right  
 
-![SplitMeter](img/1_splitMeter.png)
+Support for embedding very basic [MatPlotLib](http://matplotlib.org) plots.  
 
-* `.addSplitMeter(title)`  
+![Plot](img/1_plot.png)  
+```python
+from numpy import sin, pi, arange
+from appJar import gui
 
-####DualMeter
-Shows percentage left & right  
+x = arange(0.0, 3.0, 0.01)
+y = sin(2*pi*x)
 
-* `.addDualMeter(title)`  
+app = gui()
+axes = app.addPlot("p1", x, y)
+axes.legend(['key data'])
+app.go()
+```
 
-####Set Meters  
+* `.addPlot(title, x, y)`  
+    Create a plot with the specified x and y values.  
+    Returns the plot object, to allow further customisation.  
 
-* `.setMeter(title, value, text=None)`  
-    Value should be between -100 & 100 for a SplitMeter
+* `.updatePlot(title, x, y)`  
+    Update the specified plot with the specified x and y values.
 
-* `.setMeterFill(title, colour(s))`  
-    Pass a single colour for a Meter.  
-    Pass a list of two colours for Dual & Split meters.  
-
-####Get Meters  
-
-* `.getMeter(title)`  
+* `.refreshPlot(title)`  
+    Redraw the plot, call after changing the axes object...  

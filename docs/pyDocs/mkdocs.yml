@@ -1,6 +1,0 @@
-site_name: Python Docs
-pages:
-    - Home: index.md
-    - Modular Development: modularDevelopment.md
-    - Defensive Programming: defensiveProgramming.md
-    - Databases: databases.md

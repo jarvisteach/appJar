@@ -2,6 +2,7 @@
 
 It's possible to show a very simple SplashScreen when your GUI starts up.  
 It will fill the whole screen, and stay up for a couple of seconds, while your GUI loads.  
+![SplashScreen)](img/splash.png)  
 
 Simply call:  
 

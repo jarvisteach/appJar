@@ -63,6 +63,21 @@ It's possible to change the default colours and fonts for widgets in the GUI.
     Set the background colour for the entire GUI. This should affect all widgets, and will override any backgrounds set before.
 
 ###Font
+
+You can describe a font using a String or a Tuple. There are three properties that can be set:  
+
+* Family - such as *Arial*, *Courier*, *Comic Sans*, *Sans Serif*, *Times* or *Verdana*  
+* Size - the height in points  
+* Style - one or more of *normal*, *bold*, *roman*, *italic*, *underline* & *overstrike*  
+
+If the family has a space, then you should use a tuple, otherwise you can simply pass a space separated string:  
+```python
+font = "Times 16 bold underline"
+font = ("Comic Sans", "20", "underline")
+```
+
+If the font can't be found, a default font will be used.  
+
 * `.setFont(size, font=None)`  
     This can be used to set the font size and style for all widgets.
 
