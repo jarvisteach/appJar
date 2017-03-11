@@ -1,7 +1,7 @@
 #New & Upcoming
 ---
 
-## Next Release (0.05)  
+## Version (0.05)  
 * [Open Container](/pythonWidgetGrouping/#reopening-containers) - implemented issue [#83](https://github.com/jarvisteach/appJar/issues/83), can now reopen a container, perform operations on it, and close it.  
 * Changed disable entry to readonly, allows entries to be copied ([#86](https://github.com/jarvisteach/appJar/issues/86))  
 * Images now support [raw image data](/pythonImages/#add-images).  
@@ -10,6 +10,7 @@
 * Rewrite of [ScrollPane](/pythonWidgetGrouping/#scroll-pane), multi-platform scrolling...
 * Added functions to [change the bg/fg](/pythonWidgets/#listbox) of ListBox items ([#97](https://github.com/jarvisteach/appJar/issues/97)).  
 * Issues Resolved:  
+    * [#101](https://github.com/jarvisteach/appJar/issues/101) & [#103](https://github.com/jarvisteach/appJar/issues/103) - updates to documentation
     * [#99](https://github.com/jarvisteach/appJar/issues/99) - ability to create empty containers  
     * [#97](https://github.com/jarvisteach/appJar/issues/97) - ability to set bg/fg colour of list items
     * [#94](https://github.com/jarvisteach/appJar/issues/94) - basic support for [MatPlotLib](/pythonDevWidgets/#matplotlib)  
@@ -21,8 +22,6 @@
     * [#83](https://github.com/jarvisteach/appJar/issues/83) - can now reopen container  
     * [#65](https://github.com/jarvisteach/appJar/issues/65) - Meter rewrite  
     * [#34](https://github.com/jarvisteach/appJar/issues/34)/[#35](https://github.com/jarvisteach/appJar/issues/35) - ScrollPane rewrite
-
----
 
 ## Version 0.042  
 * Issues Resolved:  
