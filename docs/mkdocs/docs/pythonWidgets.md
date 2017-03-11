@@ -85,6 +85,7 @@ Simply add the word `Label` to the command when adding the widget:
 * `.addLabelEntry(title)`
 * `.addLabelNumericEntry(title)`
 * `.addLabelSecretEntry(title)`
+* `.addLabelAutoEntry(title)`
 * `.addLabelScale(title)`
 * `.addLabelOptionBox(title, values)`
 * `.addLabelTickOptionBox(title, values)`
