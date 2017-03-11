@@ -3072,15 +3072,16 @@ class gui(object):
         else:
             return False
 
-    def setCheckBox(self, title, ticked=True):
+    def setCheckBox(self, title, ticked=True, callFunction=True):
         cb = self.__verifyItem(self.n_cbs, title)
         if ticked:
             cb.select()
         else:
             cb.deselect()
         # now call function
-        if hasattr(cb, 'cmd'):
-            cb.cmd()
+        if callFunction:
+            if hasattr(cb, 'cmd'):
+                cb.cmd()
 
 #####################################
 # FUNCTION for scales
@@ -3114,12 +3115,13 @@ class gui(object):
         sc = self.__verifyItem(self.n_scales, title)
         return sc.get()
 
-    def setScale(self, title, pos):
+    def setScale(self, title, pos, callFunction=True):
         sc = self.__verifyItem(self.n_scales, title)
         sc.set(pos)
         # now call function
-        if hasattr(sc, 'cmd'):
-            sc.cmd()
+        if callFunction:
+            if hasattr(sc, 'cmd'):
+                sc.cmd()
 
     def setScaleWidth(self, title, width):
         sc = self.__verifyItem(self.n_scales, title)
@@ -3648,13 +3650,14 @@ class gui(object):
         return False
 
     # expects a valid spin box widget, and a valid value
-    def __setSpinBoxVal(self, spin, val):
+    def __setSpinBoxVal(self, spin, val, callFunction=True):
         var = StringVar(self.topLevel)
         var.set(val)
         spin.config(textvariable=var)
         # now call function
-        if hasattr(spin, 'cmd'):
-            spin.cmd()
+        if callFunction:
+            if hasattr(spin, 'cmd'):
+                spin.cmd()
 
     # is it going to be a hash or list??
     def __getSpinBoxValsAsList(self, vals):
@@ -3667,7 +3670,7 @@ class gui(object):
         vals = vals.split()
         return vals
 
-    def setSpinBox(self, title, value):
+    def setSpinBox(self, title, value, callFunction=True):
         spin = self.__verifyItem(self.n_spins, title)
         vals = spin.cget("values")  # .split()
         vals = self.__getSpinBoxValsAsList(vals)
@@ -3680,9 +3683,9 @@ class gui(object):
                 title +
                 "=" +
                 str(vals))
-        self.__setSpinBoxVal(spin, val)
+        self.__setSpinBoxVal(spin, val, callFunction)
 
-    def setSpinBoxPos(self, title, pos):
+    def setSpinBoxPos(self, title, pos, callFunction=True):
         spin = self.__verifyItem(self.n_spins, title)
         vals = spin.cget("values")  # .split()
         vals = self.__getSpinBoxValsAsList(vals)
@@ -3697,7 +3700,7 @@ class gui(object):
                 str(vals))
         pos = len(vals) - 1 - pos
         val = vals[pos]
-        self.__setSpinBoxVal(spin, val)
+        self.__setSpinBoxVal(spin, val, callFunction)
 
     def changeSpinBox(self, title, vals):
         spin = self.__verifyItem(self.n_spins, title)
@@ -4329,7 +4332,7 @@ class gui(object):
         var = self.__verifyItem(self.n_rbVars, title)
         return var.get()
 
-    def setRadioButton(self, title, value):
+    def setRadioButton(self, title, value, callFunction=True):
         vals = self.__verifyItem(self.n_rbVals, title)
         if value not in vals:
             raise Exception(
@@ -4340,9 +4343,10 @@ class gui(object):
         var.set(value)
 
         # now call function
-        item = self.__verifyItem(self.n_rbs, title)[0]
-        if hasattr(item, 'cmd'):
-            item.cmd()
+        if callFunction:
+            item = self.__verifyItem(self.n_rbs, title)[0]
+            if hasattr(item, 'cmd'):
+                item.cmd()
 
     def setRadioTick(self, title, tick=True):
         radios = self.__verifyItem(self.n_rbs, title)
@@ -4418,7 +4422,7 @@ class gui(object):
         self.setListBoxMulti(title, not single)
 
     # select the specified item in the list
-    def selectListItem(self, title, item):
+    def selectListItem(self, title, item, callFunction=True):
         lb = self.__verifyItem(self.n_lbs, title)
         items = lb.get(0, END)
         if len(items) > 0:
@@ -4426,8 +4430,9 @@ class gui(object):
                 if items[pos] == item:
                     self.selectListItemPos(title, pos)
                     # now call function
-                    if hasattr(lb, 'cmd'):
-                        lb.cmd()
+                    if callFunction:
+                        if hasattr(lb, 'cmd'):
+                            lb.cmd()
                     break
 
     def selectListItemPos(self, title, pos):

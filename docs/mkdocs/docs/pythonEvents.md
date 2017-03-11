@@ -20,6 +20,8 @@ To make something happen you have to set a function for a widget:
     * For Labels & Images it binds a function to the ```<Left-Mouse-Button>```, making the widget clickable.  
     * For other widgets, it will set the *command* property for the underlying tkinter widget.  
 
+**Be careful** it's possible to generate a RuntimeError. If you've linked together two widgets, say a Scale and a SpinBox, and you want a change in one to cause an update in the other, you might inadvertantly end up stuck in a recursive loop, until the stack fills up. In this case, make sure you call the ```setXXX()``` function, setting ```callFunction``` as False.
+
 ```python
 from appJar import gui
 

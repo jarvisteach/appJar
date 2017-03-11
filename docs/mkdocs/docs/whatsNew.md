@@ -1,7 +1,15 @@
 #New & Upcoming
 ---
 
-## Version (0.05)  
+## Version (0.052)  
+* Issues Resolved:  
+    * [#114](https://github.com/jarvisteach/appJar/issues/114) - ability to stop functions being called when a set method is activated
+
+## Version (0.051)  
+* Issues Resolved:  
+    * [#109](https://github.com/jarvisteach/appJar/issues/109) - Labelled Auto Entry, contributed by [jacobthetechy](https://github.com/jacobthetechy)
+
+## Version (0.052)  
 * [Open Container](/pythonWidgetGrouping/#reopening-containers) - implemented issue [#83](https://github.com/jarvisteach/appJar/issues/83), can now reopen a container, perform operations on it, and close it.  
 * Changed disable entry to readonly, allows entries to be copied ([#86](https://github.com/jarvisteach/appJar/issues/86))  
 * Images now support [raw image data](/pythonImages/#add-images).  
@@ -10,7 +18,6 @@
 * Rewrite of [ScrollPane](/pythonWidgetGrouping/#scroll-pane), multi-platform scrolling...
 * Added functions to [change the bg/fg](/pythonWidgets/#listbox) of ListBox items ([#97](https://github.com/jarvisteach/appJar/issues/97)).  
 * Issues Resolved:  
-    * [#109](https://github.com/jarvisteach/appJar/issues/109) - Labelled Auto Entry, contributed by [jacobthetechy](https://github.com/jacobthetechy)
     * [#101](https://github.com/jarvisteach/appJar/issues/101) & [#103](https://github.com/jarvisteach/appJar/issues/103) - updates to documentation
     * [#99](https://github.com/jarvisteach/appJar/issues/99) - ability to create empty containers  
     * [#97](https://github.com/jarvisteach/appJar/issues/97) - ability to set bg/fg colour of list items
