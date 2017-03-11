@@ -39,6 +39,7 @@ pages:
     - Git: gitGuide.md
     - License: License.md
     - Support: Support.md
+    - Contributing: contributing.md
     - Acknowledgements: Thanks.md
 extra:
     theme_inverse: false
