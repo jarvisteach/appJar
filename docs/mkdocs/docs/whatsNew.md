@@ -9,7 +9,7 @@
 * Issues Resolved:  
     * [#109](https://github.com/jarvisteach/appJar/issues/109) - Labelled Auto Entry, contributed by [jacobthetechy](https://github.com/jacobthetechy)
 
-## Version (0.050)  
+## Version (0.05)  
 * [Open Container](/pythonWidgetGrouping/#reopening-containers) - implemented issue [#83](https://github.com/jarvisteach/appJar/issues/83), can now reopen a container, perform operations on it, and close it.  
 * Changed disable entry to readonly, allows entries to be copied ([#86](https://github.com/jarvisteach/appJar/issues/86))  
 * Images now support [raw image data](/pythonImages/#add-images).  
