@@ -76,6 +76,14 @@ try:
 except:
     NANOJPEG_AVAILABLE = False
 
+try:
+    tkdndlib = os.path.join(os.path.dirname(os.path.abspath(__file__)), "lib", "tkdnd2.8")
+    os.environ['TKDND_LIBRARY'] = tkdndlib
+    from appJar.lib.TkDND_wrapper import TkDND
+    DND_AVAILABLE = True
+except:
+    DND_AVAILABLE = False
+
 # only try to import winsound if we're on windows
 if platform() in ["win32", "Windows"]:
     import winsound
@@ -4874,9 +4882,18 @@ class gui(object):
         text.var = None
         self.__addRightClickMenu(text)
 
+        # add external dnd support
+        if DND_AVAILABLE:
+            dnd = TkDND(self.topLevel)
+            dnd.bindtarget(text, self.__textDnD, 'text/uri-list')
+
         self.n_textAreas[title] = text
         self.logTextArea(title)
         return text
+
+    # function to receive DnD events
+    def __textDnD(self, event):
+        event.widget.insert('1.0', event.data)
 
     def addTextArea(self, title, row=None, column=0, colspan=0, rowspan=0):
         text = self.__buildTextArea(title, self.__getContainer())
@@ -5075,12 +5092,21 @@ class gui(object):
         ent.bind("<Tab>", self.__focusNextWindow)
         ent.bind("<Shift-Tab>", self.__focusLastWindow)
 
+        # add external dnd support
+        if DND_AVAILABLE:
+            dnd = TkDND(self.topLevel)
+            dnd.bindtarget(ent, self.__entryDnD, 'text/uri-list')
+
         # add a right click menu
         self.__addRightClickMenu(ent)
 
         self.n_entries[title] = ent
         self.n_entryVars[title] = ent.var
         return ent
+
+    # function to receive DnD events
+    def __entryDnD(self, event):
+        event.widget.insert(0, event.data)
 
     def addEntry(
             self,

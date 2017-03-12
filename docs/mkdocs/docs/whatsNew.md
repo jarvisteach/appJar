@@ -1,6 +1,12 @@
 #New & Upcoming
 ---
 
+## Next Release (0.6)  
+* Issues Resolved:  
+    * [#115](https://github.com/jarvisteach/appJar/issues/115) - fixed transparency in python 2.7
+    * [#101](https://github.com/jarvisteach/appJar/issues/101) - Drag n'Drop supported between applications
+
+---
 ## Version (0.052)  
 * Issues Resolved:  
     * [#114](https://github.com/jarvisteach/appJar/issues/114) - ability to stop functions being called when a set method is activated

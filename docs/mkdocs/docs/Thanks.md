@@ -13,6 +13,7 @@ ____
 * [https://bitbucket.org/hokaze/tkinter-png](https://bitbucket.org/hokaze/tkinter-png) - allows PNGs to be treated as PhotoImages
 * [https://github.com/sullerandras/nanojpeg-python](https://github.com/sullerandras/nanojpeg-python) - provides BASIC jpeg support
 * [http://tkinter.unpythonic.net/wiki/ToolTip](http://tkinter.unpythonic.net/wiki/ToolTip) - provides ToolTips
+* [https://github.com/petasis/tkdnd] - provides Drag'nDrop support
 
 ##Icons
 * Credit to www.interactivemania.com for the icons - warning malware...  
