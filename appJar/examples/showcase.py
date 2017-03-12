@@ -92,11 +92,11 @@ def scale(name):
     if name == "TransparencySpin":
         trans = int(app.getSpinBox(name))
         app.setTransparency(trans)
-        app.setScale("TransparencyScale", trans)
+        app.setScale("TransparencyScale", trans, callFunction=False)
     elif name == "TransparencyScale":
         trans = app.getScale(name)
         app.setTransparency(trans)
-        app.setSpinBox("TransparencySpin", trans)
+        app.setSpinBox("TransparencySpin", trans, callFunction=False)
     elif name == "FontScale": app.setFont(app.getScale(name))
 
 def move(direction):
