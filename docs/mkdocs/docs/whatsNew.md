@@ -4,6 +4,7 @@
 ## Next Release (0.6)  
 * Issues Resolved:  
     * [#115](https://github.com/jarvisteach/appJar/issues/115) - fixed transparency in python 2.7
+    * [#106](https://github.com/jarvisteach/appJar/issues/106) - Function to add an image button
     * [#101](https://github.com/jarvisteach/appJar/issues/101) - Drag n'Drop supported between applications
 
 ---

@@ -192,6 +192,9 @@ That way, multiple widgets can use the same function, but different actions can 
     A single function can be passed, to use for all buttons.  
     Or a list of functions can be passed, which MUST correspond to the buttons.  
 
+* `.addImageButton(name, title, function, imgFile)`  
+    This creates the named button, as above, using the specified image.
+
 * `.addNamedButton(name, title, function)`  
     By default, it's not possible to have two buttons with the same text.  
     If that's required, a named button should be used.  

@@ -255,6 +255,18 @@ def test_buttons():
     assert but3.cget("text") == "a2b1"
     assert but4.cget("text") == "butName"
 
+    app.setButton("b1", "newText")
+    but1 = app.getButtonWidget("b1")
+    assert but1.cget("text") == "newText"
+
+    app.setButtonImage("bb1", "1_entries.gif")
+    but1 = app.getButtonWidget("bb1")
+    assert but1.cget("text") == ""
+
+    app.addImageButton("ib1", None, "1_entries.gif")
+    but1 = app.getButtonWidget("ib1")
+    assert but1.cget("text") == ""
+
     # call generic setter functions
     test_setters("Button", "b1")
 

@@ -4596,6 +4596,11 @@ class gui(object):
         but = self.__buildButton(title, func, self.__getContainer())
         self.__positionWidget(but, row, column, colspan, rowspan, None)
 
+    def addImageButton(self, title, func, imgFile, row=None, column=0, colspan=0, rowspan=0):
+        but = self.__buildButton(title, func, self.__getContainer())
+        self.__positionWidget(but, row, column, colspan, rowspan, None)
+        self.setButtonImage(title, imgFile)
+
     def setButton(self, name, text):
         but = self.__verifyItem(self.n_buttons, name)
         but.config(text=text)
