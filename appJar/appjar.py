@@ -1298,7 +1298,7 @@ class gui(object):
             self.warn("Transparency not supported on LINUX")
         else:
             if percentage > 1:
-                percentage = percentage / 100
+                percentage = float(percentage) / 100
             self.__getTopLevel().attributes("-alpha", percentage)
 
 ##############################
