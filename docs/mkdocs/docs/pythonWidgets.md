@@ -229,8 +229,9 @@ app.go()
     Radio buttons are usually used in groups.  
 
 ####Set RadioButtons
-* `.setRadioButton(title, value)`  
+* `.setRadioButton(title, value, callFunction=True)`  
     This will tick the specified RadioButton.  
+    Set ```callFunction``` to be False, if you don't want to call any associated functions.  
 
 * `.setRadioTick(title, tick=True)`  
     It is possible to use tick-boxes instead of the classic circular radio-button.  
@@ -283,8 +284,9 @@ app.go()
     This creates a CheckBox, with the specified title.  
 
 ####Set CheckBoxes
-* `.setCheckBox(title, ticked=True)`  
+* `.setCheckBox(title, ticked=True, callFunction=True)`  
     This will tick the CheckBox, or untick it if ticked is set to False.  
+    Set ```callFunction``` to be False, if you don't want to call any associated functions.  
 
 ####Get CheckBoxes
 * `.getCheckBox(title)`  
@@ -343,10 +345,11 @@ app.go()
     If specified, the indexed item will be selected - this can be a position or an item name.  
     If setting a TickOptionBox, pass in the optional value.  
 
-* `.setOptionBox(title, position, value=True)`  
+* `.setOptionBox(title, position, value=True, callFunction=True)`  
     This will select the item in the list, at the position specified.  
     Alternatively, the name of an item can be specified.  
     If changing a TickOptionBox, the specified item will be set to the specified value.  
+    Set ```callFunction``` to be False, if you don't want to call any associated functions.  
 
 * `.deleteOptionBox(title, position)`  
     This will delete the item in the list, at the position specified.  
@@ -394,11 +397,13 @@ app.go()
 ```
 
 ####Set SpinBoxes
-* `.setSpinBox(title, value)`  
+* `.setSpinBox(title, value, callFunction=True)`  
     This will select the specified value in the SpinBox.  
+    Set ```callFunction``` to be False, if you don't want to call any associated functions.  
 
-* `.setSpinBoxPos(title, pos)`  
+* `.setSpinBoxPos(title, pos, callFunction=True)`  
     This will select the value at the specified position in the SpinBox.  
+    Set ```callFunction``` to be False, if you don't want to call any associated functions.  
 
 ####Get SpinBoxes
 * `.getSpinBox(title)`  
@@ -459,8 +464,9 @@ app.go()
 * `.setListBoxMulti(list, multi=True)`  
     Configures whether the specified ListBox is single or multi select.  
 
-* `.selectListItem(title, item)`  
+* `.selectListItem(title, item, callFunction=True)`  
     Selects the specified item in the specified ListBox.  
+    Set ```callFunction``` to be False, if you don't want to call any associated functions.  
 
 * `.setListItemBg(title, item, colour)` & `.setListItemFg(title, item, colour)`  
     `.setListItemAtPosBg(title, item, colour)` & `.setListItemAtPosFg(title, item, colour)`  
@@ -496,8 +502,9 @@ app.go()
     Adds a horizontal scale, with a default range between 0 and 100.  
 
 ####Set Scales
-* `.setScale(title, pos)`  
+* `.setScale(title, pos, callFunction=True)`  
     Sets the selected pos for the specified Scale.  
+    Set ```callFunction``` to be False, if you don't want to call any associated functions.  
 
 * `.setScaleRange(title from, to, curr=None)`  
     Allows you to change the range available in the Scale.  
