@@ -31,40 +31,39 @@ except ImportError:
 import os
 import sys
 import re
-import hashlib
-import imghdr
-import time
+import hashlib  # textarea
+import imghdr   # images
+import time     # splashscreen
+import webbrowser   # links
+import calendar # datepicker
+import datetime # datepicker & image
 
 import __main__ as theMain
 from platform import system as platform
 
-# Links
-import webbrowser
+# modules to be imported
+ToolTip = None
+nanojpeg = None
+TkDND = None
+winsound = None
+# matplotlib
+FigureCanvasTkAgg = Figure = None
+
 
 # ajTree
 try:
-    from idlelib.TreeWidget import TreeItem, TreeNode, ZoomHeight
+    from xml.dom.minidom import parseString
+    from idlelib.TreeWidget import TreeItem, TreeNode
 except:
     try:
         from idlelib.tree import TreeItem, TreeNode
-        from idlelib.zoomheight import ZoomHeight
     except:
         raise Exception("Unsupported python build, unable to access idlelib")
 
-from xml.dom.minidom import parseString
-# DatePicker
-import calendar
-import datetime
 
 #######################
 # import borrowed libraries - not compulsory
 #######################
-try:
-    from appJar.lib.tooltip import ToolTip
-    TOOLTIP_AVAILABLE = True
-except:
-    TOOLTIP_AVAILABLE = False
-
 try:
     from appJar.lib.tkinter_png import *
     TKINTERPNG_AVAILABLE = True
@@ -75,14 +74,6 @@ try:
     NANOJPEG_AVAILABLE = True
 except:
     NANOJPEG_AVAILABLE = False
-
-try:
-    tkdndlib = os.path.join(os.path.dirname(os.path.abspath(__file__)), "lib", "tkdnd2.8")
-    os.environ['TKDND_LIBRARY'] = tkdndlib
-    from appJar.lib.TkDND_wrapper import TkDND
-    DND_AVAILABLE = True
-except:
-    DND_AVAILABLE = False
 
 # only try to import winsound if we're on windows
 if platform() in ["win32", "Windows"]:
@@ -539,6 +530,38 @@ class gui(object):
         self.bgLabel.place(x=0, y=0, relwidth=1, relheight=1)
         container.image = None
 
+
+#####################################
+# library loaders
+#####################################
+    def __loadTooltip(self):
+        global ToolTip
+        if ToolTip is None:
+            try:
+                from appJar.lib.tooltip import ToolTip
+            except:
+                ToolTip = False
+
+    def __loadMatplotlib(self):
+        global FigureCanvasTkAgg, Figure
+
+        if FigureCanvasTkAgg is None:
+            try:
+                from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+                from matplotlib.figure import Figure
+            except:
+                FigureCanvasTkAgg = Figure = False
+
+    def __loadTkdnd(self):
+        global TkDND
+        try:
+            tkdndlib = os.path.join(os.path.dirname(os.path.abspath(__file__)), "lib", "tkdnd2.8")
+            os.environ['TKDND_LIBRARY'] = tkdndlib
+            from appJar.lib.TkDND_wrapper import TkDND
+        except:
+            TkDND = False
+
+                
 #####################################
 # set the arrays we use to store everything
 #####################################
@@ -3452,24 +3475,25 @@ class gui(object):
             rowspan=0):
         self.__verifyItem(self.n_plots, title, True)
 
-        from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
-        from matplotlib.figure import Figure
-        
-        fig = Figure()
+        self.__loadMatplotlib()
+        if FigureCanvasTkAgg is False:
+            pass
+        else:
+            fig = Figure()
 
-        axes = fig.add_subplot(111)
-        axes.plot(t,s)
+            axes = fig.add_subplot(111)
+            axes.plot(t,s)
 
-        canvas = FigureCanvasTkAgg(fig, self.__getContainer())
-        canvas.fig = fig
-        canvas.axes = axes
-        canvas.show()
-#        canvas.get_tk_widget().pack(side=TOP, fill=BOTH, expand=1)
-        canvas._tkcanvas.pack(side=TOP, fill=BOTH, expand=1)
+            canvas = FigureCanvasTkAgg(fig, self.__getContainer())
+            canvas.fig = fig
+            canvas.axes = axes
+            canvas.show()
+    #        canvas.get_tk_widget().pack(side=TOP, fill=BOTH, expand=1)
+            canvas._tkcanvas.pack(side=TOP, fill=BOTH, expand=1)
 
-        self.__positionWidget(canvas.get_tk_widget(), row, column, colspan, rowspan)
-        self.n_plots[title] = canvas
-        return axes
+            self.__positionWidget(canvas.get_tk_widget(), row, column, colspan, rowspan)
+            self.n_plots[title] = canvas
+            return axes
 
     def refreshPlot(self, title):
         canvas = self.__verifyItem(self.n_plots, title)
@@ -4569,7 +4593,7 @@ class gui(object):
             bindCommand = self.MAKE_FUNC(func, title, True)
 
             but.config(command=command)
-            but.bind('<Return>', bindCommand)
+        #    but.bind('<Return>', bindCommand)
 
         if self.platform in [self.MAC, self.LINUX]:
             but.config(highlightbackground=self.__getContainerBg())
@@ -4888,7 +4912,8 @@ class gui(object):
         self.__addRightClickMenu(text)
 
         # add external dnd support
-        if DND_AVAILABLE:
+        self.__loadTkdnd()
+        if TkDND is not False:
             dnd = TkDND(self.topLevel)
             dnd.bindtarget(text, self.__textDnD, 'text/uri-list')
 
@@ -5098,7 +5123,8 @@ class gui(object):
         ent.bind("<Shift-Tab>", self.__focusLastWindow)
 
         # add external dnd support
-        if DND_AVAILABLE:
+        self.__loadTkdnd()
+        if TkDND is not False:
             dnd = TkDND(self.topLevel)
             dnd.bindtarget(ent, self.__entryDnD, 'text/uri-list')
 
@@ -5517,6 +5543,7 @@ class gui(object):
             colspan=0,
             rowspan=0):
         self.__verifyItem(self.n_pieCharts, name, True)
+        self.__loadTooltip()
         pie = PieChart(self.__getContainer(), fracs, self.__getContainerBg())
         self.n_pieCharts[name] = pie
         self.__positionWidget(pie, row, column, colspan, rowspan, sticky=None)
@@ -6228,7 +6255,12 @@ class gui(object):
 #####################################
 
     def __addTooltip(self, item, text, hideWarn=False):
-        if TOOLTIP_AVAILABLE:
+
+        self.__loadTooltip()
+        if not ToolTip:
+            if not hideWarn:
+                self.warn("ToolTips unavailable - check tooltip.py is in the lib folder")
+        else:
             # turn off warnings about tooltips
             if hideWarn:
                 myWarn = self.__pauseWarn()
@@ -6239,9 +6271,6 @@ class gui(object):
             if hideWarn:
                 self.__resumeWarn(myWarn)
             return var
-        elif not hideWarn:
-            self.warn(
-                "ToolTips unavailable - check tooltip.py is in the lib folder")
 
 #####################################
 # FUNCTIONS to show pop-up dialogs
@@ -7199,7 +7228,7 @@ class PieChart(Canvas):
         w = self.winfo_width()
         h = self.winfo_height()
 
-        # scale h&w - so they don;t hit the edges
+        # scale h&w - so they don't hit the edges
         min_w = w * .05
         max_w = w * .95
         min_h = h * .05
@@ -7241,7 +7270,7 @@ class PieChart(Canvas):
             self.arcs.append(arc)
 
             # generate a tooltip
-            if TOOLTIP_AVAILABLE:
+            if ToolTip is not False:
                 frac = int(val / sum(self.fracs.values()) * 100)
                 tip = key + ": " + str(val) + " (" + str(frac) + "%)"
                 tt = ToolTip(

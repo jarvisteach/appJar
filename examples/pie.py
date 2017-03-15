@@ -1,3 +1,5 @@
+import sys
+sys.path.append("../")
 from appJar import gui
 
 def press(btn):
@@ -16,7 +18,7 @@ app=gui()
 app.setBg("grey")
 #app.addPieChart("p1", [50, 200, 75, 300, 150], size=300)
 app.addPieChart("p1", {"apples":50, "oanges":200, "grapes":75,
-                        "beef":300, "turkey":150}, size=300)
+                        "beef":300, "turkey":150})
 #app.addLabelEntry("Name")
 #app.addLabelNumericEntry("Amount")
 #app.addLabelEntry("Colour")
