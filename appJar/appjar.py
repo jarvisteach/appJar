@@ -43,12 +43,11 @@ from platform import system as platform
 
 # modules to be imported
 ToolTip = None
-nanojpeg = None
+nanojpeg = PngImageTk = None
 TkDND = None
 winsound = None
 # matplotlib
 FigureCanvasTkAgg = Figure = None
-
 
 # ajTree
 try:
@@ -60,24 +59,6 @@ except:
     except:
         raise Exception("Unsupported python build, unable to access idlelib")
 
-
-#######################
-# import borrowed libraries - not compulsory
-#######################
-try:
-    from appJar.lib.tkinter_png import *
-    TKINTERPNG_AVAILABLE = True
-except:
-    TKINTERPNG_AVAILABLE = False
-try:
-    from appJar.lib import nanojpeg
-    NANOJPEG_AVAILABLE = True
-except:
-    NANOJPEG_AVAILABLE = False
-
-# only try to import winsound if we're on windows
-if platform() in ["win32", "Windows"]:
-    import winsound
 
 # details
 __author__ = "Richard Jarvis"
@@ -561,7 +542,28 @@ class gui(object):
         except:
             TkDND = False
 
-                
+    def __loadNanojpeg(self):
+        global nanojpeg
+        try:
+            from appJar.lib import nanojpeg
+        except:
+            nanojpeg = False
+
+    def __loadWinsound(self):
+        # only try to import winsound if we're on windows
+        global winsound
+        if winsound is None and platform() in ["win32", "Windows"]:
+            import winsound
+        else:
+            winsound = False
+
+    def __importPngimagetk(self):
+        global PngImageTk
+        try:
+            from appJar.lib.tkinter_png import PngImageTk
+        except:
+            PngImageTk = False
+
 #####################################
 # set the arrays we use to store everything
 #####################################
@@ -3901,7 +3903,8 @@ class gui(object):
     # internal function to build an image function from a string
     def __getImageData(self, imageData, fmt="gif"):
         if fmt=="png":
-            if not TKINTERPNG_AVAILABLE:
+            self.__importPngimagetk()
+            if PngImageTk is False:
                 raise Exception(
                     "TKINTERPNG library not found, PNG files not supported: " + imagePath)
             if sys.version_info >= (2, 7):
@@ -3964,7 +3967,8 @@ class gui(object):
                     # known issue here, some PNGs lack IDAT chunks
                     # also, PNGs seem broken on python<3, maybe around the map
                     # function used to generate pixel maps
-                    if not TKINTERPNG_AVAILABLE:
+                    self.__importPngimagetk()
+                    if PngImageTk is False:
                         raise Exception(
                             "TKINTERPNG library not found, PNG files not supported: " + imagePath)
                     if sys.version_info >= (2, 7):
@@ -4144,7 +4148,8 @@ class gui(object):
         label.config(width=image.width(), height=image.height())
 
     def convertJpgToBmp(self, image):
-        if not NANOJPEG_AVAILABLE:
+        self.__loadNanojpeg()
+        if nanojpeg is False:
             raise Exception(
                 "nanojpeg library not found, unable to display jpeg files: " + image)
         elif sys.version_info < (2, 7):
@@ -4223,7 +4228,8 @@ class gui(object):
 
     # internal function to manage sound availability
     def __soundWrap(self, sound, isFile=False, repeat=False, wait=False):
-        if self.platform == self.WINDOWS:
+        self.__loadWinsound()
+        if self.platform == self.WINDOWS and winsound is not False:
             if self.userSounds is not None and sound is not None:
                 sound = os.path.join(self.userSounds, sound)
             if isFile:
@@ -4268,7 +4274,8 @@ class gui(object):
         self.__soundWrap("SystemAsterisk")
 
     def playNote(self, note, duration=200):
-        if self.platform == self.WINDOWS:
+        self.__loadWinsound()
+        if self.platform == self.WINDOWS and winsound is not False:
             try:
                 if isinstance(note, str):
                     freq = self.NOTES[note.lower()]
@@ -4914,8 +4921,12 @@ class gui(object):
         # add external dnd support
         self.__loadTkdnd()
         if TkDND is not False:
-            dnd = TkDND(self.topLevel)
-            dnd.bindtarget(text, self.__textDnD, 'text/uri-list')
+            try:
+                dnd = TkDND(self.topLevel)
+                dnd.bindtarget(text, self.__textDnD, 'text/uri-list')
+            except:
+                # dnd not working on this platform
+                pass
 
         self.n_textAreas[title] = text
         self.logTextArea(title)
@@ -5125,8 +5136,12 @@ class gui(object):
         # add external dnd support
         self.__loadTkdnd()
         if TkDND is not False:
-            dnd = TkDND(self.topLevel)
-            dnd.bindtarget(ent, self.__entryDnD, 'text/uri-list')
+            try:
+                dnd = TkDND(self.topLevel)
+                dnd.bindtarget(ent, self.__entryDnD, 'text/uri-list')
+            except:
+                # dnd not working on this platform
+                pass
 
         # add a right click menu
         self.__addRightClickMenu(ent)
