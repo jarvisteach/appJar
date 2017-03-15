@@ -37,6 +37,7 @@ pages:
     - Python: pythonBasics.md
     - Algorithms: algorithms.md
     - Git: gitGuide.md
+    - Packaging: packaging.md
     - License: License.md
     - Support: Support.md
     - Contributing: contributing.md
