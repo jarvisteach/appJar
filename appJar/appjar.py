@@ -5531,6 +5531,12 @@ class gui(object):
             else:
                 return val
 
+    def getAllEntries(self):
+        entries = {}
+        for k, v in self.n_entries.items():
+            entries[k] = self.getEntry(k)
+        return entries
+
     def setEntry(self, name, text):
         self.__verifyItem(self.n_entryVars, name)
         self.__updateEntryDefault(name, mode="set")

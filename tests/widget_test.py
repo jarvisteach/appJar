@@ -92,6 +92,17 @@ def test_entries():
     assert app.getEntry("se1") == EMPTY
     assert app.getEntry("ae1") == EMPTY
 
+    entryVals = app.getAllEntries()
+    assert entryVals["le1"] == EMPTY
+    assert entryVals["lne1"] == 0
+    assert entryVals["lse1"] == EMPTY
+    assert entryVals["lae1"] == EMPTY
+    assert entryVals["e1"] == EMPTY
+    assert entryVals["ne1"] == 0
+    assert entryVals["se1"] == EMPTY
+    assert entryVals["ae1"] == EMPTY
+
+
     app.setEntryDefault("e1", TEXT_TWO)
     app.setEntryDefault("ne1", NUM_TWO)
     app.setEntryDefault("se1", TEXT_THREE)
@@ -153,6 +164,16 @@ def test_entries():
     assert app.getEntry("lne1") == float(NUM_ONE)
     assert app.getEntry("lse1") == TEXT_ONE
     assert app.getEntry("lae1") == TEXT_ONE
+
+    entryVals = app.getAllEntries()
+    assert entryVals["e1"] == TEXT_ONE
+    assert entryVals["ne1"] == float(NUM_ONE)
+    assert entryVals["se1"] == TEXT_ONE
+    assert entryVals["ae1"] == TEXT_ONE
+    assert entryVals["le1"] == TEXT_ONE
+    assert entryVals["lne1"] == float(NUM_ONE)
+    assert entryVals["lse1"] == TEXT_ONE
+    assert entryVals["lae1"] == TEXT_ONE
 
     app.clearEntry("e1")
     app.clearEntry("ne1")

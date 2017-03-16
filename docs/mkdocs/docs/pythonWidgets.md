@@ -153,6 +153,10 @@ app.go()
     This will return the contents of the specified entry box.  
     NB. *numericEntries* always return a float.  
 
+* `.getAllEntries()`  
+    This will return the contents of all entries in the app, as a dictionary.
+    NB. *numericEntries* always return a float.  
+
 ##Button
 ____
 A clickable button, that will call a function.  
