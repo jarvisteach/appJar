@@ -154,7 +154,7 @@ app.go()
     NB. *numericEntries* always return a float.  
 
 * `.getAllEntries()`  
-    This will return the contents of all entries in the app, as a dictionary.
+    This will return the contents of all entries in the app, as a dictionary.  
     NB. *numericEntries* always return a float.  
 
 ##Button
@@ -520,6 +520,10 @@ app.go()
 * `.showScaleIntervals(title, intervals)`  
     Configures the Scale to show interval labels along its length.  
     ![Scale](img/4_scale.png)  
+
+* `.showScaleIncrement(title, increment)`  
+    Configures how much the scale jumps, when the trough is clicked.  
+    Defaults to 10.  
 
 * `.showScaleValue(title, show=True)`  
     Configures the Scale to show the currently selected value.  

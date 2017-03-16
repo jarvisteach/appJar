@@ -3320,16 +3320,16 @@ class gui(object):
 
     def __buildScale(self, title, frame):
         self.__verifyItem(self.n_scales, title, True)
-        scale = Scale(frame)
+        scale = ajScale(frame, increment=10)
         scale.config(
             repeatinterval=10,
             digits=1,
             orient=HORIZONTAL,
             showvalue=False,
             highlightthickness=1)
+        scale.bind("<Button-1>", self.__grabFocus, "+")
         scale.inContainer = False
         self.n_scales[title] = scale
-        scale.bind("<Button-1>", self.__grabFocus)
         return scale
 
     def addScale(self, title, row=None, column=0, colspan=0, rowspan=0):
@@ -3353,6 +3353,10 @@ class gui(object):
         if callFunction:
             if hasattr(sc, 'cmd'):
                 sc.cmd()
+
+    def setScaleIncrement(self, title, increment):
+        sc = self.__verifyItem(self.n_scales, title)
+        sc.increment = increment
 
     def setScaleWidth(self, title, width):
         sc = self.__verifyItem(self.n_scales, title)
@@ -8130,6 +8134,27 @@ class AutoScrollbar(Scrollbar):
     def place(self, **kw):
         raise Exception("cannot use place with this widget")
 
+#######################
+# Upgraded scale - http://stackoverflow.com/questions/42843425/change-trough-increment-in-python-tkinter-scale-without-affecting-slider/
+#######################
+
+class ajScale(Scale):
+    '''a scale where a trough click jumps by a specified increment instead of the resolution'''
+    def __init__(self, master=None, **kwargs):
+        self.increment = kwargs.pop('increment',1)
+        Scale.__init__(self, master, **kwargs)
+        self.bind('<Button-1>', self.jump)
+
+    def jump(self, event):
+        print("jumping", self.increment)
+        clicked = self.identify(event.x, event.y)
+        if clicked == 'trough1':
+            self.set(self.get() - self.increment)
+        elif clicked == 'trough2':
+            self.set(self.get() + self.increment)
+        else:
+            return None
+        return 'break'
 
 #######################
 # Widget to look like a label, but allow selection...

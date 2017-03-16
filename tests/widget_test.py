@@ -510,6 +510,9 @@ def test_scales():
     app.setScale("s3", 100)
     app.setScale("s4", 101)
 
+    app.setScaleIncrement("s1", 20)
+    app.setScaleIncrement("s2", 73)
+
     assert app.getScale("s1") == 20
     assert app.getScale("s2") == 73
     assert app.getScale("s3") == 100

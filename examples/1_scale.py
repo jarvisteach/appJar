@@ -1,3 +1,5 @@
+import sys
+sys.path.append("../")
 from appJar import gui
 
 def getScales(btn):
@@ -14,6 +16,7 @@ app.addLabelScale("scale2")
 app.addButton("GET", getScales)
 app.setScaleWidth("scale", 20)
 app.setScaleRange("scale2", -55,55)
+app.setScaleIncrement("scale2", 3)
 
 app.setScaleFunction("scale", getScales)
 
