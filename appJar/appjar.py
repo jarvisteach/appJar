@@ -41,38 +41,26 @@ import datetime # datepicker & image
 import __main__ as theMain
 from platform import system as platform
 
-# modules to be imported
+# modules to be imported on demand
 ToolTip = None
-nanojpeg = PngImageTk = None
+nanojpeg = PngImageTk = None # extra image support
 TkDND = None
 winsound = None
-# matplotlib
-FigureCanvasTkAgg = Figure = None
-
-# ajTree
-try:
-    from xml.dom.minidom import parseString
-    from idlelib.TreeWidget import TreeItem, TreeNode
-except:
-    try:
-        from idlelib.tree import TreeItem, TreeNode
-    except:
-        raise Exception("Unsupported python build, unable to access idlelib")
-
+FigureCanvasTkAgg = Figure = None # matplotlib
+parseString = TreeItem = TreeNode = None # ajTree
+ajTreeNode = ajTreeData = None
 
 # details
 __author__ = "Richard Jarvis"
-__copyright__ = "Copyright 2016, Richard Jarvis"
+__copyright__ = "Copyright 2016-2017, Richard Jarvis"
 __credits__ = ["Graham Turner", "Sarah Murch"]
 __license__ = "GPL"
-__version__ = "0.1"
+__version__ = "0.62"
 __maintainer__ = "Richard Jarvis"
 __email__ = "info@appJar.info"
 __status__ = "Development"
 
 # class to allow simple creation of tkinter GUIs
-
-
 class gui(object):
     """
         Class to represent the GUI
@@ -535,19 +523,21 @@ class gui(object):
 
     def __loadTkdnd(self):
         global TkDND
-        try:
-            tkdndlib = os.path.join(os.path.dirname(os.path.abspath(__file__)), "lib", "tkdnd2.8")
-            os.environ['TKDND_LIBRARY'] = tkdndlib
-            from appJar.lib.TkDND_wrapper import TkDND
-        except:
-            TkDND = False
+        if TkDND is None:
+            try:
+                tkdndlib = os.path.join(os.path.dirname(os.path.abspath(__file__)), "lib", "tkdnd2.8")
+                os.environ['TKDND_LIBRARY'] = tkdndlib
+                from appJar.lib.TkDND_wrapper import TkDND
+            except:
+                TkDND = False
 
     def __loadNanojpeg(self):
         global nanojpeg
-        try:
-            from appJar.lib import nanojpeg
-        except:
-            nanojpeg = False
+        if nanojpeg is None:
+            try:
+                from appJar.lib import nanojpeg
+            except:
+                nanojpeg = False
 
     def __loadWinsound(self):
         # only try to import winsound if we're on windows
@@ -559,10 +549,218 @@ class gui(object):
 
     def __importPngimagetk(self):
         global PngImageTk
-        try:
-            from appJar.lib.tkinter_png import PngImageTk
-        except:
-            PngImageTk = False
+        if PngImageTk is None:
+            try:
+                from appJar.lib.tkinter_png import PngImageTk
+            except:
+                PngImageTk = False
+
+    def __importAjtree(self):
+        global parseString, TreeItem, TreeNode
+        global ajTreeNode, ajTreeData
+
+        if TreeNode is None:
+            try:
+                from idlelib.TreeWidget import TreeItem, TreeNode
+            except:
+                try:
+                    from idlelib.tree import TreeItem, TreeNode
+                except:
+                    print("no trees...")
+                    TreeItem = TreeNode = parseString = False
+                    ajTreeNode = ajTreeData = False
+
+            if TreeNode is not False:
+                try:
+                    from xml.dom.minidom import parseString
+                except:
+                    print("no parse string")
+                    TreeItem = TreeNode = parseString = False
+                    ajTreeNode = ajTreeData = False
+                    return
+            
+                #####################################
+                # Tree Widget Class
+                # https://www.safaribooksonline.com/library/view/python-cookbook-2nd/0596007973/ch11s11.html
+                # idlelib -> TreeWidget.py
+                # modify minidom - https://wiki.python.org/moin/MiniDom
+                #####################################
+                class ajTreeNode(TreeNode):
+
+                    def __init__(self, canvas, parent, item):
+
+                        TreeNode.__init__(self, canvas, parent, item)
+
+                        self.bgColour = None
+                        self.fgColour = None
+                        self.bgHColour = None
+                        self.fgHColour = None
+                        # called (if set) when a leaf is edited
+                        self.editEvent = None
+
+                        if self.parent:
+                            self.bgColour = self.parent.bgColour
+                            self.fgColour = self.parent.fgColour
+                            self.bgHColour = self.parent.bgHColour
+                            self.fgHColour = self.parent.fgHColour
+                            self.editEvent = self.parent.editEvent
+
+                    def registerEditEvent(self, func):
+                        self.editEvent = func
+                        for c in self.children:
+                            c.registerEditEvent(func)
+
+                    def setBgColour(self, colour):
+                        self.canvas.config(background=colour)
+                        self.bgColour = colour
+                        self.__doUpdateColour()
+
+                    def setFgColour(self, colour):
+                        self.fgColour = colour
+                        self.__doUpdateColour()
+
+                    def setBgHColour(self, colour):
+                        self.bgHColour = colour
+                        self.__doUpdateColour()
+
+                    def setFgHColour(self, colour):
+                        self.fgHColour = colour
+                        self.__doUpdateColour()
+
+                    def __doUpdateColour(self):
+                        self.__updateColours(
+                            self.bgColour,
+                            self.bgHColour,
+                            self.fgColour,
+                            self.fgHColour)
+                        self.update()
+
+                    def __updateColours(self, bgCol, bgHCol, fgCol, fgHCol):
+                        self.bgColour = bgCol
+                        self.fgColour = fgCol
+                        self.bgHColour = bgHCol
+                        self.fgHColour = fgHCol
+                        for c in self.children:
+                            c.__updateColours(bgCol, bgHCol, fgCol, fgHCol)
+
+                    # override parent function, so that we can change the label's background
+                    # colour
+                    def drawtext(self):
+                        if PYTHON2:
+                            TreeNode.drawtext(self)
+                        else:
+                            super(ajTreeNode, self).drawtext()
+
+                        self.colourLabels()
+
+                    # override parent function, so that we can generate an event on finish
+                    # editing
+                    def edit_finish(self, event=None):
+                        if PYTHON2:
+                            TreeNode.edit_finish(self, event)
+                        else:
+                            super(ajTreeNode, self).edit_finish(event)
+                        if self.editEvent is not None:
+                            self.editEvent()
+
+                    def colourLabels(self):
+                        try:
+                            if not self.selected:
+                                self.label.config(background=self.bgColour, fg=self.fgColour)
+                            else:
+                                self.label.config(background=self.bgHColour, fg=self.fgHColour)
+                        except:
+                            pass
+
+                    def getSelectedText(self):
+                        item = self.getSelected()
+                        if item is not None:
+                            return item.GetText()
+                        else:
+                            return None
+
+                    def getSelected(self):
+                        if self.selected:
+                            return self.item
+                        else:
+                            for c in self.children:
+                                val = c.getSelected()
+                                if val is not None:
+                                    return val
+                            return None
+
+                # implementation of container for XML data
+                # functions implemented as specified in skeleton
+                class ajTreeData(TreeItem):
+
+                    def __init__(self, node):
+                        self.node = node
+                        self.dblClickFunc = None
+                        self.canEdit = True
+
+                # REQUIRED FUNCTIONS
+
+                    # called whenever the tree expands
+                    def GetText(self):
+                        node = self.node
+                        if node.nodeType == node.ELEMENT_NODE:
+                            return node.nodeName
+                        elif node.nodeType == node.TEXT_NODE:
+                            return node.nodeValue
+
+                    def IsEditable(self):
+                        return self.canEdit and not self.node.hasChildNodes()
+
+                    def SetText(self, text):
+                        self.node.replaceWholeText(text)
+
+                    def IsExpandable(self):
+                        return self.node.hasChildNodes()
+
+                    def GetIconName(self):
+                        if not self.IsExpandable():
+                            return "python"  # change to file icon
+
+                    def GetSubList(self):
+                        children = self.node.childNodes
+                        prelist = [ajTreeData(node) for node in children]
+                        itemList = [item for item in prelist if item.GetText().strip()]
+                        for item in itemList:
+                            item.registerDblClick(self.dblClickFunc)
+                            item.canEdit = self.canEdit
+                        return itemList
+
+                    def OnDoubleClick(self):
+                        if self.IsEditable():
+                            # TO DO: start editing this node...
+                            pass
+                        if self.dblClickFunc is not None:
+                            self.dblClickFunc()
+
+                #  EXTRA FUNCTIONS
+
+                    # TODO: can only set before calling go()
+                    def setCanEdit(self, value=True):
+                        self.canEdit = value
+
+                    # TODO: can only set before calling go()
+                    def registerDblClick(self, func):
+                        self.dblClickFunc = func
+
+                    # not used - for DEBUG
+                    def getSelected(self, spaces=1):
+                        if spaces == 1:
+                            print(self.node.tagName)
+                        for c in self.node.childNodes:
+                            if c.__class__.__name__ == "Element":
+                                print(" " * spaces, ">>", c.tagName)
+                                node = ajTreeData(c)
+                                node.getSelected(spaces + 2)
+                            elif c.__class__.__name__ == "Text":
+                                val = c.data.strip()
+                                if len(val) > 0:
+                                    print(" " * spaces, ">>>>", val)
+
 
 #####################################
 # set the arrays we use to store everything
@@ -4995,6 +5193,14 @@ class gui(object):
 #####################################
     def addTree(self, title, data, row=None, column=0, colspan=0, rowspan=0):
         self.__verifyItem(self.n_trees, title, True)
+
+        self.__importAjtree()
+        if parseString is False:
+            self.warn("Unable to parse xml files. .addTree() not available")
+            return
+
+        xmlDoc = parseString(data)
+
         frame = ScrollPane(
             self.__getContainer(),
             relief=RAISED,
@@ -5004,7 +5210,6 @@ class gui(object):
             takefocus=1)
         self.__positionWidget(frame, row, column, colspan, rowspan, "NSEW")
 
-        xmlDoc = parseString(data)
         item = ajTreeData(xmlDoc.documentElement)
         node = ajTreeNode(frame.getPane(), None, item)
         self.n_trees[title] = node
@@ -7308,192 +7513,6 @@ class PieChart(Canvas):
             self.fracs[name] = value
 
         self.__drawPie()
-
-#####################################
-# Tree Widget Class
-# https://www.safaribooksonline.com/library/view/python-cookbook-2nd/0596007973/ch11s11.html
-# idlelib -> TreeWidget.py
-# modify minidom - https://wiki.python.org/moin/MiniDom
-#####################################
-
-
-class ajTreeNode(TreeNode):
-
-    def __init__(self, canvas, parent, item):
-
-        TreeNode.__init__(self, canvas, parent, item)
-
-        self.bgColour = None
-        self.fgColour = None
-        self.bgHColour = None
-        self.fgHColour = None
-        # called (if set) when a leaf is edited
-        self.editEvent = None
-
-        if self.parent:
-            self.bgColour = self.parent.bgColour
-            self.fgColour = self.parent.fgColour
-            self.bgHColour = self.parent.bgHColour
-            self.fgHColour = self.parent.fgHColour
-            self.editEvent = self.parent.editEvent
-
-    def registerEditEvent(self, func):
-        self.editEvent = func
-        for c in self.children:
-            c.registerEditEvent(func)
-
-    def setBgColour(self, colour):
-        self.canvas.config(background=colour)
-        self.bgColour = colour
-        self.__doUpdateColour()
-
-    def setFgColour(self, colour):
-        self.fgColour = colour
-        self.__doUpdateColour()
-
-    def setBgHColour(self, colour):
-        self.bgHColour = colour
-        self.__doUpdateColour()
-
-    def setFgHColour(self, colour):
-        self.fgHColour = colour
-        self.__doUpdateColour()
-
-    def __doUpdateColour(self):
-        self.__updateColours(
-            self.bgColour,
-            self.bgHColour,
-            self.fgColour,
-            self.fgHColour)
-        self.update()
-
-    def __updateColours(self, bgCol, bgHCol, fgCol, fgHCol):
-        self.bgColour = bgCol
-        self.fgColour = fgCol
-        self.bgHColour = bgHCol
-        self.fgHColour = fgHCol
-        for c in self.children:
-            c.__updateColours(bgCol, bgHCol, fgCol, fgHCol)
-
-    # override parent function, so that we can change the label's background
-    # colour
-    def drawtext(self):
-        if PYTHON2:
-            TreeNode.drawtext(self)
-        else:
-            super(ajTreeNode, self).drawtext()
-
-        self.colourLabels()
-
-    # override parent function, so that we can generate an event on finish
-    # editing
-    def edit_finish(self, event=None):
-        if PYTHON2:
-            TreeNode.edit_finish(self, event)
-        else:
-            super(ajTreeNode, self).edit_finish(event)
-        if self.editEvent is not None:
-            self.editEvent()
-
-    def colourLabels(self):
-        try:
-            if not self.selected:
-                self.label.config(background=self.bgColour, fg=self.fgColour)
-            else:
-                self.label.config(background=self.bgHColour, fg=self.fgHColour)
-        except:
-            pass
-
-    def getSelectedText(self):
-        item = self.getSelected()
-        if item is not None:
-            return item.GetText()
-        else:
-            return None
-
-    def getSelected(self):
-        if self.selected:
-            return self.item
-        else:
-            for c in self.children:
-                val = c.getSelected()
-                if val is not None:
-                    return val
-            return None
-
-# implementation of container for XML data
-# functions implemented as specified in skeleton
-
-
-class ajTreeData(TreeItem):
-
-    def __init__(self, node):
-        self.node = node
-        self.dblClickFunc = None
-        self.canEdit = True
-
-# REQUIRED FUNCTIONS
-
-    # called whenever the tree expands
-    def GetText(self):
-        node = self.node
-        if node.nodeType == node.ELEMENT_NODE:
-            return node.nodeName
-        elif node.nodeType == node.TEXT_NODE:
-            return node.nodeValue
-
-    def IsEditable(self):
-        return self.canEdit and not self.node.hasChildNodes()
-
-    def SetText(self, text):
-        self.node.replaceWholeText(text)
-
-    def IsExpandable(self):
-        return self.node.hasChildNodes()
-
-    def GetIconName(self):
-        if not self.IsExpandable():
-            return "python"  # change to file icon
-
-    def GetSubList(self):
-        children = self.node.childNodes
-        prelist = [ajTreeData(node) for node in children]
-        itemList = [item for item in prelist if item.GetText().strip()]
-        for item in itemList:
-            item.registerDblClick(self.dblClickFunc)
-            item.canEdit = self.canEdit
-        return itemList
-
-    def OnDoubleClick(self):
-        if self.IsEditable():
-            # TO DO: start editing this node...
-            pass
-        if self.dblClickFunc is not None:
-            self.dblClickFunc()
-
-#  EXTRA FUNCTIONS
-
-    # TODO: can only set before calling go()
-    def setCanEdit(self, value=True):
-        self.canEdit = value
-
-    # TODO: can only set before calling go()
-    def registerDblClick(self, func):
-        self.dblClickFunc = func
-
-    # not used - for DEBUG
-    def getSelected(self, spaces=1):
-        if spaces == 1:
-            print(self.node.tagName)
-        for c in self.node.childNodes:
-            if c.__class__.__name__ == "Element":
-                print(" " * spaces, ">>", c.tagName)
-                node = ajTreeData(c)
-                node.getSelected(spaces + 2)
-            elif c.__class__.__name__ == "Text":
-                val = c.data.strip()
-                if len(val) > 0:
-                    print(" " * spaces, ">>>>", val)
 
 #####################################
 # errors
