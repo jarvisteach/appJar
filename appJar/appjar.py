@@ -1849,52 +1849,11 @@ class gui(object):
                                     True),
                                 add="+")
                 elif option == 'command':
-                    # this will discard the scale value, as default function
-                    # can't handle it
-                    if kind == self.SCALE:
-                        cmd = self.MAKE_FUNC(value, name, True)
-                        item.config(command=cmd)
-                        item.cmd = cmd
-                    elif kind == self.OPTION:
-                        # need to trace the variable??
-                        cmd = self.MAKE_FUNC(value, name, True)
-                        item.var.trace('w', cmd)
-                        item.cmd = cmd
-                    elif kind == self.ENTRY:
-                        if key is None:
-                            key = name
-                        cmd = self.MAKE_FUNC(value, key, True)
-                        item.bind('<Return>', cmd)
-                        item.cmd = cmd
-                    elif kind == self.BUTTON:
-                        item.config(command=self.MAKE_FUNC(value, name))
-                        item.bind(
-                            '<Return>', self.MAKE_FUNC(
-                                value, name, True))
-                    # make labels clickable, add a cursor, and change the look
-                    elif kind == self.LABEL or kind == self.IMAGE:
-                        if self.platform == self.MAC:
-                            item.config(cursor="pointinghand")
-                        elif self.platform in [self.WINDOWS, self.LINUX]:
-                            item.config(cursor="hand2")
-
-                        cmd = self.MAKE_FUNC(value, name, True)
-                        item.bind("<Button-1>", cmd, add="+")
-                        item.cmd = cmd
-                        # these look good, but break when dialogs take focus
-                        #up = item.cget("relief").lower()
-                        # down="sunken"
-                        # make it look like it's pressed
-                        #item.bind("<Button-1>",lambda e: item.config(relief=down), add="+")
-                        #item.bind("<ButtonRelease-1>",lambda e: item.config(relief=up))
-                    elif kind == self.LISTBOX:
-                        cmd = self.MAKE_FUNC(value, name, True)
-                        item.bind('<<ListboxSelect>>', cmd)
-                        item.cmd = cmd
-                    else:
-                        cmd = self.MAKE_FUNC(value, name)
-                        item.config(command=cmd)
-                        item.cmd = cmd
+                    self.__bindEvent(kind, name, item, value, option, key)
+                elif option == "change":
+                    self.__bindEvent(kind, name, item, value, option, key)
+                elif option == "submit":
+                    self.__bindEvent(kind, name, item, value, option, key)
                 elif option == 'sticky':
                     info = {}
                     # need to reposition the widget in its grid
@@ -1945,6 +1904,65 @@ class gui(object):
                                 menu))
             except TclError as e:
                 self.warn("Error configuring " + name + ": " + str(e))
+
+    # generic function for change/submit/events
+    def __bindEvent(self, kind, name, widget, function, eventType, key=None):
+        # this will discard the scale value, as default function
+        # can't handle it
+        if kind == self.SCALE:
+            cmd = self.MAKE_FUNC(function, name, True)
+            widget.config(command=cmd)
+            widget.cmd = cmd
+        elif kind == self.OPTION:
+            # need to trace the variable??
+            cmd = self.MAKE_FUNC(function, name, True)
+            widget.var.trace('w', cmd)
+            widget.cmd = cmd
+        elif kind == self.ENTRY:
+            if eventType == "change":
+                # get Entry variable
+                cmd = self.MAKE_FUNC(function, key, True)
+                var = self.__verifyItem(self.n_entryVars, name)
+                var.trace('w', cmd)
+            else:
+                if key is None:
+                    key = name
+                cmd = self.MAKE_FUNC(function, key, True)
+                widget.bind('<Return>', cmd)
+                widget.cmd = cmd
+        elif kind == self.BUTTON:
+            widget.config(command=self.MAKE_FUNC(function, name))
+            widget.bind(
+                '<Return>', self.MAKE_FUNC(
+                    function, name, True))
+        # make labels clickable, add a cursor, and change the look
+        elif kind == self.LABEL or kind == self.IMAGE:
+            if eventType in ["command", "submit"]:
+                if self.platform == self.MAC:
+                    widget.config(cursor="pointinghand")
+                elif self.platform in [self.WINDOWS, self.LINUX]:
+                    widget.config(cursor="hand2")
+
+                cmd = self.MAKE_FUNC(function, name, True)
+                widget.bind("<Button-1>", cmd, add="+")
+                widget.cmd = cmd
+                # these look good, but break when dialogs take focus
+                #up = widget.cget("relief").lower()
+                # down="sunken"
+                # make it look like it's pressed
+                #widget.bind("<Button-1>",lambda e: widget.config(relief=down), add="+")
+                #widget.bind("<ButtonRelease-1>",lambda e: widget.config(relief=up))
+            elif eventType == "change":
+                self.warn("Error configuring " + name +
+                            ": can't set a change function")
+        elif kind == self.LISTBOX:
+            cmd = self.MAKE_FUNC(function, name, True)
+            widget.bind('<<ListboxSelect>>', cmd)
+            widget.cmd = cmd
+        else:
+            cmd = self.MAKE_FUNC(function, name)
+            widget.config(command=cmd)
+            widget.cmd = cmd
 
     # dynamic way to create the configuration functions
     def __buildConfigFuncs(self):
@@ -2027,14 +2045,21 @@ class gui(object):
                 "Anchor(self, name, val): self.configureWidget(" +
                 str(k) + ", name, 'anchor', val)")
             exec("gui.set" + v + "Anchor=set" + v + "Anchor")
+
             exec( "def set" + v +
                 "Tooltip(self, name, val): self.configureWidget(" +
                 str(k) + ", name, 'tooltip', val)")
             exec("gui.set" + v + "Tooltip=set" + v + "Tooltip")
+
+            # funciton setters
             exec( "def set" + v +
-                "Function(self, name, val, key=None): self.configureWidget(" +
-                str(k) + ", name, 'command', val, key)")
-            exec("gui.set" + v + "Function=set" + v + "Function")
+                "ChangeFunction(self, name, val): self.configureWidget(" +
+                str(k) + ", name, 'change', val)")
+            exec("gui.set" + v + "ChangeFunction=set" + v + "ChangeFunction")
+            exec( "def set" + v +
+                "SubmitFunction(self, name, val): self.configureWidget(" +
+                str(k) + ", name, 'submit', val)")
+            exec("gui.set" + v + "SubmitFunction=set" + v + "SubmitFunction")
             exec( "def set" + v +
                 "DragFunction(self, name, val): self.configureWidget(" +
                 str(k) + ", name, 'drag', val)")
@@ -2043,14 +2068,20 @@ class gui(object):
                 "OverFunction(self, name, val): self.configureWidget(" +
                 str(k) + ", name, 'over', val)")
             exec("gui.set" + v + "OverFunction=set" + v + "OverFunction")
+
 # deprecated, but left in for backwards compatability
             exec( "def set" + v +
+                "Function(self, name, val, key=None): self.configureWidget(" +
+                str(k) + ", name, 'command', val, key, deprecated='Submit or Change')")
+            exec("gui.set" + v + "Function=set" + v + "Function")
+            exec( "def set" + v +
                 "Command(self, name, val, key=None): self.configureWidget(" +
-                str(k) + ", name, 'command', val, key, deprecated='Function')")
+                str(k) + ", name, 'command', val, key, deprecated='Submit or Change')")
             exec("gui.set" + v + "Command=set" + v + "Command")
+
             exec( "def set" + v +
                 "Func(self, name, val, key=None): self.configureWidget(" +
-                str(k) + ", name, 'command', val, key, deprecated='Function')")
+                str(k) + ", name, 'command', val, key, deprecated='Submit or Change')")
             exec("gui.set" + v + "Func=set" + v + "Func")
 # end deprecated
             # http://infohost.nmt.edu/tcc/help/pubs/tkinter/web/cursors.html
@@ -5343,7 +5374,7 @@ class gui(object):
         ent.showingDefault = False  # current status of entry
         ent.default = ""  # the default value to show (if set)
         ent.DEFAULT_TEXT = ""  # the default value for language support
-        ent.myTitle = title  # thr title of the entry
+        ent.myTitle = title  # the title of the entry
         ent.isNumeric = False  # if the entry is numeric
 
         # configure it to be secret

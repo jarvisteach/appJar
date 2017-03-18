@@ -1223,6 +1223,8 @@ def test_setters(widg_type, widg_id):
     exec("app.set" + widg_type + "Command(\""+widg_id +"\", tester_function)")
     exec("app.set" + widg_type + "Func(\""+widg_id +"\", tester_function)")
     exec("app.set" + widg_type + "Function(\""+widg_id +"\", tester_function)")
+    exec("app.set" + widg_type + "ChangeFunction(\""+widg_id +"\", tester_function)")
+    exec("app.set" + widg_type + "SubmitFunction(\""+widg_id +"\", tester_function)")
     exec("app.set" + widg_type + "RightClick(\""+widg_id +"\", tester_function)")
 
     exec("app.get"+widg_type+"Widget(\""+widg_id+"\")")
