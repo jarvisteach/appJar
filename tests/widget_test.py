@@ -1542,10 +1542,15 @@ def test_gui2(btn=None):
     print("Testing GUI2")
     global doStop
     if doStop == 5:
+        print("Show app2")
+        app2.show()
+    elif doStop == 6:
+        print("Hide app2")
+        app2.hide()
+    elif doStop == 8:
         print("Stopping app2")
         app2.stop()
-    else:
-        doStop += 1
+    doStop += 1
 
 app2 = gui()
 app2.showSplash(text="New test", fill="green", stripe="pink", fg="green", font=50)
@@ -1554,6 +1559,9 @@ app2.addLabel("l1", "here")
 app2.registerEvent(test_gui2)
 app2.setPollTime(1000)
 app2.setGeometry("fullscreen")
-app2.go()
+app2.startSubWindow("login")
+app2.addLabel("log_l1", "Login page")
+app2.stopSubWindow()
+app2.go(startWindow="login")
 
 print("<<<Widget Test Suite Complete>>>")
