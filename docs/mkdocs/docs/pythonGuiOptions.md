@@ -20,6 +20,12 @@ Some basic configuration for the size, position, transparency, etc. of the GUI.
 
 ###Size & Locaiton
 
+* `.hide()` & `.show()`  
+    Used to hide and show the main window.  
+    Useful in conjunction with [SubWindows](/pythonWidgetGrouping/#sub-window)  
+    You can have a menu or logon SubWindow that hides/shows the main window as necessary.  
+    NB. hiding the window, effectively minimizes it, it is still there...
+
 * `.setGeometry(geom)` & `.setGeometry(width, height)`  
     Sets the height & width of the GUI:  
     * Either as a single String `.setGeometry("200x100")` (widthxheight)  

@@ -997,7 +997,7 @@ class gui(object):
 #####################################
 # Event Loop - must always be called at end
 #####################################
-    def go(self, language=None):
+    def go(self, language=None, startWindow=None):
         """ Most important function! Start the GUI """
 
         if self.splashConfig is not None:
@@ -1050,8 +1050,13 @@ class gui(object):
             splash.destroy()
 
         # bring to front
-        self.__bringToFront()
-        self.topLevel.deiconify()
+        if startWindow is None:
+            self.__bringToFront()
+            self.topLevel.deiconify()
+        else:
+            self.hide()
+            sw = self.showSubWindow(startWindow)
+            self.__bringToFront(sw)
 
         # required to make the gui reopen after minimising
         if self.GET_PLATFORM() == self.MAC:
@@ -3150,9 +3155,17 @@ class gui(object):
             tl.focus_set()
             self.topLevel.wait_window(tl.killLab)
 
+        return tl
+
     def setSubWindowLocation(self, title, x, y):
         tl = self.__verifyItem(self.n_subWindows, title)
         tl.geometry("+%d+%d" % (x, y))
+
+    def hide(self):
+        self.topLevel.withdraw()
+
+    def show(self):
+        self.topLevel.deiconify()
 
     def hideSubWindow(self, title):
         tl = self.__verifyItem(self.n_subWindows, title)

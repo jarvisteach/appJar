@@ -423,6 +423,11 @@ app.go()
     Used to reopen the named *SubWindow*.  
 
 ####Show/Hide Sub Windows
+
+* `.go(startWindow=None)`  
+    If you set a *SubWindow* as the ```startWindow``` appJar will start-up showing the named *SubWindow*.  
+    The main window will be minimized.  
+
 * `.showSubWindow(title)`  
     Will cause the specified *SubWindow* to be shown.  
     If it is set as *modal* the parent window will become uninteractive until the *SubWindow* is closed.  
