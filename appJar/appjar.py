@@ -1920,8 +1920,10 @@ class gui(object):
             widget.cmd = cmd
         elif kind == self.ENTRY:
             if eventType == "change":
-                # get Entry variable
+                if key is None:
+                    key = name
                 cmd = self.MAKE_FUNC(function, key, True)
+                # get Entry variable
                 var = self.__verifyItem(self.n_entryVars, name)
                 var.trace('w', cmd)
             else:
@@ -1930,6 +1932,11 @@ class gui(object):
                 cmd = self.MAKE_FUNC(function, key, True)
                 widget.bind('<Return>', cmd)
                 widget.cmd = cmd
+        elif kind == self.TEXTAREA:
+            if eventType == "change":
+                # get Entry variable
+                cmd = self.MAKE_FUNC(function, name, True)
+                widget.bindChangeEvent(cmd)
         elif kind == self.BUTTON:
             widget.config(command=self.MAKE_FUNC(function, name))
             widget.bind(
@@ -2350,7 +2357,9 @@ class gui(object):
         # , "Scale"]#, "Button", "OptionMenu"]
         darwinBorders = [
             "Text",
+            "AjText",
             "ScrolledText",
+            "AjScrolledText",
             "Entry",
             "AutoCompleteEntry",
             "Button"]
@@ -5149,9 +5158,9 @@ class gui(object):
     def __buildTextArea(self, title, frame, scrollable=False):
         self.__verifyItem(self.n_textAreas, title, True)
         if scrollable:
-            text = scrolledtext.ScrolledText(frame)
+            text = AjScrolledText(frame)
         else:
-            text = Text(frame)
+            text = AjText(frame)
         text.config(font=self.taFont, width=20, height=10, undo=True)
 
         if self.platform in [self.MAC, self.LINUX]:
@@ -8201,6 +8210,52 @@ class ajScale(Scale):
         return 'break'
 
 #######################
+# Widget to give TextArea extra functionality
+# http://code.activestate.com/recipes/464635-call-a-callback-when-a-tkintertext-is-modified/
+#######################
+
+
+class ModifiedText():
+    def _init(self):
+        self.clearModifiedFlag()
+        self.bind('<<Modified>>', self._beenModified)
+
+    def _beenModified(self, event=None):
+        # stop recursive calls
+        if self._resetting_modified_flag: return
+        self.clearModifiedFlag()
+        self.beenModified(event)
+
+    def bindChangeEvent(self, function):
+        self.function = function
+
+    def beenModified(self, event=None):
+        # call the user's function
+        if hasattr(self, 'function'):
+            self.function()
+
+    def clearModifiedFlag(self):
+        self._resetting_modified_flag = True
+        try:
+            # reset the modified flag (this raises a modified event!)
+            self.tk.call(self._w, 'edit', 'modified', 0)
+        finally:
+            self._resetting_modified_flag = False
+
+# uses multiple inheritance
+class AjText(ModifiedText, Text):
+    def __init__(self, parent, **opts):
+        Text.__init__(self, parent, **opts)
+        self._init()
+
+class AjScrolledText(ModifiedText, scrolledtext.ScrolledText):
+    def __init__(self, parent, **opts):
+        scrolledtext.ScrolledText.__init__(self, parent, **opts)
+        self._init()
+
+
+
+#######################
 # Widget to look like a label, but allow selection...
 #######################
 
@@ -8921,7 +8976,7 @@ class CopyAndPaste():
                 self.canCut = self.canCopy = True
             if widget.index(END) > 0:
                 self.canSelect = True
-        elif self.widgetType in ["ScrolledText", "Text"]:
+        elif self.widgetType in ["ScrolledText", "Text", "AjText", "AjScrolledText"]:
             if widget.tag_ranges("sel"):
                 self.canCut = self.canCopy = True
             if widget.index("end-1c") != "1.0":
