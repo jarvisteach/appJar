@@ -5000,6 +5000,23 @@ class gui(object):
         self.__addTooltip(grip, "Drag here to move", True)
 
 #####################################
+# FUNCTIONS for Microbits
+#####################################
+    # adds a simple grip, used to drag the window around
+    def addMicroBit(self, row=None, column=0, colspan=0, rowspan=0):
+        self.mb = MicroBitSimulator(self.__getContainer())
+        self.__positionWidget(self.mb, row, column, colspan, rowspan)
+
+    def setMicroBitImage(self, image):
+        self.mb.show(image)
+
+    def setMicroBitPixel(self, x, y, brightness):
+        self.mb.set_pixel(x, y, brightness)
+
+    def clearMicroBit(self):
+        self.mb.clear()
+
+#####################################
 # DatePicker Widget - using Form Container
 #####################################
     def addDatePicker(self, name, row=None, column=0, colspan=0, rowspan=0):
@@ -8205,7 +8222,6 @@ class ajScale(Scale):
         self.bind('<Button-1>', self.jump)
 
     def jump(self, event):
-        print("jumping", self.increment)
         clicked = self.identify(event.x, event.y)
         if clicked == 'trough1':
             self.set(self.get() - self.increment)
@@ -8937,6 +8953,56 @@ class SimpleGrid(Frame):
         else:
             self.selectedCells[gridPos] = True
             cell.config(background=self.cellSelectedBg)
+
+
+##########################
+# MicroBit Simulator
+##########################
+
+
+class MicroBitSimulator(Frame):
+
+    COLOURS = {0:'#000000',1:'#110000',2:'#220000',3:'#440000',4:'#660000',5:'#880000',6:'#aa0000',7:'#cc0000',8:'#ee0000',9:'#ff0000'}
+    SIZE = 5
+    HEART = "09090:90909:90009:09090:00900"
+
+    def __init__(self, parent, **opts):
+        Frame.__init__(self, parent, **opts)
+        print(self.SIZE)
+
+        self.matrix = []
+        for i in range(self.SIZE):
+            self.matrix.append([])
+        for i in range(self.SIZE):
+            for j in range(self.SIZE):
+                self.matrix[i].append('')
+
+        print("made initial grid")
+
+        for y in range(self.SIZE):
+            for x in range(self.SIZE):
+                self.matrix[x][y] = Label(self, bg='#000000', width=5, height=2)
+                self.matrix[x][y].grid(column=x, row=y, padx=5, pady=5)
+
+        print("coloured grid")
+        self.update_idletasks()
+
+    def set_pixel(self, x, y, brightness):
+        self.matrix[x][y].config(bg=self.COLOURS[brightness])
+        self.update_idletasks()
+
+    def show(self, image):
+        rows = image.split(':')
+        for y in range(len(rows)):
+            for x in range(len(rows[0])):
+                self.matrix[x][y].config(bg=self.COLOURS[int(rows[y][x])])
+        self.update_idletasks()
+
+    def clear(self):
+        for y in range(self.SIZE):
+            for x in range(self.SIZE):
+                self.matrix[x][y].config(bg='#000000')
+        self.update_idletasks()
 
 
 ##########################
