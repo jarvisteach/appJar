@@ -31,7 +31,6 @@ except ImportError:
 import os
 import sys
 import re
-import hashlib  # textarea
 import imghdr   # images
 import time     # splashscreen
 import webbrowser   # links
@@ -42,6 +41,7 @@ import __main__ as theMain
 from platform import system as platform
 
 # modules to be imported on demand
+hashlib = None
 ToolTip = None
 nanojpeg = PngImageTk = None # extra image support
 TkDND = None
@@ -503,6 +503,15 @@ class gui(object):
 #####################################
 # library loaders
 #####################################
+    # textarea
+    def __loadHashlib(self):
+        global hashlib
+        if hashlib is None:
+            try:
+                import hashlib
+            except:
+                hashlib = False
+
     def __loadTooltip(self):
         global ToolTip
         if ToolTip is None:
@@ -833,7 +842,6 @@ class gui(object):
         self.n_images = {}        # image label widgets
         self.n_imageCache = {}    # image file objects
         self.n_imageAnimationIds = {} # stores after ids
-        self.n_taHashes = {}      # for monitoring textAreas
 
         # for simple grids
         self.n_grids = {}
@@ -5218,32 +5226,30 @@ class gui(object):
             N + E + S + W)
 
     def getTextArea(self, title):
-        self.__verifyItem(self.n_textAreas, title)
-        text = self.n_textAreas[title].get('1.0', END + '-1c')
-        return text
+        return self.__verifyItem(self.n_textAreas, title).getText()
 
     def setTextArea(self, title, text):
-        self.__verifyItem(self.n_textAreas, title)
-        self.n_textAreas[title].insert('1.0', text)
+        self.__verifyItem(self.n_textAreas, title).insert('1.0', text)
 
     # functions to try to monitor text areas
     def clearTextArea(self, title):
-        self.__verifyItem(self.n_textAreas, title)
-        self.n_textAreas[title].delete('1.0', END)
+        self.__verifyItem(self.n_textAreas, title).delete('1.0', END)
 
     def logTextArea(self, title):
-        newHash = self.__getTextAreaHash(title)
-        self.n_taHashes[title] = newHash
+        self.__loadHashlib()
+        if hashlib is False:
+            self.warn("Unable to log TextArea, haslib librray not available")
+        else:
+            text = self.__verifyItem(self.n_textAreas, title)
+            text.__hash = text.getTextAreaHash()
 
     def textAreaChanged(self, title):
-        newHash = self.__getTextAreaHash(title)
-        return newHash != self.n_taHashes[title]
-
-    def __getTextAreaHash(self, title):
-        self.__verifyItem(self.n_textAreas, title)
-        text = self.getTextArea(title)
-        md5 = hashlib.md5(str.encode(text)).digest()
-        return md5
+        self.__loadHashlib()
+        if hashlib is False:
+            self.warn("Unable to lof TextArea, haslib librray not available")
+        else:
+            text = self.__verifyItem(self.n_textAreas, title)
+            return text.__hash != text.getTextAreaHash()
 
 #####################################
 # FUNCTIONS to add Tree Widgets
@@ -8215,10 +8221,11 @@ class ajScale(Scale):
 #######################
 
 
-class ModifiedText():
+class TextParent():
     def _init(self):
         self.clearModifiedFlag()
         self.bind('<<Modified>>', self._beenModified)
+        self.__hash = None
 
     def _beenModified(self, event=None):
         # stop recursive calls
@@ -8242,17 +8249,31 @@ class ModifiedText():
         finally:
             self._resetting_modified_flag = False
 
+    def getText(self):
+        return self.get('1.0', END + '-1c')
+
+    def getTextAreaHash(self):
+        text = self.getText()
+        m = hashlib.md5()
+        if PYTHON2:
+            m.update(text)
+        else:
+            m.update(str.encode(text))
+        md5 = m.digest()
+#        md5 = hashlib.md5(str.encode(text)).digest()
+        return md5
+
 # uses multiple inheritance
-class AjText(ModifiedText, Text):
+class AjText(TextParent, Text):
     def __init__(self, parent, **opts):
         Text.__init__(self, parent, **opts)
-        self._init()
+        self._init()    # call TextParent initialiser
 
-class AjScrolledText(ModifiedText, scrolledtext.ScrolledText):
+
+class AjScrolledText(TextParent, scrolledtext.ScrolledText):
     def __init__(self, parent, **opts):
         scrolledtext.ScrolledText.__init__(self, parent, **opts)
-        self._init()
-
+        self._init()    # call TextParent initialiser
 
 
 #######################

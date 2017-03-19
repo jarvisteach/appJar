@@ -604,10 +604,33 @@ def test_text_areas():
     assert app.getTextArea("st1") == EMPTY
     assert app.getTextArea("st2") == EMPTY
 
+    app.logTextArea("t1")
+    assert app.textAreaChanged("t1") is False
+    app.logTextArea("t2")
+    assert app.textAreaChanged("t2") is False
+    app.logTextArea("st1")
+    assert app.textAreaChanged("st1") is False
+    app.logTextArea("st2")
+    assert app.textAreaChanged("st2") is False
+
     app.setTextArea("t1", TEXT_ONE)
     app.setTextArea("t2", TEXT_TWO)
     app.setTextArea("st1", TEXT_THREE)
     app.setTextArea("st2", TEXT_FOUR)
+
+    assert app.textAreaChanged("t1") is True
+    assert app.textAreaChanged("t2") is True
+    assert app.textAreaChanged("st1") is True
+    assert app.textAreaChanged("st2") is True
+
+    app.logTextArea("t1")
+    assert app.textAreaChanged("t1") is False
+    app.logTextArea("t2")
+    assert app.textAreaChanged("t2") is False
+    app.logTextArea("st1")
+    assert app.textAreaChanged("st1") is False
+    app.logTextArea("st2")
+    assert app.textAreaChanged("st2") is False
 
     assert app.getTextArea("t1") == TEXT_ONE
     assert app.getTextArea("t2") == TEXT_TWO
