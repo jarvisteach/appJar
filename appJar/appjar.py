@@ -3468,6 +3468,11 @@ class gui(object):
         sc.config(from_=start, to=end)
         self.setScale(title, curr)
 
+        # set the increment as 10%
+        res = sc.cget("resolution")
+        diff = int((((end - start)/res)/10)+0.99) # add 0.99 to round up...
+        sc.increment = diff
+
 #####################################
 # FUNCTION for optionMenus
 #####################################
@@ -8975,7 +8980,6 @@ class MicroBitSimulator(Frame):
 
     def __init__(self, parent, **opts):
         Frame.__init__(self, parent, **opts)
-        print(self.SIZE)
 
         self.matrix = []
         for i in range(self.SIZE):
@@ -8984,14 +8988,11 @@ class MicroBitSimulator(Frame):
             for j in range(self.SIZE):
                 self.matrix[i].append('')
 
-        print("made initial grid")
-
         for y in range(self.SIZE):
             for x in range(self.SIZE):
                 self.matrix[x][y] = Label(self, bg='#000000', width=5, height=2)
                 self.matrix[x][y].grid(column=x, row=y, padx=5, pady=5)
 
-        print("coloured grid")
         self.update_idletasks()
 
     def set_pixel(self, x, y, brightness):
