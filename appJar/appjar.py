@@ -147,6 +147,7 @@ class gui(object):
     PROPERTIES = 16
     GRID = 17
     PLOT = 18
+    MICROBIT = 19
 
     RB = 60
     CB = 40
@@ -217,6 +218,7 @@ class gui(object):
         LINK: "Link",
         METER: "Meter",
         PLOT: "Plot",
+        MICROBIT: "MicroBit",
         IMAGE: "Image",
         RADIOBUTTON: "RadioButton",
         CHECKBOX: "CheckBox",
@@ -811,6 +813,7 @@ class gui(object):
         self.n_spins = {}
         self.n_props = {}
         self.n_plots = {}
+        self.n_microbits = {}
         self.n_options = {}
         self.n_frameLabs = {}
         self.n_textAreas = {}
@@ -1635,6 +1638,8 @@ class gui(object):
             return self.n_props
         elif kind == self.PLOT:
             return self.n_plots
+        elif kind == self.MICROBIT:
+            return self.n_microbits
         elif kind == self.GRID:
             return self.n_grids
 
@@ -5003,18 +5008,20 @@ class gui(object):
 # FUNCTIONS for Microbits
 #####################################
     # adds a simple grip, used to drag the window around
-    def addMicroBit(self, row=None, column=0, colspan=0, rowspan=0):
-        self.mb = MicroBitSimulator(self.__getContainer())
-        self.__positionWidget(self.mb, row, column, colspan, rowspan)
+    def addMicroBit(self, title, row=None, column=0, colspan=0, rowspan=0):
+        self.__verifyItem(self.n_microbits, title, True)
+        mb = MicroBitSimulator(self.__getContainer())
+        self.__positionWidget(mb, row, column, colspan, rowspan)
+        self.n_microbits[title] = mb
 
-    def setMicroBitImage(self, image):
-        self.mb.show(image)
+    def setMicroBitImage(self, title, image):
+        self.__verifyItem(self.n_microbits, title).show(image)
 
-    def setMicroBitPixel(self, x, y, brightness):
-        self.mb.set_pixel(x, y, brightness)
+    def setMicroBitPixel(self, title, x, y, brightness):
+        self.__verifyItem(self.n_microbits, title).set_pixel(x, y, brightness)
 
-    def clearMicroBit(self):
-        self.mb.clear()
+    def clearMicroBit(self, title):
+        self.__verifyItem(self.n_microbits, title).clear()
 
 #####################################
 # DatePicker Widget - using Form Container

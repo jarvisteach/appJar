@@ -1461,6 +1461,20 @@ def test_plots():
         print(" >> not implemented...")
         #print("\t >> all tests complete")
 
+def test_microbits():
+    print("\tTesting plots:", PY_VER)
+    app.addMicroBit("mb1")
+    app.clearMicroBit("mb1")
+    app.setMicroBitImage("mb1", "09090:90909:90009:09090:00900")
+    app.clearMicroBit("mb1")
+    app.setMicroBitPixel("mb1", 2, 2, 5)
+    app.clearMicroBit("mb1")
+
+    test_setters("MicroBit", "mb1")
+
+    print(" >> not implemented...")
+    #print("\t >> all tests complete")
+
 
 def test_pop_ups():
     print("\tTesting popups")
@@ -1499,6 +1513,7 @@ test_links()
 test_grips()
 test_date_pickers()
 test_plots()
+test_microbits()
 
 test_status()
 test_menus()
