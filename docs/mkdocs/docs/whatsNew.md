@@ -3,10 +3,12 @@
 
 ## Next Release (0.6)  
 * Issues Resolved:  
+    * [#119](https://github.com/jarvisteach/appJar/issues/119) - MicroBit widget added
     * [#118](https://github.com/jarvisteach/appJar/issues/118) - dynamic library imports
     * [#116](https://github.com/jarvisteach/appJar/issues/116) - configurable trough [increments](/pythonWidgets/#scale) for a scale
     * [#115](https://github.com/jarvisteach/appJar/issues/115) - fixed transparency in python 2.7
     * [#114](https://github.com/jarvisteach/appJar/issues/114) - ability to stop events being propagated
+    * [#112](https://github.com/jarvisteach/appJar/issues/112) - now possible to start with a subWindow (specified in go()) as well as hide() & show() main window
     * [#106](https://github.com/jarvisteach/appJar/issues/106) - Function to add an [image button](/pythonWidgets/#button)
     * [#101](https://github.com/jarvisteach/appJar/issues/101) - Drag n'Drop supported between applications
     * [#92](https://github.com/jarvisteach/appJar/issues/92) - Function to [get all entries](/pythonWidgets/#entry)
