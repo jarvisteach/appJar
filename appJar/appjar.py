@@ -1809,64 +1809,15 @@ class gui(object):
                     self.__addTooltip(item, value)
                 elif option == "focus":
                     item.focus_set()
+
+                # event bindings
                 elif option == 'over':
-                    if not isinstance(value, list):
-                        value = [value]
-                    if len(value) == 1:
-                        value.append(None)
-                    if len(value) != 2:
-                        raise Exception(
-                            "Invalid arguments, set<widget>OverFunction requires 1 ot 2 functions to be passed in.")
-                    if kind == self.LABEL:
-                        if value[0] is not None:
-                            item.bind(
-                                "<Enter>", self.MAKE_FUNC(
-                                    value[0], name, True), add="+")
-                        if value[1] is not None:
-                            item.bind(
-                                "<Leave>", self.MAKE_FUNC(
-                                    value[1], name, True), add="+")
-                        #item.bind("<B1-Motion>",self.MAKE_FUNC(value[0], name, True), add="+")
+                    self.__bindOverEvent(kind, name, item, value, option, key)
                 elif option == 'drag':
-                    if not isinstance(value, list):
-                        value = [value]
-                    if len(value) == 1:
-                        value.append(None)
-                    if len(value) != 2:
-                        raise Exception(
-                            "Invalid arguments, set<widget>DragFunction requires 1 ot 2 functions to be passed in.")
-                    if kind == self.LABEL:
-                        item.config(cursor="fleur")
+                    self.__bindDragEvent(kind, name, item, value, option, key)
+                elif option in ['command', "change", "submit"]:
+                    self.__bindEvent(kind, name, item, value, option, key)
 
-                        def getLabel(f):
-                            # loop through all labels
-                            for key, value in self.n_labels.items():
-                                if self.__isMouseInWidget(value):
-                                    f(key)
-                                    return
-
-                        if value[0] is not None:
-                            item.bind(
-                                "<ButtonPress-1>",
-                                self.MAKE_FUNC(
-                                    value[0],
-                                    name,
-                                    True),
-                                add="+")
-                        if value[1] is not None:
-                            item.bind(
-                                "<ButtonRelease-1>",
-                                self.MAKE_FUNC(
-                                    getLabel,
-                                    value[1],
-                                    True),
-                                add="+")
-                elif option == 'command':
-                    self.__bindEvent(kind, name, item, value, option, key)
-                elif option == "change":
-                    self.__bindEvent(kind, name, item, value, option, key)
-                elif option == "submit":
-                    self.__bindEvent(kind, name, item, value, option, key)
                 elif option == 'sticky':
                     info = {}
                     # need to reposition the widget in its grid
@@ -1917,6 +1868,50 @@ class gui(object):
                                 menu))
             except TclError as e:
                 self.warn("Error configuring " + name + ": " + str(e))
+
+    # generic function for over events
+    def __validateFunctionList(self, functions, mode):
+        if not isinstance(functions, list):
+            functions = [functions]
+        if len(functions) == 1:
+            functions.append(None)
+        if len(functions) != 2:
+            raise Exception("Invalid arguments, set<widget>" + mode + "Function requires 1 or 2 functions to be passed in.")
+
+        return functions
+
+    def __bindOverEvent(self, kind, name, widget, functions, eventType, key=None):
+        functions = self.__validateFunctionList(functions, "Over")
+
+        if kind == self.LABEL:
+            if functions[0] is not None:
+                widget.bind("<Enter>", self.MAKE_FUNC(functions[0], name, True), add="+")
+            if functions[1] is not None:
+                widget.bind("<Leave>", self.MAKE_FUNC(functions[1], name, True), add="+")
+        else:
+            raise Exception("Only able to bind over events to Labels")
+
+    # generic function for over events
+    def __bindDragEvent(self, kind, name, widget, functions, eventType, key=None):
+        functions = self.__validateFunctionList(functions, "Drag")
+
+        if kind == self.LABEL:
+            widget.config(cursor="fleur")
+
+            def getLabel(f):
+                # loop through all labels
+                items = self.__getItems(kind)
+                for key, value in items.items():
+                    if self.__isMouseInWidget(value):
+                        f(key)
+                        return
+
+            if functions[0] is not None:
+                widget.bind("<ButtonPress-1>", self.MAKE_FUNC(functions[0], name, True), add="+")
+            if functions[1] is not None:
+                widget.bind("<ButtonRelease-1>", self.MAKE_FUNC(getLabel, functions[1], True), add="+")
+        else:
+            raise Exception("Only able to bind drag events to images")
 
     # generic function for change/submit/events
     def __bindEvent(self, kind, name, widget, function, eventType, key=None):
@@ -2071,7 +2066,7 @@ class gui(object):
                 str(k) + ", name, 'tooltip', val)")
             exec("gui.set" + v + "Tooltip=set" + v + "Tooltip")
 
-            # funciton setters
+            # function setters
             exec( "def set" + v +
                 "ChangeFunction(self, name, val): self.configureWidget(" +
                 str(k) + ", name, 'change', val)")
