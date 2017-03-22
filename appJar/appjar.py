@@ -1889,7 +1889,7 @@ class gui(object):
             if functions[1] is not None:
                 widget.bind("<Leave>", self.MAKE_FUNC(functions[1], name, True), add="+")
         else:
-            raise Exception("Only able to bind over events to Labels")
+            self.warn("Only able to bind over events to Labels")
 
     # generic function for over events
     def __bindDragEvent(self, kind, name, widget, functions, eventType, key=None):
@@ -1911,7 +1911,7 @@ class gui(object):
             if functions[1] is not None:
                 widget.bind("<ButtonRelease-1>", self.MAKE_FUNC(getLabel, functions[1], True), add="+")
         else:
-            raise Exception("Only able to bind drag events to images")
+            self.warn("Only able to bind drag events to images")
 
     # generic function for change/submit/events
     def __bindEvent(self, kind, name, widget, function, eventType, key=None):
