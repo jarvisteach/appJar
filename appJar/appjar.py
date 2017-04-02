@@ -1287,7 +1287,7 @@ class gui(object):
         if win is None: win = self.topLevel
         if self.platform == self.MAC:
             import subprocess
-            tmpl = 'tell application "System Events" to set frontmost of every process whose unix id is {} to true'
+            tmpl = 'tell application "System Events" to set frontmost of every process whose unix id is {0} to true'
             script = tmpl.format(os.getpid())
             subprocess.check_call(['/usr/bin/osascript', '-e', script])
             win.after( 0, lambda: win.attributes("-topmost", False))
@@ -4039,7 +4039,7 @@ class gui(object):
                 pic = lab.image.pics[lab.image.anim_pos]
             else:
                 pic = PhotoImage(file=lab.image.path,
-                                 format="gif - {}".format(lab.image.anim_pos))
+                                 format="gif - {0}".format(lab.image.anim_pos))
                 lab.image.pics.append(pic)
             lab.image.anim_pos += 1
             lab.config(image=pic)
