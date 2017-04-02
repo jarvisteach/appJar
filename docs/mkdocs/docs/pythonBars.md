@@ -22,8 +22,8 @@ app.addToolbar(tools, tbFunc, findIcon=True)
 
 * `.addToolbar(names, funcs, findIcon=False)`  
     Will add a list of buttons along the top, in a toolbar. Each button will call the corresponding function.  
-    If only one function is supplied, they will all call the same function, providing the buttons name as a parameter.  
-    A set of icons is available, if `findIcon` is set to True, then appJar will attempt to fins an icon for each button.  
+    If only one function is supplied, they will all call the same function, providing the button's name as a parameter.  
+    A set of icons is available, if `findIcon` is set to True, then appJar will attempt to find an icon for each button.  
 
 ####Set Toolbars
 
