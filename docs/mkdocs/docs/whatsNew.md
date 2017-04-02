@@ -5,6 +5,7 @@
 * Issues Resolved:  
     * [#119](https://github.com/jarvisteach/appJar/issues/119) - MicroBit widget added
     * [#118](https://github.com/jarvisteach/appJar/issues/118) - dynamic library imports
+    * [#117](https://github.com/jarvisteach/appJar/issues/117) - introduced documentation on [packaging](/packaging/)
     * [#116](https://github.com/jarvisteach/appJar/issues/116) - configurable trough [increments](/pythonWidgets/#scale) for a scale
     * [#115](https://github.com/jarvisteach/appJar/issues/115) - fixed transparency in python 2.7
     * [#114](https://github.com/jarvisteach/appJar/issues/114) - ability to stop events being propagated

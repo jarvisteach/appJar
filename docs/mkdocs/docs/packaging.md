@@ -3,6 +3,33 @@
 
 The recomended way to package appJar is to use [PyInstaller](http://www.pyinstaller.org)  
 
-Simply [download](https://github.com/pyinstaller/pyinstaller/releases/download/v3.2.1/PyInstaller-3.2.1.zip) PyInstaller and [install](https://pyinstaller.readthedocs.io/en/stable/installation.html) it.  
+Simply [download](http://www.pyinstaller.org/downloads.html) and [install](https://pyinstaller.readthedocs.io/en/stable/installation.html) PyInstaller.  
 
-pyinstaller -p <PATH_TO_APPJAR> --onefile --windowed demo.py
+If everything has been installed via pip, then you should be able to package your application with the following command:
+
+```pyinstaller -F -w demo.py```
+
+If not, then you may need to specify the path of certain libraries:  
+
+```pyinstaller -F -w -p <path_to_appJar> demo.py```
+
+###Setting an app Icon
+---
+To set an icon for the app, include the following option:
+
+```pyinstaller -i <path_to_icon> -F -w demo.py```
+
+###Including Images
+---
+To include images, include the following option:
+
+```appinstaller --add-data image.png:. -F -w demo.py```
+
+###Linux
+---
+
+###Windows
+---
+
+###Mac OSX
+---
