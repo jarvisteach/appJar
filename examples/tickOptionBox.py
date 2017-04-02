@@ -1,3 +1,5 @@
+import sys
+sys.path.append("../")
 from appJar import gui
 
 def get(btn):
@@ -14,6 +16,7 @@ def findIndex(act):
     app.setOptionBox("The Action", app.getScale(act))
 
 app=gui()
+print(gui.SHOW_VERSION())
 app.setFont(20)
 app.setBg("PapayaWhip")
 
