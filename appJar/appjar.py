@@ -59,6 +59,7 @@ __version__ = "0.62"
 __maintainer__ = "Richard Jarvis"
 __email__ = "info@appJar.info"
 __status__ = "Development"
+__url__ = "http://appJar.info"
 
 # class to allow simple creation of tkinter GUIs
 class gui(object):
@@ -102,6 +103,27 @@ class gui(object):
             return gui.LINUX
         else:
             raise Exception("Unsupported platform: " + platform())
+
+    @staticmethod
+    def SHOW_VERSION():
+        verString = \
+            "appJar: " + str(__version__) \
+            + "\nPython: " + str(sys.version_info[0]) \
+            + "." + str(sys.version_info[1]) + "." + str(sys.version_info[2]) \
+            + "\nTCL: " + str(TclVersion) \
+            + ", TK: " + str(TkVersion) \
+            + "\nPlatform: " + str(platform()) \
+            + "\npid: " + str(os.getpid())
+
+        return verString
+
+    def SHOW_PATHS(self):
+        pathString = \
+            "Filen Name: " + self.exe_file \
+            + "\nFile Location: " + self.exe_loc \
+            + "\nLib: " + self.lib_path
+
+        return pathString
 
     @staticmethod
     def CENTER(win):
@@ -382,6 +404,7 @@ class gui(object):
         self.lib_file = os.path.abspath(__file__)
         self.exe_file = os.path.basename(theMain.__file__)
         self.exe_loc = os.path.dirname(theMain.__file__)
+
         # location of appJar
         self.lib_path = os.path.dirname(self.lib_file)
         self.resource_path = os.path.join(self.lib_path, "resources")
@@ -6444,10 +6467,17 @@ class gui(object):
         self.disableMenu("EDIT")
 
     def appJarAbout(self, menu=None):
-        self.infoBox("About appJar", "appJar\nCopyright Richard Jarvis, 2016")
+        self.infoBox("About appJar", 
+                        "---\n" + 
+                        __copyright__ + "\n" +
+                        "---\n\t" + 
+                        self.SHOW_VERSION().replace("\n", "\n\t") + "\n" +
+                        "---\n" + 
+                        self.SHOW_PATHS() + "\n" +
+                        "---")
 
     def appJarHelp(self, menu=None):
-        self.infoBox("appJar Help", "For help, visit http://appJar.info")
+        self.infoBox("appJar Help", "For help, visit " + __url__)
 
     def addAppJarMenu(self):
         if self.platform == self.MAC:
