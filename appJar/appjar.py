@@ -104,19 +104,6 @@ class gui(object):
             raise Exception("Unsupported platform: " + platform())
 
     @staticmethod
-    def SHOW_VERSION():
-        verString = \
-            "Python: " + str(sys.version_info[0]) \
-            + "." + str(sys.version_info[1]) + "." + str(sys.version_info[2]) \
-            + "\nPlatform: " + str(platform()) \
-            + "\nTCL: " + str(TclVersion) \
-            + "\nTK: " + str(TkVersion) \
-            + "\nappJar: " + str(__version__) \
-            + "\npid: " + str(os.getpid())
-
-        return verString
-
-    @staticmethod
     def CENTER(win):
         """
         centers a tkinter window
@@ -1300,7 +1287,7 @@ class gui(object):
         if win is None: win = self.topLevel
         if self.platform == self.MAC:
             import subprocess
-            tmpl = 'tell application "System Events" to set frontmost of every process whose unix id is {0} to true'
+            tmpl = 'tell application "System Events" to set frontmost of every process whose unix id is {} to true'
             script = tmpl.format(os.getpid())
             subprocess.check_call(['/usr/bin/osascript', '-e', script])
             win.after( 0, lambda: win.attributes("-topmost", False))
@@ -3509,7 +3496,6 @@ class gui(object):
                 vals[o] = BooleanVar()
                 option['menu'].add_checkbutton(
                     label=o, onvalue=True, offvalue=False, variable=vals[o])
-                print("cb added:", o)
             self.n_optionVars[title] = vals
             option.kind = "ticks"
 
@@ -4053,7 +4039,7 @@ class gui(object):
                 pic = lab.image.pics[lab.image.anim_pos]
             else:
                 pic = PhotoImage(file=lab.image.path,
-                                 format="gif - {0}".format(lab.image.anim_pos))
+                                 format="gif - {}".format(lab.image.anim_pos))
                 lab.image.pics.append(pic)
             lab.image.anim_pos += 1
             lab.config(image=pic)
