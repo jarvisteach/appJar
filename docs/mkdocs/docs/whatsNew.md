@@ -10,8 +10,10 @@
     * [#114](https://github.com/jarvisteach/appJar/issues/114) - ability to stop events being propagated
     * [#112](https://github.com/jarvisteach/appJar/issues/112) - now possible to start with a subWindow (specified in go()) as well as hide() & show() main window
     * [#106](https://github.com/jarvisteach/appJar/issues/106) - Function to add an [image button](/pythonWidgets/#button)
+    * [#102](https://github.com/jarvisteach/appJar/issues/102) - Updates to drag/over events
     * [#101](https://github.com/jarvisteach/appJar/issues/101) - Drag n'Drop supported between applications
     * [#92](https://github.com/jarvisteach/appJar/issues/92) - Function to [get all entries](/pythonWidgets/#entry)
+    * [#46](https://github.com/jarvisteach/appJar/issues/46) - Added version details to about box  
 
 ---
 ## Version (0.052)  
