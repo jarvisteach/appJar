@@ -1,3 +1,5 @@
+import sys
+sys.path.append("../")
 from appJar import gui
 def press(btn):
     print(btn)
@@ -5,7 +7,9 @@ def press(btn):
     app.setButton("Check", "b")
 app=gui()
 app.addEntry("a")
-app.setEntryDefault("a", "Welcome")
+app.setEntryDefault("a", "This is the default")
+app.setEntryMaxLength("a", 7)
+app.setEntryUpperCase("a")
 app.addNamedButton("Check", "Name", press)
 app.addNamedButton("Check", "Name2", press)
 app.addNamedButton("Check", "Name3", press)

@@ -139,6 +139,13 @@ app.go()
     Once the user starts typing, it will disappear.  
     The text is centered, shown in a light gray font, and will not be returned by `.getEntry(title)`  
 
+* `.setEntryUpperCase(title)` & `.setEntryLowerCase(title)`   
+    This will force all text typed into the entry to be uppercase/lowercase.  
+
+* `.setEntryMaxLength(title, maxLength)`  
+    This will set a maximum length for the specified entry.  
+    Any additional characters typed will be discarded.  
+
 * `.clearEntry(title)`  
     This will clear the contents of the specified entry box.
 

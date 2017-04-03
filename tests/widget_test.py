@@ -10,6 +10,7 @@ TEXT_TWO = "l_one_y"
 TEXT_THREE = "l_one_z"
 TEXT_FOUR = "l_one_a"
 TEXT_FIVE = "l_one_b"
+MIXED_TEXT = "upper_AND_lower"
 
 NUM_ONE = 23123
 NUM_TWO = 33221
@@ -76,6 +77,25 @@ def test_entries():
     app.addNumericEntry("ne1")
     app.addSecretEntry("se1")
     app.addAutoEntry("ae1", ["a", "b", "c"])
+
+    app.addEntry("tester")
+    app.setEntryDefault("tester", TEXT_TWO)
+    app.addEntry("tester2")
+    app.setEntryDefault("tester2", TEXT_TWO)
+    app.addEntry("tester3")
+    app.setEntryDefault("tester3", TEXT_TWO)
+
+    app.setEntryMaxLength("tester", 5)
+    app.setEntry("tester", MIXED_TEXT)
+    assert app.getEntry("tester") == MIXED_TEXT[:5]
+
+    app.setEntryUpperCase("tester2")
+    app.setEntry("tester2", MIXED_TEXT)
+    assert app.getEntry("tester2") == MIXED_TEXT.upper()
+
+    app.setEntryLowerCase("tester3")
+    app.setEntry("tester3", MIXED_TEXT)
+    assert app.getEntry("tester3") == MIXED_TEXT.lower()
 
     app.addLabelEntry("le1")
     app.addLabelNumericEntry("lne1")
@@ -1512,7 +1532,8 @@ test_separators()
 test_links()
 test_grips()
 test_date_pickers()
-test_plots()
+try: test_plots()
+except: print("Skipping plot tests - MatPlotLib bot available")
 test_microbits()
 
 test_status()

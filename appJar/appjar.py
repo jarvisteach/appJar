@@ -3770,7 +3770,7 @@ class gui(object):
 
         self.__loadMatplotlib()
         if FigureCanvasTkAgg is False:
-            pass
+            raise Exception("Unable to load MatPlotLib - plots not available")
         else:
             fig = Figure()
 
@@ -5432,6 +5432,11 @@ class gui(object):
             ent.var = StringVar(self.topLevel)
             ent.config(textvariable=ent.var, font=self.entryFont)
 
+        # vars to store any limit traces
+        ent.var.uc_id = None
+        ent.var.lc_id = None
+        ent.var.ml_id = None
+
         ent.inContainer = False
         ent.showingDefault = False  # current status of entry
         ent.default = ""  # the default value to show (if set)
@@ -5652,6 +5657,40 @@ class gui(object):
         self.__updateEntryDefault(name, mode="set")
         self.n_entryVars[name].set(text)
 
+    def setEntryMaxLength(self, name, length):
+        var = self.__verifyItem(self.n_entryVars, name)
+        var.maxLength = length
+        if var.ml_id is not None:
+            var.trace_vdelete('w', var.ml_id)
+        var.ml_id = var.trace('w', self.MAKE_FUNC(self.__limitEntry, name, True))
+
+    def setEntryUpperCase(self, name):
+        var = self.__verifyItem(self.n_entryVars, name)
+        if var.uc_id is not None:
+            var.trace_vdelete('w', var.uc_id)
+        var.uc_id = var.trace('w', self.MAKE_FUNC(self.__upperEntry, name, True))
+
+    def setEntryLowerCase(self, name):
+        var = self.__verifyItem(self.n_entryVars, name)
+        if var.lc_id is not None:
+            var.trace_vdelete('w', var.lc_id)
+        var.lc_id = var.trace('w', self.MAKE_FUNC(self.__lowerEntry, name, True))
+
+    def __limitEntry(self, name):
+        var = self.__verifyItem(self.n_entryVars, name)
+        chars = var.get()[0:var.maxLength]
+        var.set(chars)
+
+    def __upperEntry(self, name):
+        var = self.__verifyItem(self.n_entryVars, name)
+        chars = var.get().upper()
+        var.set(chars)
+
+    def __lowerEntry(self, name):
+        var = self.__verifyItem(self.n_entryVars, name)
+        chars = var.get().lower()
+        var.set(chars)
+
     def __entryIn(self, name):
         self.__updateEntryDefault(name, "in")
 
@@ -5659,12 +5698,20 @@ class gui(object):
         self.__updateEntryDefault(name, "out")
 
     def __updateEntryDefault(self, name, mode=None):
-        self.__verifyItem(self.n_entryVars, name)
+        var = self.__verifyItem(self.n_entryVars, name)
         entry = self.__verifyItem(self.n_entries, name)
 
         # ignore this if no default to apply
         if entry.default == "":
             return
+
+        # disable any limits
+        if var.lc_id is not None:
+            var.trace_vdelete('w', var.lc_id)
+        if var.uc_id is not None:
+            var.trace_vdelete('w', var.uc_id)
+        if var.ml_id is not None:
+            var.trace_vdelete('w', var.ml_id)
 
         current = self.n_entryVars[name].get()
 
@@ -5677,6 +5724,14 @@ class gui(object):
             self.n_entryVars[name].set(entry.default)
             entry.config(justify='center', foreground='grey')
             entry.showingDefault = True
+
+        # re-enable any limits
+        if var.lc_id is not None:
+            var.lc_id = var.trace('w', self.MAKE_FUNC(self.__lowerEntry, name, True))
+        if var.uc_id is not None:
+            var.uc_id = var.trace('w', self.MAKE_FUNC(self.__upperEntry, name, True))
+        if var.ml_id is not None:
+            var.ml_id = var.trace('w', self.MAKE_FUNC(self.__limitEntry, name, True))
 
     def updateDefaultText(self, name, text):
         self.__verifyItem(self.n_entryVars, name)
