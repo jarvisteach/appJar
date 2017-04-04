@@ -5485,6 +5485,44 @@ class gui(object):
         ent = self.__buildEntry(title, self.__getContainer(), secret)
         self.__positionWidget(ent, row, column, colspan, rowspan)
 
+    def addValidationEntry(
+            self,
+            title,
+            row=None,
+            column=0,
+            colspan=0,
+            rowspan=0,
+            secret=False):
+        frame = WidgetBox(self.__getContainer())
+        frame.config(background=self.__getContainerBg())
+
+        ent = self.__buildEntry(title, frame, secret)
+        ent.pack(expand=True, fill=X, side=LEFT)
+
+        lab = Label(frame)
+        lab.pack(side=RIGHT)
+        ent.lab = lab
+
+        frame.theWidgets.append(ent)
+        frame.theWidgets.append(lab)
+        self.__positionWidget(frame, row, column, colspan, rowspan)
+        self.setEntryWaitingValidation(title)
+
+    def setEntryValid(self, title):
+        entry = self.__verifyItem(self.n_entries, title)
+        entry.config(highlightbackground="dark green", highlightcolor="dark green", fg="dark green")
+        entry.lab.config(text=u'\u2714', fg="dark green")
+
+    def setEntryInvalid(self, title):
+        entry = self.__verifyItem(self.n_entries, title)
+        entry.config(highlightbackground="red", highlightcolor="red", fg="red")
+        entry.lab.config(text=u'\u2716', fg="red")
+
+    def setEntryWaitingValidation(self, title):
+        entry = self.__verifyItem(self.n_entries, title)
+        entry.config(highlightbackground="black", highlightcolor="black", fg="black")
+        entry.lab.config(text=u'\u2605', fg="black")
+
     def addAutoEntry(
             self,
             title,
@@ -5678,8 +5716,9 @@ class gui(object):
 
     def __limitEntry(self, name):
         var = self.__verifyItem(self.n_entryVars, name)
-        chars = var.get()[0:var.maxLength]
-        var.set(chars)
+        if len(var.get()) > var.maxLength:
+            self.containerStack[0]['container'].bell()
+            var.set(var.get()[0:var.maxLength])
 
     def __upperEntry(self, name):
         var = self.__verifyItem(self.n_entryVars, name)
