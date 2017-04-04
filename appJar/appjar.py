@@ -5443,6 +5443,7 @@ class gui(object):
         ent.DEFAULT_TEXT = ""  # the default value for language support
         ent.myTitle = title  # the title of the entry
         ent.isNumeric = False  # if the entry is numeric
+        ent.isValidation = False  # if the entry is validation
 
         # configure it to be secret
         if secret:
@@ -5498,9 +5499,11 @@ class gui(object):
 
         ent = self.__buildEntry(title, frame, secret)
         ent.pack(expand=True, fill=X, side=LEFT)
+        ent.isValidation = True
 
         lab = Label(frame)
         lab.pack(side=RIGHT)
+        lab.config(font=self.labelFont, background=self.__getContainerBg())
         ent.lab = lab
 
         frame.theWidgets.append(ent)
@@ -5510,18 +5513,30 @@ class gui(object):
 
     def setEntryValid(self, title):
         entry = self.__verifyItem(self.n_entries, title)
+        if not entry.isValidation:
+            self.warn("Entry " + str(title) + " is not a validation entry. Unable to set VALID.")
+            return
+
         entry.config(highlightbackground="dark green", highlightcolor="dark green", fg="dark green")
         entry.lab.config(text=u'\u2714', fg="dark green")
 
     def setEntryInvalid(self, title):
         entry = self.__verifyItem(self.n_entries, title)
+        if not entry.isValidation:
+            self.warn("Entry " + str(title) + " is not a validation entry. Unable to set INVALID.")
+            return
+
         entry.config(highlightbackground="red", highlightcolor="red", fg="red")
         entry.lab.config(text=u'\u2716', fg="red")
 
     def setEntryWaitingValidation(self, title):
         entry = self.__verifyItem(self.n_entries, title)
+        if not entry.isValidation:
+            self.warn("Entry " + str(title) + " is not a validation entry. Unable to set WAITING VALID.")
+            return
+
         entry.config(highlightbackground="black", highlightcolor="black", fg="black")
-        entry.lab.config(text=u'\u2605', fg="black")
+        entry.lab.config(text=u'\u2731', fg="black")
 
     def addAutoEntry(
             self,
