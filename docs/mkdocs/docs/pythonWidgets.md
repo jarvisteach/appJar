@@ -98,11 +98,12 @@ See the relevant section for a description of what the widget does.
 ____
 Entries are used to capture input from the user. They take a single parameter - a title.
 
-There are three special-case entries:
+There are four special-case entries:
 
 * NumericEntry - this only allows numbers to be typed in - always returns a float.
 * SecretEntry - this will show stars, instead of the letters typed - useful for capturing passwords.
 * AutoEntry - this takes a list of words to provide auto-completion.  
+* ValidationEntry - can be set to valid/invalid/waiting - will colour the border green/red/black and show a ✔/✖/★  
 
 ![Entries](img/1_entries.gif)
 
@@ -127,6 +128,7 @@ app.go()
 * `.addNumericEntry(title)`
 * `.addSecretEntry(title)`
 * `.addAutoEntry(title, words)`  
+* `.addValidationEntry(title)`  
 
     Each of these will add the specified type of Entry, using the title provided.
 
@@ -145,6 +147,10 @@ app.go()
 * `.setEntryMaxLength(title, maxLength)`  
     This will set a maximum length for the specified entry.  
     Any additional characters typed will be discarded.  
+
+* `.setEntryValid(title)` & `.setEntryInvalid(title)` & `.setEntryWaitingValidaiton(title)`  
+    These will set the relevant status of a validation entry.  
+    ![EntryValidation](img/entValidation.png)
 
 * `.clearEntry(title)`  
     This will clear the contents of the specified entry box.

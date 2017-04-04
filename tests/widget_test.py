@@ -78,6 +78,12 @@ def test_entries():
     app.addSecretEntry("se1")
     app.addAutoEntry("ae1", ["a", "b", "c"])
 
+    # quick validation check
+    app.addValidationEntry("ve1")
+    app.setEntryValid("ve1")
+    app.setEntryInvalid("ve1")
+    app.setEntryWaitingValidation("ve1")
+
     app.addEntry("tester")
     app.setEntryDefault("tester", TEXT_TWO)
     app.addEntry("tester2")

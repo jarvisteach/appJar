@@ -3,7 +3,7 @@
 
 ## Next Release (0.6)  
 * Issues Resolved:  
-    * [#123](https://github.com/jarvisteach/appJar/issues/123) - New features for [setting entries](/pythonWidgets/#entry) - max length, auto uppercase/lowercase  
+    * [#123](https://github.com/jarvisteach/appJar/issues/123) - New features for [setting entries](/pythonWidgets/#entry) - max length, auto uppercase/lowercase, validation  
     * [#119](https://github.com/jarvisteach/appJar/issues/119) - MicroBit widget added
     * [#118](https://github.com/jarvisteach/appJar/issues/118) - dynamic library imports
     * [#117](https://github.com/jarvisteach/appJar/issues/117) - introduced documentation on [packaging](/packaging/)

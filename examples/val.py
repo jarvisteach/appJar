@@ -9,9 +9,18 @@ def press(btn):
 from appJar import gui
 
 app=gui()
-app.addEntry("aa")
+app.addEntry("n")
 app.addValidationEntry("a")
-app.addEntry("bb")
+app.setEntryDefault("a", "--valid--")
+app.addValidationEntry("b")
+app.setEntryDefault("b", "--invalid--")
+app.addValidationEntry("c")
+app.setEntryDefault("c", "--waiting--")
 app.setEntryMaxLength("a", 5)
 app.addButtons(["YES", "NO", "WAIT"], press)
+
+app.setEntryValid("a")
+app.setEntryInvalid("b")
+app.setEntryWaitingValidation("c")
+
 app.go()
