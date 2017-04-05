@@ -5494,7 +5494,7 @@ class gui(object):
             colspan=0,
             rowspan=0,
             secret=False):
-        frame = WidgetBox(self.__getContainer())
+        frame = LabelBox(self.__getContainer())
         frame.config(background=self.__getContainerBg())
 
         ent = self.__buildEntry(title, frame, secret)
@@ -5502,12 +5502,16 @@ class gui(object):
         ent.isValidation = True
 
         lab = Label(frame)
-        lab.pack(side=RIGHT)
+        lab.pack(side=RIGHT, fill=Y)
         lab.config(font=self.labelFont, background=self.__getContainerBg())
+        lab.inContainer = True
         ent.lab = lab
 
-        frame.theWidgets.append(ent)
-        frame.theWidgets.append(lab)
+        self.n_labels[title] = lab
+        self.n_frameLabs[title] = lab
+
+        frame.theWidget = ent
+        frame.theLabel = lab
         self.__positionWidget(frame, row, column, colspan, rowspan)
         self.setEntryWaitingValidation(title)
 
