@@ -3,6 +3,7 @@
 
 ## Next Release (0.6)  
 * Issues Resolved:  
+    * [#130](https://github.com/jarvisteach/appJar/issues/130) - Documented how to use [special characters](/specialCharacters)  
     * [#123](https://github.com/jarvisteach/appJar/issues/123) - New features for [setting entries](/pythonWidgets/#entry) - max length, auto uppercase/lowercase, validation  
     * [#119](https://github.com/jarvisteach/appJar/issues/119) - MicroBit widget added
     * [#118](https://github.com/jarvisteach/appJar/issues/118) - dynamic library imports

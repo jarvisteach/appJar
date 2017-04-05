@@ -150,6 +150,7 @@ app.go()
 
 * `.setEntryValid(title)` & `.setEntryInvalid(title)` & `.setEntryWaitingValidaiton(title)`  
     These will set the relevant status of a validation entry.  
+    (Have a look [here](/specialCharacters) for help displaying special characters)  
     ![EntryValidation](img/entValidation.png)
 
 * `.clearEntry(title)`  

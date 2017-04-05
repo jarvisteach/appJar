@@ -25,12 +25,13 @@ ___
 ###Playing Built-In Sounds
 ___
 
-* `.soundError()`
+* `.bell()`  
+    This will work on all platforms, playing a bell sound.  
 
+* `.soundError()`  
     This will sound a simple error beep.
 
-* `.soundWarning()`
-
+* `.soundWarning()`  
     This will sound a simple warning beep.
 
 ###Playing Musical Notes

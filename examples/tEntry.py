@@ -10,7 +10,7 @@ app.addEntry("a")
 app.setEntryDefault("a", "This is the default")
 app.setEntryMaxLength("a", 7)
 app.setEntryUpperCase("a")
-app.addNamedButton("Check", "Name", press)
+app.addnamedButton("Check", "Name", press)
 app.addNamedButton("Check", "Name2", press)
 app.addNamedButton("Check", "Name3", press)
 

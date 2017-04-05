@@ -4564,6 +4564,9 @@ class gui(object):
     def soundWarning(self):
         self.__soundWrap("SystemAsterisk")
 
+    def bell(self):
+        self.containerStack[0]['container'].bell()
+
     def playNote(self, note, duration=200):
         self.__loadWinsound()
         if self.platform == self.WINDOWS and winsound is not False:
