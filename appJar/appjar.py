@@ -381,6 +381,11 @@ class gui(object):
 # CONSTRUCTOR - creates the GUI
 #####################################
     def __init__(self, title=None, geom=None, warn=True, debug=False):
+
+        # detect if we're in interactive mode
+        if sys.stdout.isatty():
+            self.warn("Interactive mode is not fully tested, some features might not work.")
+
         # first out, verify the platform
         self.platform = gui.GET_PLATFORM()
 
@@ -402,8 +407,14 @@ class gui(object):
 
         # set up some default path locations
         self.lib_file = os.path.abspath(__file__)
-        self.exe_file = os.path.basename(theMain.__file__)
-        self.exe_loc = os.path.dirname(theMain.__file__)
+
+        # this fails if in interactive mode....
+        try:
+            self.exe_file = os.path.basename(theMain.__file__)
+            self.exe_loc = os.path.dirname(theMain.__file__)
+        except:
+            self.exe_file = "appJar"
+            self.exe_loc = ""
 
         # location of appJar
         self.lib_path = os.path.dirname(self.lib_file)
