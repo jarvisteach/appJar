@@ -5526,6 +5526,7 @@ class gui(object):
 
         entry.config(highlightbackground="dark green", highlightcolor="dark green", fg="dark green")
         entry.lab.config(text=u'\u2714', fg="dark green")
+        entry.lab.DEFAULT_TEXT = entry.lab.cget("text")
 
     def setEntryInvalid(self, title):
         entry = self.__verifyItem(self.n_entries, title)
@@ -5535,6 +5536,7 @@ class gui(object):
 
         entry.config(highlightbackground="red", highlightcolor="red", fg="red")
         entry.lab.config(text=u'\u2716', fg="red")
+        entry.lab.DEFAULT_TEXT = entry.lab.cget("text")
 
     def setEntryWaitingValidation(self, title):
         entry = self.__verifyItem(self.n_entries, title)
@@ -5544,6 +5546,7 @@ class gui(object):
 
         entry.config(highlightbackground="black", highlightcolor="black", fg="black")
         entry.lab.config(text=u'\u2731', fg="black")
+        entry.lab.DEFAULT_TEXT = entry.lab.cget("text")
 
     def addAutoEntry(
             self,
