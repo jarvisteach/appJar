@@ -14,10 +14,11 @@ def col(btn):
     canEdit = not canEdit
     app.setTreeEditable("t1", canEdit)
     app.setBg("black")
-    app.setTreeBg("t1", "red")
-    app.setTreeFg("t1", "yellow")
-    app.setTreeHighlightBg("t1", "yellow")
-    app.setTreeHighlightFg("t1", "red")
+#    app.setTreeBg("t1", "red")
+#    app.setTreeFg("t1", "yellow")
+#    app.setTreeHighlightBg("t1", "yellow")
+#    app.setTreeHighlightFg("t1", "red")
+    app.setTreeColours("t1", "yellow", "red", "red", "yellow")
 def dClick(btn):
     print("DBL CLICK:", app.getTreeSelected(btn))
 

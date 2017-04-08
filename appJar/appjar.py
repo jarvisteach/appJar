@@ -672,6 +672,14 @@ class gui(object):
                         self.fgHColour = colour
                         self.__doUpdateColour()
 
+                    def setAllColours(self, bg, fg, bgH, fgH):
+                        self.canvas.config(background=bg)
+                        self.bgColour = bg
+                        self.fgColour = fg
+                        self.bgHColour = bgH
+                        self.fgHColour = fgH
+                        self.__doUpdateColour()
+
                     def __doUpdateColour(self):
                         self.__updateColours(
                             self.bgColour,
@@ -5358,6 +5366,10 @@ class gui(object):
     def setTreeHighlightFg(self, title, colour):
         tree = self.__verifyItem(self.n_trees, title)
         tree.setFgHColour(colour)
+
+    def setTreeColours(self, title, fg, bg, fgH, bgH):
+        tree = self.__verifyItem(self.n_trees, title)
+        tree.setAllColours(bg, fg, bgH, fgH)
 
     def setTreeDoubleClickFunction(self, title, func):
         if func is not None:

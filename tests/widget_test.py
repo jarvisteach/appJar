@@ -873,6 +873,8 @@ def test_trees():
     app.getTreeSelected("t1")
     app.getTreeSelectedXML("t1")
 
+    app.setTreeColours("t1", "red", "yellow", "yellow", "red")
+
     # call generic setter functions
     test_setters("Tree", "t1")
 

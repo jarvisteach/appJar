@@ -17,6 +17,7 @@
     * [#101](https://github.com/jarvisteach/appJar/issues/101) - Drag n'Drop supported between applications
     * [#92](https://github.com/jarvisteach/appJar/issues/92) - Function to [get all entries](/pythonWidgets/#entry)
     * [#46](https://github.com/jarvisteach/appJar/issues/46) - Added version details to about box  
+    * [#33](https://github.com/jarvisteach/appJar/issues/33) - Added convenience function to [setTreeColours](/pythonDevWidgets/#tree)  
 
 ---
 ## Version (0.052)  

@@ -19,7 +19,7 @@ Widget to emulate a [MicroBit](http://microbit.org)
 * ```.addMicroBit(title)```  
     Will create a 5x5 grid emulating the MicroBit LEDs.  
 
-###Set MicroBits
+####Set MicroBits
 * ```.setMicroBitImage(title, image)```  
     This sets each pixel to the specified brightness (0 to 9).  
     Each set of 5 digits represents a row of pixels, from top to bottom.  
@@ -89,6 +89,8 @@ app.go()
     Register a function to call when an item is edited  
 * `.setTreeEditable(title, value)`  
     Set whether the tree can be edited  
+* `.setTreeColours(title, fg, bg, fgH, bgH)`  
+    Set the fg/bg/fg highlight/bg highlight colours of the tree  
 * `.setTreeBg(title, colour)`  
     Set the background colour of the tree  
 * `.setTreeFg(title, colour)`  
