@@ -881,6 +881,7 @@ class gui(object):
         # variables associated with widgets
         self.n_entryVars = {}
         self.n_optionVars = {}
+        self.n_optionTicks = {} # to store tick option items
         self.n_boxVars = {}
         self.n_rbVars = {}
         self.n_rbVals = {}
@@ -1964,10 +1965,16 @@ class gui(object):
             widget.config(command=cmd)
             widget.cmd = cmd
         elif kind == self.OPTION:
-            # need to trace the variable??
-            cmd = self.MAKE_FUNC(function, name, True)
-            widget.var.trace('w', cmd)
-            widget.cmd = cmd
+            if widget.kind == "ticks":
+                vals = self.__verifyItem(self.n_optionTicks, name)
+                for o in vals:
+                    cmd = self.MAKE_FUNC(function, str(o), True)
+                    vals[o].trace('w', cmd)
+            else:
+                cmd = self.MAKE_FUNC(function, name, True)
+                # need to trace the variable??
+                widget.var.trace('w', cmd)
+                widget.cmd = cmd
         elif kind == self.ENTRY:
             if eventType == "change":
                 if key is None:
@@ -3530,17 +3537,7 @@ class gui(object):
         elif kind == "ticks":
             # http://stackoverflow.com/questions/29019760/how-to-create-a-combobox-that-includes-checkbox-for-each-item
             option = OptionMenu(frame, variable=var, value="")
-            # delete the empty value we just added
-            option['menu'].delete(0, 'end')
-            var.set(title)
-            vals = {}
-            for o in options:
-                vals[o] = BooleanVar()
-                option['menu'].add_checkbutton(
-                    label=o, onvalue=True, offvalue=False, variable=vals[o])
-            self.n_optionVars[title] = vals
-            option.kind = "ticks"
-
+            self.__buildTickOptionBox(title, option, options)
         else:
             option = OptionMenu(frame, var, [])
             option.kind = "normal"
@@ -3553,6 +3550,7 @@ class gui(object):
             width=maxSize,
             takefocus=1)
         option.bind("<Button-1>", self.__grabFocus)
+
         # compare on windows & mac
         #option.config(highlightthickness=12, bd=0, highlightbackground=self.__getContainerBg())
         option.var = var
@@ -3578,11 +3576,25 @@ class gui(object):
         # add a right click menu
         self.__addRightClickMenu(option)
 
+        # disable any separators
         self.__disableOptionBoxSeparators(option)
 
         # add to array list
         self.n_options[title] = option
         return option
+
+    def __buildTickOptionBox(self, title, option, options):
+        # delete any items - either the initial one when created, or any existing ones if changing
+        option['menu'].delete(0, 'end')
+        var = self.__verifyItem(self.n_optionVars, title, False)
+        var.set(title)
+        vals = {}
+        for o in options:
+            vals[o] = BooleanVar()
+            option['menu'].add_checkbutton(
+                label=o, onvalue=True, offvalue=False, variable=vals[o])
+        self.n_optionTicks[title] = vals
+        option.kind = "ticks"
 
     def addOptionBox(
             self,
@@ -3634,15 +3646,16 @@ class gui(object):
         self.__positionWidget(frame, row, column, colspan, rowspan)
 
     def getOptionBox(self, title):
-        self.__verifyItem(self.n_optionVars, title)
-        val = self.n_optionVars[title]
+        box = self.__verifyItem(self.n_options, title)
 
-        if isinstance(val, dict):
+        if box.kind == "ticks":
+            val = self.n_optionTicks[title]
             retVal = {}
             for k, v in val.items():
                 retVal[k] = bool(v.get())
             return retVal
         else:
+            val = self.n_optionVars[title]
             val = val.get().strip()
             # set to None if it's a divider
             if val.startswith("-") or len(val) == 0:
@@ -3697,10 +3710,6 @@ class gui(object):
     def changeOptionBox(self, title, options, index=None):
         # get the optionBox & associated var
         box = self.__verifyItem(self.n_options, title)
-        if box.kind == "ticks":
-            self.warn("Unable to change TickOptionBoxes")
-            return
-        var = self.n_optionVars[title]
 
         # tidy up list and get max size
         maxSize, options = self.__configOptionBoxList(title, options, "normal")
@@ -3710,21 +3719,23 @@ class gui(object):
             self.warn("The new options are wider then the old ones. " +
                       str(maxSize) + ">" + str(box.maxSize))
 
-        # delete the current options
-        box['menu'].delete(0, 'end')
-        #var.set(" ")
+        if box.kind == "ticks":
+            self.__buildTickOptionBox(title, box, options)
+        else:
+            # delete the current options
+            box['menu'].delete(0, 'end')
 
-        # add the new items
-        for option in options:
-            box["menu"].add_command(
-                label=option, command=lambda temp=option: box.setvar(
-                    box.cget("textvariable"), value=temp))
+            # add the new items
+            for option in options:
+                box["menu"].add_command(
+                    label=option, command=lambda temp=option: box.setvar(
+                        box.cget("textvariable"), value=temp))
+            self.n_optionVars[title].set(options[0])
+
         box.options = options
 
         # disable any separators
         self.__disableOptionBoxSeparators(box)
-
-        var.set(options[0])
         # select the specified option
         self.setOptionBox(title, index)
 
@@ -3734,12 +3745,14 @@ class gui(object):
 
     # select the option at the specified position
     def setOptionBox(self, title, index, value=True):
-        var = self.__verifyItem(self.n_optionVars, title)
-        box = self.n_options[title]
+        box = self.__verifyItem(self.n_options, title)
 
         if box.kind == "ticks":
-            if index in var:
-                var[index].set(value)
+            ticks = self.__verifyItem(self.n_optionTicks, title)
+            if index is None:
+                return
+            elif index in ticks:
+                ticks[index].set(value)
             else:
                 raise Exception("Unknown TickOptionBox: " +
                                 str(index) + " in: " + title)
@@ -3771,7 +3784,7 @@ class gui(object):
                                 str(index) +
                                 " is a disabled index.")
             else:
-                var.set("")
+                self.__verifyItem(self.n_optionVars, title).set("")
                 self.warn("No items to select from: " + title)
 
 #####################################

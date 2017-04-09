@@ -418,6 +418,14 @@ def test_options():
     assert app.getOptionBox("tl1")[LIST_ONE[1]] is True
     assert app.getOptionBox("tl2")[LIST_TWO[2]] is True
 
+    app.changeOptionBox("tl1", LIST_TWO)
+    for item in LIST_TWO:
+        assert app.getOptionBox("tl1")[item] is False
+
+    app.changeOptionBox("tl1", LIST_ONE)
+    for item in LIST_ONE:
+        assert app.getOptionBox("tl1")[item] is False
+
     # call generic setter functions
     test_setters("OptionBox", "l1")
 
