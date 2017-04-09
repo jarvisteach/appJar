@@ -2447,7 +2447,10 @@ class gui(object):
         # Mac specific colours
         if widgType in darwinBorders:
             if isDarwin:
-                widget.config(highlightbackground=bg)
+                if widgType == "Entry" and widget.isValidation:
+                    pass # don't change validation entry highlights
+                else:
+                    widget.config(highlightbackground=bg)
 #               if widgType == "OptionMenu": widget.config(background=bg)
             if external or widgType == "Scale":
                 widget.config(bg=bg)
