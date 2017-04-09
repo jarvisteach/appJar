@@ -2447,7 +2447,10 @@ class gui(object):
         # Mac specific colours
         if widgType in darwinBorders:
             if isDarwin:
-                widget.config(highlightbackground=bg)
+                if widgType == "Entry" and widget.isValidation:
+                    pass # don't change validation entry highlights
+                else:
+                    widget.config(highlightbackground=bg)
 #               if widgType == "OptionMenu": widget.config(background=bg)
             if external or widgType == "Scale":
                 widget.config(bg=bg)
@@ -6563,7 +6566,7 @@ class gui(object):
         else:
             self.warn("The Preferences Menu is specific to Mac OSX")
 
-    # MAC help mnenu
+    # MAC help menu
     def addMenuHelp(self, func):
         if self.platform == self.MAC:
             self.__initMenu()

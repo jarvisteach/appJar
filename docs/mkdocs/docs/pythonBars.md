@@ -190,8 +190,14 @@ Simply use the menu names given below when adding menu-items to a menu.
     * **Help Menu** - `MAC_HELP` provides a *Search* menu-item   
         To access this menu, you must first call `.addMenuHelp(function)`, passing the function to call for the default *Python Help* menu-item.  
 
-* **Linux**  
-    * n/a  
+* **Linux** - by default, there is no menu, but it's easy enough to get access to the appJar menus:
+
+![Linux Menu](img/menu_4.png)  
+
+```python
+app.addMenuItem("appJar", "Help", app.appJarHelp)
+app.addMenuItem("appJar", "About", app.appJarAbout)
+```
 
 ##Statusbar
 ___
