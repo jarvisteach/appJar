@@ -1,7 +1,7 @@
 import sys
 sys.path.append("../")
 
-new_ticks = ["Dogs2", "Cats2", "Hamsters2", "Fish2", "Spiders2"]
+new_ticks = ["Dogs2", "Cats2", "-", " ", "Hamsters2", "Fish2", "Spiders2", "", " "]
 orig_ticks = ["Dogs", "Cats", "Hamsters", "Fish", "Spiders"]
 
 from appJar import gui

@@ -3678,13 +3678,16 @@ class gui(object):
 
         # check for empty strings, replace first with message, remove rest
         found = False
+        newOptions = []
         for pos, item in enumerate(options):
-            if item == "":
+            if str(item).strip() == "":
                 if not found:
-                    options[pos] = "- options -"
+                    newOptions.append("- options -")
                     found = True
-                else:
-                    del options[pos]
+            else:
+                newOptions.append(item)
+
+        options = newOptions
 
         # get the longest string length
         try:
