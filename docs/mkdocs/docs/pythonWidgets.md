@@ -341,11 +341,12 @@ app.go()
     This will create an OptionBox, adding the contents of the values list, in the order specified.  
 
 * `.addTickOptionBox(title, values)`  
-    This will create an OptionBox made up of check buttons.  
+    This will create an OptionBox made up of check boxes.  
     The `title` will always be displayed as the *selected* entry in the OptionBox, event though it can't be selected/ticked.  
     Instead of selecting a single item, you tick the ones you want.  
-    Calling `.getOptionBox(title)` will return a dictionary of the options along with a True/False value.  
     ![TickOptionBox](img/3_optBox.png)  
+
+    Calling `.getOptionBox(title)` will return a dictionary of the options along with a True/False value.  
 
 ```python
 from appJar import gui
@@ -364,7 +365,7 @@ app.go()
 * `.changeOptionBox(title, newOptions, index)`  
     This will replace the contents of the OptionBox, with the new list provided.  
     If specified, the indexed item will be selected - this can be a position or an item name.  
-    If setting a TickOptionBox, pass in the optional value.  
+    If setting a TickOptionBox, the old list will be replaced with the new list. None will be ticked. `index` will be ignored.  
 
 * `.setOptionBox(title, position, value=True, callFunction=True)`  
     This will select the item in the list, at the position specified.  
