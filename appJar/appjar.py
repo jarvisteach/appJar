@@ -55,7 +55,7 @@ __author__ = "Richard Jarvis"
 __copyright__ = "Copyright 2016-2017, Richard Jarvis"
 __credits__ = ["Graham Turner", "Sarah Murch"]
 __license__ = "GPL"
-__version__ = "0.62"
+__version__ = "0.52"
 __maintainer__ = "Richard Jarvis"
 __email__ = "info@appJar.info"
 __status__ = "Development"
@@ -1970,6 +1970,7 @@ class gui(object):
                 for o in vals:
                     cmd = self.MAKE_FUNC(function, str(o), True)
                     vals[o].trace('w', cmd)
+                    vals[o].cmd = cmd
             else:
                 cmd = self.MAKE_FUNC(function, name, True)
                 # need to trace the variable??
@@ -2454,12 +2455,16 @@ class gui(object):
         # Linux specific colours
         if widgType in linuxBorders:
             if isLinux:
-                widget.config(highlightbackground=bg)
+                if widgType == "Entry" and widget.isValidation:
+                    pass # don't change validation entry highlights
+                else:
+                    widget.config(highlightbackground=bg)
             if external:
                 widget.config(bg=bg)
 
         # widget with label, in frame
         elif widgType == "LabelBox":
+            widget.config(bg=bg)
             widget.theLabel.config(bg=bg)
             gui.SET_WIDGET_BG(widget.theWidget, bg)
 
@@ -5536,14 +5541,20 @@ class gui(object):
             colspan=0,
             rowspan=0,
             secret=False):
-        frame = LabelBox(self.__getContainer())
-        frame.config(background=self.__getContainerBg())
 
-        ent = self.__buildEntry(title, frame, secret)
+        ent = self.__buildValidationEntry(title, self.__getContainer(), secret)
+        self.__positionWidget(ent, row, column, colspan, rowspan)
+
+    def __buildValidationEntry(self, title, frame, secret):
+        vFrame = LabelBox(frame)
+        vFrame.config(background=self.__getContainerBg())
+
+        ent = self.__buildEntry(title, vFrame, secret)
+        ent.config(highlightthickness=2)
         ent.pack(expand=True, fill=X, side=LEFT)
         ent.isValidation = True
 
-        lab = Label(frame)
+        lab = Label(vFrame)
         lab.pack(side=RIGHT, fill=Y)
         lab.config(font=self.labelFont, background=self.__getContainerBg())
         lab.inContainer = True
@@ -5552,10 +5563,24 @@ class gui(object):
         self.n_labels[title] = lab
         self.n_frameLabs[title] = lab
 
-        frame.theWidget = ent
-        frame.theLabel = lab
-        self.__positionWidget(frame, row, column, colspan, rowspan)
+        vFrame.theWidget = ent
+        vFrame.theLabel = lab
         self.setEntryWaitingValidation(title)
+
+        return vFrame
+
+    def addLabelValidationEntry(
+            self,
+            title,
+            row=None,
+            column=0,
+            colspan=0,
+            rowspan=0,
+            secret=False):
+        frame = self.__getLabelBox(title)
+        ent = self.__buildValidationEntry(title, frame, secret)
+        self.__packLabelBox(frame, ent)
+        self.__positionWidget(frame, row, column, colspan, rowspan)
 
     def setEntryValid(self, title):
         entry = self.__verifyItem(self.n_entries, title)
@@ -5563,8 +5588,9 @@ class gui(object):
             self.warn("Entry " + str(title) + " is not a validation entry. Unable to set VALID.")
             return
 
-        entry.config(highlightbackground="dark green", highlightcolor="dark green", fg="dark green")
-        entry.lab.config(text=u'\u2714', fg="dark green")
+        entry.config(highlightbackground="#4CC417", highlightcolor="#4CC417", fg="#4CC417")
+        entry.config(highlightthickness=2)
+        entry.lab.config(text=u'\u2714', fg="#4CC417")
         entry.lab.DEFAULT_TEXT = entry.lab.cget("text")
 
     def setEntryInvalid(self, title):
@@ -5574,6 +5600,7 @@ class gui(object):
             return
 
         entry.config(highlightbackground="red", highlightcolor="red", fg="red")
+        entry.config(highlightthickness=2)
         entry.lab.config(text=u'\u2716', fg="red")
         entry.lab.DEFAULT_TEXT = entry.lab.cget("text")
 
@@ -5584,6 +5611,7 @@ class gui(object):
             return
 
         entry.config(highlightbackground="black", highlightcolor="black", fg="black")
+        entry.config(highlightthickness=1)
         entry.lab.config(text=u'\u2731', fg="black")
         entry.lab.DEFAULT_TEXT = entry.lab.cget("text")
 

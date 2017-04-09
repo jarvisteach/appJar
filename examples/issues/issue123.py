@@ -1,11 +1,17 @@
 import sys
-sys.path.append("../")
+sys.path.append("../../")
 
 def press(btn):
     print("in but")
-    if btn == "YES": app.setEntryValid("a")
-    elif btn == "NO": app.setEntryInvalid("a")
-    elif btn == "WAIT": app.setEntryWaitingValidation("a")
+    if btn == "YES":
+        app.setEntryValid("a")
+        app.setEntryValid("Check out my label")
+    elif btn == "NO":
+        app.setEntryInvalid("a")
+        app.setEntryInvalid("Check out my label")
+    elif btn == "WAIT":
+        app.setEntryWaitingValidation("a")
+        app.setEntryWaitingValidation("Check out my label")
 
     if btn == "YES": app.setEntryValid("n")
     elif btn == "NO": app.setEntryInvalid("n")
@@ -28,6 +34,7 @@ app.addEntry("n")
 app.addLabelEntry("Labelled")
 app.addLabelEntry("Stuff")
 app.addValidationEntry("a")
+app.addLabelValidationEntry("Check out my label")
 app.setEntryDefault("a", "--valid--")
 app.addValidationEntry("b")
 app.setEntryDefault("b", "--invalid--")
@@ -41,6 +48,6 @@ app.addButtons(["up", "mid", "down"], press)
 app.setEntryValid("a")
 app.setEntryInvalid("b")
 app.setEntryWaitingValidation("c")
-app.setBg("orange")
+#app.setBg("orange")
 
 app.go()
