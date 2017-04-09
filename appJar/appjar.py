@@ -6566,7 +6566,7 @@ class gui(object):
         else:
             self.warn("The Preferences Menu is specific to Mac OSX")
 
-    # MAC help mnenu
+    # MAC help menu
     def addMenuHelp(self, func):
         if self.platform == self.MAC:
             self.__initMenu()
