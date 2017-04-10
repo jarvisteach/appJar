@@ -3138,8 +3138,8 @@ class gui(object):
     def stopPagedWindow(self):
         if self.containerStack[-1]['type'] == self.C_PAGE:
             self.warn("You didn't STOP the previous PAGE")
-            self.containerStack[-1]['container'].stopPage()
-            self.stopContainer()
+            self.stopPage()
+
         if self.containerStack[-1]['type'] != self.C_PAGEDWINDOW:
             raise Exception("Can't stop a PAGEDWINDOW, currently in:",
                             self.containerStack[-1]['type'])
@@ -8449,6 +8449,9 @@ class ajScale(Scale):
 
     def jump(self, event):
         clicked = self.identify(event.x, event.y)
+        return self.__jump(clicked)
+
+    def __jump(self, clicked):
         if clicked == 'trough1':
             self.set(self.get() - self.increment)
         elif clicked == 'trough2':

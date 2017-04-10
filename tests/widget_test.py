@@ -586,6 +586,12 @@ def test_scales():
     assert app.getScale("s3") == 100
     assert app.getScale("s4") == 100
 
+    sc = app.getWidget(app.SCALE, "s1")
+
+    sc._ajScale__jump("trough1")
+    sc._ajScale__jump("trough2")
+
+
     # call generic setter functions
     test_setters("Scale", "s1")
 
@@ -1324,6 +1330,7 @@ def test_containers():
     print("\tTesting containers")
 
     app.startLabelFrame("lf1")
+    app.setLabelFrameAnchor("lf1", "east")
     app.addLabel("lf1_l1", TEXT_ONE)
     app.stopLabelFrame()
 
@@ -1389,7 +1396,7 @@ def test_containers():
     app.startPanedFrameVertical("p3")
     app.addLabel("p3_l1", TEXT_ONE)
     app.stopPanedFrame()
-    app.stopPanedFrame()
+    app.stopAllPanedFrames()
 
     app.startPagedWindow("pg1")
     app.startPage()
@@ -1401,6 +1408,11 @@ def test_containers():
     app.startPage()
     app.addLabel("pg3_l1", TEXT_ONE)
     app.stopPage()
+    app.stopPagedWindow()
+
+    app.startPagedWindow("ppp2")
+    app.startPage("ppp2_p1")
+    app.addLabel("ppp2_p1_l1")
     app.stopPagedWindow()
 
     assert app.getPagedWindowPageNumber("pg1") == 1
