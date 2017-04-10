@@ -5632,6 +5632,10 @@ class gui(object):
             secret=False,
             words=words)
         self.__positionWidget(ent, row, column, colspan, rowspan)
+
+    def setAutoEntryNumRows(self, title, rows):
+        entry = self.__verifyItem(self.n_entries, title)
+        entry.setNumRows(rows)
         
     def addLabelAutoEntry(
             self,
@@ -6379,6 +6383,7 @@ class gui(object):
         else:
             return False
 
+    # called when copy/paste menu items are clicked
     def __copyAndPasteHelper(self, menu):
         widget = self.topLevel.focus_get()
         self.copyAndPaste.setUp(widget)
@@ -8272,6 +8277,10 @@ class AutoCompleteEntry(Entry):
 
         # no list box - yet
         self.listBoxShowing = False
+        self.rows = 10
+
+    def setNumRows(self, rows):
+        self.rows = rows
 
     # function to see if words match
     def checkMatch(self, fieldValue, acListEntry):
@@ -8305,6 +8314,7 @@ class AutoCompleteEntry(Entry):
     # function to create & show an empty list box
     def makeListBox(self):
         self.listbox = Listbox(width=self["width"], height=8)
+        self.listbox.config(height=self.rows)
         self.listbox.bind("<Button-1>", self.mouseClickBox)
         self.listbox.bind("<Right>", self.selectWord)
         self.listbox.bind("<Return>", self.selectWord)

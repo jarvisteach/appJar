@@ -79,6 +79,7 @@ def test_entries():
     app.addNumericEntry("ne1")
     app.addSecretEntry("se1")
     app.addAutoEntry("ae1", ["a", "b", "c"])
+    app.setAutoEntryNumRows("ae1", 5)
 
     # quick validation check
     app.addValidationEntry("ve1")
@@ -1116,6 +1117,27 @@ def test_menus():
 
     app.addEntry("RCLICK")
     app.addMenuEdit()
+
+# this causes testing to hang - the popup doesn't go....
+
+#    event = Event()
+#    event.widget = ent
+#    event.x_root = 100
+#    event.y_root = 100
+#
+#    for type in [None, "9", "3", "4", "2"]:
+#        event.type = type
+#        app._gui__rightClick(event)
+#        app.setEntry("RCLICK", "text")
+#        app._gui__rightClick(event)
+
+
+# this breaks - there is no widget in focus??
+#    for action in ["Cut", "Copy", "Paste", "Select All", "Clear Clipboard", "Clear All", "Undo", "Redo"]:
+#        app.setEntry("RCLICK", action)
+#        app.setEntryFocus("RCLICK")
+#        app._gui__copyAndPasteHelper(action)
+
 
     app.enableMenubar()
     app.disableMenubar()

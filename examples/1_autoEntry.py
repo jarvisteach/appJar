@@ -7,6 +7,7 @@ words = [ 'Dora Lyons (7714)', 'Hannah Golden (6010)', 'Walker Burns (9390)', 'D
 app=gui()
 app.addMenuEdit(True)
 app.addAutoEntry("hello1", words)
+app.setAutoEntryNumRows("hello1", 25)
 app.addEntry("hello2")
 app.addSecretEntry("hello3")
 app.addEntry("hello4")

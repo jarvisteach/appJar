@@ -184,7 +184,7 @@ But, as you can see - this doesn't make much difference...
 
 Even if the cells in the columns & rows are stretching, the widgets inside them might not.  
 
-Widges have a **stickiness** which tells them which sides of their cells to stick to.  
+Widgets have a **stickiness** which tells them which sides of their cells to stick to.  
 
 Again, widgets are configured to stick to the left & right, but not the top & bottom.  
 

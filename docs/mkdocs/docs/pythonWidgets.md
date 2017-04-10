@@ -153,6 +153,10 @@ app.go()
     (Have a look [here](/specialCharacters) for help displaying special characters)  
     ![EntryValidation](img/entValidation.png)
 
+* `.setAutoEntryNumRows(title, rows)`  
+    This will set the number of rows to display in an AutoEntry.  
+    NB. this is limited to the depth of the GUI - if there is no space, then no rows will be displayed. 
+
 * `.clearEntry(title)`  
     This will clear the contents of the specified entry box.
 
