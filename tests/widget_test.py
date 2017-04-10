@@ -1,5 +1,7 @@
 import sys
 import datetime
+try: from tkinter import Event
+except: from Tkinter import Event
 sys.path.append("../")
 PY_VER = str(sys.version_info[0]) + "." + str(sys.version_info[1])
 
@@ -1406,6 +1408,8 @@ def test_containers():
     assert app.getPagedWindowPageNumber("pg1") == 2
     app.setPagedWindowPage("pg1", 3)
     assert app.getPagedWindowPageNumber("pg1") == 3
+    try: app.setPagedWindowPage("pg1", 30)
+    except: pass
 
     app.setPagedWindowTitle("pg1", TEXT_TWO)
     app.setPagedWindowButtons("pg1", ["A", "B"])
@@ -1430,6 +1434,16 @@ def test_containers():
     app.openPage("pg1", 2)
     app.addLabel("pg2_np", TEXT_ONE)
     app.stopPage()
+
+    pw = app.getWidget("pagedWindow", "pg1")
+    pw.showFirst()
+    pw.showFirst()
+    pw.showPrev()
+    pw.showNext()
+    pw.showLast()
+    pw.showLast()
+    pw.showNext()
+    pw.showPrev()
 
 # breaks under python2.7
     app.startSubWindow("sb1")
@@ -1474,6 +1488,30 @@ def test_containers():
     app.addLabel("sp_l", TEXT_ONE)
     app.stopScrollPane()
 
+    sp = app.getWidget(app.SCROLLPANE, "sp1")
+
+    event = Event()
+
+    sp._ScrollPane__mouseEnter(event)
+    sp._ScrollPane__mouseLeave(event)
+
+    for num in [4, 5]:
+        event.num = num
+        sp._ScrollPane__horizMouseScroll(event)
+        sp._ScrollPane__vertMouseScroll(event)
+
+    event.num = 0
+    for delta in [300, 30, -300, -30]:
+        event.delta = delta
+        sp._ScrollPane__horizMouseScroll(event)
+        sp._ScrollPane__vertMouseScroll(event)
+
+    event.type = "2"    # always 2
+    for state in [0]: # shift=0x0001, ctrl=0x0004, alt=0x20000
+        event.state = state
+        for key in ["Up", "Down", "Left", "Right", "Prior", "Next", "Home", "End"]:
+            event.keysym = key
+            sp._ScrollPane__keyPressed(event)
 
     print(" >> not implemented...")
     #print("\t >> all tests complete")
