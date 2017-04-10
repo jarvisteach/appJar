@@ -382,9 +382,8 @@ class gui(object):
 #####################################
     def __init__(self, title=None, geom=None, warn=True, debug=False):
 
-        # detect if we're in interactive mode
-        if sys.stdout.isatty():
-            self.warn("Interactive mode is not fully tested, some features might not work.")
+        # warn if we're in an untested mode
+        self.__checkMode()
 
         # first out, verify the platform
         self.platform = gui.GET_PLATFORM()
@@ -522,6 +521,23 @@ class gui(object):
                 self.topLevel.wm_iconbitmap(self.appJarIcon)
             except: # file not found
                 self.debug("Error setting Windows default icon")
+
+    # function to check on mode
+    def __checkMode(self):
+        # detect if we're in interactive mode
+        if hasattr(sys, 'ps1'):
+            self.warn("Interactive mode is not fully tested, some features might not work.")
+        else:
+            if sys.flags.interactive:
+                self.warn("Postmortem Interactive mode is not fully tested, some features might not work.")
+        # also, check for iPython
+        try:
+            __IPYTHON__
+        except NameError:
+            #no iPython - ignore
+            pass
+        else:
+            self.warn("iPython is not fully tested, some features might not work.")
 
     def __configBg(self, container):
         # set up a background image holder
