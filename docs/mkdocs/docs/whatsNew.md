@@ -3,9 +3,11 @@
 
 ## Next Release (0.6)  
 * Issues Resolved:  
+    * [#143](https://github.com/jarvisteach/appJar/issues/143) - Fixed bug with setting defaults on AutoEntries  
+    * [#142](https://github.com/jarvisteach/appJar/issues/142) - Finished documentation for [popups](/pythonDialogs/#file=boxes)
     * [#130](https://github.com/jarvisteach/appJar/issues/130) - Documented how to use [special characters](/specialCharacters)  
     * [#123](https://github.com/jarvisteach/appJar/issues/123) - New features for [setting entries](/pythonWidgets/#set-entries) - max length, auto uppercase/lowercase, validation  
-    * [#119](https://github.com/jarvisteach/appJar/issues/119) - MicroBit widget added
+    * [#119](https://github.com/jarvisteach/appJar/issues/119) - [MicroBit](/pythonDevWidgets/) widget added
     * [#118](https://github.com/jarvisteach/appJar/issues/118) - dynamic library imports
     * [#117](https://github.com/jarvisteach/appJar/issues/117) - introduced documentation on [packaging](/packaging/)
     * [#116](https://github.com/jarvisteach/appJar/issues/116) - configurable trough [increments](/pythonWidgets/#set-scales) for a scale
@@ -14,8 +16,8 @@
     * [#112](https://github.com/jarvisteach/appJar/issues/112) - now possible to start with a subWindow (specified in go()) as well as hide() & show() main window
     * [#110](https://github.com/jarvisteach/appJar/issues/110) - can now configure the number of rows to [show](/pythonWidgets/#set-entries) in an AutoEntry  
     * [#106](https://github.com/jarvisteach/appJar/issues/106) - Function to add an [image button](/pythonWidgets/#add-buttons)
-    * [#102](https://github.com/jarvisteach/appJar/issues/102) - Updates to drag/over events
-    * [#101](https://github.com/jarvisteach/appJar/issues/101) - Drag n'Drop supported between applications
+    * [#102](https://github.com/jarvisteach/appJar/issues/102) - Updates to drag/over [events](/pythonEvents/#make-stuff-happen)
+    * [#101](https://github.com/jarvisteach/appJar/issues/101) - [Drag n'Drop](/pythonDnD.md) supported between applications
     * [#92](https://github.com/jarvisteach/appJar/issues/92) - Function to [get all entries](/pythonWidgets/#get-entries)
     * [#46](https://github.com/jarvisteach/appJar/issues/46) - Added version details to about box  
     * [#42](https://github.com/jarvisteach/appJar/issues/42) - Added functionality to [change TickOptionBoxes](/pythonWidgets/#set-optionboxes)

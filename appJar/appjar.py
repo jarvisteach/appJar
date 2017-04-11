@@ -5497,6 +5497,7 @@ class gui(object):
             ent = Entry(frame)
             ent.var = StringVar(self.topLevel)
             ent.config(textvariable=ent.var, font=self.entryFont)
+            ent.var.auto_id = None
 
         # vars to store any limit traces
         ent.var.uc_id = None
@@ -5867,17 +5868,23 @@ class gui(object):
         if var.ml_id is not None:
             var.trace_vdelete('w', var.ml_id)
 
+        # disable any auto completion
+        if var.auto_id is not None:
+            var.trace_vdelete('w', var.auto_id)
+
         current = self.n_entryVars[name].get()
 
         # clear & remove default 
         if mode == "set" or (mode in [ "in", "clear"] and entry.showingDefault):
-            self.n_entryVars[name].set("")
+            var.set("")
             entry.showingDefault = False
             entry.config(justify=entry.oldJustify, foreground=entry.oldFg)
         elif mode == "out" and current == "":
-            self.n_entryVars[name].set(entry.default)
+            var.set(entry.default)
             entry.config(justify='center', foreground='grey')
             entry.showingDefault = True
+        elif mode == "update" and entry.showingDefault:
+            var.set(entry.default)
 
         # re-enable any limits
         if var.lc_id is not None:
@@ -5887,14 +5894,20 @@ class gui(object):
         if var.ml_id is not None:
             var.ml_id = var.trace('w', self.MAKE_FUNC(self.__limitEntry, name, True))
 
-    def updateDefaultText(self, name, text):
-        self.__verifyItem(self.n_entryVars, name)
-        entry = self.__verifyItem(self.n_entries, name)
-        current = self.n_entryVars[name].get()
+        # re-enable auto completion
+        if var.auto_id is not None:
+            var.auto_id = var.trace('w', entry.textChanged)
 
-        if entry.showingDefault:
-            self.n_entryVars[name].set(text)
+    def updateDefaultText(self, name, text):
+        self.warn(".updateDefaultText() is deprecated. You should be using .updateEntryDefault()")
+        self.updateEntryDefault(name, text)
+
+    def updateEntryDefault(self, name, text):
+        entry = self.__verifyItem(self.n_entries, name)
+
         entry.default = text
+        entry.DEFAULT_TEXT = text
+        self.__updateEntryDefault(name, "update")
 
     def setEntryDefault(self, name, text="default"):
         entry = self.__verifyItem(self.n_entries, name)
@@ -5903,13 +5916,14 @@ class gui(object):
         # remember current settings - to return to
         entry.oldJustify = entry.cget('justify')
         entry.oldFg = entry.cget('foreground')
-        entry.config(justify='center', foreground='grey')
 
-        # show the new text
-        self.n_entryVars[name].set(text)
-        entry.showingDefault = True
+        # configure default stuff
+        entry.showingDefault = False
         entry.default = text
         entry.DEFAULT_TEXT = text
+
+        # only show new text if empty
+        self.__updateEntryDefault(name, "out")
 
         # bind commands to show/remove the default
         in_command = self.MAKE_FUNC(self.__entryIn, name, True)
@@ -8282,7 +8296,7 @@ class AutoCompleteEntry(Entry):
 
         # store variable - so we can see when it changes
         self.var = self["textvariable"] = StringVar()
-        self.var.trace('w', self.textChanged)
+        self.var.auto_id = self.var.trace('w', self.textChanged)
 
         # register events
         self.bind("<Right>", self.selectWord)

@@ -141,6 +141,9 @@ app.go()
     Once the user starts typing, it will disappear.  
     The text is centered, shown in a light gray font, and will not be returned by `.getEntry(title)`  
 
+* `.updateEntryDefault(title, text)`  
+    This will update the default value for the specified entry box.  
+
 * `.setEntryUpperCase(title)` & `.setEntryLowerCase(title)`   
     This will force all text typed into the entry to be uppercase/lowercase.  
 
@@ -536,13 +539,13 @@ app.go()
     Allows you to change the range available in the Scale.  
     If ```curr``` is provided, then the Scale will be set to that value.  
 
+* `.setScaleIncrement(title, increment)`  
+    Configures how much the scale jumps, when the trough is clicked.  
+    Defaults to 10.  
+
 * `.showScaleIntervals(title, intervals)`  
     Configures the Scale to show interval labels along its length.  
     ![Scale](img/4_scale.png)  
-
-* `.showScaleIncrement(title, increment)`  
-    Configures how much the scale jumps, when the trough is clicked.  
-    Defaults to 10.  
 
 * `.showScaleValue(title, show=True)`  
     Configures the Scale to show the currently selected value.  
