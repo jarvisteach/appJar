@@ -28,6 +28,7 @@ pages:
     - Changing widgets: pythonWidgetOptions.md
     - GUI Options: pythonGuiOptions.md
     - GUI Events: pythonEvents.md
+    - Drag'n Drop: pythonDnD.md
     - Internationalisation: pythonInternationalisation.md
 - Examples:
     - Raspberry Pi Minecraft: examples/minecraft.md
