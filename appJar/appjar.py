@@ -3235,12 +3235,13 @@ class gui(object):
 
     ### SUB WINDOWS ###
 
-    def startSubWindow(self, name, title=None, modal=False, grouped=False):
+    def startSubWindow(self, name, title=None, modal=False, blocking=False, transient=False, grouped=False):
         self.__verifyItem(self.n_subWindows, name, True)
         if title is None:
             title = name
         top = SubWindow()
         top.modal = modal
+        top.blocking = blocking
         top.title(title)
         top.protocol(
             "WM_DELETE_WINDOW",
@@ -3249,6 +3250,8 @@ class gui(object):
                 name))
         top.withdraw()
         top.win = self
+        if transient:
+            top.transient(self.topLevel)
         if not grouped:
             top.group(self.topLevel.group())
         self.n_subWindows[name] = top
@@ -3270,10 +3273,14 @@ class gui(object):
         tl.config(takefocus=True)
         tl.killLab = Label(tl)
 
+        # stop other windows receiving events
         if tl.modal:
-            tl.transient(self.topLevel)
             tl.grab_set()
-            tl.focus_set()
+
+        tl.focus_set()
+
+        # block here - wait for the subwindow to close
+        if tl.blocking:
             self.topLevel.wait_window(tl.killLab)
 
         return tl
@@ -3282,10 +3289,10 @@ class gui(object):
         tl = self.__verifyItem(self.n_subWindows, title)
         tl.geometry("+%d+%d" % (x, y))
 
-    def hide(self):
+    def hide(self, btn=None):
         self.topLevel.withdraw()
 
-    def show(self):
+    def show(self, btn=None):
         self.topLevel.deiconify()
 
     def hideSubWindow(self, title):
@@ -8925,6 +8932,8 @@ class SubWindow(Toplevel):
         self.escapeBindId = None  # used to exit fullscreen
         self.stopFunction = None  # used to stop
         self.geometry("+%d+%d" % (100, 100))
+        self.modal = False
+        self.blocking = False
 
 # removed for python2.7
 #    def __getattr__(self, name):
