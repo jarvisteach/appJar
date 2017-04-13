@@ -35,7 +35,7 @@ pages:
     - Simple Layout: examples/simple.md
 - Help:
     - Installation: Install.md
-    - New & Upcoming: whatsNew.md
+    - Change-Log: whatsNew.md
     - Python: pythonBasics.md
     - Algorithms: algorithms.md
     - Git: gitGuide.md

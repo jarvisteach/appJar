@@ -25,11 +25,8 @@ To include images, include the following option:
 
 ```appinstaller --add-data image.png:. -F -w demo.py```
 
-###Linux
+###Platform Support
 ---
+This has been tested & works under both Windows & Linux, although no success (yet) on OSX.  
 
-###Windows
----
-
-###Mac OSX
----
+A lot more detail will be provided here, in a future releasse, on the exact process to follow to get everything built into  your package.  
