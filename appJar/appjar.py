@@ -225,33 +225,41 @@ class gui(object):
     # names for each of the widgets defined above
     # used for defining functions
     WIDGETS = {
+#        WINDOW: "Window",
         LABEL: "Label",
-        MESSAGE: "Message",
-        BUTTON: "Button",
         ENTRY: "Entry",
+        BUTTON: "Button",
         CB: "Cb",
+        CHECKBOX: "CheckBox",
         SCALE: "Scale",
         RB: "Rb",
-        GRID: "Grid",
+        RADIOBUTTON: "RadioButton",
         LB: "Lb",
+        LISTBOX: "ListBox",
+        MESSAGE: "Message",
         SPIN: "SpinBox",
         OPTION: "OptionBox",
         TEXTAREA: "TextArea",
         LINK: "Link",
         METER: "Meter",
-        PLOT: "Plot",
-        MICROBIT: "MicroBit",
         IMAGE: "Image",
-        RADIOBUTTON: "RadioButton",
-        CHECKBOX: "CheckBox",
-        LISTBOX: "ListBox",
         PIECHART: "PieChart",
         PROPERTIES: "Properties",
-        FRAME: "Frame",
+        GRID: "Grid",
+        PLOT: "Plot",
+        MICROBIT: "MicroBit",
         LABELFRAME: "LabelFrame",
+        FRAME: "Frame",
+        TABBEDFRAME: "TabbedFrame",
+#       TAB:"Tab",
         PANEDFRAME: "PanedFrame",
-        TOGGLEFRAME: "ToggleFrame",
-        TABBEDFRAME: "TabbedFrame"}
+#       PANE:"Pane",
+#       SCROLLPANE: "ScrollPane",
+#       PAGEDWINDOW: "PagedWindow",
+#       PAGE:"Page",
+#       SUBWINDOW:"SubWindow",
+        TOGGLEFRAME: "ToggleFrame"}
+
 
     # music stuff
     BASIC_NOTES = {
@@ -3262,6 +3270,9 @@ class gui(object):
         if grouped:
             top.group(self.topLevel)#.group())
 
+        if blocking:
+            top.killLab = None
+
         self.n_subWindows[name] = top
 
         # now, add to top of stack
@@ -3274,12 +3285,15 @@ class gui(object):
             raise Exception("Can't stop a SUBWINDOW, currently in:",
                             self.containerStack[-1]['type'])
 
+    def setSubWindowLocation(self, title, x, y):
+        tl = self.__verifyItem(self.n_subWindows, title)
+        tl.geometry("+%d+%d" % (x, y))
+
     # functions to show/hide/destroy SubWindows
     def showSubWindow(self, title):
         tl = self.__verifyItem(self.n_subWindows, title)
         tl.deiconify()
         tl.config(takefocus=True)
-        tl.killLab = Label(tl)
 
         # stop other windows receiving events
         if tl.modal:
@@ -3289,28 +3303,21 @@ class gui(object):
         self.__bringToFront(tl)
 
         # block here - wait for the subwindow to close
-        if tl.blocking:
+        if tl.blocking and tl.killLab is None:
+            tl.killLab = Label(tl)
             self.topLevel.wait_window(tl.killLab)
 
         return tl
-
-    def setSubWindowLocation(self, title, x, y):
-        tl = self.__verifyItem(self.n_subWindows, title)
-        tl.geometry("+%d+%d" % (x, y))
-
-    def hide(self, btn=None):
-        self.topLevel.withdraw()
-
-    def show(self, btn=None):
-        self.topLevel.deiconify()
 
     def hideSubWindow(self, title):
         tl = self.__verifyItem(self.n_subWindows, title)
         theFunc = tl.stopFunction
         if theFunc is None or theFunc():
             tl.withdraw()
-            if tl.modal:
+            if tl.blocking and tl.killLab is not None:
                 tl.killLab.destroy()
+                tl.killLab = None
+            if tl.modal:
                 self.topLevel.grab_set()
                 self.topLevel.focus_set()
 
@@ -3318,14 +3325,59 @@ class gui(object):
         tl = self.__verifyItem(self.n_subWindows, title)
         theFunc = tl.stopFunction
         if theFunc is None or theFunc():
+            if tl.blocking and tl.killLab is not None:
+                tl.killLab.destroy()
+                tl.killLab = None
             tl.withdraw()
-            tl.killLab.destroy()
-            tl.killLab = None
             self.topLevel.grab_set()
             self.topLevel.focus_set()
 
-            tl.destroy()
-            del self.n_subWindows[title]
+            # get rid of all the kids!
+            self.cleanseWidgets(tl)
+
+    # function to destroy widget & all children
+    # will also attempt to remove all trace from config dictionaries
+    def cleanseWidgets(self, widget):
+        for child in widget.winfo_children():
+            self.cleanseWidgets(child)
+        widgType = widget.__class__.__name__
+        for k, v in self.WIDGETS.items():
+            if widgType == v:
+                widgets = self.__getItems(k)
+                if self.destroyWidget(widget, widgets):
+                    break
+                break
+        else:
+            if widgType in ["Tab", "Page"]:
+                pass # managed by container
+            elif widgType in ["Pane", "ScrollPane", "PagedWindow", "SubWindow", "WidgetBox", "LabelBox"]:
+                if widgType == "Pane": widgets = self.n_panes
+                elif widgType == "ScrollPane": widgets = self.n_scrollPanes
+                elif widgType == "PagedWindow": widgets = self.n_pagedWindows
+                elif widgType == "SubWindow": widgets = self.n_subWindows
+                elif widgType in ["WidgetBox", "LabelBox"]: widgets = self.n_frames
+
+                if not self.destroyWidget(widget, widgets):
+                    self.warn("Unable to destroy " + str(widgType) + ", during cleanse")
+            else:
+                self.warn("Unable to destroy " + str(widgType) + ", during cleanse")
+
+    # function to loop through a config dict/list and remove matching object
+    def destroyWidget(self, widget, widgets):
+        if type(widgets) in [list, tuple]:
+            for obj in widgets:
+                if widget == obj:
+                    obj.destroy()
+                    widgets.remove(obj)
+                    return True
+        else:
+            for name, obj in widgets.items():
+                if widget == obj:
+                    obj.destroy()
+                    del widgets[name]
+                    return True
+        return False
+
     #### END SUB WINDOWS ####
 
     # make a PanedFrame align vertically
@@ -3337,6 +3389,14 @@ class gui(object):
     def setLabelFrameAnchor(self, title, anchor):
         frame = self.__verifyItem(self.n_labelFrames, title)
         frame.config(labelanchor=anchor)
+
+    # functions to hide & show the main window
+    def hide(self, btn=None):
+        self.topLevel.withdraw()
+
+    def show(self, btn=None):
+        self.topLevel.deiconify()
+
 
 #####################################
 # warn when bad functions called...
