@@ -1125,8 +1125,11 @@ class gui(object):
             self.topLevel.deiconify()
         else:
             self.hide()
-            sw = self.showSubWindow(startWindow)
-            self.__bringToFront(sw)
+            sw = self.__verifyItem(self.n_subWindows, startWindow)
+            if sw.blocking:
+                raise Exception("Unable to start appjar with a blocking subWindow")
+
+            self.showSubWindow(startWindow)
 
         # required to make the gui reopen after minimising
         if self.GET_PLATFORM() == self.MAC:
@@ -3235,7 +3238,7 @@ class gui(object):
 
     ### SUB WINDOWS ###
 
-    def startSubWindow(self, name, title=None, modal=False, blocking=False, transient=False, grouped=False):
+    def startSubWindow(self, name, title=None, modal=False, blocking=False, transient=False, grouped=True):
         self.__verifyItem(self.n_subWindows, name, True)
         if title is None:
             title = name
@@ -3250,10 +3253,15 @@ class gui(object):
                 name))
         top.withdraw()
         top.win = self
+
+        # have this respond to topLevel window style events
         if transient:
             top.transient(self.topLevel)
-        if not grouped:
-            top.group(self.topLevel.group())
+
+        # group this with the topLevel window
+        if grouped:
+            top.group(self.topLevel)#.group())
+
         self.n_subWindows[name] = top
 
         # now, add to top of stack
@@ -3278,6 +3286,7 @@ class gui(object):
             tl.grab_set()
 
         tl.focus_set()
+        self.__bringToFront(tl)
 
         # block here - wait for the subwindow to close
         if tl.blocking:

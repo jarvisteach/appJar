@@ -1480,7 +1480,7 @@ def test_containers():
     pw.showPrev()
 
 # breaks under python2.7
-    app.startSubWindow("sb1")
+    app.startSubWindow("sb1", modal=False, transient=False, blocking=False, grouped=False)
     app.addLabel("sb1_l", TEXT_ONE)
     app.stopSubWindow()
 
@@ -1497,19 +1497,18 @@ def test_containers():
         return True
 
 # modal stops the popup from closing....
-    app.startSubWindow("sb2", modal=False, grouped=True)
+    app.startSubWindow("sb2", modal=True, transient=True, blocking=False, grouped=True)
     app.addLabel("sb2_l", TEXT_ONE)
     app.setStopFunction(stopper)
     app.stopSubWindow()
 
-#    def stopSubWindow(btn=None):
-#        app.hideSubWindow("sb2")
-#
-#    app.registerEvent(stopSubWindow)
+    def stopSubWindow(btn=None):
+        app.hideSubWindow("sb2")
+
+    app.registerEvent(stopSubWindow)
     app.showSubWindow("sb2")
-    print("5-here.......")
     app.hideSubWindow("sb2")
-    print("6-here.......")
+
 # causes problems - children still in config dicitonaries...
 # setLang, etc will try to modify them
 #    app.destroySubWindow("sb1")
