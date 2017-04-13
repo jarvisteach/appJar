@@ -1497,17 +1497,17 @@ def test_containers():
         return True
 
 # modal stops the popup from closing....
-    app.startSubWindow("sb2", modal=True, transient=True, blocking=False, grouped=True)
-    app.addLabel("sb2_l", TEXT_ONE)
-    app.setStopFunction(stopper)
-    app.stopSubWindow()
-
-    def stopSubWindow(btn=None):
-        app.hideSubWindow("sb2")
-
-    app.registerEvent(stopSubWindow)
-    app.showSubWindow("sb2")
-    app.hideSubWindow("sb2")
+#    app.startSubWindow("sb2", modal=True, transient=True, blocking=False, grouped=True)
+#    app.addLabel("sb2_l", TEXT_ONE)
+#    app.setStopFunction(stopper)
+#    app.stopSubWindow()
+#
+#    def stopSubWindow(btn=None):
+#        app.hideSubWindow("sb2")
+#
+#    app.registerEvent(stopSubWindow)
+#    app.showSubWindow("sb2")
+#    app.hideSubWindow("sb2")
 
 # causes problems - children still in config dicitonaries...
 # setLang, etc will try to modify them
