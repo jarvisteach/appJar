@@ -3,11 +3,14 @@ sys.path.append("../../")
 
 from appJar import gui
 
-def pressed(btn):
-    print(btn)
+def entered(btn):
+    print("entered", btn)
+
+def buttoned(btn):
+    print("buttoned", btn)
 
 app=gui()
-app.addButton("press me", pressed)
+app.addButton("press me", buttoned)
 app.addEntry("e1")
-app.enableEnter(pressed)
+app.enableEnter(entered)
 app.go()
