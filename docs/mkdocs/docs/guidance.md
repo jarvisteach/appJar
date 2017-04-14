@@ -41,6 +41,8 @@ These are ways of changing how the GUI looks or operates:
 
 When I first started appJar, I didn't really know any Python. I grew up on Pascal & Java, followed by JavaScript & PHP - appjar is therefore all in [CamelCase](https://en.wikipedia.org/wiki/Camel_case).
 
+Also, because of this, the concept of [named parameters](https://en.wikipedia.org/wiki/Named_parameter) is also not really used (except in the more recent parts). Again, I learnt programming without this concept, and generally teach programming without this concept. You'll therefore find that sometimes you have to make two-or-three function calls, to acheive something that could be done with one - if I had more named parameters.
+
 I've tried to keep function names standardised:
 
 * `.add XXX()` - to add something to the GUI   
@@ -55,3 +57,17 @@ For example:
 * `setProperty(title, prop, value=False, callFunction=True)`  
     This has two required parameters `title` & `prop` - must be set (the title of the *Properties* group and a specific *property*)  
     And two optional parameters `value` & `callFunction` - if you don't pass `value` it will be set to False  
+
+    So, you could simply call: `.setProperty("Toppings", "cheese")` to get rid of cheese.  
+    Or, if you want cheese: `.setProperty("Toppings", "cheese", True)`.  
+
+    You don't need to name the parameters, as they are always listed in the required order.  
+
+    However, if you do want to name your parameters, feel free: `.setProperty("Toppings", "cheese", callFunction=False)`  
+
+    In fact, it can make your life much easier: `.addLabel("l1", "Main Title", colspan=5)` - saves you having to type in the row or column values.  
+
+##Deprecation
+
+appjar has been going so long, that some of the early decisions have turned out to be bad ones...  
+Some functions have now been [deprecated](https://en.wikipedia.org/wiki/Deprecation) - you can still use them, but appJar will warn you that you should be using something else.  
