@@ -56,10 +56,11 @@ app.addButton("Reload", changePic)
 app.stopLabelFrame()
 ```
 
-* `.setImageFunction(title, function)`  
+* `.setImageSubmitFunction(title, function)`  
     This will set a function to call when the image is clicked.  
 
 ```python
+clicked = False
 def changePic(btn):
     if btn == "clickme":
         global clicked
@@ -69,7 +70,7 @@ def changePic(btn):
 
 app.startLabelFrame("Click Me", 0, 2)
 app.addImage("clickme", "balloons.gif")
-app.setImageFunction("clickme", changePic)
+app.setImageSubmitFunction("clickme", changePic)
 app.stopLabelFrame()
 ```
 

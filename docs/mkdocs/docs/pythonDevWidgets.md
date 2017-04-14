@@ -1,7 +1,7 @@
-#Widgets Under Development
+#Beta Widgets  
 ----
-The following widgets are **under development**.  
-They're included in the library, but offer limited functionality, and are still buggy.  
+The following widgets are in [beta](https://en.wikipedia.org/wiki/Software_release_life_cycle#BETA).  
+They're available and in use, they're just not quite complete, and not fully tested...  
 
 ###MicroBit Emulator  
 ---  

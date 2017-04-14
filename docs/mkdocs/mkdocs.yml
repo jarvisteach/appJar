@@ -21,7 +21,7 @@ pages:
     - Pop-ups: pythonDialogs.md
     - Splashscreen: splash.md
     - Special Characters: specialCharacters.md
-    - In the works...: pythonDevWidgets.md
+    - Beta Widgets...: pythonDevWidgets.md
 - Configuration:
     - Arranging widgets: pythonWidgetLayout.md
     - Grouping widgets: pythonWidgetGrouping.md

@@ -1,7 +1,7 @@
 # Contributing
 ____
 
-We are always happy to receive additions/updates/fixes to the library - simple submit a Pull Request.  
+We are always happy to receive additions/updates/fixes to the library - simply submit a Pull Request.  
 
 The key focusses of the project are that we have good, up-to-date documentation and reliable code.  
 

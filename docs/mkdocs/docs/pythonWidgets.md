@@ -133,8 +133,9 @@ app.go()
     Each of these will add the specified type of Entry, using the title provided.
 
 #### Set Entries
-* `.setEntry(title, text)`  
+* `.setEntry(title, text, callFunction=True)`  
     This sets the contents of the specified entry box.
+    Set ```callFunction``` to be False, if you don't want to call any associated functions.  
 
 * `.setEntryDefault(title, text)`  
     This sets a default value to display in an entry box.  
@@ -160,10 +161,11 @@ app.go()
     This will set the number of rows to display in an AutoEntry.  
     NB. this is limited to the depth of the GUI - if there is no space, then no rows will be displayed. 
 
-* `.clearEntry(title)`  
+* `.clearEntry(title, callFunction=True)`  
     This will clear the contents of the specified entry box.
+    Set ```callFunction``` to be False, if you don't want to call any associated functions.  
 
-* `.clearAllEntries()`  
+* `.clearAllEntries(callFunction=True)`  
     This will clear all the entry boxes in the GUI.
 
 * `.setFocus(title)`  
@@ -622,11 +624,13 @@ app.go()
 ![ScrolledTextArea](img/2_textArea.png)  
 
 ####Set TextAreas
-* `.setTextArea(title, text)`  
+* `.setTextArea(title, text, callFunction=True)`  
     Changes the contents of the specified TextArea, to the specified text.  
+    Set ```callFunction``` to be False, if you don't want to call any associated functions.  
 
-* `.clearTextArea(title)`  
+* `.clearTextArea(title, callFunction=True)`  
     Clears the contents of the specified TextArea.  
+    Set ```callFunction``` to be False, if you don't want to call any associated functions.  
 
 ####Get TextAreas
 * `.getTextArea(title)`  
@@ -719,13 +723,15 @@ app.go()
     If values is populated, then the dictionary items will be added to the widget.  
 
 ####Set Properties
-* `setProperties(title, props)`  
+* `setProperties(title, props, callFunction=True)`  
     Adds the dictionary of properties to the widget.  
     If any of them already exist, they will be updated.  
+    Set ```callFunction``` to be False, if you don't want to call any associated functions.  
 
-* `setProperty(title, prop, value=False)`  
+* `setProperty(title, prop, value=False, callFunction=True)`  
     Sets the named property to the specified value.  
     If it doesn't exist, it will be added first, at the end of the widget.  
+    Set ```callFunction``` to be False, if you don't want to call any associated functions.  
 
 * `deleteProperty(title, prop)`  
     Deletes the named property from the widget.  

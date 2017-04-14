@@ -1804,7 +1804,7 @@ class gui(object):
         items = self.__getItems(kind)
         self.__verifyItem(items, name)
 
-        if kind in [self.RB, self.RADIOBUTTON]:
+        if kind in [self.RB, self.RADIOBUTTON] and option not in ["change"]:
             items = items[name]
         else:
             items = [items[name]]
@@ -1989,29 +1989,32 @@ class gui(object):
         # can't handle it
         if kind == self.SCALE:
             cmd = self.MAKE_FUNC(function, name, True)
-            widget.config(command=cmd)
+            widget.cmd_id = widget.var.trace('w', cmd)
             widget.cmd = cmd
         elif kind == self.OPTION:
             if widget.kind == "ticks":
                 vals = self.__verifyItem(self.n_optionTicks, name)
                 for o in vals:
                     cmd = self.MAKE_FUNC(function, str(o), True)
-                    vals[o].trace('w', cmd)
+                    vals[o].cmd_id = vals[o].trace('w', cmd)
                     vals[o].cmd = cmd
             else:
                 cmd = self.MAKE_FUNC(function, name, True)
                 # need to trace the variable??
-                widget.var.trace('w', cmd)
+                widget.cmd_id = widget.var.trace('w', cmd)
                 widget.cmd = cmd
         elif kind == self.ENTRY:
             if eventType == "change":
+                # not populated by change/submit
                 if key is None:
                     key = name
                 cmd = self.MAKE_FUNC(function, key, True)
                 # get Entry variable
                 var = self.__verifyItem(self.n_entryVars, name)
-                var.trace('w', cmd)
+                var.cmd_id = var.trace('w', cmd)
+                var.cmd = cmd
             else:
+                # not populated by change/submit
                 if key is None:
                     key = name
                 cmd = self.MAKE_FUNC(function, key, True)
@@ -2023,10 +2026,14 @@ class gui(object):
                 cmd = self.MAKE_FUNC(function, name, True)
                 widget.bindChangeEvent(cmd)
         elif kind == self.BUTTON:
-            widget.config(command=self.MAKE_FUNC(function, name))
-            widget.bind(
-                '<Return>', self.MAKE_FUNC(
-                    function, name, True))
+            if eventType == "change":
+                self.warn("Error configuring " + name +
+                            ": can't set a change function")
+            else:
+                widget.config(command=self.MAKE_FUNC(function, name))
+                widget.bind(
+                    '<Return>', self.MAKE_FUNC(
+                        function, name, True))
         # make labels clickable, add a cursor, and change the look
         elif kind == self.LABEL or kind == self.IMAGE:
             if eventType in ["command", "submit"]:
@@ -2051,7 +2058,18 @@ class gui(object):
             cmd = self.MAKE_FUNC(function, name, True)
             widget.bind('<<ListboxSelect>>', cmd)
             widget.cmd = cmd
+        elif kind in [self.RB, self.RADIOBUTTON]:
+            cmd = self.MAKE_FUNC(function, name, True)
+            # get rb variable
+            var = self.__verifyItem(self.n_rbVars, name)
+            var.cmd_id = var.trace('w', cmd)
+            var.cmd = cmd
+        elif kind == self.PROPERTIES:
+            cmd = self.MAKE_FUNC(function, name, True)
+            widget.setChangeFunction(cmd)
         else:
+            if kind not in [self.SPIN, self.CHECKBOX, self.CB]:
+                self.warn("Unmanaged binding of " + str(eventType) + " to " + str(name))
             cmd = self.MAKE_FUNC(function, name)
             widget.config(command=cmd)
             widget.cmd = cmd
@@ -3531,7 +3549,9 @@ class gui(object):
     def __buildScale(self, title, frame):
         self.__verifyItem(self.n_scales, title, True)
         scale = ajScale(frame, increment=10)
+        scale.var = DoubleVar(self.topLevel)
         scale.config(
+            variable=scale.var,
             repeatinterval=10,
             digits=1,
             orient=HORIZONTAL,
@@ -3558,11 +3578,14 @@ class gui(object):
 
     def setScale(self, title, pos, callFunction=True):
         sc = self.__verifyItem(self.n_scales, title)
-        sc.set(pos)
         # now call function
-        if callFunction:
-            if hasattr(sc, 'cmd'):
-                sc.cmd()
+        if not callFunction and hasattr(sc, 'cmd'):
+            sc.var.trace_vdelete('w', sc.cmd_id)
+
+        sc.set(pos)
+
+        if not callFunction and hasattr(sc, 'cmd'):
+            sc.cmd_id = sc.var.trace('w', sc.cmd)
 
     def setScaleIncrement(self, title, increment):
         sc = self.__verifyItem(self.n_scales, title)
@@ -3840,14 +3863,14 @@ class gui(object):
         # disable any separators
         self.__disableOptionBoxSeparators(box)
         # select the specified option
-        self.setOptionBox(title, index)
+        self.setOptionBox(title, index, callFunction=False)
 
     def deleteOptionBox(self, title, index):
         self.__verifyItem(self.n_optionVars, title)
         self.setOptionBox(title, index, None)
 
     # select the option at the specified position
-    def setOptionBox(self, title, index, value=True):
+    def setOptionBox(self, title, index, value=True, callFunction=True):
         box = self.__verifyItem(self.n_options, title)
 
         if box.kind == "ticks":
@@ -3855,7 +3878,15 @@ class gui(object):
             if index is None:
                 return
             elif index in ticks:
-                ticks[index].set(value)
+                tick = ticks[index]
+
+                if not callFunction and hasattr(tick, 'cmd'):
+                    tick.trace_vdelete('w', tick.cmd_id)
+
+                tick.set(value)
+
+                if not callFunction and hasattr(tick, 'cmd'):
+                    tick.cmd_id = tick.trace('w', tick.cmd)
             else:
                 raise Exception("Unknown TickOptionBox: " +
                                 str(index) + " in: " + title)
@@ -3879,13 +3910,20 @@ class gui(object):
                     if value is None:
                         box['menu'].delete(index)
                         del(box.options[index])
-                        self.setOptionBox(title, 0)
+                        self.setOptionBox(title, 0, callFunction=False)
                     else:
+                        # now call function
+                        if not callFunction and hasattr(box, 'cmd'):
+                            box.var.trace_vdelete('w', box.cmd_id)
+
                         if not box['menu'].invoke(index):
                             self.warn(
                                 "Invalid selection index: " +
                                 str(index) +
                                 " is a disabled index.")
+
+                        if not callFunction and hasattr(box, 'cmd'):
+                            box.cmd_id = box.var.trace('w', box.cmd)
             else:
                 self.__verifyItem(self.n_optionVars, title).set("")
                 self.warn("No items to select from: " + title)
@@ -3969,17 +4007,17 @@ class gui(object):
         props = self.__verifyItem(self.n_props, title)
         return props.getProperty(prop)
 
-    def setProperty(self, title, prop, value=False):
+    def setProperty(self, title, prop, value=False, callFunction=True):
         props = self.__verifyItem(self.n_props, title)
-        props.addProperty(prop, value)
+        props.addProperty(prop, value, callFunction=callFunction)
 
-    def setProperties(self, title, props):
+    def setProperties(self, title, props, callFunction=True):
         p = self.__verifyItem(self.n_props, title)
-        p.addProperties(props)
+        p.addProperties(props, callFunction=callFunction)
 
     def deleteProperty(self, title, prop):
         props = self.__verifyItem(self.n_props, title)
-        props.addProperty(prop, None)
+        props.addProperty(prop, None, callFunction=False)
 
 #####################################
 # FUNCTION to add spin boxes
@@ -4808,13 +4846,15 @@ class gui(object):
                 value +
                 "' doesn't exist")
         var = self.n_rbVars[title]
-        var.set(value)
 
         # now call function
-        if callFunction:
-            item = self.__verifyItem(self.n_rbs, title)[0]
-            if hasattr(item, 'cmd'):
-                item.cmd()
+        if not callFunction and hasattr(var, 'cmd'):
+            var.trace_vdelete('w', var.cmd_id)
+
+        var.set(value)
+
+        if not callFunction and hasattr(var, 'cmd'):
+            var.cmd_id = var.trace('w', var.cmd)
 
     def setRadioTick(self, title, tick=True):
         radios = self.__verifyItem(self.n_rbs, title)
@@ -4896,14 +4936,10 @@ class gui(object):
         if len(items) > 0:
             for pos in range(len(items)):
                 if items[pos] == item:
-                    self.selectListItemPos(title, pos)
-                    # now call function
-                    if callFunction:
-                        if hasattr(lb, 'cmd'):
-                            lb.cmd()
+                    self.selectListItemPos(title, pos, callFunction)
                     break
 
-    def selectListItemPos(self, title, pos):
+    def selectListItemPos(self, title, pos, callFunction=False):
         lb = self.__verifyItem(self.n_lbs, title)
 #        sel = lb.curselection()
         lb.selection_clear(0, END)
@@ -4912,6 +4948,9 @@ class gui(object):
             lb.see(pos)
             lb.activate(pos)
             lb.selection_set(pos)
+            # now call function
+            if callFunction and hasattr(lb, 'cmd'):
+                lb.cmd()
 
     # replace the list items in the list box
     def updateListItems(self, title, items):
@@ -5413,12 +5452,22 @@ class gui(object):
     def getTextArea(self, title):
         return self.__verifyItem(self.n_textAreas, title).getText()
 
-    def setTextArea(self, title, text):
-        self.__verifyItem(self.n_textAreas, title).insert('1.0', text)
+    def setTextArea(self, title, text, callFunction=True):
+        ta = self.__verifyItem(self.n_textAreas, title)
+
+        oldCall = ta.callFunction
+        ta.callFunction = callFunction
+        ta.insert('1.0', text)
+        ta.callFunction = oldCall
 
     # functions to try to monitor text areas
-    def clearTextArea(self, title):
-        self.__verifyItem(self.n_textAreas, title).delete('1.0', END)
+    def clearTextArea(self, title, callFunction=True):
+        ta = self.__verifyItem(self.n_textAreas, title)
+
+        oldCall = ta.callFunction
+        ta.callFunction = callFunction
+        ta.delete('1.0', END)
+        ta.callFunction = oldCall
 
     def logTextArea(self, title):
         self.__loadHashlib()
@@ -5882,10 +5931,18 @@ class gui(object):
             entries[k] = self.getEntry(k)
         return entries
 
-    def setEntry(self, name, text):
-        self.__verifyItem(self.n_entryVars, name)
+    def setEntry(self, name, text, callFunction=True):
+        var = self.__verifyItem(self.n_entryVars, name)
         self.__updateEntryDefault(name, mode="set")
-        self.n_entryVars[name].set(text)
+
+        # now call function
+        if not callFunction and hasattr(var, 'cmd'):
+            var.trace_vdelete('w', var.cmd_id)
+
+        var.set(text)
+
+        if not callFunction and hasattr(var, 'cmd'):
+            var.cmd_id = var.trace('w', var.cmd)
 
     def setEntryMaxLength(self, name, length):
         var = self.__verifyItem(self.n_entryVars, name)
@@ -6007,15 +6064,34 @@ class gui(object):
         entry.bind("<FocusIn>", in_command, add="+")
         entry.bind("<FocusOut>", out_command, add="+")
 
-    def clearEntry(self, name):
-        self.__verifyItem(self.n_entryVars, name)
-        self.n_entryVars[name].set("")
+    def clearEntry(self, name, callFunction=True):
+        var = self.__verifyItem(self.n_entryVars, name)
+
+        # now call function
+        if not callFunction and hasattr(var, 'cmd'):
+            var.trace_vdelete('w', var.cmd_id)
+
+        var.set("")
+
+        if not callFunction and hasattr(var, 'cmd'):
+            var.cmd_id = var.trace('w', var.cmd)
+
         self.__updateEntryDefault(name, mode="clear")
         self.setFocus(name)
 
-    def clearAllEntries(self):
+    def clearAllEntries(self, callFunction=True):
         for entry in self.n_entryVars:
-            self.n_entryVars[entry].set("")
+            var = self.__verifyItem(self.n_entryVars, entry)
+
+            # now call function
+            if not callFunction and hasattr(var, 'cmd'):
+                var.trace_vdelete('w', var.cmd_id)
+
+            var.set("")
+
+            if not callFunction and hasattr(var, 'cmd'):
+                var.cmd_id = var.trace('w', var.cmd)
+
             self.__updateEntryDefault(entry, mode="clear")
 
     def setFocus(self, name):
@@ -7699,6 +7775,8 @@ class Properties(LabelFrame):
         self.props = {}
         self.cbs = {}
         self.title = text
+        self.cmd = None
+        self.changingProps = False
         self.addProperties(props)
 
     def config(self, cnf=None, **kw):
@@ -7726,13 +7804,17 @@ class Properties(LabelFrame):
         else:
             super(LabelFrame, self).config(cnf, **kw)
 
-    def addProperties(self, props):
+    def addProperties(self, props, callFunction=True):
 
         if props is not None:
             for k in sorted(props):
-                self.addProperty(k, props[k])
+                self.addProperty(k, props[k], callFunction=False)
 
-    def addProperty(self, prop, value=False):
+        if self.cmd is not None and callFunction:
+            self.cmd()
+
+    def addProperty(self, prop, value=False, callFunction=True):
+        self.changingProps = True
         if prop in self.props:
             if value is None:
                 del self.props[prop]
@@ -7743,6 +7825,7 @@ class Properties(LabelFrame):
         elif prop is not None:
             var = BooleanVar()
             var.set(value)
+            var.trace('w', self.__propChanged)
             cb = Checkbutton(self)
             cb.config(
                 anchor=W,
@@ -7755,8 +7838,17 @@ class Properties(LabelFrame):
             self.props[prop] = var
             self.cbs[prop] = cb
         else:
+            self.changingProps = False
             raise Exception("Can't add a None property to: ", prop)
         # if text is not None: lab.config ( text=text )
+
+        if self.cmd is not None and callFunction:
+            self.cmd()
+        self.changingProps = False
+
+    def __propChanged(self, a,b,c):
+        if self.cmd is not None and not self.changingProps:
+            self.cmd()
 
     def getProperties(self):
         vals = {}
@@ -7773,6 +7865,9 @@ class Properties(LabelFrame):
                 str(prop) +
                 " not found in Properties: " +
                 self.title)
+
+    def setChangeFunction(self, cmd):
+        self.cmd = cmd
 
 #####################################
 # appJar Frame
@@ -8587,6 +8682,7 @@ class TextParent():
         self.clearModifiedFlag()
         self.bind('<<Modified>>', self._beenModified)
         self.__hash = None
+        self.callFunction = True
 
     def _beenModified(self, event=None):
         # stop recursive calls
@@ -8599,7 +8695,7 @@ class TextParent():
 
     def beenModified(self, event=None):
         # call the user's function
-        if hasattr(self, 'function'):
+        if hasattr(self, 'function') and self.callFunction:
             self.function()
 
     def clearModifiedFlag(self):

@@ -8,19 +8,39 @@ We also, sometimes, want events to happen repeatedly...
 
 ##Make stuff happen...
 ----
-To make something happen you have to set a function for a widget:  
+To make something happen you have to set a function for a widget.  
+appJar currenly supports four basic use cases:  
 
-* `.set XXX Function(title, function, key=None)`  
+* `.set XXX ChangeFunction(title, function)` call a function when the widget changes  
+* `.set XXX SubmitFunction(title, function)` call a function when the widget is submitted    
+* `.set XXX OverFunction(title, functions)` call function(s) when the mouse enters/leaves the widget  
+* `.set XXX DragFunction(title, functions)` call function(s) when the mouse is dragged in/out of the widget  
 
-    This binds a function to the named widget:  
+###Breakdown  
+---
 
-    * For Scales, OptionBoxes, SpinBoxes, ListBoxes, RadioButtons & CheckButtons the function will be called each time the widget is changed.  
-    * For Entries it binds a function to the ```<Return>``` key, allowing the Entry to be *submitted*.  
-    * For Buttons it binds a function to the ```<Return>``` key.  
-    * For Labels & Images it binds a function to the ```<Left-Mouse-Button>```, making the widget clickable.  
-    * For other widgets, it will set the *command* property for the underlying tkinter widget.  
+* `.set XXX ChangeFunction(title, function)` & `.set XXX SubmitFunction(title, function)`  
 
-**Be careful** it's possible to generate a RuntimeError. If you've linked together two widgets, say a Scale and a SpinBox, and you want a change in one to cause an update in the other, you might inadvertantly end up stuck in a recursive loop, until the stack fills up. In this case, make sure you call the ```set XXX Function()```, setting ```callFunction``` as False.
+    These do similar things, so probably shouldn't both exist, but have evolved from a single `.set XXX Function()` which is now deprecated.  
+
+    They bind a function to the named widget.  
+
+    For `ChangeFunction`:  
+
+    * Scales, OptionBoxes, SpinBoxes, ListBoxes, RadioButtons & CheckBoxes, Entries & TextAreas, and Properties - the function will be called each time the widget is changed.  
+    * Buttons, Labels & Images - it is not available.  
+    * Other widgets - it will set the *command* property for the underlying tkinter widget; this may or may not do anything...  
+
+    For `SubmitFunction`:  
+
+    * Labels & Images - it binds a function to the ```<Left-Mouse-Button>```, making the widget clickable.  
+    * Entries & Buttons - it binds a function to the ```<Return>``` key  
+    * TextAreas - it's not available
+    * Other widgets - it does the same as `ChangeFunction`  
+
+**Be careful** it's possible to generate a RuntimeError. If you've got two widgets changing the same variable, say a Scale and a SpinBox, and you want a change in one widget to cause an update in the other, you might inadvertantly end up stuck in a recursive loop, until the [stack overflows](https://en.wikipedia.org/wiki/Stack_overflow).  
+
+In this case, make sure you set the optional parameter ```callFunction = False``` when you  call the ```set XXX Function()``` of a widget.  
 
 ```python
 from appJar import gui
@@ -28,15 +48,21 @@ from appJar import gui
 def songChanged(rb):
     print(app.getRadioButton(rb))
 
+def reset(btn):
+    # set back to the default, but don't call the change function
+    app.setRadioButton("song", "Killer Queen", callFunction=False)
+
 app=gui()
 app.addRadioButton("song", "Killer Queen")
 app.addRadioButton("song", "Paradise City")
-app.setRadioButtonFunction("song", songChanged)
+app.setRadioButtonChangeFunction("song", songChanged)
+app.addButton("Reset", reset)
 app.go()
 ```
 
 * `.set XXX OverFunction(name, [inFunction, outFunction])`  
     Set functions to call whenever the mouse enters (goes over) or leaves the specified widget.  
+    **Only available on Labels**  
     The first function is called when the mouse first enters the widget.  
     The second function is called when the mouse leaves the widget.  
     If you only want a function to be called when the mouse leaves the widget, pass an array like: `[None, leave]`  
@@ -54,15 +80,20 @@ app.go()
     app.setLabelOverFunction("l1", [enter, leave])
     app.go()
 ```  
+
+* `.setImageMouseOver(title, image)`  
+    Additional function, specific to [images](/pythonImages/#change-images), to change the specified image, while the mouse is over it.
+
 * `.set XXX DragFunction(name, [startDragFunction, stopDragFunction])`  
     Set functions to call whenever the mouse button is clicked and dragged.  
+    **Only available on Labels**  
     The first function will be called when the mouse is initially clicked.  
     The second function will be called when the mouse is released.  
     The same rules for passing functions apply as above.  
 
 ### Registering Other Event Types  
 
-It's possible to register any ot the standard event types with appJar widgets  
+It's possible to register any of the standard event types with appJar widgets  
 ```python
 app.getEntryWidget("widget_name").bind("<FocusOut>", function_name, add="+")
 ```
@@ -75,7 +106,7 @@ The classic example is the ```<Return>``` key, we often want to be able to hit t
 Link a function to the ```<Return>``` key
 
 * `.disableEnter()`  
-Unlink a function form the ```<Return>```  key
+Unlink a function from the ```<Return>```  key
 
 You may also want to bind other keys to events.  
 

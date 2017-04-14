@@ -465,7 +465,7 @@ app.addLabel("l1", "In sub window")
 app.stopSubWindow()
 ```
 
-#Under Development
+#In Beta  
 ---
 
 ###Frame
