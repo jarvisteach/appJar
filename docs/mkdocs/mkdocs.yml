@@ -34,12 +34,13 @@ pages:
     - Raspberry Pi Minecraft: examples/minecraft.md
     - Simple Layout: examples/simple.md
 - Help:
+    - Guidance: guidance.md
     - Installation: Install.md
-    - Change-Log: whatsNew.md
     - Python: pythonBasics.md
     - Algorithms: algorithms.md
     - Git: gitGuide.md
     - Packaging: packaging.md
+    - Change-Log: whatsNew.md
     - License: License.md
     - Support: Support.md
     - Contributing: contributing.md

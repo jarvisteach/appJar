@@ -27,7 +27,7 @@ Then copy your repo's address, and **add** it to your local git account:
 
 * `git remote add origin [web_address]` - link your local Git repo to a GitHub repo.  
 
-Then, once you've **commited** local changes, you can **push** them to GitHub:  
+Then, once you've **committed** local changes, you can **push** them to GitHub:  
 
 * `git push` - send your local changes to your online GitHub repository.  
 

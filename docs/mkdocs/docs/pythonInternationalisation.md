@@ -50,7 +50,7 @@ These will look for a file called `LANGUAGE.ini`
 
 ### Widget Support
 Not all widget's are supported, and some require a bit more effort to get them to work properly.  
-Note, changing the text of a widget through `setXXX()` method's will work, but will not be rememberd if the language is changed.  
+Note, changing the text of a widget through `setXXX()` method's will work, but will not be remembered if the language is changed.  
 
 * **Auto-labelled Widgets**  
     Any widgets created with an **auto-label** can be changed under the `[LABEL]` option below.  

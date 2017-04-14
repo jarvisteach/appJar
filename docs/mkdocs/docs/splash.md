@@ -8,7 +8,7 @@ Simply call:
 
 * `.showSplash(text, fill='red', stripe='black', fg='white', font=44)`  
     Pass in the text you want to show, plus any colours (not required).  
-    `text` This should be ashort message to show in the center of the screen.  
+    `text` This should be a short message to show in the center of the screen.  
     `fill` - this is the bg colour for the splashscreen.  
     `stripe` - this is the bg colour of a stripe across the screen.  
     `fg` - this is the colour of the writing to put in the stripe.  

@@ -61,7 +61,7 @@ app.setLabelBg("l9", "DarkKhaki")
 app.go()
 ```
 
-If youre still not satisfied, you can configure widgets to span across multiple columns or rows.  
+If you're still not satisfied, you can configure widgets to span across multiple columns or rows.  
 Simply provide a third & fourth parameter to specify how many rows and columns to span:  
 
 ![Grid Layout](img/layouts/grid2.png)
@@ -101,7 +101,7 @@ There are a few tricks you can employ, to make life a bit easier...
 
 ####Named Arguments  
 It can be annoying having to specify all of the positional parameters each time, so why not take advantage of Python's support for *Named Arguments*. These allow you to set specific parameters, using their name.  
-For example: `app.addLabel("l1", "text here", colspan=2)`, will set the `colspan` parameter, without having to set the preceeding ones.   
+For example: `app.addLabel("l1", "text here", colspan=2)`, will set the `colspan` parameter, without having to set the preceding ones.   
 
 ####Row Helpers
 If you combine that with having appJar telling you the row you're on, things get even easier.  
@@ -149,7 +149,7 @@ There are two things you can configure:
 * How columns and rows stretch to fill the GUI - **stretchiness**  
 * How widgets stretch to fill their cells - **stickiness**  
 
-Note, you can also cange these settings for [individual widgets](pythonWidgetOptions/#advanced-looks)
+Note, you can also change these settings for [individual widgets](pythonWidgetOptions/#advanced-looks)
 
 ####Set Stretch & Sticky
 

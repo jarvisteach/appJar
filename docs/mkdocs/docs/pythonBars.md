@@ -48,7 +48,7 @@ ___
 Adds a standard Menubar along the top of the GUI.  
 On Windows/Linux a menubar will only be shown, once the first menu has been added.  
 On Mac, a menubar is always present.  
-Menubars are made up of a series of menus, each conaining a list of names.  
+Menubars are made up of a series of menus, each containing a list of names.  
 These names can be menu-items, radio buttons, check boxes, separators, or sub-menus.  
 
 ####Create Menus
@@ -182,8 +182,8 @@ Simply use the menu names given below when adding menu-items to a menu.
 
 * **Mac** - there are three *default* menus, each containing platform specific menus-item.   
     There are also a couple of menu-items the user can/should provide.  
-    * **Application Menu** - `MAC_APP` after the Apple logo (), usuaully called *Python*.  
-        This menu is always present, and connot be renamed - no matter how much I wish it could!  
+    * **Application Menu** - `MAC_APP` after the Apple logo (), usually called *Python*.  
+        This menu is always present, and cannot be renamed - no matter how much I wish it could!  
         Call `.addMenuPreferences(function)` to enable the *Preferences* menu-item, within the *Application Menu*.  
     * **Window Menu** - `MAC_WIN` contains menu-items related to windows.   
         To access this menu, you must first call `.addMenuWindow()`  

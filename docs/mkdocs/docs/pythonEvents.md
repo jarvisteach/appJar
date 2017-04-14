@@ -38,7 +38,7 @@ appJar currenly supports four basic use cases:
     * TextAreas - it's not available
     * Other widgets - it does the same as `ChangeFunction`  
 
-**Be careful** it's possible to generate a RuntimeError. If you've got two widgets changing the same variable, say a Scale and a SpinBox, and you want a change in one widget to cause an update in the other, you might inadvertantly end up stuck in a recursive loop, until the [stack overflows](https://en.wikipedia.org/wiki/Stack_overflow).  
+**Be careful** it's possible to generate a RuntimeError. If you've got two widgets changing the same variable, say a Scale and a SpinBox, and you want a change in one widget to cause an update in the other, you might inadvertently end up stuck in a recursive loop, until the [stack overflows](https://en.wikipedia.org/wiki/Stack_overflow).  
 
 In this case, make sure you set the optional parameter ```callFunction = False``` when you  call the ```set XXX Function()``` of a widget.  
 
@@ -118,7 +118,7 @@ Unlink the specified key from any functions bound to it.
 
 ##Repeating Events  
 Sometimes, you want events to keep happening in the background.  
-GUIs aren't so great at this - if you have a loop in your prgram, the GUI will *hang* (stop working until the loop finishes).  
+GUIs aren't so great at this - if you have a loop in your program, the GUI will *hang* (stop working until the loop finishes).  
 Luckily, we have a solution,,,
 
 * `.registerEvent(function)`  

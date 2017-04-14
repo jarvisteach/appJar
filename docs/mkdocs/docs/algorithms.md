@@ -1,8 +1,8 @@
 #Algorithms  
 ----  
-Below are ssme comparisons of how to acheive the same thing in a flowchart, pseudocode & Python.  
+Below are some comparisons of how to achieve the same thing in a flowchart, pseudocode & Python.  
 
-This site was originally written using AQA suggested pseudocode, but will be updated to include OCR recomendations.  
+This site was originally written using AQA suggested pseudocode, but will be updated to include OCR recommendations.  
 It will aso be extended, to include a lot more examples.  
 
 ##Comparison  

@@ -121,7 +121,7 @@ app.addLabelOptionBox("Block", blockNames, colspan=2)
 app.addButton("Drop", drop, colspan=2)
 ```
 
-The issue we have is building a disctionary of block names linked to block IDs. You can try this one out, or make your own...  
+The issue we have is building a dictionary of block names linked to block IDs. You can try this one out, or make your own...  
 ```python
 # put this near the top of your code
 BLOCKS={ "AIR":0, "STONE":1, "GRASS":2, "DIRT":3, "COBBLESTONE":4,

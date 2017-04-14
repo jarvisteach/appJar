@@ -29,7 +29,7 @@ Some basic configuration for the size, position, transparency, etc. of the GUI.
 * `.setGeometry(geom)` & `.setGeometry(width, height)`  
     Sets the height & width of the GUI:  
     * Either as a single String `.setGeometry("200x100")` (widthxheight)  
-    * As two seperate parameters `.setGeometry(200,100)`
+    * As two separate parameters `.setGeometry(200,100)`
     * Or to go *Fullscreen* `.setGeometry("Fullscreen")`  
 
 * `.exitFullscreen()`  

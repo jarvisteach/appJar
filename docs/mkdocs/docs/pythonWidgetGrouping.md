@@ -154,7 +154,7 @@ app.go()
 * `.setTabbedFrameDisabledTab(title, tab, disabled=True)`  
     Disable the specified tab in the TabbedFrame.  
     Set disabled to False to re-enable it.  
-    This will also change the displayed tab, if the disaplyed tab is being disabled.  
+    This will also change the displayed tab, if the displayed tab is being disabled.  
 
 * `.setTabbedFrameDisableAllTabs(title, disabled=True)`  
     Will disable all tabs for the named TabFrame.  
@@ -233,7 +233,7 @@ app.go()
 ![Vertical Panes](img/layouts/pane2.png)  
 
 * Start an initial, vertical pane  
-* Start all additional panes inside the intial pane  
+* Start all additional panes inside the initial pane  
 
 ```python
 from appJar import gui
@@ -273,7 +273,7 @@ app = gui()
 app.startPanedFrame("p1")
 app.addLabel("l1", "Inside Pane 1")
 
-# start second, vertical pane inside inital pane
+# start second, vertical pane inside initial pane
 app.startPanedFrameVertical("p2")
 app.addLabel("l2", "Inside Pane 2")
 
@@ -293,7 +293,7 @@ app.go()
 ![T-Panes](img/layouts/pane4.png)  
 
 * Start an initial, vertical pane  
-* Start a second pane, indside the initial pane  
+* Start a second pane, inside the initial pane  
 * Start additional panes inside the second pane  
 
 ```python
@@ -326,7 +326,7 @@ A container that mimics a classic phone based interface.
 It provides **PREVIOUS**/**NEXT** buttons to navigate through a series of pages.  
 It has an optional widget title, and shows the current page, in a page counter.  
 Keyboard bindings are provided to navigate with arrow key presses. CTRL-arrow will navigate to the beginning/end.  
-Events can be bound to page changes, the page can be changed via a funciton call, and the current page number can be queried.  
+Events can be bound to page changes, the page can be changed via a function call, and the current page number can be queried.  
 ![PagedWindow](img/layouts/1_pagedWindow.png)
 ```python
 from appJar import gui

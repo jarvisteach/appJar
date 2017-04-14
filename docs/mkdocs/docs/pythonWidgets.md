@@ -1,7 +1,7 @@
 #Widgets
 ----
 In a GUI, the fillings are known as **widgets**.  
-There are lots of different widgets to chose from, each suited to a specific task.  
+There are lots of different widgets to choose from, each suited to a specific task.  
 
 Nearly every widget needs a **TITLE**.  
 This is a unique name for the widget, so that later you can get information from that widget, or change it.  
@@ -46,7 +46,7 @@ app.go()
     As with all widgets, when you add a *label*, a title must be provided - to identify the *label*. This is then followed by an optional piece of text to display.
 
 * `.addEmptyLabel(title)`  
-    Does the same as add a *label*, except there''s no parameter to set any text.
+    Does the same as add a *label*, except there's no parameter to set any text.
 
 * `.addFlashLabel(title, text=None)`  
     This adds a flashing *label*, that will alternate between the foreground and background colours.
@@ -78,7 +78,7 @@ app.go()
 ##Auto-Labelled Widgets
 ___
 
-It's possible to automatically include a *label* alongside some widgets.  
+It's possible to automatically include a *label* alongside a lot of the  widgets.  
 Both the label and widget will be placed in the same grid space.  
 Simply add the word `Label` to the command when adding the widget:  
 
@@ -648,7 +648,7 @@ Various styles of progress meter:
 * #### SplitMeter  
 
     ![Meter](img/2_meter.png)  
-    A possesion style meter, showing percentages on either side.  
+    A possession style meter, showing percentages on either side.  
 
 * #### DualMeter  
 
@@ -691,7 +691,7 @@ This should then be monitoring/updating a global variable:
 def updateMeter():
     app.setMeter("progress", percentComplete)
 
-# schedue function to be called regularly
+# schedule function to be called regularly
 app.registerEvent(updateMeter)
 ```
 
@@ -765,7 +765,7 @@ app.setFont(20)
 
 app.startToggleFrame("Toppings")
 app.addProperties("Toppings", toppings)
-app.setPropertiesFunction("Toppings", changed)
+app.setPropertiesChangeFunction("Toppings", changed)
 app.stopToggleFrame()
 
 app.go()

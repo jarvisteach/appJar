@@ -90,7 +90,7 @@ Python also lets us perform various actions on Strings.
 ```varName.lower()``` | Lowercase | Makes the entire string lowercase
 ```varName.split(" ")``` | Split into a list | Converts the String into a list, using spaces
 ```varName.split(",")``` | Split into a list | Converts the String into a list, using commas
-```varName.count("a")``` | Counts occurences of the text | Counts how many times **a** appears in the String
+```varName.count("a")``` | Counts occurrences of the text | Counts how many times **a** appears in the String
 ```varName.index("a")``` | Finds the first position of the text | Finds the first position of **a**
 ```varName.startswith("Mr.")``` | Checks what the String starts with | Returns True if the String starts with **Mr.**
 ```varName.endswith("Jarvis")``` | Checks what the String ends with | Returns True if the String ends with**Jarvis**
@@ -101,7 +101,7 @@ It's also possible to access parts of a String using array square brackets.
 
  | | 
 -|-|-
-```varName[2]``` | Gets a character | Returns the thrid character
+```varName[2]``` | Gets a character | Returns the third character
 ```varName[2:5]``` | Gets a substring | Returns characters from 2 to 4
 ```varName[2:]``` | Gets a substring | Returns characters from 2 to the end
 ```varName[:5]``` | Gets a substring | Returns characters from the beginning to 4

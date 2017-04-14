@@ -64,7 +64,7 @@
 
 ## Version 0.041  
 * Continuous Integration - added [landscape.io](https://landscape.io/github/jarvisteach/appJar/) to monitor code quality  
-* [Reload Image](/pythonImages/#change-images) - funciton to force a reload of an image, bypassing the cache (issue [#87](https://github.com/jarvisteach/appJar/issues/87))  
+* [Reload Image](/pythonImages/#change-images) - function to force a reload of an image, bypassing the cache (issue [#87](https://github.com/jarvisteach/appJar/issues/87))  
 * Minor fixes based off landscape report  
 * Issues Resolved:  
     * [#87](https://github.com/jarvisteach/appJar/issues/87) - reloadImage()  
