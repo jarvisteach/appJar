@@ -1,5 +1,6 @@
 import sys
 import datetime
+import pytest
 try: from tkinter import Event
 except: from Tkinter import Event
 sys.path.append("../")
@@ -37,6 +38,27 @@ app.showSplash()
 print("NEXT...")
 
 
+def test_grid_layout():
+    print("\tTesting layout")
+    app.addLabel("lay1", TEXT_ONE, 1)
+    app.addLabel("lay2", TEXT_ONE, 1, 1)
+    app.addLabel("lay3", TEXT_ONE, 1, 1, 1)
+    app.addLabel("lay4", TEXT_ONE, 1, 1, 1, 1)
+
+    app.addLabel("lay5", TEXT_ONE, 2)
+    app.addLabel("lay6", TEXT_ONE, 2, 2)
+    app.addLabel("lay7", TEXT_ONE, 2, 2, 2)
+    app.addLabel("lay8", TEXT_ONE, 2, 2, 2, 2)
+
+    app.addLabel("lay9", TEXT_ONE, colspan=3, rowspan=3, column=3, row=3)
+
+    app.setSticky("n")
+    app.addLabel("lay11", TEXT_ONE, colspan=4, rowspan=4, column=4, row=4)
+    app.setSticky("s")
+    app.addLabel("lay12", TEXT_ONE, colspan=5, rowspan=5, column=5, row=5)
+
+    print("\t >> all tests complete")
+
 def test_labels():
     print("\tTesting labels")
     app.addEmptyLabel("el1")
@@ -66,6 +88,9 @@ def test_labels():
     assert app.getLabel("el1") == EMPTY
     assert app.getLabel("l1") == EMPTY
     assert app.getLabel("fl1") == EMPTY
+
+    with pytest.raises(Exception) :
+        app.addLabel("l1", "crash here")
 
     # call generic setter functions
     test_setters("Label", "l1")
@@ -288,6 +313,8 @@ def test_buttons():
     print("\tTesting buttons")
     app.addButton("b1", None)
     app.addButtons(["bb1", "bb2", "bb3", "bb4"], None)
+    with pytest.raises(Exception) :
+        app.addButtons(["brk1", "brk1", "brk1", "brk1"], [None, None])
     app.addButtons(
             [["a2b1", "a2b2", "a2b3", "a2b4"],
             ["b2b1", "b2b2", "b2b3", "b2b4"],
@@ -1265,8 +1292,8 @@ def test_setters(widg_type, widg_id):
     exec("app.set" + widg_type + "ActiveBg(\""+widg_id +"\", \"red\")")
 
 # only applicable for tabbed panes
-#    exec("app.set" + widg_type + "InactiveFg(\""+widg_id +"\", \"red\")")
-#    exec("app.set" + widg_type + "InactiveBg(\""+widg_id +"\", \"red\")")
+    exec("app.set" + widg_type + "InactiveFg(\""+widg_id +"\", \"red\")")
+    exec("app.set" + widg_type + "InactiveBg(\""+widg_id +"\", \"red\")")
 
     exec("app.set" + widg_type + "Width(\""+widg_id +"\", 20)")
     exec("app.set" + widg_type + "Height(\""+widg_id +"\", 20)")
@@ -1360,6 +1387,9 @@ def test_containers():
     app.addLabel("lf1_l2", TEXT_ONE)
     app.stopLabelFrame()
 
+    with pytest.raises(Exception) :
+        app.openLabelFrame("crash here")
+
     app.startToggleFrame("tf1")
     app.addLabel("tf1_l1", TEXT_ONE)
     app.stopToggleFrame()
@@ -1390,6 +1420,8 @@ def test_containers():
     app.stopTab()
     app.stopTabbedFrame()
 
+    app.setTabBg("tbf1", "tab2", "red")
+
     assert app.getTabbedFrameSelectedTab("tbf1") == "tab1"
     app.setTabbedFrameSelectedTab("tbf1", "tab2")
     assert app.getTabbedFrameSelectedTab("tbf1") == "tab2"
@@ -1410,6 +1442,8 @@ def test_containers():
     app.setTabbedFrameDisabledTab("tbf1", "tab3")
     app.setTabbedFrameDisableAllTabs("tbf1")
 
+    app.setTabbedFrameTabExpand("tbf1")
+
     app.startPanedFrame("p1")
     app.addLabel("p1_l1", TEXT_ONE)
     app.startPanedFrame("p2")
@@ -1419,6 +1453,10 @@ def test_containers():
     app.addLabel("p3_l1", TEXT_ONE)
     app.stopPanedFrame()
     app.stopAllPanedFrames()
+
+    app.openPanedFrame("p1")
+    app.addLabel("p1_l11", TEXT_ONE)
+    app.stopPanedFrame()
 
     app.startPagedWindow("pg1")
     app.startPage()
@@ -1446,6 +1484,8 @@ def test_containers():
     except: pass
 
     app.setPagedWindowTitle("pg1", TEXT_TWO)
+    with pytest.raises(Exception) :
+        app.setPagedWindowButtons("pg1", ["A"])
     app.setPagedWindowButtons("pg1", ["A", "B"])
     app.setPagedWindowButtonsTop("pg1")
     app.setPagedWindowButtonsTop("pg1", False)
@@ -1517,9 +1557,15 @@ def test_containers():
     app.startFrame("fr1")
     app.addLabel("fr1_l", TEXT_ONE)
     app.stopFrame()
+    app.openFrame("fr1")
+    app.addLabel("fr1_l2", TEXT_ONE)
+    app.stopFrame()
 
     app.startScrollPane("sp1")
     app.addLabel("sp_l", TEXT_ONE)
+    app.stopScrollPane()
+    app.openScrollPane("sp1")
+    app.addLabel("sp_l2", TEXT_ONE)
     app.stopScrollPane()
 
     sp = app.getWidget(app.SCROLLPANE, "sp1")
@@ -1583,6 +1629,20 @@ def test_microbits():
     print(" >> not implemented...")
     #print("\t >> all tests complete")
 
+def test_padding():
+    print("\tTesting padding:", PY_VER)
+    app.setIPadX()
+    app.setIPadY()
+    app.setIPadding(5, 5)
+
+    app.setInPadX()
+    app.setInPadY()
+
+    app.setIcon("icons/favicon.ico")
+
+    print(" >> not implemented...")
+    #print("\t >> all tests complete")
+
 
 def test_pop_ups():
     print("\tTesting popups")
@@ -1602,6 +1662,7 @@ def test_pop_ups():
 print("<<<Starting Widget Test Suite>>>")
 test_gui_options()
 test_widget_arranging()
+test_grid_layout()
 test_labels()
 test_entries()
 test_buttons()
@@ -1612,6 +1673,7 @@ test_spins()
 test_lists()
 test_scales()
 test_widget_arranging()
+test_padding()
 test_message_boxes()
 test_text_areas()
 test_meters()
