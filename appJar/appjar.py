@@ -7818,6 +7818,8 @@ class Properties(LabelFrame):
                 # and set them on all CheckBoxes if desired
                 for prop_key in self.cbs:
                     self.cbs[prop_key][k] = v
+                    if k == "bg" and gui.GET_PLATFORM() == gui.LINUX:
+                        self.cbs[prop_key].config(highlightbackground=v)
 
         # remove any props the LabelFrame can't handle
         kw.pop("state", None)
