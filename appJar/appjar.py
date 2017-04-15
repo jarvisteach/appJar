@@ -119,7 +119,7 @@ class gui(object):
 
     def SHOW_PATHS(self):
         pathString = \
-            "Filen Name: " + self.exe_file \
+            "File Name: " + self.exe_file \
             + "\nFile Location: " + self.exe_loc \
             + "\nLib: " + self.lib_path
 
@@ -1981,7 +1981,7 @@ class gui(object):
             if functions[1] is not None:
                 widget.bind("<ButtonRelease-1>", self.MAKE_FUNC(getLabel, functions[1], True), add="+")
         else:
-            self.warn("Only able to bind drag events to images")
+            self.warn("Only able to bind drag events to labels")
 
     # generic function for change/submit/events
     def __bindEvent(self, kind, name, widget, function, eventType, key=None):
@@ -5207,7 +5207,8 @@ class gui(object):
 #####################################
 # FUNCTIONS for Microbits
 #####################################
-    # adds a simple grip, used to drag the window around
+    # adds a simple microbit widget
+    # used with permission from Ben Goodwin
     def addMicroBit(self, title, row=None, column=0, colspan=0, rowspan=0):
         self.__verifyItem(self.n_microbits, title, True)
         mb = MicroBitSimulator(self.__getContainer())
