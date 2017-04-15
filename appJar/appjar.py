@@ -5409,6 +5409,8 @@ class gui(object):
         # add external dnd support
         self.__loadTkdnd()
         text.dndFunction = None
+        text.dropData = None
+
         if TkDND is not False:
             try:
                 dnd = TkDND(self.topLevel)
@@ -5424,6 +5426,7 @@ class gui(object):
 
     # function to receive DnD events
     def __textDnD(self, event):
+        event.widget.dropData = event.data
         if event.widget.dndFunction is not None:
             event.widget.dndFunction(event.data)
         else:
@@ -5659,6 +5662,8 @@ class gui(object):
         # add external dnd support
         self.__loadTkdnd()
         ent.dndFunction = None
+        ent.dropData = None
+
         if TkDND is not False:
             try:
                 dnd = TkDND(self.topLevel)
@@ -5681,6 +5686,7 @@ class gui(object):
 
     # function to receive DnD events
     def __entryDnD(self, event):
+        event.widget.dropData = event.data
         if event.widget.dndFunction is not None:
             event.widget.dndFunction(event.data)
         else:
