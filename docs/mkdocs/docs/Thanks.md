@@ -13,7 +13,8 @@ ____
 * [https://bitbucket.org/hokaze/tkinter-png](https://bitbucket.org/hokaze/tkinter-png) - allows PNGs to be treated as PhotoImages
 * [https://github.com/sullerandras/nanojpeg-python](https://github.com/sullerandras/nanojpeg-python) - provides BASIC jpeg support
 * [http://tkinter.unpythonic.net/wiki/ToolTip](http://tkinter.unpythonic.net/wiki/ToolTip) - provides ToolTips
-* [https://github.com/petasis/tkdnd] - provides Drag'nDrop support
+* [https://github.com/petasis/tkdnd](https://github.com/petasis/tkdnd) - provides Drag'n Drop support  
+* MicroBit Emulator Widget - Ben Goodwin  
 
 ##Icons
 * Credit to www.interactivemania.com for the icons - warning malware...  
