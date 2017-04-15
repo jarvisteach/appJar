@@ -16,10 +16,10 @@ There is a beta version of drag and drop between labels.
 
 ##Drag'n Drop Between Applications
 ---
-There is also a beta version of drag and drop between applications - at the moment, this is only working on Mac OSX.  
+There is also a beta version of drag and drop between applications - at the moment, this is has been seen to work on Mac OSX and Windows 7 - let us know of success on other versions of Windows!  
 
 **Entries** and **TextAreas** have been registered to receive *Drop* events automatically.  
-If you drag a file from the *Finder* or a URI form *Safari* onto either widget, then the filename/URI will be copied.  
+If you drag a file or a URI from a browser onto either widget, then the filename/URI will be copied.  
 
 If you set a function to receive the dnd event:  
 
