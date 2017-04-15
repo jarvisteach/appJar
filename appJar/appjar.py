@@ -5408,10 +5408,12 @@ class gui(object):
 
         # add external dnd support
         self.__loadTkdnd()
+        text.dndFunction = None
         if TkDND is not False:
             try:
                 dnd = TkDND(self.topLevel)
                 dnd.bindtarget(text, self.__textDnD, 'text/uri-list')
+                dnd.bindtarget(text, self.__textDnD, 'text/plain')
             except:
                 # dnd not working on this platform
                 pass
@@ -5422,7 +5424,14 @@ class gui(object):
 
     # function to receive DnD events
     def __textDnD(self, event):
-        event.widget.insert('1.0', event.data)
+        if event.widget.dndFunction is not None:
+            event.widget.dndFunction(event.data)
+        else:
+            event.widget.insert('1.0', event.data)
+
+    def setTextAreaDndFunction(self, title, function):
+        text = self.__verifyItem(self.n_textAreas, title)
+        text.dndFunction = function
 
     def addTextArea(self, title, row=None, column=0, colspan=0, rowspan=0):
         text = self.__buildTextArea(title, self.__getContainer())
@@ -5649,10 +5658,12 @@ class gui(object):
 
         # add external dnd support
         self.__loadTkdnd()
+        ent.dndFunction = None
         if TkDND is not False:
             try:
                 dnd = TkDND(self.topLevel)
                 dnd.bindtarget(ent, self.__entryDnD, 'text/uri-list')
+                dnd.bindtarget(text, self.__entryDnD, 'text/plain')
             except:
                 # dnd not working on this platform
                 pass
@@ -5664,9 +5675,16 @@ class gui(object):
         self.n_entryVars[title] = ent.var
         return ent
 
+    def setEntryDndFunction(self, title, function):
+        entry = self.__verifyItem(self.n_entries, title)
+        entry.dndFunction = function
+
     # function to receive DnD events
     def __entryDnD(self, event):
-        event.widget.insert(0, event.data)
+        if event.widget.dndFunction is not None:
+            event.widget.dndFunction(event.data)
+        else:
+            event.widget.insert(0, event.data)
 
     def addEntry(
             self,
