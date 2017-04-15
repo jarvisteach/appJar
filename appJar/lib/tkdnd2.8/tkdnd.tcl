@@ -60,7 +60,7 @@ namespace eval ::tkdnd {
   # ----------------------------------------------------------------------------
   #  Command tkdnd::initialise: Initialise the TkDND package.
   # ----------------------------------------------------------------------------
-  proc initialise { dir PKG_LIB_FILE PACKAGE_NAME} {
+  proc initialise { dir } {
     variable _platform_namespace
     variable _drop_file_temp_dir
     variable _windowingsystem
@@ -141,21 +141,28 @@ namespace eval ::tkdnd {
       x11 {
         source $dir/tkdnd_unix.tcl
         set _platform_namespace xdnd
+		load $dir/libtkdnd2.8[info sharedlibextension] tkdnd
       }
-      win32 -
+      win32 {
+		source $dir/tkdnd_windows.tcl
+        set _platform_namespace olednd
+		load $dir/libtkdnd2.8[info sharedlibextension] tkdnd
+	  }
       windows {
         source $dir/tkdnd_windows.tcl
         set _platform_namespace olednd
-      }
+		load $dir/libtkdnd2.8_win64.dll tkdnd
+	  }
       aqua  {
         source $dir/tkdnd_macosx.tcl
         set _platform_namespace macdnd
+		load $dir/libtkdnd2.8[info sharedlibextension] tkdnd
       }
       default {
         error "unknown Tk windowing system"
       }
     }
-    load $dir/$PKG_LIB_FILE $PACKAGE_NAME
+
     source $dir/tkdnd_compat.tcl
     ${_platform_namespace}::initialise
   };# initialise
