@@ -1638,7 +1638,7 @@ def test_padding():
     app.setInPadX()
     app.setInPadY()
 
-    app.setIcon("icons/favicon.ico")
+    app.setIcon("images/favicon.ico")
 
     print(" >> not implemented...")
     #print("\t >> all tests complete")
