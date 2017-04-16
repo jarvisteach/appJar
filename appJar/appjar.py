@@ -597,6 +597,7 @@ class gui(object):
                 tkdndlib = os.path.join(os.path.dirname(os.path.abspath(__file__)), "lib", "tkdnd2.8")
                 os.environ['TKDND_LIBRARY'] = tkdndlib
                 from appJar.lib.TkDND_wrapper import TkDND
+                self.dnd = TkDND(self.topLevel)
             except:
                 TkDND = False
 
@@ -5472,23 +5473,19 @@ class gui(object):
 
     def __registerDropTarget(self, title, widget, function=None, replace=True):
         self.__loadTkdnd()
-        done = False
 
         if TkDND is not False:
             try:
-                if self.dnd is None:
-                    self.dnd = TkDND(self.topLevel)
                 self.dnd.bindtarget(widget, self.__dndDrop, 'text/uri-list')
                 self.dnd.bindtarget(widget, self.__dndDrop, 'text/plain')
                 widget.dndFunction = function
                 widget.dropData = None
                 widget.dropReplace = replace
-                done = True
             except:
                 # dnd not working on this platform
-                pass
-        if not done:
-            raise Exception("Drag'n Drop not available for: " + str(title))
+                raise Exception("Failed to register Drag'n Drop for: " + str(title))
+        else:
+            raise Exception("Drag'n Drop not available on this platform")
 
     def addTextArea(self, title, row=None, column=0, colspan=0, rowspan=0):
         text = self.__buildTextArea(title, self.__getContainer())
