@@ -3,7 +3,7 @@
 Drag and Drop functionality is something we're accustomed to in most software.  
 By default, python and tkinter don't provide it.
 
-We've incorporated a couple of ways of including drag and drop functionality in **appJar**.  
+We've incorporated a couple of ways to include drag and drop functionality in **appJar**.  
 
 ##Drag'n Drop Between Widgets
 ---
@@ -18,16 +18,18 @@ There is a beta version of drag and drop between labels.
 ---
 There is also a beta version of drag and drop between applications - at the moment, this is has been seen to work on Mac OSX and Windows 7 - let us know of success on other versions of Windows!  
 
-**Entries** and **TextAreas** have been registered to receive *Drop* events automatically.  
-If you drag a file or a URI from a browser onto either widget, then the filename/URI will be copied.  
+Certain widgets can be registered to receive *Drop* events:  
 
-If you set a function to receive the dnd event:  
+* `.setEntryDropTarget(title, function=None, replace=True)`  
+* `.setTextAreaDropTarget(title, function=None, replace=True)`  
+* `.setImageDropTarget(title, function=None, replace=True)`  
+* `.setLabelDropTarget(title, function=None, replace=True)`  
 
-* `.setEntryDndFunction(title, function)`  
-* `.setTextAreaDndFunction(title, function)`  
+Then, if you drag a file or a URI onto one of these widgets, the filename/URI will be copied.  
 
-Then the filename/URI will be passed to your function.  
-Otherwise, the filename/URI will be pasted into the **Entry**/**TextArea**.  
+If no function has been set, the contents of the widget will be replaced with the filename/URI.  
+If you'd rather append the URI/filename - set `replace` to be False.  
+If a function has been set, it will be called, passing in the filename/URI as the only paramter.  
 
 There is currently no support for registering *Drag* events.  
 

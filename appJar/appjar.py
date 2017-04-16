@@ -600,6 +600,45 @@ class gui(object):
             except:
                 TkDND = False
 
+    # function to receive DnD events
+    def __dndDrop(self, event):
+        widgType = event.widget.__class__.__name__
+        event.widget.dropData = event.data
+        if not hasattr(event.widget, 'dndFunction'):
+            self.warn("Error - dropTarget not correctly configured: " + str(widgType))
+        elif event.widget.dndFunction is not None:
+            event.widget.dndFunction(event.data)
+        else:
+            if widgType in ["Entry", "AutoCompleteEntry"]:
+                if event.widget.dropReplace:
+                    event.widget.delete(0, END)
+                event.widget.insert(END, event.data)
+                event.widget.focus_set()
+                event.widget.icursor(END)
+            elif widgType in ["TextArea", "AjText", "ScrolledText", "AjScrolledText"]:
+                if event.widget.dropReplace:
+                    event.widget.delete(1.0, END)
+                event.widget.insert(END, event.data)
+                event.widget.focus_set()
+                event.widget.see(END)
+            elif widgType in ["Label"]:
+                for k, v in self.n_images.items():
+                    if v == event.widget:
+                        try:
+                            imgTemp = self.userImages
+                            image = self.__getImage(event.data, False)
+                            self.__populateImage(k, image)
+                            self.userImages = imgTemp
+                        except:
+                            self.errorBox("Error loading image", "Unable to load image: " + str(event.data))
+                        return
+                for k, v in self.n_labels.items():
+                    if v == event.widget:
+                        self.setLabel(k, event.data)
+                        return
+            else:
+                self.warn("Unable to receive drop events: " + str(widgType))
+
     def __loadNanojpeg(self):
         global nanojpeg
         if nanojpeg is None:
@@ -920,6 +959,9 @@ class gui(object):
         self.n_menus = {}
         self.n_menuVars = {}
         self.n_accelerators = []
+
+        # the dnd manager
+        self.dnd = None
 
     def setLanguage(self, language):
         try:
@@ -5406,35 +5448,47 @@ class gui(object):
         text.var = None
         self.__addRightClickMenu(text)
 
-        # add external dnd support
+        self.n_textAreas[title] = text
+        self.logTextArea(title)
+
+        return text
+
+    # add external dnd support
+    def setTextAreaDropTarget(self, title, function=None, replace=True):
+        text = self.__verifyItem(self.n_textAreas, title)
+        self.__registerDropTarget(title, text, function, True)
+
+    def setImageDropTarget(self, title, function=None, replace=True):
+        img = self.__verifyItem(self.n_images, title)
+        self.__registerDropTarget(title, img, function, True)
+
+    def setLabelDropTarget(self, title, function=None, replace=True):
+        lbl = self.__verifyItem(self.n_labels, title)
+        self.__registerDropTarget(title, lbl, function, True)
+
+    def setEntryDropTarget(self, title, function=None, replace=True):
+        entry = self.__verifyItem(self.n_entries, title)
+        self.__registerDropTarget(title, entry, function, replace)
+
+    def __registerDropTarget(self, title, widget, function=None, replace=True):
         self.__loadTkdnd()
-        text.dndFunction = None
-        text.dropData = None
+        done = False
 
         if TkDND is not False:
             try:
-                dnd = TkDND(self.topLevel)
-                dnd.bindtarget(text, self.__textDnD, 'text/uri-list')
-                dnd.bindtarget(text, self.__textDnD, 'text/plain')
+                if self.dnd is None:
+                    self.dnd = TkDND(self.topLevel)
+                self.dnd.bindtarget(widget, self.__dndDrop, 'text/uri-list')
+                self.dnd.bindtarget(widget, self.__dndDrop, 'text/plain')
+                widget.dndFunction = function
+                widget.dropData = None
+                widget.dropReplace = replace
+                done = True
             except:
                 # dnd not working on this platform
                 pass
-
-        self.n_textAreas[title] = text
-        self.logTextArea(title)
-        return text
-
-    # function to receive DnD events
-    def __textDnD(self, event):
-        event.widget.dropData = event.data
-        if event.widget.dndFunction is not None:
-            event.widget.dndFunction(event.data)
-        else:
-            event.widget.insert('1.0', event.data)
-
-    def setTextAreaDndFunction(self, title, function):
-        text = self.__verifyItem(self.n_textAreas, title)
-        text.dndFunction = function
+        if not done:
+            raise Exception("Drag'n Drop not available for: " + str(title))
 
     def addTextArea(self, title, row=None, column=0, colspan=0, rowspan=0):
         text = self.__buildTextArea(title, self.__getContainer())
@@ -5659,38 +5713,12 @@ class gui(object):
         ent.bind("<Tab>", self.__focusNextWindow)
         ent.bind("<Shift-Tab>", self.__focusLastWindow)
 
-        # add external dnd support
-        self.__loadTkdnd()
-        ent.dndFunction = None
-        ent.dropData = None
-
-        if TkDND is not False:
-            try:
-                dnd = TkDND(self.topLevel)
-                dnd.bindtarget(ent, self.__entryDnD, 'text/uri-list')
-                dnd.bindtarget(text, self.__entryDnD, 'text/plain')
-            except:
-                # dnd not working on this platform
-                pass
-
         # add a right click menu
         self.__addRightClickMenu(ent)
 
         self.n_entries[title] = ent
         self.n_entryVars[title] = ent.var
         return ent
-
-    def setEntryDndFunction(self, title, function):
-        entry = self.__verifyItem(self.n_entries, title)
-        entry.dndFunction = function
-
-    # function to receive DnD events
-    def __entryDnD(self, event):
-        event.widget.dropData = event.data
-        if event.widget.dndFunction is not None:
-            event.widget.dndFunction(event.data)
-        else:
-            event.widget.insert(0, event.data)
 
     def addEntry(
             self,
