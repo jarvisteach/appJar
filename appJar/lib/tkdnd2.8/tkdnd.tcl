@@ -64,6 +64,10 @@ namespace eval ::tkdnd {
     variable _platform_namespace
     variable _drop_file_temp_dir
     variable _windowingsystem
+
+    variable lib_dir tcl_libs
+    variable tcl_dir tcl_files
+
     global env
 
     switch [tk windowingsystem] {
@@ -136,34 +140,34 @@ namespace eval ::tkdnd {
     }
     set _drop_file_temp_dir [file native $_drop_file_temp_dir]
 
-    source $dir/tkdnd_generic.tcl
+    source $dir/$tcl_dir/tkdnd_generic.tcl
     switch $_windowingsystem {
       x11 {
-        source $dir/tkdnd_unix.tcl
+        source $dir/$tcl_dir/tkdnd_unix.tcl
         set _platform_namespace xdnd
-		load $dir/libtkdnd2.8_lin64.so tkdnd
+		load $dir/$lib_dir/libtkdnd2.8_lin64.so tkdnd
       }
       win32 {
-		source $dir/tkdnd_windows.tcl
+		source $dir/$tcl_dir/tkdnd_windows.tcl
         set _platform_namespace olednd
-		load $dir/libtkdnd2.8[info sharedlibextension] tkdnd
+		load $dir/$lib_dir/libtkdnd2.8[info sharedlibextension] tkdnd
 	  }
       windows {
-        source $dir/tkdnd_windows.tcl
+        source $dir/$tcl_dir/tkdnd_windows.tcl
         set _platform_namespace olednd
-		load $dir/libtkdnd2.8_win64.dll tkdnd
+		load $dir/$lib_dir/libtkdnd2.8_win64.dll tkdnd
 	  }
       aqua  {
-        source $dir/tkdnd_macosx.tcl
+        source $dir/$tcl_dir/tkdnd_macosx.tcl
         set _platform_namespace macdnd
-		load $dir/libtkdnd2.8[info sharedlibextension] tkdnd
+		load $dir/$lib_dir/libtkdnd2.8[info sharedlibextension] tkdnd
       }
       default {
         error "unknown Tk windowing system"
       }
     }
 
-    source $dir/tkdnd_compat.tcl
+    source $dir/$tcl_dir/tkdnd_compat.tcl
     ${_platform_namespace}::initialise
   };# initialise
 
