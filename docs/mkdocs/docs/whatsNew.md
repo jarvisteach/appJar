@@ -2,12 +2,16 @@
 ---
 
 ## Next Release (0.6)  
+* New widgets: [MicroBit](/pythonDevWidgets/#microbit-emulator), [Validation Entries](/pythonWidgets/#entry)  
+* Widget enhancements: Can now set some rules for [entries](/pythonWidgets/#set-entries)  
+* New documentation: [packaging](/packaging), [special characters](/specialCharacters), [events](/pythonEvents), [drag'n drop](/pythonDnD)  
+* Work on events: [stopping event propagation](/pythonEvents/#breakdown), [drag/over events](/pythonEvents/#make-stuff-happen), [drag'n drop](/pythonDnD)  
 * Issues Resolved:  
     * [#143](https://github.com/jarvisteach/appJar/issues/143) - Fixed bug with setting defaults on AutoEntries  
     * [#142](https://github.com/jarvisteach/appJar/issues/142) - Finished documentation for [popups](/pythonDialogs/#file=boxes)
     * [#130](https://github.com/jarvisteach/appJar/issues/130) - Documented how to use [special characters](/specialCharacters)  
     * [#123](https://github.com/jarvisteach/appJar/issues/123) - New features for [setting entries](/pythonWidgets/#set-entries) - max length, auto uppercase/lowercase, validation  
-    * [#119](https://github.com/jarvisteach/appJar/issues/119) - [MicroBit](/pythonDevWidgets/) widget added
+    * [#119](https://github.com/jarvisteach/appJar/issues/119) - [MicroBit](/pythonDevWidgets/#microbit-emulator) widget added
     * [#118](https://github.com/jarvisteach/appJar/issues/118) - dynamic library imports
     * [#117](https://github.com/jarvisteach/appJar/issues/117) - introduced documentation on [packaging](/packaging/)
     * [#116](https://github.com/jarvisteach/appJar/issues/116) - configurable trough [increments](/pythonWidgets/#set-scales) for a scale
