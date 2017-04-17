@@ -1,4 +1,5 @@
 import sys
+import time
 sys.path.append("../../")
 from appJar import gui
 
@@ -116,14 +117,26 @@ def move(direction):
         app.clearListBox("Animals")
 
 def add(entry):
-    if entry == "animalsEntry": app.addListItem("Animals", app.getEntry("animalsEntry"))
-    elif entry == "sportsEntry": app.addListItem("Sports", app.getEntry("sportsEntry"))
+    if entry == "animalsEntry":
+        app.addListItem("Animals", app.getEntry("animalsEntry"))
+        app.clearEntry("animalsEntry")
+    elif entry == "sportsEntry":
+        app.addListItem("Sports", app.getEntry("sportsEntry"))
+        app.clearEntry("sportsEntry")
 
 # funciton to change the selected tab - called from menu
 def changeTab(tabName):
     print("Changing to: ", tabName)
     app.setTabbedFrameSelectedTab("Tabs", tabName)
     print("done")
+
+# function to get a help message on log-in page
+def helpMe(nbtn):
+    app.infoBox("Login Help", "Any username/password will do...")
+
+# function to update status bar with the time
+def showTime():
+    app.setStatusbar(time.strftime("%X"))
 
 ###########################
 ## GUI Code starts here ##
@@ -134,6 +147,7 @@ app.showSplash("appJar Showcase")
 
 # add a simple toolbar
 app.addToolbar(["EXIT", "LOGOUT", "FILL", "PIE-CHART", "CALENDAR", "ADDRESS-BOOK", "FULL-SCREEN"], toolbar, findIcon=True)
+
 #app.createMenu("Test")
 app.addMenuPreferences(toolbar)
 #app.addMenuItem("APPMENU", "About", toolbar)
@@ -165,6 +179,9 @@ app.addMenuList("List Items", ["-", "aaa", "-", "bbb", "-", "ccc", "-", "ddd", "
 
 app.addMenuWindow()
 app.addMenuHelp(toolbar)
+app.addMenuItem("WIN_SYS", "About", app.appJarAbout)
+
+app.addMenuList("Help", ["Help", "About"], [app.appJarHelp, app.appJarAbout])
 
 try:
     app.setMenuIcon("Test", "EXIT", "EXIT", "left")
@@ -175,6 +192,10 @@ except:
 
 app.disableMenuItem("List Items", "aaa")
 app.disableMenubar()
+
+# add a statusbar to show the time
+app.addStatusbar(side="RIGHT")
+app.registerEvent(showTime)
 
 # start the tabbed frame
 app.startTabbedFrame("Tabs")
@@ -191,6 +212,8 @@ app.addLabel("password", "Password", 1, 0)
 app.addSecretEntry("password", 1, 1)
 app.addButtons(["Submit", "Clear"], login, 2, 0, 2)
 app.setEntryFocus("username")
+app.setSticky("e")
+app.addLink("help", helpMe, column=1)
 app.stopLabelFrame()
 app.stopTab()
 
@@ -215,8 +238,12 @@ app.setListBoxBg("Animals", "Orange")
 app.setListBoxBg("Sports", "Orange")
 app.setEntryBg("animalsEntry", "LightGrey")
 app.setEntryBg("sportsEntry", "LightGrey")
-app.setEntryFunction("animalsEntry", add)
-app.setEntryFunction("sportsEntry", add)
+app.setEntrySubmitFunction("animalsEntry", add)
+app.setEntrySubmitFunction("sportsEntry", add)
+
+app.setEntryDefault("animalsEntry", "-- add an item --")
+app.setEntryDefault("sportsEntry", "-- add an item --")
+
 app.stopTab()
 
 #### PROPERTIES TAB
@@ -224,17 +251,19 @@ app.startTab("Properties")
 app.addLabel("t", "Transparency",0,0)
 app.addScale("TransparencyScale",0,1)
 app.setScale("TransparencyScale", 100)
-app.setScaleFunction("TransparencyScale", scale)
+app.setScaleChangeFunction("TransparencyScale", scale)
+app.showScaleIntervals("TransparencyScale", 25)
 
 app.addLabel("t2", "Transparency",1,0)
-app.addSpinBoxRange("TransparencySpin", 1, 100, 1, 1)
+app.addSpinBoxRange("TransparencySpin", 0, 100, 1, 1)
 app.setSpinBox("TransparencySpin", 100)
-app.setSpinBoxFunction("TransparencySpin", scale)
+app.setSpinBoxChangeFunction("TransparencySpin", scale)
 
 app.addLabel("f","Font",2,0)
 app.addScale("FontScale",2,1)
 app.setScaleRange("FontScale", 6, 40, 12)
-app.setScaleFunction("FontScale", scale)
+app.setScaleChangeFunction("FontScale", scale)
+app.showScaleValue("FontScale")
 app.stopTab()
 
 #### METERS TAB
@@ -273,7 +302,7 @@ app.setSticky("news")
 app.addButton("RESET", resetDD, 0,0)
 app.addLabel("RESET", "RESET", 0,1)
 app.setLabelBg("RESET", "grey")
-app.setLabelFunction("RESET", resetDD)
+app.setLabelSubmitFunction("RESET", resetDD)
 app.addLink("RESET", resetDD, 0,2)
 app.stopLabelFrame()
 app.stopTab()
@@ -343,7 +372,7 @@ app.stopTab()
 app.stopTabbedFrame()
 
 # set up the sub window - by default it's hidden
-app.startSubWindow("Statistics")
+app.startSubWindow("Statistics", transient=True)
 #app.setBg("yellow")
 app.setSticky("news")
 app.setGeometry("300x330")
@@ -357,7 +386,7 @@ app.addButton("Update", changePie)
 app.stopSubWindow()
 
 # date picker
-app.startSubWindow("DatePicker")
+app.startSubWindow("DatePicker", transient=True, modal=True)
 app.addDatePicker("dp")
 app.setDatePicker("dp")
 def getDate(btn=None):
@@ -368,7 +397,7 @@ app.setStopFunction(getDate)
 app.stopSubWindow()
 
 # paged window
-app.startSubWindow("AddressBook")
+app.startSubWindow("AddressBook", transient=True)
 app.startPagedWindow("AddressBook")
 app.startPage("Page 1")
 app.addLabel("PP1", "PP1")

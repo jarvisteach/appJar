@@ -526,7 +526,7 @@ class gui(object):
         self.built = True
         if self.platform == self.WINDOWS:
             try:
-                self.topLevel.wm_iconbitmap(self.appJarIcon)
+                self.setIcon(self.appJarIcon)
             except: # file not found
                 self.debug("Error setting Windows default icon")
 
@@ -904,6 +904,9 @@ class gui(object):
 
         # splash screen?
         self.splashConfig = None
+
+        # store the path to any icon
+        self.winIcon = None
 
         # collections of widgets, widget name is key
         self.n_frames = []  # un-named, so no direct access
@@ -1638,6 +1641,7 @@ class gui(object):
 
     # set an icon
     def setIcon(self, image):
+        self.winIcon = image
         container = self.__getTopLevel()
         if image.endswith('.ico'):
             container.wm_iconbitmap(image)
@@ -3338,6 +3342,8 @@ class gui(object):
 
         # now, add to top of stack
         self.__addContainer(name, self.C_SUBWINDOW, top, 0, 1, "")
+        if self.winIcon is not None:
+            self.setIcon(self.winIcon)
 
     def stopSubWindow(self):
         if self.containerStack[-1]['type'] == self.C_SUBWINDOW:
@@ -5288,10 +5294,10 @@ class gui(object):
         self.addLabel(name + "_DP_YearLabel", "Year:", 2, 0)
         self.setLabelAlign(name + "_DP_YearLabel", "w")
         self.addOptionBox(name + "_DP_YearOptionBox", years, 2, 1)
-        self.setOptionBoxFunction(
+        self.setOptionBoxChangeFunction(
             name + "_DP_MonthOptionBox",
             self.__updateDatePickerDays)
-        self.setOptionBoxFunction(
+        self.setOptionBoxChangeFunction(
             name + "_DP_YearOptionBox",
             self.__updateDatePickerDays)
         self.stopFrame()

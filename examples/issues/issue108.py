@@ -17,7 +17,7 @@ app.addEntry("e1")
 app.addButtons(["HIDE", "SHOW"], [app.hide, app.show])
 app.stopSubWindow()
 
-app.startSubWindow("unModal", grouped=True)
+app.startSubWindow("unModal", grouped=True, transient=True)
 app.addLabel("l2", "SubWindow Two")
 app.addEntry("e2")
 app.addButtons(["HIDE2", "SHOW2"], [app.hide, app.show])
