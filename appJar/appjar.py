@@ -6435,6 +6435,11 @@ class gui(object):
     def createMenu(self, title, tearable=False, showInBar=True):
         self.__verifyItem(self.n_menus, title, True)
         self.__initMenu()
+
+        if title == "WIN_SYS" and self.platform != self.WINDOWS:
+            self.warn("The WIN_SYS menu is specific to Windows")
+            return None
+
         if self.platform == self.MAC and tearable:
             self.warn("Tearable menus (" + title + ") not supported on MAC")
             tearable = False
@@ -6446,7 +6451,7 @@ class gui(object):
 
     def createRightClickMenu(self, title, showInBar=False):
         men = self.createMenu(title, False, showInBar)
-        if gui.GET_PLATFORM() == gui.LINUX:
+        if men is not None and gui.GET_PLATFORM() == gui.LINUX:
             self.addMenuSeparator(title)
         return men
 
@@ -6470,6 +6475,8 @@ class gui(object):
                 theMenu = self.__verifyItem(self.n_menus, title, False)
             except:
                 theMenu = self.createMenu(title)
+                if theMenu is None:
+                    return
 
         if underline > -1 and self.platform == self.MAC:
             self.warn("Underlining menu items not available on MAC")
