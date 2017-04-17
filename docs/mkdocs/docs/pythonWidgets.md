@@ -281,7 +281,7 @@ app.go()
     app.addRadioButton("song", "Paradise City")
 
     # call this function, when the RadioButton changes
-    app.setRadioButtonFunction("song", press)
+    app.setRadioButtonChangeFunction("song", press)
 
     app.addButton("PLAY", press)
     app.go()
@@ -543,10 +543,11 @@ app.go()
 
 * `.setScaleIncrement(title, increment)`  
     Configures how much the scale jumps, when the trough is clicked.  
-    Defaults to 10.  
+    It defaults to 10%.  
 
 * `.showScaleIntervals(title, intervals)`  
     Configures the Scale to show interval labels along its length.  
+    `intervals` should be how often to show a value, eg. `25` would show 0, 25, 50, and so on...  
     ![Scale](img/4_scale.png)  
 
 * `.showScaleValue(title, show=True)`  
@@ -561,7 +562,7 @@ app.go()
 * `.setScaleWidth(title, width)` & `.setScaleLength(title, length)`  
     Sets a width/length for the scale's slider.  
 
-* `.setScaleFunction(title, func)`  
+* `.setScaleChangeFunction(title, func)`  
     Sets a function to call, each time the scale is changed.  
     The function must take one parameter, which will be populated with the scale's title.  
 
