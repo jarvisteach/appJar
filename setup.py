@@ -26,6 +26,6 @@ setup(
 
     ],
     package_data = {
-        "appJar": ["lib/*", "resources/icons/*", "examples/showcase.py"]
+        "appJar": ["lib/*", "lib/tkdnd2.8/*", "lib/tkdnd2.8/tcl_files/*", "lib/tkdnd2.8/tcl_libs/*", "resources/icons/*", "examples/showcase.py"]
     }
 )
