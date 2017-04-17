@@ -5,6 +5,8 @@ appJar/__init__.py
 appJar/appjar.py
 appJar/examples/showcase.py
 appJar/lib/README.txt
+appJar/lib/TkDND_wrapper.py
+appJar/lib/TkDND_wrapper.pyc
 appJar/lib/__init__.py
 appJar/lib/__init__.pyc
 appJar/lib/license.txt
@@ -524,6 +526,7 @@ appJar/resources/icons/pattern.png
 appJar/resources/icons/pen.png
 appJar/resources/icons/pie-chart.png
 appJar/resources/icons/pill.png
+appJar/resources/icons/pin.gif
 appJar/resources/icons/pinetree.png
 appJar/resources/icons/plugin-disabled.png
 appJar/resources/icons/plugin.png
@@ -634,6 +637,7 @@ appJar/resources/icons/unfold-from-left.png
 appJar/resources/icons/unfold-from-right.png
 appJar/resources/icons/unfold-from-top.png
 appJar/resources/icons/unfold-multiple.png
+appJar/resources/icons/unpin.gif
 appJar/resources/icons/user-alt-1.png
 appJar/resources/icons/user-alt-2.png
 appJar/resources/icons/user-alt-3.png
