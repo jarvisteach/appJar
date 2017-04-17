@@ -1,7 +1,7 @@
 #Change-Log
 ---
 
-## Next Release (0.6)  
+## Version (0.06)  
 * New widgets: [MicroBit](/pythonDevWidgets/#microbit-emulator), [Validation Entries](/pythonWidgets/#entry)  
 * Widget enhancements: Can now set some rules for [entries](/pythonWidgets/#set-entries)  
 * New documentation: [packaging](/packaging), [special characters](/specialCharacters), [events](/pythonEvents), [drag'n drop](/pythonDnD)  
@@ -30,7 +30,6 @@
     * [#42](https://github.com/jarvisteach/appJar/issues/42) - Added functionality to [change TickOptionBoxes](/pythonWidgets/#set-optionboxes)
     * [#33](https://github.com/jarvisteach/appJar/issues/33) - Added convenience function to [setTreeColours](/pythonDevWidgets/#tree)  
 
----
 ## Version (0.052)  
 * Issues Resolved:  
     * [#114](https://github.com/jarvisteach/appJar/issues/114) - ability to stop functions being called when a set method is activated
