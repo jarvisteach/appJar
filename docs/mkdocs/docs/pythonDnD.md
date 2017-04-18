@@ -24,6 +24,8 @@ Certain widgets can be registered to receive *Drop* events:
 * `.setTextAreaDropTarget(title, function=None, replace=True)`  
 * `.setImageDropTarget(title, function=None, replace=True)`  
 * `.setLabelDropTarget(title, function=None, replace=True)`  
+* `.setMessageDropTarget(title, function=None)`  
+* `.setListBoxDropTarget(title, function=None, replace=True)`  
 
 Then, if you drag a file or a URI onto one of these widgets, the filename/URI will be copied.  
 
@@ -32,6 +34,8 @@ If you'd rather append the URI/filename - set `replace` to be False.
 If a function has been set, it will be called, passing in the filename/URI as the only paramter.  
 
 There is currently no support for registering *Drag* events.  
+
+* `.set XXX DragSource(title, function=None)`  
 
 ##Beta
 ---

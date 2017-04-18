@@ -601,7 +601,43 @@ class gui(object):
             except:
                 TkDND = False
 
+    def __registerDragSource(self, title, widget, function=None):
+        self.__loadTkdnd()
+
+        if TkDND is not False:
+            try:
+                self.dnd.bindsource(widget, self.__dndDrag, 'text/uri-list')
+                self.dnd.bindsource(widget, self.__dndDrag, 'text/plain')
+                widget.dndFunction = function
+                widget.dragData = None
+            except:
+                # dnd not working on this platform
+                raise Exception("Failed to register Drag'n Drop for: " + str(title))
+        else:
+            raise Exception("Drag'n Drop not available on this platform")
+
+
+    def __registerDropTarget(self, title, widget, function=None, replace=True):
+        self.__loadTkdnd()
+
+        if TkDND is not False:
+            try:
+                self.dnd.bindtarget(widget, self.__dndDrop, 'text/uri-list')
+                self.dnd.bindtarget(widget, self.__dndDrop, 'text/plain')
+                widget.dndFunction = function
+                widget.dropData = None
+                widget.dropReplace = replace
+            except:
+                # dnd not working on this platform
+                raise Exception("Failed to register Drag'n Drop for: " + str(title))
+        else:
+            raise Exception("Drag'n Drop not available on this platform")
+
     # function to receive DnD events
+    def __dndDrag(self, event):
+        widgType = event.widget.__class__.__name__
+        self.warn("Unable to initiate drag events: " + str(widgType))
+
     def __dndDrop(self, event):
         widgType = event.widget.__class__.__name__
         event.widget.dropData = event.data
@@ -636,6 +672,16 @@ class gui(object):
                 for k, v in self.n_labels.items():
                     if v == event.widget:
                         self.setLabel(k, event.data)
+                        return
+            elif widgType in ["Listbox"]:
+                for k, v in self.n_lbs.items():
+                    if v == event.widget:
+                        self.addListItem(k, event.data)
+                        return
+            elif widgType in ["Message"]:
+                for k, v in self.n_messages.items():
+                    if v == event.widget:
+                        self.setMessage(k, event.data)
                         return
             else:
                 self.warn("Unable to receive drop events: " + str(widgType))
@@ -1983,6 +2029,12 @@ class gui(object):
                             menu=value: self.__rightClick(
                                 e,
                                 menu))
+                elif option == 'dropTarget':
+                    self.__registerDropTarget(name, item, value[0], value[1])
+
+                elif option == 'dragSource':
+                    self.__registerDragSource(name, item, value)
+
             except TclError as e:
                 self.warn("Error configuring " + name + ": " + str(e))
 
@@ -2188,6 +2240,17 @@ class gui(object):
                 "InPadding(self, name, x, y=None): self.configureWidgets(" +
                 str(k) + ", name, 'ipadding', [x, y])")
             exec("gui.set" + v + "InPadding=set" + v + "InPadding")
+
+            # drag and drop stuff
+            exec( "def set" + v +
+                "DropTarget(self, name, function=None, replace=True): self.configureWidgets(" +
+                str(k) + ", name, 'dropTarget', [function, replace])")
+            exec("gui.set" + v + "DropTarget=set" + v + "DropTarget")
+
+            exec( "def set" + v +
+                "DragSource(self, name, function=None): self.configureWidgets(" +
+                str(k) + ", name, 'dragSource', function)")
+            exec("gui.set" + v + "DragSource=set" + v + "DragSource")
 
             # might not all be necessary, could make exclusion list
             exec( "def set" + v +
@@ -5459,39 +5522,6 @@ class gui(object):
         self.logTextArea(title)
 
         return text
-
-    # add external dnd support
-    def setTextAreaDropTarget(self, title, function=None, replace=True):
-        text = self.__verifyItem(self.n_textAreas, title)
-        self.__registerDropTarget(title, text, function, True)
-
-    def setImageDropTarget(self, title, function=None, replace=True):
-        img = self.__verifyItem(self.n_images, title)
-        self.__registerDropTarget(title, img, function, True)
-
-    def setLabelDropTarget(self, title, function=None, replace=True):
-        lbl = self.__verifyItem(self.n_labels, title)
-        self.__registerDropTarget(title, lbl, function, True)
-
-    def setEntryDropTarget(self, title, function=None, replace=True):
-        entry = self.__verifyItem(self.n_entries, title)
-        self.__registerDropTarget(title, entry, function, replace)
-
-    def __registerDropTarget(self, title, widget, function=None, replace=True):
-        self.__loadTkdnd()
-
-        if TkDND is not False:
-            try:
-                self.dnd.bindtarget(widget, self.__dndDrop, 'text/uri-list')
-                self.dnd.bindtarget(widget, self.__dndDrop, 'text/plain')
-                widget.dndFunction = function
-                widget.dropData = None
-                widget.dropReplace = replace
-            except:
-                # dnd not working on this platform
-                raise Exception("Failed to register Drag'n Drop for: " + str(title))
-        else:
-            raise Exception("Drag'n Drop not available on this platform")
 
     def addTextArea(self, title, row=None, column=0, colspan=0, rowspan=0):
         text = self.__buildTextArea(title, self.__getContainer())
