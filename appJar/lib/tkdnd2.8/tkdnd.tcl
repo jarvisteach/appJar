@@ -145,7 +145,7 @@ namespace eval ::tkdnd {
       x11 {
         source $dir/$tcl_dir/tkdnd_unix.tcl
         set _platform_namespace xdnd
-		load $dir/$lib_dir/libtkdnd2.8_lin64.so tkdnd
+		load $dir/$lib_dir/libtkdnd2.8_arm[info sharedlibextension] tkdnd
       }
       win32 {
 		source $dir/$tcl_dir/tkdnd_windows.tcl
