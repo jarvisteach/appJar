@@ -16,7 +16,7 @@ There is a beta version of drag and drop between labels.
 
 ##Drag'n Drop Between Applications
 ---
-There is also a beta version of drag and drop between applications - at the moment, this is has been seen to work on Mac OSX and Windows 7 - let us know of success on other versions of Windows!  
+There is also a beta version of drag and drop between applications - at the moment, this is has been seen to work on OSX 10.11, Windows 7 & Raspberry Pi - let us know of success on other distributions!  
 
 Certain widgets can be registered to receive *Drop* events:  
 
