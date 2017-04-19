@@ -1134,6 +1134,11 @@ class gui(object):
             else:
                 self.warn("Unsupported widget: " + section)
                 continue
+    
+
+    # function to turn on the splash screen
+    def showSplash(self, text="appJar", fill="red", stripe="black", fg="white", font=44):
+        self.splashConfig= {'text':text, 'fill':fill, 'stripe':stripe, 'fg':fg, 'font':font}
 
     #########################
     ### Stuff for logging
@@ -1183,9 +1188,6 @@ class gui(object):
         elif level == "INFO": logger.info(msg)
         elif level == "DEBUG": logger.debug(msg)
 
-    # function to turn on the splash screen
-    def showSplash(self, text="appJar", fill="red", stripe="black", fg="white", font=44):
-        self.splashConfig= {'text':text, 'fill':fill, 'stripe':stripe, 'fg':fg, 'font':font}
 
 #####################################
 # Event Loop - must always be called at end
@@ -1502,20 +1504,21 @@ class gui(object):
             container.attributes('-fullscreen', False)
             if container.escapeBindId is not None:
                 container.unbind('<Escape>', container.escapeBindId)
-            myWarn = self.__pauseWarn()
-            self.__doTitleBar()
-            self.__resumeWarn(myWarn)
+#            myWarn = self.__pauseWarn()
+            with PauseLogger():
+                self.__doTitleBar()
+#            self.__resumeWarn(myWarn)
             return True
         else:
             return False
 
-    def __pauseWarn(self):
-        myWarn = self.WARN
-        self.WARN = False
-        return myWarn
-
-    def __resumeWarn(self, myWarn):
-        self.WARN = myWarn
+#    def __pauseWarn(self):
+#        myWarn = self.WARN
+#        self.WARN = False
+#        return myWarn
+#
+#    def __resumeWarn(self, myWarn):
+#        self.WARN = myWarn
 
     # set the current container's external grid padding
     def setPadX(self, x=0):
@@ -5407,9 +5410,10 @@ class gui(object):
         self.changeOptionBox(title + "_DP_DayOptionBox", days)
 
         # keep previous day if possible
-        myWarn = self.__pauseWarn()
-        self.setOptionBox(title + "_DP_DayOptionBox", day)
-        self.__resumeWarn(myWarn)
+#        myWarn = self.__pauseWarn()
+        with PauseLogger():
+            self.setOptionBox(title + "_DP_DayOptionBox", day)
+#        self.__resumeWarn(myWarn)
 
     # set a date for the named DatePicker
     def setDatePickerRange(self, title, startYear, endYear=None):
@@ -6401,13 +6405,14 @@ class gui(object):
 
             if findIcon:
                 # turn off warnings about PNGs
-                myWarn = self.__pauseWarn()
-                imgFile = os.path.join(self.icon_path, t.lower() + ".png")
-                try:
-                    image = self.__getImage(imgFile)
-                except Exception as e:
-                    image = None
-                self.__resumeWarn(myWarn)
+#                myWarn = self.__pauseWarn()
+                with PauseLogger():
+                    imgFile = os.path.join(self.icon_path, t.lower() + ".png")
+                    try:
+                        image = self.__getImage(imgFile)
+                    except Exception as e:
+                        image = None
+#                self.__resumeWarn(myWarn)
 
             but = Button(self.tb)
             self.n_tbButts[t] = but
@@ -6429,9 +6434,10 @@ class gui(object):
         if (name not in self.n_tbButts):
             raise Exception("Unknown toolbar name: " + name)
         imgFile = os.path.join(self.icon_path, icon.lower() + ".png")
-        myWarn = self.__pauseWarn()
-        self.setToolbarImage(name, imgFile)
-        self.__resumeWarn(myWarn)
+#        myWarn = self.__pauseWarn()
+        with PauseLogger():
+            self.setToolbarImage(name, imgFile)
+#        self.__resumeWarn(myWarn)
         self.n_tbButts[name].tt_var.set(icon)
 
     def setToolbarImage(self, name, imgFile):
@@ -6775,9 +6781,10 @@ class gui(object):
 
     def setMenuIcon(self, menu, title, icon, align="left"):
         image = os.path.join(self.icon_path, icon.lower() + ".png")
-        myWarn = self.__pauseWarn()
-        self.setMenuImage(menu, title, image, align)
-        self.__resumeWarn(myWarn)
+#        myWarn = self.__pauseWarn()
+        with PauseLogger():
+            self.setMenuImage(menu, title, image, align)
+#        self.__resumeWarn(myWarn)
 
     def disableMenubar(self):
         for theMenu in self.n_menus:
@@ -7104,13 +7111,15 @@ class gui(object):
         else:
             # turn off warnings about tooltips
             if hideWarn:
-                myWarn = self.__pauseWarn()
+                logging.disable(logging.CRITICAL)
+#                myWarn = self.__pauseWarn()
             var = StringVar(self.topLevel)
             var.set(text)
             tip = ToolTip(item, delay=500, follow_mouse=1, textvariable=var)
             item.tooltip = tip
             if hideWarn:
-                self.__resumeWarn(myWarn)
+                logging.disable(logging.NOTSET)
+#                self.__resumeWarn(myWarn)
             return var
 
 #####################################
@@ -9692,6 +9701,21 @@ class CopyAndPaste():
 
     # clear the undo/redo stack
     def resetStack(self): self.widget.edit_reset()
+
+#####################################
+# class to temporarily pause logging
+#####################################
+# usage:
+# with PauseLogger():
+#   doSomething()
+#####################################
+class PauseLogger():
+    def __enter__(self):
+        # disable all warning of CRITICAL & below
+        logging.disable(logging.CRITICAL)
+    def __exit__(self, a, b, c):
+        logging.disable(logging.NOTSET)
+
 
 #####################################
 # MAIN - for testing
