@@ -36,6 +36,7 @@ import time     # splashscreen
 import webbrowser   # links
 import calendar # datepicker
 import datetime # datepicker & image
+import logging  # python's logger
 
 import __main__ as theMain
 from platform import system as platform
@@ -388,7 +389,7 @@ class gui(object):
 #####################################
 # CONSTRUCTOR - creates the GUI
 #####################################
-    def __init__(self, title=None, geom=None, warn=True, debug=False):
+    def __init__(self, title=None, geom=None, warn=None, debug=None):
 
         # warn if we're in an untested mode
         self.__checkMode()
@@ -396,8 +397,9 @@ class gui(object):
         # first out, verify the platform
         self.platform = gui.GET_PLATFORM()
 
-        self.WARN = warn
-        self.DEBUG = debug
+        if warn is not None or debug is not None:
+            self.warn("Cannot set logging level in __init__. You should use .setLogLevel()")
+        logging.basicConfig(level=logging.WARNING, format='%(asctime)s %(name)s:%(levelname)s: %(message)s')
 
         # a stack to hold containers as being built
         # done here, as initArrays is called elsewhere - to reset the gubbins
@@ -563,6 +565,7 @@ class gui(object):
 #####################################
 # library loaders
 #####################################
+
     # textarea
     def __loadHashlib(self):
         global hashlib
@@ -1131,34 +1134,54 @@ class gui(object):
             else:
                 self.warn("Unsupported widget: " + section)
                 continue
-                
 
-    # function to generate warning messages
-    def warn(self, message):
-        if self.WARN:
-            print("Warning -", message)
+    #########################
+    ### Stuff for logging
+    #########################
+                
+    def setLogFile(self, fileName):
+        # Remove all handlers associated with the root logger object.
+        for handler in logging.root.handlers[:]:
+            logging.root.removeHandler(handler)
+        logging.basicConfig(level=logging.INFO, filename=fileName, format='%(asctime)s %(name)s:%(levelname)s: %(message)s')
+        self.info("Switched to logFile: " + str(fileName))
 
     # function to turn off warning messages
     def disableWarnings(self):
-        self.WARN = False
-
+        self.warn("Using old debug setter, should use app.setLogLevel()")
+        self.setLogLevel("ERROR")
 
     def enableWarnings(self):
-        self.WARN = True
-
-
-    # function to generate warning messages
-    def debug(self, message):
-        if self.DEBUG:
-            print("Debug -", message)
+        self.warn("Using old debug setter, should use app.setLogLevel()")
+        self.setLogLevel("WARNING")
 
     # function to turn on debug messages
     def enableDebug(self):
-        self.DEBUG = True
-
+        self.warn("Using old debug setter, should use app.setLogLevel()")
+        self.setLogLevel("DEBUG")
 
     def disableDebug(self):
-        self.DEBUG = False
+        self.warn("Using old debug setter, should use app.setLogLevel()")
+        self.setLogLevel("INFO")
+
+    def setLogLevel(self, level):
+        self.info("Log level changed to: " + str(level))
+        logging.getLogger("appJar").setLevel(getattr(logging, level.upper()))
+
+    def critical(self, message): self.logMessage(message, "CRITICAL")
+    def error(self, message): self.logMessage(message, "ERROR")
+    def warn(self, message): self.logMessage(message, "WARNING")
+    def debug(self, message): self.logMessage(message, "DEBUG")
+    def info(self, message): self.logMessage(message, "INFO")
+
+    def logMessage(self, msg, level):
+        logger = logging.getLogger("appJar")
+        level = level.upper()
+        if level == "CRITICAL": logger.critical(msg)
+        elif level == "ERROR": logger.error(msg)
+        elif level == "WARNING": logger.warning(msg)
+        elif level == "INFO": logger.info(msg)
+        elif level == "DEBUG": logger.debug(msg)
 
     # function to turn on the splash screen
     def showSplash(self, text="appJar", fill="red", stripe="black", fg="white", font=44):
@@ -5442,6 +5465,12 @@ class gui(object):
             column=0,
             colspan=0,
             rowspan=0):
+        """Add a label to the GUI.
+        :param title: a unique identifier for the Label
+        :param text: optional text for the Label
+        :param row/column/colspan/rowspan: the row/column to position the label in & how many rows/columns to strecth across
+        :raises ItemLookupError: raised if the title is not unique
+        """
         self.__verifyItem(self.n_labels, title, True)
         container = self.__getContainer()
         lab = Label(container)

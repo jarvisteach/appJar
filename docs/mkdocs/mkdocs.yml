@@ -30,6 +30,7 @@ pages:
     - GUI Events: pythonEvents.md
     - Drag'n Drop: pythonDnD.md
     - Internationalisation: pythonInternationalisation.md
+    - Logging: pythonLogging.md
 - Examples:
     - Raspberry Pi Minecraft: examples/minecraft.md
     - Simple Layout: examples/simple.md
