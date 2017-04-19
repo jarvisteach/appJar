@@ -1,6 +1,14 @@
 #Change-Log
 ---
 
+## Next version (0.07)  
+
+* Issues Resolved:
+    * [#124](https://github.com/jarvisteach/appJar/issues/124) - Switched to Python's [logging](/pythonLogging.md) feature
+    * [#101](https://github.com/jarvisteach/appJar/issues/101) - More work implementing [Drag n'Drop](/pythonDnD.md)
+
+---
+
 ## Version (0.06)  
 * New widgets: [MicroBit](/pythonDevWidgets/#microbit-emulator), [Validation Entries](/pythonWidgets/#entry)  
 * Widget enhancements: Can now set some rules for [entries](/pythonWidgets/#set-entries)  
