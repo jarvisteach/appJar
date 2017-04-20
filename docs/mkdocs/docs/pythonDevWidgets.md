@@ -135,13 +135,21 @@ It is possible to include buttons at the end of each row, and an additional row 
 
 * `.addGrid(title, data, action=None, addRow=False)`  
     Receives a (jagged) 2D list of values. The first list should be the headers for the grid, the rest will contain each row of values.  
-    If action is set, a button will be created, at the end of each row,  calling the specified function.  
-    If addRow is True, then an additional row will appear at the end, with entry boxes and an additional button.  
+
+    If `action` is set, a button will be created, at the end of each row,  calling the specified function.  
+    If `addRow` is True, then an additional row will appear at the end, with entry boxes and an additional button.  
+
+    The **Press** button at the end of each data row will pass the values of that row to the function as a list.  
+    The **Press** button at the end of the entry row will call the function, passing its name as a parameter.  
+
+    NB. you shouldn't set `addRow` to be True, unless `action` has been set with a function.  
 
 ####Get Grids  
+
 * `.getGridEntries(title)`  
-    Get the contents of the entry boxes, if present.  
-    Returned as a list, in the same order as the entry boxes.  
+    If `addRow` was set when the *Grid* was created, this function will get the contents of the entry boxes.  
+    They will be returned as a list, in the same order as the entry boxes.  
+
 * `.getGridSelectedCells(title)`  
     Gets a dictionary of booleans, indicating the status of each cell.  
     True indicates the cell is selected, False indicates the cell is not selected.  
@@ -150,8 +158,16 @@ It is possible to include buttons at the end of each row, and an additional row 
 ####Set Grids  
 
 * `.addGridRow(title, data)`  
-    Add a single row of data to the existing grid.  
+    Adds a new row of data to the end of the existing grid.  
     It will be positioned at the bottom of the grid, above the entry boxes if present.  
+
+To have the **Press** button on the entries row, add a new row of data, try the following:  
+```python
+    def press(btn):
+        if btn == "Press":     # the button on the entries row
+            data = app.getGridEntries("g1")
+            app.addGridRow("g1", data)
+``` 
 
 ###MatPlotLib
 ---

@@ -5,6 +5,8 @@ from appJar import gui
 def press(*args):
     if args[0]=="newRow":
         app.addGridRow('airflow_data_raw', app.getGridEntries('airflow_data_raw'))
+    else:
+        print(args)
 
 app=gui("GridTest", "800x500")
 
