@@ -1,0 +1,19 @@
+@import url('http://fonts.googleapis.com/css?family=Noto+Sans:400,700');
+
+.corner-ribbon{
+    width: 225px;
+    background: #ec0;
+    position: absolute;
+    text-align: center;
+    line-height: 50px;
+    letter-spacing: 1px;
+    color: #f0f0f0;
+    z-index: 20;
+    top: 88px;
+    right: -50px;
+    left: auto;
+    transform: rotate(45deg);
+    -webkit-transform: rotate(45deg);
+    position: fixed;
+    box-shadow: 0 0 3px rgba(0,0,0,.3);
+}
