@@ -9328,13 +9328,13 @@ class SimpleGrid(Frame):
                 lab.configure(
                     relief=RIDGE,
                     text=val,
-                    font=self.ghFont,
+#                    font=self.ghFont,
                     background=self.cellHeadingBg)
             else:
                 lab.configure(
                     relief=RIDGE,
                     text=val,
-                    font=self.gdFont,
+#                    font=self.gdFont,
                     background=self.cellBg)
                 lab.bind("<Enter>", self.__gridCellEnter)
                 lab.bind("<Leave>", self.__gridCellLeave)
@@ -9354,13 +9354,13 @@ class SimpleGrid(Frame):
                 if rowNum == 0:
                     widg.configure(
                         text="Action",
-                        font=self.ghFont,
+#                        font=self.ghFont,
                         background=self.cellHeadingBg)
                 # add a button
                 else:
                     but = Button(
                         widg,
-                        font=self.buttonFont,
+#                        font=self.buttonFont,
                         text="Press",
                         command=gui.MAKE_FUNC(
                             self.action,
@@ -9385,7 +9385,7 @@ class SimpleGrid(Frame):
 
             # self.__buildEntry(name, self.gridContainer)
             ent = Entry(lab, width=5)
-            ent.place(relx=0.5, rely=0.5, anchor=CENTER)
+            ent.pack(expand=True, fill='both')
             self.entries.append(ent)
             ent.lab = lab
 
@@ -9403,7 +9403,7 @@ class SimpleGrid(Frame):
                 self.action,
                 "newRow"))
         self.ent_but.lab = lab
-        self.ent_but.place(relx=0.5, rely=0.5, anchor=CENTER)
+        self.ent_but.pack(expand=True, fill='both')
 
     def getEntries(self):
         return [e.get() for e in self.entries]
