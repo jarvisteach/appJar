@@ -40,6 +40,21 @@ A number of pop-ups (aka dialogs) are available, to add a different user experie
     Shows a question requesting a numeric response. Returns a number, or None if Cancel pressed.  
     ![NumberBox](img/dialogs/num.gif)
 
+### Tooltips
+
+* `.set XXX Tooltip(name, value)`  
+    Sets a tooltip for the named widget, with the specified value.  
+    The specified value will be displayed in a small pop-up, when the mouse is left over the widget.
+
+    ![toltip](img/tooltip.png)
+
+    If called a second time, it will update the value of the tooltip.  
+    NB. `XXX` must be the widget type, eg. `Label`  
+
+* `.enable XXX Tooltip(name)` & `.disable XXX Tooltip(name)`  
+    These will enable or disable the named tooltip.  
+    When disabled, it will not show-up.  
+
 ### File Boxes
 * `.openBox(title=None, dirName=None, fileTypes=None, asFile=False)`  
     Shows an open file dialog.  

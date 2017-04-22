@@ -1228,6 +1228,9 @@ def test_langs():
 def test_tooltips():
     print("\tTesting tooltip")
     app.setLabelTooltip("l1", "message")
+    app.setLabelTooltip("l1", "updated message")
+    app.disableTooltip("l1")
+    app.enableTooltip("l1")
     lab = app.getLabelWidget("l1")
     tip = lab.tooltip
     tip.enter()

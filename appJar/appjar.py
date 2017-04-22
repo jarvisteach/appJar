@@ -724,7 +724,7 @@ class gui(object):
                 try:
                     from idlelib.tree import TreeItem, TreeNode
                 except:
-                    print("no trees...")
+                    logging.getLogger("appJar").warning("no trees")
                     TreeItem = TreeNode = parseString = False
                     ajTreeNode = ajTreeData = False
 
@@ -732,7 +732,7 @@ class gui(object):
                 try:
                     from xml.dom.minidom import parseString
                 except:
-                    print("no parse string")
+                    logging.getLogger("appJar").warning("no parse string")
                     TreeItem = TreeNode = parseString = False
                     ajTreeNode = ajTreeData = False
                     return
@@ -916,16 +916,16 @@ class gui(object):
                     # not used - for DEBUG
                     def getSelected(self, spaces=1):
                         if spaces == 1:
-                            print(self.node.tagName)
+                            logging.getLogger("appJar").debug(str(self.node.tagName))
                         for c in self.node.childNodes:
                             if c.__class__.__name__ == "Element":
-                                print(" " * spaces, ">>", c.tagName)
+                                logging.getLogger("appJar").debug(str(" " * spaces) + " >> "+ str(c.tagName))
                                 node = ajTreeData(c)
                                 node.getSelected(spaces + 2)
                             elif c.__class__.__name__ == "Text":
                                 val = c.data.strip()
                                 if len(val) > 0:
-                                    print(" " * spaces, ">>>>", val)
+                                    logging.getLogger("appJar").debug(str(" " * spaces) + " >>>> "+ str(val))
 
 
 #####################################
@@ -1504,21 +1504,11 @@ class gui(object):
             container.attributes('-fullscreen', False)
             if container.escapeBindId is not None:
                 container.unbind('<Escape>', container.escapeBindId)
-#            myWarn = self.__pauseWarn()
             with PauseLogger():
                 self.__doTitleBar()
-#            self.__resumeWarn(myWarn)
             return True
         else:
             return False
-
-#    def __pauseWarn(self):
-#        myWarn = self.WARN
-#        self.WARN = False
-#        return myWarn
-#
-#    def __resumeWarn(self, myWarn):
-#        self.WARN = myWarn
 
     # set the current container's external grid padding
     def setPadX(self, x=0):
@@ -1996,6 +1986,10 @@ class gui(object):
                     item.config(cursor=value)
                 elif option == 'tooltip':
                     self.__addTooltip(item, value)
+                elif option == 'disableTooltip':
+                    self.__disableTooltip(item)
+                elif option == 'enableTooltip':
+                    self.__enableTooltip(item)
                 elif option == "focus":
                     item.focus_set()
 
@@ -2110,6 +2104,7 @@ class gui(object):
 
     # generic function for change/submit/events
     def __bindEvent(self, kind, name, widget, function, eventType, key=None):
+        print(name)
         # this will discard the scale value, as default function
         # can't handle it
         if kind == self.SCALE:
@@ -2292,10 +2287,21 @@ class gui(object):
                 str(k) + ", name, 'anchor', val)")
             exec("gui.set" + v + "Anchor=set" + v + "Anchor")
 
+            print("execing tooltip", v)
             exec( "def set" + v +
                 "Tooltip(self, name, val): self.configureWidget(" +
                 str(k) + ", name, 'tooltip', val)")
             exec("gui.set" + v + "Tooltip=set" + v + "Tooltip")
+
+            exec( "def disable" + v +
+                "Tooltip(self, name): self.configureWidget(" +
+                str(k) + ", name, 'disableTooltip', None)")
+            exec("gui.disable" + v + "Tooltip=disable" + v + "Tooltip")
+
+            exec( "def enable" + v +
+                "Tooltip(self, name): self.configureWidget(" +
+                str(k) + ", name, 'enableTooltip', None)")
+            exec("gui.enable" + v + "Tooltip=enable" + v + "Tooltip")
 
             # function setters
             exec( "def set" + v +
@@ -5410,10 +5416,8 @@ class gui(object):
         self.changeOptionBox(title + "_DP_DayOptionBox", days)
 
         # keep previous day if possible
-#        myWarn = self.__pauseWarn()
         with PauseLogger():
             self.setOptionBox(title + "_DP_DayOptionBox", day)
-#        self.__resumeWarn(myWarn)
 
     # set a date for the named DatePicker
     def setDatePickerRange(self, title, startYear, endYear=None):
@@ -6405,14 +6409,12 @@ class gui(object):
 
             if findIcon:
                 # turn off warnings about PNGs
-#                myWarn = self.__pauseWarn()
                 with PauseLogger():
                     imgFile = os.path.join(self.icon_path, t.lower() + ".png")
                     try:
                         image = self.__getImage(imgFile)
                     except Exception as e:
                         image = None
-#                self.__resumeWarn(myWarn)
 
             but = Button(self.tb)
             self.n_tbButts[t] = but
@@ -6434,10 +6436,8 @@ class gui(object):
         if (name not in self.n_tbButts):
             raise Exception("Unknown toolbar name: " + name)
         imgFile = os.path.join(self.icon_path, icon.lower() + ".png")
-#        myWarn = self.__pauseWarn()
         with PauseLogger():
             self.setToolbarImage(name, imgFile)
-#        self.__resumeWarn(myWarn)
         self.n_tbButts[name].tt_var.set(icon)
 
     def setToolbarImage(self, name, imgFile):
@@ -6781,10 +6781,8 @@ class gui(object):
 
     def setMenuIcon(self, menu, title, icon, align="left"):
         image = os.path.join(self.icon_path, icon.lower() + ".png")
-#        myWarn = self.__pauseWarn()
         with PauseLogger():
             self.setMenuImage(menu, title, image, align)
-#        self.__resumeWarn(myWarn)
 
     def disableMenubar(self):
         for theMenu in self.n_menus:
@@ -7103,7 +7101,6 @@ class gui(object):
 #####################################
 
     def __addTooltip(self, item, text, hideWarn=False):
-
         self.__loadTooltip()
         if not ToolTip:
             if not hideWarn:
@@ -7112,15 +7109,32 @@ class gui(object):
             # turn off warnings about tooltips
             if hideWarn:
                 logging.disable(logging.CRITICAL)
-#                myWarn = self.__pauseWarn()
-            var = StringVar(self.topLevel)
-            var.set(text)
-            tip = ToolTip(item, delay=500, follow_mouse=1, textvariable=var)
-            item.tooltip = tip
+
+            # if there's already  tt, just change it
+            if hasattr(item, "tt_var"):
+                item.tt_var.set(text)
+            # otherwise create one
+            else:
+                var = StringVar(self.topLevel)
+                var.set(text)
+                tip = ToolTip(item, delay=500, follow_mouse=1, textvariable=var)
+                item.tooltip = tip
+                item.tt_var = var
             if hideWarn:
                 logging.disable(logging.NOTSET)
-#                self.__resumeWarn(myWarn)
-            return var
+            return item.tt_var
+
+    def __enableTooltip(self, item):
+        if hasattr(item, "tooltip"):
+            item.tooltip.configure(state="normal")
+        else:
+            self.warn("Unable to enable tooltip")
+
+    def __disableTooltip(self, item):
+        if hasattr(item, "tooltip"):
+            item.tooltip.configure(state="disabled")
+        else:
+            self.warn("Unable to disable tooltip")
 
 #####################################
 # FUNCTIONS to show pop-up dialogs

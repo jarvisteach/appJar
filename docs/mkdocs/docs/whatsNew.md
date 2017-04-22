@@ -4,6 +4,7 @@
 ## Next version (0.07)  
 
 * Issues Resolved:
+    * [#133](https://github.com/jarvisteach/appJar/issues/133) - Improvements to [Tooltips](/pythonDialogs/#tooltips)
     * [#124](https://github.com/jarvisteach/appJar/issues/124) - Switched to Python's [logging](/pythonLogging.md) feature
     * [#101](https://github.com/jarvisteach/appJar/issues/101) - More work implementing [Drag n'Drop](/pythonDnD.md)
 
