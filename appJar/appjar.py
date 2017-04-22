@@ -4091,14 +4091,20 @@ class gui(object):
 # mapType: roadmap, satellite, hybrid, terrain
     def getGoogleMapData(self, location, zoom=18, imgSize="500x500", imgFormat="gif", mapType="roadmap"):  
         request = self._getGoogleURL(location, zoom, imgSize, imgFormat, mapType)  
-        self.warn(request)
-        return urlopen(request).read()
+        self.debug(request)
+        try:
+            return urlopen(request).read()
+        except:
+            return None
 
     def getGoogleMapFile(self, fileName, location, zoom=18, imgSize="500x500", imgFormat="gif", mapType="roadmap"):  
         request = self._getGoogleURL(location, zoom, imgSize, imgFormat, mapType)  
-        self.warn(request)
-        urlretrieve(request, fileName)
-        return fileName
+        self.debug(request)
+        try:
+            urlretrieve(request, fileName)
+            return fileName
+        except:
+            return None
 
     def _getGoogleURL(self, location, zoom=18, imgSize="500x500", imgFormat="gif", mapType="roadmap"):  
         GOOGLE_URL =  "http://maps.google.com/maps/api/staticmap?"
@@ -4111,7 +4117,7 @@ class gui(object):
         params["format"] = imgFormat
         params["maptype"] = mapType
 
-        params["mobile"] = "true" # optional: mobile=true will assume the image is shown on a small screen (mobile device)
+#        params["mobile"] = "true" # optional: mobile=true will assume the image is shown on a small screen (mobile device)
         params["sensor"] = "false"  # must be given, deals with getting loction from mobile device 
 
         request += urlencode(params)

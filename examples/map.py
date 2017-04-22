@@ -7,29 +7,49 @@ FILE_NAME = "myMap.gif"
 
 def getit(btn=None):
     if btn is not None:
-#        img = app.getGoogleMapData(location=app.getEntry("Location"), zoom=app.getScale("zoom"), imgSize="500x500", mapType=app.getOptionBox("type"))
-#        app.reloadImageData("i1", img)
+        location=app.getEntry("Search:")
+        zoom=app.getScale("Zoom:")
+        imgSize="500x500"
+        mapType=app.getOptionBox("Type:").lower()
+        
+        #img = app.getGoogleMapData(location=location, zoom=zoom, imgSize=imgSize, mapType=mapType)
+        img = app.getGoogleMapFile(FILE_NAME, location=location, zoom=zoom, imgSize=imgSize, mapType=mapType)
 
-        app.getGoogleMapFile(FILE_NAME, location=app.getEntry("Location"), zoom=app.getScale("zoom"), imgSize="500x500", mapType=app.getOptionBox("type"))
-        app.reloadImage("i1", FILE_NAME)
+        if img is not None:
+#            app.reloadImageData("i1", img)
+            app.reloadImage("i1", FILE_NAME)
+        else:
+            app.errorBox("Error", "Failed to contact GoogleMaps")
+
     else:
+        location = app.getEntry("Search:")
 #        global start
-#        start = app.getGoogleMapData("Marlborough, UK")
-        start = app.getGoogleMapFile(FILE_NAME, "Marlborough, UK")
+#        start = app.getGoogleMapData(location)
+        start = app.getGoogleMapFile(FILE_NAME, location=location)
+        if start is None:
+            self.error("Unable to contact google maps")
+
 
 app=gui()
+
+app.addLabelEntry("Search:", colspan=2)
+app.setEntry("Search:", "Swindon")
+app.setEntrySubmitFunction("Search:", getit)
+
 getit()
+
+app.startLabelFrame("GoogleMaps", colspan=2)
 #app.addImageData("i1", start)
 app.addImage("i1", FILE_NAME)
-app.addLabelScale("zoom")
-app.addLabelOptionBox("type", ["roadmap", "satellite", "hybrid", "terrain"])
-app.setOptionBoxChangeFunction("type", getit)
-app.setScaleRange("zoom", 0, 22, 18)
-app.showScaleValue("zoom")
-app.setScaleChangeFunction("zoom", getit)
-app.addLabelEntry("Location")
-app.setEntry("Location", "Swindon")
-app.setEntrySubmitFunction("Location", getit)
-getit()
+app.stopLabelFrame()
+
+app.addLabelScale("Zoom:", column=0, row=2)
+app.setScaleRange("Zoom:", 0, 22, 18)
+app.showScaleValue("Zoom:")
+app.setScaleChangeFunction("Zoom:", getit)
+
+app.addLabelOptionBox("Type:", ["Roadmap", "Satellite", "Hybrid", "Terrain"], row=2, column=1)
+app.setOptionBoxChangeFunction("Type:", getit)
+
 app.go()
 
