@@ -4,6 +4,7 @@
 ## Next version (0.07)  
 
 * Issues Resolved:
+    * [#137](https://github.com/jarvisteach/appJar/issues/137) - [File Entries](/pythonWidgets/#entry)  
     * [#136](https://github.com/jarvisteach/appJar/issues/136) - Simple [GoogleMaps](/pythonDevWidgets/#googlemaps) downloader   
     * [#133](https://github.com/jarvisteach/appJar/issues/133) - Improvements to [Tooltips](/pythonDialogs/#tooltips)
     * [#124](https://github.com/jarvisteach/appJar/issues/124) - Switched to Python's [logging](/pythonLogging.md) feature

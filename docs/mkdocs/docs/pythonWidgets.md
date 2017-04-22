@@ -104,6 +104,7 @@ There are four special-case entries:
 * SecretEntry - this will show stars, instead of the letters typed - useful for capturing passwords.
 * AutoEntry - this takes a list of words to provide auto-completion.  
 * ValidationEntry - can be set to valid/invalid/waiting - will colour the border green/red/black and show a ✔/✖/★  
+* FileEntry - provides a button to select a file  
 
 ![Entries](img/1_entries.gif)
 
@@ -129,6 +130,7 @@ app.go()
 * `.addSecretEntry(title)`
 * `.addAutoEntry(title, words)`  
 * `.addValidationEntry(title)`  
+* `.addFileEntry(title)`  
 
     Each of these will add the specified type of Entry, using the title provided.
 

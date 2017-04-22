@@ -2660,7 +2660,7 @@ class gui(object):
         # widget with label, in frame
         elif widgType == "LabelBox":
             widget.config(bg=bg)
-            widget.theLabel.config(bg=bg)
+            if widget.theLabel is not None: widget.theLabel.config(bg=bg)
             gui.SET_WIDGET_BG(widget.theWidget, bg)
 
         # group of buttons or labels
@@ -5845,6 +5845,42 @@ class gui(object):
             secret=False):
         ent = self.__buildEntry(title, self.__getContainer(), secret)
         self.__positionWidget(ent, row, column, colspan, rowspan)
+
+    def addFileEntry(
+            self,
+            title,
+            row=None,
+            column=0,
+            colspan=0,
+            rowspan=0):
+        ent = self.__buildFileEntry(title, self.__getContainer())
+        self.__positionWidget(ent, row, column, colspan, rowspan)
+
+    def __getFileName(self, title):
+        fileName = self.openBox()
+        if fileName is not None:
+            self.setEntry(title, fileName)
+
+    def __buildFileEntry(self, title, frame):
+        vFrame = LabelBox(frame)
+        vFrame.config(background=self.__getContainerBg())
+
+        ent = self.__buildEntry(title, vFrame)
+        self.setEntryDefault(title, "-- enter a filename --")
+        ent.pack(expand=True, fill=X, side=LEFT)
+
+        but = Button(vFrame)
+#        FILE = u"\U0001F4C1"
+        but.config(text="File", font=self.buttonFont)
+        command = self.MAKE_FUNC(self.__getFileName, title)
+        but.config(command=command)
+        but.pack(side=RIGHT, fill=X)
+        but.inContainer = True
+        ent.but = but
+
+        vFrame.theWidget = ent
+
+        return vFrame
 
     def addValidationEntry(
             self,
