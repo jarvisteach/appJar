@@ -28,6 +28,13 @@ except ImportError:
     PYTHON2 = False
     PY_NAME = "python3"
 
+try: # python 2
+    from urllib import urlencode, urlopen, urlretrieve
+except ImportError: # python 3
+    from urllib.parse import urlencode
+    from urllib.request import urlopen
+    from urllib.request import urlretrieve
+
 import os
 import sys
 import re
@@ -2104,7 +2111,6 @@ class gui(object):
 
     # generic function for change/submit/events
     def __bindEvent(self, kind, name, widget, function, eventType, key=None):
-        print(name)
         # this will discard the scale value, as default function
         # can't handle it
         if kind == self.SCALE:
@@ -2287,7 +2293,6 @@ class gui(object):
                 str(k) + ", name, 'anchor', val)")
             exec("gui.set" + v + "Anchor=set" + v + "Anchor")
 
-            print("execing tooltip", v)
             exec( "def set" + v +
                 "Tooltip(self, name, val): self.configureWidget(" +
                 str(k) + ", name, 'tooltip', val)")
@@ -4071,6 +4076,46 @@ class gui(object):
             else:
                 self.__verifyItem(self.n_optionVars, title).set("")
                 self.warn("No items to select from: " + title)
+
+#####################################
+# FUNCTION for GoogleMaps
+#####################################
+
+## https://developers.google.com/maps/documentation/static-maps/intro
+# http://hci574.blogspot.co.uk/2010/04/using-google-maps-static-images.html
+# baseName: the fileName
+# center: the location
+# zoom: 0 (all of the world scale ) to 22 (single buildings scale)
+# imgSize: tuple of ints, up to 640 by 640
+# imgFormat: png, gif, jpg (lossy)
+# mapType: roadmap, satellite, hybrid, terrain
+    def getGoogleMapData(self, location, zoom=18, imgSize="500x500", imgFormat="gif", mapType="roadmap"):  
+        request = self._getGoogleURL(location, zoom, imgSize, imgFormat, mapType)  
+        self.warn(request)
+        return urlopen(request).read()
+
+    def getGoogleMapFile(self, fileName, location, zoom=18, imgSize="500x500", imgFormat="gif", mapType="roadmap"):  
+        request = self._getGoogleURL(location, zoom, imgSize, imgFormat, mapType)  
+        self.warn(request)
+        urlretrieve(request, fileName)
+        return fileName
+
+    def _getGoogleURL(self, location, zoom=18, imgSize="500x500", imgFormat="gif", mapType="roadmap"):  
+        GOOGLE_URL =  "http://maps.google.com/maps/api/staticmap?"
+        request =  GOOGLE_URL
+        params = {}
+
+        params["center"] = location
+        params["zoom"] = zoom
+        params["size"] = imgSize
+        params["format"] = imgFormat
+        params["maptype"] = mapType
+
+        params["mobile"] = "true" # optional: mobile=true will assume the image is shown on a small screen (mobile device)
+        params["sensor"] = "false"  # must be given, deals with getting loction from mobile device 
+
+        request += urlencode(params)
+        return request
 
 #####################################
 # FUNCTION for matplotlib

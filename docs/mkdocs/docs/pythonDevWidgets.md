@@ -32,6 +32,13 @@ Widget to emulate a [MicroBit](http://microbit.org)
 * ```.clearMicroBit(title)```  
     Will turn off all of the pixels - setting their brightness to 0.  
 
+###GoogleMaps
+---
+Functions for getting GoogleMaps images  
+![GoogleMaps](img/gMap.png)
+
+* ```.getGoogleMapData(location, zoom=18, imgSize="500x500", imgFormat="gif", mapType="roadmap")```
+* ```.getGoogleMapFile(fileName, location, zoom=18, imgSize="500x500", imgFormat="gif", mapType="roadmap")```
 
 ###PieChart
 ---

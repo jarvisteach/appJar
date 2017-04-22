@@ -1618,6 +1618,17 @@ def test_plots():
         print(" >> not implemented...")
         #print("\t >> all tests complete")
 
+def test_googlemap():
+    print("\tTesting GoogleMaps:", PY_VER)
+    fileName = app.getGoogleMapFile("a.gif", "swindon")
+    data = app.getGoogleMapData("swindon")
+
+    app.addImage("gm1", fileName)
+    app.addImageData("gm2", data)
+
+    print(" >> not implemented...")
+    #print("\t >> all tests complete")
+
 def test_microbits():
     print("\tTesting plots:", PY_VER)
     app.addMicroBit("mb1")
@@ -1688,6 +1699,7 @@ test_date_pickers()
 try: test_plots()
 except: print("Skipping plot tests - MatPlotLib not available")
 test_microbits()
+test_googlemap()
 
 test_status()
 test_menus()
