@@ -72,6 +72,10 @@ app.addButton(FLOWER, flowerPower)
 ---
 Different platforms will (potentially) display these characters in different ways...  
 As you can see in the music example, for some reason, the PLAY character doesn't display like the other characters...  
+
+There is also an issue with Python GUIs in general, where they can't actually (yet) display all of the different Unicode characters.  
+If the character has more than 4 digits in its code, it probably won't work.  
+You may even get an error similar to: `character is above the range (U+0000-U+FFFF) allowed by Tcl`  
 So, make sure you test them!  
 
 ###Easter Egg
