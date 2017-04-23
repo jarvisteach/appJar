@@ -30,10 +30,12 @@ except ImportError:
 
 try: # python 2
     from urllib import urlencode, urlopen, urlretrieve
+    import json
 except ImportError: # python 3
     from urllib.parse import urlencode
     from urllib.request import urlopen
     from urllib.request import urlretrieve
+    import json
 
 import os
 import sys
@@ -1180,6 +1182,7 @@ class gui(object):
         self.info("Log level changed to: " + str(level))
         logging.getLogger("appJar").setLevel(getattr(logging, level.upper()))
 
+    def exception(self, message): self.logMessage(message, "EXCEPTION")
     def critical(self, message): self.logMessage(message, "CRITICAL")
     def error(self, message): self.logMessage(message, "ERROR")
     def warn(self, message): self.logMessage(message, "WARNING")
@@ -1189,6 +1192,7 @@ class gui(object):
     def logMessage(self, msg, level):
         logger = logging.getLogger("appJar")
         level = level.upper()
+        if level == "EXCEPTION": logger.exception(msg)
         if level == "CRITICAL": logger.critical(msg)
         elif level == "ERROR": logger.error(msg)
         elif level == "WARNING": logger.warning(msg)
@@ -4089,27 +4093,32 @@ class gui(object):
 # imgSize: tuple of ints, up to 640 by 640
 # imgFormat: png, gif, jpg (lossy)
 # mapType: roadmap, satellite, hybrid, terrain
-    def getGoogleMapData(self, location, zoom=18, imgSize="500x500", imgFormat="gif", mapType="roadmap"):  
+    def getGoogleMapData(self, location=None, zoom=16, imgSize="500x500", imgFormat="gif", mapType="roadmap"):  
         request = self._getGoogleURL(location, zoom, imgSize, imgFormat, mapType)  
         self.debug(request)
         try:
             return urlopen(request).read()
-        except:
+        except Exception as e:
+            self.exception(e)
             return None
 
-    def getGoogleMapFile(self, fileName, location, zoom=18, imgSize="500x500", imgFormat="gif", mapType="roadmap"):  
+    def getGoogleMapFile(self, fileName, location=None, zoom=16, imgSize="500x500", imgFormat="gif", mapType="roadmap"):  
         request = self._getGoogleURL(location, zoom, imgSize, imgFormat, mapType)  
         self.debug(request)
         try:
             urlretrieve(request, fileName)
             return fileName
-        except:
+        except Exception as e:
+            self.exception(e)
             return None
 
-    def _getGoogleURL(self, location, zoom=18, imgSize="500x500", imgFormat="gif", mapType="roadmap"):  
+    def _getGoogleURL(self, location=None, zoom=18, imgSize="500x500", imgFormat="gif", mapType="roadmap"):  
         GOOGLE_URL =  "http://maps.google.com/maps/api/staticmap?"
         request =  GOOGLE_URL
         params = {}
+
+        if location is None or location == "":
+            location = self.getLocation()["postal"]
 
         params["center"] = location
         params["zoom"] = zoom
@@ -4122,6 +4131,16 @@ class gui(object):
 
         request += urlencode(params)
         return request
+
+    def getLocation(self):
+        LOCATION_URL = "http://ipinfo.io/json"
+        try:
+            data =  urlopen(LOCATION_URL).read()
+            data = json.loads(data)
+            return data
+        except Exception as e:
+            self.exception(e)
+            return None
 
 #####################################
 # FUNCTION for matplotlib
@@ -5876,7 +5895,7 @@ class gui(object):
         ent.pack(expand=True, fill=X, side=LEFT)
 
         but = Button(vFrame)
-#        FILE = u"\U0001F4C1"
+        FILE_ICON = u"\U0001F4C1"
         but.config(text="File", font=self.buttonFont)
         command = self.MAKE_FUNC(self.__getFileName, title)
         but.config(command=command)
@@ -8709,6 +8728,7 @@ class AutoCompleteEntry(Entry):
         self.bind("<Up>", self.moveUp)
         self.bind("<Down>", self.moveDown)
         self.bind("<FocusOut>", self.closeList, add="+")
+        self.bind("<Escape>", self.closeList, add="+")
 
         # no list box - yet
         self.listBoxShowing = False
@@ -8753,6 +8773,7 @@ class AutoCompleteEntry(Entry):
         self.listbox.bind("<Button-1>", self.mouseClickBox)
         self.listbox.bind("<Right>", self.selectWord)
         self.listbox.bind("<Return>", self.selectWord)
+
         self.listbox.place(
             x=self.winfo_x(),
             y=self.winfo_y() +

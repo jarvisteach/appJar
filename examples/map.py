@@ -22,21 +22,18 @@ def getit(btn=None):
             app.errorBox("Error", "Failed to contact GoogleMaps")
 
     else:
-        location = app.getEntry("Search:")
 #        global start
 #        start = app.getGoogleMapData(location)
-        start = app.getGoogleMapFile(FILE_NAME, location=location)
+        start = app.getGoogleMapFile(FILE_NAME)
         if start is None:
-            self.error("Unable to contact google maps")
+            app.error("Unable to contact google maps")
 
 
 app=gui()
+getit()
 
 app.addLabelEntry("Search:", colspan=2)
-app.setEntry("Search:", "Swindon")
 app.setEntrySubmitFunction("Search:", getit)
-
-getit()
 
 app.startLabelFrame("GoogleMaps", colspan=2)
 #app.addImageData("i1", start)
@@ -44,7 +41,7 @@ app.addImage("i1", FILE_NAME)
 app.stopLabelFrame()
 
 app.addLabelScale("Zoom:", column=0, row=2)
-app.setScaleRange("Zoom:", 0, 22, 18)
+app.setScaleRange("Zoom:", 0, 22, 16)
 app.showScaleValue("Zoom:")
 app.setScaleChangeFunction("Zoom:", getit)
 
