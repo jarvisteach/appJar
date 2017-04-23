@@ -5686,7 +5686,7 @@ class gui(object):
 
         # if we are an autocompleter
         if len(words) > 0:
-            ent = AutoCompleteEntry(words, frame)
+            ent = AutoCompleteEntry(words, self.topLevel, frame)
             ent.config(font=self.entryFont)
         else:
             ent = Entry(frame)
@@ -8525,10 +8525,11 @@ class Page(Frame):
 
 class AutoCompleteEntry(Entry):
 
-    def __init__(self, words, *args, **kwargs):
+    def __init__(self, words, tl, *args, **kwargs):
         Entry.__init__(self, *args, **kwargs)
         self.allWords = words
         self.allWords.sort()
+        self.topLevel = tl
 
         # store variable - so we can see when it changes
         self.var = self["textvariable"] = StringVar()
@@ -8540,6 +8541,7 @@ class AutoCompleteEntry(Entry):
         self.bind("<Up>", self.moveUp)
         self.bind("<Down>", self.moveDown)
         self.bind("<FocusOut>", self.closeList, add="+")
+        self.bind("<Escape>", self.closeList, add="+")
 
         # no list box - yet
         self.listBoxShowing = False
@@ -8584,10 +8586,11 @@ class AutoCompleteEntry(Entry):
         self.listbox.bind("<Button-1>", self.mouseClickBox)
         self.listbox.bind("<Right>", self.selectWord)
         self.listbox.bind("<Return>", self.selectWord)
-        self.listbox.place(
-            x=self.winfo_x(),
-            y=self.winfo_y() +
-            self.winfo_height())
+
+        x = self.winfo_rootx() - self.topLevel.winfo_rootx()
+        y = self.winfo_rooty() - self.topLevel.winfo_rooty() + self.winfo_height()
+
+        self.listbox.place(x=x, y=y)
         self.listBoxShowing = True
 
     # function to handle a mouse click in the list box
