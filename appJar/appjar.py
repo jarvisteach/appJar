@@ -1115,7 +1115,7 @@ class gui(object):
         self.DEBUG = False
 
     # function to turn on the splash screen
-    def showSplash(self, text="appJar", fill="red", stripe="black", fg="white", font=44):
+    def showSplash(self, text="appJar", fill="#FF0000", stripe="#000000", fg="#FFFFFF", font=44):
         self.splashConfig= {'text':text, 'fill':fill, 'stripe':stripe, 'fg':fg, 'font':font}
 
 #####################################
@@ -2591,7 +2591,7 @@ class gui(object):
         try:
             return self.__getContainer()["fg"]
         except:
-            return "black"
+            return "#000000"
 
     # two important things here:
     # grid - sticky: position of widget in its space (side or fill)
@@ -2697,7 +2697,7 @@ class gui(object):
                     'ipady': 0,
                     'expand': "ALL",
                     'widgets': False,
-                    "fg": "black"}
+                    "fg": "#000000"}
         self.containerStack.append(containerData)
 
     def openRootPage(self, title):
@@ -5572,7 +5572,7 @@ class gui(object):
             self.__getContainer(),
             relief=RAISED,
             borderwidth=2,
-            bg="white",
+            bg="#FFFFFF",
             highlightthickness=0,
             takefocus=1)
         self.__positionWidget(frame, row, column, colspan, rowspan, "NSEW")
@@ -5800,9 +5800,9 @@ class gui(object):
             self.warn("Entry " + str(title) + " is not a validation entry. Unable to set INVALID.")
             return
 
-        entry.config(highlightbackground="red", highlightcolor="red", fg="red")
+        entry.config(highlightbackground="#FF0000", highlightcolor="#FF0000", fg="#FF0000")
         entry.config(highlightthickness=2)
-        entry.lab.config(text=u'\u2716', fg="red")
+        entry.lab.config(text=u'\u2716', fg="#FF0000")
         entry.lab.DEFAULT_TEXT = entry.lab.cget("text")
 
     def setEntryWaitingValidation(self, title):
@@ -5811,9 +5811,9 @@ class gui(object):
             self.warn("Entry " + str(title) + " is not a validation entry. Unable to set WAITING VALID.")
             return
 
-        entry.config(highlightbackground="black", highlightcolor="black", fg="black")
+        entry.config(highlightbackground="#000000", highlightcolor="#000000", fg="#000000")
         entry.config(highlightthickness=1)
-        entry.lab.config(text=u'\u2731', fg="black")
+        entry.lab.config(text=u'\u2731', fg="#000000")
         entry.lab.DEFAULT_TEXT = entry.lab.cget("text")
 
     def addAutoEntry(
@@ -7181,9 +7181,9 @@ class gui(object):
 class Meter(Frame):
 
     def __init__(self, master, width=100, height=20,
-            bg='white', fillColour='orchid1',
+            bg='#FFFFFF', fillColour='orchid1',
             value=0.0, text=None, font=None,
-            fg='black', *args, **kw):
+            fg='#000000', *args, **kw):
 
         # call the super constructor
         Frame.__init__(self, master, bg=bg,
@@ -7379,8 +7379,8 @@ class Meter(Frame):
 class SplitMeter(Meter):
 
     def __init__(self, master, width=100, height=20,
-            bg='white', leftfillColour='red', rightfillColour='blue',
-            value=0.0, text=None, font=None, fg='black', *args, **kw):
+            bg='#FFFFFF', leftfillColour='#FF0000', rightfillColour='#0000FF',
+            value=0.0, text=None, font=None, fg='#000000', *args, **kw):
 
         self._leftFill = leftfillColour
         self._rightFill = rightfillColour
@@ -7434,10 +7434,10 @@ class SplitMeter(Meter):
 #####################################
 class DualMeter(SplitMeter):
 
-    def __init__(self, master, width=100, height=20, bg='white',
-            leftfillColour='pink', rightfillColour='green',
+    def __init__(self, master, width=100, height=20, bg='#FFFFFF',
+            leftfillColour='#FFC0CB', rightfillColour='#00FF00',
             value=None, text=None,
-            font=None, fg='black', *args, **kw):
+            font=None, fg='#000000', *args, **kw):
 
         SplitMeter.__init__(self, master, width=width, height=height,
                     bg=bg, leftfillColour=leftfillColour,
@@ -7524,11 +7524,11 @@ class TabbedFrame(Frame):
         self.changeEvent = None
 
         # selected tab & all panes
-        self.activeFg = "blue"
-        self.activeBg = "white"
+        self.activeFg = "#0000FF"
+        self.activeBg = "#FFFFFF"
 
         # other tabs
-        self.inactiveFg = "black"
+        self.inactiveFg = "#000000"
         self.inactiveBg = "grey"
 
         # disabled tabs
@@ -7775,7 +7775,7 @@ class Link(Label):
 
     def __init__(self, *args, **kwargs):
         Label.__init__(self, *args, **kwargs)
-        self.config(fg="blue", takefocus=1, highlightthickness=0)
+        self.config(fg="#0000FF", takefocus=1, highlightthickness=0)
         self.page = ""
         self.DEFAULT_TEXT = ""
 
@@ -8014,7 +8014,7 @@ class PieChart(Canvas):
         "#f6c4e1",
         "#f79cd4"]
 
-    def __init__(self, container, fracs, bg="green"):
+    def __init__(self, container, fracs, bg="#00FF00"):
         Canvas.__init__(self, container, bd=0, highlightthickness=0, bg=bg)
         self.fracs = fracs
         self.arcs = []
@@ -8806,7 +8806,7 @@ class AjScrolledText(TextParent, scrolledtext.ScrolledText):
 class SelectableLabel(Entry):
     def __init__(self, parent, **opts):
         Entry.__init__(self, parent)
-        self.configure(relief=FLAT, state="readonly", readonlybackground='white', fg='black')
+        self.configure(relief=FLAT, state="readonly", readonlybackground='#FFFFFF', fg='#000000')
 #        var = parent.StringVar()
 #        self.configure(textvariable=var)
         
@@ -9104,7 +9104,7 @@ class SimpleEntryDialog(Dialog):
     def body(self, master):
         Label(master, text=self.question).grid(row=0)
         self.e1 = Entry(master)
-        self.l1 = Label(master, fg="red")
+        self.l1 = Label(master, fg="#FF0000")
         self.e1.grid(row=1)
         self.l1.grid(row=2)
         self.e1.bind("<Key>", self.clearError)
@@ -9207,6 +9207,7 @@ class SimpleGrid(Frame):
                 size=buttonFont.actual("size"))
 
     def __init__(self, parent, title, data, action=None, addRow=False, **opts):
+        # SimpleGrid is a Frame, holding a MainCanvas & 2x ScrollBara (vsb & hsb), holding a Frame (GridContainer)
         if "buttonFont" in opts:
             self.buttonFont = opts.pop("buttonFont")
         else:
@@ -9239,10 +9240,10 @@ class SimpleGrid(Frame):
         self.selectedCells = OrderedDict()
 
         # colours
-        self.cellHeadingBg = "DarkGray"      # HEADING BG
-        self.cellBg = "LightCyan"        # CELL BG
-        self.cellOverBg = "Silver"       # mouse over BG
-        self.cellSelectedBg = "LightGray"     # selected cell BG
+        self.cellHeadingBg = "#A9A9A9"      # HEADING BG
+        self.cellBg = "#E0FFFF"        # CELL BG
+        self.cellOverBg = "#C0C0C0"       # mouse over BG
+        self.cellSelectedBg = "#D3D3D3"     # selected cell BG
 
         # add a canvas for scrolling
         self.mainCanvas = Canvas(
@@ -9256,12 +9257,14 @@ class SimpleGrid(Frame):
             orient="horizontal",
             command=self.mainCanvas.xview)
 
+        self.config(bg="yellow")
+
         # pack them in
         vsb.pack(side="right", fill="y")
         hsb.pack(side="bottom", fill="x")
         self.mainCanvas.pack(side="left", fill="both", expand=True)
 
-        # add the grid cpntainer to the frame
+        # add the grid container to the frame
         self.gridContainer = Frame(self.mainCanvas)
         self.mainCanvas.create_window(
             (4, 4), window=self.gridContainer, anchor="nw", tags="self.gridContainer")
@@ -9515,7 +9518,7 @@ class MicroBitSimulator(Frame):
 
 
 class SplashScreen(Toplevel):
-    def __init__(self, parent, text="appJar", fill="red", stripe="black", fg="white", font=44):
+    def __init__(self, parent, text="appJar", fill="#FF0000", stripe="#000000", fg="#FFFFFF", font=44):
         Toplevel.__init__(self, parent)
 
         lab = Label(self, bg=stripe, fg=fg, text=text, height=3, width=50)
