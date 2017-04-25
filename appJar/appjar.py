@@ -4118,7 +4118,11 @@ class gui(object):
         params = {}
 
         if location is None or location == "":
-            location = self.getLocation()["postal"]
+            location = self.getLocation()
+            if location is not None:
+                location = location["loc"]
+            else:
+                raise Exception("Unable to contact location server.")
 
         params["center"] = location
         params["zoom"] = zoom
@@ -4136,6 +4140,7 @@ class gui(object):
         LOCATION_URL = "http://ipinfo.io/json"
         try:
             data =  urlopen(LOCATION_URL).read()
+            self.info(data)
             data = json.loads(data)
             return data
         except Exception as e:
@@ -5823,7 +5828,7 @@ class gui(object):
 
         # if we are an autocompleter
         if len(words) > 0:
-            ent = AutoCompleteEntry(words, frame)
+            ent = AutoCompleteEntry(words, self.topLevel, frame)
             ent.config(font=self.entryFont)
         else:
             ent = Entry(frame)
@@ -8713,10 +8718,11 @@ class Page(Frame):
 
 class AutoCompleteEntry(Entry):
 
-    def __init__(self, words, *args, **kwargs):
+    def __init__(self, words, tl, *args, **kwargs):
         Entry.__init__(self, *args, **kwargs)
         self.allWords = words
         self.allWords.sort()
+        self.topLevel = tl
 
         # store variable - so we can see when it changes
         self.var = self["textvariable"] = StringVar()
@@ -8768,16 +8774,16 @@ class AutoCompleteEntry(Entry):
 
     # function to create & show an empty list box
     def makeListBox(self):
-        self.listbox = Listbox(width=self["width"], height=8)
+        self.listbox = Listbox(self.topLevel, width=self["width"], height=8)
         self.listbox.config(height=self.rows)
         self.listbox.bind("<Button-1>", self.mouseClickBox)
         self.listbox.bind("<Right>", self.selectWord)
         self.listbox.bind("<Return>", self.selectWord)
 
-        self.listbox.place(
-            x=self.winfo_x(),
-            y=self.winfo_y() +
-            self.winfo_height())
+        x = self.winfo_rootx() - self.topLevel.winfo_rootx()
+        y = self.winfo_rooty() - self.topLevel.winfo_rooty() + self.winfo_height()
+
+        self.listbox.place(x=x, y=y)
         self.listBoxShowing = True
 
     # function to handle a mouse click in the list box
