@@ -1,6 +1,10 @@
 #Change-Log
 ---
 
+## Version (0.061)  
+* Issues Resolved:  
+    * [#154](https://github.com/jarvisteach/appJar/issues/154) - Fixed bug with AutoEntry not showing drop-down in right position, when placed in a container
+
 ## Version (0.06)  
 * New widgets: [MicroBit](/pythonDevWidgets/#microbit-emulator), [Validation Entries](/pythonWidgets/#entry)  
 * Widget enhancements: Can now set some rules for [entries](/pythonWidgets/#set-entries)  
