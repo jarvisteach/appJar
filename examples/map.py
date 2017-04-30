@@ -30,6 +30,7 @@ def getit(btn=None):
 
 
 app=gui()
+app.setLogLevel("DEBUG")
 getit()
 
 app.addLabelEntry("Search:", colspan=2)

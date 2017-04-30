@@ -180,6 +180,7 @@ class gui(object):
     GRID = 17
     PLOT = 18
     MICROBIT = 19
+    WIDGET = 20
 
     RB = 60
     CB = 40
@@ -263,6 +264,7 @@ class gui(object):
         TABBEDFRAME: "TabbedFrame",
 #       TAB:"Tab",
         PANEDFRAME: "PanedFrame",
+        WIDGET: "Widget",
 #       PANE:"Pane",
 #       SCROLLPANE: "ScrollPane",
 #       PAGEDWINDOW: "PagedWindow",
@@ -1000,6 +1002,7 @@ class gui(object):
         self.n_flashLabs = []
         self.n_pieCharts = {}
         self.n_separators = []
+        self.n_widgets = {}
 
         # completed containers - in case we want to open them again
         self.n_usedContainers = {}
@@ -1843,6 +1846,8 @@ class gui(object):
             return self.n_microbits
         elif kind == self.GRID:
             return self.n_grids
+        elif kind == self.WIDGET:
+            return self.n_widgets
 
         elif kind in [ self.LABELFRAME, self.C_LABELFRAME ]:
             return self.n_labelFrames
@@ -1897,6 +1902,11 @@ class gui(object):
         items = self.__getItems(kind)
         return self.__verifyItem(items, name, False)
 
+    def addWidget(self, title, widg, row=None, column=0, colspan=0, rowspan=0):
+        self.__verifyItem(self.n_widgets, title, True)
+        self.__positionWidget(widg, row, column, colspan, rowspan)
+        self.n_widgets[title] = widg
+
     def configureWidget(
             self,
             kind,
@@ -1905,6 +1915,9 @@ class gui(object):
             value,
             key=None,
             deprecated=False):
+
+        self.debug("Configuring: " + str(name) + " of " + str(kind) + " with: " + str(option))
+
         # warn about deprecated functions
         if deprecated:
             self.warn(
@@ -1934,6 +1947,8 @@ class gui(object):
         # list
         items = self.__getItems(kind)
         self.__verifyItem(items, name)
+
+        self.debug("Got items: " + str(items))
 
         if kind in [self.RB, self.RADIOBUTTON] and option not in ["change"]:
             items = items[name]
@@ -2643,6 +2658,8 @@ class gui(object):
         isDarwin = gui.GET_PLATFORM() == gui.MAC
         isLinux = gui.GET_PLATFORM() == gui.LINUX
 
+        logging.getLogger("appJar").debug("Config " + str(widgType) + " BG to " + str(bg))
+
         # always remove the border from scales
         if widgType == "Scale":
             widget.config(highlightbackground=bg)
@@ -2700,11 +2717,11 @@ class gui(object):
             widget.config(bg=bg)
 
     def __getContainerBg(self):
-        return self.__getContainer()["bg"]
+        return self.getContainer()["bg"]
 
     def __getContainerFg(self):
         try:
-            return self.__getContainer()["fg"]
+            return self.getContainer()["fg"]
         except:
             return "black"
 
@@ -2720,7 +2737,7 @@ class gui(object):
             rowspan=0,
             sticky=W + E):
         # allow item to be added to container
-        container = self.__getContainer()
+        container = self.getContainer()
         gui.SET_WIDGET_BG(widget, self.__getContainerBg())
         self.SET_WIDGET_FG(widget, self.__getContainerFg())
 
@@ -2865,6 +2882,10 @@ class gui(object):
 
     # returns the current working container
     def __getContainer(self):
+        self.warn(".__getContainer() has been deprecated. Please use .getContainer()")
+        return self.getContainer()
+
+    def getContainer(self):
         container = self.containerStack[-1]['container']
         if self.containerStack[-1]['type'] == self.C_SCROLLPANE:
             return container.interior
@@ -3138,7 +3159,7 @@ class gui(object):
             addRow=False):
         self.__verifyItem(self.n_grids, title, True)
         grid = SimpleGrid(
-            self.__getContainer(),
+            self.getContainer(),
             title,
             data,
             action,
@@ -3611,7 +3632,7 @@ class gui(object):
         self.__verifyItem(self.n_labels, title, True)
 
         # first, make a frame
-        frame = LabelBox(self.__getContainer())
+        frame = LabelBox(self.getContainer())
         frame.config(background=self.__getContainerBg())
         self.n_frames.append(frame)
 
@@ -3674,7 +3695,7 @@ class gui(object):
     def addCheckBox(self, title, row=None, column=0, colspan=0, rowspan=0):
         self.__verifyItem(self.n_cbs, title, True)
         var = IntVar(self.topLevel)
-        cb = Checkbutton(self.__getContainer())
+        cb = Checkbutton(self.getContainer())
         cb.config(
             text=title,
             variable=var,
@@ -3727,7 +3748,7 @@ class gui(object):
         return scale
 
     def addScale(self, title, row=None, column=0, colspan=0, rowspan=0):
-        scale = self.__buildScale(title, self.__getContainer())
+        scale = self.__buildScale(title, self.getContainer())
         self.__positionWidget(scale, row, column, colspan, rowspan)
 
     def addLabelScale(self, title, row=None, column=0, colspan=0, rowspan=0):
@@ -3891,7 +3912,7 @@ class gui(object):
             column=0,
             colspan=0,
             rowspan=0):
-        option = self.__buildOptionBox(self.__getContainer(), title, options)
+        option = self.__buildOptionBox(self.getContainer(), title, options)
         self.__positionWidget(option, row, column, colspan, rowspan)
 
     def addTickOptionBox(
@@ -3903,7 +3924,7 @@ class gui(object):
             colspan=0,
             rowspan=0):
         tick = self.__buildOptionBox(
-            self.__getContainer(), title, options, "ticks")
+            self.getContainer(), title, options, "ticks")
         self.__positionWidget(tick, row, column, colspan, rowspan)
 
     def addLabelTickOptionBox(
@@ -4131,7 +4152,8 @@ class gui(object):
         if location is None or location == "":
             location = self.getLocation()
             if location is not None:
-                location = location["loc"]
+#                location = location["loc"]
+                location = str(location["latitude"]) + "," + str(location["longitude"])
             else:
                 raise Exception("Unable to contact location server.")
 
@@ -4148,9 +4170,10 @@ class gui(object):
         return request
 
     def getLocation(self):
-        LOCATION_URL = "http://ipinfo.io/json"
+#        LOCATION_URL = "http://ipinfo.io/json"
+        LOCATION_URL = "http://freegeoip.net/json/"
         try:
-            data =  urlopen(LOCATION_URL).read()
+            data =  urlopen(LOCATION_URL).read().decode("utf-8")
             self.info(data)
             data = json.loads(data)
             return data
@@ -4180,7 +4203,7 @@ class gui(object):
             axes = fig.add_subplot(111)
             axes.plot(t,s)
 
-            canvas = FigureCanvasTkAgg(fig, self.__getContainer())
+            canvas = FigureCanvasTkAgg(fig, self.getContainer())
             canvas.fig = fig
             canvas.axes = axes
             canvas.show()
@@ -4220,7 +4243,7 @@ class gui(object):
             haveTitle = False
 
         props = Properties(
-            self.__getContainer(),
+            self.getContainer(),
             title,
             values,
             haveTitle,
@@ -4304,7 +4327,7 @@ class gui(object):
             column=0,
             colspan=0,
             rowspan=0):
-        spin = self.__buildSpinBox(self.__getContainer(), title, values)
+        spin = self.__buildSpinBox(self.getContainer(), title, values)
         self.__positionWidget(spin, row, column, colspan, rowspan)
         self.setSpinBoxPos(title, 0)
         return spin
@@ -4778,7 +4801,7 @@ class gui(object):
         self.__addImageObj(name, imgObj, row, column, colspan, rowspan)
 
     def __addImageObj(self, name, img, row=None, column=0, colspan=0, rowspan=0):
-        label = Label(self.__getContainer())
+        label = Label(self.getContainer())
         label.config(
             anchor=CENTER,
             font=self.labelFont,
@@ -5037,7 +5060,7 @@ class gui(object):
             newRb = True
 
         # finally, create the actual RadioButton
-        rb = Radiobutton(self.__getContainer())
+        rb = Radiobutton(self.getContainer())
         rb.config(
             text=name,
             variable=var,
@@ -5106,7 +5129,7 @@ class gui(object):
             colspan=0,
             rowspan=0):
         self.__verifyItem(self.n_lbs, name, True)
-        frame = ListBox(self.__getContainer())
+        frame = ListBox(self.getContainer())
         vscrollbar = AutoScrollbar(frame)
         hscrollbar = AutoScrollbar(frame, orient=HORIZONTAL)
 
@@ -5319,15 +5342,15 @@ class gui(object):
             column=0,
             colspan=0,
             rowspan=0):
-        but = self.__buildButton(title, func, self.__getContainer(), name)
+        but = self.__buildButton(title, func, self.getContainer(), name)
         self.__positionWidget(but, row, column, colspan, rowspan, None)
 
     def addButton(self, title, func, row=None, column=0, colspan=0, rowspan=0):
-        but = self.__buildButton(title, func, self.__getContainer())
+        but = self.__buildButton(title, func, self.getContainer())
         self.__positionWidget(but, row, column, colspan, rowspan, None)
 
     def addImageButton(self, title, func, imgFile, row=None, column=0, colspan=0, rowspan=0):
-        but = self.__buildButton(title, func, self.__getContainer())
+        but = self.__buildButton(title, func, self.getContainer())
         self.__positionWidget(but, row, column, colspan, rowspan, None)
         self.setButtonImage(title, imgFile)
 
@@ -5365,7 +5388,7 @@ class gui(object):
 
         singleFunc = self.__checkFunc(names, funcs)
 
-        frame = WidgetBox(self.__getContainer())
+        frame = WidgetBox(self.getContainer())
         frame.config(background=self.__getContainerBg())
 
         # make them into a 2D array, if not already
@@ -5398,7 +5421,7 @@ class gui(object):
 # FUNCTIONS for links
 #####################################
     def __buildLink(self, title):
-        link = Link(self.__getContainer())
+        link = Link(self.getContainer())
         link.config(
             text=title,
             font=self.linkFont,
@@ -5431,7 +5454,7 @@ class gui(object):
 #####################################
     # adds a simple grip, used to drag the window around
     def addGrip(self, row=None, column=0, colspan=0, rowspan=0):
-        grip = Grip(self.__getContainer())
+        grip = Grip(self.getContainer())
         self.__positionWidget(grip, row, column, colspan, rowspan)
         self.__addTooltip(grip, "Drag here to move", True)
 
@@ -5442,7 +5465,7 @@ class gui(object):
     # used with permission from Ben Goodwin
     def addMicroBit(self, title, row=None, column=0, colspan=0, rowspan=0):
         self.__verifyItem(self.n_microbits, title, True)
-        mb = MicroBitSimulator(self.__getContainer())
+        mb = MicroBitSimulator(self.getContainer())
         self.__positionWidget(mb, row, column, colspan, rowspan)
         self.n_microbits[title] = mb
 
@@ -5567,7 +5590,7 @@ class gui(object):
         :raises ItemLookupError: raised if the title is not unique
         """
         self.__verifyItem(self.n_labels, title, True)
-        container = self.__getContainer()
+        container = self.getContainer()
         lab = Label(container)
 
         lab.inContainer = False
@@ -5589,7 +5612,7 @@ class gui(object):
 
     # adds a set of labels, in the row, spannning specified columns
     def addLabels(self, names, row=None, colspan=0, rowspan=0):
-        frame = WidgetBox(self.__getContainer())
+        frame = WidgetBox(self.getContainer())
         frame.config(background=self.__getContainerBg())
         for i in range(len(names)):
             self.__verifyItem(self.n_labels, names[i], True)
@@ -5648,7 +5671,7 @@ class gui(object):
         return text
 
     def addTextArea(self, title, row=None, column=0, colspan=0, rowspan=0):
-        text = self.__buildTextArea(title, self.__getContainer())
+        text = self.__buildTextArea(title, self.getContainer())
         self.__positionWidget(
             text,
             row,
@@ -5664,7 +5687,7 @@ class gui(object):
             column=0,
             colspan=0,
             rowspan=0):
-        text = self.__buildTextArea(title, self.__getContainer(), True)
+        text = self.__buildTextArea(title, self.getContainer(), True)
         self.__positionWidget(
             text,
             row,
@@ -5723,7 +5746,7 @@ class gui(object):
         xmlDoc = parseString(data)
 
         frame = ScrollPane(
-            self.__getContainer(),
+            self.getContainer(),
             relief=RAISED,
             borderwidth=2,
             bg="white",
@@ -5804,7 +5827,7 @@ class gui(object):
             rowspan=0):
 
         self.__verifyItem(self.n_messages, title, True)
-        mess = Message(self.__getContainer())
+        mess = Message(self.getContainer())
         mess.config(font=self.messageFont)
         mess.config(justify=LEFT, background=self.__getContainerBg())
 
@@ -5885,7 +5908,7 @@ class gui(object):
             colspan=0,
             rowspan=0,
             secret=False):
-        ent = self.__buildEntry(title, self.__getContainer(), secret)
+        ent = self.__buildEntry(title, self.getContainer(), secret)
         self.__positionWidget(ent, row, column, colspan, rowspan)
 
     def addFileEntry(
@@ -5895,7 +5918,7 @@ class gui(object):
             column=0,
             colspan=0,
             rowspan=0):
-        ent = self.__buildFileEntry(title, self.__getContainer())
+        ent = self.__buildFileEntry(title, self.getContainer())
         self.__positionWidget(ent, row, column, colspan, rowspan)
 
     def __getFileName(self, title):
@@ -5933,7 +5956,7 @@ class gui(object):
             rowspan=0,
             secret=False):
 
-        ent = self.__buildValidationEntry(title, self.__getContainer(), secret)
+        ent = self.__buildValidationEntry(title, self.getContainer(), secret)
         self.__positionWidget(ent, row, column, colspan, rowspan)
 
     def __buildValidationEntry(self, title, frame, secret):
@@ -6016,7 +6039,7 @@ class gui(object):
             rowspan=0):
         ent = self.__buildEntry(
             title,
-            self.__getContainer(),
+            self.getContainer(),
             secret=False,
             words=words)
         self.__positionWidget(ent, row, column, colspan, rowspan)
@@ -6076,7 +6099,7 @@ class gui(object):
             colspan=0,
             rowspan=0,
             secret=False):
-        ent = self.__buildEntry(title, self.__getContainer(), secret)
+        ent = self.__buildEntry(title, self.getContainer(), secret)
         self.__positionWidget(ent, row, column, colspan, rowspan)
 
         if self.validateNumeric is None:
@@ -6403,11 +6426,11 @@ class gui(object):
         self.__verifyItem(self.n_meters, name, True)
 
         if type == "SPLIT":
-            meter = SplitMeter(self.__getContainer(), font=self.meterFont)
+            meter = SplitMeter(self.getContainer(), font=self.meterFont)
         elif type == "DUAL":
-            meter = DualMeter(self.__getContainer(), font=self.meterFont)
+            meter = DualMeter(self.getContainer(), font=self.meterFont)
         else:
-            meter = Meter(self.__getContainer(), font=self.meterFont)
+            meter = Meter(self.getContainer(), font=self.meterFont)
 
         self.n_meters[name] = meter
         self.__positionWidget(meter, row, column, colspan, rowspan)
@@ -6482,7 +6505,7 @@ class gui(object):
             colspan=0,
             rowspan=0,
             colour=None):
-        sep = Separator(self.__getContainer(), orient)
+        sep = Separator(self.getContainer(), orient)
         if colour is not None:
             sep.configure(fg=colour)
         self.n_separators.append(sep)
@@ -6501,7 +6524,7 @@ class gui(object):
             rowspan=0):
         self.__verifyItem(self.n_pieCharts, name, True)
         self.__loadTooltip()
-        pie = PieChart(self.__getContainer(), fracs, self.__getContainerBg())
+        pie = PieChart(self.getContainer(), fracs, self.__getContainerBg())
         self.n_pieCharts[name] = pie
         self.__positionWidget(pie, row, column, colspan, rowspan, sticky=None)
 
