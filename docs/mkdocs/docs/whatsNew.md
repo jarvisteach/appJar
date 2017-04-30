@@ -11,6 +11,11 @@
     * [#101](https://github.com/jarvisteach/appJar/issues/101) - More work implementing [Drag n'Drop](/pythonDnD.md)
     * [#83](https://github.com/jarvisteach/appJar/issues/83) - Toolbars are now [pinnable](/pythonBars/#set-toolbars)  
 
+## Version (0.061)  
+
+* Issues Resolved:
+    * [#154](https://github.com/jarvisteach/appJar/issues/154) - Fixed bug with AutoEntry not showing drop-down in right position, when placed in a container
+
 ## Version (0.06)  
 * New widgets: [MicroBit](/pythonDevWidgets/#microbit-emulator), [Validation Entries](/pythonWidgets/#entry)  
 * Widget enhancements: Can now set some rules for [entries](/pythonWidgets/#set-entries)  
