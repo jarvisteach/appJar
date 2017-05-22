@@ -3020,7 +3020,9 @@ class gui(object):
             colspan=0,
             rowspan=0,
             action=None,
-            addRow=False):
+            addRow=False,
+            actionColumnText="Action",
+            actionButtonLabel="Press"):
         self.__verifyItem(self.n_grids, title, True)
         grid = SimpleGrid(
             self.__getContainer(),
@@ -3028,6 +3030,8 @@ class gui(object):
             data,
             action,
             addRow,
+            actionColumnText,
+            actionButtonLabel,
             buttonFont=self.buttonFont)
         grid.config(font=self.gridFont, background=self.__getContainerBg())
         self.__positionWidget(
@@ -7162,9 +7166,12 @@ class gui(object):
         else:
             return col[1]
 
-    def textBox(self, title, question):
+    def textBox(self, title, question, defaultValue=None):
         self.topLevel.update_idletasks()
-        return TextDialog(self.topLevel, title, question).result
+        if defaultValue is not None:
+            defaultVar = StringVar(self.topLevel)
+            defaultVar.set(defaultValue)
+        return TextDialog(self.topLevel, title, question, defaultVar=defaultVar).result
 
     def numberBox(self, title, question):
         return self.numBox(title, question)
@@ -9081,9 +9088,11 @@ class Dialog(Toplevel):
 
 class SimpleEntryDialog(Dialog):
 
-    def __init__(self, parent, title, question):
+    def __init__(self, parent, title, question, defaultvar=None):
         self.error = False
         self.question = question
+        if defaultvar is not None:
+            self.defaultVar=defaultvar
         if PYTHON2:
             Dialog.__init__(self, parent, title)
         else:
@@ -9104,6 +9113,10 @@ class SimpleEntryDialog(Dialog):
     def body(self, master):
         Label(master, text=self.question).grid(row=0)
         self.e1 = Entry(master)
+        if self.defaultVar is not None:
+            self.e1.var = self.defaultVar
+            self.e1.config(textvariable=self.e1.var)
+            self.e1.var.auto_id = None
         self.l1 = Label(master, fg="red")
         self.e1.grid(row=1)
         self.l1.grid(row=2)
@@ -9115,11 +9128,11 @@ class SimpleEntryDialog(Dialog):
 
 class TextDialog(SimpleEntryDialog):
 
-    def __init__(self, parent, title, question):
+    def __init__(self, parent, title, question, defaultVar=None):
         if PYTHON2:
-            SimpleEntryDialog.__init__(self, parent, title, question)
+            SimpleEntryDialog.__init__(self, parent, title, question, defaultVar)
         else:
-            super(TextDialog, self).__init__(parent, title, question)
+            super(TextDialog, self).__init__(parent, title, question, defaultVar)
 
     def validate(self):
         res = self.e1.get()
@@ -9180,6 +9193,8 @@ class SubWindow(Toplevel):
 
 class SimpleGrid(Frame):
 
+    rows = []
+
     def config(self, cnf=None, **kw):
         self.configure(cnf, **kw)
 
@@ -9206,7 +9221,7 @@ class SimpleGrid(Frame):
                 family=buttonFont.actual("family"),
                 size=buttonFont.actual("size"))
 
-    def __init__(self, parent, title, data, action=None, addRow=False, **opts):
+    def __init__(self, parent, title, data, action=None, addRow=False, actionColumnText="Action", actionButtonLabel="Press", **opts):
         if "buttonFont" in opts:
             self.buttonFont = opts.pop("buttonFont")
         else:
@@ -9229,6 +9244,8 @@ class SimpleGrid(Frame):
         self.entries = []
         self.numColumns = 0
         self.numRows = len(data)
+        self.actionColumnText=actionColumnText
+        self.actionButtonLabel=actionButtonLabel
         # find out the max number of cells in a row
         for rowNum in range(self.numRows):
             if len(data[rowNum]) > self.numColumns:
@@ -9298,6 +9315,7 @@ class SimpleGrid(Frame):
 
     def __addRows(self, data, addEntryRow=False):
         # loop through each row
+        self.rows = data
         for rowNum in range(self.numRows):
             self.__addRow(rowNum, data[rowNum])
 
@@ -9353,7 +9371,7 @@ class SimpleGrid(Frame):
                 # add the title
                 if rowNum == 0:
                     widg.configure(
-                        text="Action",
+                        text=self.actionColumnText,
                         font=self.ghFont,
                         background=self.cellHeadingBg)
                 # add a button
@@ -9361,10 +9379,10 @@ class SimpleGrid(Frame):
                     but = Button(
                         widg,
                         font=self.buttonFont,
-                        text="Press",
+                        text=self.actionButtonLabel,
                         command=gui.MAKE_FUNC(
                             self.action,
-                            celContents))
+                            cellNum))
                     but.place(relx=0.5, rely=0.5, anchor=CENTER)
 
                 widg.grid(row=rowNum, column=cellNum + 1, sticky=N + E + S + W)
@@ -9398,7 +9416,7 @@ class SimpleGrid(Frame):
         self.ent_but = Button(
             lab,
             font=self.buttonFont,
-            text="Press",
+            text=self.actionButtonLabel,
             command=gui.MAKE_FUNC(
                 self.action,
                 "newRow"))
