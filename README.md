@@ -27,7 +27,7 @@ Docs here: http://appJar.info
 
 This provides a library for implementing easy GUIs...
 
-###Installation:
+### Installation:
  - Download the ZIP file (click the big green button) & unzip it
  - Add it to your path:
    - make a folder in your home directory, called PYLIB, and put appJar inside it
@@ -37,14 +37,14 @@ This provides a library for implementing easy GUIs...
    - Check the docs folder, for a couple of PDFs with help.
    - Check the Lessons folder, for some example code.
 
-###Example:
+### Example:
 ```
 from appJar import gui  
 app = gui("Example")  
 app.addLabel("label1", "Hello World")  
 app.go()  
 ```
-###Reasoning:
+### Reasoning:
  - Designed to be as easy as possible, yet still provide a lot of tkinter functionality
  - Provides 3 functions for most widgets:
    - add(name, value) this adds a new widget (usually with a name and a value)
