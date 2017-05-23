@@ -3050,7 +3050,8 @@ class gui(object):
         return self.__verifyItem(self.n_grids, title).getSelectedCells()
 
     def addGridRow(self, title, data):
-        self.__verifyItem(self.n_grids, title).addRow(data)
+        grid=self.__verifyItem(self.n_grids, title)
+        grid.addRow(data)
 
     ########################################
 
@@ -7171,6 +7172,8 @@ class gui(object):
         if defaultValue is not None:
             defaultVar = StringVar(self.topLevel)
             defaultVar.set(defaultValue)
+        else:
+            defaultVar = None
         return TextDialog(self.topLevel, title, question, defaultVar=defaultVar).result
 
     def numberBox(self, title, question):
@@ -9088,11 +9091,10 @@ class Dialog(Toplevel):
 
 class SimpleEntryDialog(Dialog):
 
-    def __init__(self, parent, title, question, defaultvar=None):
+    def __init__(self, parent, title, question, defaultvar):
         self.error = False
         self.question = question
-        if defaultvar is not None:
-            self.defaultVar=defaultvar
+        self.defaultVar=defaultvar
         if PYTHON2:
             Dialog.__init__(self, parent, title)
         else:
@@ -9194,6 +9196,7 @@ class SubWindow(Toplevel):
 class SimpleGrid(Frame):
 
     rows = []
+    addRow = False
 
     def config(self, cnf=None, **kw):
         self.configure(cnf, **kw)
@@ -9278,7 +9281,7 @@ class SimpleGrid(Frame):
         hsb.pack(side="bottom", fill="x")
         self.mainCanvas.pack(side="left", fill="both", expand=True)
 
-        # add the grid cpntainer to the frame
+        # add the grid container to the frame
         self.gridContainer = Frame(self.mainCanvas)
         self.mainCanvas.create_window(
             (4, 4), window=self.gridContainer, anchor="nw", tags="self.gridContainer")
@@ -9311,7 +9314,11 @@ class SimpleGrid(Frame):
                     event,
                     arg))
 
+        self.addRowFlag=addRow
         self.__addRows(data, addRow)
+        
+    def addRows(self, data, addEntryRow=False):
+        self.__addRows(data, addEntryRow)
 
     def __addRows(self, data, addEntryRow=False):
         # loop through each row
@@ -9324,10 +9331,12 @@ class SimpleGrid(Frame):
             self.__addEntryBoxes()
 
     def addRow(self, rowData):
-        self.__removeEntryBoxes()
+        if self.addRowFlag:
+            self.__removeEntryBoxes()
         self.__addRow(self.numRows, rowData)
         self.numRows += 1
-        self.__addEntryBoxes()
+        if self.addRowFlag:
+            self.__addEntryBoxes()
 
     def __addRow(self, rowNum, rowData):
         celContents = []
@@ -9382,7 +9391,7 @@ class SimpleGrid(Frame):
                         text=self.actionButtonLabel,
                         command=gui.MAKE_FUNC(
                             self.action,
-                            cellNum))
+                            rowNum))
                     but.place(relx=0.5, rely=0.5, anchor=CENTER)
 
                 widg.grid(row=rowNum, column=cellNum + 1, sticky=N + E + S + W)
