@@ -1183,8 +1183,8 @@ class gui(object):
         self.setLogLevel("INFO")
 
     def setLogLevel(self, level):
-        self.info("Log level changed to: " + str(level))
         logging.getLogger("appJar").setLevel(getattr(logging, level.upper()))
+        self.info("Log level changed to: " + str(level))
 
     def exception(self, message): self.logMessage(message, "EXCEPTION")
     def critical(self, message): self.logMessage(message, "CRITICAL")
@@ -4497,7 +4497,8 @@ class gui(object):
                 self.__animateImage,
                 title)
             self.n_imageAnimationIds[title] = anim_id
-        except:
+        except Exception as e:
+            self.exception(e)
             lab.image.anim_pos = 0
             lab.image.cached = True
             self.__animateImage(title)
@@ -4513,7 +4514,8 @@ class gui(object):
             self.preloadAnimatedImageId = self.topLevel.after(
                 0, self.__preloadAnimatedImage, img)
         # when all frames have been processed
-        except TclError:
+        except TclError as e:
+            self.exception(e)
             img.anim_pos = 0
             img.cached = True
 
