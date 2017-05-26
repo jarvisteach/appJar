@@ -72,7 +72,7 @@ namespace eval ::tkdnd {
 
     switch [tk windowingsystem] {
       x11 {
-        if { [string first "arm" $tcl_platform(machine)] == 0 } {
+        if { [string first "arm" $::tcl_platform(machine) ] == 0 } {
           set _windowingsystem pi
         } else {
           set _windowingsystem x11
@@ -255,6 +255,7 @@ proc ::tkdnd::drop_target { mode path { types {} } } {
     }
     unregister {
       switch $_windowingsystem {
+        pi -
         x11 {
         }
         win32 -
