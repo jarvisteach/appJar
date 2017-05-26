@@ -2395,15 +2395,15 @@ class gui(object):
 
             # functions to manage widgets
             exec( "def show" + v +
-                "(self, name): self.showWidget(" +
+                "(self, name): self.showWidgetType(" +
                 str(k) + ", name)")
             exec("gui.show" + v + "=show" + v)
             exec( "def hide" + v +
-                "(self, name): self.hideWidget(" +
+                "(self, name): self.hideWidgetType(" +
                 str(k) + ", name)")
             exec("gui.hide" + v + "=hide" + v)
             exec( "def remove" + v +
-                "(self, name): self.removeWidget(" +
+                "(self, name): self.removeWidgetType(" +
                 str(k) + ", name)")
             exec("gui.remove" + v + "=remove" + v)
 
@@ -2456,7 +2456,7 @@ class gui(object):
         else:
             return False
 
-    def hideWidget(self, kind, name):
+    def hideWidgetType(self, kind, name):
         # get the dictionary of items, and find the item in it
         items = self.__getItems(kind)
         item = self.__verifyItem(items, name)
@@ -2475,7 +2475,7 @@ class gui(object):
             widget.grid_remove()
 #                  self.__updateLabelBoxes(name)
 
-    def showWidget(self, kind, name):
+    def showWidgetType(self, kind, name):
         # get the dictionary of items, and find the item in it
         items = self.__getItems(kind)
         item = self.__verifyItem(items, name)
@@ -2491,7 +2491,7 @@ class gui(object):
             widget.grid()
 #                  self.__updateLabelBoxes(name)
 
-    def removeWidget(self, kind, name):
+    def removeWidgetType(self, kind, name):
         # get the dictionary of items, and find the item in it
         items = self.__getItems(kind)
         item = self.__verifyItem(items, name)
@@ -4498,7 +4498,7 @@ class gui(object):
                 title)
             self.n_imageAnimationIds[title] = anim_id
         except Exception as e:
-            self.exception(e)
+            # will be thrown when we reach end of anim images
             lab.image.anim_pos = 0
             lab.image.cached = True
             self.__animateImage(title)
@@ -4515,7 +4515,7 @@ class gui(object):
                 0, self.__preloadAnimatedImage, img)
         # when all frames have been processed
         except TclError as e:
-            self.exception(e)
+            # expected - when all images cached
             img.anim_pos = 0
             img.cached = True
 
@@ -4787,6 +4787,29 @@ class gui(object):
         self.__verifyItem(self.n_images, name, True)
         imgObj = self.__getImageData(imageData, fmt)
         self.__addImageObj(name, imgObj, row, column, colspan, rowspan)
+
+    # function to configure an image map
+    def setImageMap(self, name, func, coords):
+        img = self.__verifyItem(self.n_images, name)
+
+        rectangles = []
+        for k, v in coords.items():
+            rect = AJRectangle(k, Point(v[0], v[1]), v[2]-v[0], v[3]-v[1])
+            rectangles.append(rect)
+
+        img.MAP_COORDS = rectangles
+        img.MAP_FUNC = func
+        img.bind("<Button-1>", lambda e: self.__imageMap(name, e), add="+")
+
+    # function called when an image map is clicked
+    def __imageMap(self, name, event):
+        img = self.__verifyItem(self.n_images, name)
+        for rect in img.MAP_COORDS:
+            if rect.contains(Point(event.x, event.y)):
+                img.MAP_FUNC(rect.name)
+                return
+
+        img.MAP_FUNC("UNKNOWN: " + str(event.x) + ", " + str(event.y))
 
     # must be GIF or PNG
     def addImage(
@@ -9959,6 +9982,30 @@ class PauseLogger():
     def __exit__(self, a, b, c):
         logging.disable(logging.NOTSET)
 
+#####################################
+# classes to work with image maps
+#####################################
+class Point(object):
+    def __init__(self, x=0, y=0):
+        self.x = x
+        self.y = y
+
+    def __str__(self):
+        return "({},{})".format(self.x, self.y)
+
+class AJRectangle(object):
+    def __init__(self, name, posn, w, h):
+        self.name = name
+        self.corner = posn
+        self.width = w
+        self.height = h
+
+    def __str__(self):
+        return "{3}:({0},{1},{2})".format(self.corner, self.width, self.height, self.name)
+
+    def contains(self, point):
+        return (self.corner.x <= point.x <= self.corner.x + self.width and
+                    self.corner.y <= point.y <= self.corner.y + self.height)
 
 #####################################
 # MAIN - for testing

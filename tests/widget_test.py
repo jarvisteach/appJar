@@ -1048,6 +1048,16 @@ def test_images():
     app.startAnimation("im1")
 
     app.addImage("im2", "1_entries.gif")
+
+    coords = {
+        "America":[32, 17, 242, 167],
+        "South America":[126, 170, 226, 292],
+    }
+
+    def click(area):
+        print(area)
+
+    app.setImageMap("im2", click, coords)
     app.addImage("im3", "1_checks.png")
     app.addImage("im4", "sc.jpg")
 

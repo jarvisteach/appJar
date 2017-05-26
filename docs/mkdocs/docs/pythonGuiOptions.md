@@ -18,7 +18,7 @@ Some basic configuration for the size, position, transparency, etc. of the GUI.
 * `.setTransparency(percentage)`  
     Sets how transparent the GUI is. Between 0 and 100%.
 
-###Size & Locaiton
+###Size & Location
 
 * `.hide()` & `.show()`  
     Used to hide and show the main window.  
