@@ -4793,9 +4793,10 @@ class gui(object):
         img = self.__verifyItem(self.n_images, name)
 
         rectangles = []
-        for k, v in coords.items():
-            rect = AJRectangle(k, Point(v[0], v[1]), v[2]-v[0], v[3]-v[1])
-            rectangles.append(rect)
+        if len(coords) > 0:
+            for k, v in coords.items():
+                rect = AJRectangle(k, Point(v[0], v[1]), v[2]-v[0], v[3]-v[1])
+                rectangles.append(rect)
 
         img.MAP_COORDS = rectangles
         img.MAP_FUNC = func
