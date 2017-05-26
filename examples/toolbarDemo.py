@@ -1,3 +1,5 @@
+import sys
+sys.path.append("../")
 from appJar import gui
 showing = True
 
@@ -35,7 +37,7 @@ settings = {"Bold":False, "Italic": False, "Underline": False}
 
 app=gui("Toolbar Demo")
 
-app.startPanedWindow("mainPane")
+app.startPanedFrame("mainPane")
 
 app.setExpand("column")
 app.setSticky("new")
@@ -51,15 +53,15 @@ app.addScrolledTextArea("t1")
 
 app.setTextAreaWidth("t1", 50)
 app.setTextAreaHeight("t1", 25)
-app.startPanedWindow("toolPane")
+app.startPanedFrame("toolPane")
 app.setSticky("new")
 app.addProperties("Settings", settings)
 app.setSticky("new")
 app.setExpand("column")
 app.addButtons(["HIDE", "SHOW"], bar)
-app.stopAllPanedWindows()
+app.stopAllPanedFrames()
 
-app.addToolbar(tools, tbFunc, True)
+app.addToolbar(tools, tbFunc, True, False)
 app.addStatusbar(fields=3, side="RIGHT")
 app.setStatusbarBg("red", 2)
 app.setStatusbarFg("white", 2)
