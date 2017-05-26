@@ -9,7 +9,7 @@
     * [#133](https://github.com/jarvisteach/appJar/issues/133) - Improvements to [Tooltips](/pythonDialogs/#tooltips)
     * [#124](https://github.com/jarvisteach/appJar/issues/124) - Switched to Python's [logging](/pythonLogging.md) feature
     * [#101](https://github.com/jarvisteach/appJar/issues/101) - More work implementing [Drag n'Drop](/pythonDnD.md)
-    * [#83](https://github.com/jarvisteach/appJar/issues/83) - Toolbars are now [pinnable](/pythonBars/#set-toolbars)  
+    * [#73](https://github.com/jarvisteach/appJar/issues/73) - Toolbars are now [pinnable](/pythonBars/#set-toolbars)  
 
 ## Version (0.061)  
 

@@ -39,7 +39,7 @@ The `logLevel` is also incresed to **DEBUG**
 ##External Logging
 ---
 
-If you wan to bypass the **appJar** functions, and use the logger directly in your code, simply request your own copy of the logger: `logger = logging.getLogger("appJar")`.  
+If you want to bypass the **appJar** functions, and use the logger directly in your code, simply request your own copy of the logger: `logger = logging.getLogger("appJar")`.  
 
 You can then talk directly to the same logging mechanism that **appJar** uses.  
 
@@ -48,5 +48,3 @@ You can then talk directly to the same logging mechanism that **appJar** uses.
 The idea behind having different levels of logging, is that you don't have to remove all of your debug & testing messages. It is common to include lots of testing messages during development, and then remove them once we're satisfied the code is working. However, these might sometimes prove useful in the future, when trying to diagnose something that has gone wrong.  
 
 With logging, you can register those messages as **DEBUG** or **INFO**. Then set the `logLevel` to be **INFO** during development, and **WARNING** once development is complete. Then, if you ever need them, you can simply change the `logLevel`.  
-
-

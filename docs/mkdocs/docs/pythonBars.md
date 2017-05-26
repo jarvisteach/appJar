@@ -30,7 +30,12 @@ app.addToolbar(tools, tbFunc, findIcon=True)
 * `.setToolbarPinned(pinned=True)`  
     Will configure the toolbar to be *pinnable*  
     When the mouse is not over the toolbar it will minimise.  
-    The toolbar will also gain an extra button (a pin) allowing the user to configure it to be pinned or not.  
+
+![ToolbarPinHidden](img/bars/toolbar_pin_hidden.png)
+
+The toolbar will also gain an extra button (a pin) allowing the user to configure it to be pinned or not.  
+
+![ToolbarPin](img/bars/toolbar_pin.png)  
 
 * `.setToolbarIcon(name, icon)`  
     Will set an icon for the corresponding button in the toolbar.  

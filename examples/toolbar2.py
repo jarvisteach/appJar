@@ -15,7 +15,7 @@ def tbIn(btn): app.showToolbar()
 
 app = gui()
 
-app.addToolbar(["Save", "Open", "Close", "a", "b", "c", "d", "e", "f", "g"], tbFunc, True)
+app.addToolbar(["Save", "Open", "Close"], tbFunc, True)
 
 app.addButtons(["Pin", "Unpin", "Hide", "Show"], [pin, unpin, tbOut, tbIn])
 #app.setToolbarPinned(False)
