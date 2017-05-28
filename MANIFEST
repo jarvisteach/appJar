@@ -22,6 +22,7 @@ appJar/lib/tkdnd2.8/tcl_files/tkdnd_windows.tcl
 appJar/lib/tkdnd2.8/tcl_libs/libtkdnd2.8.dll
 appJar/lib/tkdnd2.8/tcl_libs/libtkdnd2.8.dylib
 appJar/lib/tkdnd2.8/tcl_libs/libtkdnd2.8.so
+appJar/lib/tkdnd2.8/tcl_libs/libtkdnd2.8_arm.so
 appJar/lib/tkdnd2.8/tcl_libs/libtkdnd2.8_lin32.so
 appJar/lib/tkdnd2.8/tcl_libs/libtkdnd2.8_lin64.so
 appJar/lib/tkdnd2.8/tcl_libs/libtkdnd2.8_win64.dll
