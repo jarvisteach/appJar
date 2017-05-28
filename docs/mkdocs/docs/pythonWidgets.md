@@ -489,7 +489,7 @@ app.go()
 * `.clearListBox(title)`  
     Removes all items from the specified ListBox.  
 
-* `.setListBoxRows(title)`  
+* `.setListBoxRows(title, rows)`  
     Sets how many rows to display in the specified ListBox.  
 
 * `.setListBoxMulti(list, multi=True)`  
