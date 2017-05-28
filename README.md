@@ -44,6 +44,12 @@ app = gui("Example")
 app.addLabel("label1", "Hello World")  
 app.go()  
 ```
+
+### Case Study Project:
+[Content Downloader](https://github.com/ltfschoen/content-downloader) was originally built as a command line tool but now incorporates the **appJar GUI**, which has improved the user experience of gathering their web scraping requirements. Screenshot of outcome shown below:
+
+![alt tag](https://raw.githubusercontent.com/ltfschoen/content-downloader/master/screenshots/gui_appjar_updated.png)
+
 ### Reasoning:
  - Designed to be as easy as possible, yet still provide a lot of tkinter functionality
  - Provides 3 functions for most widgets:
