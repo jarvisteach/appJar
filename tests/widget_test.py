@@ -380,10 +380,16 @@ def test_checks():
     app.addCheckBox(TEXT_ONE)
     app.addCheckBox(TEXT_TWO)
     app.addCheckBox(TEXT_THREE)
+    app.addNamedCheckBox(TEXT_TWO, "NCB1")
+    app.addNamedCheckBox(TEXT_TWO, "NCB2")
+    app.addNamedCheckBox(TEXT_TWO, "NCB3")
 
     assert app.getCheckBox(TEXT_ONE) is False
     assert app.getCheckBox(TEXT_TWO) is False
     assert app.getCheckBox(TEXT_THREE) is False
+    assert app.getCheckBox("NCB1") is False
+    assert app.getCheckBox("NCB2") is False
+    assert app.getCheckBox("NCB3") is False
 
     app.setCheckBox(TEXT_ONE)
     app.setCheckBox(TEXT_TWO, True)
@@ -392,6 +398,19 @@ def test_checks():
     assert app.getCheckBox(TEXT_ONE) is True
     assert app.getCheckBox(TEXT_TWO) is True
     assert app.getCheckBox(TEXT_THREE) is False
+    assert app.getCheckBox("NCB1") is False
+    assert app.getCheckBox("NCB2") is False
+    assert app.getCheckBox("NCB3") is False
+
+    app.setCheckBox("NCB2", True)
+
+    assert app.getCheckBox(TEXT_ONE) is True
+    assert app.getCheckBox(TEXT_TWO) is True
+    assert app.getCheckBox(TEXT_THREE) is False
+
+    assert app.getCheckBox("NCB1") is False
+    assert app.getCheckBox("NCB2") is True
+    assert app.getCheckBox("NCB3") is False
 
     # call generic setter functions
     test_setters("CheckBox", TEXT_ONE)

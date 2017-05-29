@@ -4,6 +4,7 @@
 ## Version (0.07)  
 
 * Issues Resolved:
+    * [#161](https://github.com/jarvisteach/appJar/issues/161) - [NamedCheckBoxes](/pythonWidgets/#add-checkboxes)
     * [#137](https://github.com/jarvisteach/appJar/issues/137) - [File Entries](/pythonWidgets/#entry)  
     * [#136](https://github.com/jarvisteach/appJar/issues/136) - Simple [GoogleMaps](/pythonDevWidgets/#googlemaps) downloader   
     * [#135](https://github.com/jarvisteach/appJar/issues/135) - A clickable [Image Map](/pythonImages/#image-maps)

@@ -3692,22 +3692,27 @@ class gui(object):
 #####################################
 # FUNCTION for check boxes
 #####################################
-    def addCheckBox(self, title, row=None, column=0, colspan=0, rowspan=0):
+    def addCheckBox(self, title, row=None, column=0, colspan=0, rowspan=0, name=None):
         self.__verifyItem(self.n_cbs, title, True)
         var = IntVar(self.topLevel)
         cb = Checkbutton(self.getContainer())
+        if name is None:
+            name = title
         cb.config(
-            text=title,
+            text=name,
             variable=var,
             font=self.cbFont,
             background=self.__getContainerBg(),
             activebackground=self.__getContainerBg())
-        cb.DEFAULT_TEXT = title
+        cb.DEFAULT_TEXT = name
         cb.config(anchor=W)
         cb.bind("<Button-1>", self.__grabFocus)
         self.n_cbs[title] = cb
         self.n_boxVars[title] = var
         self.__positionWidget(cb, row, column, colspan, rowspan, EW)
+
+    def addNamedCheckBox(self, name, title, row=None, column=0, colspan=0, rowspan=0):
+        self. addCheckBox(title, row, column, colspan, rowspan, name)
 
     def getCheckBox(self, title):
         bVar = self.__verifyItem(self.n_boxVars, title)

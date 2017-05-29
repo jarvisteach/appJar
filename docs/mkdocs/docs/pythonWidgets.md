@@ -315,6 +315,12 @@ app.go()
 * `.addCheckBox(title)`  
     This creates a CheckBox, with the specified title.  
 
+* `.addNamedCheckBox(name, title)`  
+    By default, it's not possible to have two CheckBoxes with the same text.  
+    If that's required, a named CheckBox should be used.  
+    This creates a CheckBox, with the specified title.  
+    The name will be displayed next to the CheckBox, and the title passed to the function as a unique ID.  
+
 ####Set CheckBoxes
 * `.setCheckBox(title, ticked=True, callFunction=True)`  
     This will tick the CheckBox, or untick it if ticked is set to False.  
