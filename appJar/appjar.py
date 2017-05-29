@@ -9050,6 +9050,24 @@ class LabelBox(Frame):
         self.theLabel = None
         self.theWidget = None
 
+    # customised config setters
+    def config(self, cnf=None, **kw):
+        self.configure(cnf, **kw)
+
+    def configure(self, cnf=None, **kw):
+        # properties to propagate to CheckBoxes
+        kw = gui.CLEAN_CONFIG_DICTIONARY(**kw)
+
+        if "bg" in kw:
+            for child in self.winfo_children():
+                gui.SET_WIDGET_BG(child, kw["bg"])
+
+        # propagate anything left
+        if PYTHON2:
+            Frame.config(self, cnf, **kw)
+        else:
+            super(Frame, self).config(cnf, **kw)
+
 
 class WidgetBox(Frame):
 
