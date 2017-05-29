@@ -1,10 +1,12 @@
 #Minecraft
 ----
 
+You can now see a version of this article in print!  Check out the [MagPi, issue 58](https://www.raspberrypi.org/magpi-issues/MagPi58.pdf).
+
 Linking appJar with Minecraft on the Raspberry Pi is super easy!  
 Simply import the Minecraft library and appJar library and have appJar call Minecraft functions...  
 
-###Chat  
+### Chat  
 
 First, let's set up a simple chat entry box.  
 ![Chat](/img/pi/mc1.png)
@@ -38,7 +40,7 @@ app.setEntryFunction("Chat", sendMsg)
 app.setLocation(100,100)
 ```
 
-###Movement  
+### Movement  
 Next, let's add some movement controls... 
 ![Movement](/img/pi/mc2.png)
 
@@ -83,7 +85,7 @@ app.bindKey("<Space>", move)
 # if btn == "LEFT" or btn == "<Left>" ... and so on
 ```
 
-###Status  
+### Status  
 
 Another cool feature, is a status bar that tells us where we're at...
 ![Status](/img/pi/mc3.png)
@@ -103,7 +105,7 @@ app.addStatusbar(fields=3)
 app.registerEvent(getLocation)
 ```
 
-###Dropping blocks  
+### Dropping blocks  
 Next, let's add the ability to drop blocks.  
 
 ![Blocks](/img/pi/mc4.png)
@@ -144,4 +146,34 @@ BLOCKS={ "AIR":0, "STONE":1, "GRASS":2, "DIRT":3, "COBBLESTONE":4,
 }
 blockNames=list(BLOCKS.keys())
 blockNames.sort()
+```
+### Anything from the menu?
+
+Finally, let's add a menu.  
+Menus work just like buttons - when you click them, they simply call a function.  
+So, we're going to create a function for the menus, and have it operate the camera and create/restore checkpoints:
+
+```python
+# put this near the top of your code
+def clickMenu(choice):
+    if choice == "Create":
+        mc.saveCheckpoint()
+        app.infoBox("Save", "Checkpoint saved.")
+    elif choice == "Restore":
+        if app.yesNoBox("Restore", "Are you sure?"):
+            mc.restoreCheckpoint()
+    elif choice == "Normal":
+        mc.camera.setNormal()
+    elif choice == "Fixed":
+        mc.camera.setFixed()
+    elif choice == "Follow":
+        mc.camera.setFollow()
+```
+
+Then we add the code to our main GUI block, to show the menus:  
+
+```python
+# put this in the main GUI block
+app.addMenuList("Checkpoint", ["Create", "Restore"], clickMenu)
+app.addMenuList("Camera", ["Normal", "Fixed", "Follow"], clickMenu)
 ```

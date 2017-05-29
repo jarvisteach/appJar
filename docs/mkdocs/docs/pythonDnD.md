@@ -16,7 +16,7 @@ There is a beta version of drag and drop between labels.
 
 ##Drag'n Drop Between Applications
 ---
-There is also a beta version of drag and drop between applications - at the moment, this is has been seen to work on OSX 10.11, Windows 7 & Raspberry Pi - let us know of success on other distributions!  
+There is also a beta version of drag and drop between applications - at the moment, this has been seen to work on Mac OSX 10.11, Raspberry Pi, and Windows 7 - let us know of success on other distributions!  
 
 Certain widgets can be registered to receive *Drop* events:  
 
@@ -28,6 +28,7 @@ Certain widgets can be registered to receive *Drop* events:
 * `.setListBoxDropTarget(title, function=None, replace=True)`  
 
 Then, if you drag a file or a URI onto one of these widgets, the filename/URI will be copied.  
+Or, if it's an image, the image will be replaced.  
 
 If no function has been set, the contents of the widget will be replaced with the filename/URI.  
 If you'd rather append the URI/filename - set `replace` to be False.  
