@@ -7500,6 +7500,11 @@ class gui(object):
         options['title'] = title
         options['mustexist'] = False
         fileName = filedialog.askdirectory(**options)
+
+        # re-enable menus
+        for theMenu in self.n_menus:
+            self.enableMenu(theMenu)
+
         if fileName == "":
             return None
         else:
@@ -7508,6 +7513,11 @@ class gui(object):
     def colourBox(self, colour='#ff0000'):
         self.topLevel.update_idletasks()
         col = askcolor(colour)
+
+        # re-enable menus
+        for theMenu in self.n_menus:
+            self.enableMenu(theMenu)
+
         if col[1] is None:
             return None
         else:
