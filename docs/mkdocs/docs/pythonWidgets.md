@@ -136,6 +136,7 @@ app.go()
 * `.addAutoEntry(title, words)`  
 * `.addValidationEntry(title)`  
 * `.addFileEntry(title)`  
+* `.addDirectoryEntry(title)`  
 
     Each of these will add the specified type of Entry, using the title provided.
 

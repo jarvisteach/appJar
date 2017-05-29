@@ -2029,6 +2029,9 @@ class gui(object):
                     self.__enableTooltip(item)
                 elif option == "focus":
                     item.focus_set()
+                    if kind == self.ENTRY:
+                        item.icursor(END)
+                        item.xview(END)
 
                 # event bindings
                 elif option == 'over':
@@ -5956,33 +5959,58 @@ class gui(object):
         ent = self.__buildEntry(title, self.getContainer(), secret)
         self.__positionWidget(ent, row, column, colspan, rowspan)
 
-    def addFileEntry(
-            self,
-            title,
-            row=None,
-            column=0,
-            colspan=0,
-            rowspan=0):
+    def addFileEntry(self, title, row=None, column=0, colspan=0, rowspan=0):
         ent = self.__buildFileEntry(title, self.getContainer())
         self.__positionWidget(ent, row, column, colspan, rowspan)
 
-    def __getFileName(self, title):
-        fileName = self.openBox()
+    def addDirectoryEntry(self, title, row=None, column=0, colspan=0, rowspan=0):
+        ent = self.__buildFileEntry(title, self.getContainer(), selectFile=False)
+        self.__positionWidget(ent, row, column, colspan, rowspan)
+
+    def __getDirName(self, title):
+        self.__getFileName(title, selectFile=False)
+
+    def __getFileName(self, title, selectFile=True):
+        if selectFile:
+            fileName = self.openBox()
+        else:
+            fileName = self.directoryBox()
+
         if fileName is not None:
             self.setEntry(title, fileName)
+        self.setEntryFocus(title)
 
-    def __buildFileEntry(self, title, frame):
+    def __checkDirName(self, title):
+        if len(self.getEntry(title)) == 0:
+            self.__getFileName(title, selectFile=False)
+
+    def __checkFileName(self, title):
+        if len(self.getEntry(title)) == 0:
+            self.__getFileName(title)
+
+    def __buildFileEntry(self, title, frame, selectFile=True):
         vFrame = LabelBox(frame)
         vFrame.config(background=self.__getContainerBg())
 
         ent = self.__buildEntry(title, vFrame)
-        self.setEntryDefault(title, "-- enter a filename --")
         ent.pack(expand=True, fill=X, side=LEFT)
 
+        if selectFile:
+            command = self.MAKE_FUNC(self.__getFileName, title)
+            click_command = self.MAKE_FUNC(self.__checkFileName, title, True)
+            text = "File"
+            default = "-- enter a filename --"
+        else:
+            command = self.MAKE_FUNC(self.__getDirName, title)
+            click_command = self.MAKE_FUNC(self.__checkDirName, title, True)
+            text = "Directory"
+            default = "-- enter a directory --"
+
+        self.setEntryDefault(title, default)
+        ent.bind("<Button-1>", click_command, "+")
+
         but = Button(vFrame)
-        FILE_ICON = u"\U0001F4C1"
-        but.config(text="File", font=self.buttonFont)
-        command = self.MAKE_FUNC(self.__getFileName, title)
+        but.config(text=text, font=self.buttonFont)
         but.config(command=command)
         but.pack(side=RIGHT, fill=X)
         but.inContainer = True

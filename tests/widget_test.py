@@ -109,6 +109,7 @@ def test_entries():
     app.addNumericEntry("ne1")
     app.addSecretEntry("se1")
     app.addFileEntry("fe1")
+    app.addDirectoryEntry("de1")
     app.addAutoEntry("ae1", ["a", "b", "c"])
     app.setAutoEntryNumRows("ae1", 5)
 
