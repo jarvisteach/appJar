@@ -12,11 +12,11 @@ app=gui("Main Window")
 app.addLabel("l1", "Main Window")
 app.addButtons(["Grouped", "Not-grouped"], press)
 
-app.startSubWindow("Grouped")
+app.startSubWindow("Grouped", transient=True)
 app.addLabel("g1", "Grouped")
 app.stopSubWindow()
 
-app.startSubWindow("Not Grouped", grouped=False)
+app.startSubWindow("Not Grouped", grouped=False, transient=True)
 app.addLabel("g2", "Not Grouped")
 app.stopSubWindow()
 
