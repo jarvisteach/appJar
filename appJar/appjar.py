@@ -3469,7 +3469,7 @@ class gui(object):
 
         # group this with the topLevel window
         if grouped:
-            top.group(self.topLevel)#.group())
+            top.group(self.topLevel)
 
         if blocking:
             top.killLab = None
