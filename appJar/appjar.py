@@ -5606,7 +5606,7 @@ class gui(object):
         self.n_flashLabs.append(self.n_labels[title])
         self.doFlash = True
 
-    def addLabel(
+    def addSelectableLabel(
             self,
             title,
             text=None,
@@ -5614,6 +5614,17 @@ class gui(object):
             column=0,
             colspan=0,
             rowspan=0):
+        self.addLabel(title, text, row, column, colspan, rowspan, selectable=True)
+
+    def addLabel(
+            self,
+            title,
+            text=None,
+            row=None,
+            column=0,
+            colspan=0,
+            rowspan=0,
+            selectable = False):
         """Add a label to the GUI.
         :param title: a unique identifier for the Label
         :param text: optional text for the Label
@@ -5622,7 +5633,10 @@ class gui(object):
         """
         self.__verifyItem(self.n_labels, title, True)
         container = self.getContainer()
-        lab = Label(container)
+        if not selectable:
+            lab = Label(container)
+        else:
+            lab = SelectableLabel(container)
 
         lab.inContainer = False
         if text is not None:
@@ -9146,9 +9160,35 @@ class AjScrolledText(TextParent, scrolledtext.ScrolledText):
 class SelectableLabel(Entry):
     def __init__(self, parent, **opts):
         Entry.__init__(self, parent)
-        self.configure(relief=FLAT, state="readonly", readonlybackground='white', fg='black')
-#        var = parent.StringVar()
-#        self.configure(textvariable=var)
+        self.configure(relief=FLAT, state="readonly", readonlybackground='white', fg='black', highlightthickness=0)
+        self.var = StringVar(parent)
+        self.configure(textvariable=self.var)
+
+    def cget(self, kw):
+        if kw == "text":
+            return self.var.get()
+        else:
+            if PYTHON2:
+                return Entry.cget(self, kw)
+            else:
+                return super(Entry, self).cget(kw)
+
+    def config(self, cnf=None, **kw):
+        self.configure(cnf, **kw)
+
+    def configure(self, cnf=None, **kw):
+        kw = gui.CLEAN_CONFIG_DICTIONARY(**kw)
+        if "text" in kw:
+            self.var.set(kw.pop("text"))
+
+        if "bg" in kw:
+            kw["readonlybackground"] = kw.pop("bg")
+
+        # propagate anything left
+        if PYTHON2:
+            Entry.config(self, cnf, **kw)
+        else:
+            super(Entry, self).config(cnf, **kw)
         
 
 #######################

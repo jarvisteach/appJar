@@ -68,10 +68,15 @@ def test_labels():
     app.addLabel("rowl1", TEXT_ONE, row)
     assert app.gr() == row + 1
     app.addFlashLabel("fl1", TEXT_ONE)
+    app.addSelectableLabel("sl1", TEXT_ONE)
+
+    app.setLabelFg("sl1", "yellow")
+    assert app.getLabelWidget("sl1").cget("fg") == "yellow"
 
     assert app.getLabel("el1") == EMPTY
     assert app.getLabel("l1") == TEXT_ONE
     assert app.getLabel("fl1") == TEXT_ONE
+    assert app.getLabel("sl1") == TEXT_ONE
 
     app.setLabel("el1", TEXT_TWO)
     app.setLabel("l1", TEXT_TWO)

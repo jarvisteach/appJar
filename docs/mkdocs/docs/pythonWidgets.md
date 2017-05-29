@@ -48,6 +48,11 @@ app.go()
 * `.addEmptyLabel(title)`  
     Does the same as add a *label*, except there's no parameter to set any text.
 
+* `.addSelectableLabel(title, text=None)`  
+    This adds a label whose text can be selected with the mouse.  
+    This is really just a *read-only* entry, disguised to look like a label.  
+    But it seems to do the trick...  
+
 * `.addFlashLabel(title, text=None)`  
     This adds a flashing *label*, that will alternate between the foreground and background colours.
 

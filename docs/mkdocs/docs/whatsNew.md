@@ -12,6 +12,7 @@
     * [#124](https://github.com/jarvisteach/appJar/issues/124) - Switched to Python's [logging](/pythonLogging.md) feature
     * [#101](https://github.com/jarvisteach/appJar/issues/101) - More work implementing [Drag n'Drop](/pythonDnD.md)
     * [#73](https://github.com/jarvisteach/appJar/issues/73) - Toolbars are now [pinnable](/pythonBars/#set-toolbars)  
+    * [#59](https://github.com/jarvisteach/appJar/issues/59) - [SelectableLabels](/pythonWidgets/#add-labels)
 
 ## Version (0.061)  
 
