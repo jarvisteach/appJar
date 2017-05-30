@@ -4133,6 +4133,34 @@ class gui(object):
 # imgSize: tuple of ints, up to 640 by 640
 # imgFormat: png, gif, jpg (lossy)
 # mapType: roadmap, satellite, hybrid, terrain
+    def addGoogleMap(self, name, params, row=None, column=0, colspan=0, rowspan=0):
+        self.__verifyItem(self.n_images, name, True)
+        params = self.__setMapParams(params)
+        mapData = self.getGoogleMapData(**params)
+        imgObj = self.__getImageData(mapData, params["imgFormat"])
+        self.__addImageObj(name, imgObj, row, column, colspan, rowspan)
+
+    def setGoogleMap(self, name, params):
+        label = self.__verifyItem(self.n_images, name)
+        params = self.__setMapParams(params)
+        mapData = self.getGoogleMapData(**params)
+        imgObj = self.__getImageData(mapData, params["imgFormat"])
+        self.__populateImage(name, imgObj)
+
+    def __setMapParams(self, params):
+        if "location" not in params or params["location"] == None or params["location"] == "":
+            params["location"] = self.getLocation()
+        if "zoom" not in params:
+            params["zoom"] = 16
+        if "imgSize" not in params:
+            params["imgSize"] = "500x500"
+        if "imgFormat" not in params:
+            params["imgFormat"] = "gif"
+        if "mapType" not in params:
+            params["mapType"] = "roadmap"
+
+        return params
+
     def getGoogleMapData(self, location=None, zoom=16, imgSize="500x500", imgFormat="gif", mapType="roadmap"):  
         request = self._getGoogleURL(location, zoom, imgSize, imgFormat, mapType)  
         self.debug(request)
@@ -4154,15 +4182,12 @@ class gui(object):
 
     def _getGoogleURL(self, location=None, zoom=18, imgSize="500x500", imgFormat="gif", mapType="roadmap"):  
         GOOGLE_URL =  "http://maps.google.com/maps/api/staticmap?"
-        request =  GOOGLE_URL
+        request = GOOGLE_URL
         params = {}
 
         if location is None or location == "":
             location = self.getLocation()
-            if location is not None:
-#                location = location["loc"]
-                location = str(location["latitude"]) + "," + str(location["longitude"])
-            else:
+            if location is None:
                 raise Exception("Unable to contact location server.")
 
         params["center"] = location
@@ -4184,7 +4209,9 @@ class gui(object):
             data =  urlopen(LOCATION_URL).read().decode("utf-8")
             self.info(data)
             data = json.loads(data)
-            return data
+#            location = data["loc"]
+            location = str(data["latitude"]) + "," + str(data["longitude"])
+            return location
         except Exception as e:
             self.exception(e)
             return None
@@ -9689,7 +9716,7 @@ class SimpleGrid(Frame):
         hsb.pack(side="bottom", fill="x")
         self.mainCanvas.pack(side="left", fill="both", expand=True)
 
-        # add the grid cpntainer to the frame
+        # add the grid container to the frame
         self.gridContainer = Frame(self.mainCanvas)
         self.mainCanvas.create_window(
             (4, 4), window=self.gridContainer, anchor="nw", tags="self.gridContainer")
