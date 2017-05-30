@@ -1656,12 +1656,8 @@ def test_plots():
 
 def test_googlemap():
     print("\tTesting GoogleMaps:", PY_VER)
-    fileName = app.getGoogleMapFile("a.gif", "swindon")
-    data = app.getGoogleMapData("swindon")
-
-    app.addImage("gm1", fileName)
     try:
-        app.addImageData("gm2", data)
+        app.addGoogleMap("gm2")
     except:
         print("error with google maps - expected in 3.3.6.......")
 
