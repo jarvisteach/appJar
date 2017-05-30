@@ -1656,15 +1656,21 @@ def test_plots():
 
 def test_googlemap():
     print("\tTesting GoogleMaps:", PY_VER)
-    try:
-        app.addGoogleMap("gm2")
-        app.searchGoogleMap("gm2", "germany")
-        app.setGoogleMapTerrain("gm2", "Satellite")
-        app.zoomGoogleMap("gm2", 5)
-        app.zoomGoogleMap("gm2", "+")
-        app.zoomGoogleMap("gm2", "-")
-    except:
-        print("error with google maps - expected in 3.3.6.......")
+    app.addGoogleMap("gm2")
+    app.setGoogleMapLocation("gm2", "spain")
+    app.searchGoogleMap("gm2", "germany")
+    app.setGoogleMapTerrain("gm2", "Satellite")
+    app.setGoogleMapSize("gm2", "350x450")
+    app.setGoogleMapZoom("gm2", 15)
+    assert app.getGoogleMapZoom("gm2") == 15
+    app.zoomGoogleMap("gm2", 5)
+    app.zoomGoogleMap("gm2", "+")
+    app.zoomGoogleMap("gm2", "-")
+
+    assert app.getGoogleMapZoom("gm2") == 5
+    assert app.getGoogleMapTerrain("gm2") == "Satellite"
+    assert app.getGoogleMapLocation("gm2") == "germany"
+    assert app.getGoogleMapSize("gm2") == "350x450"
 
     print(" >> not implemented...")
     #print("\t >> all tests complete")

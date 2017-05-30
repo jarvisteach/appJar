@@ -4146,6 +4146,9 @@ class gui(object):
         self.__positionWidget(gMap, row, column, colspan, rowspan)
         self.n_maps[title] = gMap
 
+    def setGoogleMapLocation(self, title, location):
+        self.searchGoogleMap(title, location)
+
     def searchGoogleMap(self, title, location):
         gMap = self.__verifyItem(self.n_maps, title)
         gMap.changeLocation(location)
@@ -4156,12 +4159,31 @@ class gui(object):
             raise Exception("Invalid terrain. Must be one of " + str(gMap.TERRAINS))
         gMap.changeTerrain(terrain)
 
+    def setGoogleMapZoom(self, title, mod):
+        self. zoomGoogleMap(title, mod)
+
     def zoomGoogleMap(self, title, mod):
         gMap = self.__verifyItem(self.n_maps, title)
         if mod in ["+", "-"]:
             gMap.zoom(mod)
         elif isinstance(mod, int) and 0 <= mod <= 22:
             gMap.setZoom(mod)
+
+    def setGoogleMapSize(self, title, size):
+        gMap = self.__verifyItem(self.n_maps, title)
+        gMap.setSize(size)
+
+    def getGoogleMapZoom(self, title):
+        return self.__verifyItem(self.n_maps, title).params["zoom"]
+
+    def getGoogleMapTerrain(self, title):
+        return self.__verifyItem(self.n_maps, title).params["mapType"].title()
+
+    def getGoogleMapLocation(self, title):
+        return self.__verifyItem(self.n_maps, title).params["location"]
+
+    def getGoogleMapSize(self, title):
+        return self.__verifyItem(self.n_maps, title).params["imgSize"]
         
 
 #####################################
@@ -10087,22 +10109,21 @@ class GoogleMap(LabelFrame):
 
         mapData = self.getMapData(**self.params)
         imgObj = PhotoImage(data=mapData)
-        h = imgObj.height()
-        w = imgObj.width()
+        self.h = imgObj.height()
+        self.w = imgObj.width()
 
-        self.canvas = Canvas(self, width=w, height=h)
-        self.canvas.pack(expand = YES, fill = BOTH)
+        self.canvas = Canvas(self, width=self.w, height=self.h)
+        self.canvas.pack()#expand = YES, fill = BOTH)
         self.image_on_canvas = self.canvas.create_image(1, 1, image=imgObj, anchor=NW)
         self.canvas.img = imgObj
 
-        buttons = []
-        buttons.append(Label(self.canvas, text="-"))
-        buttons.append(Label(self.canvas, text="+"))
-        buttons.append(Label(self.canvas, text="H"))
+        self.buttons = []
+        self.buttons.append(Label(self.canvas, text="-"))
+        self.buttons.append(Label(self.canvas, text="+"))
+        self.buttons.append(Label(self.canvas, text="H"))
         b_font = font.Font(family='Helvetica', size=10, weight='bold')
 
-        y = -20
-        for b in buttons:
+        for b in self.buttons:
             b.configure(width=3, activebackground="#D2D2D2", relief=GROOVE, font=b_font)
 
             if gui.GET_PLATFORM() == gui.MAC:
@@ -10110,35 +10131,44 @@ class GoogleMap(LabelFrame):
             elif gui.GET_PLATFORM() in [gui.WINDOWS, gui.LINUX]:
                 b.configure(cursor="hand2")
 
-            b.place(rely=1.0, relx=1.0, x=-5, y=y, anchor=SE)
-            y-=18
-
         #make it look like it's pressed
-        buttons[0].bind("<Button-1>",lambda e: buttons[0].config(relief=SUNKEN), add="+")
-        buttons[0].bind("<ButtonRelease-1>",lambda e: buttons[0].config(relief=GROOVE), add="+")
-        buttons[0].bind("<ButtonRelease-1>",lambda e: self.zoom("-"), add="+")
+        self.buttons[0].bind("<Button-1>",lambda e: self.buttons[0].config(relief=SUNKEN), add="+")
+        self.buttons[0].bind("<ButtonRelease-1>",lambda e: self.buttons[0].config(relief=GROOVE), add="+")
+        self.buttons[0].bind("<ButtonRelease-1>",lambda e: self.zoom("-"), add="+")
 
-        buttons[1].bind("<Button-1>",lambda e: buttons[1].config(relief=SUNKEN), add="+")
-        buttons[1].bind("<ButtonRelease-1>",lambda e: buttons[1].config(relief=GROOVE), add="+")
-        buttons[1].bind("<ButtonRelease-1>",lambda e: self.zoom("+"), add="+")
+        self.buttons[1].bind("<Button-1>",lambda e: self.buttons[1].config(relief=SUNKEN), add="+")
+        self.buttons[1].bind("<ButtonRelease-1>",lambda e: self.buttons[1].config(relief=GROOVE), add="+")
+        self.buttons[1].bind("<ButtonRelease-1>",lambda e: self.zoom("+"), add="+")
 
-        buttons[2].bind("<Button-1>",lambda e: buttons[2].config(relief=SUNKEN), add="+")
-        buttons[2].bind("<ButtonRelease-1>",lambda e: buttons[2].config(relief=GROOVE), add="+")
-        buttons[2].bind("<ButtonRelease-1>",lambda e: self.changeLocation(""), add="+")
+        self.buttons[2].bind("<Button-1>",lambda e: self.buttons[2].config(relief=SUNKEN), add="+")
+        self.buttons[2].bind("<ButtonRelease-1>",lambda e: self.buttons[2].config(relief=GROOVE), add="+")
+        self.buttons[2].bind("<ButtonRelease-1>",lambda e: self.changeLocation(""), add="+")
 
         self.terrainType = StringVar(self.parent)
         self.terrainType.set(self.TERRAINS[0])
+        self.terrainOption = OptionMenu(self.canvas, self.terrainType, *self.TERRAINS, command=lambda e: self.changeTerrain(self.terrainType.get().lower()))
+        self.terrainOption.config(font=b_font)
 
-        terrainType = OptionMenu(self.canvas, self.terrainType, *self.TERRAINS, command=lambda e: self.changeTerrain(self.terrainType.get().lower()))
-        terrainType.config(font=b_font)
-        terrainType.place(rely=0, relx=1.0, x=-5, y=5, anchor=NE)
-
-        ent = Entry(self.canvas)
-        ent.bind('<Return>', lambda e: self.changeLocation(self.location.get()))
-
+        self.locationEntry = Entry(self.canvas)
+        self.locationEntry.bind('<Return>', lambda e: self.changeLocation(self.location.get()))
         self.location = StringVar(self.parent)
-        ent.config(textvariable=self.location)
-        ent.place(rely=0, relx=0, x=5, y=5, anchor=NW)
+        self.locationEntry.config(textvariable=self.location)
+
+        self.__placeControls()
+
+    def __removeControls(self):
+        self.locationEntry.place_forget()
+        self.terrainOption.place_forget()
+        self.buttons[0].place_forget()
+        self.buttons[1].place_forget()
+        self.buttons[2].place_forget()
+
+    def __placeControls(self):
+        self.locationEntry.place(rely=0, relx=0, x=5, y=5, anchor=NW)
+        self.terrainOption.place(rely=0, relx=1.0, x=-5, y=5, anchor=NE)
+        self.buttons[0].place(rely=1.0, relx=1.0, x=-5, y=-20, anchor=SE)
+        self.buttons[1].place(rely=1.0, relx=1.0, x=-5, y=-38, anchor=SE)
+        self.buttons[2].place(rely=1.0, relx=1.0, x=-5, y=-56, anchor=SE)
 
     def __setMapParams(self):
         if "location" not in self.params or self.params["location"] == None or self.params["location"] == "":
@@ -10151,6 +10181,11 @@ class GoogleMap(LabelFrame):
             self.params["imgFormat"] = "gif"
         if "mapType" not in self.params:
             self.params["mapType"] = self.TERRAINS[0]
+
+    def setSize(self, size):
+        if size != self.params["imgSize"]:
+            self.params["imgSize"] = size
+            self.parent.after(0, self.updateMap())
 
     def changeTerrain(self, terrainType):
         terrainType = terrainType.title()
@@ -10185,6 +10220,16 @@ class GoogleMap(LabelFrame):
             imgObj = PhotoImage(data=mapData)
             self.canvas.itemconfig(self.image_on_canvas, image=imgObj)
             self.canvas.img = imgObj
+
+            h = imgObj.height()
+            w = imgObj.width()
+
+            if h != self.h or w != self.w:
+                self.__removeControls()
+                self.h = h
+                self.w = w
+                self.canvas.config(width=self.w, height=self.h)
+                self.__placeControls()
         else:
             print("error")
 

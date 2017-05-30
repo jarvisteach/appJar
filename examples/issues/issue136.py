@@ -9,6 +9,8 @@ def press(btn):
         app.zoomGoogleMap("m1", int(app.getEntry("e1")))
     elif btn == "TERRAIN": 
         app.setGoogleMapTerrain("m1", app.getEntry("e1"))
+    elif btn == "SIZE": 
+        app.setGoogleMapSize("m1", app.getEntry("e1"))
     else:
         app.zoomGoogleMap("m1", btn)
         
@@ -16,8 +18,9 @@ def press(btn):
 app=gui()
 app.setLogLevel("DEBUG")
 app.addGoogleMap("m1")
+app.setGoogleMapSize("m1", "300x500")
 app.addEntry("e1")
-app.addButtons(["SEARCH", "+", "-", "ZOOM", "TERRAIN"], press)
+app.addButtons(["SEARCH", "+", "-", "ZOOM", "SIZE", "TERRAIN"], press)
 
 app.go()
 

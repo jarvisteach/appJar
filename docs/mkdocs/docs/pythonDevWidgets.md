@@ -39,9 +39,13 @@ It provides useful functionality for finding somewhere on Earth.
 
 ![GoogleMaps](img/gMap_2.png)
 
+#### Add GoogleMaps  
+
 * `.addGoogleMap(title)`  
     Creates a GoogleMap widget.  
     Displays a map image, and provides functionality to search, zoom, and change terrain.  
+
+#### Set GoogleMaps  
 
 * `.searchGoogleMap(title, location)`  
     Update the named GoogleMap widget to show the specified locaiton.  
@@ -52,7 +56,25 @@ It provides useful functionality for finding somewhere on Earth.
     Otherwise, a digit between 0 and 22 should be provided, to set the zoom level.  
 
 * `.setGoogleMapTerrain(title, terrain)`  
-    Set the GoogleMaps terrain to one of: `("Roadmap", "Satellite", "Hybrid", "Terrain")`  
+
+* `.setGoogleMapSize(title, size)`  
+    Set the size of the GoogleMap. Should be in the format `"300x300"`.  
+    Note, if you set it too small, the control widgets won;t look good...  
+
+#### Get GoogleMaps  
+
+* `.getGoogleMapLocation(title)`  
+    Returns the current displayed location.  
+    Will return an empty String, if the user clicked the **H** button.  
+
+* `.getGoogleMapZoom(title)`  
+    Returns the current zoom level of the map tile.  
+
+* `.getGoogleMapTerrain(title)`  
+    Returns the current terrain setting for the map tile.  
+
+* `.getGoogleMapSize(title)`  
+    Returns the current size of the map tile.  
 
 ###PieChart
 ---
