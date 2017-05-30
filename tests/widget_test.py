@@ -1658,6 +1658,11 @@ def test_googlemap():
     print("\tTesting GoogleMaps:", PY_VER)
     try:
         app.addGoogleMap("gm2")
+        app.searchGoogleMap("gm2", "germany")
+        app.setGoogleMapTerrain("gm2", "Satellite")
+        app.zoomGoogleMap("gm2", 5)
+        app.zoomGoogleMap("gm2", "+")
+        app.zoomGoogleMap("gm2", "-")
     except:
         print("error with google maps - expected in 3.3.6.......")
 

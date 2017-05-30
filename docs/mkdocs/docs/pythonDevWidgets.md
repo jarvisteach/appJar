@@ -35,12 +35,24 @@ Widget to emulate a [MicroBit](http://microbit.org)
 ###GoogleMaps
 ---
 A self-contained GoogleMaps widget.  
-It provides all functionality for finding somewhere on Earth.  
+It provides useful functionality for finding somewhere on Earth.  
+
 ![GoogleMaps](img/gMap_2.png)
 
-* `.addGoogleMap(name)`  
+* `.addGoogleMap(title)`  
     Creates a GoogleMap widget.  
-    Displays a map image, and provides functionality to search, zoom, and change terrain.
+    Displays a map image, and provides functionality to search, zoom, and change terrain.  
+
+* `.searchGoogleMap(title, location)`  
+    Update the named GoogleMap widget to show the specified locaiton.  
+
+* `.zoomGoogleMap(title, mod)`  
+    Change the zoom level of the named GoogleMap.  
+    Providing a **+** or **-** will cause the map to zoom in or out one level.  
+    Otherwise, a digit between 0 and 22 should be provided, to set the zoom level.  
+
+* `.setGoogleMapTerrain(title, terrain)`  
+    Set the GoogleMaps terrain to one of: `("Roadmap", "Satellite", "Hybrid", "Terrain")`  
 
 ###PieChart
 ---

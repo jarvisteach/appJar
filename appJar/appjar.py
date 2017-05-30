@@ -4137,12 +4137,32 @@ class gui(object):
 # FUNCTION for GoogleMaps
 #####################################
 
-    def addGoogleMap(self, name, row=None, column=0, colspan=0, rowspan=0):
+    def addGoogleMap(self, title, row=None, column=0, colspan=0, rowspan=0):
         self.__loadURL()
         if urlencode is False:
             raise Exception("Unable to load GoogleMaps - urlencode library not available")
+        self.__verifyItem(self.n_maps, title, True)
         gMap = GoogleMap(self.getContainer())
         self.__positionWidget(gMap, row, column, colspan, rowspan)
+        self.n_maps[title] = gMap
+
+    def searchGoogleMap(self, title, location):
+        gMap = self.__verifyItem(self.n_maps, title)
+        gMap.changeLocation(location)
+
+    def setGoogleMapTerrain(self, title, terrain):
+        gMap = self.__verifyItem(self.n_maps, title)
+        if terrain not in gMap.TERRAINS:
+            raise Exception("Invalid terrain. Must be one of " + str(gMap.TERRAINS))
+        gMap.changeTerrain(terrain)
+
+    def zoomGoogleMap(self, title, mod):
+        gMap = self.__verifyItem(self.n_maps, title)
+        if mod in ["+", "-"]:
+            gMap.zoom(mod)
+        elif isinstance(mod, int) and 0 <= mod <= 22:
+            gMap.setZoom(mod)
+        
 
 #####################################
 # FUNCTION for matplotlib
@@ -10060,6 +10080,7 @@ class GoogleMap(LabelFrame):
     def __init__(self, parent):
         LabelFrame.__init__(self, parent, text="GoogleMaps")
         self.parent = parent
+        self.TERRAINS = ("Roadmap", "Satellite", "Hybrid", "Terrain")
 
         self.params = {}
         self.__setMapParams()
@@ -10106,9 +10127,9 @@ class GoogleMap(LabelFrame):
         buttons[2].bind("<ButtonRelease-1>",lambda e: self.changeLocation(""), add="+")
 
         self.terrainType = StringVar(self.parent)
-        self.terrainType.set("Roadmap")
+        self.terrainType.set(self.TERRAINS[0])
 
-        terrainType = OptionMenu(self.canvas, self.terrainType, "Roadmap", "Satellite", "Hybrid", "Terrain", command=lambda e: self.changeTerrain(self.terrainType.get().lower()))
+        terrainType = OptionMenu(self.canvas, self.terrainType, *self.TERRAINS, command=lambda e: self.changeTerrain(self.terrainType.get().lower()))
         terrainType.config(font=b_font)
         terrainType.place(rely=0, relx=1.0, x=-5, y=5, anchor=NE)
 
@@ -10129,18 +10150,25 @@ class GoogleMap(LabelFrame):
         if "imgFormat" not in self.params:
             self.params["imgFormat"] = "gif"
         if "mapType" not in self.params:
-            self.params["mapType"] = "Roadmap"
+            self.params["mapType"] = self.TERRAINS[0]
 
     def changeTerrain(self, terrainType):
-        self.terrainType.set(terrainType.title())
-        if self.params["mapType"] != self.terrainType.get().lower():
-            self.params["mapType"] = self.terrainType.get().lower()
-            self.parent.after(0, self.updateMap())
+        terrainType = terrainType.title()
+        if terrainType in self.TERRAINS:
+            self.terrainType.set(terrainType)
+            if self.params["mapType"] != self.terrainType.get().lower():
+                self.params["mapType"] = self.terrainType.get().lower()
+                self.parent.after(0, self.updateMap())
 
     def changeLocation(self, location):
         self.location.set(location)
         if self.params["location"] != location:
             self.params["location"] = location
+            self.parent.after(0, self.updateMap())
+
+    def setZoom(self, zoom):
+        if 0 <= zoom <= 22:
+            self.params["zoom"] = zoom
             self.parent.after(0, self.updateMap())
 
     def zoom(self, mod):
