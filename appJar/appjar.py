@@ -10231,14 +10231,14 @@ class GoogleMap(LabelFrame):
                 self.canvas.config(width=self.w, height=self.h)
                 self.__placeControls()
         else:
-            print("error")
+            logging.getLogger("appJar").error("Unable to update map, as no mapData")
 
     def getMapData(self, location=None, zoom=16, imgSize="500x500", imgFormat="gif", mapType="roadmap"):  
         request = self._getURL(location, zoom, imgSize, imgFormat, mapType)  
         try:
             return urlopen(request).read()
         except Exception as e:
-            print(e)
+            logging.getLogger("appJar").exception(e)
             return None
 
     def getMapFile(self, fileName, location=None, zoom=16, imgSize="500x500", imgFormat="gif", mapType="roadmap"):  
@@ -10247,7 +10247,7 @@ class GoogleMap(LabelFrame):
             urlretrieve(request, fileName)
             return fileName
         except Exception as e:
-            print(e)
+            logging.getLogger("appJar").exception(e)
             return None
 
     def _getURL(self, location=None, zoom=18, imgSize="500x500", imgFormat="gif", mapType="roadmap"):  
@@ -10270,20 +10270,22 @@ class GoogleMap(LabelFrame):
         params["sensor"] = "false"  # must be given, deals with getting loction from mobile device 
 
         request += urlencode(params)
+        logging.getLogger("appJar").debug("GoogleMap search URL: " + request)
         return request
 
     def getLocation(self):
 #        LOCATION_URL = "http://ipinfo.io/json"
         LOCATION_URL = "http://freegeoip.net/json/"
+        logging.getLogger("appJar").debug("Location request URL: " + LOCATION_URL)
         try:
             data =  urlopen(LOCATION_URL).read().decode("utf-8")
-            print(data)
+            logging.getLogger("appJar").debug("Location data: " + data)
             data = json.loads(data)
 #            location = data["loc"]
             location = str(data["latitude"]) + "," + str(data["longitude"])
             return location
         except Exception as e:
-            print(e)
+            logging.getLogger("appJar").exception(e)
             return None
 
 #####################################

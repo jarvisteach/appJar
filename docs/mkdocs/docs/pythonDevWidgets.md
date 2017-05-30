@@ -10,9 +10,12 @@ Widget to emulate a [MicroBit](http://microbit.org)
 ![MicroBit Emulator](img/mb.png)
 
 ```python
-    app.addMicroBit("mb1")
-    app.setMicroBitImage("mb1", "09090:90909:90009:09090:00900")
-    app.go()
+from appJar import gui
+
+app = gui()
+app.addMicroBit("mb1")
+app.setMicroBitImage("mb1", "09090:90909:90009:09090:00900")
+app.go()
 ```
 
 ####Add MicroBits
@@ -36,8 +39,18 @@ Widget to emulate a [MicroBit](http://microbit.org)
 ---
 A self-contained GoogleMaps widget.  
 It provides useful functionality for finding somewhere on Earth.  
+All requests for map data are performed in the background, so the UI shouldn't become unresponsive.  
 
 ![GoogleMaps](img/gMap_2.png)
+
+```python
+from appjar import gui
+
+app = gui()
+app.addGoogleMap("m1")
+app.setGoogleMapSize("m1", "300x500")
+app.go()
+```
 
 #### Add GoogleMaps  
 
@@ -84,12 +97,12 @@ The PieChart is purely for display purposes, and is not interactive.
 ![PieChart](img/dev/pie.png)  
 
 ```python
-    from appJar import gui
+from appJar import gui
 
-    app=gui()
-    app.addPieChart("p1", {"apples":50, "oranges":200, "grapes":75,
-                            "beef":300, "turkey":150})
-    app.go()
+app = gui()
+app.addPieChart("p1", {"apples":50, "oranges":200, "grapes":75,
+                        "beef":300, "turkey":150})
+app.go()
 ```
 
 ####Add PieCharts  
@@ -110,7 +123,7 @@ Takes an arbitrary XML string, and converts it into a tree structure.
 ```python
 from appJar import gui
 
-app=gui()
+app = gui()
 app.addTree("t1",
             """<people>
             <person><name>Fred</name><age>45</age><gender>Male</gender></person>
@@ -161,17 +174,17 @@ It is possible to include buttons at the end of each row, and an additional row 
 ![Grid](img/dev/grid.png)  
 
 ```python
-    from appJar import gui
+from appJar import gui
 
-    app=gui()
-    app.setFont(20)
-    app.addGrid("g1",
-        [["Name", "Age", "Gender"],
-        ["Fred", 45, "Male"],
-        ["Tina", 37, "Female"],
-        ["Clive", 28, "Male"],
-        ["Betty", 51, "Female"]])
-    app.go()
+app = gui()
+app.setFont(20)
+app.addGrid("g1",
+    [["Name", "Age", "Gender"],
+    ["Fred", 45, "Male"],
+    ["Tina", 37, "Female"],
+    ["Clive", 28, "Male"],
+    ["Betty", 51, "Female"]])
+app.go()
 ```
 
 ####Add Grids  
