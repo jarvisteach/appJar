@@ -2124,13 +2124,10 @@ class gui(object):
     def __bindOverEvent(self, kind, name, widget, functions, eventType, key=None):
         functions = self.__validateFunctionList(functions, "Over")
 
-        if kind == self.LABEL:
-            if functions[0] is not None:
-                widget.bind("<Enter>", self.MAKE_FUNC(functions[0], name, True), add="+")
-            if functions[1] is not None:
-                widget.bind("<Leave>", self.MAKE_FUNC(functions[1], name, True), add="+")
-        else:
-            self.warn("Only able to bind over events to Labels")
+        if functions[0] is not None:
+            widget.bind("<Enter>", self.MAKE_FUNC(functions[0], name, True), add="+")
+        if functions[1] is not None:
+            widget.bind("<Leave>", self.MAKE_FUNC(functions[1], name, True), add="+")
 
     # generic function for over events
     def __bindDragEvent(self, kind, name, widget, functions, eventType, key=None):
