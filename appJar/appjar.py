@@ -28,15 +28,6 @@ except ImportError:
     PYTHON2 = False
     PY_NAME = "python3"
 
-try: # python 2
-    from urllib import urlencode, urlopen, urlretrieve
-    import json
-except ImportError: # python 3
-    from urllib.parse import urlencode
-    from urllib.request import urlopen
-    from urllib.request import urlretrieve
-    import json
-
 import os
 import sys
 import re
@@ -59,6 +50,7 @@ winsound = None
 FigureCanvasTkAgg = Figure = None # matplotlib
 parseString = TreeItem = TreeNode = None # ajTree
 ajTreeNode = ajTreeData = None
+urlencode = urlopen = urlretrieve = json = None # GoogleMap
 
 # details
 __author__ = "Richard Jarvis"
@@ -181,6 +173,7 @@ class gui(object):
     PLOT = 18
     MICROBIT = 19
     WIDGET = 20
+    MAP = 21
 
     RB = 60
     CB = 40
@@ -254,6 +247,7 @@ class gui(object):
         LINK: "Link",
         METER: "Meter",
         IMAGE: "Image",
+        MAP: "Map",
         PIECHART: "PieChart",
         PROPERTIES: "Properties",
         GRID: "Grid",
@@ -615,6 +609,21 @@ class gui(object):
                 self.dnd = TkDND(self.topLevel)
             except:
                 TkDND = False
+
+    def __loadURL(self):
+        global urlencode, urlopen, urlretrieve, json
+        if urlencode is None:
+            try: # python 2
+                from urllib import urlencode, urlopen, urlretrieve
+                import json
+            except ImportError: # python 3
+                try:
+                    from urllib.parse import urlencode
+                    from urllib.request import urlopen
+                    from urllib.request import urlretrieve
+                    import json
+                except:
+                    urlencode = urlopen = urlretrieve = json = False
 
     def __registerDragSource(self, title, widget, function=None):
         self.__loadTkdnd()
@@ -1015,6 +1024,7 @@ class gui(object):
         self.n_rbVars = {}
         self.n_rbVals = {}
         self.n_images = {}        # image label widgets
+        self.n_maps = {}        # GoogleMap widgets
         self.n_imageCache = {}    # image file objects
         self.n_imageAnimationIds = {} # stores after ids
 
@@ -1836,6 +1846,8 @@ class gui(object):
             return self.n_meters
         elif kind == self.IMAGE:
             return self.n_images
+        elif kind == self.MAP:
+            return self.n_maps
         elif kind == self.PIECHART:
             return self.n_pieCharts
         elif kind == self.PROPERTIES:
@@ -4125,96 +4137,12 @@ class gui(object):
 # FUNCTION for GoogleMaps
 #####################################
 
-## https://developers.google.com/maps/documentation/static-maps/intro
-# http://hci574.blogspot.co.uk/2010/04/using-google-maps-static-images.html
-# baseName: the fileName
-# center: the location
-# zoom: 0 (all of the world scale ) to 22 (single buildings scale)
-# imgSize: tuple of ints, up to 640 by 640
-# imgFormat: png, gif, jpg (lossy)
-# mapType: roadmap, satellite, hybrid, terrain
-    def addGoogleMap(self, name, params, row=None, column=0, colspan=0, rowspan=0):
-        self.__verifyItem(self.n_images, name, True)
-        params = self.__setMapParams(params)
-        mapData = self.getGoogleMapData(**params)
-        imgObj = self.__getImageData(mapData, params["imgFormat"])
-        self.__addImageObj(name, imgObj, row, column, colspan, rowspan)
-
-    def setGoogleMap(self, name, params):
-        label = self.__verifyItem(self.n_images, name)
-        params = self.__setMapParams(params)
-        mapData = self.getGoogleMapData(**params)
-        imgObj = self.__getImageData(mapData, params["imgFormat"])
-        self.__populateImage(name, imgObj)
-
-    def __setMapParams(self, params):
-        if "location" not in params or params["location"] == None or params["location"] == "":
-            params["location"] = self.getLocation()
-        if "zoom" not in params:
-            params["zoom"] = 16
-        if "imgSize" not in params:
-            params["imgSize"] = "500x500"
-        if "imgFormat" not in params:
-            params["imgFormat"] = "gif"
-        if "mapType" not in params:
-            params["mapType"] = "roadmap"
-
-        return params
-
-    def getGoogleMapData(self, location=None, zoom=16, imgSize="500x500", imgFormat="gif", mapType="roadmap"):  
-        request = self._getGoogleURL(location, zoom, imgSize, imgFormat, mapType)  
-        self.debug(request)
-        try:
-            return urlopen(request).read()
-        except Exception as e:
-            self.exception(e)
-            return None
-
-    def getGoogleMapFile(self, fileName, location=None, zoom=16, imgSize="500x500", imgFormat="gif", mapType="roadmap"):  
-        request = self._getGoogleURL(location, zoom, imgSize, imgFormat, mapType)  
-        self.debug(request)
-        try:
-            urlretrieve(request, fileName)
-            return fileName
-        except Exception as e:
-            self.exception(e)
-            return None
-
-    def _getGoogleURL(self, location=None, zoom=18, imgSize="500x500", imgFormat="gif", mapType="roadmap"):  
-        GOOGLE_URL =  "http://maps.google.com/maps/api/staticmap?"
-        request = GOOGLE_URL
-        params = {}
-
-        if location is None or location == "":
-            location = self.getLocation()
-            if location is None:
-                raise Exception("Unable to contact location server.")
-
-        params["center"] = location
-        params["zoom"] = zoom
-        params["size"] = imgSize
-        params["format"] = imgFormat
-        params["maptype"] = mapType
-
-#        params["mobile"] = "true" # optional: mobile=true will assume the image is shown on a small screen (mobile device)
-        params["sensor"] = "false"  # must be given, deals with getting loction from mobile device 
-
-        request += urlencode(params)
-        return request
-
-    def getLocation(self):
-#        LOCATION_URL = "http://ipinfo.io/json"
-        LOCATION_URL = "http://freegeoip.net/json/"
-        try:
-            data =  urlopen(LOCATION_URL).read().decode("utf-8")
-            self.info(data)
-            data = json.loads(data)
-#            location = data["loc"]
-            location = str(data["latitude"]) + "," + str(data["longitude"])
-            return location
-        except Exception as e:
-            self.exception(e)
-            return None
+    def addGoogleMap(self, name, row=None, column=0, colspan=0, rowspan=0):
+        self.__loadURL()
+        if urlencode is False:
+            raise Exception("Unable to load GoogleMaps - urlencode library not available")
+        gMap = GoogleMap(self.getContainer())
+        self.__positionWidget(gMap, row, column, colspan, rowspan)
 
 #####################################
 # FUNCTION for matplotlib
@@ -10127,6 +10055,210 @@ class AJRectangle(object):
     def contains(self, point):
         return (self.corner.x <= point.x <= self.corner.x + self.width and
                     self.corner.y <= point.y <= self.corner.y + self.height)
+
+class GoogleMap(LabelFrame):
+    def __init__(self, parent):
+        LabelFrame.__init__(self, parent, text="GoogleMaps")
+        self.parent = parent
+
+        self.params = {}
+        self.__setMapParams()
+
+        mapData = self.getMapData(**self.params)
+        imgObj = PhotoImage(data=mapData)
+        h = imgObj.height()
+        w = imgObj.width()
+
+        self.canvas = Canvas(self, width=w, height=h)
+        self.canvas.pack(expand = YES, fill = BOTH)
+        self.image_on_canvas = self.canvas.create_image(1, 1, image=imgObj, anchor=NW)
+        self.canvas.img = imgObj
+
+        buttons = []
+        buttons.append(Label(self.canvas, text="-"))
+        buttons.append(Label(self.canvas, text="+"))
+        buttons.append(Label(self.canvas, text="H"))
+        b_font = font.Font(family='Helvetica', size=10, weight='bold')
+
+        y = -20
+        for b in buttons:
+            b.configure(width=3, activebackground="#D2D2D2", relief=GROOVE, font=b_font)
+
+            if gui.GET_PLATFORM() == gui.MAC:
+                b.configure(cursor="pointinghand")
+            elif gui.GET_PLATFORM() in [gui.WINDOWS, gui.LINUX]:
+                b.configure(cursor="hand2")
+
+            b.place(rely=1.0, relx=1.0, x=-5, y=y, anchor=SE)
+            y-=18
+
+        #make it look like it's pressed
+        buttons[0].bind("<Button-1>",lambda e: buttons[0].config(relief=SUNKEN), add="+")
+        buttons[0].bind("<ButtonRelease-1>",lambda e: buttons[0].config(relief=GROOVE), add="+")
+        buttons[0].bind("<ButtonRelease-1>",lambda e: self.zoom("-"), add="+")
+
+        buttons[1].bind("<Button-1>",lambda e: buttons[1].config(relief=SUNKEN), add="+")
+        buttons[1].bind("<ButtonRelease-1>",lambda e: buttons[1].config(relief=GROOVE), add="+")
+        buttons[1].bind("<ButtonRelease-1>",lambda e: self.zoom("+"), add="+")
+
+        buttons[2].bind("<Button-1>",lambda e: buttons[2].config(relief=SUNKEN), add="+")
+        buttons[2].bind("<ButtonRelease-1>",lambda e: buttons[2].config(relief=GROOVE), add="+")
+        buttons[2].bind("<ButtonRelease-1>",lambda e: self.changeLocation(""), add="+")
+
+        self.terrainType = StringVar(self.parent)
+        self.terrainType.set("Roadmap")
+
+        terrainType = OptionMenu(self.canvas, self.terrainType, "Roadmap", "Satellite", "Hybrid", "Terrain", command=lambda e: self.changeTerrain(self.terrainType.get().lower()))
+        terrainType.config(font=b_font)
+        terrainType.place(rely=0, relx=1.0, x=-5, y=5, anchor=NE)
+
+        ent = Entry(self.canvas)
+        ent.bind('<Return>', lambda e: self.changeLocation(self.location.get()))
+
+        self.location = StringVar(self.parent)
+        ent.config(textvariable=self.location)
+        ent.place(rely=0, relx=0, x=5, y=5, anchor=NW)
+
+    def __setMapParams(self):
+        if "location" not in self.params or self.params["location"] == None or self.params["location"] == "":
+            self.params["location"] = self.getLocation()
+        if "zoom" not in self.params:
+            self.params["zoom"] = 16
+        if "imgSize" not in self.params:
+            self.params["imgSize"] = "500x500"
+        if "imgFormat" not in self.params:
+            self.params["imgFormat"] = "gif"
+        if "mapType" not in self.params:
+            self.params["mapType"] = "Roadmap"
+
+    def changeTerrain(self, terrainType):
+        self.terrainType.set(terrainType.title())
+        if self.params["mapType"] != self.terrainType.get().lower():
+            self.params["mapType"] = self.terrainType.get().lower()
+            self.parent.after(0, self.updateMap())
+
+    def changeLocation(self, location):
+        self.location.set(location)
+        if self.params["location"] != location:
+            self.params["location"] = location
+            self.parent.after(0, self.updateMap())
+
+    def zoom(self, mod):
+        if mod == "+" and self.params["zoom"] < 22:
+            self.params["zoom"] += 1
+            self.parent.after(0, self.updateMap())
+        elif mod == "-" and self.params["zoom"] > 0:
+            self.params["zoom"] -= 1
+            self.parent.after(0, self.updateMap())
+
+    def updateMap(self):
+        mapData = self.getMapData(**self.params)
+        if mapData is not None:
+            imgObj = PhotoImage(data=mapData)
+            self.canvas.itemconfig(self.image_on_canvas, image=imgObj)
+            self.canvas.img = imgObj
+        else:
+            print("error")
+
+    def getMapData(self, location=None, zoom=16, imgSize="500x500", imgFormat="gif", mapType="roadmap"):  
+        request = self._getURL(location, zoom, imgSize, imgFormat, mapType)  
+        try:
+            return urlopen(request).read()
+        except Exception as e:
+            print(e)
+            return None
+
+    def getMapFile(self, fileName, location=None, zoom=16, imgSize="500x500", imgFormat="gif", mapType="roadmap"):  
+        request = self._getURL(location, zoom, imgSize, imgFormat, mapType)  
+        try:
+            urlretrieve(request, fileName)
+            return fileName
+        except Exception as e:
+            print(e)
+            return None
+
+    def _getURL(self, location=None, zoom=18, imgSize="500x500", imgFormat="gif", mapType="roadmap"):  
+        GOOGLE_URL =  "http://maps.google.com/maps/api/staticmap?"
+        request = GOOGLE_URL
+        params = {}
+
+        if location is None or location == "":
+            location = self.getLocation()
+            if location is None:
+                raise Exception("Unable to contact location server.")
+
+        params["center"] = location
+        params["zoom"] = zoom
+        params["size"] = imgSize
+        params["format"] = imgFormat
+        params["maptype"] = mapType
+
+#        params["mobile"] = "true" # optional: mobile=true will assume the image is shown on a small screen (mobile device)
+        params["sensor"] = "false"  # must be given, deals with getting loction from mobile device 
+
+        request += urlencode(params)
+        return request
+
+    def getLocation(self):
+#        LOCATION_URL = "http://ipinfo.io/json"
+        LOCATION_URL = "http://freegeoip.net/json/"
+        try:
+            data =  urlopen(LOCATION_URL).read().decode("utf-8")
+            print(data)
+            data = json.loads(data)
+#            location = data["loc"]
+            location = str(data["latitude"]) + "," + str(data["longitude"])
+            return location
+        except Exception as e:
+            print(e)
+            return None
+
+#####################################
+# FUNCTION for matplotlib
+#####################################
+    def addPlot(
+            self,
+            title,
+            t, s,
+            row=None,
+            column=0,
+            colspan=0,
+            rowspan=0):
+        self.__verifyItem(self.n_plots, title, True)
+
+        self.__loadMatplotlib()
+        if FigureCanvasTkAgg is False:
+            raise Exception("Unable to load MatPlotLib - plots not available")
+        else:
+            fig = Figure()
+
+            axes = fig.add_subplot(111)
+            axes.plot(t,s)
+
+            canvas = FigureCanvasTkAgg(fig, self.getContainer())
+            canvas.fig = fig
+            canvas.axes = axes
+            canvas.show()
+    #        canvas.get_tk_widget().pack(side=TOP, fill=BOTH, expand=1)
+            canvas._tkcanvas.pack(side=TOP, fill=BOTH, expand=1)
+
+            self.__positionWidget(canvas.get_tk_widget(), row, column, colspan, rowspan)
+            self.n_plots[title] = canvas
+            return axes
+
+    def refreshPlot(self, title):
+        canvas = self.__verifyItem(self.n_plots, title)
+        canvas.draw()
+
+    def updatePlot(self, title, t, s):
+        axes = self.__verifyItem(self.n_plots, title).axes
+        axes.clear()
+        axes.plot(t, s)
+        self.refreshPlot(title)
+
+
+#####################################
+
 
 #####################################
 # MAIN - for testing

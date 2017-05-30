@@ -34,11 +34,13 @@ Widget to emulate a [MicroBit](http://microbit.org)
 
 ###GoogleMaps
 ---
-Functions for getting GoogleMaps images  
-![GoogleMaps](img/gMap.png)
+A self-contained GoogleMaps widget.  
+It provides all functionality for finding somewhere on Earth.  
+![GoogleMaps](img/gMap_2.png)
 
-* ```.getGoogleMapData(location, zoom=18, imgSize="500x500", imgFormat="gif", mapType="roadmap")```
-* ```.getGoogleMapFile(fileName, location, zoom=18, imgSize="500x500", imgFormat="gif", mapType="roadmap")```
+* `.addGoogleMap(name)`  
+    Creates a GoogleMap widget.  
+    Displays a map image, and provides functionality to search, zoom, and change terrain.
 
 ###PieChart
 ---
