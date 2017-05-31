@@ -109,9 +109,9 @@ There are four special-case entries:
 * SecretEntry - this will show stars, instead of the letters typed - useful for capturing passwords.
 * AutoEntry - this takes a list of words to provide auto-completion.  
 * ValidationEntry - can be set to valid/invalid/waiting - will colour the border green/red/black and show a ✔/✖/★  
-* FileEntry - provides a button to select a file  
+* FileEntry/DirectoryEntry - provides a button to select a file/directory and auto-populates the entry  
 
-![Entries](img/1_entries.gif)
+![Entries](img/1_entries.png)
 
 ```python
 from appJar import gui
@@ -122,8 +122,11 @@ app.addEntry("e1")
 app.addEntry("e2")
 app.addEntry("e3")
 app.addLabelEntry("Name")
+app.addValidationEntry("v1")
+app.addFileEntry("f1")
 
 app.setEntryDefault("e2", "Age here")
+app.setEntryValid("v1")
 
 app.go()
 ```
@@ -168,6 +171,7 @@ app.go()
 * `.setAutoEntryNumRows(title, rows)`  
     This will set the number of rows to display in an AutoEntry.  
     NB. this is limited to the depth of the GUI - if there is no space, then no rows will be displayed. 
+    ![AutoEntry](img/1_autoEntry.png)  
 
 * `.clearEntry(title, callFunction=True)`  
     This will clear the contents of the specified entry box.

@@ -2,6 +2,7 @@
 ---
 
 ## Version (0.07)  
+* New widgets: [GoogleMaps](/pythonDevWidgets/#googlemaps), [ImageMaps](/pythonImages/#image-maps), [FileEntries](/pythonWidgets/#entry)
 
 * Issues Resolved:
     * [#161](https://github.com/jarvisteach/appJar/issues/161) - [NamedCheckBoxes](/pythonWidgets/#add-checkboxes)
