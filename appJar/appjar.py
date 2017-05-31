@@ -4174,13 +4174,13 @@ class gui(object):
         return self.__verifyItem(self.n_maps, title).params["zoom"]
 
     def getGoogleMapTerrain(self, title):
-        return self.__verifyItem(self.n_maps, title).params["mapType"].title()
+        return self.__verifyItem(self.n_maps, title).params["maptype"].title()
 
     def getGoogleMapLocation(self, title):
-        return self.__verifyItem(self.n_maps, title).params["location"]
+        return self.__verifyItem(self.n_maps, title).params["center"]
 
     def getGoogleMapSize(self, title):
-        return self.__verifyItem(self.n_maps, title).params["imgSize"]
+        return self.__verifyItem(self.n_maps, title).params["size"]
         
 
 #####################################
@@ -10096,15 +10096,23 @@ class AJRectangle(object):
                     self.corner.y <= point.y <= self.corner.y + self.height)
 
 class GoogleMap(LabelFrame):
+    """ Class to wrap a GoogleMap tile download into a widget"""
+
     def __init__(self, parent):
         LabelFrame.__init__(self, parent, text="GoogleMaps")
         self.parent = parent
-        self.TERRAINS = ("Roadmap", "Satellite", "Hybrid", "Terrain")
 
+        self.TERRAINS = ("Roadmap", "Satellite", "Hybrid", "Terrain")
+        self.GOOGLE_URL =  "http://maps.google.com/maps/api/staticmap?"
+        self.LOCATION_URL = "http://freegeoip.net/json/"
+#        self.LOCATION_URL = "http://ipinfo.io/json"
+
+        # the parameters that we store
+        # keeps getting updated, then sent to GoogleMaps
         self.params = {}
         self.__setMapParams()
 
-        mapData = self.getMapData(**self.params)
+        mapData = self.getMapData()
         imgObj = PhotoImage(data=mapData)
         self.h = imgObj.height()
         self.w = imgObj.width()
@@ -10114,14 +10122,18 @@ class GoogleMap(LabelFrame):
         self.image_on_canvas = self.canvas.create_image(1, 1, image=imgObj, anchor=NW)
         self.canvas.img = imgObj
 
-        self.buttons = []
-        self.buttons.append(Label(self.canvas, text="-"))
-        self.buttons.append(Label(self.canvas, text="+"))
-        self.buttons.append(Label(self.canvas, text="H"))
-        b_font = font.Font(family='Helvetica', size=10, weight='bold')
+        # will store the 3 buttons in an array
+        # they are actually labels - to hide border
+        # maes it easier to configure them
+        self.buttons = [
+                    Label(self.canvas, text="-"),
+                    Label(self.canvas, text="+"),
+                    Label(self.canvas, text="H")
+                        ]
+        B_FONT = font.Font(family='Helvetica', size=10)
 
         for b in self.buttons:
-            b.configure(width=3, activebackground="#D2D2D2", relief=GROOVE, font=b_font)
+            b.configure(width=3, activebackground="#D2D2D2", relief=GROOVE, font=B_FONT)
 
             if gui.GET_PLATFORM() == gui.MAC:
                 b.configure(cursor="pointinghand")
@@ -10141,11 +10153,13 @@ class GoogleMap(LabelFrame):
         self.buttons[2].bind("<ButtonRelease-1>",lambda e: self.buttons[2].config(relief=GROOVE), add="+")
         self.buttons[2].bind("<ButtonRelease-1>",lambda e: self.changeLocation(""), add="+")
 
+        # an optionMenu of terrains
         self.terrainType = StringVar(self.parent)
         self.terrainType.set(self.TERRAINS[0])
         self.terrainOption = OptionMenu(self.canvas, self.terrainType, *self.TERRAINS, command=lambda e: self.changeTerrain(self.terrainType.get().lower()))
-        self.terrainOption.config(font=b_font)
+        self.terrainOption.config(font=B_FONT)
 
+        # an entry for searching locations
         self.locationEntry = Entry(self.canvas)
         self.locationEntry.bind('<Return>', lambda e: self.changeLocation(self.location.get()))
         self.location = StringVar(self.parent)
@@ -10168,34 +10182,39 @@ class GoogleMap(LabelFrame):
         self.buttons[2].place(rely=1.0, relx=1.0, x=-5, y=-56, anchor=SE)
 
     def __setMapParams(self):
-        if "location" not in self.params or self.params["location"] == None or self.params["location"] == "":
-            self.params["location"] = self.getLocation()
+        if "center" not in self.params or self.params["center"] == None or self.params["center"] == "":
+            self.params["center"] = self.getCurrentLocation()
+            if self.params["center"] is None:
+                raise Exception("Unable to contact location server.")
         if "zoom" not in self.params:
             self.params["zoom"] = 16
-        if "imgSize" not in self.params:
-            self.params["imgSize"] = "500x500"
-        if "imgFormat" not in self.params:
-            self.params["imgFormat"] = "gif"
-        if "mapType" not in self.params:
-            self.params["mapType"] = self.TERRAINS[0]
+        if "size" not in self.params:
+            self.params["size"] = "500x500"
+        if "format" not in self.params:
+            self.params["format"] = "gif"
+        if "maptype" not in self.params:
+            self.params["maptype"] = self.TERRAINS[0]
+
+#        self.params["mobile"] = "true" # optional: mobile=true will assume the image is shown on a small screen (mobile device)
+        self.params["sensor"] = "false"  # must be given, deals with getting loction from mobile device 
 
     def setSize(self, size):
-        if size != self.params["imgSize"]:
-            self.params["imgSize"] = size
+        if size != self.params["size"]:
+            self.params["size"] = size
             self.parent.after(0, self.updateMap())
 
     def changeTerrain(self, terrainType):
         terrainType = terrainType.title()
         if terrainType in self.TERRAINS:
             self.terrainType.set(terrainType)
-            if self.params["mapType"] != self.terrainType.get().lower():
-                self.params["mapType"] = self.terrainType.get().lower()
+            if self.params["maptype"] != self.terrainType.get().lower():
+                self.params["maptype"] = self.terrainType.get().lower()
                 self.parent.after(0, self.updateMap())
 
     def changeLocation(self, location):
         self.location.set(location)
-        if self.params["location"] != location:
-            self.params["location"] = location
+        if self.params["center"] != location:
+            self.params["center"] = location
             self.parent.after(0, self.updateMap())
 
     def setZoom(self, zoom):
@@ -10212,7 +10231,7 @@ class GoogleMap(LabelFrame):
             self.parent.after(0, self.updateMap())
 
     def updateMap(self):
-        mapData = self.getMapData(**self.params)
+        mapData = self.getMapData()
         if mapData is not None:
             imgObj = PhotoImage(data=mapData)
             self.canvas.itemconfig(self.image_on_canvas, image=imgObj)
@@ -10230,16 +10249,18 @@ class GoogleMap(LabelFrame):
         else:
             logging.getLogger("appJar").error("Unable to update map, as no mapData")
 
-    def getMapData(self, location=None, zoom=16, imgSize="500x500", imgFormat="gif", mapType="roadmap"):  
-        request = self._getURL(location, zoom, imgSize, imgFormat, mapType)  
+    def getMapData(self):
+        """ will query GoogleMaps & download the iamge data as a blob """
+        request = self.__buildQueryURL()
         try:
             return urlopen(request).read()
         except Exception as e:
             logging.getLogger("appJar").exception(e)
             return None
 
-    def getMapFile(self, fileName, location=None, zoom=16, imgSize="500x500", imgFormat="gif", mapType="roadmap"):  
-        request = self._getURL(location, zoom, imgSize, imgFormat, mapType)  
+    def getMapFile(self, fileName):
+        """ will query GoogleMaps & download the iamge into the named file """
+        request = self.__buildQueryURL()
         try:
             urlretrieve(request, fileName)
             return fileName
@@ -10247,35 +10268,15 @@ class GoogleMap(LabelFrame):
             logging.getLogger("appJar").exception(e)
             return None
 
-    def _getURL(self, location=None, zoom=18, imgSize="500x500", imgFormat="gif", mapType="roadmap"):  
-        GOOGLE_URL =  "http://maps.google.com/maps/api/staticmap?"
-        request = GOOGLE_URL
-        params = {}
-
-        if location is None or location == "":
-            location = self.getLocation()
-            if location is None:
-                raise Exception("Unable to contact location server.")
-
-        params["center"] = location
-        params["zoom"] = zoom
-        params["size"] = imgSize
-        params["format"] = imgFormat
-        params["maptype"] = mapType
-
-#        params["mobile"] = "true" # optional: mobile=true will assume the image is shown on a small screen (mobile device)
-        params["sensor"] = "false"  # must be given, deals with getting loction from mobile device 
-
-        request += urlencode(params)
+    def __buildQueryURL(self):
+        request = self.GOOGLE_URL + urlencode(self.params)
         logging.getLogger("appJar").debug("GoogleMap search URL: " + request)
         return request
 
-    def getLocation(self):
-#        LOCATION_URL = "http://ipinfo.io/json"
-        LOCATION_URL = "http://freegeoip.net/json/"
-        logging.getLogger("appJar").debug("Location request URL: " + LOCATION_URL)
+    def getCurrentLocation(self):
+        logging.getLogger("appJar").debug("Location request URL: " + self.LOCATION_URL)
         try:
-            data =  urlopen(LOCATION_URL).read().decode("utf-8")
+            data =  urlopen(self.LOCATION_URL).read().decode("utf-8")
             logging.getLogger("appJar").debug("Location data: " + data)
             data = json.loads(data)
 #            location = data["loc"]

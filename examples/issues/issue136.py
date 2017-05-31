@@ -18,7 +18,7 @@ def press(btn):
 app=gui()
 app.setLogLevel("DEBUG")
 app.addGoogleMap("m1")
-app.setGoogleMapSize("m1", "300x500")
+app.setGoogleMapSize("m1", "340x500")
 app.addEntry("e1")
 app.addButtons(["SEARCH", "+", "-", "ZOOM", "SIZE", "TERRAIN"], press)
 
