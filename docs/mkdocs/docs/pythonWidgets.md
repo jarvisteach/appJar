@@ -911,7 +911,7 @@ app.go()
     If endYear is None, the current Year will be used.  
 
 * `.setDatePickerChangeFunction(title, function)`  
-    Set a function to call when the DaetPicker is changed.  
+    Set a function to call when the DatePicker is changed.  
 
 ####Get DatePickers  
 
