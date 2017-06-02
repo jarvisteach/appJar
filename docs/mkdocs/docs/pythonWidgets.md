@@ -484,11 +484,21 @@ app.go()
     Adds a list of items to the end of the List Box, selecting the last one.  
 
 ####Set ListBoxes
-* `.updateListItems(title, items)`  
-    Replace the contents of the specified ListBox with the new values.  
+* `.setListItem(title, item, oldVal, newVal, first=False)`  
+    `.setListItemAtPos(title, item, pos, newVal)`  
+    Changes the specified list item to the new value.  
+    If `first` is set to True, only the first item found will be changed.  
+    Otherwise, all occurences of the specified value will be changed.  
 
 * `.removeListItem(title, item)`  
+    `.removeListItemAtPos(title, pos)`  
     Remove the specified item from the  specified ListBox.  
+
+* `.clearListBox(title)`  
+    Removes all items from the specified ListBox.  
+
+* `.updateListBox(title, items)`  
+    Replace the contents of the specified ListBox with the new values.  
 
 ```python
 from appJar import gui
@@ -504,18 +514,16 @@ app.addButton("press",  press)
 app.go()
 ```
 
-* `.clearListBox(title)`  
-    Removes all items from the specified ListBox.  
+* `.selectListItem(title, item, callFunction=True)`  
+    `.selectListItemAtPos(title, pos, callFunction=True)`  
+    Selects the specified item in the specified ListBox.  
+    Set ```callFunction``` to be False, if you don't want to call any associated functions.  
 
 * `.setListBoxRows(title, rows)`  
     Sets how many rows to display in the specified ListBox.  
 
 * `.setListBoxMulti(list, multi=True)`  
     Configures whether the specified ListBox is single or multi select.  
-
-* `.selectListItem(title, item, callFunction=True)`  
-    Selects the specified item in the specified ListBox.  
-    Set ```callFunction``` to be False, if you don't want to call any associated functions.  
 
 * `.setListItemBg(title, item, colour)` & `.setListItemFg(title, item, colour)`  
     `.setListItemAtPosBg(title, item, colour)` & `.setListItemAtPosFg(title, item, colour)`  

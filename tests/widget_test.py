@@ -571,6 +571,12 @@ def test_lists():
 #    assert app.getListItems("l2") == []
 # SELECTING THE LAST ONE...
 
+    app.addListBox("cl1", LIST_ONE)
+    app.setListItemAtPos("cl1", 0, "new_word")
+    assert app.getAllListItems("cl1")[0] == "new_word"
+    app.setListItem("cl1", "new_word", "newer_word")
+    assert app.getAllListItems("cl1")[0] == "newer_word"
+
     app.removeListItem("l2", LIST_TWO[1])
     tmp_list = LIST_TWO
     tmp_list.remove(tmp_list[1])
@@ -1718,6 +1724,36 @@ def test_pop_ups():
     print(" >> not implemented...")
     #print("\t >> all tests complete")
 
+def test_logging():
+    print("\tTesting logging")
+
+    app.disableWarnings()
+    app.enableWarnings()
+
+    app.disableDebug()
+    app.enableDebug()
+
+    app.setLogLevel("DEBUG")
+    app.logMessage("test logging", "CRITICAL")
+    app.logMessage("test logging", "ERROR")
+    app.logMessage("test logging", "WARNING")
+    app.logMessage("test logging", "INFO")
+    app.logMessage("test logging", "DEBUG")
+    app.logMessage("test logging", "BROKEN")
+
+    app.critical("test logging")
+    app.error("test logging")
+    app.warn("test logging")
+    app.debug("test logging")
+    app.info("test logging")
+
+    import logging
+    logger = logging.getLogger("appJar")
+    logger.error("WITH LOGGING")
+
+    print(" >> not implemented...")
+    #print("\t >> all tests complete")
+
 
 print("<<<Starting Widget Test Suite>>>")
 test_gui_options()
@@ -1747,6 +1783,8 @@ except: print("Skipping plot tests - MatPlotLib not available")
 test_microbits()
 test_googlemap()
 
+test_logging()
+
 test_status()
 test_menus()
 test_toolbars()
@@ -1764,6 +1802,7 @@ test_langs()
 
 test_containers()
 test_messages()
+
 
 
 test_sets()

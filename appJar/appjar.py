@@ -5205,22 +5205,24 @@ class gui(object):
     # make the list single/multi select
     # default is single
     def setListBoxSingle(self, title, single=True):
-        self.setListSingle(title, single)
+        self.warn(".setListBoxSingle() is deprecated. You should be using .setListBoxMulti()")
+        self.setListBoxMulti(title, not single)
 
     def setListSingle(self, title, single=True):
+        self.warn(".setListSingle() is deprecated. You should be using .setListBoxMulti()")
         self.setListBoxMulti(title, not single)
 
     # select the specified item in the list
     def selectListItem(self, title, item, callFunction=True):
-        lb = self.__verifyItem(self.n_lbs, title)
-        items = lb.get(0, END)
-        if len(items) > 0:
-            for pos in range(len(items)):
-                if items[pos] == item:
-                    self.selectListItemPos(title, pos, callFunction)
-                    break
+        positions = self.__getListPositions(title, item)
+        if len(positions) > 0:
+            self.selectListItemPos(title, positions[0], callFunction)
 
     def selectListItemPos(self, title, pos, callFunction=False):
+        self.warn(".selectListItemPos() is deprecated. You should be using .selectListItemAtPos()")
+        self.selectListItemAtPos(title, pos, callFunction)
+
+    def selectListItemAtPos(self, title, pos, callFunction=False):
         lb = self.__verifyItem(self.n_lbs, title)
 #        sel = lb.curselection()
         lb.selection_clear(0, END)
@@ -5236,6 +5238,10 @@ class gui(object):
 
     # replace the list items in the list box
     def updateListItems(self, title, items):
+        self.warn(".updateListItems() is deprecated. You should be using .updateListBox()")
+        self.updateListBox(title, items)
+
+    def updateListBox(self, title, items):
         self.clearListBox(title)
         self.addListItems(title, items)
 
@@ -5245,10 +5251,11 @@ class gui(object):
             self.addListItem(title, i)
 
     # add the item to the end of the list box
-    def addListItem(self, title, item):
+    def addListItem(self, title, item, pos=None):
         lb = self.__verifyItem(self.n_lbs, title)
         # add it at the end
-        lb.insert(END, item)
+        if pos is None: pos = END
+        lb.insert(pos, item)
 
         # clear any selection
         items = lb.curselection()
@@ -5294,16 +5301,25 @@ class gui(object):
     # will only remove the first item that matches the String
     def removeListItem(self, title, item):
         lb = self.__verifyItem(self.n_lbs, title)
-        items = lb.get(0, END)
-        for pos, val in enumerate(items):
-            if val == item:
-                lb.delete(pos)
-                break
+        positions = self.__getListPositions(title, item)
+        if len(positions) > 0:
+            lb.delete(positions[0])
 
         # show & select this item
-        if pos >= lb.size():
-            pos -= 1
-        self.selectListItemPos(title, pos)
+        if positions[0] >= lb.size():
+            positions[0] -= 1
+        self.selectListItemPos(title, positions[0])
+
+    def setListItemAtPos(self, title, pos, newVal):
+        lb = self.__verifyItem(self.n_lbs, title)
+        lb.delete(pos)
+        lb.insert(pos, newVal)
+
+    def setListItem(self, title, oldVal, newVal, first=False):
+        for pos in self.__getListPositions(title, oldVal):
+            self.setListItemAtPos(title, pos, newVal)
+            if first:
+                break
 
     # functions to config 
     def setListItemAtPosBg(self, title, pos, col):
@@ -5313,21 +5329,25 @@ class gui(object):
     def setListItemAtPosFg(self, title, pos, col):
         lb = self.__verifyItem(self.n_lbs, title)
         lb.itemconfig(pos, fg=col)
+
+    def __getListPositions(self, title, item):
+        lb = self.__verifyItem(self.n_lbs, title)
+        if not isinstance(item, list):
+            item = [item]
+        vals = lb.get(0, END)
+        positions = []
+        for pos, val in enumerate(vals):
+            if val in item:
+                positions.append(pos)
+        return positions
  
     def setListItemBg(self, title, item, col):
-        lb = self.__verifyItem(self.n_lbs, title)
-        items = lb.get(0, END)
-        for pos, val in enumerate(items):
-            if val == item:
-                self.setListItemAtPosBg(title, pos, col)
+        for pos in self.__getListPositions(title, item):
+            self.setListItemAtPosBg(title, pos, col)
 
     def setListItemFg(self, title, item, col):
-        lb = self.__verifyItem(self.n_lbs, title)
-        items = lb.get(0, END)
-        for pos, val in enumerate(items):
-            if val == item:
-                self.setListItemAtPosFg(title, pos, col)
-
+        for pos in self.__getListPositions(title, item):
+            self.setListItemAtPosFg(title, pos, col)
 
     def clearListBox(self, title):
         lb = self.__verifyItem(self.n_lbs, title)
@@ -10157,6 +10177,9 @@ class GoogleMap(LabelFrame):
         self.terrainType = StringVar(self.parent)
         self.terrainType.set(self.TERRAINS[0])
         self.terrainOption = OptionMenu(self.canvas, self.terrainType, *self.TERRAINS, command=lambda e: self.changeTerrain(self.terrainType.get().lower()))
+        self.terrainOption.config(highlightthickness=0)
+
+
         self.terrainOption.config(font=B_FONT)
 
         # an entry for searching locations
@@ -10164,6 +10187,7 @@ class GoogleMap(LabelFrame):
         self.locationEntry.bind('<Return>', lambda e: self.changeLocation(self.location.get()))
         self.location = StringVar(self.parent)
         self.locationEntry.config(textvariable=self.location)
+        self.locationEntry.config(highlightthickness=0)
 
         self.__placeControls()
 
@@ -10175,8 +10199,8 @@ class GoogleMap(LabelFrame):
         self.buttons[2].place_forget()
 
     def __placeControls(self):
-        self.locationEntry.place(rely=0, relx=0, x=5, y=5, anchor=NW)
-        self.terrainOption.place(rely=0, relx=1.0, x=-5, y=5, anchor=NE)
+        self.locationEntry.place(rely=0, relx=0, x=8, y=8, anchor=NW)
+        self.terrainOption.place(rely=0, relx=1.0, x=-8, y=8, anchor=NE)
         self.buttons[0].place(rely=1.0, relx=1.0, x=-5, y=-20, anchor=SE)
         self.buttons[1].place(rely=1.0, relx=1.0, x=-5, y=-38, anchor=SE)
         self.buttons[2].place(rely=1.0, relx=1.0, x=-5, y=-56, anchor=SE)
