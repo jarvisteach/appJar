@@ -23,11 +23,11 @@ By default, **appJar** will only log messages of importance `WARNING` or above. 
 
 You can also use the following convenience functions for logging messages:
 
-* `.logCritical(msg)`
-* `.logError(msg)`
-* `.logWarn(msg)`
-* `.logDebug(msg)`
-* `.logInfo(msg)`
+* `.critical(msg)`
+* `.error(msg)`
+* `.warn(msg)`
+* `.debug(msg)`
+* `.info(msg)`
 
 ##Logging to file
 ---
