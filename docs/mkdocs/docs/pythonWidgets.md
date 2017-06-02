@@ -389,10 +389,11 @@ app.go()
 ```
 
 ####Set OptionBoxes
-* `.changeOptionBox(title, newOptions, index)`  
+* `.changeOptionBox(title, newOptions, index, callFunction=False)`  
     This will replace the contents of the OptionBox, with the new list provided.  
     If specified, the indexed item will be selected - this can be a position or an item name.  
     If setting a TickOptionBox, the old list will be replaced with the new list. None will be ticked. `index` will be ignored.  
+    Set ```callFunction``` to be True, if you want to call any associated `change` functions.  
 
 * `.setOptionBox(title, position, value=True, callFunction=True)`  
     This will select the item in the list, at the position specified.  
@@ -493,6 +494,7 @@ app.go()
 * `.removeListItem(title, item)`  
     `.removeListItemAtPos(title, pos)`  
     Remove the specified item from the  specified ListBox.  
+    Will only remove the first item that matches the parameter.  
 
 * `.clearListBox(title)`  
     Removes all items from the specified ListBox.  
@@ -887,12 +889,12 @@ from appJar import gui
 def showDate(btn):
     print(app.getDatePicker("dp"))
 
-    app=gui()
-    app.addDatePicker("dp")
-    app.addButton("GET", showDate)
-    app.setDatePickerRange("dp", 1900, 2100)
-    app.setDatePicker("dp")
-    app.go()
+app=gui()
+app.addDatePicker("dp")
+app.addButton("GET", showDate)
+app.setDatePickerRange("dp", 1900, 2100)
+app.setDatePicker("dp")
+app.go()
 ```
 ####Add DatePickers  
 
@@ -907,6 +909,9 @@ def showDate(btn):
 * `.setDatePickerRange(title, startYear, endYear=None)`  
     Set the range for the named DatePicker.  
     If endYear is None, the current Year will be used.  
+
+* `.setDatePickerChangeFunction(title, function)`  
+    Set a function to call when the DaetPicker is changed.  
 
 ####Get DatePickers  
 

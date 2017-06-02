@@ -3931,6 +3931,7 @@ class gui(object):
             rowspan=0):
         option = self.__buildOptionBox(self.getContainer(), title, options)
         self.__positionWidget(option, row, column, colspan, rowspan)
+        return option
 
     def addTickOptionBox(
             self,
@@ -4035,7 +4036,7 @@ class gui(object):
 
     # function to replace the current contents of an option box
     # http://www.prasannatech.net/2009/06/tkinter-optionmenu-changing-choices.html
-    def changeOptionBox(self, title, options, index=None):
+    def changeOptionBox(self, title, options, index=None, callFunction=False):
         # get the optionBox & associated var
         box = self.__verifyItem(self.n_options, title)
 
@@ -4058,7 +4059,16 @@ class gui(object):
                 box["menu"].add_command(
                     label=option, command=lambda temp=option: box.setvar(
                         box.cget("textvariable"), value=temp))
-            self.n_optionVars[title].set(options[0])
+
+            ov = self.n_optionVars[title]
+
+            if not callFunction and hasattr(box, 'cmd'):
+                ov.trace_vdelete('w', box.cmd_id)
+
+            ov.set(options[0])
+
+            if not callFunction and hasattr(box, 'cmd'):
+                box.cmd_id = ov.trace('w', box.cmd)
 
         box.options = options
 
@@ -5216,7 +5226,7 @@ class gui(object):
     def selectListItem(self, title, item, callFunction=True):
         positions = self.__getListPositions(title, item)
         if len(positions) > 0:
-            self.selectListItemPos(title, positions[0], callFunction)
+            self.selectListItemAtPos(title, positions[0], callFunction)
 
     def selectListItemPos(self, title, pos, callFunction=False):
         self.warn(".selectListItemPos() is deprecated. You should be using .selectListItemAtPos()")
@@ -5263,7 +5273,7 @@ class gui(object):
             lb.selection_clear(items)
 
         # show & select the newly added item
-        self.selectListItemPos(title, lb.size() - 1)
+        self.selectListItemAtPos(title, lb.size() - 1)
 
     # returns a list containing 0 or more elements
     # all that are in the selected range
@@ -5295,7 +5305,7 @@ class gui(object):
         # show & select this item
         if pos >= lb.size():
             pos -= 1
-        self.selectListItemPos(title, pos)
+        self.selectListItemAtPos(title, pos)
 
     # remove a specific item from the listBox
     # will only remove the first item that matches the String
@@ -5308,7 +5318,7 @@ class gui(object):
         # show & select this item
         if positions[0] >= lb.size():
             positions[0] -= 1
-        self.selectListItemPos(title, positions[0])
+        self.selectListItemAtPos(title, positions[0])
 
     def setListItemAtPos(self, title, pos, newVal):
         lb = self.__verifyItem(self.n_lbs, title)
@@ -5555,6 +5565,16 @@ class gui(object):
             self.__updateDatePickerDays)
         self.stopFrame()
 
+    def setDatePickerChangeFunction(self, title, function):
+        cmd = self.MAKE_FUNC(self.__datePickerChangeFunction, title, True)
+        self.setOptionBoxChangeFunction(title + "_DP_DayOptionBox", cmd)
+        self.__verifyItem(self.n_options, title + "_DP_DayOptionBox").function = function
+
+    def __datePickerChangeFunction(self, title):
+        box = self.__verifyItem(self.n_options, title + "_DP_DayOptionBox")
+        if hasattr(box, 'function'):
+            box.function(title)
+
     # function to update DatePicker dropDowns
     def __updateDatePickerDays(self, title):
         if title.find("_DP_MonthOptionBox") > -1:
@@ -5575,7 +5595,9 @@ class gui(object):
 
         # keep previous day if possible
         with PauseLogger():
-            self.setOptionBox(title + "_DP_DayOptionBox", day)
+            self.setOptionBox(title + "_DP_DayOptionBox", day, callFunction=False)
+
+        self.__datePickerChangeFunction(title)
 
     # set a date for the named DatePicker
     def setDatePickerRange(self, title, startYear, endYear=None):
