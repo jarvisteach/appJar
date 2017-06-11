@@ -45,7 +45,9 @@ from platform import system as platform
 hashlib = None
 ToolTip = None
 nanojpeg = PngImageTk = None # extra image support
-TkDND = None
+EXTERNAL_DND = None
+INTERNAL_DND = None
+types = None            # used to register dnd functions
 winsound = None
 FigureCanvasTkAgg = Figure = None # matplotlib
 parseString = TreeItem = TreeNode = None # ajTree
@@ -148,6 +150,23 @@ class gui(object):
         win.geometry('{}x{}+{}+{}'.format(width, height, x, y))
         win.deiconify()
         win.attributes('-alpha', 1.0)
+
+    # figure out where the cursor is with respect to a widget
+    @staticmethod
+    def MOUSE_POS_IN_WIDGET(widget, event, findRoot=True):
+        # subtract the widget's top left corner from the root window's top corner
+
+        # first we have to get the real master
+        master = widget
+        while findRoot:
+            if isinstance(master, (SubWindow, Tk)):
+                break
+            master = master.master
+
+        x = event.x_root - master.winfo_rootx()
+        y = event.y_root - master.winfo_rooty()
+        logging.getLogger("appJar").debug("<<MOUSE_POS_IN_WIDGET>> " + str(widget) + str(x) + "," + str(y))
+        return (x, y)
 
     built = False
 
@@ -456,8 +475,10 @@ class gui(object):
         self.topLevel.POP_UP = None
 
         # create a frame to store all the widgets
-        self.appWindow = Frame(self.topLevel)
+        # now a canvas to allow animation...
+        self.appWindow = CanvasDnd(self.topLevel)
         self.appWindow.pack(fill=BOTH, expand=True)
+        self.topLevel.canvasPane = self.appWindow
 
         # set the windows title
         if title is None:
@@ -599,16 +620,30 @@ class gui(object):
             except:
                 FigureCanvasTkAgg = Figure = False
 
-    def __loadTkdnd(self):
-        global TkDND
-        if TkDND is None:
+    def __loadExternalDnd(self):
+        global EXTERNAL_DND
+        if EXTERNAL_DND is None:
             try:
                 tkdndlib = os.path.join(os.path.dirname(os.path.abspath(__file__)), "lib", "tkdnd2.8")
                 os.environ['TKDND_LIBRARY'] = tkdndlib
-                from appJar.lib.TkDND_wrapper import TkDND
-                self.dnd = TkDND(self.topLevel)
+                from appJar.lib.TkDND_wrapper import TkDND as EXTERNAL_DND
+                self.dnd = EXTERNAL_DND(self.topLevel)
             except:
-                TkDND = False
+                EXTERNAL_DND = False
+
+    def __loadInternalDnd(self):
+        global INTERNAL_DND, types
+        if INTERNAL_DND is None:
+            try:
+                import Tkdnd as INTERNAL_DND
+                import types as types
+            except:
+                try:
+                    from tkinter import dnd as INTERNAL_DND
+                    import types as types
+                except:
+                    INTERNAL_DND = False
+                    types = False
 
     def __loadURL(self):
         global urlencode, urlopen, urlretrieve, json
@@ -624,91 +659,6 @@ class gui(object):
                     import json
                 except:
                     urlencode = urlopen = urlretrieve = json = False
-
-    def __registerDragSource(self, title, widget, function=None):
-        self.__loadTkdnd()
-
-        if TkDND is not False:
-            try:
-                self.dnd.bindsource(widget, self.__dndDrag, 'text/uri-list')
-                self.dnd.bindsource(widget, self.__dndDrag, 'text/plain')
-                widget.dndFunction = function
-                widget.dragData = None
-            except:
-                # dnd not working on this platform
-                raise Exception("Failed to register Drag'n Drop for: " + str(title))
-        else:
-            raise Exception("Drag'n Drop not available on this platform")
-
-
-    def __registerDropTarget(self, title, widget, function=None, replace=True):
-        self.__loadTkdnd()
-
-        if TkDND is not False:
-            try:
-                self.dnd.bindtarget(widget, self.__dndDrop, 'text/uri-list')
-                self.dnd.bindtarget(widget, self.__dndDrop, 'text/plain')
-                widget.dndFunction = function
-                widget.dropData = None
-                widget.dropReplace = replace
-            except:
-                # dnd not working on this platform
-                raise Exception("Failed to register Drag'n Drop for: " + str(title))
-        else:
-            raise Exception("Drag'n Drop not available on this platform")
-
-    # function to receive DnD events
-    def __dndDrag(self, event):
-        widgType = event.widget.__class__.__name__
-        self.warn("Unable to initiate drag events: " + str(widgType))
-
-    def __dndDrop(self, event):
-        widgType = event.widget.__class__.__name__
-        event.widget.dropData = event.data
-        if not hasattr(event.widget, 'dndFunction'):
-            self.warn("Error - dropTarget not correctly configured: " + str(widgType))
-        elif event.widget.dndFunction is not None:
-            event.widget.dndFunction(event.data)
-        else:
-            if widgType in ["Entry", "AutoCompleteEntry"]:
-                if event.widget.dropReplace:
-                    event.widget.delete(0, END)
-                event.widget.insert(END, event.data)
-                event.widget.focus_set()
-                event.widget.icursor(END)
-            elif widgType in ["TextArea", "AjText", "ScrolledText", "AjScrolledText"]:
-                if event.widget.dropReplace:
-                    event.widget.delete(1.0, END)
-                event.widget.insert(END, event.data)
-                event.widget.focus_set()
-                event.widget.see(END)
-            elif widgType in ["Label"]:
-                for k, v in self.n_images.items():
-                    if v == event.widget:
-                        try:
-                            imgTemp = self.userImages
-                            image = self.__getImage(event.data, False)
-                            self.__populateImage(k, image)
-                            self.userImages = imgTemp
-                        except:
-                            self.errorBox("Error loading image", "Unable to load image: " + str(event.data))
-                        return
-                for k, v in self.n_labels.items():
-                    if v == event.widget:
-                        self.setLabel(k, event.data)
-                        return
-            elif widgType in ["Listbox"]:
-                for k, v in self.n_lbs.items():
-                    if v == event.widget:
-                        self.addListItem(k, event.data)
-                        return
-            elif widgType in ["Message"]:
-                for k, v in self.n_messages.items():
-                    if v == event.widget:
-                        self.setMessage(k, event.data)
-                        return
-            else:
-                self.warn("Unable to receive drop events: " + str(widgType))
 
     def __loadNanojpeg(self):
         global nanojpeg
@@ -948,6 +898,180 @@ class gui(object):
                                 if len(val) > 0:
                                     logging.getLogger("appJar").debug(str(" " * spaces) + " >>>> "+ str(val))
 
+
+#####################################
+# FUNCTIONS FOR UNIVERSAL DND
+#####################################
+
+    def __registerExternalDragSource(self, title, widget, function=None):
+        self.__loadExternalDnd()
+
+        if EXTERNAL_DND is not False:
+            try:
+                self.dnd.bindsource(widget, self.__startExternalDrag, 'text/uri-list')
+                self.dnd.bindsource(widget, self.__startExternalDrag, 'text/plain')
+                widget.dndFunction = function
+                widget.dragData = None
+            except:
+                # dnd not working on this platform
+                raise Exception("Failed to register external Drag'n Drop for: " + str(title))
+        else:
+            raise Exception("External Drag'n Drop not available on this platform")
+
+    def __registerExternalDropTarget(self, title, widget, function=None, replace=True):
+        self.__loadExternalDnd()
+
+        if EXTERNAL_DND is not False:
+            try:
+                self.dnd.bindtarget(widget, self.__receiveExternalDrop, 'text/uri-list')
+                self.dnd.bindtarget(widget, self.__receiveExternalDrop, 'text/plain')
+                widget.dndFunction = function
+                widget.dropData = None
+                widget.dropReplace = replace
+            except:
+                # dnd not working on this platform
+                raise Exception("Failed to register external Drag'n Drop for: " + str(title))
+        else:
+            raise Exception("External Drag'n Drop not available on this platform")
+
+    def __registerInternalDragSource(self, kind, title, widget, function=None):
+        self.__loadInternalDnd()
+
+        name = None
+        if kind == self.LABEL:
+            name = self.getLabel(title)
+
+        if INTERNAL_DND is not False:
+            try:
+                widget.bind('<ButtonPress>', lambda e: self.__startInternalDrag(e, title, name, widget))
+                widget.dnd_canvas = self.__getCanvas().canvasPane
+                self.debug("DND drag source created: " + str(widget) + " on canvas " + str(widget.dnd_canvas))
+            except:
+                raise Exception("Failed to register internal Drag'n Drop for: " + str(title))
+        else:
+            raise Exception("Internal Drag'n Drop not available on this platform")
+
+    def __registerInternalDropTarget(self, widget, function):
+        self.debug("<<WIDGET.__registerInternalDropTarget>> " + str(widget))
+        self.__loadInternalDnd()
+        if not INTERNAL_DND:
+            raise Exception("Internal Drag'n Drop not available on this platform")
+
+        # called by DND class, when looking for a DND target
+        def dnd_accept(self, source, event):
+            logging.getLogger("appJar").debug("<<WIDGET.dnd_accept>> " + str(widget) + " - " + str(self.dnd_canvas))
+            print(self)
+            return self
+
+        # This is called when the mouse pointer goes from outside the
+        # Target Widget to inside the Target Widget.
+        def dnd_enter(self, source, event):
+            logging.getLogger("appJar").debug("<<WIDGET.dnd_enter>> " + str(widget))
+            XY = gui.MOUSE_POS_IN_WIDGET(self,event)
+            source.appear(self, XY)
+
+        # This is called when the mouse pointer goes from inside the
+        # Target Widget to outside the Target Widget.
+        def dnd_leave(self, source, event):
+            logging.getLogger("appJar").debug("<<WIDGET.dnd_leave>> " + str(widget))
+            # hide the dragged object
+            source.vanish()
+
+        #This is called if the DraggableWidget is being dropped on us.
+        def dnd_commit(self, source, event):
+            source.vanish(all=True)
+            logging.getLogger("appJar").debug("<<WIDGET.dnd_commit>> " + str(widget) + " Object received=" + str(source))
+
+        #This is called when the mouse pointer moves within the TargetWidget.
+        def dnd_motion(self, source, event):
+            logging.getLogger("appJar").debug("<<WIDGET.dnd_motion>> " + str(widget))
+            XY = gui.MOUSE_POS_IN_WIDGET(self,event)
+            # move the dragged object
+            source.move(self, XY)
+
+        def keepWidget(self, title, name):
+            print("IN KEEPER...")
+            if self.drop_function is not None:
+                return self.drop_function(title, name)
+            else:
+                self.config(text=name)
+                return True
+
+        widget.dnd_accept = types.MethodType(dnd_accept, widget)
+        widget.dnd_enter = types.MethodType(dnd_enter, widget)
+        widget.dnd_leave = types.MethodType(dnd_leave, widget)
+        widget.dnd_commit = types.MethodType(dnd_commit, widget)
+        widget.dnd_motion = types.MethodType(dnd_motion, widget)
+        widget.keepWidget = types.MethodType(keepWidget, widget)
+        # save the underlying canvas
+        widget.dnd_canvas = self.__getCanvas().canvasPane
+        widget.drop_function = function
+
+        self.debug("DND target created: " + str(widget) + " on canvas " + str(widget.dnd_canvas))
+
+    # called when the user initiates an internal drag event
+    def __startInternalDrag(self, event, title, name, widget):
+        self.debug("Internal drag started for " + title + " on " + str(widget))
+
+        x, y = gui.MOUSE_POS_IN_WIDGET(widget, event, False)
+        width = x / widget.winfo_width()
+        height = y / widget.winfo_height()
+
+        thingToDrag = DraggableWidget(widget.dnd_canvas, title, name, (width, height))
+        INTERNAL_DND.dnd_start(thingToDrag, event)
+
+    # function to receive DnD events
+    def __startExternalDrag(self, event):
+        widgType = event.widget.__class__.__name__
+        self.warn("Unable to initiate drag events: " + str(widgType))
+
+    def __receiveExternalDrop(self, event):
+        widgType = event.widget.__class__.__name__
+        event.widget.dropData = event.data
+        if not hasattr(event.widget, 'dndFunction'):
+            self.warn("Error - external drop target not correctly configured: " + str(widgType))
+        elif event.widget.dndFunction is not None:
+            event.widget.dndFunction(event.data)
+        else:
+            if widgType in ["Entry", "AutoCompleteEntry"]:
+                if event.widget.dropReplace:
+                    event.widget.delete(0, END)
+                event.widget.insert(END, event.data)
+                event.widget.focus_set()
+                event.widget.icursor(END)
+            elif widgType in ["TextArea", "AjText", "ScrolledText", "AjScrolledText"]:
+                if event.widget.dropReplace:
+                    event.widget.delete(1.0, END)
+                event.widget.insert(END, event.data)
+                event.widget.focus_set()
+                event.widget.see(END)
+            elif widgType in ["Label"]:
+                for k, v in self.n_images.items():
+                    if v == event.widget:
+                        try:
+                            imgTemp = self.userImages
+                            image = self.__getImage(event.data, False)
+                            self.__populateImage(k, image)
+                            self.userImages = imgTemp
+                        except:
+                            self.errorBox("Error loading image", "Unable to load image: " + str(event.data))
+                        return
+                for k, v in self.n_labels.items():
+                    if v == event.widget:
+                        self.setLabel(k, event.data)
+                        return
+            elif widgType in ["Listbox"]:
+                for k, v in self.n_lbs.items():
+                    if v == event.widget:
+                        self.addListItem(k, event.data)
+                        return
+            elif widgType in ["Message"]:
+                for k, v in self.n_messages.items():
+                    if v == event.widget:
+                        self.setMessage(k, event.data)
+                        return
+            else:
+                self.warn("Unable to receive drop events: " + str(widgType))
 
 #####################################
 # set the arrays we use to store everything
@@ -1340,6 +1464,23 @@ class gui(object):
         """ Queue a function, to be executed every poll time """
         self.events.append(func)
 
+    # wrapper for tkinter event callers
+    def after(self, delay_ms, callback=None, *args):
+        return self.topLevel.after(delay_ms, callback, *args)
+
+    def afterIdle(self, callback, *args):
+        return self.after_idle(callback, *args)
+
+    def after_idle(self, callback, *args):
+        return self.topLevel.after_idle(callback, *args)
+
+    def afterCancel(self, id):
+        return self.after_cancel(id)
+
+    def after_cancel(self, id):
+        self.topLevel.after_cancel(id)
+        
+
     # internal function, called by 'after' function, after sleeping
     def __poll(self):
         # run any registered actions
@@ -1353,7 +1494,7 @@ class gui(object):
     def __windowEvent(self, event):
         new_width = self.topLevel.winfo_width()
         new_height = self.topLevel.winfo_height()
-        self.debug("Window resized: " + str(new_width) + "x" + str(new_height))
+        #self.debug("Window resized: " + str(new_width) + "x" + str(new_height))
 
     # will call the specified function when enter key is pressed
     def enableEnter(self, func):
@@ -1746,9 +1887,16 @@ class gui(object):
             icon = self.__getImage(image)
             container.iconphoto(True, icon)
 
+    def __getCanvas(self, param=-1):
+        if len(self.containerStack) > 1 and self.containerStack[param]['type'] == self.C_SUBWINDOW:
+            return self.containerStack[param]['container']
+        elif len(self.containerStack) > 1:
+            return self.__getCanvas(param-1)
+        else:
+            return self.topLevel
+
     def __getTopLevel(self):
-        if len(
-                self.containerStack) > 1 and self.containerStack[-1]['type'] == self.C_SUBWINDOW:
+        if len(self.containerStack) > 1 and self.containerStack[-1]['type'] == self.C_SUBWINDOW:
             return self.containerStack[-1]['container']
         else:
             return self.topLevel
@@ -1960,8 +2108,6 @@ class gui(object):
         items = self.__getItems(kind)
         self.__verifyItem(items, name)
 
-        self.debug("Got items: " + str(items))
-
         if kind in [self.RB, self.RADIOBUTTON] and option not in ["change"]:
             items = items[name]
         else:
@@ -2101,11 +2247,17 @@ class gui(object):
                             menu=value: self.__rightClick(
                                 e,
                                 menu))
-                elif option == 'dropTarget':
-                    self.__registerDropTarget(name, item, value[0], value[1])
+                elif option == 'internalDrop':
+                    self.__registerInternalDropTarget(item, value)
 
-                elif option == 'dragSource':
-                    self.__registerDragSource(name, item, value)
+                elif option == 'internalDrag':
+                    self.__registerInternalDragSource(kind, name, item, value)
+
+                elif option == 'externalDrop':
+                    self.__registerExternalDropTarget(name, item, value[0], value[1])
+
+                elif option == 'externalDrag':
+                    self.__registerExternalDragSource(name, item, value)
 
             except TclError as e:
                 self.warn("Error configuring " + name + ": " + str(e))
@@ -2313,13 +2465,23 @@ class gui(object):
             # drag and drop stuff
             exec( "def set" + v +
                 "DropTarget(self, name, function=None, replace=True): self.configureWidgets(" +
-                str(k) + ", name, 'dropTarget', [function, replace])")
+                str(k) + ", name, 'externalDrop', [function, replace])")
             exec("gui.set" + v + "DropTarget=set" + v + "DropTarget")
 
             exec( "def set" + v +
                 "DragSource(self, name, function=None): self.configureWidgets(" +
-                str(k) + ", name, 'dragSource', function)")
+                str(k) + ", name, 'externalDrag', function)")
             exec("gui.set" + v + "DragSource=set" + v + "DragSource")
+
+            exec( "def register" + v +
+                "Draggable(self, name, function=None): self.configureWidgets(" +
+                str(k) + ", name, 'internalDrag', function)")
+            exec("gui.register" + v + "Draggable=register" + v + "Draggable")
+
+            exec( "def register" + v +
+                "Droppable(self, name, function=None): self.configureWidgets(" +
+                str(k) + ", name, 'internalDrop', function)")
+            exec("gui.register" + v + "Droppable=register" + v + "Droppable")
 
             # might not all be necessary, could make exclusion list
             exec( "def set" + v +
@@ -2823,6 +2985,7 @@ class gui(object):
 #        self.containerStack[-1]['container'].columnconfigure(0, weight=1)
 #        self.containerStack[-1]['container'].rowconfigure(0, weight=1)
 
+
 #####################################
 # FUNCTION to manage containers
 #####################################
@@ -2905,6 +3068,8 @@ class gui(object):
             return container.getPage()
         elif self.containerStack[-1]['type'] == self.C_TOGGLEFRAME:
             return container.getContainer()
+        elif self.containerStack[-1]['type'] == self.C_SUBWINDOW:
+            return container.canvasPane
         else:
             return container
 
@@ -2936,8 +3101,7 @@ class gui(object):
         if fType == self.C_LABELFRAME:
             # first, make a LabelFrame, and position it correctly
             self.__verifyItem(self.n_labelFrames, title, True)
-            container = LabelFrame(
-                self.containerStack[-1]['container'], text=title)
+            container = LabelFrame(self.getContainer(), text=title)
             container.isContainer = True
             container.config(
                 background=self.__getContainerBg(),
@@ -2954,7 +3118,7 @@ class gui(object):
         elif fType == self.C_FRAME:
             # first, make a Frame, and position it correctly
             self.__verifyItem(self.n_ajFrame, title, True)
-            container = ajFrame(self.containerStack[-1]['container'])
+            container = ajFrame(self.getContainer())
             container.isContainer = True
 #            container.config(background=self.__getContainerBg(), font=self.frameFont, relief="groove")
             container.config(background=self.__getContainerBg())
@@ -2966,8 +3130,7 @@ class gui(object):
             self.__addContainer(title, self.C_FRAME, container, 0, 1, sticky)
         elif fType == self.C_TABBEDFRAME:
             self.__verifyItem(self.n_tabbedFrames, title, True)
-            tabbedFrame = TabbedFrame(
-                self.containerStack[-1]['container'], bg=self.__getContainerBg())
+            tabbedFrame = TabbedFrame(self.getContainer(), bg=self.__getContainerBg())
 #            tabbedFrame.isContainer = True
             self.__positionWidget(
                 tabbedFrame,
@@ -2984,8 +3147,7 @@ class gui(object):
             # add to top of stack
             self.containerStack[-1]['widgets'] = True
             tabTitle = self.containerStack[-1]['title'] + "__" + title
-            self.__addContainer(tabTitle, 
-                self.C_TAB, self.containerStack[-1]['container'].addTab(title), 0, 1, sticky)
+            self.__addContainer(tabTitle, self.C_TAB, self.containerStack[-1]['container'].addTab(title), 0, 1, sticky)
         elif fType == self.C_PANEDFRAME:
             # if we previously put a frame for widgets
             # remove it
@@ -2995,8 +3157,7 @@ class gui(object):
             # now, add the new pane
             self.__verifyItem(self.n_panedFrames, title, True)
             pane = PanedWindow(
-                self.containerStack[
-                    -1]['container'],
+                self.getContainer(),
                 showhandle=True,
                 sashrelief="groove",
                 bg=self.__getContainerBg())
@@ -3012,8 +3173,7 @@ class gui(object):
             self.startContainer(self.C_PANE, title)
         elif fType == self.C_PANE:
             # create a frame, and add it to the pane
-            pane = Pane(
-                self.containerStack[-1]['container'], bg=self.__getContainerBg())
+            pane = Pane(self.getContainer(), bg=self.__getContainerBg())
             pane.isContainer = True
             self.containerStack[-1]['container'].add(pane)
             self.n_panes[title] = pane
@@ -3021,8 +3181,7 @@ class gui(object):
             # now, add to top of stack
             self.__addContainer(title, self.C_PANE, pane, 0, 1, sticky)
         elif fType == self.C_SCROLLPANE:
-            scrollPane = ScrollPane(
-                self.containerStack[-1]['container'], bg=self.__getContainerBg())#, width=100, height=100)
+            scrollPane = ScrollPane(self.getContainer(), bg=self.__getContainerBg())#, width=100, height=100)
             scrollPane.isContainer = True
 #                self.containerStack[-1]['container'].add(scrollPane)
             self.__positionWidget(
@@ -3037,8 +3196,7 @@ class gui(object):
             # now, add to top of stack
             self.__addContainer(title, self.C_SCROLLPANE, scrollPane, 0, 1, sticky)
         elif fType == self.C_TOGGLEFRAME:
-            toggleFrame = ToggleFrame(
-                self.containerStack[-1]['container'], title=title, bg=self.__getContainerBg())
+            toggleFrame = ToggleFrame(self.getContainer(), title=title, bg=self.__getContainerBg())
             toggleFrame.configure(font=self.toggleFrameFont)
             toggleFrame.isContainer = True
             self.__positionWidget(
@@ -3053,8 +3211,7 @@ class gui(object):
         elif fType == self.C_PAGEDWINDOW:
             # create the paged window
             pagedWindow = PagedWindow(
-                self.containerStack[
-                    -1]['container'],
+                self.getContainer(),
                 title=title,
                 bg=self.__getContainerBg(),
                 width=200,
@@ -5516,6 +5673,15 @@ class gui(object):
         self.__positionWidget(grip, row, column, colspan, rowspan)
         self.__addTooltip(grip, "Drag here to move", True)
 
+
+#####################################
+# FUNCTIONS for dnd
+#####################################
+    def addTrashBin(self, title, row=None, column=0, colspan=0, rowspan=0):
+        trash = TrashBin(self.getContainer())
+        self.__positionWidget(trash, row, column, colspan, rowspan)
+
+
 #####################################
 # FUNCTIONS for Microbits
 #####################################
@@ -5690,6 +5856,7 @@ class gui(object):
         self.n_labels[title] = lab
 
         self.__positionWidget(lab, row, column, colspan, rowspan)
+        return lab
 
     def addEmptyLabel(self, title, row=None, column=0, colspan=0, rowspan=0):
         self.addLabel(title, None, row, column, colspan, rowspan)
@@ -9628,6 +9795,8 @@ class SubWindow(Toplevel):
         self.geometry("+%d+%d" % (100, 100))
         self.modal = False
         self.blocking = False
+        self.canvasPane = CanvasDnd(self)
+        self.canvasPane.pack(fill=BOTH, expand=True)
 
 # removed for python2.7
 #    def __getattr__(self, name):
@@ -10377,6 +10546,236 @@ class GoogleMap(LabelFrame):
 
 
 #####################################
+class CanvasDnd(Canvas):
+    """
+    A canvas to which we have added those methods necessary so it can
+        act as both a TargetWidget and a TargetObject. 
+        
+    Use (or derive from) this drag-and-drop enabled canvas to create anything
+        that needs to be able to receive a dragged object.    
+    """    
+    def __init__(self, Master, cnf={}, **kw):
+        if cnf:
+            kw.update(cnf)
+        Canvas.__init__(self, Master,  kw)
+
+    #----- TargetWidget functionality -----
+    
+    def dnd_accept(self, source, event):
+        #Tkdnd is asking us (the TargetWidget) if we want to tell it about a
+        #    TargetObject. Since CanvasDnd is also acting as TargetObject we
+        #    return 'self', saying that we are willing to be the TargetObject.
+        logging.getLogger("appJar").debug("<<"+str(type(self))+".dnd_accept>> " + str(source))
+        return self
+
+    #----- TargetObject functionality -----
+
+    # This is called when the mouse pointer goes from outside the
+    # Target Widget to inside the Target Widget.
+    def dnd_enter(self, source, event):
+        logging.getLogger("appJar").debug("<<"+str(type(self))+".dnd_enter>> " + str(source))
+        XY = gui.MOUSE_POS_IN_WIDGET(self, event)
+        # show the dragged object
+        source.appear(self ,XY)
+        
+    # This is called when the mouse pointer goes from inside the
+    # Target Widget to outside the Target Widget.
+    def dnd_leave(self, source, event):
+        logging.getLogger("appJar").debug("<<"+str(type(self))+".dnd_leave>> " + str(source))
+        # hide the dragged object
+        source.vanish()
+        
+    #This is called when the mouse pointer moves withing the TargetWidget.
+    def dnd_motion(self, source, event):
+        logging.getLogger("appJar").debug("<<"+str(type(self))+".dnd_motion>> " + str(source))
+        XY = gui.MOUSE_POS_IN_WIDGET(self,event)
+        # move the dragged object
+        source.move(self, XY)
+        
+    #This is called if the DraggableWidget is being dropped on us.
+    def dnd_commit(self, source, event):
+        logging.getLogger("appJar").debug("<<"+str(type(self))+".dnd_commit>> " + str(source))
+
+# A canvas specifically for deleting dragged objects.
+class TrashBin(CanvasDnd):
+    def __init__(self, master, **kw):
+        if "width" not in kw:
+            kw['width'] =150
+        if "height" not in kw:
+            kw['height'] = 25    
+
+        CanvasDnd.__init__(self, master, kw)
+        x = kw['width'] / 2
+        y = kw['height'] / 2
+        self.create_text(x, y, text='TRASH')
+
+    def dnd_commit(self, source, event):
+        logging.getLogger("appJar").debug("<<TRASH_BIN.dnd_commit>> vanishing source")
+        source.vanish(True)
+
+# This is a prototype thing to be dragged and dropped.
+class DraggableWidget:
+    discardDragged = False
+
+    def dnd_accept(self, source, event):
+        print(self)
+        return None
+    
+    def __init__(self, parent, title, name, XY, widg=None):
+        self.parent = parent
+        logging.getLogger("appJar").debug("<<DRAGGABLE_WIDGET.__init__>>")
+
+        #When created we are not on any canvas
+        self.Canvas = None
+        self.OriginalCanvas = None
+        self.widg = widg
+
+        #This sets where the mouse cursor will be with respect to our label
+        self.OffsetCalculated = False
+        self.OffsetX = XY[0]
+        self.OffsetY = XY[1]
+
+        # give ourself a name
+        self.Name = name
+        self.Title = title
+
+        self.OriginalID = None
+        self.dropTarget = None
+        
+    # this gets called when we are dropped
+    def dnd_end(self, target, event):
+        logging.getLogger("appJar").debug("<<DRAGGABLE_WIDGET.dnd_end>> " + str(self.Name) + " target=" + str(target))
+
+        # from somewhere, dropped nowhere - self destruct, or put back
+        if self.Canvas is None:
+            logging.getLogger("appJar").debug("<<DRAGGABLE_WIDGET.dnd_end>> dropped with Canvas (None)")
+            if DraggableWidget.discardDragged:
+                logging.getLogger("appJar").debug("<<DRAGGABLE_WIDGET.dnd_end>> DISCARDING under order")
+            else:
+                if self.OriginalCanvas is not None:
+                    logging.getLogger("appJar").debug("<<DRAGGABLE_WIDGET.dnd_end>> RESTORING")
+                    self.restoreOldData()
+                    self.Canvas.dnd_enter(self, event)
+                else:
+                    logging.getLogger("appJar").debug("<<DRAGGABLE_WIDGET.dnd_end>> DISCARDING as nowhere to go")
+
+        # have been dropped somewhere
+        else:
+            logging.getLogger("appJar").debug("<<DRAGGABLE_WIDGET.dnd_end>> dropped with Canvas("+str(self.Canvas)+") Target=" + str(self.dropTarget))
+            if not self.dropTarget:
+                # make the dragged object re-draggable
+                self.Label.bind('<ButtonPress>', self.press)
+            else:
+                if self.dropTarget.keepWidget(self.Title, self.Name):
+                    self.Label.bind('<ButtonPress>', self.press)
+                else:
+                    self.vanish(True)
+
+            # delete any old widget
+            if self.OriginalCanvas:
+                self.OriginalCanvas.delete(self.OriginalID)
+                self.OriginalCanvas = None
+                self.OriginalID = None
+                self.OriginalLabel = None
+
+    # put a label representing this DraggableWidget instance on Canvas.
+    def appear(self, canvas, XY):
+    
+        if not isinstance(canvas, CanvasDnd):
+            self.dropTarget = canvas
+            canvas = canvas.dnd_canvas
+#        else:
+#            self.dropTarget = None
+
+        if self.Canvas:
+            logging.getLogger("appJar").debug("<<DRAGGABLE_WIDGET.appear> - ignoring, as we already exist?: " + str(canvas) + str(XY))
+            return
+        else:
+            logging.getLogger("appJar").debug("<<DRAGGABLE_WIDGET.appear> - appearing: " + str(canvas) + str(XY))
+
+            self.Canvas = canvas
+            self.X, self.Y = XY    
+            self.Label = Label(self.Canvas, text=self.Name, borderwidth=2, relief=RAISED)
+
+            # Offsets are received as percentages from initial button press
+            # so calculate Offset from a percentage
+            if not self.OffsetCalculated:
+                self.OffsetX = self.Label.winfo_reqwidth() * self.OffsetX
+                self.OffsetY = self.Label.winfo_reqheight() * self.OffsetY
+                self.OffsetCalculated = True
+
+            self.ID = self.Canvas.create_window(self.X-self.OffsetX, self.Y-self.OffsetY, window=self.Label, anchor="nw")
+            logging.getLogger("appJar").debug("<<DRAGGABLE_WIDGET.appear> - created: " + str(self.Label) + str(self.Canvas))
+
+    # if there is a label representing us on a canvas, make it go away.
+    def vanish(self, all=False):
+        # if we had a canvas, delete us
+        if self.Canvas:
+            logging.getLogger("appJar").debug("<<DRAGGABLE_WIDGET.vanish> - vanishing")
+            self.storeOldData()
+            self.Canvas.delete(self.ID)
+            self.Canvas = None
+            del self.ID
+            del self.Label
+        else:
+            logging.getLogger("appJar").debug("<<DRAGGABLE_WIDGET.vanish>> ignoring")
+
+        if all and self.OriginalCanvas:
+            logging.getLogger("appJar").debug("<<DRAGGABLE_WIDGET.vanish>> restore original")
+            self.OriginalCanvas.delete(self.OriginalID)
+            self.OriginalCanvas = None
+            del self.OriginalID
+            del self.OriginalLabel
+
+    # if we have a label on a canvas, then move it to the specified location. 
+    def move(self, widget, XY):
+        logging.getLogger("appJar").debug("<<DRAGGABLE_WIDGET.move>> " + str(self.Canvas) + str(XY))
+        if self.Canvas:
+            self.X, self.Y = XY
+            self.Canvas.coords(self.ID, self.X-self.OffsetX, self.Y-self.OffsetY)
+        else:
+            logging.getLogger("appJar").error("<<DRAGGABLE_WIDGET.move>> unable to move - NO CANVAS!") 
+
+    def press(self, event):
+        logging.getLogger("appJar").debug("<<DRAGGABLE_WIDGET.press>>")
+        self.storeOldData()
+
+        self.ID = None
+        self.Canvas = None
+        self.Label = None
+
+        #Ask Tkdnd to start the drag operation
+        if INTERNAL_DND.dnd_start(self, event):
+            self.OffsetX, self.OffsetY = gui.MOUSE_POS_IN_WIDGET(self.OriginalLabel, event, False)
+            XY = gui.MOUSE_POS_IN_WIDGET(self.OriginalCanvas, event, False)
+            self.appear(self.OriginalCanvas, XY)
+
+    def storeOldData(self, phantom=False):
+        logging.getLogger("appJar").debug("<<DRAGGABLE_WIDGET.storeOldData>>")
+        self.OriginalID = self.ID
+        self.OriginalLabel = self.Label
+        self.OriginalText = self.Label['text']
+        self.OriginalCanvas = self.Canvas
+        if phantom:
+            logging.getLogger("appJar").debug("<<DRAGGABLE_WIDGET.storeOldData>> keeping phantom")
+            self.OriginalLabel["text"] = "<Phantom>"
+            self.OriginalLabel["relief"] = RAISED
+        else:
+            logging.getLogger("appJar").debug("<<DRAGGABLE_WIDGET.storeOldData>> hiding phantom")
+            self.OriginalCanvas.delete(self.OriginalID)
+        
+    def restoreOldData(self):
+        if self.OriginalID:
+            logging.getLogger("appJar").debug("<<DRAGGABLE_WIDGET.restoreOldData>>")
+            self.ID = self.OriginalID
+            self.Label = self.OriginalLabel
+            self.Label['text'] = self.OriginalText
+            self.Label['relief'] = RAISED
+            self.Canvas = self.OriginalCanvas
+            self.OriginalCanvas.itemconfigure(self.OriginalID, state='normal')
+            self.Label.bind('<ButtonPress>', self.press)
+        else:
+            logging.getLogger("appJar").debug("<<DRAGGABLE_WIDGET.restoreOldData>> unable to restore - NO OriginalID")
 
 
 #####################################
