@@ -10321,13 +10321,19 @@ class GoogleMap(LabelFrame):
         self.params = {}
         self.__setMapParams()
 
+        imgObj = None
         mapData = self.getMapData()
+        # if we got some map data then load it
         if mapData is not None:
-            imgObj = PhotoImage(data=mapData)
-            self.h = imgObj.height()
-            self.w = imgObj.width()
-        else:
-            imgObj = None
+            try:
+                imgObj = PhotoImage(data=mapData)
+                self.h = imgObj.height()
+                self.w = imgObj.width()
+            # python 3.3 fails to load data
+            except Exception as e:
+                logging.getLogger("appJar").exception(e)
+
+        if imgObj is None:
             self.w = self.params['size'].split("x")[0]
             self.h = self.params['size'].split("x")[1]
 
