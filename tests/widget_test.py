@@ -1781,7 +1781,8 @@ test_date_pickers()
 try: test_plots()
 except: print("Skipping plot tests - MatPlotLib not available")
 test_microbits()
-test_googlemap()
+if PY_VER != "3.3":
+    test_googlemap()
 
 test_logging()
 
