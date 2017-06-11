@@ -28,6 +28,7 @@ def login(btn):
         app.infoBox("Success", "Access granted")
         app.setTabbedFrameDisableAllTabs("Tabs", False)
         app.setToolbarEnabled()
+        app.setToolbarPinned()
         app.setToolbarButtonDisabled("LOGOUT", False)
         app.enableMenubar()
 
@@ -152,7 +153,7 @@ app.addToolbar(["EXIT", "LOGOUT", "FILL", "PIE-CHART", "CALENDAR", "ADDRESS-BOOK
 app.addMenuPreferences(toolbar)
 #app.addMenuItem("APPMENU", "About", toolbar)
 app.addMenuItem("Test", "EXIT", toolbar, shortcut="Option-Control-Shift-Alt-Command-B", underline=2)
-app.addMenuList("Tabs", ["Login", "Lists", "Properties", "Meters", "Drag`nDrop", "Calculator", "Panes", "Labels"], changeTab)
+app.addMenuList("Tabs", ["Login", "Lists", "Properties", "Meters", "Drag'nDrop", "Calculator", "Panes", "Labels"], changeTab)
 app.addMenuItem("Test", "LOGOUT", toolbar, shortcut="Shift-Command-B", underline=3)
 app.addMenuItem("Test", "FILL", toolbar, shortcut="Control-Shift-C", underline=1)
 app.addSubMenu("Test", "Bobs")

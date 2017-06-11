@@ -7,7 +7,7 @@ We've incorporated a couple of ways to include drag and drop functionality in **
 
 ##Drag'n Drop Between Widgets
 ---
-There is a beta version of drag and drop between labels.  
+There is a beta version of drag and drop **between labels**.  
 
 * `.set XXX DragFunction(name, [startDragFunction, stopDragFunction]`)  
     Set functions to call whenever the mouse button is clicked and dragged.  

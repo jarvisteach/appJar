@@ -7,6 +7,9 @@ Statusbars are also useful features, they allow you to show information about wh
 ___
 Toolbars (sometimes known as ribbons) appear across the top of a GUI.  
 They offer a series of buttons to click, which can be used to change settings/functionality in a GUI.
+
+**NB.** Icons don't work in python 2.7, due to an issue showing PNG images.  
+
 ![Toolbar](img/bars/toolbar_1.png)  
 
 ```python

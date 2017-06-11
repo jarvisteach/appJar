@@ -1,8 +1,24 @@
 #Pop-ups
-----
+---
 A number of pop-ups (aka dialogs) are available, to add a different user experience, notify the user of information, or get one off pieces of data.
 
+### Tooltips
+---
+* `.set XXX Tooltip(name, value)`  
+    Sets a tooltip for the named widget, with the specified value.  
+    The specified value will be displayed in a small pop-up, when the mouse is left over the widget.
+
+    ![toltip](img/tooltip.png)
+
+    If called a second time, it will update the value of the tooltip.  
+    NB. `XXX` must be the widget type, eg. `Label`  
+
+* `.enable XXX Tooltip(name)` & `.disable XXX Tooltip(name)`  
+    These will enable or disable the named tooltip.  
+    When disabled, it will not show-up.  
+
 ### Message Boxes
+---
 * `.infoBox(title, message)`  
     Shows a simple information message, with an OK button.  
     ![InfoBox](img/dialogs/info.gif)
@@ -15,7 +31,8 @@ A number of pop-ups (aka dialogs) are available, to add a different user experie
     Shows a simple warning message, with an OK message.  
     ![WarningBox](img/dialogs/warning.gif)
 
-###Question Boxes
+### Question Boxes
+---
 * `.yesNoBox(title, message)`  
     Shows a question, with Yes/No buttons. Returns True/False.  
     ![yesNoBox](img/dialogs/yesno.gif)
@@ -40,22 +57,8 @@ A number of pop-ups (aka dialogs) are available, to add a different user experie
     Shows a question requesting a numeric response. Returns a number, or None if Cancel pressed.  
     ![NumberBox](img/dialogs/num.gif)
 
-### Tooltips
-
-* `.set XXX Tooltip(name, value)`  
-    Sets a tooltip for the named widget, with the specified value.  
-    The specified value will be displayed in a small pop-up, when the mouse is left over the widget.
-
-    ![toltip](img/tooltip.png)
-
-    If called a second time, it will update the value of the tooltip.  
-    NB. `XXX` must be the widget type, eg. `Label`  
-
-* `.enable XXX Tooltip(name)` & `.disable XXX Tooltip(name)`  
-    These will enable or disable the named tooltip.  
-    When disabled, it will not show-up.  
-
 ### File Boxes
+---
 * `.openBox(title=None, dirName=None, fileTypes=None, asFile=False)`  
     Shows an open file dialog.  
 
@@ -68,6 +71,7 @@ A number of pop-ups (aka dialogs) are available, to add a different user experie
     * `fileTypes=[('images', '*.png'), ('images', '*.jpg')]`  
     This will set the allowed file extensions, it should be a list of tuples. They will be grouped by the name.  
     * `asFile` this will determine whether a path or actual Python file object is returned, defaults to filename   
+
 
 * `.saveBox(title=None, fileName=none, dirName=None, fileExt=".txt", fileTypes=None, asFile=None)`  
     Shows a save file dialog.  
@@ -92,6 +96,7 @@ A number of pop-ups (aka dialogs) are available, to add a different user experie
     * `dirName` this will set a starting directory, defaults to the current working directory  
 
 ### Other Boxes
+---
 * `.colourBox(colour="#FF0000")`
     Shows a dialog for choosing colours.  
 
