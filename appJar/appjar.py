@@ -960,7 +960,6 @@ class gui(object):
         # called by DND class, when looking for a DND target
         def dnd_accept(self, source, event):
             logging.getLogger("appJar").debug("<<WIDGET.dnd_accept>> " + str(widget) + " - " + str(self.dnd_canvas))
-            print(self)
             return self
 
         # This is called when the mouse pointer goes from outside the
@@ -990,7 +989,6 @@ class gui(object):
             source.move(self, XY)
 
         def keepWidget(self, title, name):
-            print("IN KEEPER...")
             if self.drop_function is not None:
                 return self.drop_function(title, name)
             else:
@@ -10324,9 +10322,14 @@ class GoogleMap(LabelFrame):
         self.__setMapParams()
 
         mapData = self.getMapData()
-        imgObj = PhotoImage(data=mapData)
-        self.h = imgObj.height()
-        self.w = imgObj.width()
+        if mapData is not None:
+            imgObj = PhotoImage(data=mapData)
+            self.h = imgObj.height()
+            self.w = imgObj.width()
+        else:
+            imgObj = None
+            self.w = self.params['size'].split("x")[0]
+            self.h = self.params['size'].split("x")[1]
 
         self.canvas = Canvas(self, width=self.w, height=self.h)
         self.canvas.pack()#expand = YES, fill = BOTH)
@@ -10415,7 +10418,7 @@ class GoogleMap(LabelFrame):
 
     def setSize(self, size):
         if size != self.params["size"]:
-            self.params["size"] = size
+            self.params["size"] = size.lower()
             self.parent.after(0, self.updateMap())
 
     def changeTerrain(self, terrainType):
@@ -10427,7 +10430,7 @@ class GoogleMap(LabelFrame):
                 self.parent.after(0, self.updateMap())
 
     def changeLocation(self, location):
-        self.location.set(location)
+        self.location.set(location) # update the entry
         if self.params["center"] != location:
             self.params["center"] = location
             self.parent.after(0, self.updateMap())
@@ -10464,8 +10467,15 @@ class GoogleMap(LabelFrame):
         else:
             logging.getLogger("appJar").error("Unable to update map, as no mapData")
 
+    def __buildQueryURL(self):
+        request = self.GOOGLE_URL + urlencode(self.params)
+        logging.getLogger("appJar").debug("GoogleMap search URL: " + request)
+        return request
+
     def getMapData(self):
-        """ will query GoogleMaps & download the iamge data as a blob """
+        """ will query GoogleMaps & download the image data as a blob """
+#        if self.params['center'] == "":
+#            self.params["center"] = self.getCurrentLocation()
         request = self.__buildQueryURL()
         try:
             return urlopen(request).read()
@@ -10483,23 +10493,21 @@ class GoogleMap(LabelFrame):
             logging.getLogger("appJar").exception(e)
             return None
 
-    def __buildQueryURL(self):
-        request = self.GOOGLE_URL + urlencode(self.params)
-        logging.getLogger("appJar").debug("GoogleMap search URL: " + request)
-        return request
-
     def getCurrentLocation(self):
         logging.getLogger("appJar").debug("Location request URL: " + self.LOCATION_URL)
         try:
-            data =  urlopen(self.LOCATION_URL).read().decode("utf-8")
-            logging.getLogger("appJar").debug("Location data: " + data)
-            data = json.loads(data)
-#            location = data["loc"]
-            location = str(data["latitude"]) + "," + str(data["longitude"])
-            return location
+            return self.__locationLookup()
         except Exception as e:
             logging.getLogger("appJar").exception(e)
             return None
+
+    def __locationLookup(self):
+        data =  urlopen(self.LOCATION_URL).read().decode("utf-8")
+        logging.getLogger("appJar").debug("Location data: " + data)
+        data = json.loads(data)
+#        location = data["loc"]
+        location = str(data["latitude"]) + "," + str(data["longitude"])
+        return location
 
 #####################################
 # FUNCTION for matplotlib
@@ -10618,7 +10626,6 @@ class DraggableWidget:
     discardDragged = False
 
     def dnd_accept(self, source, event):
-        print(self)
         return None
     
     def __init__(self, parent, title, name, XY, widg=None):
