@@ -1648,7 +1648,7 @@ def test_pop_ups():
     print("\tTesting popups")
     print("Registering event:")
     app.topLevel.after(500, closePop)
-    a = app.textBox("a", "a")
+    a = app.textBox("a", "a", "initial")
     assert a is None
     print("Registering event:")
     app.topLevel.after(500, closePop)
