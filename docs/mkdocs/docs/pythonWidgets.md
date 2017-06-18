@@ -499,8 +499,9 @@ app.go()
 * `.clearListBox(title)`  
     Removes all items from the specified ListBox.  
 
-* `.updateListBox(title, items)`  
+* `.updateListBox(title, items, select=False)`  
     Replace the contents of the specified ListBox with the new values.  
+    If you set `select` to be True, the last item in the list will be selected.  
 
 ```python
 from appJar import gui
@@ -526,6 +527,10 @@ app.go()
 
 * `.setListBoxMulti(list, multi=True)`  
     Configures whether the specified ListBox is single or multi select.  
+
+* `.setListBoxGroup(list, group=True)`  
+    Adds the named ListBox to a group of selectable ListBoxes.  
+    All ListBoxes in the group can have items selected at the same time.  
 
 * `.setListItemBg(title, item, colour)` & `.setListItemFg(title, item, colour)`  
     `.setListItemAtPosBg(title, item, colour)` & `.setListItemAtPosFg(title, item, colour)`  

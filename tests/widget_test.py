@@ -571,12 +571,22 @@ def test_lists():
 #    assert app.getListItems("l2") == []
 # SELECTING THE LAST ONE...
 
+    app.updateListItems("l2", LIST_TWO, True)
+    assert app.getListItems("l2") == [LIST_TWO[len(LIST_TWO)-1]]
+
+    app.addListItem("l2", "new item")
+    assert app.getListItems("l2") == ["new item"]
+
+    app.addListItem("l2", "another new item", select=False)
+    assert app.getListItems("l2") == ["new item"]
+
     app.addListBox("cl1", LIST_ONE)
     app.setListItemAtPos("cl1", 0, "new_word")
     assert app.getAllListItems("cl1")[0] == "new_word"
     app.setListItem("cl1", "new_word", "newer_word")
     assert app.getAllListItems("cl1")[0] == "newer_word"
 
+    app.updateListItems("l2", LIST_TWO, True)
     app.removeListItem("l2", LIST_TWO[1])
     tmp_list = LIST_TWO
     tmp_list.remove(tmp_list[1])
@@ -585,6 +595,33 @@ def test_lists():
     # call generic setter functions
     test_setters("ListBox", "l1")
     test_setters("Lb", "l1")
+
+    app.addListBox("g1", LIST_ONE)
+    app.addListBox("g2", LIST_TWO)
+
+    app.selectListItem("g1", LIST_ONE[0])
+    assert app.getListItems("g1") == [LIST_ONE[0]]
+    assert app.getListItems("g2") == []
+
+    app.selectListItem("g2", LIST_TWO[0])
+    assert app.getListItems("g1") == []
+    assert app.getListItems("g2") == [LIST_TWO[0]]
+
+    app.updateListBox("g1", LIST_ONE)
+    app.updateListBox("g2", LIST_TWO)
+
+    app.setListBoxGroup("g1")
+    app.setListBoxGroup("g2")
+
+    app.selectListItem("g1", LIST_ONE[0])
+
+    assert app.getListItems("g1") == [LIST_ONE[0]]
+    assert app.getListItems("g2") == []
+
+    app.selectListItem("g2", LIST_TWO[0])
+
+    assert app.getListItems("g1") == [LIST_ONE[0]]
+    assert app.getListItems("g2") == [LIST_TWO[0]]
 
     print("\t>> all tests complete")
 

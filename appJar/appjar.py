@@ -1231,7 +1231,7 @@ class gui(object):
                     data = texts.get(k, lb.DEFAULT_TEXT).strip().split("\n")
                     # tidy up the list
                     data = [item.strip() for item in data if len(item.strip()) > 0]
-                    self.updateListItems(k, data)
+                    self.updateListBox(k, data)
             elif kind in [self.SPIN]:
                 for k in widgets.keys():
                     sb = widgets[k]
@@ -5353,6 +5353,12 @@ class gui(object):
 
         self.__positionWidget(frame, row, column, colspan, rowspan)
 
+    # enable multiple listboxes to be selected at the same time
+    def setListBoxGroup(self, name, group=True):
+        lb = self.__verifyItem(self.n_lbs, name)
+        group = not group
+        lb.config(exportselection=group)
+
     # set how many rows to display
     def setListBoxRows(self, name, rows):
         lb = self.__verifyItem(self.n_lbs, name)
@@ -5402,33 +5408,35 @@ class gui(object):
             self.topLevel.update_idletasks()
 
     # replace the list items in the list box
-    def updateListItems(self, title, items):
+    def updateListItems(self, title, items, select=False):
         self.warn(".updateListItems() is deprecated. You should be using .updateListBox()")
-        self.updateListBox(title, items)
+        self.updateListBox(title, items, select)
 
-    def updateListBox(self, title, items):
+    def updateListBox(self, title, items, select=False):
         self.clearListBox(title)
-        self.addListItems(title, items)
+        self.addListItems(title, items, select=select)
 
     # add the items to the specified list box
-    def addListItems(self, title, items):
+    def addListItems(self, title, items, select=True):
         for i in items:
-            self.addListItem(title, i)
+            self.addListItem(title, i, select=select)
 
     # add the item to the end of the list box
-    def addListItem(self, title, item, pos=None):
+    def addListItem(self, title, item, pos=None, select=True):
         lb = self.__verifyItem(self.n_lbs, title)
         # add it at the end
         if pos is None: pos = END
         lb.insert(pos, item)
 
-        # clear any selection
-        items = lb.curselection()
-        if len(items) > 0:
-            lb.selection_clear(items)
-
         # show & select the newly added item
-        self.selectListItemAtPos(title, lb.size() - 1)
+        if select:
+            # clear any selection
+            items = lb.curselection()
+            if len(items) > 0:
+                lb.selection_clear(items)
+
+            self.selectListItemAtPos(title, lb.size() - 1)
+            print("SELECTING-", lb.size())
 
     # returns a list containing 0 or more elements
     # all that are in the selected range
@@ -5516,6 +5524,7 @@ class gui(object):
 
     def clearListBox(self, title):
         lb = self.__verifyItem(self.n_lbs, title)
+        lb.selection_clear(0, END)
         lb.delete(0, END)  # clear
 
 #####################################
