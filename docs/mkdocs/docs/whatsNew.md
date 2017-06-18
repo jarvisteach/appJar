@@ -9,6 +9,7 @@
 
 
 * Issues Resolved:
+    * [#184](https://github.com/jarvisteach/appJar/issues/184) - [Groupable List Boxes](/pythonWidgets/#set-listboxes)
     * [#180](https://github.com/jarvisteach/appJar/issues/180) - [SlowActions](/pythonEvents/#slow-actions)  
     * [#176](https://github.com/jarvisteach/appJar/issues/176) - Fixed issue with placing container in [containers](/pythonWidgetGrouping)  
     * [#173](https://github.com/jarvisteach/appJar/issues/173) - New functions to [Set ListBoxes](/pythonWidgets/#set-listboxes)  
