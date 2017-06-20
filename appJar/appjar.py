@@ -6881,16 +6881,17 @@ class gui(object):
             
         # if image found, then set up the label
         if self.pinBut is not None:
+            self.pinBut.config(image=imgObj)#, compound=TOP, text="", justify=LEFT)
+            self.pinBut.image = imgObj  # keep a reference!
+            self.pinBut.pack(side=RIGHT, anchor=NE, padx=0, pady=0)
+
             if gui.GET_PLATFORM() == gui.MAC:
                 self.pinBut.config(cursor="pointinghand")
             elif gui.GET_PLATFORM() in [gui.WINDOWS, gui.LINUX]:
                 self.pinBut.config(cursor="hand2")
 
-            self.pinBut.bind("<Button-1>", self.__toggletb)
-            self.pinBut.config(image=imgObj)#, compound=TOP, text="", justify=LEFT)
-            self.pinBut.image = imgObj  # keep a reference!
+            self.pinBut.eventId = self.pinBut.bind("<Button-1>", self.__toggletb)
             self.__addTooltip(self.pinBut, "Click here to pin/unpin the toolbar.", True)
-            self.pinBut.pack(side=RIGHT, anchor=NE, padx=0, pady=0)
 
     # called by pinBut, to toggle the pin status of the toolbar
     def __toggletb(self, event=None):
@@ -6958,6 +6959,20 @@ class gui(object):
                 self.n_tbButts[but].config(state=DISABLED)
             else:
                 self.n_tbButts[but].config(state=NORMAL)
+
+        if self.pinBut is not None:
+            if disabled:
+                self.pinBut.unbind("<Button-1>", self.pinBut.eventId)
+                self.__disableTooltip(self.pinBut)
+                self.pinBut.config(cursor="")
+            else:
+                if gui.GET_PLATFORM() == gui.MAC:
+                    self.pinBut.config(cursor="pointinghand")
+                elif gui.GET_PLATFORM() in [gui.WINDOWS, gui.LINUX]:
+                    self.pinBut.config(cursor="hand2")
+
+                self.pinBut.eventId = self.pinBut.bind("<Button-1>", self.__toggletb)
+                self.__enableTooltip(self.pinBut)
 
     def __minToolbar(self, e=None):
         if not self.tbPinned:
