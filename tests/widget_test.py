@@ -32,12 +32,6 @@ def tester_function(btn=None):
     print(btn)
     return True
 
-from appJar import gui
-app = gui()
-app.showSplash()
-print("NEXT...")
-
-
 def test_grid_layout():
     print("\tTesting layout")
     app.addLabel("lay1", TEXT_ONE, 1)
@@ -1791,6 +1785,13 @@ def test_logging():
     print(" >> not implemented...")
     #print("\t >> all tests complete")
 
+
+from appJar import gui
+app = gui()
+print(app.SHOW_VERSION())
+print(app.SHOW_PATHS)
+app.showSplash()
+print("NEXT...")
 
 print("<<<Starting Widget Test Suite>>>")
 test_gui_options()

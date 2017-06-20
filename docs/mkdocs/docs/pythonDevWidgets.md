@@ -56,7 +56,7 @@ app.go()
 
 * `.addGoogleMap(title)`  
     Creates a GoogleMap widget.  
-    Displays a map image, and provides functionality to search, zoom, and change terrain.  
+    Displays a map image, and provides functionality to search, zoom, and change terrain, as well as a link to the original image.  
 
 #### Set GoogleMaps  
 
@@ -72,7 +72,7 @@ app.go()
 
 * `.setGoogleMapSize(title, size)`  
     Set the size of the GoogleMap. Should be in the format `"300x300"`.  
-    Note, if you set it too small, the control widgets won;t look good...  
+    Note, if you set it too small, the control widgets won't look good...  
 
 #### Get GoogleMaps  
 
@@ -93,7 +93,7 @@ app.go()
 ---
 Widget to depict a Pie Chart.  
 It will automatically calculate percentages, and draw a pie chart, given a dictionary of items and their amount.  
-The PieChart is purely for display purposes, and is not interactive.  
+The PieChart is purely for display purposes, and is not interactive, other than a simple mouse-over effect with a tooltip.  
 ![PieChart](img/dev/pie.png)  
 
 ```python

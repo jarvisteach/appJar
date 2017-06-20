@@ -13,32 +13,32 @@ Check out the [installation](/install) instructions for other ways to get **appJ
 GUIs in Python are hard, there's a huge amount of [boilerplate code](https://en.wikipedia.org/wiki/Boilerplate_code) required to get things working - so we hide all that.  
 We're also not big fans of lots of parameters, so we keep them to a minimum, instead giving functions to get & set most things.  
 
-### Hello World  
+### Hello appJar  
 ---
 
 [GUIs](https://en.wikipedia.org/wiki/Graphical_user_interface) in **appJar** require three steps.  
 
-* Import the library & create a GUI variable.  
-    ( From now on, we do everything to the GUI variable. )  
+* First, import the library & create a GUI variable.  
+    (from now on, we do everything to the GUI variable)  
 
 ```python
 # import the library
 from appJar import gui
-# create the GUI
+# create a GUI variable called app
 app = gui()
 ```
 
-* Add and configure some widgets:  
-    ( If you've tried [turtle](https://docs.python.org/3.6/library/turtle.html) this will all look very familiar. )  
+* Then, using the gui variable, add and configure some widgets:  
+    (if you've tried [turtle](https://docs.python.org/3.6/library/turtle.html) this will all look very familiar)  
 
 ```python
-# add & configure widgets
+# add & configure widgets - widgets get a name, to help referencing them later
 app.addLabel("title", "Welcome to appJar")
 app.setLabelBg("title", "red")
 ```
 
-* Start the GUI:  
-    ( **NB.** don't put any code after this line! )  
+* Finally, start the GUI:  
+    (**NB.** don't put any code after this line)  
 
 ```python
 # start the GUI
@@ -47,7 +47,7 @@ app.go()
 
 * And, that's it: 
 
-    ![simpleApp](img/simpleApp.png)
+    ![simpleApp](img/simpleApp.png)  
 
 ### Interactivity    
 ---
@@ -55,7 +55,14 @@ Of course, the whole point of making a GUI, is to be interactive - this requires
 
 The idea behind [event-driven programming](https://en.wikipedia.org/wiki/Event-driven_programming) is that each time the user clicks, presses or drags something (the event) the GUI should respond.  
 
-* This requires making a function - a block of code to call, when the event happens:  
+* First, add some more widgets ([Entry Boxes](/pythonWidgets/#entry)), for the user to interact with:
+
+```python
+app.addLabelEntry("Username")
+app.addLabelSecretEntry("Password")
+```
+
+* Then, we'll need a **function** - a block of code to call, when an event happens:  
 
 ```python
 def press(button):
@@ -67,52 +74,48 @@ def press(button):
         print("User:", usr, "Pass:", pwd)
 ```
 
-* Then add some more widgets, for the user to interact with:
+
+* Finally, some widgets ([buttons](/pythonWidgets/#button)) to create the events:  
 
 ```python
-app.addLabelEntry("Username")
-app.addLabelSecretEntry("Password")
-```
-
-* And, widgets to create events:  
-
-```python
-# give the name of the function - press
+# link the buttons to the function called press
 app.addButtons(["Submit", "Cancel"], press)
 ```
-* We now have an interactive GUI: 
+
+* We now have an interactive GUI:  
 
     ![testLog](img/testLog.png)
 
-
-Now, when the user presses a button, the `press()` function is called, passing the name of the button as a parameter.  
+When the user presses a button, the `press` function is called, passing the name of the button as a parameter.  
 
 ### Appearance counts
 ---
-As well as changing widgets, you can also change the way the [GUI looks](/pythonGuiOptions).  
+As well as changing widgets, you can also change the way the [GUI looks](/pythonGuiOptions):  
 
-For starters, you can specify a name and size for your GUI when you make it:  
+* For starters, you can specify a name and size for your GUI, when you create the variable:  
 
 ```python
 app = gui("Login Window", "400x200")
 ```
 
-And, change the general appearance:  
+* As well as changing widget appearance, you can also change the general GUI's appearance:  
 
 ```python
 app.setBg("orange")
 app.setFont(18)
 ```
 
-You can even specify where you want the cursor to be when the user starts typing:
+* You can even specify where you want the cursor to be when the GUI starts:  
 
 ```python
 app.setFocus("Username")
 ```
 
-![testLog](img/testLog2.png)
+* It now looks a bit better:  
 
-( **NB.** We also set some other colours on the label - see [below](#full-code-listing). )  
+    ![testLog](img/testLog2.png)  
+
+    (**NB.** We also set some other colours on the label - see [below](#full-code-listing)) 
 
 ###  Make your own  
 ---  
@@ -143,19 +146,20 @@ def press(button):
         pwd = app.getEntry("Password")
         print("User:", usr, "Pass:", pwd)
 
-# create the GUI
+# create a GUI variable called app
 app = gui("Login Window", "400x200")
 app.setBg("orange")
 app.setFont(18)
 
-# add & configure widgets
+# add & configure widgets - widgets get a name, to help referencing them later
 app.addLabel("title", "Welcome to appJar")
 app.setLabelBg("title", "blue")
 app.setLabelFg("title", "orange")
 
 app.addLabelEntry("Username")
 app.addLabelSecretEntry("Password")
-# give the name of the function - press
+
+# link the buttons to the function called press
 app.addButtons(["Submit", "Cancel"], press)
 
 app.setFocus("Username")

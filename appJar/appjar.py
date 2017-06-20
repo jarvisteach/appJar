@@ -10372,7 +10372,8 @@ class GoogleMap(LabelFrame):
         self.buttons = [
                     Label(self.canvas, text="-"),
                     Label(self.canvas, text="+"),
-                    Label(self.canvas, text="H")
+                    Label(self.canvas, text="H"),
+                    Link(self.canvas, text="@")
                         ]
         B_FONT = font.Font(family='Helvetica', size=10)
 
@@ -10421,6 +10422,7 @@ class GoogleMap(LabelFrame):
         self.buttons[0].place_forget()
         self.buttons[1].place_forget()
         self.buttons[2].place_forget()
+        self.buttons[3].place_forget()
 
     def __placeControls(self):
         self.locationEntry.place(rely=0, relx=0, x=8, y=8, anchor=NW)
@@ -10428,6 +10430,9 @@ class GoogleMap(LabelFrame):
         self.buttons[0].place(rely=1.0, relx=1.0, x=-5, y=-20, anchor=SE)
         self.buttons[1].place(rely=1.0, relx=1.0, x=-5, y=-38, anchor=SE)
         self.buttons[2].place(rely=1.0, relx=1.0, x=-5, y=-56, anchor=SE)
+        self.buttons[3].place(rely=1.0, relx=1.0, x=-5, y=-74, anchor=SE)
+
+        self.buttons[3].registerWebpage(self.request)
 
     def __setMapParams(self):
         if "center" not in self.params or self.params["center"] == None or self.params["center"] == "":
@@ -10494,30 +10499,31 @@ class GoogleMap(LabelFrame):
                 self.w = w
                 self.canvas.config(width=self.w, height=self.h)
                 self.__placeControls()
+            self.buttons[3].registerWebpage(self.request)
         else:
             logging.getLogger("appJar").error("Unable to update map, as no mapData")
 
     def __buildQueryURL(self):
-        request = self.GOOGLE_URL + urlencode(self.params)
-        logging.getLogger("appJar").debug("GoogleMap search URL: " + request)
-        return request
+        self.request = self.GOOGLE_URL + urlencode(self.params)
+        logging.getLogger("appJar").debug("GoogleMap search URL: " + self.request)
 
     def getMapData(self):
         """ will query GoogleMaps & download the image data as a blob """
 #        if self.params['center'] == "":
 #            self.params["center"] = self.getCurrentLocation()
-        request = self.__buildQueryURL()
+        self.__buildQueryURL()
         try:
-            return urlopen(request).read()
+            return urlopen(self.request).read()
         except Exception as e:
             logging.getLogger("appJar").exception(e)
             return None
 
     def getMapFile(self, fileName):
         """ will query GoogleMaps & download the iamge into the named file """
-        request = self.__buildQueryURL()
+        self.__buildQueryURL()
+        self.buttons[3].registerWebpage(self.request)
         try:
-            urlretrieve(request, fileName)
+            urlretrieve(self.request, fileName)
             return fileName
         except Exception as e:
             logging.getLogger("appJar").exception(e)
