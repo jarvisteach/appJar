@@ -10509,8 +10509,8 @@ class GoogleMap(LabelFrame):
 
     def getMapData(self):
         """ will query GoogleMaps & download the image data as a blob """
-#        if self.params['center'] == "":
-#            self.params["center"] = self.getCurrentLocation()
+        if self.params['center'] == "":
+            self.params["center"] = self.getCurrentLocation()
         self.__buildQueryURL()
         try:
             return urlopen(self.request).read()
