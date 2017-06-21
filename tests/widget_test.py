@@ -1709,6 +1709,13 @@ def test_googlemap():
     assert app.getGoogleMapLocation("gm2") == "germany"
     assert app.getGoogleMapSize("gm2") == "350x450"
 
+    app.setGoogleMapMarker("gm2", "france")
+    app.setGoogleMapMarker("gm2", "paris")
+    app.setGoogleMapMarker("gm2", "leon")
+
+    app.setGoogleMapMarker("gm2", "")
+    app.saveGoogleMap("gm2", "gm.gif")
+
     print(" >> not implemented...")
     #print("\t >> all tests complete")
 
