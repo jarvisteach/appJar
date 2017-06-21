@@ -4354,6 +4354,10 @@ class gui(object):
 
     def getGoogleMapSize(self, title):
         return self.__verifyItem(self.n_maps, title).params["size"]
+
+    def saveGoogleMap(self, title, fileLocation):
+        gMap = self.__verifyItem(self.n_maps, title)
+        return gMap.saveTile(fileLocation)
         
 
 #####################################
@@ -10354,11 +10358,11 @@ class GoogleMap(LabelFrame):
         self.__setMapParams()
 
         imgObj = None
-        mapData = self.getMapData()
+        self.mapData = self.getMapData()
         # if we got some map data then load it
-        if mapData is not None:
+        if self.mapData is not None:
             try:
-                imgObj = PhotoImage(data=mapData)
+                imgObj = PhotoImage(data=self.mapData)
                 self.h = imgObj.height()
                 self.w = imgObj.width()
             # python 3.3 fails to load data
@@ -10469,6 +10473,16 @@ class GoogleMap(LabelFrame):
         self.markers.append(location)
         self.parent.after(0, self.updateMap())
 
+    def saveTile(self, location):
+        try:
+            with open(location, "wb") as fh:
+                fh.write(self.mapData)
+            logging.getLogger("appJar").info("Map data written to file: " + str(location))
+            return True
+        except  Exception as e:
+            logging.getLogger("appJar").exception(e)
+            return False
+
     def setSize(self, size):
         if size != self.params["size"]:
             self.params["size"] = size.lower()
@@ -10502,9 +10516,9 @@ class GoogleMap(LabelFrame):
             self.parent.after(0, self.updateMap())
 
     def updateMap(self):
-        mapData = self.getMapData()
-        if mapData is not None:
-            imgObj = PhotoImage(data=mapData)
+        self.mapData = self.getMapData()
+        if self.mapData is not None:
+            imgObj = PhotoImage(data=self.mapData)
             self.canvas.itemconfig(self.image_on_canvas, image=imgObj)
             self.canvas.img = imgObj
 

@@ -13,6 +13,8 @@ def press(btn):
         app.setGoogleMapSize("m1", app.getEntry("e1"))
     elif btn == "MARK": 
         app.setGoogleMapMarker("m1", app.getEntry("e1"))
+    elif btn == "SAVE": 
+        app.saveGoogleMap("m1", app.getEntry("e1"))
     else:
         app.zoomGoogleMap("m1", btn)
         
@@ -23,7 +25,7 @@ app.addGoogleMap("m1")
 app.setGoogleMapMarker("m1", "swindon")
 app.setGoogleMapSize("m1", "340x500")
 app.addEntry("e1")
-app.addButtons(["SEARCH", "+", "-", "ZOOM", "SIZE", "TERRAIN", "MARK"], press)
+app.addButtons(["SAVE", "SEARCH", "+", "-", "ZOOM", "SIZE", "TERRAIN", "MARK"], press)
 
 app.go()
 

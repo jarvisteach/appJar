@@ -94,6 +94,12 @@ app.go()
 * `.getGoogleMapSize(title)`  
     Returns the current size of the map tile.  
 
+#### Save GoogleMaps  
+
+* `.saveGoogleMap(title, fileName)`  
+    Saves the currently displayed map to the named location.  
+    By default, all map tiles are GIFs.  
+
 ###PieChart
 ---
 Widget to depict a Pie Chart.  
