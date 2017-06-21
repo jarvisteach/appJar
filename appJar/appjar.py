@@ -52,7 +52,7 @@ winsound = None
 FigureCanvasTkAgg = Figure = None # matplotlib
 parseString = TreeItem = TreeNode = None # ajTree
 ajTreeNode = ajTreeData = None
-urlencode = urlopen = urlretrieve = json = None # GoogleMap
+urlencode = urlopen = urlretrieve = quote_plus = json = None # GoogleMap
 
 # details
 __author__ = "Richard Jarvis"
@@ -646,19 +646,20 @@ class gui(object):
                     types = False
 
     def __loadURL(self):
-        global urlencode, urlopen, urlretrieve, json
+        global urlencode, urlopen, urlretrieve, quote_plus, json
         if urlencode is None:
             try: # python 2
-                from urllib import urlencode, urlopen, urlretrieve
+                from urllib import urlencode, urlopen, urlretrieve, quote_plus
                 import json
             except ImportError: # python 3
                 try:
                     from urllib.parse import urlencode
+                    from urllib.parse import quote_plus
                     from urllib.request import urlopen
                     from urllib.request import urlretrieve
                     import json
                 except:
-                    urlencode = urlopen = urlretrieve = json = False
+                    urlencode = urlopen = urlretrieve = quote_plus = json = False
 
     def __loadNanojpeg(self):
         global nanojpeg
@@ -4334,6 +4335,13 @@ class gui(object):
     def setGoogleMapSize(self, title, size):
         gMap = self.__verifyItem(self.n_maps, title)
         gMap.setSize(size)
+
+    def setGoogleMapMarker(self, title, location):
+        gMap = self.__verifyItem(self.n_maps, title)
+        if len(location) == 0:
+            gMap.removeMarkers()
+        else:
+            gMap.addMarker(location)
 
     def getGoogleMapZoom(self, title):
         return self.__verifyItem(self.n_maps, title).params["zoom"]
@@ -10451,6 +10459,16 @@ class GoogleMap(LabelFrame):
 #        self.params["mobile"] = "true" # optional: mobile=true will assume the image is shown on a small screen (mobile device)
         self.params["sensor"] = "false"  # must be given, deals with getting loction from mobile device 
 
+        self.markers = []
+
+    def removeMarkers(self):
+        self.markers = []
+        self.parent.after(0, self.updateMap())
+
+    def addMarker(self, location):
+        self.markers.append(location)
+        self.parent.after(0, self.updateMap())
+
     def setSize(self, size):
         if size != self.params["size"]:
             self.params["size"] = size.lower()
@@ -10505,6 +10523,11 @@ class GoogleMap(LabelFrame):
 
     def __buildQueryURL(self):
         self.request = self.GOOGLE_URL + urlencode(self.params)
+        if len(self.markers) > 0:
+            m = "|".join(self.markers)
+            m = quote_plus(m)
+            self.request += "&markers=" + m
+            
         logging.getLogger("appJar").debug("GoogleMap search URL: " + self.request)
 
     def getMapData(self):
