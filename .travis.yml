@@ -10,12 +10,6 @@ matrix:
           - COVERALLS_PARALLEL=true
         - os: linux
           sudo: required
-          python: 3.2
-          env:
-          - PYTHONPATH=.
-          - COVERALLS_PARALLEL=true
-        - os: linux
-          sudo: required
           python: 3.3
           env:
           - PYTHONPATH=.

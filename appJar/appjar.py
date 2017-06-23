@@ -4,8 +4,9 @@
 # with help from: http://infohost.nmt.edu/tcc/help/pubs/tkinter/web/index.html
 # with snippets from stackexchange.com
 
-# make print backwards compatible
+# make print & unicode backwards compatible
 from __future__ import print_function
+from __future__ import unicode_literals
 
 try:
     # for Python2
@@ -6299,7 +6300,7 @@ class gui(object):
 
         entry.config(highlightbackground="#4CC417", highlightcolor="#4CC417", fg="#4CC417")
         entry.config(highlightthickness=2)
-        entry.lab.config(text=u'\u2714', fg="#4CC417")
+        entry.lab.config(text='\u2714', fg="#4CC417")
         entry.lab.DEFAULT_TEXT = entry.lab.cget("text")
 
     def setEntryInvalid(self, title):
@@ -6310,7 +6311,7 @@ class gui(object):
 
         entry.config(highlightbackground="red", highlightcolor="red", fg="red")
         entry.config(highlightthickness=2)
-        entry.lab.config(text=u'\u2716', fg="red")
+        entry.lab.config(text='\u2716', fg="red")
         entry.lab.DEFAULT_TEXT = entry.lab.cget("text")
 
     def setEntryWaitingValidation(self, title):
@@ -6321,7 +6322,7 @@ class gui(object):
 
         entry.config(highlightbackground="black", highlightcolor="black", fg="black")
         entry.config(highlightthickness=1)
-        entry.lab.config(text=u'\u2731', fg="black")
+        entry.lab.config(text='\u2731', fg="black")
         entry.lab.DEFAULT_TEXT = entry.lab.cget("text")
 
     def addAutoEntry(
