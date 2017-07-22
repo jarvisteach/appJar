@@ -1820,10 +1820,15 @@ class gui(object):
     # all widgets will then need to use it
     # and here we update all....
     def setFg(self, colour):
+        self.containerStack[-1]['fg']=colour
         self.SET_WIDGET_FG(self.containerStack[-1]['container'], colour, True)
 
+        for child in self.containerStack[-1]['container'].winfo_children():
+            if not self.__isWidgetContainer(child):
+                self.SET_WIDGET_FG(child, colour, True)
+
     # self.topLevel = Tk()
-    # self.appWindow = Frame, fills all of self.topLevel
+    # self.appWindow = CanvasDnd, fills all of self.topLevel
     # self.tb = Frame, at top of appWindow
     # self.container = Frame, at bottom of appWindow => C_ROOT container
     # self.bglabel = Label, filling all of container
@@ -1836,7 +1841,7 @@ class gui(object):
 
         for child in self.containerStack[-1]['container'].winfo_children():
             if not self.__isWidgetContainer(child):
-                gui.SET_WIDGET_BG(child, colour)
+                gui.SET_WIDGET_BG(child, colour, True)
 
     def __isWidgetContainer(self, widget):
         try:
@@ -2123,14 +2128,7 @@ class gui(object):
                     else:
                         gui.SET_WIDGET_BG(item, value, True)
                 elif option == 'foreground':
-                    if kind == self.ENTRY:
-                        if item.showingDefault:
-                            item.oldFg = value
-                        else:
-                            item.config(foreground=value)
-                            item.oldFg = value
-                    else:
-                        item.config(foreground=value)
+                    self.SET_WIDGET_FG(item, value, True)
                 elif option == 'disabledforeground':
                     item.config(disabledforeground=value)
                 elif option == 'disabledbackground':
@@ -2773,16 +2771,32 @@ class gui(object):
     def SET_WIDGET_FG(self, widget, fg, external=False):
 
         widgType = widget.__class__.__name__
+        self.debug("SET_WIDGET_FG: " + str(widgType) + " - " + str(fg))
 
         if self.__isWidgetContainer(widget):
             self.containerStack[-1]['fg'] = fg
+            self.debug("CONTAINER")
         elif widgType == "Link" and not external:
+            self.debug("LINK")
             pass
-        else:
-            try:
+        elif widgType == "Entry":
+            self.debug("ENTRY")
+            if widget.showingDefault:
+                widget.oldFg = fg
+            else:
                 widget.config(foreground=fg)
-            except:
-                pass  # can't set an FG colour on this widget
+                widget.oldFg = fg
+        elif widgType == "Checkbutton":
+            self.debug("CHECKBUTTON")
+            widget.config(fg=fg)
+            self.debug(str(widget) + " - " + str(widget.cget('fg')))
+            self.debug("CHECKBUTTON = DONE")
+        else:
+            self.debug("OTHER")
+            try:
+                widget.config(fg=fg)
+            except Exception as e:
+                self.exception(e) # can't set an FG colour on this widget
 
     @staticmethod
     def TINT(widget, colour):
@@ -2894,10 +2908,10 @@ class gui(object):
         return self.getContainer()["bg"]
 
     def __getContainerFg(self):
-        try:
-            return self.getContainer()["fg"]
-        except:
-            return "black"
+        fg = "black"
+        try: fg = self.containerStack[-1]['fg']
+        except: pass
+        return fg
 
     # two important things here:
     # grid - sticky: position of widget in its space (side or fill)
@@ -5449,7 +5463,6 @@ class gui(object):
                 lb.selection_clear(items)
 
             self.selectListItemAtPos(title, lb.size() - 1)
-            print("SELECTING-", lb.size())
 
     # returns a list containing 0 or more elements
     # all that are in the selected range
@@ -8171,10 +8184,12 @@ class TabbedFrame(Frame):
                 for child in self.widgetStore[key][1].winfo_children():
                     gui.SET_WIDGET_BG(child, self.activeBg)
 
-        if "fg" in kw:
-            self.inactiveFg = kw.pop("fg")
+#        if "fg" in kw:
+#            self.inactiveFg = kw.pop("fg")
         if "inactivebackground" in kw:
             self.inactiveBg = kw.pop("inactivebackground")
+        if "inactiveforeground" in kw:
+            self.inactiveFg = kw.pop("fg")
 
         if "disabledforeground" in kw:
             self.disabledFg = kw.pop("disabledforeground")
