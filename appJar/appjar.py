@@ -45,7 +45,7 @@ from platform import system as platform
 # modules to be imported on demand
 hashlib = None
 ToolTip = None
-nanojpeg = PngImageTk = None # extra image support
+nanojpeg = PngImageTk = array = None # extra image support
 EXTERNAL_DND = None
 INTERNAL_DND = None
 types = None            # used to register dnd functions
@@ -663,12 +663,14 @@ class gui(object):
                     urlencode = urlopen = urlretrieve = quote_plus = json = False
 
     def __loadNanojpeg(self):
-        global nanojpeg
+        global nanojpeg, array
         if nanojpeg is None:
             try:
                 from appJar.lib import nanojpeg
+                import array
             except:
                 nanojpeg = False
+                array = False
 
     def __loadWinsound(self):
         # only try to import winsound if we're on windows
@@ -2796,7 +2798,7 @@ class gui(object):
             try:
                 widget.config(fg=fg)
             except Exception as e:
-                self.exception(e) # can't set an FG colour on this widget
+                self.error("Can't set FG of widget: " + str(widgType))
 
     @staticmethod
     def TINT(widget, colour):
@@ -5096,8 +5098,7 @@ class gui(object):
         else:
             # read the image into an array of bytes
             with open(image, 'rb') as inFile:
-                import array
-                buf = array.array("B", inFile.read())
+                buf = array.array(str('B'), inFile.read())
 
             # init the translator, and decode the array of bytes
             nanojpeg.njInit()
@@ -5116,7 +5117,7 @@ class gui(object):
             val = "P%d\n%d %d\n255\n" % (
                 param, nanojpeg.njGetWidth(), nanojpeg.njGetHeight())
             # append the bytes, converted to chars
-            val += ''.join(map(chr, nanojpeg.njGetImage()))
+            val = str(val) + str('').join(map(chr, nanojpeg.njGetImage()))
 
             # release any stuff
             nanojpeg.njDone()
