@@ -3893,9 +3893,10 @@ class gui(object):
         self.n_cbs[title] = cb
         self.n_boxVars[title] = var
         self.__positionWidget(cb, row, column, colspan, rowspan, EW)
+        return cb
 
     def addNamedCheckBox(self, name, title, row=None, column=0, colspan=0, rowspan=0):
-        self. addCheckBox(title, row, column, colspan, rowspan, name)
+        return self.addCheckBox(title, row, column, colspan, rowspan, name)
 
     def getCheckBox(self, title):
         bVar = self.__verifyItem(self.n_boxVars, title)
@@ -8224,7 +8225,7 @@ class TabbedFrame(Frame):
             text=text,
             highlightthickness=1,
             highlightcolor=self.activeFg,
-            relief=RIDGE,
+            relief=SUNKEN,
             cursor="hand2",
             takefocus=1,
             **kwargs)
@@ -8351,9 +8352,11 @@ class TabbedFrame(Frame):
             if self.widgetStore[key][0].disabled:
                 self.widgetStore[key][0]['bg'] = self.disabledBg
                 self.widgetStore[key][0]['fg'] = self.disabledFg
+                self.widgetStore[key][0]['relief'] = SUNKEN
             else:
                 self.widgetStore[key][0]['bg'] = self.inactiveBg
                 self.widgetStore[key][0]['fg'] = self.inactiveFg
+                self.widgetStore[key][0]['relief'] = SUNKEN
                 if swap:
                     self.widgetStore[key][1].grid_remove()
 
@@ -8365,6 +8368,7 @@ class TabbedFrame(Frame):
         if self.selectedTab is not None:
             self.widgetStore[self.selectedTab][0]['bg'] = self.activeBg
             self.widgetStore[self.selectedTab][0]['fg'] = self.activeFg
+            self.widgetStore[self.selectedTab][0]['relief'] = RAISED
             # and grid it if necessary
             if swap:
                 self.widgetStore[self.selectedTab][1].grid()
