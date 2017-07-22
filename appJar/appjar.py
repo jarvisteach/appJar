@@ -8190,7 +8190,7 @@ class TabbedFrame(Frame):
         if "inactivebackground" in kw:
             self.inactiveBg = kw.pop("inactivebackground")
         if "inactiveforeground" in kw:
-            self.inactiveFg = kw.pop("fg")
+            self.inactiveFg = kw.pop("inactiveforeground")
 
         if "disabledforeground" in kw:
             self.disabledFg = kw.pop("disabledforeground")
