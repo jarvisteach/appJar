@@ -583,8 +583,8 @@ class Writer:
         ``None`` if no ``tRNS`` chunk is necessary.
         """
 
-        p = array('B')
-        t = array('B')
+        p = array(str('B'))
+        t = array(str('B'))
 
         for x in self.palette:
             p.extend(x[0:3])
@@ -614,7 +614,7 @@ class Writer:
 
         if self.interlace:
             fmt = 'BH'[self.bitdepth > 8]
-            a = array(fmt, itertools.chain(*rows))
+            a = array(str(fmt), itertools.chain(*rows))
             return self.write_array(outfile, a)
 
         nrows = self.write_passes(outfile, rows)
@@ -708,21 +708,21 @@ class Writer:
         # Choose an extend function based on the bitdepth.  The extend
         # function packs/decomposes the pixel values into bytes and
         # stuffs them onto the data array.
-        data = array('B')
+        data = array(str('B'))
         if self.bitdepth == 8 or packed:
             extend = data.extend
         elif self.bitdepth == 16:
             # Decompose into bytes
             def extend(sl):
                 fmt = '!%dH' % len(sl)
-                data.extend(array('B', struct.pack(fmt, *sl)))
+                data.extend(array(str('B'), struct.pack(fmt, *sl)))
         else:
             # Pack into bytes
             assert self.bitdepth < 8
             # samples per byte
             spb = int(8/self.bitdepth)
             def extend(sl):
-                a = array('B', sl)
+                a = array(str('B'), sl)
                 # Adding padding bytes so we can group into a whole
                 # number of spb-tuples.
                 l = float(len(a))
@@ -835,7 +835,7 @@ class Writer:
         """
 
         if self.interlace:
-            pixels = array('B')
+            pixels = array(str('B'))
             pixels.fromfile(infile,
                             (self.bitdepth/8) * self.color_planes *
                             self.width * self.height)
@@ -848,11 +848,11 @@ class Writer:
         Convert a PPM and PGM file containing raw pixel data into a
         PNG outfile with the parameters set in the writer object.
         """
-        pixels = array('B')
+        pixels = array(str('B'))
         pixels.fromfile(ppmfile,
                         (self.bitdepth/8) * self.color_planes *
                         self.width * self.height)
-        apixels = array('B')
+        apixels = array(str('B'))
         apixels.fromfile(pgmfile,
                          (self.bitdepth/8) *
                          self.width * self.height)
@@ -882,10 +882,10 @@ class Writer:
             row_bytes *= 2
             fmt = '>%dH' % vpr
             def line():
-                return array('H', struct.unpack(fmt, infile.read(row_bytes)))
+                return array(str('H'), struct.unpack(fmt, infile.read(row_bytes)))
         else:
             def line():
-                scanline = array('B', infile.read(row_bytes))
+                scanline = array(str('B'), infile.read(row_bytes))
                 return scanline
         for y in range(self.height):
             yield line()
@@ -929,7 +929,7 @@ class Writer:
                     offset = y * vpr
                     yield pixels[offset:offset+vpr]
                 else:
-                    row = array(fmt)
+                    row = array(str(fmt))
                     # There's no easier way to set the length of an array
                     row.extend(pixels[0:row_len])
                     offset = y * vpr + xstart * self.planes
@@ -976,7 +976,7 @@ def filter_scanline(type, line, fo, prev=None):
 
     # The output array.  Which, pathetically, we extend one-byte at a
     # time (fortunately this is linear).
-    out = array('B', [type])
+    out = array(str('B'), [type])
 
     def sub():
         ai = -fo
@@ -1341,8 +1341,8 @@ class Reader:
         if _guess is not None:
             if isarray(_guess):
                 kw["bytes"] = _guess
-            elif isinstance(_guess, str):
-                kw["filename"] = _guess
+            elif isinstance(_guess, str) or isinstance(_guess, unicode):
+                kw["filename"] = str(_guess)
             elif hasattr(_guess, 'read'):
                 kw["file"] = _guess
 
@@ -1459,7 +1459,7 @@ class Reader:
         # first line 'up' is the same as 'null', 'paeth' is the same
         # as 'sub', with only 'average' requiring any special case.
         if not previous:
-            previous = array('B', [0]*len(scanline))
+            previous = array(str('B'), [0]*len(scanline))
 
         def sub():
             """Undo sub filter."""
@@ -1544,7 +1544,7 @@ class Reader:
         # writes to the output array randomly (well, not quite), so the
         # entire output array must be in memory.
         fmt = 'BH'[self.bitdepth > 8]
-        a = array(fmt, [0]*vpr*self.height)
+        a = array(str(fmt), [0]*vpr*self.height)
         source_offset = 0
 
         for xstart, ystart, xstep, ystep in _adam7:
@@ -1592,15 +1592,15 @@ class Reader:
             """
 
             if self.bitdepth == 8:
-                return array('B', raw)
+                return array(str('B'), raw)
             if self.bitdepth == 16:
                 raw = tostring(raw)
-                return array('H', struct.unpack('!%dH' % (len(raw)//2), raw))
+                return array(str('H'), struct.unpack('!%dH' % (len(raw)//2), raw))
             assert self.bitdepth < 8
             width = self.width
             # Samples per byte
             spb = 8//self.bitdepth
-            out = array('B')
+            out = array(str('B'))
             mask = 2**self.bitdepth - 1
             shifts = [self.bitdepth * i
                 for i in reversed(list(range(spb)))]
@@ -1608,7 +1608,10 @@ class Reader:
                 out.extend([mask&(o>>i) for i in shifts])
             return out[:width]
 
-        return map(asvalues, rows)
+        if sys.version_info[0] == 3:
+            return map(asvalues, rows)
+        else:
+            return itertools.imap(asvalues, rows)
 
     def serialtoflat(self, bytes, width=None):
         """Convert serial format (byte stream) pixel data to flat row
@@ -1619,14 +1622,14 @@ class Reader:
             return bytes
         if self.bitdepth == 16:
             bytes = tostring(bytes)
-            return array('H',
+            return array(str('H'),
               struct.unpack('!%dH' % (len(bytes)//2), bytes))
         assert self.bitdepth < 8
         if width is None:
             width = self.width
         # Samples per byte
         spb = 8//self.bitdepth
-        out = array('B')
+        out = array(str('B'))
         mask = 2**self.bitdepth - 1
         shifts = list(map(self.bitdepth.__mul__, reversed(list(range(spb)))))
         l = width
@@ -1646,7 +1649,7 @@ class Reader:
 
         # length of row, in bytes
         rb = self.row_bytes
-        a = array('B')
+        a = array(str('B'))
         # The previous (reconstructed) scanline.  None indicates first
         # line of image.
         recon = None
@@ -1894,18 +1897,18 @@ class Reader:
             for data in idat:
                 # :todo: add a max_length argument here to limit output
                 # size.
-                yield array('B', d.decompress(data))
-            yield array('B', d.flush())
+                yield array(str('B'), d.decompress(data))
+            yield array(str('B'), d.flush())
 
         self.preamble(lenient=lenient)
         raw = iterdecomp(iteridat())
 
         if self.interlace:
-            raw = array('B', itertools.chain(*raw))
+            raw = array(str('B'), itertools.chain(*raw))
             arraycode = 'BH'[self.bitdepth>8]
             # Like :meth:`group` but producing an array.array object for
             # each row.
-            pixels = map(lambda *row: array(arraycode, row),
+            pixels = map(lambda *row: array(str(arraycode), row),
                        *[iter(self.deinterlace(raw))]*self.width*self.planes)
         else:
             pixels = self.iterboxed(self.iterstraight(raw))
@@ -1937,7 +1940,7 @@ class Reader:
 
         x, y, pixel, meta = self.read()
         arraycode = 'BH'[meta['bitdepth']>8]
-        pixel = array(arraycode, itertools.chain(*pixel))
+        pixel = array(str(arraycode), itertools.chain(*pixel))
         return x, y, pixel, meta
 
     def palette(self, alpha='natural'):
@@ -1956,9 +1959,9 @@ class Reader:
         if not self.plte:
             raise FormatError(
                 "Required PLTE chunk is missing in colour type 3 image.")
-        plte = group(array('B', self.plte), 3)
+        plte = group(array(str('B'), self.plte), 3)
         if self.trns or alpha == 'force':
-            trns = array('B', self.trns or [])
+            trns = array(str('B'), self.trns or [])
             trns.extend([255]*(len(plte)-len(trns)))
             plte = list(map(operator.add, plte, group(trns, 1)))
         return plte
@@ -2018,7 +2021,7 @@ class Reader:
             def iterpal(pixels):
                 for row in pixels:
                     row = [plte[x] for x in row]
-                    yield array('B', itertools.chain(*row))
+                    yield array(str('B'), itertools.chain(*row))
             pixels = iterpal(pixels)
         elif self.trns:
             # It would be nice if there was some reasonable way
@@ -2045,7 +2048,7 @@ class Reader:
                     opa = map(it.__ne__, row)
                     opa = map(maxval.__mul__, opa)
                     opa = list(zip(opa)) # convert to 1-tuples
-                    yield array(typecode,
+                    yield array(str(typecode),
                       itertools.chain(*map(operator.add, row, opa)))
             pixels = itertrns(pixels)
         targetbitdepth = None
@@ -2154,7 +2157,7 @@ class Reader:
         typecode = 'BH'[meta['bitdepth'] > 8]
         def iterrgb():
             for row in pixels:
-                a = array(typecode, [0]) * 3 * width
+                a = array(str(typecode), [0]) * 3 * width
                 for i in range(3):
                     a[i::3] = row
                 yield a
@@ -2177,7 +2180,7 @@ class Reader:
         maxval = 2**meta['bitdepth'] - 1
         maxbuffer = struct.pack('=' + typecode, maxval) * 4 * width
         def newarray():
-            return array(typecode, maxbuffer)
+            return array(str(typecode), maxbuffer)
 
         if meta['alpha'] and meta['greyscale']:
             # LA to RGBA
