@@ -66,6 +66,8 @@ before_install:
     # virtualenv>=14.0.0 has dropped Python 3.2 support (and pypy3 is based on py32)
     - if [[ "$TRAVIS_PYTHON_VERSION" == 3.2 ]]; then pip install "virtualenv<14.0.0" ; fi
     - pip install pytest pytest-cov
+    - if [ "$TRAVIS_PYTHON_VERSION" == "3.2" ]; then travis_retry pip install coverage==3.7.1; fi
+    - if [ "$TRAVIS_PYTHON_VERSION" != "3.2" ]; then travis_retry pip install coverage; fi
     - pip install coveralls
     - pip install codeclimate-test-reporter
     - pip install numpy
