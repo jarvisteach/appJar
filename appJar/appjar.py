@@ -3367,6 +3367,7 @@ class gui(object):
             rowspan,
             N + E + S + W)
         self.n_grids[title] = grid
+        return grid
 
     def getGridEntries(self, title):
         return self.__verifyItem(self.n_grids, title).getEntries()
@@ -3949,12 +3950,14 @@ class gui(object):
     def addScale(self, title, row=None, column=0, colspan=0, rowspan=0):
         scale = self.__buildScale(title, self.getContainer())
         self.__positionWidget(scale, row, column, colspan, rowspan)
+        return scale
 
     def addLabelScale(self, title, row=None, column=0, colspan=0, rowspan=0):
         frame = self.__getLabelBox(title)
         scale = self.__buildScale(title, frame)
         self.__packLabelBox(frame, scale)
         self.__positionWidget(frame, row, column, colspan, rowspan)
+        return scale
 
     def getScale(self, title):
         sc = self.__verifyItem(self.n_scales, title)
@@ -4126,6 +4129,7 @@ class gui(object):
         tick = self.__buildOptionBox(
             self.getContainer(), title, options, "ticks")
         self.__positionWidget(tick, row, column, colspan, rowspan)
+        return tick
 
     def addLabelTickOptionBox(
             self,
@@ -4139,6 +4143,7 @@ class gui(object):
         tick = self.__buildOptionBox(frame, title, options, "ticks")
         self.__packLabelBox(frame, tick)
         self.__positionWidget(frame, row, column, colspan, rowspan)
+        return tick
 
     def addLabelOptionBox(
             self,
@@ -4152,6 +4157,7 @@ class gui(object):
         option = self.__buildOptionBox(frame, title, options)
         self.__packLabelBox(frame, option)
         self.__positionWidget(frame, row, column, colspan, rowspan)
+        return option
 
     def getOptionBox(self, title):
         box = self.__verifyItem(self.n_options, title)
@@ -4334,6 +4340,7 @@ class gui(object):
         gMap = GoogleMap(self.getContainer())
         self.__positionWidget(gMap, row, column, colspan, rowspan)
         self.n_maps[title] = gMap
+        return gMap
 
     def setGoogleMapLocation(self, title, location):
         self.searchGoogleMap(title, location)
@@ -4456,6 +4463,7 @@ class gui(object):
             background=self.__getContainerBg())
         self.__positionWidget(props, row, column, colspan, rowspan)
         self.n_props[title] = props
+        return props
 
     def getProperties(self, title):
         props = self.__verifyItem(self.n_props, title)
@@ -4574,6 +4582,7 @@ class gui(object):
         vals = list(range(fromVal, toVal + 1))
         spin = self.__addSpinBox(title, vals, row, column, colspan, rowspan)
         spin.isRange = True
+        return spin
 
     def addLabelSpinBoxRange(
             self,
@@ -4587,6 +4596,7 @@ class gui(object):
         vals = list(range(fromVal, toVal + 1))
         spin = self.addLabelSpinBox(title, vals, row, column, colspan, rowspan)
         spin.isRange = True
+        return spin
 
     def getSpinBox(self, title):
         spin = self.__verifyItem(self.n_spins, title)
@@ -4770,7 +4780,7 @@ class gui(object):
             colspan=0,
             rowspan=0):
         self.warn("addAnimatedImage() is now deprecated - use addImage()")
-        self.addImage(name, imageFile, row, column, colspan, rowspan)
+        return self.addImage(name, imageFile, row, column, colspan, rowspan)
 
     # function to set an alternative image, when a mouse goes over
     def setImageMouseOver(self, title, overImg):
@@ -4992,6 +5002,7 @@ class gui(object):
         self.__verifyItem(self.n_images, name, True)
         imgObj = self.__getImageData(imageData, fmt)
         self.__addImageObj(name, imgObj, row, column, colspan, rowspan)
+        return imgObj
 
     # function to configure an image map
     def setImageMap(self, name, func, coords):
@@ -5030,6 +5041,7 @@ class gui(object):
         self.__verifyItem(self.n_images, name, True)
         imgObj = self.__getImage(imageFile)
         self.__addImageObj(name, imgObj, row, column, colspan, rowspan)
+        return imgObj
 
     def __addImageObj(self, name, img, row=None, column=0, colspan=0, rowspan=0):
         label = Label(self.getContainer())
@@ -5316,6 +5328,7 @@ class gui(object):
         if newRb:
             rb.select()
         self.__positionWidget(rb, row, column, colspan, rowspan, EW)
+        return rb
 
     def getRadioButton(self, title):
         var = self.__verifyItem(self.n_rbVars, title)
@@ -5389,6 +5402,7 @@ class gui(object):
                 lb.insert(END, name)
 
         self.__positionWidget(frame, row, column, colspan, rowspan)
+        return lb
 
     # enable multiple listboxes to be selected at the same time
     def setListBoxGroup(self, name, group=True):
@@ -5602,15 +5616,18 @@ class gui(object):
             rowspan=0):
         but = self.__buildButton(title, func, self.getContainer(), name)
         self.__positionWidget(but, row, column, colspan, rowspan, None)
+        return but
 
     def addButton(self, title, func, row=None, column=0, colspan=0, rowspan=0):
         but = self.__buildButton(title, func, self.getContainer())
         self.__positionWidget(but, row, column, colspan, rowspan, None)
+        return but
 
     def addImageButton(self, title, func, imgFile, row=None, column=0, colspan=0, rowspan=0):
         but = self.__buildButton(title, func, self.getContainer())
         self.__positionWidget(but, row, column, colspan, rowspan, None)
         self.setButtonImage(title, imgFile)
+        return but
 
     def setButton(self, name, text):
         but = self.__verifyItem(self.n_buttons, name)
@@ -5699,6 +5716,7 @@ class gui(object):
         link = self.__buildLink(title)
         link.registerWebpage(page)
         self.__positionWidget(link, row, column, colspan, rowspan)
+        return link
 
     # executes the specified function
     def addLink(self, title, func, row=None, column=0, colspan=0, rowspan=0):
@@ -5706,6 +5724,7 @@ class gui(object):
         myF = self.MAKE_FUNC(func, title, True)
         link.registerCallback(myF)
         self.__positionWidget(link, row, column, colspan, rowspan)
+        return link
 
 #####################################
 # FUNCTIONS for grips
@@ -5715,6 +5734,7 @@ class gui(object):
         grip = Grip(self.getContainer())
         self.__positionWidget(grip, row, column, colspan, rowspan)
         self.__addTooltip(grip, "Drag here to move", True)
+        return grip
 
 
 #####################################
@@ -5723,6 +5743,7 @@ class gui(object):
     def addTrashBin(self, title, row=None, column=0, colspan=0, rowspan=0):
         trash = TrashBin(self.getContainer())
         self.__positionWidget(trash, row, column, colspan, rowspan)
+        return trash
 
 
 #####################################
@@ -5735,6 +5756,7 @@ class gui(object):
         mb = MicroBitSimulator(self.getContainer())
         self.__positionWidget(mb, row, column, colspan, rowspan)
         self.n_microbits[title] = mb
+        return mb
 
     def setMicroBitImage(self, title, image):
         self.__verifyItem(self.n_microbits, title).show(image)
@@ -5853,6 +5875,7 @@ class gui(object):
         self.addLabel(title, text, row, column, colspan, rowspan)
         self.n_flashLabs.append(self.n_labels[title])
         self.doFlash = True
+        return self.n_labels[title]
 
     def addSelectableLabel(
             self,
@@ -5862,7 +5885,7 @@ class gui(object):
             column=0,
             colspan=0,
             rowspan=0):
-        self.addLabel(title, text, row, column, colspan, rowspan, selectable=True)
+        return self.addLabel(title, text, row, column, colspan, rowspan, selectable=True)
 
     def addLabel(
             self,
@@ -5902,7 +5925,7 @@ class gui(object):
         return lab
 
     def addEmptyLabel(self, title, row=None, column=0, colspan=0, rowspan=0):
-        self.addLabel(title, None, row, column, colspan, rowspan)
+        return self.addLabel(title, None, row, column, colspan, rowspan)
 
     # adds a set of labels, in the row, spannning specified columns
     def addLabels(self, names, row=None, colspan=0, rowspan=0):
@@ -5973,6 +5996,7 @@ class gui(object):
             colspan,
             rowspan,
             N + E + S + W)
+        return text
 
     def addScrolledTextArea(
             self,
@@ -5989,6 +6013,7 @@ class gui(object):
             colspan,
             rowspan,
             N + E + S + W)
+        return text
 
     def getTextArea(self, title):
         return self.__verifyItem(self.n_textAreas, title).getText()
@@ -6052,6 +6077,7 @@ class gui(object):
         node = ajTreeNode(frame.getPane(), None, item)
         self.n_trees[title] = node
         # update() & expand() called in go() function
+        return node
 
     def setTreeEditable(self, title, value=True):
         tree = self.__verifyItem(self.n_trees, title)
@@ -6138,9 +6164,10 @@ class gui(object):
 
         self.__positionWidget(mess, row, column, colspan, rowspan)
 #            mess.bind("<Configure>", lambda e: mess.config(width=e.width-10))
+        return mess
 
     def addEmptyMessage(self, title, row=None, column=0, colspan=0, rowspan=0):
-        self.addMessage(title, None, row, column, colspan, rowspan)
+        return self.addMessage(title, None, row, column, colspan, rowspan)
 
     def setMessage(self, title, text):
         mess = self.__verifyItem(self.n_messages, title)
@@ -6204,14 +6231,17 @@ class gui(object):
             secret=False):
         ent = self.__buildEntry(title, self.getContainer(), secret)
         self.__positionWidget(ent, row, column, colspan, rowspan)
+        return ent
 
     def addFileEntry(self, title, row=None, column=0, colspan=0, rowspan=0):
         ent = self.__buildFileEntry(title, self.getContainer())
         self.__positionWidget(ent, row, column, colspan, rowspan)
+        return ent
 
     def addDirectoryEntry(self, title, row=None, column=0, colspan=0, rowspan=0):
         ent = self.__buildFileEntry(title, self.getContainer(), selectFile=False)
         self.__positionWidget(ent, row, column, colspan, rowspan)
+        return ent
 
     def __getDirName(self, title):
         self.__getFileName(title, selectFile=False)
@@ -6277,6 +6307,7 @@ class gui(object):
 
         ent = self.__buildValidationEntry(title, self.getContainer(), secret)
         self.__positionWidget(ent, row, column, colspan, rowspan)
+        return ent
 
     def __buildValidationEntry(self, title, frame, secret):
         vFrame = LabelBox(frame)
@@ -6314,6 +6345,7 @@ class gui(object):
         ent = self.__buildValidationEntry(title, frame, secret)
         self.__packLabelBox(frame, ent)
         self.__positionWidget(frame, row, column, colspan, rowspan)
+        return ent
 
     def setEntryValid(self, title):
         entry = self.__verifyItem(self.n_entries, title)
@@ -6362,6 +6394,7 @@ class gui(object):
             secret=False,
             words=words)
         self.__positionWidget(ent, row, column, colspan, rowspan)
+        return ent
 
     def setAutoEntryNumRows(self, title, rows):
         entry = self.__verifyItem(self.n_entries, title)
@@ -6380,6 +6413,7 @@ class gui(object):
         ent = self.__buildEntry(title, frame, secret, words=words)
         self.__packLabelBox(frame, ent)
         self.__positionWidget(frame, row, column, colspan, rowspan)
+        return ent
 
     def __validateNumericEntry(
             self,
@@ -6428,6 +6462,7 @@ class gui(object):
         ent.isNumeric = True
         ent.config(validate='key', validatecommand=self.validateNumeric)
         self.setEntryTooltip(title, "Numeric data only.")
+        return ent
 
     def addLabelNumericEntry(
             self,
@@ -6437,7 +6472,7 @@ class gui(object):
             colspan=0,
             rowspan=0,
             secret=False):
-        self. addNumericLabelEntry(
+        return self.addNumericLabelEntry(
             title, row, column, colspan, rowspan, secret)
 
     def addNumericLabelEntry(
@@ -6460,9 +6495,10 @@ class gui(object):
         ent.isNumeric = True
         ent.config(validate='key', validatecommand=self.validateNumeric)
         self.setEntryTooltip(title, "Numeric data only.")
+        return ent
 
     def addSecretEntry(self, title, row=None, column=0, colspan=0, rowspan=0):
-        self.addEntry(title, row, column, colspan, rowspan, True)
+        return self.addEntry(title, row, column, colspan, rowspan, True)
 
     def addLabelEntry(
             self,
@@ -6476,6 +6512,7 @@ class gui(object):
         ent = self.__buildEntry(title, frame, secret)
         self.__packLabelBox(frame, ent)
         self.__positionWidget(frame, row, column, colspan, rowspan)
+        return ent
 
     def addLabelSecretEntry(
             self,
@@ -6484,7 +6521,7 @@ class gui(object):
             column=0,
             colspan=0,
             rowspan=0):
-        self.addSecretLabelEntry(title, row, column, colspan, rowspan)
+        return self.addSecretLabelEntry(title, row, column, colspan, rowspan)
 
     def addSecretLabelEntry(
             self,
@@ -6493,7 +6530,7 @@ class gui(object):
             column=0,
             colspan=0,
             rowspan=0):
-        self.addLabelEntry(title, row, column, colspan, rowspan, True)
+        return self.addLabelEntry(title, row, column, colspan, rowspan, True)
 
     def getEntry(self, name):
         self.__verifyItem(self.n_entryVars, name)
@@ -6753,15 +6790,16 @@ class gui(object):
 
         self.n_meters[name] = meter
         self.__positionWidget(meter, row, column, colspan, rowspan)
+        return meter
 
     def addMeter(self, name, row=None, column=0, colspan=0, rowspan=0):
-        self.__addMeter(name, "METER", row, column, colspan, rowspan)
+        return self.__addMeter(name, "METER", row, column, colspan, rowspan)
 
     def addSplitMeter(self, name, row=None, column=0, colspan=0, rowspan=0):
-        self.__addMeter(name, "SPLIT", row, column, colspan, rowspan)
+        return self.__addMeter(name, "SPLIT", row, column, colspan, rowspan)
 
     def addDualMeter(self, name, row=None, column=0, colspan=0, rowspan=0):
-        self.__addMeter(name, "DUAL", row, column, colspan, rowspan)
+        return self.__addMeter(name, "DUAL", row, column, colspan, rowspan)
 
     # update the value of the specified meter
     # note: expects a value between 0 (-100 for split/dual) & 100
@@ -6790,7 +6828,7 @@ class gui(object):
             colour=None):
         self.warn(
             ".addSeparator() is deprecated. You should be using .addHorizontalSeparator() or .addVerticalSeparator()")
-        self.addHorizontalSeparator(row, column, colspan, rowspan, colour)
+        return self.addHorizontalSeparator(row, column, colspan, rowspan, colour)
 
     def addHorizontalSeparator(
             self,
@@ -6799,7 +6837,7 @@ class gui(object):
             colspan=0,
             rowspan=0,
             colour=None):
-        self.__addSeparator(
+        return self.__addSeparator(
             "horizontal",
             row,
             column,
@@ -6814,7 +6852,7 @@ class gui(object):
             colspan=0,
             rowspan=0,
             colour=None):
-        self.__addSeparator("vertical", row, column, colspan, rowspan, colour)
+        return self.__addSeparator("vertical", row, column, colspan, rowspan, colour)
 
     def __addSeparator(
             self,
@@ -6829,6 +6867,7 @@ class gui(object):
             sep.configure(fg=colour)
         self.n_separators.append(sep)
         self.__positionWidget(sep, row, column, colspan, rowspan)
+        return sep
 
 #####################################
 # FUNCTIONS for pie charts
@@ -6846,6 +6885,7 @@ class gui(object):
         pie = PieChart(self.getContainer(), fracs, self.__getContainerBg())
         self.n_pieCharts[name] = pie
         self.__positionWidget(pie, row, column, colspan, rowspan, sticky=None)
+        return pie
 
     def setPieChart(self, title, name, value):
         pie = self.__verifyItem(self.n_pieCharts, title)
