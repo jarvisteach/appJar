@@ -5939,6 +5939,7 @@ class gui(object):
                 font=self.labelFont,
                 justify=LEFT,
                 background=self.__getContainerBg())
+            lab.DEFAULT_TEXT = names[i]
             lab.inContainer = False
 
             self.n_labels[names[i]] = lab
