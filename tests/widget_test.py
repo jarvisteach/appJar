@@ -1910,6 +1910,7 @@ def test_gui2(btn=None):
     doStop += 1
 
 app2 = gui()
+app2.useTtk()
 app2.showSplash(text="New test", fill="green", stripe="pink", fg="green", font=50)
 app2.startLabelFrame("l1")
 app2.addLabel("l1", "here")

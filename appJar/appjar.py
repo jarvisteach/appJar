@@ -43,6 +43,7 @@ import __main__ as theMain
 from platform import system as platform
 
 # modules to be imported on demand
+ttk = None
 hashlib = None
 ToolTip = None
 nanojpeg = PngImageTk = array = None # extra image support
@@ -559,6 +560,13 @@ class gui(object):
                 self.setIcon(self.appJarIcon)
             except: # file not found
                 self.debug("Error setting Windows default icon")
+
+    def useTtk(self):
+        global ttk
+        try:
+            import ttk
+        except:
+            from tkinter import ttk
 
     # function to check on mode
     def __checkMode(self):

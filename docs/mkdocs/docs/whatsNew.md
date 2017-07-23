@@ -9,6 +9,7 @@
 
 
 * Issues Resolved:
+    * [#189](https://github.com/jarvisteach/appJar/issues/189) - **VERY** basic support for [ttk](/pythonDevWidgets/#ttk)
     * [#184](https://github.com/jarvisteach/appJar/issues/184) - [Groupable List Boxes](/pythonWidgets/#set-listboxes)
     * [#182](https://github.com/jarvisteach/appJar/issues/182) - Added a link to source for [GoogleMaps](/pythonDevWidgets/#googlemaps)
     * [#181](https://github.com/jarvisteach/appJar/issues/181) - [Disabling toolbars](/pythonBars/#set-toolbars) will also disable a pinned icon

@@ -3,6 +3,19 @@
 The following widgets are in [beta](https://en.wikipedia.org/wiki/Software_release_life_cycle#BETA).  
 They're available and in use, they're just not quite complete, and not fully tested...  
 
+### ttk
+---
+If you want access to the [Tk themed widget set](https://docs.python.org/3/library/tkinter.ttk.html) then you'll need to tell appJar to use it:
+```python
+from appJar import gui
+app = gui("ttk Demo")
+app.useTtk()
+app.addButton("Press Me", None)
+app.go()
+```
+
+At the moment, this simply imports ttk, so the standard widget set will be replaced with a ttk widget set.  
+
 ###MicroBit Emulator  
 ---  
 Widget to emulate a [MicroBit](http://microbit.org)
