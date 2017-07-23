@@ -63,6 +63,8 @@ matrix:
         - python: pypy
 before_install:
     - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then tests/osx.sh; fi
+    # virtualenv>=14.0.0 has dropped Python 3.2 support (and pypy3 is based on py32)
+    - if [[ "$TRAVIS_PYTHON_VERSION" == 3.2 ]]; then pip install "virtualenv<14.0.0" ; fi
     - pip install pytest pytest-cov
     - pip install coveralls
     - pip install codeclimate-test-reporter
@@ -70,10 +72,6 @@ before_install:
     - if [[ "$TRAVIS_PYTHON_VERSION" != 3.3 ]]; then pip install matplotlib ; fi
     - if [[ "$TRAVIS_OS_NAME" != "osx" ]]; then sudo apt-get install python-tk; fi
     - if [[ "$TRAVIS_OS_NAME" != "osx" ]]; then sudo apt-get install python3-tk; fi
-
-install:
-    # virtualenv>=14.0.0 has dropped Python 3.2 support (and pypy3 is based on py32)
-    - if [[ "$TRAVIS_PYTHON_VERSION" == 3.2 ]]; then pip install "virtualenv<14.0.0" ; fi
 
 before_script:
     - "export DISPLAY=:99.0"
