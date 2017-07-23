@@ -3,12 +3,13 @@
 
 ## Version (0.07)  
 * New widgets: [GoogleMaps](/pythonDevWidgets/#googlemaps) - a widget to show a GoogleMap tile & control widgets, [ImageMaps](/pythonImages/#image-maps) - clickable ImageMap with linked functions, [FileEntries](/pythonWidgets/#entry) - Entries linked with File/Directory dialogs  
-* Widget enhancements: [Pinnable Toolbars](/pythonBars/#set-toolbars), [SelectableLabels](/pythonWidgets/#add-labels), better [Tooltips](/pythonDialogs/#tooltips), [NamedCheckBoxes](/pythonWidgets/#add-checkboxes) & settble [ListBoxes](/pythonWidgets/#set-listboxes)  
+* Widget enhancements: [Pinnable Toolbars](/pythonBars/#set-toolbars), [SelectableLabels](/pythonWidgets/#add-labels), better [Tooltips](/pythonDialogs/#tooltips), [NamedCheckBoxes](/pythonWidgets/#add-checkboxes) & settable [ListBoxes](/pythonWidgets/#set-listboxes)  
 * Update to event model and [documentation](/pythonEvents) - now clearer how to perform different actions, and function names updated.  
 * Switched to Python's [logging](/pythonLogging) feature
 
 
 * Issues Resolved:
+    * [#192](https://github.com/jarvisteach/appJar/issues/192) - Fixed PNG image support in pyhton 2.7 - specifically for toolbars  
     * [#189](https://github.com/jarvisteach/appJar/issues/189) - **VERY** basic support for [ttk](/pythonDevWidgets/#ttk)
     * [#184](https://github.com/jarvisteach/appJar/issues/184) - [Groupable List Boxes](/pythonWidgets/#set-listboxes)
     * [#182](https://github.com/jarvisteach/appJar/issues/182) - Added a link to source for [GoogleMaps](/pythonDevWidgets/#googlemaps)
