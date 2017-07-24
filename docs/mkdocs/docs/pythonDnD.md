@@ -10,13 +10,56 @@ We've incorporated a couple of ways to include drag and drop functionality in **
 There is a beta version of drag and drop **between labels**.  
 
 * `.set XXX DragFunction(name, [startDragFunction, stopDragFunction]`)  
-    Set functions to call whenever the mouse button is clicked and dragged.  
-    The first function will be called when the mouse is initially clicked.  
+    Set functions to call when the mouse button is dragged from the named widget, or released over any widget.  
+    The first function will be called when the mouse is initially draged.  
     The second function will be called when the mouse is released.  
+
+```python
+from appJar import gui
+
+def drag(widget):
+    print("Dragged from:", widget)
+
+def drop(widget):
+    print("Dropped on:", widget)
+
+app = gui("dnd Demo")
+
+app.setFont(20)
+app.setBg("SlateGrey")
+app.setFg("yellow")
+
+app.addLabel("dragLab", "Drag Me")
+app.addHorizontalSeparator()
+app.addLabel("dropLab", "Drop Here")
+
+app.setLabelDragFunction("dragLab", [drag, drop])
+
+app.go()
+```
 
 ##Drag'n Drop Between Applications
 ---
 There is also a beta version of drag and drop between applications - at the moment, this has been seen to work on Mac OSX 10.11, Raspberry Pi, and Windows 7 - let us know of success on other distributions!  
+
+```python
+from appJar import gui
+
+def externalDrop(data):
+    print("Data dropped:", data)
+
+app = gui("External dnd Demo")
+
+app.setFont(20)
+app.setBg("SlateGrey")
+app.setFg("yellow")
+
+app.addLabel("dropLab", "Drop Here")
+app.setLabelDropTarget("dropLab", externalDrop)
+
+app.go()
+```
+
 
 Certain widgets can be registered to receive *Drop* events:  
 
