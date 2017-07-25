@@ -1768,10 +1768,10 @@ class gui(object):
         return list(font.families()).sort()
 
     def increaseButtonFont(self):
-        self.setButtonFont( self.buttonFont['size'] + 1)
+        self.setButtonFont(self.buttonFont['size'] + 1)
 
     def decreaseButtonFont(self):
-        self.setButtonFont( self.buttonFont['size'] - 1)
+        self.setButtonFont(self.buttonFont['size'] - 1)
 
     def setButtonFont(self, size, font=None):
         if font is None:
@@ -1829,20 +1829,20 @@ class gui(object):
     # then use & update that field accordingly
     # all widgets will then need to use it
     # and here we update all....
-    def setFg(self, colour):
+    def setFg(self, colour, override=False):
         self.containerStack[-1]['fg']=colour
-        self.SET_WIDGET_FG(self.containerStack[-1]['container'], colour, True)
+        gui.SET_WIDGET_FG(self.containerStack[-1]['container'], colour, override)
 
         for child in self.containerStack[-1]['container'].winfo_children():
             if not self.__isWidgetContainer(child):
-                self.SET_WIDGET_FG(child, colour, True)
+                gui.SET_WIDGET_FG(child, colour, override)
 
     # self.topLevel = Tk()
     # self.appWindow = CanvasDnd, fills all of self.topLevel
     # self.tb = Frame, at top of appWindow
     # self.container = Frame, at bottom of appWindow => C_ROOT container
     # self.bglabel = Label, filling all of container
-    def setBg(self, colour):
+    def setBg(self, colour, override=False):
         if self.containerStack[-1]['type'] == self.C_ROOT:
             self.appWindow.config(background=colour)
             self.bgLabel.config(background=colour)
@@ -1851,9 +1851,10 @@ class gui(object):
 
         for child in self.containerStack[-1]['container'].winfo_children():
             if not self.__isWidgetContainer(child):
-                gui.SET_WIDGET_BG(child, colour, True)
+                gui.SET_WIDGET_BG(child, colour, override)
 
-    def __isWidgetContainer(self, widget):
+    @staticmethod
+    def __isWidgetContainer(widget):
         try:
             if widget.isContainer:
                 return True
@@ -2138,7 +2139,7 @@ class gui(object):
                     else:
                         gui.SET_WIDGET_BG(item, value, True)
                 elif option == 'foreground':
-                    self.SET_WIDGET_FG(item, value, True)
+                    gui.SET_WIDGET_FG(item, value, True)
                 elif option == 'disabledforeground':
                     item.config(disabledforeground=value)
                 elif option == 'disabledbackground':
@@ -2778,35 +2779,55 @@ class gui(object):
 
         return row, column, colspan, rowspan
 
-    def SET_WIDGET_FG(self, widget, fg, external=False):
-
+    @staticmethod
+    def SET_WIDGET_FG(widget, fg, external=False):
         widgType = widget.__class__.__name__
-        self.debug("SET_WIDGET_FG: " + str(widgType) + " - " + str(fg))
+        logging.getLogger("appJar").debug("SET_WIDGET_FG: " + str(widgType) + " - " + str(fg))
 
-        if self.__isWidgetContainer(widget):
-            self.containerStack[-1]['fg'] = fg
-            self.debug("CONTAINER")
-        elif widgType == "Link" and not external:
-            self.debug("LINK")
+        if widgType == "Link" and not external:
             pass
-        elif widgType == "Entry":
-            self.debug("ENTRY")
-            if widget.showingDefault:
-                widget.oldFg = fg
-            else:
-                widget.config(foreground=fg)
-                widget.oldFg = fg
+        elif widgType in ["Entry", "AutoCompleteEntry"]:
+            if external:
+                if widget.showingDefault:
+                    widget.oldFg = fg
+                else:
+                    widget.config(foreground=fg)
+                    widget.oldFg = fg
         elif widgType == "Checkbutton":
-            self.debug("CHECKBUTTON")
             widget.config(fg=fg)
-            self.debug(str(widget) + " - " + str(widget.cget('fg')))
-            self.debug("CHECKBUTTON = DONE")
+        elif widgType == "Radiobutton":
+            widget.config(fg=fg)
+        elif widgType in ["Spinbox", "OptionMenu", "AjText", "AjScrolledText"]:
+            if external:
+                widget.config(fg=fg)
+        # ignore some widgets
+        elif widgType in ["Frame", "LabelFrame", "PanedFrame", "Pane", "ajFrame"]:
+            for child in widget.winfo_children():
+                gui.SET_WIDGET_FG(child, fg, external)
+        elif widgType == "LabelBox":
+            try:
+                if not widget.theLabel.isValidation:
+                    gui.SET_WIDGET_FG(widget.theLabel, fg, external)
+            except:
+                gui.SET_WIDGET_FG(widget.theLabel, fg, external)
+            gui.SET_WIDGET_FG(widget.theWidget, fg, external)
+        elif widgType == "ButtonBox":
+            gui.SET_WIDGET_FG(widget.theWidget, fg, external)
+            gui.SET_WIDGET_FG(widget.theButton, fg, external)
+        elif widgType == "WidgetBox":
+            for child in widget.theWidgets:
+                gui.SET_WIDGET_FG(child, fg, external)
+        elif widgType == "ListBox":
+            if external:
+                for child in widget.winfo_children():
+                    gui.SET_WIDGET_FG(child, fg, external)
+        elif widgType in ["PieChart", "MicroBitSimulator", "Scrollbar"]:
+            logging.getLogger("appJar").error("Ignoring FG of widget: " + str(widgType))
         else:
-            self.debug("OTHER")
             try:
                 widget.config(fg=fg)
             except Exception as e:
-                self.error("Can't set FG of widget: " + str(widgType))
+                logging.getLogger("appJar").error("Can't set FG of widget: " + str(widgType))
 
     @staticmethod
     def TINT(widget, colour):
@@ -2832,25 +2853,27 @@ class gui(object):
         if bg is None:
             return  # ignore empty colours
 
-        # , "Scale"]#, "Button", "OptionMenu"]
+        # on MAC, these have a border that needs colouring
         darwinBorders = [
-            "Text",
-            "AjText",
-            "ScrolledText",
-            "AjScrolledText",
+            "Text", "AjText",
+            "ScrolledText", "AjScrolledText",
             "Entry",
+#            "Scale",
+            "OptionMenu",
             "AutoCompleteEntry",
             "Button"]
+
         linuxBorders = darwinBorders + ["Radiobutton", "Checkbutton"]
+
         noBg = [
             "Button",
-            "Spinbox",
-            "ListBox",
-            "SplitMeter",
-            "DualMeter",
-            "Meter",
-            "ToggleFrame",
-            "OptionMenu"]  # , "Scale"]
+#            "Scale",
+            "Spinbox", "ListBox", "OptionMenu",
+            "SplitMeter", "DualMeter", "Meter",
+            "Entry", "AutoCompleteEntry",
+            "Text", "AjText",
+            "ScrolledText", "AjScrolledText",
+            "ToggleFrame"]
 
         widgType = widget.__class__.__name__
         isDarwin = gui.GET_PLATFORM() == gui.MAC
@@ -2861,6 +2884,7 @@ class gui(object):
         # always remove the border from scales
         if widgType == "Scale":
             widget.config(highlightbackground=bg)
+            widget.config(bg=bg)
 
         # tint the background colour when active...
         if widgType in ["Button", "OptionMenu", "Scale"]:
@@ -2873,9 +2897,7 @@ class gui(object):
                     pass # don't change validation entry highlights
                 else:
                     widget.config(highlightbackground=bg)
-#               if widgType == "OptionMenu": widget.config(background=bg)
-            if external or widgType == "Scale":
-                widget.config(bg=bg)
+                if widgType == "OptionMenu": widget.config(background=bg)
 
         # Linux specific colours
         if widgType in linuxBorders:
@@ -2884,25 +2906,12 @@ class gui(object):
                     pass # don't change validation entry highlights
                 else:
                     widget.config(highlightbackground=bg)
-            if external:
                 widget.config(bg=bg)
 
-        # widget with label, in frame
-        elif widgType == "LabelBox":
-            widget.config(bg=bg)
-            if widget.theLabel is not None: widget.theLabel.config(bg=bg)
-            gui.SET_WIDGET_BG(widget.theWidget, bg)
-
-        # group of buttons or labels
-        elif widgType == "WidgetBox":
-            widget.config(bg=bg)
-            for widg in widget.theWidgets:
-                gui.SET_WIDGET_BG(widg, bg)
-
-        elif widgType in ["LabelFrame", "PanedFrame", "Pane", "ajFrame"]:
+        if widgType in ["LabelFrame", "PanedFrame", "Pane", "ajFrame"]:
             widget.config(bg=bg)
             for child in widget.winfo_children():
-                gui.SET_WIDGET_BG(child, bg)
+                gui.SET_WIDGET_BG(child, bg, external)
 
         # any other widgets
         elif external:
@@ -2913,6 +2922,25 @@ class gui(object):
                 widget.config(bg=bg)
         elif widgType not in noBg:
             widget.config(bg=bg)
+
+        # widget with label, in frame
+        if widgType == "LabelBox":
+            widget.config(bg=bg)
+            if widget.theLabel is not None: widget.theLabel.config(bg=bg)
+            gui.SET_WIDGET_BG(widget.theWidget, bg, external)
+
+        # widget with button, in frame
+        elif widgType == "ButtonBox":
+            widget.config(bg=bg)
+            gui.SET_WIDGET_BG(widget.theWidget, bg, external)
+            gui.SET_WIDGET_BG(widget.theButton, bg, external)
+
+        # group of buttons or labels
+        elif widgType == "WidgetBox":
+            widget.config(bg=bg)
+            for widg in widget.theWidgets:
+                gui.SET_WIDGET_BG(widg, bg, external)
+
 
     def __getContainerBg(self):
         return self.getContainer()["bg"]
@@ -2937,7 +2965,7 @@ class gui(object):
         # allow item to be added to container
         container = self.getContainer()
         gui.SET_WIDGET_BG(widget, self.__getContainerBg())
-        self.SET_WIDGET_FG(widget, self.__getContainerFg())
+        gui.SET_WIDGET_FG(widget, self.__getContainerFg())
 
         # alpha paned window placement
         if self.containerStack[-1]['type'] == self.C_PANEDFRAME:
@@ -3139,6 +3167,7 @@ class gui(object):
 
             # now, add to top of stack
             self.__addContainer(title, self.C_LABELFRAME, container, 0, 1, sticky)
+            return container
         elif fType == self.C_FRAME:
             # first, make a Frame, and position it correctly
             self.__verifyItem(self.n_ajFrame, title, True)
@@ -3152,6 +3181,7 @@ class gui(object):
 
             # now, add to top of stack
             self.__addContainer(title, self.C_FRAME, container, 0, 1, sticky)
+            return container
         elif fType == self.C_TABBEDFRAME:
             self.__verifyItem(self.n_tabbedFrames, title, True)
             tabbedFrame = TabbedFrame(self.getContainer(), bg=self.__getContainerBg())
@@ -3167,6 +3197,7 @@ class gui(object):
 
             # now, add to top of stack
             self.__addContainer(title, self.C_TABBEDFRAME, tabbedFrame, 0, 1, sticky)
+            return tabbedFrame
         elif fType == self.C_TAB:
             # add to top of stack
             self.containerStack[-1]['widgets'] = True
@@ -3195,6 +3226,7 @@ class gui(object):
 
             # now, add a frame to the pane
             self.startContainer(self.C_PANE, title)
+            return pane
         elif fType == self.C_PANE:
             # create a frame, and add it to the pane
             pane = Pane(self.getContainer(), bg=self.__getContainerBg())
@@ -3204,6 +3236,7 @@ class gui(object):
 
             # now, add to top of stack
             self.__addContainer(title, self.C_PANE, pane, 0, 1, sticky)
+            return pane
         elif fType == self.C_SCROLLPANE:
             scrollPane = ScrollPane(self.getContainer(), bg=self.__getContainerBg())#, width=100, height=100)
             scrollPane.isContainer = True
@@ -3219,6 +3252,7 @@ class gui(object):
 
             # now, add to top of stack
             self.__addContainer(title, self.C_SCROLLPANE, scrollPane, 0, 1, sticky)
+            return scrollPane
         elif fType == self.C_TOGGLEFRAME:
             toggleFrame = ToggleFrame(self.getContainer(), title=title, bg=self.__getContainerBg())
             toggleFrame.configure(font=self.toggleFrameFont)
@@ -3232,6 +3266,7 @@ class gui(object):
                 sticky=sticky)
             self.__addContainer(title, self.C_TOGGLEFRAME, toggleFrame, 0, 1, "nw")
             self.n_toggleFrames[title] = toggleFrame
+            return toggleFrame
         elif fType == self.C_PAGEDWINDOW:
             # create the paged window
             pagedWindow = PagedWindow(
@@ -3256,11 +3291,13 @@ class gui(object):
                 sticky=sticky)
             self.__addContainer(title, self.C_PAGEDWINDOW, pagedWindow, 0, 1, "nw")
             self.n_pagedWindows[title] = pagedWindow
+            return pagedWindow
         elif fType == self.C_PAGE:
             page = self.containerStack[-1]['container'].addPage()
             page.isContainer = True
             self.__addContainer(title, self.C_PAGE, page, 0, 1, sticky)
             self.containerStack[-1]['expand'] = "None"
+            return page
         else:
             raise Exception("Unknown container: " + fType)
 
@@ -3630,7 +3667,7 @@ class gui(object):
             colspan=0,
             rowspan=0,
             sticky="NSEW"):
-        self.startContainer(
+        return self.startContainer(
             self.C_FRAME,
             title,
             row,
@@ -3747,12 +3784,12 @@ class gui(object):
         else:
             if widgType in ["Tab", "Page"]:
                 pass # managed by container
-            elif widgType in ["Pane", "ScrollPane", "PagedWindow", "SubWindow", "WidgetBox", "LabelBox"]:
+            elif widgType in ["Pane", "ScrollPane", "PagedWindow", "SubWindow", "WidgetBox", "LabelBox", "ButtonBox"]:
                 if widgType == "Pane": widgets = self.n_panes
                 elif widgType == "ScrollPane": widgets = self.n_scrollPanes
                 elif widgType == "PagedWindow": widgets = self.n_pagedWindows
                 elif widgType == "SubWindow": widgets = self.n_subWindows
-                elif widgType in ["WidgetBox", "LabelBox"]: widgets = self.n_frames
+                elif widgType in ["WidgetBox", "LabelBox", "ButtonBox"]: widgets = self.n_frames
 
                 if not self.destroyWidget(widget, widgets):
                     self.warn("Unable to destroy " + str(widgType) + ", during cleanse")
@@ -4056,7 +4093,7 @@ class gui(object):
             justify=LEFT,
             font=self.optionFont,
             background=self.__getContainerBg(),
-            highlightthickness=1,
+            highlightthickness=0,
             width=maxSize,
             takefocus=1)
         option.bind("<Button-1>", self.__grabFocus)
@@ -5777,7 +5814,7 @@ class gui(object):
         years = range(1970, 2021)
 
         # create a frame, and add the widgets
-        self.startFrame(name, row, column, colspan, rowspan)
+        frame = self.startFrame(name, row, column, colspan, rowspan)
         self.setExpand("none")
         self.addLabel(name + "_DP_DayLabel", "Day:", 0, 0)
         self.setLabelAlign(name + "_DP_DayLabel", "w")
@@ -5795,6 +5832,12 @@ class gui(object):
             name + "_DP_YearOptionBox",
             self.__updateDatePickerDays)
         self.stopFrame()
+        frame.isContainer = False
+
+    def setDatePickerFg(self, name, fg):
+        self.setLabelFg(name + "_DP_DayLabel", fg)
+        self.setLabelFg(name + "_DP_MonthLabel", fg)
+        self.setLabelFg(name + "_DP_YearLabel", fg)
 
     def setDatePickerChangeFunction(self, title, function):
         cmd = self.MAKE_FUNC(self.__datePickerChangeFunction, title, True)
@@ -6266,11 +6309,11 @@ class gui(object):
             self.__getFileName(title)
 
     def __buildFileEntry(self, title, frame, selectFile=True):
-        vFrame = LabelBox(frame)
+        vFrame = ButtonBox(frame)
         vFrame.config(background=self.__getContainerBg())
 
-        ent = self.__buildEntry(title, vFrame)
-        ent.pack(expand=True, fill=X, side=LEFT)
+        vFrame.theWidget = self.__buildEntry(title, vFrame)
+        vFrame.theWidget.pack(expand=True, fill=X, side=LEFT)
 
         if selectFile:
             command = self.MAKE_FUNC(self.__getFileName, title)
@@ -6284,16 +6327,14 @@ class gui(object):
             default = "-- enter a directory --"
 
         self.setEntryDefault(title, default)
-        ent.bind("<Button-1>", click_command, "+")
+        vFrame.theWidget.bind("<Button-1>", click_command, "+")
 
-        but = Button(vFrame)
-        but.config(text=text, font=self.buttonFont)
-        but.config(command=command)
-        but.pack(side=RIGHT, fill=X)
-        but.inContainer = True
-        ent.but = but
-
-        vFrame.theWidget = ent
+        vFrame.theButton = Button(vFrame)
+        vFrame.theButton.config(text=text, font=self.buttonFont)
+        vFrame.theButton.config(command=command)
+        vFrame.theButton.pack(side=RIGHT, fill=X)
+        vFrame.theButton.inContainer = True
+        vFrame.theWidget.but = vFrame.theButton
 
         return vFrame
 
@@ -8235,8 +8276,8 @@ class TabbedFrame(Frame):
                 for child in self.widgetStore[key][1].winfo_children():
                     gui.SET_WIDGET_BG(child, self.activeBg)
 
-#        if "fg" in kw:
-#            self.inactiveFg = kw.pop("fg")
+        if "fg" in kw:
+            self.inactiveFg = kw.pop("fg")
         if "inactivebackground" in kw:
             self.inactiveBg = kw.pop("inactivebackground")
         if "inactiveforeground" in kw:
@@ -8497,6 +8538,7 @@ class Link(Label):
         self.configure(**kw)
 
     def configure(self, **kw):
+        kw = gui.CLEAN_CONFIG_DICTIONARY(**kw)
         if "text" in kw:
             self.DEFAULT_TEXT = kw["text"]
         if PYTHON2:
@@ -9350,12 +9392,14 @@ class AutoCompleteEntry(Entry):
 #####################################
 
 
-class LabelBox(Frame):
+class ParentBox(Frame):
 
     def __init__(self, parent, **opts):
         Frame.__init__(self, parent)
-        self.theLabel = None
-        self.theWidget = None
+        self.setup()
+
+    def setup(self):
+        pass
 
     # customised config setters
     def config(self, cnf=None, **kw):
@@ -9369,24 +9413,49 @@ class LabelBox(Frame):
             for child in self.winfo_children():
                 gui.SET_WIDGET_BG(child, kw["bg"])
 
+        kw = self.processConfig(kw)
+
         # propagate anything left
         if PYTHON2:
             Frame.config(self, cnf, **kw)
         else:
             super(Frame, self).config(cnf, **kw)
 
+    def processConfig(self, kw):
+        return kw
 
-class WidgetBox(Frame):
+class LabelBox(ParentBox):
+    def setup(self):
+        self.theLabel = None
+        self.theWidget = None
 
-    def __init__(self, parent, **opts):
-        Frame.__init__(self, parent)
+class ButtonBox(ParentBox):
+    def setup(self):
+        self.theWidget = None
+        self.theButton = None
+
+class WidgetBox(ParentBox):
+    def setup(self):
         self.theWidgets = []
-
 
 class ListBox(Frame):
 
     def __init__(self, parent, **opts):
         Frame.__init__(self, parent)
+
+    # customised config setters
+    def config(self, cnf=None, **kw):
+        self.configure(cnf, **kw)
+
+    def configure(self, cnf=None, **kw):
+        # properties to propagate to CheckBoxes
+        kw = gui.CLEAN_CONFIG_DICTIONARY(**kw)
+
+        # propagate anything left
+        if PYTHON2:
+            Frame.config(self, cnf, **kw)
+        else:
+            super(Frame, self).config(cnf, **kw)
 
 
 class Pane(Frame):
@@ -9420,6 +9489,23 @@ class AutoScrollbar(Scrollbar):
 
     def place(self, **kw):
         raise Exception("cannot use place with this widget")
+
+    # customised config setters
+    def config(self, cnf=None, **kw):
+        self.configure(cnf, **kw)
+
+    def configure(self, cnf=None, **kw):
+        # properties to propagate to CheckBoxes
+        kw = gui.CLEAN_CONFIG_DICTIONARY(**kw)
+
+        if "fg" in kw:
+            kw.pop("fg")
+
+        # propagate anything left
+        if PYTHON2:
+            Scrollbar.config(self, cnf, **kw)
+        else:
+            super(Scrollbar, self).config(cnf, **kw)
 
 #######################
 # Upgraded scale - http://stackoverflow.com/questions/42843425/change-trough-increment-in-python-tkinter-scale-without-affecting-slider/
@@ -10709,6 +10795,7 @@ class CanvasDnd(Canvas):
         if cnf:
             kw.update(cnf)
         Canvas.__init__(self, Master,  kw)
+        self.config(bd=0, highlightthickness=0)
 
     #----- TargetWidget functionality -----
     
@@ -10751,18 +10838,33 @@ class CanvasDnd(Canvas):
 class TrashBin(CanvasDnd):
     def __init__(self, master, **kw):
         if "width" not in kw:
-            kw['width'] =150
+            kw['width'] = 150
         if "height" not in kw:
             kw['height'] = 25    
 
         CanvasDnd.__init__(self, master, kw)
+        self.config(relief="sunken", bd=2)
         x = kw['width'] / 2
         y = kw['height'] / 2
-        self.create_text(x, y, text='TRASH')
+        self.textId = self.create_text(x, y, text='TRASH', anchor="center")
 
     def dnd_commit(self, source, event):
         logging.getLogger("appJar").debug("<<TRASH_BIN.dnd_commit>> vanishing source")
         source.vanish(True)
+
+    def config(self, **kw):
+        self.configure(**kw)
+
+    def configure(self, **kw):
+        kw = gui.CLEAN_CONFIG_DICTIONARY(**kw)
+        if "fg" in kw:
+            fg=kw.pop('fg')
+            self.itemconfigure(self.textId, fill=fg)
+
+        if PYTHON2:
+            CanvasDnd.config(self, **kw)
+        else:
+            super(CanvasDnd, self).config(**kw)
 
 # This is a prototype thing to be dragged and dropped.
 class DraggableWidget:
