@@ -3056,7 +3056,7 @@ class gui(object):
                     'ipady': 0,
                     'expand': "ALL",
                     'widgets': False,
-                    "fg": "black"}
+                    "fg": self.__getContainerFg()}
         self.containerStack.append(containerData)
 
     def openRootPage(self, title):
