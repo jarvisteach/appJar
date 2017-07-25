@@ -2806,9 +2806,9 @@ class gui(object):
                 gui.SET_WIDGET_FG(child, fg, external)
         elif widgType == "LabelBox":
             try:
-                if not widget.theLabel.isValidation:
+                if not widget.isValidation:
                     gui.SET_WIDGET_FG(widget.theLabel, fg, external)
-            except:
+            except Exception as e:
                 gui.SET_WIDGET_FG(widget.theLabel, fg, external)
             gui.SET_WIDGET_FG(widget.theWidget, fg, external)
         elif widgType == "ButtonBox":
@@ -2906,7 +2906,7 @@ class gui(object):
                     pass # don't change validation entry highlights
                 else:
                     widget.config(highlightbackground=bg)
-                widget.config(bg=bg)
+#                widget.config(bg=bg)
 
         if widgType in ["LabelFrame", "PanedFrame", "Pane", "ajFrame"]:
             widget.config(bg=bg)
@@ -6354,6 +6354,7 @@ class gui(object):
     def __buildValidationEntry(self, title, frame, secret):
         vFrame = LabelBox(frame)
         vFrame.config(background=self.__getContainerBg())
+        vFrame.isValidation = True
 
         ent = self.__buildEntry(title, vFrame, secret)
         ent.config(highlightthickness=2)
