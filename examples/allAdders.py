@@ -8,7 +8,7 @@ print(gui.SHOW_VERSION())
 
 app=gui()
 app.setFg("red")
-app.setBg("blue")
+app.setBg("orange")
 app.setLogLevel("INFO")
 
 app.addCheckBox("cb1", column=0)
@@ -44,7 +44,6 @@ app.addFlashLabel("fl1", "flash", row=7, column=2)
 app.addSelectableLabel("sl1", "selectable", row=0, column=3)
 app.addLabel("l1", "label", row=1, column=3)
 app.addEmptyLabel("el1", row=2, column=3)
-app.addTextArea("ta", row=6, column=3)
 app.addTree("t1",
     """<people>
     <person><name>Fred</name><age>45</age><gender>Male</gender></person>
@@ -53,6 +52,7 @@ app.addTree("t1",
     <person><name>Betty</name><age>51</age><gender>Female</gender></person>
     </people>""", column=7, row=0, rowspan=6)
 app.addScrolledTextArea("ta2", row=6, column=7)
+app.addTextArea("ta", row=6, column=3)
 #app.addGoogleMap("gm1", column=7, row=1)
 app.addMicroBit("mb", row=7, column=7, rowspan=6)
 #t = arange(0.0, 3.0, 0.01)
@@ -94,4 +94,5 @@ app.addButton("BG COL", changeBg, row=10, column=5)
 app.addCheckBox("OVER", row=11, column=5)
 app.addMenuList("Colours", ["FG Col", "BG Col"], [changeFg, changeBg])
 
+app.addMenuEdit()
 app.go()
