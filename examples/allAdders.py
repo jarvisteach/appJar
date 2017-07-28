@@ -1,14 +1,15 @@
 import sys
 sys.path.append("../")
 
-from numpy import arange, sin, pi
 
 from appJar import gui
 print(gui.SHOW_VERSION())
 
+#from numpy import arange, sin, pi
+
 app=gui()
 app.setFg("red")
-app.setBg("orange")
+#app.setBg("orange")
 app.setLogLevel("INFO")
 
 app.addCheckBox("cb1", column=0)
@@ -20,7 +21,7 @@ app.addTickOptionBox("to1", ["a", "b"], column=0)
 app.addLabelTickOptionBox("lto1", ["a", "b"], column=0)
 app.addLabelOptionBox("lo1", ["a", "b"], column=0)
 app.addLabels(["a", "b", "c", "d"])
-app.addProperties("p1", row=0, column=1)
+app.addProperties("p1", {"a": True, "b": False}, row=0, column=1)
 app.addSpinBox("sb1",["a", "b"], row=1, column=1)
 app.addLabelSpinBox("sb2",["a", "b"], row=2, column=1)
 app.addSpinBoxRange("sb3", 5, 11, row=3, column=1)
@@ -85,14 +86,15 @@ app.addVerticalSeparator(row=6, column=4)
 #app.addPieChart("p1")
 app.addProperties("prop", row=6, column=4)
 def changeFg(btn):
-    app.setFg(app.colourBox(), app.getCheckBox("OVER"))
+    app.setFg(app.colourBox(), app.getCheckBox("OVER") or app.getMenuCheckBox("Colours", "Override"))
 def changeBg(btn):
-    app.setBg(app.colourBox(), app.getCheckBox("OVER"))
+    app.setBg(app.colourBox(), app.getCheckBox("OVER") or app.getMenuCheckBox("Colours", "Override"))
 
 app.addButton("FG COL", changeFg, row=9, column=5)
 app.addButton("BG COL", changeBg, row=10, column=5)
 app.addCheckBox("OVER", row=11, column=5)
-app.addMenuList("Colours", ["FG Col", "BG Col"], [changeFg, changeBg])
+app.addMenuList("Colours", ["FG Col", "BG Col", "Quit"], [changeFg, changeBg, app.stop])
+app.addMenuCheckBox("Colours", "Override")
 
 app.addMenuEdit()
 app.go()
