@@ -8514,7 +8514,7 @@ class Link(Label):
 
     def __init__(self, *args, **kwargs):
         Label.__init__(self, *args, **kwargs)
-        self.config(fg="blue", takefocus=1, highlightthickness=0)
+        self.config(fg="#0000ff", takefocus=1, highlightthickness=0)
         self.page = ""
         self.DEFAULT_TEXT = ""
 
@@ -8522,6 +8522,15 @@ class Link(Label):
             self.config(cursor="pointinghand")
         elif gui.GET_PLATFORM() in [gui.WINDOWS, gui.LINUX]:
             self.config(cursor="hand2")
+
+        self.bind("<Enter>", self.enter)
+        self.bind("<Leave>", self.leave)
+
+    def enter(self, e):
+        self.config(fg="#3366ff")
+
+    def leave(self, e):
+        self.config(fg="#0000ff")
 
     def registerCallback(self, callback):
         self.bind("<Button-1>", callback)
