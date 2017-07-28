@@ -2885,6 +2885,9 @@ class gui(object):
             elif widgType in ["Entry", "Text", "AjText", "ScrolledText", "AjScrolledText", "AutoCompleteEntry", "Spinbox"]:
                 widget.config(selectbackground=gui.TINT(widget, bg))
                 widget.config(highlightcolor=gui.TINT(widget, bg))
+                widget.config(highlightbackground=gui.TINT(widget, bg))
+                if widgType in ["Text", "AjText", "ScrolledText", "AjScrolledText"]:
+                    widget.config(inactiveselectbackground=gui.TINT(widget, bg))
             elif widgType == "Listbox":
                 widget.config(selectbackground=gui.TINT(widget, bg))
             elif widgType == "OptionMenu":

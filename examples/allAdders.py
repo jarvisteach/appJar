@@ -8,8 +8,8 @@ print(gui.SHOW_VERSION())
 #from numpy import arange, sin, pi
 
 app=gui()
-app.setFg("red")
-#app.setBg("orange")
+app.setFg("blue")
+app.setBg("orange")
 app.setLogLevel("INFO")
 
 app.addCheckBox("cb1", column=0)
