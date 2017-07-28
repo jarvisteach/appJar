@@ -4102,7 +4102,7 @@ class gui(object):
         option.config(
             justify=LEFT,
             font=self.optionFont,
-            background=self.__getContainerBg(),
+#            background=self.__getContainerBg(),
             highlightthickness=0,
             width=maxSize,
             takefocus=1)
