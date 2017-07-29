@@ -2843,22 +2843,27 @@ class gui(object):
             elif len(t) == 0:
                 t = '00'
             col.append(t)
-        return "#" + "".join(col)
+
+        if int(col[0], 16) > 210 and int(col[1], 16) > 210 and int(col[2], 16) > 210:
+            return "systemHighlight"
+        else:
+            return "#" + "".join(col)
 
     # convenience method to set a widget's bg
     @staticmethod
     def SET_WIDGET_BG(widget, bg, external=False, tint=True):
-        # POTENTIAL ISSUES
-        # spinBox - highlightBackground
-        # cbs/rbs - activebackground
-        # grids - background
 
-        if bg is None:
-            return  # ignore empty colours
+        if bg is None: # ignore empty colours
+            return  
 
-        # on linux/MAC, these have a border that needs colouring
-        hideBorders = [
-            "Text", "AjText",
+        widgType = widget.__class__.__name__
+        isDarwin = gui.GET_PLATFORM() == gui.MAC
+        isLinux = gui.GET_PLATFORM() == gui.LINUX
+
+        logging.getLogger("appJar").debug("Config " + str(widgType) + " BG to " + str(bg))
+
+        # these have a highlight border to remove
+        hideBorders = [ "Text", "AjText",
             "ScrolledText", "AjScrolledText",
             "Scale", "ajScale",
             "OptionMenu",
@@ -2866,8 +2871,8 @@ class gui(object):
             "Radiobutton", "Checkbutton",
             "Button"]
 
-        noBg = [
-            "Button",
+        # these shouldn't have their BG coloured by default
+        noBg = [ "Button",
             "Scale", "ajScale",
             "Spinbox", "Listbox", "OptionMenu",
             "SplitMeter", "DualMeter", "Meter",
@@ -2876,90 +2881,60 @@ class gui(object):
             "ScrolledText", "AjScrolledText",
             "ToggleFrame"]
 
-        widgType = widget.__class__.__name__
-        isDarwin = gui.GET_PLATFORM() == gui.MAC
-        isLinux = gui.GET_PLATFORM() == gui.LINUX
+        # remove the highlight borders
+        if widgType in hideBorders:
+            if widgType == "Entry" and widget.isValidation:
+                pass
+            elif widgType == "OptionMenu":
+                widget["menu"].config(borderwidth=0)
+                widget.config(highlightbackground=bg)
+                if isDarwin:
+                    widget.config(background=bg)
+            else:
+                widget.config(highlightbackground=bg)
 
-        logging.getLogger("appJar").debug("Config " + str(widgType) + " BG to " + str(bg))
-
-        # tint the background colour when active...
-        if (external or tint):
+        # do some fancy tinting
+        if external or tint:
             if widgType in ["Button", "Scale", "ajScale"]:
                 widget.config(activebackground=gui.TINT(widget, bg))
             elif widgType in ["Entry", "Text", "AjText", "ScrolledText", "AjScrolledText", "AutoCompleteEntry", "Spinbox"]:
                 widget.config(selectbackground=gui.TINT(widget, bg))
                 widget.config(highlightcolor=gui.TINT(widget, bg))
-                widget.config(highlightbackground=gui.TINT(widget, bg))
                 if widgType in ["Text", "AjText", "ScrolledText", "AjScrolledText"]:
                     widget.config(inactiveselectbackground=gui.TINT(widget, bg))
+                elif widgType == "Spinbox":
+                    widget.config(buttonbackground=bg)
             elif widgType == "Listbox":
                 widget.config(selectbackground=gui.TINT(widget, bg))
             elif widgType == "OptionMenu":
                 widget.config(activebackground=gui.TINT(widget, bg))
                 widget["menu"].config(activebackground=gui.TINT(widget, bg))
 
-        # remove ugly highlighting from RB/CB
-        if widgType in ["Radiobutton", "Checkbutton"]:
-            widget.config(activebackground=bg, highlightbackground=bg)
-
-        # remove the borders
-        if widgType in hideBorders:# and (isDarwin or isLinux):
-            if widgType == "Entry" and widget.isValidation:
-                pass
-            elif widgType == "OptionMenu":
-                widget["menu"].config(borderwidth=0)
-                widget.config(highlightbackground=bg)
-            else:
-                widget.config(highlightbackground=bg)
-
-        if isDarwin and widgType == "OptionMenu":
-            widget.config(background=bg)
-
-        if widgType in ["LabelFrame", "PanedFrame", "Pane", "ajFrame"]:
+        # if this is forced - change everything
+        if external:
             widget.config(bg=bg)
-            for child in widget.winfo_children():
-                gui.SET_WIDGET_BG(child, bg, external, tint)
-
-        # widget with label, in frame
-        elif widgType == "LabelBox":
-            widget.config(bg=bg)
-            if widget.theLabel is not None: widget.theLabel.config(bg=bg)
-            gui.SET_WIDGET_BG(widget.theWidget, bg, external, tint)
-
-        # widget with button, in frame
-        elif widgType == "ButtonBox":
-            widget.config(bg=bg)
-            gui.SET_WIDGET_BG(widget.theWidget, bg, external, tint)
-            gui.SET_WIDGET_BG(widget.theButton, bg, external, tint)
-
-        # list box container
-        elif widgType == "ListBoxContainer":
-            widget.config(bg=bg)
-            gui.SET_WIDGET_BG(widget.lb, bg, external, tint)
-
-        # group of buttons or labels
-        elif widgType == "WidgetBox":
-            widget.config(bg=bg)
-            for widg in widget.theWidgets:
-                gui.SET_WIDGET_BG(widg, bg, external, tint)
-
-        # any other widgets
-        elif external:
-            if isDarwin:
-                if widgType != "OptionMenu":
-                    widget.config(bg=bg)
-            else:
-                widget.config(bg=bg)
-                if widgType == "OptionMenu":
-                    widget["menu"].config(bg=bg)
-                elif widgType == "Spinbox":
-                    widget.config(buttonbackground=bg)
-
-        # colour any widgets in in exclude list
+            if widgType == "OptionMenu":
+                widget["menu"].config(bg=bg)
+        # otherwise only colour un-excluded widgets
         elif widgType not in noBg:
             widget.config(bg=bg)
 
-
+        # now do any of the below containers
+        if widgType in ["LabelFrame", "PanedFrame", "Pane", "ajFrame"]:
+            for child in widget.winfo_children():
+                gui.SET_WIDGET_BG(child, bg, external, tint)
+        elif widgType == "LabelBox": # widget with label, in frame
+            if widget.theLabel is not None:
+                gui.SET_WIDGET_BG(widget.theLabel, bg, external, tint)
+            gui.SET_WIDGET_BG(widget.theWidget, bg, external, tint)
+        elif widgType == "ButtonBox": # widget with button, in frame
+            gui.SET_WIDGET_BG(widget.theWidget, bg, external, tint)
+            gui.SET_WIDGET_BG(widget.theButton, bg, external, tint)
+        elif widgType == "ListBoxContainer": # list box container
+            gui.SET_WIDGET_BG(widget.lb, bg, external, tint)
+        elif widgType == "WidgetBox": # group of buttons or labels
+            for widg in widget.theWidgets:
+                gui.SET_WIDGET_BG(widg, bg, external, tint)
 
     def __getContainerBg(self):
         return self.getContainer()["bg"]
@@ -9340,7 +9315,8 @@ class AutoCompleteEntry(Entry):
     # function to create & show an empty list box
     def makeListBox(self):
         self.listbox = Listbox(self.topLevel, width=self["width"], height=8)
-        self.listbox.config(height=self.rows)
+        self.listbox.config(height=self.rows, bg=self.cget("bg"), selectbackground=self.cget("selectbackground"))
+        self.listbox.config(fg=self.cget("fg"))
         self.listbox.bind("<Button-1>", self.mouseClickBox)
         self.listbox.bind("<Right>", self.selectWord)
         self.listbox.bind("<Return>", self.selectWord)
