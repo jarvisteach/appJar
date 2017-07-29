@@ -2845,7 +2845,10 @@ class gui(object):
             col.append(t)
 
         if int(col[0], 16) > 210 and int(col[1], 16) > 210 and int(col[2], 16) > 210:
-            return "systemHighlight"
+            if gui.GET_PLATFORM() == gui.LINUX:
+                return "#c3c3c3"
+            else:
+                return "systemHighlight"
         else:
             return "#" + "".join(col)
 
