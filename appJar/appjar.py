@@ -2797,9 +2797,13 @@ class gui(object):
             widget.config(fg=fg)
         elif widgType == "Radiobutton":
             widget.config(fg=fg)
-        elif widgType in ["Spinbox", "OptionMenu", "AjText", "AjScrolledText"]:
+        elif widgType in ["Spinbox", "AjText", "AjScrolledText", "Button"]:
             if external:
                 widget.config(fg=fg)
+        elif widgType == "OptionMenu":
+            if external:
+                widget.config(fg=fg)
+                widget["menu"].config(fg=fg)
         # ignore some widgets
         elif widgType in ["Frame", "LabelFrame", "PanedFrame", "Pane", "ajFrame"]:
             for child in widget.winfo_children():
@@ -2896,12 +2900,15 @@ class gui(object):
 
         # remove ugly highlighting from RB/CB
         if widgType in ["Radiobutton", "Checkbutton"]:
-            widget.config(activebackground=bg)
+            widget.config(activebackground=bg, highlightbackground=bg)
 
         # remove the borders
-        if widgType in hideBorders and (isDarwin or isLinux):
+        if widgType in hideBorders:# and (isDarwin or isLinux):
             if widgType == "Entry" and widget.isValidation:
                 pass
+            elif widgType == "OptionMenu":
+                widget["menu"].config(borderwidth=0)
+                widget.config(highlightbackground=bg)
             else:
                 widget.config(highlightbackground=bg)
 
@@ -2945,6 +2952,8 @@ class gui(object):
                 widget.config(bg=bg)
                 if widgType == "OptionMenu":
                     widget["menu"].config(bg=bg)
+                elif widgType == "Spinbox":
+                    widget.config(buttonbackground=bg)
 
         # colour any widgets in in exclude list
         elif widgType not in noBg:
@@ -8605,7 +8614,7 @@ class Properties(LabelFrame):
                 # and set them on all CheckBoxes if desired
                 for prop_key in self.cbs:
                     self.cbs[prop_key][k] = v
-                    if k == "bg" and gui.GET_PLATFORM() == gui.LINUX:
+                    if k == "bg":# and gui.GET_PLATFORM() == gui.LINUX:
                         self.cbs[prop_key].config(highlightbackground=v, activebackground=v)
 
         # remove any props the LabelFrame can't handle
