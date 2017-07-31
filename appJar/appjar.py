@@ -2923,15 +2923,15 @@ class gui(object):
             widget.config(bg=bg)
             if widgType == "OptionMenu":
                 widget["menu"].config(bg=bg)
-        # deal with flash labels
-        elif widgType == "Label":
-            widget.config(bg=bg)
-            widget.origBg=bg
-            try: widget.config(fg=widget.origFg)
-            except: pass # not a flash label
         # otherwise only colour un-excluded widgets
         elif widgType not in noBg:
             widget.config(bg=bg)
+
+        # deal with flash labels
+        if widgType == "Label":
+            widget.origBg=bg
+            try: widget.config(fg=widget.origFg)
+            except: pass # not a flash label
 
         # now do any of the below containers
         if widgType in ["LabelFrame", "PanedFrame", "Pane", "ajFrame"]:
