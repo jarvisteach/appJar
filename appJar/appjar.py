@@ -1842,7 +1842,7 @@ class gui(object):
     # self.tb = Frame, at top of appWindow
     # self.container = Frame, at bottom of appWindow => C_ROOT container
     # self.bglabel = Label, filling all of container
-    def setBg(self, colour, override=False):
+    def setBg(self, colour, override=False, tint=False):
         if self.containerStack[-1]['type'] == self.C_ROOT:
             self.appWindow.config(background=colour)
             self.bgLabel.config(background=colour)
@@ -1851,7 +1851,7 @@ class gui(object):
 
         for child in self.containerStack[-1]['container'].winfo_children():
             if not self.__isWidgetContainer(child):
-                gui.SET_WIDGET_BG(child, colour, override)
+                gui.SET_WIDGET_BG(child, colour, override, tint)
 
     @staticmethod
     def __isWidgetContainer(widget):
@@ -2826,6 +2826,11 @@ class gui(object):
                 gui.SET_WIDGET_FG(widget.lb, fg, external)
         elif widgType in ["PieChart", "MicroBitSimulator", "Scrollbar"]:
             pass
+        elif widgType == "Label":
+            widget.config(fg=fg)
+            widget.origFg=fg
+            try: widget.config(bg=widget.origBg)
+            except: pass # not a flash label
         else:
             try:
                 widget.config(fg=fg)
@@ -2854,7 +2859,7 @@ class gui(object):
 
     # convenience method to set a widget's bg
     @staticmethod
-    def SET_WIDGET_BG(widget, bg, external=False, tint=True):
+    def SET_WIDGET_BG(widget, bg, external=False, tint=False):
 
         if bg is None: # ignore empty colours
             return  
@@ -2918,6 +2923,12 @@ class gui(object):
             widget.config(bg=bg)
             if widgType == "OptionMenu":
                 widget["menu"].config(bg=bg)
+        # deal with flash labels
+        elif widgType == "Label":
+            widget.config(bg=bg)
+            widget.origBg=bg
+            try: widget.config(fg=widget.origFg)
+            except: pass # not a flash label
         # otherwise only colour un-excluded widgets
         elif widgType not in noBg:
             widget.config(bg=bg)
@@ -2961,8 +2972,8 @@ class gui(object):
             sticky=W + E):
         # allow item to be added to container
         container = self.getContainer()
-        gui.SET_WIDGET_BG(widget, self.__getContainerBg())
         gui.SET_WIDGET_FG(widget, self.__getContainerFg())
+        gui.SET_WIDGET_BG(widget, self.__getContainerBg())
 
         # alpha paned window placement
         if self.containerStack[-1]['type'] == self.C_PANEDFRAME:
@@ -5341,11 +5352,11 @@ class gui(object):
             text=name,
             variable=var,
             value=name,
+            anchor=W,
             background=self.__getContainerBg(),
             activebackground=self.__getContainerBg(),
             font=self.rbFont,
             indicatoron = 1)
-        rb.config(anchor = W)
         rb.bind("<Button-1>", self.__grabFocus)
         rb.DEFAULT_TEXT = name
 
@@ -5954,10 +5965,13 @@ class gui(object):
             lab.DEFAULT_TEXT = text
         else:
             lab.DEFAULT_TEXT = ""
+
+        lab.origBg = self.__getContainerBg()
+
         lab.config(
             justify=LEFT,
             font=self.labelFont,
-            background=self.__getContainerBg())
+            background=lab.origBg)
         self.n_labels[title] = lab
 
         self.__positionWidget(lab, row, column, colspan, rowspan)
