@@ -1294,7 +1294,7 @@ class gui(object):
     
 
     # function to turn on the splash screen
-    def showSplash(self, text="appJar", fill="red", stripe="black", fg="white", font=44):
+    def showSplash(self, text="appJar", fill="#FF0000", stripe="#000000", fg="#FFFFFF", font=44):
         self.splashConfig= {'text':text, 'fill':fill, 'stripe':stripe, 'fg':fg, 'font':font}
 
     #########################
@@ -1346,13 +1346,6 @@ class gui(object):
         elif level == "WARNING": logger.warning(msg)
         elif level == "INFO": logger.info(msg)
         elif level == "DEBUG": logger.debug(msg)
-
-<<<<<<< HEAD
-    # function to turn on the splash screen
-    def showSplash(self, text="appJar", fill="#FF0000", stripe="#000000", fg="#FFFFFF", font=44):
-        self.splashConfig= {'text':text, 'fill':fill, 'stripe':stripe, 'fg':fg, 'font':font}
-=======
->>>>>>> next_release
 
 #####################################
 # Event Loop - must always be called at end
@@ -2967,17 +2960,10 @@ class gui(object):
         return self.getContainer()["bg"]
 
     def __getContainerFg(self):
-<<<<<<< HEAD
         try:
             return self.__getContainer()["fg"]
         except:
             return "#000000"
-=======
-        fg = "black"
-        try: fg = self.containerStack[-1]['fg']
-        except: pass
-        return fg
->>>>>>> next_release
 
     # two important things here:
     # grid - sticky: position of widget in its space (side or fill)
@@ -3084,11 +3070,7 @@ class gui(object):
                     'ipady': 0,
                     'expand': "ALL",
                     'widgets': False,
-<<<<<<< HEAD
-                    "fg": "#000000"}
-=======
                     "fg": self.__getContainerFg()}
->>>>>>> next_release
         self.containerStack.append(containerData)
 
     def openRootPage(self, title):
@@ -6443,11 +6425,7 @@ class gui(object):
 
         entry.config(highlightbackground="#FF0000", highlightcolor="#FF0000", fg="#FF0000")
         entry.config(highlightthickness=2)
-<<<<<<< HEAD
-        entry.lab.config(text=u'\u2716', fg="#FF0000")
-=======
-        entry.lab.config(text='\u2716', fg="red")
->>>>>>> next_release
+        entry.lab.config(text='\u2716', fg="#FF0000")
         entry.lab.DEFAULT_TEXT = entry.lab.cget("text")
 
     def setEntryWaitingValidation(self, title):
@@ -6458,11 +6436,7 @@ class gui(object):
 
         entry.config(highlightbackground="#000000", highlightcolor="#000000", fg="#000000")
         entry.config(highlightthickness=1)
-<<<<<<< HEAD
-        entry.lab.config(text=u'\u2731', fg="#000000")
-=======
-        entry.lab.config(text='\u2731', fg="black")
->>>>>>> next_release
+        entry.lab.config(text='\u2731', fg="#000000")
         entry.lab.DEFAULT_TEXT = entry.lab.cget("text")
 
     def addAutoEntry(
@@ -8547,13 +8521,9 @@ class Link(Label):
 
     def __init__(self, *args, **kwargs):
         Label.__init__(self, *args, **kwargs)
-<<<<<<< HEAD
-        self.config(fg="#0000FF", takefocus=1, highlightthickness=0)
-=======
         self.fg = "#0000ff"
         self.overFg="#3366ff"
         self.config(fg=self.fg, takefocus=1, highlightthickness=0)
->>>>>>> next_release
         self.page = ""
         self.DEFAULT_TEXT = ""
 
@@ -9661,12 +9631,7 @@ class AjScrolledText(TextParent, scrolledtext.ScrolledText):
 class SelectableLabel(Entry):
     def __init__(self, parent, **opts):
         Entry.__init__(self, parent)
-<<<<<<< HEAD
-        self.configure(relief=FLAT, state="readonly", readonlybackground='#FFFFFF', fg='#000000')
-#        var = parent.StringVar()
-#        self.configure(textvariable=var)
-=======
-        self.configure(relief=FLAT, state="readonly", readonlybackground='white', fg='black', highlightthickness=0)
+        self.configure(relief=FLAT, state="readonly", readonlybackground='#FFFFFF', fg='#000000', highlightthickness=0)
         self.var = StringVar(parent)
         self.configure(textvariable=self.var)
 
