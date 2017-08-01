@@ -2961,7 +2961,7 @@ class gui(object):
 
     def __getContainerFg(self):
         try:
-            return self.__getContainer()["fg"]
+            return self.containerStack[-1]['fg']
         except:
             return "#000000"
 
