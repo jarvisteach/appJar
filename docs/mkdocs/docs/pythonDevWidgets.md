@@ -161,7 +161,7 @@ It is possible to include buttons at the end of each row, and an additional row 
     Adds a new row of data to the end of the existing grid.  
     It will be positioned at the bottom of the grid, above the entry boxes if present.  
 
-To have the **Press** button on the entries row, add a new row of data, try the following:  
+To have the **Press** button on the entries row add a new row of data, try the following:  
 ```python
     def press(btn):
         if btn == "Press":     # the button on the entries row

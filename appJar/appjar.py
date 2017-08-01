@@ -1198,7 +1198,11 @@ class gui(object):
         # start the main loop
         try:
             self.topLevel.mainloop()
-        except(KeyboardInterrupt, SystemExit):
+        except(KeyboardInterrupt, SystemExit) as e:
+            self.debug("appJar stopped through ^c or exit()")
+            self.stop()
+        except Exception as e:
+            self.exception(e)
             self.stop()
 
     def setStopFunction(self, function):
@@ -9252,10 +9256,7 @@ class SimpleGrid(Frame):
             highlightthickness=2,
             bg=self.cget("bg"))
         vsb = Scrollbar(self, orient="vertical", command=self.mainCanvas.yview)
-        hsb = Scrollbar(
-            self,
-            orient="horizontal",
-            command=self.mainCanvas.xview)
+        hsb = Scrollbar( self, orient="horizontal", command=self.mainCanvas.xview)
 
         self.config(bg="yellow")
 
