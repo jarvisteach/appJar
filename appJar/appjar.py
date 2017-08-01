@@ -9660,7 +9660,6 @@ class SelectableLabel(Entry):
             Entry.config(self, cnf, **kw)
         else:
             super(Entry, self).config(cnf, **kw)
->>>>>>> next_release
         
 
 #######################
