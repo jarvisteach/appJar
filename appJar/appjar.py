@@ -2134,10 +2134,7 @@ class gui(object):
         for item in items:
             try:
                 if option == 'background':
-                    if kind == self.METER:
-                        item.config(bg=value)
-                    else:
-                        gui.SET_WIDGET_BG(item, value, True)
+                    gui.SET_WIDGET_BG(item, value, True)
                 elif option == 'foreground':
                     gui.SET_WIDGET_FG(item, value, True)
                 elif option == 'disabledforeground':
@@ -2784,19 +2781,17 @@ class gui(object):
         widgType = widget.__class__.__name__
         logging.getLogger("appJar").debug("SET_WIDGET_FG: " + str(widgType) + " - " + str(fg))
 
-        if widgType == "Link" and not external:
-            pass
+        # only configure these widgets if external
+        if widgType == "Link":
+            if external:
+                widget.fg = fg
+                widget.overFg = gui.TINT(widget, fg)
+                widget.config(foreground=fg)
         elif widgType in ["Entry", "AutoCompleteEntry"]:
             if external:
-                if widget.showingDefault:
-                    widget.oldFg = fg
-                else:
+                widget.oldFg = fg
+                if not widget.showingDefault:
                     widget.config(foreground=fg)
-                    widget.oldFg = fg
-        elif widgType == "Checkbutton":
-            widget.config(fg=fg)
-        elif widgType == "Radiobutton":
-            widget.config(fg=fg)
         elif widgType in ["Spinbox", "AjText", "AjScrolledText", "Button"]:
             if external:
                 widget.config(fg=fg)
@@ -2804,10 +2799,19 @@ class gui(object):
             if external:
                 widget.config(fg=fg)
                 widget["menu"].config(fg=fg)
-        # ignore some widgets
+        # handle flash labels
+        elif widgType == "Label":
+            widget.config(fg=fg)
+            widget.origFg=fg
+            try: widget.config(bg=widget.origBg)
+            except: pass # not a flash label
+
+        # deal with generic groupers
         elif widgType in ["Frame", "LabelFrame", "PanedFrame", "Pane", "ajFrame"]:
             for child in widget.winfo_children():
                 gui.SET_WIDGET_FG(child, fg, external)
+
+        # deal with specific containers
         elif widgType == "LabelBox":
             try:
                 if not widget.isValidation:
@@ -2824,13 +2828,12 @@ class gui(object):
         elif widgType == "ListBoxContainer":
             if external:
                 gui.SET_WIDGET_FG(widget.lb, fg, external)
+
+        # skip these widgets
         elif widgType in ["PieChart", "MicroBitSimulator", "Scrollbar"]:
             pass
-        elif widgType == "Label":
-            widget.config(fg=fg)
-            widget.origFg=fg
-            try: widget.config(bg=widget.origBg)
-            except: pass # not a flash label
+
+        # always try these widgets
         else:
             try:
                 widget.config(fg=fg)
@@ -8515,7 +8518,9 @@ class Link(Label):
 
     def __init__(self, *args, **kwargs):
         Label.__init__(self, *args, **kwargs)
-        self.config(fg="#0000ff", takefocus=1, highlightthickness=0)
+        self.fg = "#0000ff"
+        self.overFg="#3366ff"
+        self.config(fg=self.fg, takefocus=1, highlightthickness=0)
         self.page = ""
         self.DEFAULT_TEXT = ""
 
@@ -8528,10 +8533,10 @@ class Link(Label):
         self.bind("<Leave>", self.leave)
 
     def enter(self, e):
-        self.config(fg="#3366ff")
+        self.config(fg=self.overFg)
 
     def leave(self, e):
-        self.config(fg="#0000ff")
+        self.config(fg=self.fg)
 
     def registerCallback(self, callback):
         self.bind("<Button-1>", callback)
@@ -8561,6 +8566,7 @@ class Link(Label):
         kw = gui.CLEAN_CONFIG_DICTIONARY(**kw)
         if "text" in kw:
             self.DEFAULT_TEXT = kw["text"]
+
         if PYTHON2:
             Label.config(self, **kw)
         else:
