@@ -3,6 +3,19 @@
 The following widgets are in [beta](https://en.wikipedia.org/wiki/Software_release_life_cycle#BETA).  
 They're available and in use, they're just not quite complete, and not fully tested...  
 
+### ttk
+---
+If you want access to the [Tk themed widget set](https://docs.python.org/3/library/tkinter.ttk.html) then you'll need to tell appJar to use it:
+```python
+from appJar import gui
+app = gui("ttk Demo")
+app.useTtk()
+app.addButton("Press Me", None)
+app.go()
+```
+
+At the moment, this simply imports ttk, so the standard widget set will be replaced with a ttk widget set.  
+
 ###MicroBit Emulator  
 ---  
 Widget to emulate a [MicroBit](http://microbit.org)
@@ -10,9 +23,12 @@ Widget to emulate a [MicroBit](http://microbit.org)
 ![MicroBit Emulator](img/mb.png)
 
 ```python
-    app.addMicroBit("mb1")
-    app.setMicroBitImage("mb1", "09090:90909:90009:09090:00900")
-    app.go()
+from appJar import gui
+
+app = gui()
+app.addMicroBit("mb1")
+app.setMicroBitImage("mb1", "09090:90909:90009:09090:00900")
+app.go()
 ```
 
 ####Add MicroBits
@@ -32,21 +48,85 @@ Widget to emulate a [MicroBit](http://microbit.org)
 * ```.clearMicroBit(title)```  
     Will turn off all of the pixels - setting their brightness to 0.  
 
+###GoogleMaps
+---
+A self-contained GoogleMaps widget.  
+It provides useful functionality for finding somewhere on Earth.  
+All requests for map data are performed in the background, so the UI shouldn't become unresponsive.  
+
+![GoogleMaps](img/gMap_2.png)
+
+```python
+from appjar import gui
+
+app = gui()
+app.addGoogleMap("m1")
+app.setGoogleMapSize("m1", "300x500")
+app.go()
+```
+
+#### Add GoogleMaps  
+
+* `.addGoogleMap(title)`  
+    Creates a GoogleMap widget.  
+    Displays a map image, and provides functionality to search, zoom, and change terrain, as well as a link to the original image.  
+
+#### Set GoogleMaps  
+
+* `.searchGoogleMap(title, location)`  
+    Update the named GoogleMap widget to show the specified locaiton.  
+
+* `.zoomGoogleMap(title, mod)`  
+    Change the zoom level of the named GoogleMap.  
+    Providing a **+** or **-** will cause the map to zoom in or out one level.  
+    Otherwise, a digit between 0 and 22 should be provided, to set the zoom level.  
+
+* `.setGoogleMapTerrain(title, terrain)`  
+
+* `.setGoogleMapSize(title, size)`  
+    Set the size of the GoogleMap. Should be in the format `"300x300"`.  
+    Note, if you set it too small, the control widgets won't look good...  
+
+* `.setGoogleMapMarker(title, location)`  
+    Will drop a marker on the specified location.  
+    The marker will only be visible if the current `location` & `zoom level` permit.  
+    If an empty `location` is provided, all markers will be removed.  
+
+#### Get GoogleMaps  
+
+* `.getGoogleMapLocation(title)`  
+    Returns the current displayed location.  
+    Will return an empty String, if the user clicked the **H** button.  
+
+* `.getGoogleMapZoom(title)`  
+    Returns the current zoom level of the map tile.  
+
+* `.getGoogleMapTerrain(title)`  
+    Returns the current terrain setting for the map tile.  
+
+* `.getGoogleMapSize(title)`  
+    Returns the current size of the map tile.  
+
+#### Save GoogleMaps  
+
+* `.saveGoogleMap(title, fileName)`  
+    Saves the currently displayed map to the named location.  
+    By default, all map tiles are GIFs.  
 
 ###PieChart
 ---
 Widget to depict a Pie Chart.  
 It will automatically calculate percentages, and draw a pie chart, given a dictionary of items and their amount.  
-The PieChart is purely for display purposes, and is not interactive.  
+The PieChart is purely for display purposes, and is not interactive, other than a simple mouse-over effect with a tooltip.  
 ![PieChart](img/dev/pie.png)  
 
 ```python
-    from appJar import gui
+from appJar import gui
 
-    app=gui()
-    app.addPieChart("p1", {"apples":50, "oranges":200, "grapes":75,
-                            "beef":300, "turkey":150})
-    app.go()
+app = gui()
+app.addPieChart("p1", {"apples":50, "oranges":200, "grapes":75,
+                        "beef":300, "turkey":150})
+app.go()
 ```
 
 ####Add PieCharts  
@@ -67,7 +147,7 @@ Takes an arbitrary XML string, and converts it into a tree structure.
 ```python
 from appJar import gui
 
-app=gui()
+app = gui()
 app.addTree("t1",
             """<people>
             <person><name>Fred</name><age>45</age><gender>Male</gender></person>
@@ -118,17 +198,17 @@ It is possible to include buttons at the end of each row, and an additional row 
 ![Grid](img/dev/grid.png)  
 
 ```python
-    from appJar import gui
+from appJar import gui
 
-    app=gui()
-    app.setFont(20)
-    app.addGrid("g1",
-        [["Name", "Age", "Gender"],
-        ["Fred", 45, "Male"],
-        ["Tina", 37, "Female"],
-        ["Clive", 28, "Male"],
-        ["Betty", 51, "Female"]])
-    app.go()
+app = gui()
+app.setFont(20)
+app.addGrid("g1",
+    [["Name", "Age", "Gender"],
+    ["Fred", 45, "Male"],
+    ["Tina", 37, "Female"],
+    ["Clive", 28, "Male"],
+    ["Betty", 51, "Female"]])
+app.go()
 ```
 
 ####Add Grids  

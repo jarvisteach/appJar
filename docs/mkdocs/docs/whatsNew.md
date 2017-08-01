@@ -1,9 +1,38 @@
 #Change-Log
 ---
 
+## Version (0.07)  
+* New widgets: [GoogleMaps](/pythonDevWidgets/#googlemaps) - a widget to show a GoogleMap tile & control widgets, [ImageMaps](/pythonImages/#image-maps) - clickable ImageMap with linked functions, [FileEntries](/pythonWidgets/#entry) - Entries linked with File/Directory dialogs  
+* Widget enhancements: [Pinnable Toolbars](/pythonBars/#set-toolbars), [SelectableLabels](/pythonWidgets/#add-labels), better [Tooltips](/pythonDialogs/#tooltips), [NamedCheckBoxes](/pythonWidgets/#add-checkboxes) & settable [ListBoxes](/pythonWidgets/#set-listboxes)  
+* Update to event model and [documentation](/pythonEvents) - now clearer how to perform different actions, and function names updated.  
+* Switched to Python's [logging](/pythonLogging) feature
+
+
+* Issues Resolved:
+    * [#192](https://github.com/jarvisteach/appJar/issues/192) - Fixed PNG image support in pyhton 2.7 - specifically for toolbars  
+    * [#189](https://github.com/jarvisteach/appJar/issues/189) - **VERY** basic support for [ttk](/pythonDevWidgets/#ttk)
+    * [#184](https://github.com/jarvisteach/appJar/issues/184) - [Groupable List Boxes](/pythonWidgets/#set-listboxes)
+    * [#182](https://github.com/jarvisteach/appJar/issues/182) - Added a link to source for [GoogleMaps](/pythonDevWidgets/#googlemaps)
+    * [#181](https://github.com/jarvisteach/appJar/issues/181) - [Disabling toolbars](/pythonBars/#set-toolbars) will also disable a pinned icon
+    * [#180](https://github.com/jarvisteach/appJar/issues/180) - [SlowActions](/pythonEvents/#slow-actions)  
+    * [#176](https://github.com/jarvisteach/appJar/issues/176) - Fixed issue with placing container in [containers](/pythonWidgetGrouping)  
+    * [#173](https://github.com/jarvisteach/appJar/issues/173) - New functions to [Set ListBoxes](/pythonWidgets/#set-listboxes)  
+    * [#161](https://github.com/jarvisteach/appJar/issues/161) - [NamedCheckBoxes](/pythonWidgets/#add-checkboxes)  
+    * [#148](https://github.com/jarvisteach/appJar/issues/148) - Improved support for [MouseOver Events](/pythonEvents/#user-actions)  
+    * [#138](https://github.com/jarvisteach/appJar/issues/138) - Can now register a [Change Event](/pythonWidgets/#set-datepicker) on DatePicker  
+    * [#137](https://github.com/jarvisteach/appJar/issues/137) - [File Entries](/pythonWidgets/#entry)  
+    * [#136](https://github.com/jarvisteach/appJar/issues/136) - Simple [GoogleMaps](/pythonDevWidgets/#googlemaps) widget   
+    * [#135](https://github.com/jarvisteach/appJar/issues/135) - A clickable [Image Map](/pythonImages/#image-maps)  
+    * [#133](https://github.com/jarvisteach/appJar/issues/133) - Improvements to [Tooltips](/pythonDialogs/#tooltips)  
+    * [#124](https://github.com/jarvisteach/appJar/issues/124) - Switched to Python's [logging](/pythonLogging) feature  
+    * [#101](https://github.com/jarvisteach/appJar/issues/101) - More work implementing [Drag n'Drop](/pythonDnD)  
+    * [#73](https://github.com/jarvisteach/appJar/issues/73) - Toolbars are now [pinnable](/pythonBars/#set-toolbars)  
+    * [#59](https://github.com/jarvisteach/appJar/issues/59) - [SelectableLabels](/pythonWidgets/#add-labels)  
+
 ## Version (0.061)  
+
 * Issues Resolved:  
-    * [#154](https://github.com/jarvisteach/appJar/issues/154) - Fixed bug with AutoEntry not showing drop-down in right position, when placed in a container
+    * [#154](https://github.com/jarvisteach/appJar/issues/154) - Fixed bug with AutoEntry not showing drop-down in right position, when placed in a container  
 
 ## Version (0.06)  
 * New widgets: [MicroBit](/pythonDevWidgets/#microbit-emulator), [Validation Entries](/pythonWidgets/#entry)  
@@ -12,26 +41,26 @@
 * Work on events: [stopping event propagation](/pythonEvents/#breakdown), [drag/over events](/pythonEvents/#make-stuff-happen), [drag'n drop](/pythonDnD)  
 * Issues Resolved:  
     * [#143](https://github.com/jarvisteach/appJar/issues/143) - Fixed bug with setting defaults on AutoEntries  
-    * [#142](https://github.com/jarvisteach/appJar/issues/142) - Finished documentation for [popups](/pythonDialogs/#file=boxes)
+    * [#142](https://github.com/jarvisteach/appJar/issues/142) - Finished documentation for [popups](/pythonDialogs/#file=boxes)  
     * [#130](https://github.com/jarvisteach/appJar/issues/130) - Documented how to use [special characters](/specialCharacters)  
     * [#123](https://github.com/jarvisteach/appJar/issues/123) - New features for [setting entries](/pythonWidgets/#set-entries) - max length, auto uppercase/lowercase, validation  
-    * [#119](https://github.com/jarvisteach/appJar/issues/119) - [MicroBit](/pythonDevWidgets/#microbit-emulator) widget added
-    * [#118](https://github.com/jarvisteach/appJar/issues/118) - dynamic library imports
-    * [#117](https://github.com/jarvisteach/appJar/issues/117) - introduced documentation on [packaging](/packaging/)
-    * [#116](https://github.com/jarvisteach/appJar/issues/116) - configurable trough [increments](/pythonWidgets/#set-scales) for a scale
-    * [#115](https://github.com/jarvisteach/appJar/issues/115) - fixed transparency in python 2.7
-    * [#114](https://github.com/jarvisteach/appJar/issues/114) - ability to stop events being propagated
-    * [#112](https://github.com/jarvisteach/appJar/issues/112) - now possible to start with a subWindow (specified in go()) as well as hide() & show() main window
+    * [#119](https://github.com/jarvisteach/appJar/issues/119) - [MicroBit](/pythonDevWidgets/#microbit-emulator) widget added  
+    * [#118](https://github.com/jarvisteach/appJar/issues/118) - dynamic library imports  
+    * [#117](https://github.com/jarvisteach/appJar/issues/117) - introduced documentation on [packaging](/packaging/)  
+    * [#116](https://github.com/jarvisteach/appJar/issues/116) - configurable trough [increments](/pythonWidgets/#set-scales) for a scale  
+    * [#115](https://github.com/jarvisteach/appJar/issues/115) - fixed transparency in python 2.7  
+    * [#114](https://github.com/jarvisteach/appJar/issues/114) - ability to stop events being propagated  
+    * [#112](https://github.com/jarvisteach/appJar/issues/112) - now possible to start with a subWindow (specified in go()) as well as hide() & show() main window  
     * [#110](https://github.com/jarvisteach/appJar/issues/110) - can now configure the number of rows to [show](/pythonWidgets/#set-entries) in an AutoEntry  
-    * [#108](https://github.com/jarvisteach/appJar/issues/108) - Fixed issue with modal [SubWindows](/pythonWidgetGrouping/#startstop-sub-windows)
-    * [#106](https://github.com/jarvisteach/appJar/issues/106) - Function to add an [image button](/pythonWidgets/#add-buttons)
-    * [#102](https://github.com/jarvisteach/appJar/issues/102) - Updates to drag/over [events](/pythonEvents/#make-stuff-happen)
-    * [#103](https://github.com/jarvisteach/appJar/issues/103) - Can now manage event calling when [widgets change](/pythonEvents/#make-stuff-happen)
-    * [#101](https://github.com/jarvisteach/appJar/issues/101) - [Drag n'Drop](/pythonDnD.md) beta support for dnd between applications
-    * [#92](https://github.com/jarvisteach/appJar/issues/92) - Function to [get all entries](/pythonWidgets/#get-entries)
-    * [#75](https://github.com/jarvisteach/appJar/issues/75) - Fix to [destroySubWindow](/pythonWidgetGrouping/#showhide-sub-windows)
+    * [#108](https://github.com/jarvisteach/appJar/issues/108) - Fixed issue with modal [SubWindows](/pythonWidgetGrouping/#startstop-sub-windows)  
+    * [#106](https://github.com/jarvisteach/appJar/issues/106) - Function to add an [image button](/pythonWidgets/#add-buttons)  
+    * [#102](https://github.com/jarvisteach/appJar/issues/102) - Updates to drag/over [events](/pythonEvents/#make-stuff-happen)  
+    * [#103](https://github.com/jarvisteach/appJar/issues/103) - Can now manage event calling when [widgets change](/pythonEvents/#make-stuff-happen)  
+    * [#101](https://github.com/jarvisteach/appJar/issues/101) - [Drag n'Drop](/pythonDnD.md) beta support for dnd between applications  
+    * [#92](https://github.com/jarvisteach/appJar/issues/92) - Function to [get all entries](/pythonWidgets/#get-entries)  
+    * [#75](https://github.com/jarvisteach/appJar/issues/75) - Fix to [destroySubWindow](/pythonWidgetGrouping/#showhide-sub-windows)  
     * [#46](https://github.com/jarvisteach/appJar/issues/46) - Added version details to about box  
-    * [#42](https://github.com/jarvisteach/appJar/issues/42) - Added functionality to [change TickOptionBoxes](/pythonWidgets/#set-optionboxes)
+    * [#42](https://github.com/jarvisteach/appJar/issues/42) - Added functionality to [change TickOptionBoxes](/pythonWidgets/#set-optionboxes)  
     * [#33](https://github.com/jarvisteach/appJar/issues/33) - Added convenience function to [setTreeColours](/pythonDevWidgets/#tree)  
 
 ## Version (0.052)  

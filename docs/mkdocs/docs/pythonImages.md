@@ -5,6 +5,7 @@ ____
 Default image support in appJar assumes no extra libraries. That means it should only support `.GIF` and `.PPM` images.  
 However, code is included to allow the use of `.PNG` and `.JPG` files. appJar will convert these to `.GIF` files, before loading.  
 Converting image files is **SLOW**, so it's best to stick to `.GIF` files!  
+Also, converting PNGs is temperamental in Python 2.7 - another reason to avoid.  
 
 Getting the path for images right can be **TRICKY**  
 It's therefore best to put images in the same folder as your Python code.  
@@ -101,6 +102,35 @@ def changePic(btn):
 
 * `.shrinkImage(title, mod)` & `.growImage(title, mod)`  
     These are wrappers for the above function, simply causing the image to shrink or grow accordingly.
+
+### Image Maps
+It is possible to set up a simple ImageMap - a clickable image, with names linked to different areas.  
+When one of those areas is clicked, a function will be called, passing the name of the area as a parameter.  
+
+* `.setImageMap(title, func, coords)`  
+    This will associate an image map with the named image.  
+    `coords` must contain a dictionary of areas on the map.  
+    When a position on the image is clicked, in one of the areas, the named function will be called, passing in the area's name.  
+    When an unknown position on the image is clicked, *UNKNOWN* will be passed to the function, along with the coordinates.  
+
+```python
+from appJar import gui
+
+# each list of numbers contains the top left x/y and bottom right x/y
+coords = {
+    "America":[32, 17, 242, 167],
+    "South America":[126, 170, 226, 292],
+}
+
+def click(area):
+    app.setLabel("l1", area)
+
+app=gui()
+app.addImage("i1", "map.gif")
+app.setImageMap("i1", click, coords)
+app.addLabel("l1", "<click the map>")
+app.go()
+```
 
 ###Change Image Animation
 If an image is animated, it's possible to control it.

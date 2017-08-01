@@ -7,6 +7,9 @@ Statusbars are also useful features, they allow you to show information about wh
 ___
 Toolbars (sometimes known as ribbons) appear across the top of a GUI.  
 They offer a series of buttons to click, which can be used to change settings/functionality in a GUI.
+
+**NB.** Icons don't work in python 2.7, due to an issue showing PNG images.  
+
 ![Toolbar](img/bars/toolbar_1.png)  
 
 ```python
@@ -26,6 +29,16 @@ app.addToolbar(tools, tbFunc, findIcon=True)
     A set of icons is available, if `findIcon` is set to True, then appJar will attempt to find an icon for each button.  
 
 ####Set Toolbars
+
+* `.setToolbarPinned(pinned=True)`  
+    Will configure the toolbar to be *pinnable*  
+    When the mouse is not over the toolbar it will minimise.  
+
+![ToolbarPinHidden](img/bars/toolbar_pin_hidden.png)
+
+The toolbar will also gain an extra button (a pin) allowing the user to configure it to be pinned or not.  
+
+![ToolbarPin](img/bars/toolbar_pin.png)  
 
 * `.setToolbarIcon(name, icon)`  
     Will set an icon for the corresponding button in the toolbar.  

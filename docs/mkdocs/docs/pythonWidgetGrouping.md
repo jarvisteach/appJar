@@ -418,7 +418,7 @@ app.go()
     Used to start and stop defining a *SubWindow*  
     Setting a `title` will override the `name` as a title for the *SubWindow*.   
     Setting `modal` to True, will prevent the user from interacting with the parent window until the *SubWindow* is closed.  
-    Setting `transient` to True, will cause the *SubWindow* to respond to parent window events such as hide & show.  
+    Setting `transient` to True, will cause the *SubWindow* to respond to parent window events such as hide, show & move.  
     Setting `blocking` to True, will stop execution of your code once the *SubWindow* is shown, until the user closes it.  
 
 * `.openSubWindow(title)`  

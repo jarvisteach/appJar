@@ -7,16 +7,59 @@ We've incorporated a couple of ways to include drag and drop functionality in **
 
 ##Drag'n Drop Between Widgets
 ---
-There is a beta version of drag and drop between labels.  
+There is a beta version of drag and drop **between labels**.  
 
 * `.set XXX DragFunction(name, [startDragFunction, stopDragFunction]`)  
-    Set functions to call whenever the mouse button is clicked and dragged.  
-    The first function will be called when the mouse is initially clicked.  
+    Set functions to call when the mouse button is dragged from the named widget, or released over any widget.  
+    The first function will be called when the mouse is initially draged.  
     The second function will be called when the mouse is released.  
+
+```python
+from appJar import gui
+
+def drag(widget):
+    print("Dragged from:", widget)
+
+def drop(widget):
+    print("Dropped on:", widget)
+
+app = gui("dnd Demo")
+
+app.setFont(20)
+app.setBg("SlateGrey")
+app.setFg("yellow")
+
+app.addLabel("dragLab", "Drag Me")
+app.addHorizontalSeparator()
+app.addLabel("dropLab", "Drop Here")
+
+app.setLabelDragFunction("dragLab", [drag, drop])
+
+app.go()
+```
 
 ##Drag'n Drop Between Applications
 ---
-There is also a beta version of drag and drop between applications - at the moment, this has been seen to work on Mac OSX, Raspberry Pi, and Windows 7 - let us know of success on other versions of Windows!  
+There is also a beta version of drag and drop between applications - at the moment, this has been seen to work on Mac OSX 10.11, Raspberry Pi, and Windows 7 - let us know of success on other distributions!  
+
+```python
+from appJar import gui
+
+def externalDrop(data):
+    print("Data dropped:", data)
+
+app = gui("External dnd Demo")
+
+app.setFont(20)
+app.setBg("SlateGrey")
+app.setFg("yellow")
+
+app.addLabel("dropLab", "Drop Here")
+app.setLabelDropTarget("dropLab", externalDrop)
+
+app.go()
+```
+
 
 Certain widgets can be registered to receive *Drop* events:  
 
@@ -24,6 +67,8 @@ Certain widgets can be registered to receive *Drop* events:
 * `.setTextAreaDropTarget(title, function=None, replace=True)`  
 * `.setImageDropTarget(title, function=None, replace=True)`  
 * `.setLabelDropTarget(title, function=None, replace=True)`  
+* `.setMessageDropTarget(title, function=None)`  
+* `.setListBoxDropTarget(title, function=None, replace=True)`  
 
 Then, if you drag a file or a URI onto one of these widgets, the filename/URI will be copied.  
 Or, if it's an image, the image will be replaced.  
@@ -33,6 +78,8 @@ If you'd rather append the URI/filename - set `replace` to be False.
 If a function has been set, it will be called, passing in the filename/URI as the only paramter.  
 
 There is currently no support for registering *Drag* events.  
+
+* `.set XXX DragSource(title, function=None)`  
 
 ##Beta
 ---

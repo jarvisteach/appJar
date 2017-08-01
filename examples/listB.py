@@ -1,3 +1,5 @@
+import sys
+sys.path.append("../")
 from appJar import gui
 
 def press(btn):
@@ -13,7 +15,7 @@ app=gui()
 app.addListBox("l1", items, 0, 0)
 app.addListBox("l2", items, 0, 1)
 app.setListBoxRows("l1",15)
-app.setListSingle("l1", False)
+app.setListBoxMulti("l1")
 app.addButton("DEL", press)
 app.addEntry("e1")
 app.addButton("ADD", add)

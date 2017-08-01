@@ -5,12 +5,19 @@ from appJar import gui
 
 def here(data):
     print(data)
+    return("here")
 
 app=gui()
 app.addLabel("l1", "DnD")
 
 app.addEntry("dnd")
 app.setEntryDropTarget("dnd", None, replace=False)
+
+app.addListBox("l1", [])
+app.setListBoxDropTarget("l1")
+
+app.addMessage("m1", "lots of message text...")
+app.setMessageDragSource("m1", function=here)
 
 app.addTextArea("text")
 app.setTextAreaDropTarget("text", None)

@@ -28,6 +28,7 @@ def login(btn):
         app.infoBox("Success", "Access granted")
         app.setTabbedFrameDisableAllTabs("Tabs", False)
         app.setToolbarEnabled()
+        app.setToolbarPinned()
         app.setToolbarButtonDisabled("LOGOUT", False)
         app.enableMenubar()
 
@@ -87,6 +88,7 @@ def toolbar(btn):
             app.setToolbarIcon("FULL-SCREEN", "FULL-SCREEN-EXIT")
     elif btn == "CALENDAR": app.showSubWindow("DatePicker")
     elif btn == "ADDRESS-BOOK": app.showSubWindow("AddressBook")
+    elif btn == "MAP": app.showSubWindow("Maps")
 
 # called when scale/meters are changed
 def scale(name):
@@ -146,13 +148,13 @@ app = gui("ShowCase")
 app.showSplash("appJar Showcase")
 
 # add a simple toolbar
-app.addToolbar(["EXIT", "LOGOUT", "FILL", "PIE-CHART", "CALENDAR", "ADDRESS-BOOK", "FULL-SCREEN"], toolbar, findIcon=True)
+app.addToolbar(["EXIT", "LOGOUT", "FILL", "PIE-CHART", "CALENDAR", "ADDRESS-BOOK", "MAP", "FULL-SCREEN"], toolbar, findIcon=True)
 
 #app.createMenu("Test")
 app.addMenuPreferences(toolbar)
 #app.addMenuItem("APPMENU", "About", toolbar)
 app.addMenuItem("Test", "EXIT", toolbar, shortcut="Option-Control-Shift-Alt-Command-B", underline=2)
-app.addMenuList("Tabs", ["Login", "Lists", "Properties", "Meters", "Drag`nDrop", "Calculator", "Panes", "Labels"], changeTab)
+app.addMenuList("Tabs", ["Login", "Lists", "Properties", "Meters", "Drag'nDrop", "Calculator", "Panes", "Labels"], changeTab)
 app.addMenuItem("Test", "LOGOUT", toolbar, shortcut="Shift-Command-B", underline=3)
 app.addMenuItem("Test", "FILL", toolbar, shortcut="Control-Shift-C", underline=1)
 app.addSubMenu("Test", "Bobs")
@@ -383,6 +385,11 @@ app.addNumericEntry("Percentage")
 def changePie(btn):
     app.setPieChart("Nationality", app.getOptionBox("Nationality"), app.getEntry("Percentage"))
 app.addButton("Update", changePie)
+app.stopSubWindow()
+
+app.startSubWindow("Maps")
+app.setSticky("news")
+app.addGoogleMap("g1")
 app.stopSubWindow()
 
 # date picker

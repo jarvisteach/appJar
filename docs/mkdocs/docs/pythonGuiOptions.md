@@ -18,7 +18,7 @@ Some basic configuration for the size, position, transparency, etc. of the GUI.
 * `.setTransparency(percentage)`  
     Sets how transparent the GUI is. Between 0 and 100%.
 
-###Size & Locaiton
+###Size & Location
 
 * `.hide()` & `.show()`  
     Used to hide and show the main window.  
@@ -65,8 +65,19 @@ It's possible to change the default colours and fonts for widgets in the GUI.
 
 ###Colour
 
-* `.setBg(colour)`  
-    Set the background colour for the entire GUI. This should affect all widgets, and will override any backgrounds set before.
+* `.setFg(colour, override=False)`  
+    Set a foreground colour for the entire GUI. By default, this will only apply to labels (including on RadioButtons & CheckButtons).  
+    **NB.** To change the colour inside interactive widgets (Entry, TextArea, SpinBox, OptionMenu, etc), set `override` to be True.  
+
+* `.setBg(colour, override=False, tint=False)`  
+    Set the background colour for the GUI. This should affect all widgets, and will override any backgrounds set before.  
+    **NB.** this doesn't change the background colour of interactive widgets (Entry, TextArea, etc). If you also want to update those, set `override` to True.  
+    It's also possible to set a `tint` - this will determine an appropriate colour to set mouse-over, highlight colours, etc. It is set automatically if `override` is True.  
+
+* `.setFg(colour, override=False)`  
+    Set the foreground colour for the entire GUI. This sould affect all widgets, and will overrirde any existing colours.  
+    If override is set to True, then even the foreground
+
 
 ###Font
 

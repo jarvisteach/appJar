@@ -88,8 +88,13 @@ The following are supported by most widgets:
 ###Fancy Options  
 ---
 * `.set XXX Tooltip(name, value)`  
-    Sets a tooltip for the widget.
-    The specified text will be displayed in a small pop-up, when the mouse is left over the widget.
+    Sets a tooltip for the named widget, with the specified value.  
+    The specified value will be displayed in a small pop-up, when the mouse is left over the widget.  
+    If called a second time, it will update the text of the tooltip.  
+    See [Tooltips](/pythonDialogs/#tooltips) for more info.  
+
+* `.enable XXX Tooltip(name)` & `.disable XXX Tooltip(name)`  
+    These will enable or disable the named tooltip. When disabled, it will not show-up.  
 
 * `.set XXX Cursor(name, value)`  
     Sets the cursor shown, when the mouse goes over this widget.  

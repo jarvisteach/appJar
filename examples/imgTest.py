@@ -46,9 +46,13 @@ app.startLabelFrame("Image Data", 0, 0)
 app.addImageData("imgdata", photo)
 app.stopLabelFrame()
 
+def imgMap(pos):
+    print(pos)
 
-app.startLabelFrame("Simple", 0, 1)
+app.startLabelFrame("ImageMap", 0, 1)
 app.addImage("simple", "balloons.gif")
+mapData = {"Yellow": [15,52,77,138], "Red":[75,1,129,138], "White":[137,15,184,127]}
+app.setImageMap("simple", imgMap, mapData)
 app.stopLabelFrame()
 
 app.startLabelFrame("Mouse Over", 0, 2)

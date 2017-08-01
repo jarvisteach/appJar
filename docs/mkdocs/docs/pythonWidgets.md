@@ -48,6 +48,11 @@ app.go()
 * `.addEmptyLabel(title)`  
     Does the same as add a *label*, except there's no parameter to set any text.
 
+* `.addSelectableLabel(title, text=None)`  
+    This adds a label whose text can be selected with the mouse.  
+    This is really just a *read-only* entry, disguised to look like a label.  
+    But it seems to do the trick...  
+
 * `.addFlashLabel(title, text=None)`  
     This adds a flashing *label*, that will alternate between the foreground and background colours.
 
@@ -104,8 +109,9 @@ There are four special-case entries:
 * SecretEntry - this will show stars, instead of the letters typed - useful for capturing passwords.
 * AutoEntry - this takes a list of words to provide auto-completion.  
 * ValidationEntry - can be set to valid/invalid/waiting - will colour the border green/red/black and show a ✔/✖/★  
+* FileEntry/DirectoryEntry - provides a button to select a file/directory and auto-populates the entry  
 
-![Entries](img/1_entries.gif)
+![Entries](img/1_entries.png)
 
 ```python
 from appJar import gui
@@ -116,8 +122,11 @@ app.addEntry("e1")
 app.addEntry("e2")
 app.addEntry("e3")
 app.addLabelEntry("Name")
+app.addValidationEntry("v1")
+app.addFileEntry("f1")
 
 app.setEntryDefault("e2", "Age here")
+app.setEntryValid("v1")
 
 app.go()
 ```
@@ -129,6 +138,8 @@ app.go()
 * `.addSecretEntry(title)`
 * `.addAutoEntry(title, words)`  
 * `.addValidationEntry(title)`  
+* `.addFileEntry(title)`  
+* `.addDirectoryEntry(title)`  
 
     Each of these will add the specified type of Entry, using the title provided.
 
@@ -160,6 +171,7 @@ app.go()
 * `.setAutoEntryNumRows(title, rows)`  
     This will set the number of rows to display in an AutoEntry.  
     NB. this is limited to the depth of the GUI - if there is no space, then no rows will be displayed. 
+    ![AutoEntry](img/1_autoEntry.png)  
 
 * `.clearEntry(title, callFunction=True)`  
     This will clear the contents of the specified entry box.
@@ -313,6 +325,12 @@ app.go()
 * `.addCheckBox(title)`  
     This creates a CheckBox, with the specified title.  
 
+* `.addNamedCheckBox(name, title)`  
+    By default, it's not possible to have two CheckBoxes with the same text.  
+    If that's required, a named CheckBox should be used.  
+    This creates a CheckBox, with the specified title.  
+    The name will be displayed next to the CheckBox, and the title passed to the function as a unique ID.  
+
 ####Set CheckBoxes
 * `.setCheckBox(title, ticked=True, callFunction=True)`  
     This will tick the CheckBox, or untick it if ticked is set to False.  
@@ -371,10 +389,11 @@ app.go()
 ```
 
 ####Set OptionBoxes
-* `.changeOptionBox(title, newOptions, index)`  
+* `.changeOptionBox(title, newOptions, index, callFunction=False)`  
     This will replace the contents of the OptionBox, with the new list provided.  
     If specified, the indexed item will be selected - this can be a position or an item name.  
     If setting a TickOptionBox, the old list will be replaced with the new list. None will be ticked. `index` will be ignored.  
+    Set ```callFunction``` to be True, if you want to call any associated `change` functions.  
 
 * `.setOptionBox(title, position, value=True, callFunction=True)`  
     This will select the item in the list, at the position specified.  
@@ -466,11 +485,23 @@ app.go()
     Adds a list of items to the end of the List Box, selecting the last one.  
 
 ####Set ListBoxes
-* `.updateListItems(title, items)`  
-    Replace the contents of the specified ListBox with the new values.  
+* `.setListItem(title, item, oldVal, newVal, first=False)`  
+    `.setListItemAtPos(title, item, pos, newVal)`  
+    Changes the specified list item to the new value.  
+    If `first` is set to True, only the first item found will be changed.  
+    Otherwise, all occurences of the specified value will be changed.  
 
 * `.removeListItem(title, item)`  
+    `.removeListItemAtPos(title, pos)`  
     Remove the specified item from the  specified ListBox.  
+    Will only remove the first item that matches the parameter.  
+
+* `.clearListBox(title)`  
+    Removes all items from the specified ListBox.  
+
+* `.updateListBox(title, items, select=False)`  
+    Replace the contents of the specified ListBox with the new values.  
+    If you set `select` to be True, the last item in the list will be selected.  
 
 ```python
 from appJar import gui
@@ -486,8 +517,10 @@ app.addButton("press",  press)
 app.go()
 ```
 
-* `.clearListBox(title)`  
-    Removes all items from the specified ListBox.  
+* `.selectListItem(title, item, callFunction=True)`  
+    `.selectListItemAtPos(title, pos, callFunction=True)`  
+    Selects the specified item in the specified ListBox.  
+    Set ```callFunction``` to be False, if you don't want to call any associated functions.  
 
 * `.setListBoxRows(title, rows)`  
     Sets how many rows to display in the specified ListBox.  
@@ -495,9 +528,9 @@ app.go()
 * `.setListBoxMulti(list, multi=True)`  
     Configures whether the specified ListBox is single or multi select.  
 
-* `.selectListItem(title, item, callFunction=True)`  
-    Selects the specified item in the specified ListBox.  
-    Set ```callFunction``` to be False, if you don't want to call any associated functions.  
+* `.setListBoxGroup(list, group=True)`  
+    Adds the named ListBox to a group of selectable ListBoxes.  
+    All ListBoxes in the group can have items selected at the same time.  
 
 * `.setListItemBg(title, item, colour)` & `.setListItemFg(title, item, colour)`  
     `.setListItemAtPosBg(title, item, colour)` & `.setListItemAtPosFg(title, item, colour)`  
@@ -861,12 +894,12 @@ from appJar import gui
 def showDate(btn):
     print(app.getDatePicker("dp"))
 
-    app=gui()
-    app.addDatePicker("dp")
-    app.addButton("GET", showDate)
-    app.setDatePickerRange("dp", 1900, 2100)
-    app.setDatePicker("dp")
-    app.go()
+app=gui()
+app.addDatePicker("dp")
+app.addButton("GET", showDate)
+app.setDatePickerRange("dp", 1900, 2100)
+app.setDatePicker("dp")
+app.go()
 ```
 ####Add DatePickers  
 
@@ -881,6 +914,9 @@ def showDate(btn):
 * `.setDatePickerRange(title, startYear, endYear=None)`  
     Set the range for the named DatePicker.  
     If endYear is None, the current Year will be used.  
+
+* `.setDatePickerChangeFunction(title, function)`  
+    Set a function to call when the DatePicker is changed.  
 
 ####Get DatePickers  
 
