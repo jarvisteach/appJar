@@ -2,7 +2,7 @@ from distutils.core import setup
 setup(
     name="appJar",
     packages=["appJar"],
-    version="0.06",
+    version="0.061",
     description="An easy-to-use, feature-rich GUI wrapper for tkinter. Designed specifically for use in the classroom, but powerful enough to be used anywhere.",
     author="Richard Jarvis",
     author_email="info@appjar.info",
@@ -26,6 +26,6 @@ setup(
 
     ],
     package_data = {
-        "appJar": ["lib/*", "lib/tkdnd2.8/*", "lib/tkdnd2.8/tcl_files/*", "lib/tkdnd2.8/tcl_libs/*", "resources/icons/*", "examples/showcase.py"]
+        "appJar": ["lib/*.py", "lib/*.txt", "lib/tkdnd2.8/*.tcl", "lib/tkdnd2.8/tcl_files/*.tcl", "lib/tkdnd2.8/tcl_libs/*", "resources/icons/*", "examples/showcase.py"]
     }
 )

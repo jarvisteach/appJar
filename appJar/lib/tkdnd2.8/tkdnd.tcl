@@ -72,7 +72,11 @@ namespace eval ::tkdnd {
 
     switch [tk windowingsystem] {
       x11 {
-        set _windowingsystem x11
+        if { [string first "arm" $::tcl_platform(machine) ] == 0 } {
+          set _windowingsystem pi
+        } else {
+          set _windowingsystem x11
+        }
       }
       win32 -
       windows {
@@ -142,10 +146,15 @@ namespace eval ::tkdnd {
 
     source $dir/$tcl_dir/tkdnd_generic.tcl
     switch $_windowingsystem {
+      pi {
+        source $dir/$tcl_dir/tkdnd_unix.tcl
+        set _platform_namespace xdnd
+		load $dir/$lib_dir/libtkdnd2.8_arm[info sharedlibextension] tkdnd
+      }
       x11 {
         source $dir/$tcl_dir/tkdnd_unix.tcl
         set _platform_namespace xdnd
-		load $dir/$lib_dir/libtkdnd2.8_lin64.so tkdnd
+		load $dir/$lib_dir/libtkdnd2.8_lin64[info sharedlibextension] tkdnd
       }
       win32 {
 		source $dir/$tcl_dir/tkdnd_windows.tcl
@@ -219,6 +228,7 @@ proc ::tkdnd::drop_target { mode path { types {} } } {
   switch -- $mode {
     register {
       switch $_windowingsystem {
+        pi -
         x11 {
           _register_types $path [winfo toplevel $path] $types
         }
@@ -245,6 +255,7 @@ proc ::tkdnd::drop_target { mode path { types {} } } {
     }
     unregister {
       switch $_windowingsystem {
+        pi -
         x11 {
         }
         win32 -
@@ -343,6 +354,7 @@ proc ::tkdnd::_init_drag { button source state rootX rootY X Y } {
     set action refuse_drop
     variable _windowingsystem
     switch $_windowingsystem {
+      pi -
       x11 {
         set action [xdnd::_dodragdrop $source $actions $types $data $button]
       }

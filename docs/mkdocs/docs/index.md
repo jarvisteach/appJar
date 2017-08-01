@@ -1,130 +1,169 @@
-#appJar
+# appJar  
+*The easiest way to create GUIs in Python.*  
+
 ---
-This is a Python library for creating **quick** and **easy** GUIs, designed primarily for use in the **classroom**.  
 
-It has no dependencies, other than [Python](https://www.python.org/downloads/) (Python 3.x or 2.7) and relies on Python's built-in [tkinter](https://docs.python.org/3.5/library/tkinter.html) library.  
+Written by a teacher, in the classroom, for students.  
 
-It's designed to be as easy to set-up as possible, specifically with schools in mind, so can just be downloaded and used.  
-See the [installation guidelines](Install.md) for more information.
+**appJar** is designed to run on as many versions of [Python](https://www.python.org/downloads/) as possible - so it should work in your school.  
 
-###Let's make a sandwich
+There are no other dependencies - simply [download](https://github.com/RWBA/appJar/blob/appJar/releases/appJar.zip?raw=true), unzip, and put it in your code folder.  
+Check out the [installation](/install) instructions for other ways to get **appJar** working.  
+
+GUIs in Python are hard, there's a huge amount of [boilerplate code](https://en.wikipedia.org/wiki/Boilerplate_code) required to get things working - so we hide all that.  
+We're also not big fans of lots of parameters, so we keep them to a minimum, instead giving functions to get & set most things.  
+
+### Hello appJar  
 ---
-Making a [GUI](https://en.wikipedia.org/wiki/Graphical_user_interface) (using appJar) is just like making a [sandwich](https://en.wikipedia.org/wiki/Sandwich)!  
 
-You need a slice of bread on the top and bottom, and then a bunch of fillings in the middle ...
+[GUIs](https://en.wikipedia.org/wiki/Graphical_user_interface) in **appJar** require three steps.  
+
+* First, import the library & create a GUI variable.  
+    (from now on, we do everything to the GUI variable)  
 
 ```python
 # import the library
 from appJar import gui
-
-# top slice - CREATE the GUI
+# create a GUI variable called app
 app = gui()
-
-### fillings go here ###
-
-# bottom slice - START the GUI
-app.go()
 ```
 
-If you forget a slice of bread - you haven't got a sandwich!  
-Oh, and if you try to put fillings under the bottom-slice, then they won't be in the sandwich!
-
-###Add some fillings...
----
-When making a sandwich, you could just stuff it with fillings:  
-
-* `addFilling('cheese', 'cheddar')`  
-* `addFilling('ham', 'smoked')`  
-
-But it's often nice to prepare the fillings too:  
-
-* `setFilling('cheese', 'grated')` 
-* `setFilling('ham', 'sliced')` 
+* Then, using the gui variable, add and configure some widgets:  
+    (if you've tried [turtle](https://docs.python.org/3.6/library/turtle.html) this will all look very familiar)  
 
 ```python
-# import the library
-from appJar import gui
-
-# top slice - CREATE the GUI
-app = gui()
-
-### fillings go here ###
+# add & configure widgets - widgets get a name, to help referencing them later
 app.addLabel("title", "Welcome to appJar")
 app.setLabelBg("title", "red")
-
-# bottom slice - START the GUI
-app.go()
 ```
-![simpleApp](img/simpleApp.png)
 
-And, that's it...  
-The more [fillings](pythonWidgets.md) you put in your sandwich, and the more time you spend making them [look nice](pythonWidgetOptions.md), the better it will taste!
-
-###Foot-long sub?
----
-Of course, for most of us, a simple sandwich isn't enough...  
-We want to make a meal out of it!  
-
-In which case, you're going to want to arrange your fillings a bit more cleverly!
-
-* 3 slices of cheese along the bottom  
-* Alternating slices of tomato & cucumber on top  
-* Then a mixture of onions and peppers  
-* Finally, the sauce!  
-
-By default, in an appJar GUI, the fillings are simply stacked on top of each other.  
-
-However, filling a sub is very similar to filling a spreadsheet.  
-Simply tell each filling what layer (row) it's on, and what column it's in.  
-And, if you're not planning on chopping a filling, it might stretch (span) across more than one column.  
-
-[See here](pythonWidgetLayout.md) for more.  
+* Finally, start the GUI:  
+    (**NB.** don't put any code after this line)  
 
 ```python
-from appJar import gui
-
-# function called by pressing the buttons
-def press(btn):
-    if btn=="Cancel":
-        app.stop()
-    else:
-        print("User:", app.getEntry('user'), "Pass:", app.getEntry('pass'))
-
-app = gui()
-
-app.addLabel("title", "Welcome to appJar", 0, 0, 2)  # Row 0,Column 0,Span 2
-app.addLabel("user", "Username:", 1, 0)              # Row 1,Column 0
-app.addEntry("user", 1, 1)                           # Row 1,Column 1
-app.addLabel("pass", "Password:", 2, 0)              # Row 2,Column 0
-app.addSecretEntry("pass", 2, 1)                     # Row 2,Column 1
-app.addButtons(["Submit", "Cancel"], press, 3, 0, 2) # Row 3,Column 0,Span 2
-
-app.setEntryFocus("user")
-
+# start the GUI
 app.go()
 ```
 
-![testLog](img/testLog.png)
+* And, that's it: 
 
-###Any extras?  
+    ![simpleApp](img/simpleApp.png)  
+
+### Interactivity    
 ---
-It's possible to make changes to how the GUI looks  
-For starters, you can specify a name and size for your GUI when you make it:  
+Of course, the whole point of making a GUI, is to be interactive - this requires **events**.  
 
-* `app=gui("Login Window", "400x200")`  
+The idea behind [event-driven programming](https://en.wikipedia.org/wiki/Event-driven_programming) is that each time the user clicks, presses or drags something (the event) the GUI should respond.  
 
-And, you can choose what kind of bread, and whether it's toasted:   
+* First, add some more widgets ([Entry Boxes](/pythonWidgets/#entry)), for the user to interact with:
 
-* `app.setBg("Brown")`
-* `app.setFont(20)`
+```python
+app.addLabelEntry("Username")
+app.addLabelSecretEntry("Password")
+```
 
-[See here](pythonGuiOptions.md) for more.  
+* Then, we'll need a **function** - a block of code to call, when an event happens:  
 
-![testLog](img/testLog2.png)
+```python
+def press(button):
+    if button == "Cancel":
+        app.stop()
+    else:
+        usr = app.getEntry("Username")
+        pwd = app.getEntry("Password")
+        print("User:", usr, "Pass:", pwd)
+```
 
 
-###Make your own!
+* Finally, some widgets ([buttons](/pythonWidgets/#button)) to create the events:  
+
+```python
+# link the buttons to the function called press
+app.addButtons(["Submit", "Cancel"], press)
+```
+
+* We now have an interactive GUI:  
+
+    ![testLog](img/testLog.png)
+
+When the user presses a button, the `press` function is called, passing the name of the button as a parameter.  
+
+### Appearance counts
 ---
-That's about it for now.  
-Have a look around, discover all of the different [fillings](pythonWidgets.md) available.  
-And, investigate how best to [present ](pythonWidgetGrouping.md) your sandwich!
+As well as changing widgets, you can also change the way the [GUI looks](/pythonGuiOptions):  
+
+* For starters, you can specify a name and size for your GUI, when you create the variable:  
+
+```python
+app = gui("Login Window", "400x200")
+```
+
+* As well as changing widget appearance, you can also change the general GUI's appearance:  
+
+```python
+app.setBg("orange")
+app.setFont(18)
+```
+
+* You can even specify where you want the cursor to be when the GUI starts:  
+
+```python
+app.setFocus("Username")
+```
+
+* It now looks a bit better:  
+
+    ![testLog](img/testLog2.png)  
+
+    (**NB.** We also set some other colours on the label - see [below](#full-code-listing)) 
+
+###  Make your own  
+---  
+And, that's all you need to know. Check out:  
+
+* All the different [widgets](/pythonWidgets) available.  
+* Our support for [images](/pythonImages) and [sound](pythonSound).  
+* How to include [toolbars, menubars & statusbars](/pythonBars).  
+* How to create simple [pop-ups](/pythonDialogs).  
+* How to use a [grid layout](/pythonWidgetLayout).  
+* How to use [containers](/pythonWidgetGrouping) for more advanced layouts.  
+
+### Full code-listing  
+---  
+
+Below is the full code-listing created on this page:  
+
+```python
+# import the library
+from appJar import gui
+
+# handle button events
+def press(button):
+    if button == "Cancel":
+        app.stop()
+    else:
+        usr = app.getEntry("Username")
+        pwd = app.getEntry("Password")
+        print("User:", usr, "Pass:", pwd)
+
+# create a GUI variable called app
+app = gui("Login Window", "400x200")
+app.setBg("orange")
+app.setFont(18)
+
+# add & configure widgets - widgets get a name, to help referencing them later
+app.addLabel("title", "Welcome to appJar")
+app.setLabelBg("title", "blue")
+app.setLabelFg("title", "orange")
+
+app.addLabelEntry("Username")
+app.addLabelSecretEntry("Password")
+
+# link the buttons to the function called press
+app.addButtons(["Submit", "Cancel"], press)
+
+app.setFocus("Username")
+
+# start the GUI
+app.go()
+```
