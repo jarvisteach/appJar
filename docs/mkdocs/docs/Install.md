@@ -28,7 +28,7 @@ from appJar import gui
 ##Multi-user Set-up  
 If you're trying to install appJar in a school, everyone can download their own copy ([see above](/install/#single-user-set-up)), or:  
 
-* Put the **appJar folder** in a **shared location** (eg. a network drive): `E:\PYLIB`  
+* Put the **appJar folder** in a **shared location** (eg. a folder on a network drive): `E:\PYLIB`  
 * Then have pupils include the following 2-lines at the start of their code:
 
 ```python

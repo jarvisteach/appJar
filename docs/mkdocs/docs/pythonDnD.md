@@ -61,7 +61,7 @@ app.go()
 ```
 
 
-Certain widgets can be registered to receive *Drop* events:  
+Only certain widgets can be registered to receive *Drop* events:  
 
 * `.setEntryDropTarget(title, function=None, replace=True)`  
 * `.setTextAreaDropTarget(title, function=None, replace=True)`  
