@@ -213,17 +213,14 @@ app.go()
 
 ####Add Grids  
 
-* `.addGrid(title, data, action=None, addRow=False)`  
+* `.addGrid(title, data, action=None, addRow=None)`  
     Receives a (jagged) 2D list of values. The first list should be the headers for the grid, the rest will contain each row of values.  
 
     If `action` is set, a button will be created, at the end of each row, calling the specified function.  
-    If `addRow` is True, then an additional row will appear at the end, with entry boxes and an additional button.  
+    If `addRow` is set, then an additional row will appear at the end of the grid, with entry boxes and a button that calls the function.  
 
     The **Press** button at the end of each data row will pass the values of that row to the function as a list.  
     The **Press** button at the end of the entry row will call the function, passing its name as a parameter.  
-
-    NB. you shouldn't set `addRow` to be True, unless `action` has been set with a function.
-
 
 ####Get Grids  
 
@@ -242,15 +239,13 @@ app.go()
     Adds a new row of data to the end of the existing grid.  
     It will be positioned at the bottom of the grid, above the entry boxes if present.  
 
-To have the **Press** button on the entries row add a new row of data, try the following:
-
+To have the **Press** button on the entries row add a new row of data, try the following:  
 ```python
-def press(btn):
-    if btn == "Press":     # the button on the entries row
-        data = app.getGridEntries("g1")
-        app.addGridRow("g1", data)
-```
-
+    def press(btn):
+        if btn == "Press":     # the button on the entries row
+            data = app.getGridEntries("g1")
+            app.addGridRow("g1", data)
+``` 
 
 ###MatPlotLib
 ---

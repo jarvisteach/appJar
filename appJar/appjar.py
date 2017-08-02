@@ -1294,7 +1294,7 @@ class gui(object):
     
 
     # function to turn on the splash screen
-    def showSplash(self, text="appJar", fill="red", stripe="black", fg="white", font=44):
+    def showSplash(self, text="appJar", fill="#FF0000", stripe="#000000", fg="#FFFFFF", font=44):
         self.splashConfig= {'text':text, 'fill':fill, 'stripe':stripe, 'fg':fg, 'font':font}
 
     #########################
@@ -1346,7 +1346,6 @@ class gui(object):
         elif level == "WARNING": logger.warning(msg)
         elif level == "INFO": logger.info(msg)
         elif level == "DEBUG": logger.debug(msg)
-
 
 #####################################
 # Event Loop - must always be called at end
@@ -1428,7 +1427,11 @@ class gui(object):
         # start the main loop
         try:
             self.topLevel.mainloop()
-        except(KeyboardInterrupt, SystemExit):
+        except(KeyboardInterrupt, SystemExit) as e:
+            self.debug("appJar stopped through ^c or exit()")
+            self.stop()
+        except Exception as e:
+            self.exception(e)
             self.stop()
 
     def setStopFunction(self, function):
@@ -2957,10 +2960,10 @@ class gui(object):
         return self.getContainer()["bg"]
 
     def __getContainerFg(self):
-        fg = "black"
-        try: fg = self.containerStack[-1]['fg']
-        except: pass
-        return fg
+        try:
+            return self.containerStack[-1]['fg']
+        except:
+            return "#000000"
 
     # two important things here:
     # grid - sticky: position of widget in its space (side or fill)
@@ -3397,7 +3400,7 @@ class gui(object):
             colspan=0,
             rowspan=0,
             action=None,
-            addRow=False):
+            addRow=None):
         self.__verifyItem(self.n_grids, title, True)
         grid = SimpleGrid(
             self.getContainer(),
@@ -6125,7 +6128,7 @@ class gui(object):
             self.getContainer(),
             relief=RAISED,
             borderwidth=2,
-            bg="white",
+            bg="#FFFFFF",
             highlightthickness=0,
             takefocus=1)
         self.__positionWidget(frame, row, column, colspan, rowspan, "NSEW")
@@ -6420,9 +6423,9 @@ class gui(object):
             self.warn("Entry " + str(title) + " is not a validation entry. Unable to set INVALID.")
             return
 
-        entry.config(highlightbackground="red", highlightcolor="red", fg="red")
+        entry.config(highlightbackground="#FF0000", highlightcolor="#FF0000", fg="#FF0000")
         entry.config(highlightthickness=2)
-        entry.lab.config(text='\u2716', fg="red")
+        entry.lab.config(text='\u2716', fg="#FF0000")
         entry.lab.DEFAULT_TEXT = entry.lab.cget("text")
 
     def setEntryWaitingValidation(self, title):
@@ -6431,9 +6434,9 @@ class gui(object):
             self.warn("Entry " + str(title) + " is not a validation entry. Unable to set WAITING VALID.")
             return
 
-        entry.config(highlightbackground="black", highlightcolor="black", fg="black")
+        entry.config(highlightbackground="#000000", highlightcolor="#000000", fg="#000000")
         entry.config(highlightthickness=1)
-        entry.lab.config(text='\u2731', fg="black")
+        entry.lab.config(text='\u2731', fg="#000000")
         entry.lab.DEFAULT_TEXT = entry.lab.cget("text")
 
     def addAutoEntry(
@@ -7919,9 +7922,9 @@ class gui(object):
 class Meter(Frame):
 
     def __init__(self, master, width=100, height=20,
-            bg='white', fillColour='orchid1',
+            bg='#FFFFFF', fillColour='orchid1',
             value=0.0, text=None, font=None,
-            fg='black', *args, **kw):
+            fg='#000000', *args, **kw):
 
         # call the super constructor
         Frame.__init__(self, master, bg=bg,
@@ -8117,8 +8120,8 @@ class Meter(Frame):
 class SplitMeter(Meter):
 
     def __init__(self, master, width=100, height=20,
-            bg='white', leftfillColour='red', rightfillColour='blue',
-            value=0.0, text=None, font=None, fg='black', *args, **kw):
+            bg='#FFFFFF', leftfillColour='#FF0000', rightfillColour='#0000FF',
+            value=0.0, text=None, font=None, fg='#000000', *args, **kw):
 
         self._leftFill = leftfillColour
         self._rightFill = rightfillColour
@@ -8172,10 +8175,10 @@ class SplitMeter(Meter):
 #####################################
 class DualMeter(SplitMeter):
 
-    def __init__(self, master, width=100, height=20, bg='white',
-            leftfillColour='pink', rightfillColour='green',
+    def __init__(self, master, width=100, height=20, bg='#FFFFFF',
+            leftfillColour='#FFC0CB', rightfillColour='#00FF00',
             value=None, text=None,
-            font=None, fg='black', *args, **kw):
+            font=None, fg='#000000', *args, **kw):
 
         SplitMeter.__init__(self, master, width=width, height=height,
                     bg=bg, leftfillColour=leftfillColour,
@@ -8262,11 +8265,11 @@ class TabbedFrame(Frame):
         self.changeEvent = None
 
         # selected tab & all panes
-        self.activeFg = "blue"
-        self.activeBg = "white"
+        self.activeFg = "#0000FF"
+        self.activeBg = "#FFFFFF"
 
         # other tabs
-        self.inactiveFg = "black"
+        self.inactiveFg = "#000000"
         self.inactiveBg = "grey"
 
         # disabled tabs
@@ -8770,7 +8773,7 @@ class PieChart(Canvas):
         "#f6c4e1",
         "#f79cd4"]
 
-    def __init__(self, container, fracs, bg="green"):
+    def __init__(self, container, fracs, bg="#00FF00"):
         Canvas.__init__(self, container, bd=0, highlightthickness=0, bg=bg)
         self.fracs = fracs
         self.arcs = []
@@ -9628,7 +9631,7 @@ class AjScrolledText(TextParent, scrolledtext.ScrolledText):
 class SelectableLabel(Entry):
     def __init__(self, parent, **opts):
         Entry.__init__(self, parent)
-        self.configure(relief=FLAT, state="readonly", readonlybackground='white', fg='black', highlightthickness=0)
+        self.configure(relief=FLAT, state="readonly", readonlybackground='#FFFFFF', fg='#000000', highlightthickness=0)
         self.var = StringVar(parent)
         self.configure(textvariable=self.var)
 
@@ -9952,7 +9955,7 @@ class SimpleEntryDialog(Dialog):
     def body(self, master):
         Label(master, text=self.question).grid(row=0)
         self.e1 = Entry(master)
-        self.l1 = Label(master, fg="red")
+        self.l1 = Label(master, fg="#FF0000")
         self.e1.grid(row=1)
         self.l1.grid(row=2)
         self.e1.bind("<Key>", self.clearError)
@@ -10056,13 +10059,17 @@ class SimpleGrid(Frame):
                 family=buttonFont.actual("family"),
                 size=buttonFont.actual("size"))
 
-    def __init__(self, parent, title, data, action=None, addRow=False, **opts):
+    def __init__(self, parent, title, data, action=None, addRow=None, **opts):
+        # SimpleGrid is a Frame, holding a MainCanvas & 2x ScrollBars (vsb & hsb), holding a Frame (GridContainer)
         if "buttonFont" in opts:
             self.buttonFont = opts.pop("buttonFont")
         else:
             self.buttonFont = font.Font(family="Helvetica", size=12)
 
         Frame.__init__(self, parent, **opts)
+
+        self.addRowEntries = addRow
+        self.data = []
 
         if "font" in opts:
             self.gdFont = opts["font"]
@@ -10089,10 +10096,10 @@ class SimpleGrid(Frame):
         self.selectedCells = OrderedDict()
 
         # colours
-        self.cellHeadingBg = "DarkGray"      # HEADING BG
-        self.cellBg = "LightCyan"        # CELL BG
-        self.cellOverBg = "Silver"       # mouse over BG
-        self.cellSelectedBg = "LightGray"     # selected cell BG
+        self.cellHeadingBg = "#A9A9A9"      # HEADING BG
+        self.cellBg = "#E0FFFF"        # CELL BG
+        self.cellOverBg = "#C0C0C0"       # mouse over BG
+        self.cellSelectedBg = "#D3D3D3"     # selected cell BG
 
         # add a canvas for scrolling
         self.mainCanvas = Canvas(
@@ -10101,10 +10108,9 @@ class SimpleGrid(Frame):
             highlightthickness=2,
             bg=self.cget("bg"))
         vsb = Scrollbar(self, orient="vertical", command=self.mainCanvas.yview)
-        hsb = Scrollbar(
-            self,
-            orient="horizontal",
-            command=self.mainCanvas.xview)
+        hsb = Scrollbar( self, orient="horizontal", command=self.mainCanvas.xview)
+
+        self.config(bg="yellow")
 
         # pack them in
         vsb.pack(side="right", fill="y")
@@ -10144,24 +10150,35 @@ class SimpleGrid(Frame):
                     event,
                     arg))
 
-        self.__addRows(data, addRow)
+        self.__addRows(data)
 
-    def __addRows(self, data, addEntryRow=False):
+    # not finished
+    def deleteRow(self, position):
+        if 0 > position >= self.numRows:
+            raise Exception("Invalid row number.")
+        else:
+            for loop in range(position, self.numRows -2):
+                self.data[position] = self.data[position+1]
+            self.numRows -= 1
+                
+
+    def __addRows(self, data):
         # loop through each row
         for rowNum in range(self.numRows):
             self.__addRow(rowNum, data[rowNum])
 
         # add a row of entry boxes...
-        if addEntryRow:
-            self.__addEntryBoxes()
+        self.__addEntryBoxes()
 
     def addRow(self, rowData):
         self.__removeEntryBoxes()
         self.__addRow(self.numRows, rowData)
         self.numRows += 1
         self.__addEntryBoxes()
+        self.__scrollToBottom()
 
     def __addRow(self, rowNum, rowData):
+        self.data.append(rowData)
         celContents = []
         # then the cells in that row
         for cellNum in range(self.numColumns):
@@ -10210,7 +10227,7 @@ class SimpleGrid(Frame):
                 else:
                     but = Button(
                         widg,
-                        font=self.buttonFont,
+#                        font=self.buttonFont,
                         text="Press",
                         command=gui.MAKE_FUNC(
                             self.action,
@@ -10220,6 +10237,7 @@ class SimpleGrid(Frame):
                 widg.grid(row=rowNum, column=cellNum + 1, sticky=N + E + S + W)
 
     def __removeEntryBoxes(self):
+        if self.addRowEntries is None: return
         for e in self.entries:
             e.lab.grid_forget()
             e.place_forget()
@@ -10227,6 +10245,7 @@ class SimpleGrid(Frame):
         self.ent_but.place_forget()
 
     def __addEntryBoxes(self):
+        if self.addRowEntries is None: return
         self.entries = []
         for cellNum in range(self.numColumns):
             name = "GR" + str(cellNum)
@@ -10235,7 +10254,7 @@ class SimpleGrid(Frame):
 
             # self.__buildEntry(name, self.gridContainer)
             ent = Entry(lab, width=5)
-            ent.place(relx=0.5, rely=0.5, anchor=CENTER)
+            ent.pack(expand=True, fill='both')
             self.entries.append(ent)
             ent.lab = lab
 
@@ -10250,10 +10269,10 @@ class SimpleGrid(Frame):
             font=self.buttonFont,
             text="Press",
             command=gui.MAKE_FUNC(
-                self.action,
+                self.addRowEntries,
                 "newRow"))
         self.ent_but.lab = lab
-        self.ent_but.place(relx=0.5, rely=0.5, anchor=CENTER)
+        self.ent_but.pack(expand=True, fill='both')
 
     def getEntries(self):
         return [e.get() for e in self.entries]
@@ -10284,6 +10303,9 @@ class SimpleGrid(Frame):
                 self.mainCanvas.yview_scroll(-1 * 2, "units")
             elif event.num == 5:
                 self.mainCanvas.yview_scroll(2, "units")
+
+    def __scrollToBottom(self):
+        self.mainCanvas.yview('moveto', 1)
 
     def __refreshGrids(self, event):
         '''Reset the scroll region to encompass the inner frame'''
@@ -10365,7 +10387,7 @@ class MicroBitSimulator(Frame):
 
 
 class SplashScreen(Toplevel):
-    def __init__(self, parent, text="appJar", fill="red", stripe="black", fg="white", font=44):
+    def __init__(self, parent, text="appJar", fill="#FF0000", stripe="#000000", fg="#FFFFFF", font=44):
         Toplevel.__init__(self, parent)
 
         lab = Label(self, bg=stripe, fg=fg, text=text, height=3, width=50)
