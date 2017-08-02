@@ -54,7 +54,7 @@ winsound = None
 FigureCanvasTkAgg = Figure = None # matplotlib
 parseString = TreeItem = TreeNode = None # ajTree
 ajTreeNode = ajTreeData = None
-urlencode = urlopen = urlretrieve = quote_plus = json = None # GoogleMap
+base64 = urlencode = urlopen = urlretrieve = quote_plus = json = None # GoogleMap
 
 # details
 __author__ = "Richard Jarvis"
@@ -655,11 +655,12 @@ class gui(object):
                     types = False
 
     def __loadURL(self):
-        global urlencode, urlopen, urlretrieve, quote_plus, json
+        global base64, urlencode, urlopen, urlretrieve, quote_plus, json
         if urlencode is None:
             try: # python 2
                 from urllib import urlencode, urlopen, urlretrieve, quote_plus
                 import json
+                import base64
             except ImportError: # python 3
                 try:
                     from urllib.parse import urlencode
@@ -667,8 +668,9 @@ class gui(object):
                     from urllib.request import urlopen
                     from urllib.request import urlretrieve
                     import json
+                    import base64
                 except:
-                    urlencode = urlopen = urlretrieve = quote_plus = json = False
+                    base64 = urlencode = urlopen = urlretrieve = quote_plus = json = False
 
     def __loadNanojpeg(self):
         global nanojpeg, array
@@ -10759,7 +10761,10 @@ class GoogleMap(LabelFrame):
             self.params["center"] = self.getCurrentLocation()
         self.__buildQueryURL()
         try:
-            return urlopen(self.request).read()
+            u = urlopen(self.request)
+            data = u.read()
+            u.close()
+            return base64.encodestring(data)
         except Exception as e:
             logging.getLogger("appJar").exception(e)
             return None
