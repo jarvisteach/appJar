@@ -3400,7 +3400,7 @@ class gui(object):
             colspan=0,
             rowspan=0,
             action=None,
-            addRow=False):
+            addRow=None):
         self.__verifyItem(self.n_grids, title, True)
         grid = SimpleGrid(
             self.getContainer(),
@@ -10059,14 +10059,17 @@ class SimpleGrid(Frame):
                 family=buttonFont.actual("family"),
                 size=buttonFont.actual("size"))
 
-    def __init__(self, parent, title, data, action=None, addRow=False, **opts):
-        # SimpleGrid is a Frame, holding a MainCanvas & 2x ScrollBara (vsb & hsb), holding a Frame (GridContainer)
+    def __init__(self, parent, title, data, action=None, addRow=None, **opts):
+        # SimpleGrid is a Frame, holding a MainCanvas & 2x ScrollBars (vsb & hsb), holding a Frame (GridContainer)
         if "buttonFont" in opts:
             self.buttonFont = opts.pop("buttonFont")
         else:
             self.buttonFont = font.Font(family="Helvetica", size=12)
 
         Frame.__init__(self, parent, **opts)
+
+        self.addRowEntries = addRow
+        self.data = []
 
         if "font" in opts:
             self.gdFont = opts["font"]
@@ -10147,24 +10150,35 @@ class SimpleGrid(Frame):
                     event,
                     arg))
 
-        self.__addRows(data, addRow)
+        self.__addRows(data)
 
-    def __addRows(self, data, addEntryRow=False):
+    # not finished
+    def deleteRow(self, position):
+        if 0 > position >= self.numRows:
+            raise Exception("Invalid row number.")
+        else:
+            for loop in range(position, self.numRows -2):
+                self.data[position] = self.data[position+1]
+            self.numRows -= 1
+                
+
+    def __addRows(self, data):
         # loop through each row
         for rowNum in range(self.numRows):
             self.__addRow(rowNum, data[rowNum])
 
         # add a row of entry boxes...
-        if addEntryRow:
-            self.__addEntryBoxes()
+        self.__addEntryBoxes()
 
     def addRow(self, rowData):
         self.__removeEntryBoxes()
         self.__addRow(self.numRows, rowData)
         self.numRows += 1
         self.__addEntryBoxes()
+        self.__scrollToBottom()
 
     def __addRow(self, rowNum, rowData):
+        self.data.append(rowData)
         celContents = []
         # then the cells in that row
         for cellNum in range(self.numColumns):
@@ -10181,13 +10195,13 @@ class SimpleGrid(Frame):
                 lab.configure(
                     relief=RIDGE,
                     text=val,
-#                    font=self.ghFont,
+                    font=self.ghFont,
                     background=self.cellHeadingBg)
             else:
                 lab.configure(
                     relief=RIDGE,
                     text=val,
-#                    font=self.gdFont,
+                    font=self.gdFont,
                     background=self.cellBg)
                 lab.bind("<Enter>", self.__gridCellEnter)
                 lab.bind("<Leave>", self.__gridCellLeave)
@@ -10207,7 +10221,7 @@ class SimpleGrid(Frame):
                 if rowNum == 0:
                     widg.configure(
                         text="Action",
-#                        font=self.ghFont,
+                        font=self.ghFont,
                         background=self.cellHeadingBg)
                 # add a button
                 else:
@@ -10223,6 +10237,7 @@ class SimpleGrid(Frame):
                 widg.grid(row=rowNum, column=cellNum + 1, sticky=N + E + S + W)
 
     def __removeEntryBoxes(self):
+        if self.addRowEntries is None: return
         for e in self.entries:
             e.lab.grid_forget()
             e.place_forget()
@@ -10230,6 +10245,7 @@ class SimpleGrid(Frame):
         self.ent_but.place_forget()
 
     def __addEntryBoxes(self):
+        if self.addRowEntries is None: return
         self.entries = []
         for cellNum in range(self.numColumns):
             name = "GR" + str(cellNum)
@@ -10253,7 +10269,7 @@ class SimpleGrid(Frame):
             font=self.buttonFont,
             text="Press",
             command=gui.MAKE_FUNC(
-                self.action,
+                self.addRowEntries,
                 "newRow"))
         self.ent_but.lab = lab
         self.ent_but.pack(expand=True, fill='both')
@@ -10287,6 +10303,9 @@ class SimpleGrid(Frame):
                 self.mainCanvas.yview_scroll(-1 * 2, "units")
             elif event.num == 5:
                 self.mainCanvas.yview_scroll(2, "units")
+
+    def __scrollToBottom(self):
+        self.mainCanvas.yview('moveto', 1)
 
     def __refreshGrids(self, event):
         '''Reset the scroll region to encompass the inner frame'''

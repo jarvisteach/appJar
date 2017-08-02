@@ -37,14 +37,32 @@ app.addEntry("size", 1, 1)
 app.stopLabelFrame()
 
 app.addGrid(
-    'airflow_data_raw',
+    'a',
     [
         ['Nozzle Diameter', 'Number of Nozzles', 'Differential Pressure', 'Static Pressure', 'Voltage', 'Current', 'Frequency'],
     ],
     row=1,
     column=0,
     colspan=3,
+)
+app.addGrid(
+    'b',
+    [
+        ['Nozzle Diameter', 'Number of Nozzles', 'Differential Pressure', 'Static Pressure', 'Voltage', 'Current', 'Frequency'],
+    ],
+    row=2,
+    column=0,
+    colspan=3,
     action=press,
+)
+app.addGrid(
+    'c',
+    [
+        ['Nozzle Diameter', 'Number of Nozzles', 'Differential Pressure', 'Static Pressure', 'Voltage', 'Current', 'Frequency'],
+    ],
+    row=3,
+    column=0,
+    colspan=3,
     addRow=True
 )
 
