@@ -721,7 +721,7 @@ class gui(object):
                     TreeItem = TreeNode = parseString = False
                     ajTreeNode = ajTreeData = False
                     return
-            
+
                 #####################################
                 # Tree Widget Class
                 # https://www.safaribooksonline.com/library/view/python-cookbook-2nd/0596007973/ch11s11.html
@@ -1293,7 +1293,6 @@ class gui(object):
             else:
                 self.warn("Unsupported widget: " + section)
                 continue
-    
 
     # function to turn on the splash screen
     def showSplash(self, text="appJar", fill="#FF0000", stripe="#000000", fg="#FFFFFF", font=44):
@@ -3222,7 +3221,8 @@ class gui(object):
             # add to top of stack
             self.containerStack[-1]['widgets'] = True
             tabTitle = self.containerStack[-1]['title'] + "__" + title
-            self.__addContainer(tabTitle, self.C_TAB, self.containerStack[-1]['container'].addTab(title), 0, 1, sticky)
+            self.__addContainer(tabTitle,
+                self.C_TAB, self.containerStack[-1]['container'].addTab(title), 0, 1, sticky)
         elif fType == self.C_PANEDFRAME:
             # if we previously put a frame for widgets
             # remove it
@@ -3406,7 +3406,10 @@ class gui(object):
             colspan=0,
             rowspan=0,
             action=None,
-            addRow=None):
+            addRow=None,
+            actionColumnText="Action",
+            actionButtonLabel="Press",
+            addRowButtonLabel="Add"):
         self.__verifyItem(self.n_grids, title, True)
         grid = SimpleGrid(
             self.getContainer(),
@@ -3414,6 +3417,9 @@ class gui(object):
             data,
             action,
             addRow,
+            actionColumnText,
+            actionButtonLabel,
+            addRowButtonLabel,
             buttonFont=self.buttonFont)
         grid.config(font=self.gridFont, background=self.__getContainerBg())
         self.__positionWidget(
@@ -3433,7 +3439,8 @@ class gui(object):
         return self.__verifyItem(self.n_grids, title).getSelectedCells()
 
     def addGridRow(self, title, data):
-        self.__verifyItem(self.n_grids, title).addRow(data)
+        grid=self.__verifyItem(self.n_grids, title)
+        grid.addRow(data)
 
     ########################################
 
@@ -5600,7 +5607,7 @@ class gui(object):
             if first:
                 break
 
-    # functions to config 
+    # functions to config
     def setListItemAtPosBg(self, title, pos, col):
         lb = self.__verifyItem(self.n_lbs, title)
         lb.itemconfig(pos, bg=col)
@@ -6464,7 +6471,7 @@ class gui(object):
     def setAutoEntryNumRows(self, title, rows):
         entry = self.__verifyItem(self.n_entries, title)
         entry.setNumRows(rows)
-        
+
     def addLabelAutoEntry(
             self,
             title,
@@ -6697,7 +6704,7 @@ class gui(object):
 
         current = self.n_entryVars[name].get()
 
-        # clear & remove default 
+        # clear & remove default
         if mode == "set" or (mode in [ "in", "clear"] and entry.showingDefault):
             var.set("")
             entry.showingDefault = False
@@ -7633,12 +7640,12 @@ class gui(object):
         self.disableMenu("EDIT")
 
     def appJarAbout(self, menu=None):
-        self.infoBox("About appJar", 
-                        "---\n" + 
+        self.infoBox("About appJar",
+                        "---\n" +
                         __copyright__ + "\n" +
-                        "---\n\t" + 
+                        "---\n\t" +
                         self.SHOW_VERSION().replace("\n", "\n\t") + "\n" +
-                        "---\n" + 
+                        "---\n" +
                         self.SHOW_PATHS() + "\n" +
                         "---")
 
@@ -7909,9 +7916,14 @@ class gui(object):
         else:
             return col[1]
 
-    def textBox(self, title, question):
+    def textBox(self, title, question, defaultValue=None):
         self.topLevel.update_idletasks()
-        return TextDialog(self.topLevel, title, question).result
+        if defaultValue is not None:
+            defaultVar = StringVar(self.topLevel)
+            defaultVar.set(defaultValue)
+        else:
+            defaultVar = None
+        return TextDialog(self.topLevel, title, question, defaultVar=defaultVar).result
 
     def numberBox(self, title, question):
         return self.numBox(title, question)
@@ -8132,7 +8144,7 @@ class SplitMeter(Meter):
         self._leftFill = leftfillColour
         self._rightFill = rightfillColour
 
-        Meter.__init__(self, master, width=width, height=height, 
+        Meter.__init__(self, master, width=width, height=height,
                     bg=bg, value=value, text=text, font=font,
                     fg=fg, *args, **kw)
 
@@ -9666,7 +9678,7 @@ class SelectableLabel(Entry):
             Entry.config(self, cnf, **kw)
         else:
             super(Entry, self).config(cnf, **kw)
-        
+
 
 #######################
 # Frame with built in scrollbars and canvas for placing stuff on
@@ -9771,9 +9783,9 @@ class ScrollPane(Frame):
             direction = -1
         elif event.num == 5:
             direction = 1
-        elif event.delta > 100: 
+        elif event.delta > 100:
             direction = int(-1 * (event.delta/120))
-        elif event.delta > 0: 
+        elif event.delta > 0:
             direction = -1 * event.delta
         elif event.delta < -100:
             direction = int(-1 * (event.delta/120))
@@ -9833,7 +9845,7 @@ class ScrollPane(Frame):
                     self.canvas.xview_scroll(1, "pages")
                 else:
                     self.canvas.yview_scroll(1, "pages")
-            
+
             # home & end keys
             elif event.keysym == "Home": # event.keycode == 36
                 if ctrl:
@@ -9845,7 +9857,7 @@ class ScrollPane(Frame):
                     self.canvas.xview_moveto(1.0)
                 else:
                     self.canvas.yview_moveto(1.0)
-            
+
             return "break"
         else:
             pass # shouldn't happen
@@ -9938,9 +9950,10 @@ class Dialog(Toplevel):
 
 class SimpleEntryDialog(Dialog):
 
-    def __init__(self, parent, title, question):
+    def __init__(self, parent, title, question, defaultvar=None):
         self.error = False
         self.question = question
+        self.defaultVar=defaultvar
         if PYTHON2:
             Dialog.__init__(self, parent, title)
         else:
@@ -9961,6 +9974,10 @@ class SimpleEntryDialog(Dialog):
     def body(self, master):
         Label(master, text=self.question).grid(row=0)
         self.e1 = Entry(master)
+        if self.defaultVar is not None:
+            self.e1.var = self.defaultVar
+            self.e1.config(textvariable=self.e1.var)
+            self.e1.var.auto_id = None
         self.l1 = Label(master, fg="#FF0000")
         self.e1.grid(row=1)
         self.l1.grid(row=2)
@@ -9972,11 +9989,11 @@ class SimpleEntryDialog(Dialog):
 
 class TextDialog(SimpleEntryDialog):
 
-    def __init__(self, parent, title, question):
+    def __init__(self, parent, title, question, defaultVar=None):
         if PYTHON2:
-            SimpleEntryDialog.__init__(self, parent, title, question)
+            SimpleEntryDialog.__init__(self, parent, title, question, defaultVar)
         else:
-            super(TextDialog, self).__init__(parent, title, question)
+            super(TextDialog, self).__init__(parent, title, question, defaultVar)
 
     def validate(self):
         res = self.e1.get()
@@ -10039,6 +10056,9 @@ class SubWindow(Toplevel):
 
 class SimpleGrid(Frame):
 
+    rows = []
+    addRow = False
+
     def config(self, cnf=None, **kw):
         self.configure(cnf, **kw)
 
@@ -10065,7 +10085,7 @@ class SimpleGrid(Frame):
                 family=buttonFont.actual("family"),
                 size=buttonFont.actual("size"))
 
-    def __init__(self, parent, title, data, action=None, addRow=None, **opts):
+    def __init__(self, parent, title, data, action=None, addRow=None, actionColumnText="Action", actionButtonLabel="Press", addRowButtonLabel="Add", **opts):
         # SimpleGrid is a Frame, holding a MainCanvas & 2x ScrollBars (vsb & hsb), holding a Frame (GridContainer)
         if "buttonFont" in opts:
             self.buttonFont = opts.pop("buttonFont")
@@ -10092,6 +10112,9 @@ class SimpleGrid(Frame):
         self.entries = []
         self.numColumns = 0
         self.numRows = len(data)
+        self.actionColumnText=actionColumnText
+        self.actionButtonLabel=actionButtonLabel
+        self.addRowButtonLabel = addRowButtonLabel
         # find out the max number of cells in a row
         for rowNum in range(self.numRows):
             if len(data[rowNum]) > self.numColumns:
@@ -10168,8 +10191,12 @@ class SimpleGrid(Frame):
             self.numRows -= 1
                 
 
+    def addRows(self, data):
+        self.__addRows(data)
+
     def __addRows(self, data):
         # loop through each row
+        self.rows = data
         for rowNum in range(self.numRows):
             self.__addRow(rowNum, data[rowNum])
 
@@ -10226,18 +10253,16 @@ class SimpleGrid(Frame):
                 # add the title
                 if rowNum == 0:
                     widg.configure(
-                        text="Action",
+                        text=self.actionColumnText,
                         font=self.ghFont,
                         background=self.cellHeadingBg)
                 # add a button
                 else:
                     but = Button(
                         widg,
-#                        font=self.buttonFont,
-                        text="Press",
-                        command=gui.MAKE_FUNC(
-                            self.action,
-                            celContents))
+                        font=self.buttonFont,
+                        text=self.actionButtonLabel,
+                        command=gui.MAKE_FUNC(self.action, rowNum))
                     but.place(relx=0.5, rely=0.5, anchor=CENTER)
 
                 widg.grid(row=rowNum, column=cellNum + 1, sticky=N + E + S + W)
@@ -10273,7 +10298,7 @@ class SimpleGrid(Frame):
         self.ent_but = Button(
             lab,
             font=self.buttonFont,
-            text="Press",
+            text=self.addRowButtonLabel,
             command=gui.MAKE_FUNC(
                 self.addRowEntries,
                 "newRow"))
