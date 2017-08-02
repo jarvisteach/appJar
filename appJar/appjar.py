@@ -10569,7 +10569,10 @@ class GoogleMap(LabelFrame):
         self.__setMapParams()
 
         imgObj = None
-        self.mapData = self.getMapData()
+        self.rawData = None
+        self.mapData = None
+        self.getMapData()
+
         # if we got some map data then load it
         if self.mapData is not None:
             try:
@@ -10685,13 +10688,17 @@ class GoogleMap(LabelFrame):
         self.parent.after(0, self.updateMap())
 
     def saveTile(self, location):
-        try:
-            with open(location, "wb") as fh:
-                fh.write(self.mapData)
-            logging.getLogger("appJar").info("Map data written to file: " + str(location))
-            return True
-        except  Exception as e:
-            logging.getLogger("appJar").exception(e)
+        if self.rawData is not None:
+            try:
+                with open(location, "wb") as fh:
+                    fh.write(self.rawData)
+                logging.getLogger("appJar").info("Map data written to file: " + str(location))
+                return True
+            except  Exception as e:
+                logging.getLogger("appJar").exception(e)
+                return False
+        else:
+            logging.getLogger("appJar").error("Unable to save map data - no data available")
             return False
 
     def setSize(self, size):
@@ -10727,7 +10734,7 @@ class GoogleMap(LabelFrame):
             self.parent.after(0, self.updateMap())
 
     def updateMap(self):
-        self.mapData = self.getMapData()
+        self.getMapData()
         if self.mapData is not None:
             imgObj = PhotoImage(data=self.mapData)
             self.canvas.itemconfig(self.image_on_canvas, image=imgObj)
@@ -10762,12 +10769,13 @@ class GoogleMap(LabelFrame):
         self.__buildQueryURL()
         try:
             u = urlopen(self.request)
-            data = u.read()
+            self.rawData = u.read()
             u.close()
-            return base64.encodestring(data)
+            self.mapData = base64.encodestring(self.rawData)
         except Exception as e:
             logging.getLogger("appJar").exception(e)
-            return None
+            self.mapData = None
+            self.rawData = None
 
     def getMapFile(self, fileName):
         """ will query GoogleMaps & download the iamge into the named file """
