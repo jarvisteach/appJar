@@ -2904,6 +2904,8 @@ class gui(object):
                 widget.config(highlightbackground=bg)
                 if isDarwin:
                     widget.config(background=bg)
+            elif widgType in ["Radiobutton", "Checkbutton"]:
+                widget.config(activebackground=bg, highlightbackground=bg)
             else:
                 widget.config(highlightbackground=bg)
 
@@ -2923,6 +2925,8 @@ class gui(object):
             elif widgType == "OptionMenu":
                 widget.config(activebackground=gui.TINT(widget, bg))
                 widget["menu"].config(activebackground=gui.TINT(widget, bg))
+            elif widgType in ["Radiobutton", "Checkbutton"]:
+                widget.config(activebackground=gui.TINT(widget, bg))
 
         # if this is forced - change everything
         if external:
@@ -8616,7 +8620,7 @@ class Properties(LabelFrame):
                 for prop_key in self.cbs:
                     self.cbs[prop_key][k] = v
                     if k == "bg":# and gui.GET_PLATFORM() == gui.LINUX:
-                        self.cbs[prop_key].config(highlightbackground=v, activebackground=v)
+                        gui.SET_WIDGET_BG(self.cbs[prop_key], v, True)
 
         # remove any props the LabelFrame can't handle
         kw.pop("state", None)
