@@ -23,7 +23,11 @@ app.addGrid("g1",
     ["Clive", 28, "Male"],
     ["Betty", 51, "Female"]],
     action=press,
-    addRow=press)
+    addRow=press,
+    actionColumnText = "Delete",
+    actionButtonLabel = "This One",
+    addRowButtonLabel = "Add New One"
+    )
 
 
 app.addButton("PRESS ME", press)
