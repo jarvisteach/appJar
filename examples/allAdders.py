@@ -92,6 +92,7 @@ def changeFg(btn):
     app.setFg(app.colourBox(),
         app.getCheckBox("OVER") or app.getMenuCheckBox("Colours", "Override")
     )
+
 def changeBg(btn):
     app.setBg(app.colourBox(),
         app.getCheckBox("OVER") or app.getMenuCheckBox("Colours", "Override"),

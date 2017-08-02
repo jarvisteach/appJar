@@ -11,6 +11,8 @@
 * Issues Resolved:
     * [#192](https://github.com/jarvisteach/appJar/issues/192) - Fixed PNG image support in pyhton 2.7 - specifically for toolbars  
     * [#189](https://github.com/jarvisteach/appJar/issues/189) - **VERY** basic support for [ttk](/pythonDevWidgets/#ttk)
+    * [#186](https://github.com/jarvisteach/appJar/issues/186) - Changes to [Unicode](/specialCharacters) support  
+    * [#185](https://github.com/jarvisteach/appJar/issues/185) - All add functions now return the widget  
     * [#184](https://github.com/jarvisteach/appJar/issues/184) - [Groupable List Boxes](/pythonWidgets/#set-listboxes)
     * [#182](https://github.com/jarvisteach/appJar/issues/182) - Added a link to source for [GoogleMaps](/pythonDevWidgets/#googlemaps)
     * [#181](https://github.com/jarvisteach/appJar/issues/181) - [Disabling toolbars](/pythonBars/#set-toolbars) will also disable a pinned icon
@@ -19,6 +21,7 @@
     * [#173](https://github.com/jarvisteach/appJar/issues/173) - New functions to [Set ListBoxes](/pythonWidgets/#set-listboxes)  
     * [#161](https://github.com/jarvisteach/appJar/issues/161) - [NamedCheckBoxes](/pythonWidgets/#add-checkboxes)  
     * [#148](https://github.com/jarvisteach/appJar/issues/148) - Improved support for [MouseOver Events](/pythonEvents/#user-actions)  
+    * [#151](https://github.com/jarvisteach/appJar/issues/151) & [#158](https://github.com/jarvisteach/appJar/issues/158) - Some fixes to [Grid Widget](/pythonDevWidgets/#grid)  
     * [#138](https://github.com/jarvisteach/appJar/issues/138) - Can now register a [Change Event](/pythonWidgets/#set-datepicker) on DatePicker  
     * [#137](https://github.com/jarvisteach/appJar/issues/137) - [File Entries](/pythonWidgets/#entry)  
     * [#136](https://github.com/jarvisteach/appJar/issues/136) - Simple [GoogleMaps](/pythonDevWidgets/#googlemaps) widget   
@@ -28,6 +31,7 @@
     * [#101](https://github.com/jarvisteach/appJar/issues/101) - More work implementing [Drag n'Drop](/pythonDnD)  
     * [#73](https://github.com/jarvisteach/appJar/issues/73) - Toolbars are now [pinnable](/pythonBars/#set-toolbars)  
     * [#59](https://github.com/jarvisteach/appJar/issues/59) - [SelectableLabels](/pythonWidgets/#add-labels)  
+    * [#7](https://github.com/jarvisteach/appJar/issues/7) -  Can now [Set Foreground](/pythonGuiOptions/#colour) across the whole GUI  
 
 ## Version (0.061)  
 

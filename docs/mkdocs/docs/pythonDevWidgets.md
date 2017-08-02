@@ -216,11 +216,18 @@ app.go()
 * `.addGrid(title, data, action=None, addRow=None)`  
     Receives a (jagged) 2D list of values. The first list should be the headers for the grid, the rest will contain each row of values.  
 
-    If `action` is set, a button will be created, at the end of each row, calling the specified function.  
-    If `addRow` is set, then an additional row will appear at the end of the grid, with entry boxes and a button that calls the function.  
+    If `action` is set, a button will be created, at the end of each row, calling the specified function. It will pass a list of values, representing the selected row.   
 
-    The **Press** button at the end of each data row will pass the values of that row to the function as a list.  
-    The **Press** button at the end of the entry row will call the function, passing its name as a parameter.  
+    ![Grid](img/dev/grid_2.png)   
+
+    If `addRow` is set, then an additional row will appear at the end of the grid, with entry boxes and a button to call the specified function.  
+
+    ![Grid](img/dev/grid_3.png)   
+
+    If both parameters are set to a function, then both buttons at the end of each rowm and a row of Entry boxes will be shown:  
+
+    ![Grid](img/dev/grid_4.png)   
+
 
 ####Get Grids  
 

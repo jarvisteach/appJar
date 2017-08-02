@@ -74,11 +74,6 @@ It's possible to change the default colours and fonts for widgets in the GUI.
     **NB.** this doesn't change the background colour of interactive widgets (Entry, TextArea, etc). If you also want to update those, set `override` to True.  
     It's also possible to set a `tint` - this will determine an appropriate colour to set mouse-over, highlight colours, etc. It is set automatically if `override` is True.  
 
-* `.setFg(colour, override=False)`  
-    Set the foreground colour for the entire GUI. This sould affect all widgets, and will overrirde any existing colours.  
-    If override is set to True, then even the foreground
-
-
 ###Font
 
 You can describe a font using a String or a Tuple. There are three properties that can be set:  
