@@ -10,6 +10,8 @@ def press(*args):
 
 app=gui("GridTest")
 
+app.setBg("red")
+
 
 app.startLabelFrame("Standard Conditions", 0, 0)
 app.addLabel("st1", "Temperature", 0, 0)

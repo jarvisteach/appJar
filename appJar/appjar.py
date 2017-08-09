@@ -9785,6 +9785,20 @@ class ScrollPane(Frame):
 
         self.interior.bind('<Configure>', self.__configureInterior)
 
+    def config(self, **kw):
+        self.configure(**kw)
+
+    def configure(self, **kw):
+        kw = gui.CLEAN_CONFIG_DICTIONARY(**kw)
+        if "bg" in kw:
+            self.canvas.config(bg=kw["bg"])
+            self.interior.config(bg=kw["bg"])
+
+        if PYTHON2:
+            Frame.config(self, **kw)
+        else:
+            super(Frame, self).config(**kw)
+
     # track changes to the canvas and frame width and sync them,
     # http://www.scriptscoop2.com/t/35d742299f35/python-tkinter-scrollbar-for-frame.html
     def __configureInterior(self, event):
@@ -10214,6 +10228,8 @@ class SimpleGrid(ScrollPane):
     def configure(self, cnf=None, **kw):
         kw = gui.CLEAN_CONFIG_DICTIONARY(**kw)
         if "bg" in kw:
+            self.gridContainer.config(bg=kw["bg"])
+            self.canvas.config(bg=kw["bg"])
             self.interior.config(bg=kw["bg"])
         if "activebackground" in kw:
             self.cellSelectedBg = kw.pop("activebackground")
