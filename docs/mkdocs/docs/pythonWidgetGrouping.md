@@ -1,6 +1,6 @@
 #Grouping Widgets  
 ----
-The standard way of using appJar, is simply to place all widgets into a single window.  
+The standard way of using *appJar*, is simply to place all widgets into a single window.  
 Everything is grouped into that single window, and any changes affect everything in that window.  
 
 It's sometimes desirable to group widgets together within a window.  
@@ -30,6 +30,10 @@ def addRows(btn):
 ----
 A way of grouping widgets into a box, with a label at the top of the box.  
 Position the *LabelFrame* within the grid, then position widgets inside the *LabelFrame*  
+
+**NB.** *LabelFrames* have a different [stickiness](/pythonWidgetLayout/#widget-positioning) to the *appJar* GUI - they only stick widgets to the `w` (left) side.  
+If you want your widgets to stretch across the *LabelFrame*, like the rest of *appJar*, you will need to call `app.setSticky("ew")` after starting the *LabelFrame*.  
+
 ![LabelFrame](img/layouts/labelFrame.png)
 ```python
 from appJar import gui
@@ -427,7 +431,7 @@ app.go()
 ####Show/Hide Sub Windows
 
 * `.go(startWindow=None)`  
-    If you set a *SubWindow* as the ```startWindow``` appJar will start-up showing the named *SubWindow*.  
+    If you set a *SubWindow* as the ```startWindow``` *appJar* will start-up showing the named *SubWindow*.  
     The main window will be minimized.  
 
 * `.showSubWindow(title)`  
