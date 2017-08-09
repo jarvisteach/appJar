@@ -9580,6 +9580,7 @@ class AutoScrollbar(Scrollbar):
 
     def __init__(self, parent, **opts):
         Scrollbar.__init__(self, parent, **opts)
+        self.hidden = None
 
     # a scrollbar that hides itself if it's not needed
     # only works if you use the grid geometry manager
@@ -9587,8 +9588,10 @@ class AutoScrollbar(Scrollbar):
         if float(lo) <= 0.0 and float(hi) >= 1.0:
             # grid_remove is currently missing from Tkinter!
             self.tk.call("grid", "remove", self)
+            self.hidden = True
         else:
             self.grid()
+            self.hidden = False
         Scrollbar.set(self, lo, hi)
 
     def pack(self, **kw):
@@ -9755,32 +9758,24 @@ class ScrollPane(Frame):
         self.grid_rowconfigure(0, weight=1)
         self.grid_columnconfigure(0, weight=1)
 
-        vscrollbar = Scrollbar(self)
-        hscrollbar = Scrollbar(self, orient=HORIZONTAL)
-        opts['yscrollcommand'] = vscrollbar.set
-        opts['xscrollcommand'] = hscrollbar.set
+        self.vscrollbar = AutoScrollbar(self)
+        self.hscrollbar = AutoScrollbar(self, orient=HORIZONTAL)
+        opts['yscrollcommand'] = self.vscrollbar.set
+        opts['xscrollcommand'] = self.hscrollbar.set
 
         self.canvas = Canvas(self, **opts)
         self.canvas.config(highlightthickness=0)
 
-        vscrollbar.grid(row=0, column=1, sticky=N + S + E)
-        hscrollbar.grid(row=1, column=0, sticky=E + W + S)
+        self.vscrollbar.grid(row=0, column=1, sticky=N + S + E)
+        self.hscrollbar.grid(row=1, column=0, sticky=E + W + S)
         self.canvas.grid(row=0, column=0, sticky=N + S + E + W)
 
-        vscrollbar.config(command=self.canvas.yview)
-        hscrollbar.config(command=self.canvas.xview)
-
-        self.canvas.bind("<Key-Prior>", self.__keyPressed)
-        self.canvas.bind("<Key-Next>", self.__keyPressed)
-        self.canvas.bind("<Key-Up>", self.__keyPressed)
-        self.canvas.bind("<Key-Down>", self.__keyPressed)
-        self.canvas.bind("<Key-Left>", self.__keyPressed)
-        self.canvas.bind("<Key-Right>", self.__keyPressed)
-        self.canvas.bind("<Home>", self.__keyPressed)
-        self.canvas.bind("<End>", self.__keyPressed)
+        self.vscrollbar.config(command=self.canvas.yview)
+        self.hscrollbar.config(command=self.canvas.xview)
 
         self.canvas.bind("<Enter>", self.__mouseEnter)
         self.canvas.bind("<Leave>", self.__mouseLeave)
+
         self.b_ids = []
         self.canvas.focus_set()
 
@@ -9810,6 +9805,15 @@ class ScrollPane(Frame):
             self.canvas.unbind("<MouseWheel>", self.b_ids[0])
             self.canvas.unbind("<Shift-MouseWheel>", self.b_ids[1])
 
+        self.canvas.unbind("<Key-Prior>", self.b_ids[4])
+        self.canvas.unbind("<Key-Next>", self.b_ids[5])
+        self.canvas.unbind("<Key-Up>", self.b_ids[6])
+        self.canvas.unbind("<Key-Down>", self.b_ids[7])
+        self.canvas.unbind("<Key-Left>", self.b_ids[8])
+        self.canvas.unbind("<Key-Right>", self.b_ids[9])
+        self.canvas.unbind("<Home>", self.b_ids[10])
+        self.canvas.unbind("<End>", self.b_ids[11])
+
         self.b_ids = []
 
     # bind mouse scroll to this widget only when mouse is over
@@ -9823,16 +9827,29 @@ class ScrollPane(Frame):
         else:  # Windows and MacOS
             self.b_ids.append(self.canvas.bind_all("<MouseWheel>", self.__vertMouseScroll))
             self.b_ids.append(self.canvas.bind_all("<Shift-MouseWheel>", self.__horizMouseScroll))
+            self.b_ids.append(None)
+            self.b_ids.append(None)
+
+        self.b_ids.append(self.canvas.bind_all("<Key-Prior>", self.__keyPressed))
+        self.b_ids.append(self.canvas.bind_all("<Key-Next>", self.__keyPressed))
+        self.b_ids.append(self.canvas.bind_all("<Key-Up>", self.__keyPressed))
+        self.b_ids.append(self.canvas.bind_all("<Key-Down>", self.__keyPressed))
+        self.b_ids.append(self.canvas.bind_all("<Key-Left>", self.__keyPressed))
+        self.b_ids.append(self.canvas.bind_all("<Key-Right>", self.__keyPressed))
+        self.b_ids.append(self.canvas.bind_all("<Home>", self.__keyPressed))
+        self.b_ids.append(self.canvas.bind_all("<End>", self.__keyPressed))
 
     # remove mouse scroll binding, when mouse leaves
     def __mouseLeave(self, event):
         self.__unbindIds()
 
     def __horizMouseScroll(self, event):
-        self.__mouseScroll(True, event)
+        if not self.hscrollbar.hidden:
+            self.__mouseScroll(True, event)
 
     def __vertMouseScroll(self, event):
-        self.__mouseScroll(False, event)
+        if not self.vscrollbar.hidden:
+            self.__mouseScroll(False, event)
 
     def __mouseScroll(self, horiz, event):
         direction = 0
@@ -9854,9 +9871,9 @@ class ScrollPane(Frame):
             return  # shouldn't happen
 
         if horiz:
-            self.canvas.xview_scroll(direction, "units")
+            self.xscroll(direction, "units")
         else:
-            self.canvas.yview_scroll(direction, "units")
+            self.yscroll(direction, "units")
 
     def getPane(self):
         return self.canvas
@@ -9872,54 +9889,75 @@ class ScrollPane(Frame):
             # up and down arrows
             if event.keysym == "Up": # event.keycode == 38
                 if ctrl:
-                    self.canvas.yview_scroll(-1, "pages")
+                    self.yscroll(-1, "pages")
                 else:
-                    self.canvas.yview_scroll(-1, "units")
+                    self.yscroll(-1, "units")
             elif event.keysym == "Down": # event.keycode == 40
                 if ctrl:
-                    self.canvas.yview_scroll(1, "pages")
+                    self.yscroll(1, "pages")
                 else:
-                    self.canvas.yview_scroll(1, "units")
+                    self.yscroll(1, "units")
 
             # left and right arrows
             elif event.keysym == "Left": # event.keycode == 37
                 if ctrl:
-                    self.canvas.xview_scroll(-1, "pages")
+                    self.xscroll(-1, "pages")
                 else:
-                    self.canvas.xview_scroll(-1, "units")
+                    self.xscroll(-1, "units")
             elif event.keysym == "Right": # event.keycode == 39
                 if ctrl:
-                    self.canvas.xview_scroll(1, "pages")
+                    self.xscroll(1, "pages")
                 else:
-                    self.canvas.xview_scroll(1, "units")
+                    self.xscroll(1, "units")
 
             # page-up & page-down keys
             elif event.keysym == "Prior": # event.keycode == 33
                 if ctrl:
-                    self.canvas.xview_scroll(-1, "pages")
+                    self.xscroll(-1, "pages")
                 else:
-                    self.canvas.yview_scroll(-1, "pages")
+                    self.yscroll(-1, "pages")
             elif event.keysym == "Next": # event.keycode == 34
                 if ctrl:
-                    self.canvas.xview_scroll(1, "pages")
+                    self.xscroll(1, "pages")
                 else:
-                    self.canvas.yview_scroll(1, "pages")
+                    self.yscroll(1, "pages")
 
             # home & end keys
             elif event.keysym == "Home": # event.keycode == 36
                 if ctrl:
-                    self.canvas.xview_moveto(0.0)
+                    self.xscroll(0.0)
                 else:
-                    self.canvas.yview_moveto(0.0)
+                    self.yscroll(0.0)
             elif event.keysym == "End": # event.keycode == 35
                 if ctrl:
-                    self.canvas.xview_moveto(1.0)
+                    self.xscroll(1.0)
                 else:
-                    self.canvas.yview_moveto(1.0)
+                    self.yscroll(1.0)
 
             return "break"
         else:
             pass # shouldn't happen
+
+    def xscroll(self, direction, value=None):
+        if not self.hscrollbar.hidden:
+            if value is not None: self.canvas.xview_scroll(direction, value)
+            else: self.canvas.xview_scroll(direction)
+
+    def yscroll(self, direction, value=None):
+        if not self.vscrollbar.hidden:
+            if value is not None: self.canvas.yview_scroll(direction, value)
+            else: self.canvas.yview_scroll(direction)
+
+    # functions to scroll to the beginning or end
+    def scrollLeft(self):
+        self.canvas.xview('moveto', 0.0)
+    def scrollRight(self):
+        self.canvas.xview('moveto', 1.0)
+
+    def scrollTop(self):
+        self.canvas.yview('moveto', 0.0)
+    def scrollBottom(self):
+        self.canvas.yview('moveto', 1.1)
 
 
 #################################
@@ -10111,21 +10149,21 @@ class SubWindow(Toplevel):
 #####################################
 
 # first row is used as a header
-
-
-class SimpleGrid(Frame):
+# SimpleGrid is a ScrollPane, where a Frame has been placed on the canvas - called GridContainer
+class SimpleGrid(ScrollPane):
 
     rows = []
     addRow = False
 
-    def __init__(self, parent, title, data, action=None, addRow=None, actionColumnText="Action", actionButtonLabel="Press", addRowButtonLabel="Add", **opts):
-        # SimpleGrid is a Frame, holding a MainCanvas & 2x ScrollBars (vsb & hsb), holding a Frame (GridContainer)
+    def __init__(self, parent, title, data, action=None, addRow=None,
+                    actionColumnText="Action", actionButtonLabel="Press",
+                    addRowButtonLabel="Add", **opts):
         if "buttonFont" in opts:
             self.buttonFont = opts.pop("buttonFont")
         else:
             self.buttonFont = font.Font(family="Helvetica", size=12)
 
-        Frame.__init__(self, parent, **opts)
+        ScrollPane.__init__(self, parent, **opts)
 
         self.addRowEntries = addRow
         self.data = []
@@ -10163,59 +10201,10 @@ class SimpleGrid(Frame):
         self.cellOverBg = "#C0C0C0"       # mouse over BG
         self.cellSelectedBg = "#D3D3D3"     # selected cell BG
 
-        # add a canvas for scrolling
-        self.mainCanvas = Canvas(
-            self,
-            borderwidth=0,
-            highlightthickness=2,
-            bg=self.cget("bg"))
-        vsb = AutoScrollbar(self, orient="vertical", command=self.mainCanvas.yview)
-        hsb = AutoScrollbar(self, orient="horizontal", command=self.mainCanvas.xview)
-
-        # pack them in
-#        vsb.pack(side="right", fill="y")
-#        hsb.pack(side="bottom", fill="x")
-#        self.mainCanvas.pack(side="left", fill="both", expand=True)
-
-        # can't pack AutoScrollBar - so try grid
-        vsb.grid(row=0, column=1, sticky=N+S)
-        hsb.grid(row=1, column=0, sticky=E+W)
-        self.mainCanvas.grid(row=0, column=0, sticky=N+S+E+W)
-        self.grid_rowconfigure(0, weight=1)
-        self.grid_columnconfigure(0, weight=1)
-
         # add the grid container to the frame
-        self.gridContainer = Frame(self.mainCanvas)
-        self.mainCanvas.create_window(
-            (4, 4), window=self.gridContainer, anchor="nw", tags="self.gridContainer")
+        self.gridContainer = Frame(self.interior)
+        self.gridContainer.pack(expand=True, fill='both')
         self.gridContainer.bind("<Configure>", self.__refreshGrids)
-
-        # configure scrollCommands
-        self.mainCanvas.configure(yscrollcommand=vsb.set)
-        self.mainCanvas.configure(xscrollcommand=hsb.set)
-
-        # bind scroll events
-        if gui.GET_PLATFORM() == gui.LINUX:
-            self.mainCanvas.bind_all(
-                "<4>",
-                lambda event,
-                arg=title: self.__scrollGrid(
-                    event,
-                    arg))
-            self.mainCanvas.bind_all(
-                "<5>",
-                lambda event,
-                arg=title: self.__scrollGrid(
-                    event,
-                    arg))
-        else:
-            # Windows and MacOS
-            self.mainCanvas.bind_all(
-                "<MouseWheel>",
-                lambda event,
-                arg=title: self.__scrollGrid(
-                    event,
-                    arg))
 
         self.__addRows(data)
 
@@ -10225,7 +10214,7 @@ class SimpleGrid(Frame):
     def configure(self, cnf=None, **kw):
         kw = gui.CLEAN_CONFIG_DICTIONARY(**kw)
         if "bg" in kw:
-            self.mainCanvas.config(bg=kw["bg"])
+            self.interior.config(bg=kw["bg"])
         if "activebackground" in kw:
             self.cellSelectedBg = kw.pop("activebackground")
         if "inactivebackground" in kw:
@@ -10272,7 +10261,7 @@ class SimpleGrid(Frame):
         self.__addRow(self.numRows, rowData)
         self.numRows += 1
         self.__addEntryBoxes()
-        self.__scrollToBottom()
+        self.scrollBottom()
 
     def __addRow(self, rowNum, rowData):
         self.data.append(rowData)
@@ -10375,37 +10364,9 @@ class SimpleGrid(Frame):
     def getSelectedCells(self):
         return dict(self.selectedCells)
 
-    # function to scroll the canvas/scrollbars
-    # gets the requested grid
-    # and checks the event.delta to determine where to scroll
-    # https://www.daniweb.com/programming/software-development/code/217059/using-the-mouse-wheel-with-tkinter-python
-    def __scrollGrid(self, event, title):
-        if gui.GET_PLATFORM() in [gui.WINDOWS, gui.MAC]:
-            if gui.GET_PLATFORM() == gui.WINDOWS:
-                val = event.delta / 120
-            else:
-                val = event.delta
-
-            val = val * -1
-
-            if event.delta in [1, -1]:
-                self.mainCanvas.yview_scroll(val, "units")
-            elif event.delta in [2, -2]:
-                self.mainCanvas.xview_scroll(val, "units")
-
-        elif gui.GET_PLATFORM() == gui.LINUX:
-            if event.num == 4:
-                self.mainCanvas.yview_scroll(-1 * 2, "units")
-            elif event.num == 5:
-                self.mainCanvas.yview_scroll(2, "units")
-
-    def __scrollToBottom(self):
-        self.mainCanvas.yview('moveto', 1)
-
     def __refreshGrids(self, event):
         '''Reset the scroll region to encompass the inner frame'''
-        self.mainCanvas.configure(scrollregion=self.mainCanvas.bbox("all"))
-        #can.itemconfig(_id, height=frame.mainCanvas.height, width=frame.mainCanvas.width)
+        self.canvas.configure(scrollregion=self.canvas.bbox("all"))
 
     def __gridCellEnter(self, event):
         cell = event.widget

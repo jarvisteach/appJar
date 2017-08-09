@@ -37,17 +37,13 @@ app.addEntry("size", 1, 1)
 app.stopLabelFrame()
 
 app.addGrid(
-    'a',
-    [
-        ['Nozzle Diameter', 'Number of Nozzles', 'Differential Pressure', 'Static Pressure', 'Voltage', 'Current', 'Frequency'],
-    ],
-    row=1,
-    column=0,
-    colspan=3,
-)
-app.addGrid(
     'b',
     [
+        ['Nozzle Diameter', 'Number of Nozzles', 'Differential Pressure', 'Static Pressure', 'Voltage', 'Current', 'Frequency'],
+        ['Nozzle Diameter', 'Number of Nozzles', 'Differential Pressure', 'Static Pressure', 'Voltage', 'Current', 'Frequency'],
+        ['Nozzle Diameter', 'Number of Nozzles', 'Differential Pressure', 'Static Pressure', 'Voltage', 'Current', 'Frequency'],
+        ['Nozzle Diameter', 'Number of Nozzles', 'Differential Pressure', 'Static Pressure', 'Voltage', 'Current', 'Frequency'],
+        ['Nozzle Diameter', 'Number of Nozzles', 'Differential Pressure', 'Static Pressure', 'Voltage', 'Current', 'Frequency'],
         ['Nozzle Diameter', 'Number of Nozzles', 'Differential Pressure', 'Static Pressure', 'Voltage', 'Current', 'Frequency'],
     ],
     row=2,
