@@ -61,7 +61,7 @@ __author__ = "Richard Jarvis"
 __copyright__ = "Copyright 2016-2017, Richard Jarvis"
 __credits__ = ["Graham Turner", "Sarah Murch"]
 __license__ = "GPL"
-__version__ = "0.07"
+__version__ = "0.08"
 __maintainer__ = "Richard Jarvis"
 __email__ = "info@appJar.info"
 __status__ = "Development"
@@ -415,7 +415,11 @@ class gui(object):
 #####################################
 # CONSTRUCTOR - creates the GUI
 #####################################
-    def __init__(self, title=None, geom=None, warn=None, debug=None):
+    def __init__(self, title=None, geom=None, warn=None, debug=None, handleArgs=True):
+
+        # check any command line arguments
+        self.language = None
+        opts = self.__handleArgs() if handleArgs else None
 
         # warn if we're in an untested mode
         self.__checkMode()
@@ -426,6 +430,26 @@ class gui(object):
         if warn is not None or debug is not None:
             self.warn("Cannot set logging level in __init__. You should use .setLogLevel()")
         logging.basicConfig(level=logging.WARNING, format='%(asctime)s %(name)s:%(levelname)s: %(message)s')
+
+        # process any command line arguments
+        if opts is not None:
+            for opt, arg in opts:
+                if opt == "-c": self.setLogLevel("CRITICAL")
+                elif opt == "-e": self.setLogLevel("ERROR")
+                elif opt == "-w": self.setLogLevel("WARNING")
+                elif opt == "-i": self.setLogLevel("INFO")
+                elif opt == "-d": self.setLogLevel("DEBUG")
+                elif opt in ["-l", "--language"]:
+                    self.language = arg
+                elif opt in ["-f", "--file"]:
+                    self.setLogFile(arg)
+                elif opt in ["-V", "--version"]:
+                    print("\nappJar Information\n\t"+
+                        self.SHOW_VERSION().replace("\n", "\n\t"))
+                    sys.exit()
+                elif opt in ["-h", "--help"]:
+                    self.__showHelp()
+                    sys.exit()
 
         # a stack to hold containers as being built
         # done here, as initArrays is called elsewhere - to reset the gubbins
@@ -445,8 +469,8 @@ class gui(object):
 
         # this fails if in interactive mode....
         try:
-            self.exe_file = os.path.basename(theMain.__file__)
-            self.exe_loc = os.path.dirname(theMain.__file__)
+            self.exe_file = str(os.path.basename(theMain.__file__))
+            self.exe_loc = str(os.path.dirname(theMain.__file__))
         except:
             self.exe_file = "appJar"
             self.exe_loc = ""
@@ -567,6 +591,29 @@ class gui(object):
             import ttk
         except:
             from tkinter import ttk
+
+    # function to check command line parameters
+    def __showHelp(self):
+        print("\nUsage:\n  " + sys.argv[0] + " [-cewid] [-h --help] [-V --version] [-l --language] <language> [-f --file] <filename>")
+        print("\nOptions:")
+        print("  -h, --help:\t\t\tShow help.")
+        print("  -V, --version:\t\tShow version information.")
+        print("  -l, --language <language>:\tSet the language file to use.")
+        print("  -f,--file <filename>:\t\tSet the log file to use.")
+        print("  -c:\t\t\t\tOnly log CRITICAL messages.")
+        print("  -e:\t\t\t\tLog ERROR messages and above.")
+        print("  -w:\t\t\t\tLog WARNING messages and above.")
+        print("  -i:\t\t\t\tLog INFO messages and above.")
+        print("  -d:\t\t\t\tLog DEBUG messages and above.")
+
+    def __handleArgs(self):
+        import getopt
+        try:
+            opts, args = getopt.getopt(sys.argv[1:], "cewidVhl:f:", ["version", "language=", "file=", "help"])
+            return opts
+        except getopt.GetoptError:
+            self.__showHelp()
+            sys.exit(2)
 
     # function to check on mode
     def __checkMode(self):
@@ -1365,6 +1412,10 @@ class gui(object):
                             )
             self.topLevel.withdraw()
             self.__bringToFront(splash)
+
+        # check if we have a command line language
+        if self.language is not None:
+            language = self.language
 
         # if language is populated, we are in internationalisation mode
         # call the setLanguage function - to re-badge all the widgets

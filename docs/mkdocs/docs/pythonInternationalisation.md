@@ -43,10 +43,19 @@ app.addButtons(["English", "Francais", "한글"], app.changeLanguage)
 app.go("english")
 ```
 
-The starting language must be set in the call to `.go(language)`  
+The starting language must be set in the call to `.go(language)` or provided as a command line argument.  
 To change the language, call `.changeLanguage(language)`  
 
 These will look for a file called `LANGUAGE.ini`
+
+#### Command Line Arguments  
+It is possible to set the starting language as a [command line argument](/pythonCommandLine):  
+
+```sh
+python3 languages.py -l english
+```
+
+This will override any language set in the call to `.go()`, and removes the need to set one at all.  
 
 ### Widget Support
 Not all widget's are supported, and some require a bit more effort to get them to work properly.  

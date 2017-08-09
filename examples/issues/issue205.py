@@ -15,7 +15,6 @@ def press(btn):
 
 
 app = gui()
-app.setLogLevel("DEBUG")
 app.addOptionBox("box", ["", "a", "b", "c", "d", "e"])
 app.addCheckBox("Delete")
 app.addButtons(["fred", "b",  "-1", "0", "1", "2", "3", "4", "5"], press)
