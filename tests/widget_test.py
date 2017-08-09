@@ -31,6 +31,7 @@ COL_THREE = "green"
 
 LIST_ONE = ["a", "b", "c", "d", "e"]
 LIST_TWO = ["v", "d", "s", "t", "z"]
+LIST_THREE = ["", "v", "- d -", "s", "t", "z"]
 
 HASH_ONE = {"a": True, "b": False, "c": True}
 HASH_TWO = {"x": False, "y": True, "z": False}
@@ -484,6 +485,19 @@ def test_options():
     app.changeOptionBox("tl1", LIST_ONE)
     for item in LIST_ONE:
         assert app.getOptionBox("tl1")[item] is False
+
+    # test override disabled
+    app.addOptionBox("l3", LIST_THREE)
+    assert app.getOptionBox("l3") is None
+    app.setOptionBox("l3", 1)
+    assert app.getOptionBox("l3") == LIST_THREE[1]
+
+    app.setOptionBox("l3", 0)
+    assert app.getOptionBox("l3") == LIST_THREE[1]
+
+    app.setOptionBox("l3", 0, override=True)
+    assert app.getOptionBox("l3") != LIST_THREE[1]
+    assert app.getOptionBox("l3") is None
 
     # call generic setter functions
     test_setters("OptionBox", "l1")

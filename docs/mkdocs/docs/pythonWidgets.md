@@ -395,11 +395,12 @@ app.go()
     If setting a TickOptionBox, the old list will be replaced with the new list. None will be ticked. `index` will be ignored.  
     Set ```callFunction``` to be True, if you want to call any associated `change` functions.  
 
-* `.setOptionBox(title, position, value=True, callFunction=True)`  
+* `.setOptionBox(title, position, value=True, callFunction=True, override=False)`  
     This will select the item in the list, at the position specified.  
     Alternatively, the name of an item can be specified.  
     If changing a TickOptionBox, the specified item will be set to the specified value.  
     Set ```callFunction``` to be False, if you don't want to call any associated functions.  
+    By default, you can't select a disabled item. You can change this by setting `override` to be True.  
 
 * `.deleteOptionBox(title, position)`  
     This will delete the item in the list, at the position specified.  

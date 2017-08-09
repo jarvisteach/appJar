@@ -1,7 +1,13 @@
 #Change-Log
 ---
 
-## Version (0.07)  
+## Version 0.08  
+
+* Issues Resolved:
+    * [#205](https://github.com/jarvisteach/appJar/issues/205) - Now possible to [select](/pythonWidgets/#set-optionboxes) a disabled item in an OptionBox.  
+
+
+## Version 0.07  
 * New widgets: [GoogleMaps](/pythonDevWidgets/#googlemaps) - a widget to show a GoogleMap tile & control widgets, [ImageMaps](/pythonImages/#image-maps) - clickable ImageMap with linked functions, [FileEntries](/pythonWidgets/#entry) - Entries linked with File/Directory dialogs  
 * Widget enhancements: [Pinnable Toolbars](/pythonBars/#set-toolbars), [SelectableLabels](/pythonWidgets/#add-labels), better [Tooltips](/pythonDialogs/#tooltips), [NamedCheckBoxes](/pythonWidgets/#add-checkboxes) & settable [ListBoxes](/pythonWidgets/#set-listboxes)  
 * Update to event model and [documentation](/pythonEvents) - now clearer how to perform different actions, and function names updated.  
@@ -33,12 +39,12 @@
     * [#59](https://github.com/jarvisteach/appJar/issues/59) - [SelectableLabels](/pythonWidgets/#add-labels)  
     * [#7](https://github.com/jarvisteach/appJar/issues/7) -  Can now [Set Foreground](/pythonGuiOptions/#colour) across the whole GUI  
 
-## Version (0.061)  
+## Version 0.061  
 
 * Issues Resolved:  
     * [#154](https://github.com/jarvisteach/appJar/issues/154) - Fixed bug with AutoEntry not showing drop-down in right position, when placed in a container  
 
-## Version (0.06)  
+## Version 0.06  
 * New widgets: [MicroBit](/pythonDevWidgets/#microbit-emulator), [Validation Entries](/pythonWidgets/#entry)  
 * Widget enhancements: Can now set some rules for [entries](/pythonWidgets/#set-entries)  
 * New documentation: [packaging](/packaging), [special characters](/specialCharacters), [events](/pythonEvents), [drag'n drop](/pythonDnD)  
@@ -67,15 +73,15 @@
     * [#42](https://github.com/jarvisteach/appJar/issues/42) - Added functionality to [change TickOptionBoxes](/pythonWidgets/#set-optionboxes)  
     * [#33](https://github.com/jarvisteach/appJar/issues/33) - Added convenience function to [setTreeColours](/pythonDevWidgets/#tree)  
 
-## Version (0.052)  
+## Version 0.052  
 * Issues Resolved:  
     * [#114](https://github.com/jarvisteach/appJar/issues/114) - ability to stop functions being called when a set method is activated
 
-## Version (0.051)  
+## Version 0.051  
 * Issues Resolved:  
     * [#109](https://github.com/jarvisteach/appJar/issues/109) - Labelled Auto Entry, contributed by [jacobthetechy](https://github.com/jacobthetechy)
 
-## Version (0.05)  
+## Version 0.05  
 * [Open Container](/pythonWidgetGrouping/#reopening-containers) - implemented issue [#83](https://github.com/jarvisteach/appJar/issues/83), can now reopen a container, perform operations on it, and close it.  
 * Changed disable entry to readonly, allows entries to be copied ([#86](https://github.com/jarvisteach/appJar/issues/86))  
 * Images now support [raw image data](/pythonImages/#add-images).  

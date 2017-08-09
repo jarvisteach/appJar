@@ -4327,14 +4327,14 @@ class gui(object):
         # disable any separators
         self.__disableOptionBoxSeparators(box)
         # select the specified option
-        self.setOptionBox(title, index, callFunction=False)
+        self.setOptionBox(title, index, callFunction=False, override=True)
 
     def deleteOptionBox(self, title, index):
         self.__verifyItem(self.n_optionVars, title)
-        self.setOptionBox(title, index, None)
+        self.setOptionBox(title, index, value=None, override=True)
 
     # select the option at the specified position
-    def setOptionBox(self, title, index, value=True, callFunction=True):
+    def setOptionBox(self, title, index, value=True, callFunction=True, override=False):
         box = self.__verifyItem(self.n_options, title)
 
         if box.kind == "ticks":
@@ -4372,19 +4372,27 @@ class gui(object):
                 else:
                     # then we can delete it...
                     if value is None:
+                        self.debug("Deleting index")
                         box['menu'].delete(index)
                         del(box.options[index])
-                        self.setOptionBox(title, 0, callFunction=False)
+                        self.setOptionBox(title, 0, callFunction=False, override=override)
                     else:
                         # now call function
                         if not callFunction and hasattr(box, 'cmd'):
                             box.var.trace_vdelete('w', box.cmd_id)
 
                         if not box['menu'].invoke(index):
-                            self.warn(
-                                "Invalid selection index: " +
-                                str(index) +
-                                " is a disabled index.")
+                            if override:
+                                self.debug("Setting option to disabled option: " + str(index))
+                                box["menu"].entryconfigure(index, state="normal")
+                                box['menu'].invoke(index)
+                                box["menu"].entryconfigure(index, state="disabled")
+                            else:
+                                self.warn(
+                                    "Invalid selection index: " +
+                                    str(index) +
+                                    " is a disabled index.")
+
 
                         if not callFunction and hasattr(box, 'cmd'):
                             box.cmd_id = box.var.trace('w', box.cmd)
