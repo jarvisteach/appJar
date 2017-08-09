@@ -10118,32 +10118,6 @@ class SimpleGrid(Frame):
     rows = []
     addRow = False
 
-    def config(self, cnf=None, **kw):
-        self.configure(cnf, **kw)
-
-    def configure(self, cnf=None, **kw):
-        kw = gui.CLEAN_CONFIG_DICTIONARY(**kw)
-        if "bg" in kw:
-            self.mainCanvas.config(bg=kw["bg"])
-        if "activebackground" in kw:
-            self.cellSelectedBg = kw.pop("activebackground")
-        if "inactivebackground" in kw:
-            self.cellBg = kw.pop("inactivebackground")
-        if "font" in kw:
-            font = kw.pop("font")
-            self.gdFont.configure(
-                family=font.actual("family"),
-                size=font.actual("size"))
-            self.ghFont.configure(
-                family=font.actual("family"),
-                size=font.actual("size") + 2,
-                weight="bold")
-        if "buttonFont" in kw:
-            buttonFont = kw.pop("buttonFont")
-            self.buttonFont.configure(
-                family=buttonFont.actual("family"),
-                size=buttonFont.actual("size"))
-
     def __init__(self, parent, title, data, action=None, addRow=None, actionColumnText="Action", actionButtonLabel="Press", addRowButtonLabel="Add", **opts):
         # SimpleGrid is a Frame, holding a MainCanvas & 2x ScrollBars (vsb & hsb), holding a Frame (GridContainer)
         if "buttonFont" in opts:
@@ -10195,15 +10169,20 @@ class SimpleGrid(Frame):
             borderwidth=0,
             highlightthickness=2,
             bg=self.cget("bg"))
-        vsb = Scrollbar(self, orient="vertical", command=self.mainCanvas.yview)
-        hsb = Scrollbar( self, orient="horizontal", command=self.mainCanvas.xview)
-
-        self.config(bg="yellow")
+        vsb = AutoScrollbar(self, orient="vertical", command=self.mainCanvas.yview)
+        hsb = AutoScrollbar(self, orient="horizontal", command=self.mainCanvas.xview)
 
         # pack them in
-        vsb.pack(side="right", fill="y")
-        hsb.pack(side="bottom", fill="x")
-        self.mainCanvas.pack(side="left", fill="both", expand=True)
+#        vsb.pack(side="right", fill="y")
+#        hsb.pack(side="bottom", fill="x")
+#        self.mainCanvas.pack(side="left", fill="both", expand=True)
+
+        # can't pack AutoScrollBar - so try grid
+        vsb.grid(row=0, column=1, sticky=N+S)
+        hsb.grid(row=1, column=0, sticky=E+W)
+        self.mainCanvas.grid(row=0, column=0, sticky=N+S+E+W)
+        self.grid_rowconfigure(0, weight=1)
+        self.grid_columnconfigure(0, weight=1)
 
         # add the grid container to the frame
         self.gridContainer = Frame(self.mainCanvas)
@@ -10239,6 +10218,32 @@ class SimpleGrid(Frame):
                     arg))
 
         self.__addRows(data)
+
+    def config(self, cnf=None, **kw):
+        self.configure(cnf, **kw)
+
+    def configure(self, cnf=None, **kw):
+        kw = gui.CLEAN_CONFIG_DICTIONARY(**kw)
+        if "bg" in kw:
+            self.mainCanvas.config(bg=kw["bg"])
+        if "activebackground" in kw:
+            self.cellSelectedBg = kw.pop("activebackground")
+        if "inactivebackground" in kw:
+            self.cellBg = kw.pop("inactivebackground")
+        if "font" in kw:
+            font = kw.pop("font")
+            self.gdFont.configure(
+                family=font.actual("family"),
+                size=font.actual("size"))
+            self.ghFont.configure(
+                family=font.actual("family"),
+                size=font.actual("size") + 2,
+                weight="bold")
+        if "buttonFont" in kw:
+            buttonFont = kw.pop("buttonFont")
+            self.buttonFont.configure(
+                family=buttonFont.actual("family"),
+                size=buttonFont.actual("size"))
 
     # not finished
     def deleteRow(self, position):
