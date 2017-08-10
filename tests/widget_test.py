@@ -858,6 +858,8 @@ def test_properties():
     assert app.getProperties("p2") == {}
 
     validateProp("p1", HASH_ONE)
+    app.setPropertyText("p2", "a", "new text")
+    app.setPropertyText("p2", "b")
 
     app.setProperties("p2", HASH_TWO)
     validateProp("p2", HASH_TWO)

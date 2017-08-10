@@ -1295,8 +1295,6 @@ class gui(object):
             elif kind in [self.TEXTAREA, self.METER]:
                 self.warn("No text is displayed in " + section)
                 continue
-            elif kind in [self.PROPERTIES]:
-                self.warn(section + " - list-style widgets are currently not supported")
             elif kind in [self.C_SUBWINDOW]:
                 for (key, val) in self.config.items(section):
                     self.debug("\t\t" + key + "---->" +  val)
@@ -1359,26 +1357,47 @@ class gui(object):
                     self.debug("\t\t" + key + "---->" +  val)
                     keys = key.split("-")
                     self.debug("\t\t" + str(keys))
-
-                    try:
-                        rbs = self.n_rbs[keys[0]]
-                    except KeyError:
-                        self.warn("Invalid RADIOBUTTON key: " + keys[0])
-                        continue
-                    for rb in rbs:
-                        if rb.DEFAULT_TEXT == keys[1]:
-                            rb["text"] = val
-                            break
+                    if len(keys) != 2:
+                        self.warn("Invalid RADIOBUTTON key:" + key)
+                    else:
+                        try:
+                            rbs = self.n_rbs[keys[0]]
+                        except KeyError:
+                            self.warn("Invalid RADIOBUTTON key: " + keys[0])
+                            continue
+                        for rb in rbs:
+                            if rb.DEFAULT_TEXT == keys[1]:
+                                rb["text"] = val
+                                break
 
             elif kind in [self.TABBEDFRAME]:
                 for (key, val) in self.config.items(section):
                     self.debug("\t\t" + key + "---->" +  val)
                     keys = key.split("-")
                     self.debug("\t\t" + str(keys))
-                    try:
-                        self.setTabText(keys[0], keys[1], val)
-                    except ItemLookupError:
-                        self.warn("Invalid tab name: " + key)
+                    if len(keys) != 2:
+                        self.warn("Invalid TABBEDFRAME key: " + key)
+                    else:
+                        try:
+                            self.setTabText(keys[0], keys[1], val)
+                        except ItemLookupError:
+                            self.warn("Invalid tab name: " + key)
+
+            elif kind in [self.PROPERTIES]:
+                for (key, val) in self.config.items(section):
+                    self.debug("\t\t" + key + "---->" +  val)
+                    keys = key.split("-")
+                    self.debug("\t\t" + str(keys))
+                    if len(keys) != 2:
+                        self.warn("Invalid PROPERTIES key: " + key)
+                    else:
+                        try:
+                            self.setPropertyText(keys[0], keys[1], val)
+                        except ItemLookupError:
+                            self.warn("Invalid properties: " + keys[0])
+                        except KeyError:
+                            self.warn("Invalid property: " + keys[1])
+
             elif kind in [self.PIECHART, self.GRID]:
                 self.warn(section + " - widgets not yet implemented")
                 continue
@@ -4690,6 +4709,10 @@ class gui(object):
     def deleteProperty(self, title, prop):
         props = self.__verifyItem(self.n_props, title)
         props.addProperty(prop, None, callFunction=False)
+
+    def setPropertyText(self, title, prop, newText=None):
+        props = self.__verifyItem(self.n_props, title)
+        props.renameProperty(prop, newText)
 
 #####################################
 # FUNCTION to add spin boxes
@@ -8809,6 +8832,14 @@ class Properties(LabelFrame):
 
         if self.cmd is not None and callFunction:
             self.cmd()
+
+    def renameProperty(self, prop, newName=None):
+        if newName is None:
+            newName = prop
+        if prop in self.cbs:
+            self.cbs[prop].config(text=newName)
+        else:
+            logging.getLogger("appJar").warn("Unknown property: " + str(prop))
 
     def addProperty(self, prop, value=False, callFunction=True):
         self.changingProps = True

@@ -1,3 +1,6 @@
+import sys
+sys.path.append("../")
+
 from appJar import gui
 
 def getEm(btn=None):
@@ -6,6 +9,8 @@ def getEm(btn=None):
         # TODO: remove from OptionBox
         app.deleteOptionBox("Prop", app.getOptionBox("Prop"))
 
+    elif btn=="RENAME":
+        app.setPropertyText("The props", app.getOptionBox("Prop"), app.getEntry("e1"))
     else:
         print(app.getProperties("The props"))
         print(app.getProperty("The props", app.getOptionBox("Prop")))
@@ -36,12 +41,13 @@ app.setFont(20)
 app.addProperties("The props", props)
 #app.setPropertiesBg("The props", "yellow")
 #app.stopToggleFrame()
-app.addButtons(["GET EM", "DELETE"], getEm)
+app.addButtons(["GET EM", "DELETE", "RENAME"], getEm)
 app.addLabelOptionBox("Prop", ["Name", "Age", "Name1", "Age1", "Name2", "Age2", "Name3", "Age3"])
 app.addCheckBox("Value")
 app.setCheckBoxFunction("Value", change)
 app.setProperty("The props", "Super Prop")
 app.addButtons(["ENAB", "DISAB"], state)
+app.addEntry("e1")
 app.setProperties("The props", {"fred":True, "Apples":False, "Age":True})
 
 app.setBg("red")

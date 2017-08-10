@@ -758,6 +758,11 @@ app.go()
     If values is populated, then the dictionary items will be added to the widget.  
 
 ####Set Properties
+
+* `setPropertyText(title, prop, newText=None)`  
+    Change the displayed text for the named property.  
+    If no value is provided, the original vaue will be used.  
+
 * `setProperties(title, props, callFunction=True)`  
     Adds the dictionary of properties to the widget.  
     If any of them already exist, they will be updated.  

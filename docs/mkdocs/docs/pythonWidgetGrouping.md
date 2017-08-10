@@ -157,6 +157,11 @@ app.go()
     Used to reopen the named *TabbedFrame* or named *Tab*.  
 
 #### Set TabbedFrame
+
+* `.setTabText(title, tab, newText=None)`  
+    Change the text of the named tab in the specified *TabbedFrame*.  
+    If no `newText` is provided, the tab will revert back to its original text.  
+
 * `.setTabbedFrameTabExpand(title, expand=True)`  
     By default, the tabs take up the minimum amount of space necessary.  
     Set this to True, to have the tabs fill the entire row.  

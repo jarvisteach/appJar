@@ -77,19 +77,24 @@ sub1: SubWindow 1 Title
 sub2: SubWindow 2 Title
 ```
 
-* `[RADIOBUTTON]`, `[TABBEDFRAME]`  
-    For these, the ID must be in two parts: the name of the frame or radio button group, followed by the name of the tab or radio button.  
-    The two should be joined together with a dash, for example:  
+* `[RADIOBUTTON]`, `[TABBEDFRAME]`, `[PROPERTIES]`  
+    For these, the ID must be in two parts: the name of the frame/button group/properties followed by the name of the tab/button/property. The two should be joined together with a dash, for example:  
+
 ```
 [TABBEDFRAME]
-    mainFrame-Tab 1: Information
-    mainFrame-Tab 2: Extras
-    mainFrame-Tab 3: Help
+    mainFrame-Tab1: Information
+    mainFrame-Tab2: Extras
+    mainFrame-Tab3: Details
 
 [RADIOBUTTON]
     Food-rb1: baguettes
     Food-rb2: fromage
     Food-rb3: vin
+
+[PROPERTIES]
+    props-prop1: Extra Cheese
+    props-prop2: Sweetcorn
+    props-prop3: Pineapple
 ```
 
 * `[ENTRY]`  
@@ -111,7 +116,7 @@ fruits:
 ```
 
 * The following are currently in development:  
-    `[PROPERTIES]`, `[POPUP]`, `[PIECHART]`, `[TREE]`, `[GRID]`  
+    `[POPUP]`, `[PIECHART]`, `[TREE]`, `[GRID]`  
     `[MENUBAR]`, `[STATUSBAR]`, `[TOOLBAR]`, `[TOOLTIP]`  
     `[PAGEDWINDOW]`  
     `[SOUND]` & `[IMAGE]`  
