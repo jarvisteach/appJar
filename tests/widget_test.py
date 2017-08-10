@@ -1530,6 +1530,9 @@ def test_containers():
     app.stopTab()
     app.stopTabbedFrame()
 
+    app.setTabText("tbf1", "tab2", "new text")
+    app.setTabText("tbf1", "tab3")
+
     app.setTabBg("tbf1", "tab2", "red")
 
     assert app.getTabbedFrameSelectedTab("tbf1") == "tab1"

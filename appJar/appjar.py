@@ -1369,6 +1369,16 @@ class gui(object):
                         if rb.DEFAULT_TEXT == keys[1]:
                             rb["text"] = val
                             break
+
+            elif kind in [self.TABBEDFRAME]:
+                for (key, val) in self.config.items(section):
+                    self.debug("\t\t" + key + "---->" +  val)
+                    keys = key.split("-")
+                    self.debug("\t\t" + str(keys))
+                    try:
+                        self.setTabText(keys[0], keys[1], val)
+                    except ItemLookupError:
+                        self.warn("Invalid tab name: " + key)
             elif kind in [self.PIECHART, self.GRID]:
                 self.warn(section + " - widgets not yet implemented")
                 continue
@@ -3447,7 +3457,7 @@ class gui(object):
             colspan=0,
             rowspan=0,
             sticky="NSEW"):
-        self.startContainer(
+        return self.startContainer(
             self.C_TABBEDFRAME,
             title,
             row,
@@ -3478,6 +3488,10 @@ class gui(object):
     def setTabbedFrameDisableAllTabs(self, title, disabled=True):
         nb = self.__verifyItem(self.n_tabbedFrames, title)
         nb.disableAllTabs(disabled)
+
+    def setTabText(self, title, tab, newText=None):
+        nb = self.__verifyItem(self.n_tabbedFrames, title)
+        nb.renameTab(tab, newText)
 
     def setTabBg(self, title, tab, colour):
         nb = self.__verifyItem(self.n_tabbedFrames, title)
@@ -8475,7 +8489,7 @@ class TabbedFrame(Frame):
     def addTab(self, text, **kwargs):
         # check for duplicates
         if text in self.widgetStore:
-            raise Exception("Duplicate tabName: " + text)
+            raise ItemLookupError("Duplicate tabName: " + text)
 
         # create the tab, bind events, pack it in
         tab = Label(
@@ -8488,6 +8502,7 @@ class TabbedFrame(Frame):
             takefocus=1,
             **kwargs)
         tab.disabled = False
+        tab.DEFAULT_TEXT = text
 
         tab.bind("<Button-1>", lambda *args: self.changeTab(text))
         tab.bind("<Return>", lambda *args: self.changeTab(text))
@@ -8519,7 +8534,7 @@ class TabbedFrame(Frame):
 
     def getTab(self, title):
         if title not in self.widgetStore.keys():
-            raise Exception("Invalid tab name: " + title)
+            raise ItemLookupError("Invalid tab name: " + title)
         else:
             return self.widgetStore[title][1]
 
@@ -8556,9 +8571,17 @@ class TabbedFrame(Frame):
         for tab in self.widgetStore.keys():
             self.disableTab(tab, disabled)
 
+    def renameTab(self, tabName, newName=None):
+        if tabName not in self.widgetStore.keys():
+            raise ItemLookupError("Invalid tab name: " + tabName)
+        if newName is None:
+            newname = self.widgetStore[tabName][0].DEFAULT_TEXT
+
+        self.widgetStore[tabName][0].config(text=newName)
+
     def disableTab(self, tabName, disabled=True):
         if tabName not in self.widgetStore.keys():
-            raise Exception("Invalid tab name: " + tabName)
+            raise ItemLookupError("Invalid tab name: " + tabName)
 
         if not disabled:
             self.widgetStore[tabName][0].disabled = False
@@ -8587,7 +8610,7 @@ class TabbedFrame(Frame):
             return
 
         if tabName not in self.widgetStore.keys():
-            raise Exception("Invalid tab name: " + tabName)
+            raise ItemLookupError("Invalid tab name: " + tabName)
 
         if self.widgetStore[tabName][0].disabled:
             return

@@ -77,10 +77,20 @@ sub1: SubWindow 1 Title
 sub2: SubWindow 2 Title
 ```
 
-* `[RADIOBUTTON]`  
-    Radio-buttons are a little tricky. The key has two parts: the *group* & *item*  
-    If you used: `.addRadioButton("Food", "f1")` the entry in the `.ini` file would be:
-    `Food-f1: french_food_name`  
+* `[RADIOBUTTON]`, `[TABBEDFRAME]`  
+    For these, the ID must be in two parts: the name of the frame or radio button group, followed by the name of the tab or radio button.  
+    The two should be joined together with a dash, for example:  
+```
+[TABBEDFRAME]
+    mainFrame-Tab 1: Information
+    mainFrame-Tab 2: Extras
+    mainFrame-Tab 3: Help
+
+[RADIOBUTTON]
+    Food-rb1: baguettes
+    Food-rb2: fromage
+    Food-rb3: vin
+```
 
 * `[ENTRY]`  
     The text provided here will be used for the default value, if one is being used.  
@@ -101,9 +111,9 @@ fruits:
 ```
 
 * The following are currently in development:  
-    `[TABBEDFRAME]`, `[PAGEDWINDOW]`  
     `[PROPERTIES]`, `[POPUP]`, `[PIECHART]`, `[TREE]`, `[GRID]`  
     `[MENUBAR]`, `[STATUSBAR]`, `[TOOLBAR]`, `[TOOLTIP]`  
+    `[PAGEDWINDOW]`  
     `[SOUND]` & `[IMAGE]`  
 
 * `[EXTERNAL]`  
