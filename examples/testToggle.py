@@ -1,3 +1,6 @@
+import sys
+sys.path.append("../")
+
 from appJar import gui
 
 def press(btn):
@@ -5,7 +8,7 @@ def press(btn):
 
 app=gui()
 app.setBg("yellow")
-app.setFont(40)
+#app.setFont(40)
 
 app.addTickOptionBox("Fred", ["Dogs", "Cats", "Elephants Are Super Cool And Funky"])
 app.addButton("Check Tick", press)
@@ -24,6 +27,15 @@ app.addRadioButton("fav", "Oranges")
 app.addRadioButton("fav", "Pears")
 app.addRadioButton("fav", "Grapes")
 app.stopToggleFrame()
+
+def press(btn):
+    text = app.textBox("Text", "Text")
+    if btn == "One":
+        app.setToggleFrameText("Names", text)
+    else:
+        app.setToggleFrameText("Favourites", text)
+
+app.addButtons(["One", "Two"], press)
 
 
 app.go()

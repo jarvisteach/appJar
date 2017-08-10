@@ -17,11 +17,11 @@ These are values that can be set when appJar is initially run.
 
 * `-c`, `-e`, `-w`, `-i`, `-d`  
     This sets the [logging level](/pythonLogging/):  
-    * c - only log CRIRICAL messages  
-    * e - log ERROR messages and above  
-    * w - log WARNING messages and above
-    * i - log INFO messages and above  
-    * d - log DEBUG messages and above  
+    * `-c` - only log CRIRICAL messages  
+    * `-e` - log ERROR messages and above  
+    * `-w` - log WARNING messages and above
+    * `-i` - log INFO messages and above  
+    * `-d` - log DEBUG messages and above  
 
 ### Example  
 
@@ -33,7 +33,9 @@ python3 demoApp.py -d -l ENGLISH
 
 ### Disabling  
 
-If you want to provide your own command line argument handling, then you will need to disable it in appJar, as appJar will show an error message if invalid arguments are found. To do this, you can set the `handleArgs` flag to False in the appJar constructor:  
+If you want to provide your own command line argument handling, then you will need to disable it in appJar, as appJar will show an error message if invalid arguments are found.  
+
+To do this, you can set the `handleArgs` flag to False in the appJar constructor:  
 
 ```python
 from appJar import gui

@@ -1385,7 +1385,8 @@ class gui(object):
                     self.updateEntryDefault(k, data)
                     self.debug("\t\t" + k + "=" + str(ent.default))
 
-            elif kind in [self.LABEL, self.BUTTON, self.CHECKBOX, self.MESSAGE, self.LINK, self.LABELFRAME]:
+            elif kind in [self.LABEL, self.BUTTON, self.CHECKBOX, self.MESSAGE,
+                            self.LINK, self.LABELFRAME, self.TOGGLEFRAME]:
                 for k in widgets.keys():
                     widg = widgets[k]
 
@@ -3614,7 +3615,7 @@ class gui(object):
             column=0,
             colspan=0,
             rowspan=0):
-        self.startContainer(
+        return self.startContainer(
             self.C_TOGGLEFRAME,
             title,
             row,
@@ -3633,6 +3634,10 @@ class gui(object):
     def toggleToggleFrame(self, title):
         toggle = self.__verifyItem(self.n_toggleFrames, title)
         toggle.toggle()
+
+    def setToggleFrameText(self, title, newText):
+        toggle = self.__verifyItem(self.n_toggleFrames, title)
+        toggle.config(text=newText)
 
     def disableToggleFrame(self, title, disabled=True):
         toggle = self.__verifyItem(self.n_toggleFrames, title)
@@ -9033,6 +9038,7 @@ class ToggleFrame(Frame):
         self.titleFrame.config(bg="DarkGray")
 
         self.titleLabel = Label(self.titleFrame, text=title)
+        self.DEFAULT_TEXT = title
         self.titleLabel.config(font="-weight bold")
 
         self.toggleButton = Button(
@@ -9074,10 +9080,23 @@ class ToggleFrame(Frame):
             self.toggleButton.config(state=kw["state"])
             del(kw["state"])
 
+        if "text" in kw:
+            self.titleLabel.config(text=kw.pop("text"))
+
         if PYTHON2:
             Frame.config(self, cnf, **kw)
         else:
             super(Frame, self).config(cnf, **kw)
+
+
+    def cget(self, option):
+        if option == "text":
+            return self.titleLabel.cget(option)
+
+        if PYTHON2:
+            return Frame.cget(self, option)
+        else:
+            return super(Frame, self).cget(option)
 
     def toggle(self):
         if not self.showing:

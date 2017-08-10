@@ -64,7 +64,7 @@ Note, changing the text of a widget through `setXXX()` method's will work, but w
 * **Auto-labelled Widgets**  
     The labels of any widgets created with an **auto-label** can be changed under the `[LABEL]` option below.  
 
-* `[LABEL]`, `[LABELFRAME]`, `[BUTTON]`, `[CHECKBOX]`, `[MESSAGE]`, `[LINK]`  
+* `[LABEL]`, `[BUTTON]`, `[CHECKBOX]`, `[MESSAGE]`, `[LINK]`, `[LABELFRAME]`, `[TOGGLEFRAME]`  
     The widget ID, followed by the text to update it with.  
     Any widgets added with auto-labels (`.addLabelEntry()`) are also changed here.  
 
@@ -101,7 +101,7 @@ fruits:
 ```
 
 * The following are currently in development:  
-    `[TABBEDFRAME]`, `[PAGEDWINDOW]`, `[TOGGLEFRAME]`  
+    `[TABBEDFRAME]`, `[PAGEDWINDOW]`  
     `[PROPERTIES]`, `[POPUP]`, `[PIECHART]`, `[TREE]`, `[GRID]`  
     `[MENUBAR]`, `[STATUSBAR]`, `[TOOLBAR]`, `[TOOLTIP]`  
     `[SOUND]` & `[IMAGE]`  

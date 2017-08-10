@@ -106,6 +106,9 @@ app.go()
 * `.openToggleFrame(title)`  
     Used to reopen the named *ToggleFrame*.  
 #### Set Toggle Frames  
+* `.setToggleFrameText(title, newText)`  
+    Will update the text displayed in the *ToggleFrame*.  
+
 * `.toggleToggleFrame(title)`  
     Will toggle the state of the specified *ToggleFrame*.  
 

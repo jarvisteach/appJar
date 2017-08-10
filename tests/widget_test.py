@@ -1497,9 +1497,12 @@ def test_containers():
     with pytest.raises(Exception) :
         app.openLabelFrame("crash here")
 
-    app.startToggleFrame("tf1")
+    tog = app.startToggleFrame("tf1")
     app.addLabel("tf1_l1", TEXT_ONE)
     app.stopToggleFrame()
+
+    app.setToggleFrameText("tf1", "New text")
+    assert tog.cget("text") == "New text"
 
     assert app.getToggleFrameState("tf1") is False
 
