@@ -58,15 +58,24 @@ python3 languages.py -l english
 This will override any language set in the call to `.go()`, and removes the need to set one at all.  
 
 ### Widget Support
-Not all widget's are supported, and some require a bit more effort to get them to work properly.  
+Not all widget's are supported yet, and some require a bit more effort to get them to work properly.  
 Note, changing the text of a widget through `setXXX()` method's will work, but will not be remembered if the language is changed.  
 
 * **Auto-labelled Widgets**  
-    Any widgets created with an **auto-label** can be changed under the `[LABEL]` option below.  
+    The labels of any widgets created with an **auto-label** can be changed under the `[LABEL]` option below.  
 
-* `[LABEL]`,  `[BUTTON]`, `[CHECKBOX]`, `[MESSAGE]`, `[LINK]`  
-    The label id, followed by the text to put in it.  
-    Any widgets added with labels `.addLabelEntry()` are also changed here.  
+* `[LABEL]`, `[LABELFRAME]`, `[BUTTON]`, `[CHECKBOX]`, `[MESSAGE]`, `[LINK]`  
+    The widget ID, followed by the text to update it with.  
+    Any widgets added with auto-labels (`.addLabelEntry()`) are also changed here.  
+
+* `[TITLE]`  
+    This allows you to change the GUI's title, or the title of any SubWindows.
+```
+[TITLE]
+appJar: Main GUI Title
+sub1: SubWindow 1 Title
+sub2: SubWindow 2 Title
+```
 
 * `[RADIOBUTTON]`  
     Radio-buttons are a little tricky. The key has two parts: the *group* & *item*  
@@ -74,7 +83,7 @@ Note, changing the text of a widget through `setXXX()` method's will work, but w
     `Food-f1: french_food_name`  
 
 * `[ENTRY]`  
-    The text provided here wil be used for the default value, if one is being used.  
+    The text provided here will be used for the default value, if one is being used.  
 
 * `[SCALE]`, `[TEXTAREA]`, `[METER]`  
     These widgets have no text to change.  
@@ -92,9 +101,9 @@ fruits:
 ```
 
 * The following are currently in development:  
-    `[LABELFRAME]`, `[TABBEDFRAME]`, `[PAGEDWINDOW]`, `[TOGGLEFRAME]`  
+    `[TABBEDFRAME]`, `[PAGEDWINDOW]`, `[TOGGLEFRAME]`  
     `[PROPERTIES]`, `[POPUP]`, `[PIECHART]`, `[TREE]`, `[GRID]`  
-    `[MENUBAR]`, `[STATUSBAR]`, `[TOOLBAR]`, `[TOOLTIP]`, `[TITLE]`  
+    `[MENUBAR]`, `[STATUSBAR]`, `[TOOLBAR]`, `[TOOLTIP]`  
     `[SOUND]` & `[IMAGE]`  
 
 * `[EXTERNAL]`  

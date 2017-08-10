@@ -1226,10 +1226,14 @@ class gui(object):
         try:
             from configparser import ConfigParser
         except:
-            self.warn("Internationalisation not supported")
-            self.config = None
-            return
+            try:
+                from ConfigParser import ConfigParser
+            except:
+                self.warn("Internationalisation not supported, configparser not available.")
+                self.config = None
+                return
         self.config = ConfigParser()
+        self.config.optionxform = str
         self.changeLanguage(language)
 
     # function to update languages
@@ -1249,8 +1253,12 @@ class gui(object):
                 return
         else:
             try:
-                with codecs.open(language + ".ini", "r", "utf8") as langFile:
-                    self.config.read_file(langFile)
+                try:
+                    with codecs.open(language + ".ini", "r", "utf8") as langFile:
+                        self.config.read_file(langFile)
+                except AttributeError:
+                    with codecs.open(language + ".ini", "r", "utf8") as langFile:
+                        self.config.readfp(langFile)
             except IOError:
                 self.warn("Invalid language: " + language)
                 return
@@ -1260,19 +1268,23 @@ class gui(object):
         # change the text
         for section in self.config.sections():
             section = section.upper()
-            # skip the config section (for now)
-            if section == "CONFIG":
-                continue
-
-            self.debug("\t" + section)
+            self.debug("\tSECTION:" + section)
 
             # convert the section title to its code
-            try:
-                kind = vars(gui)[section]
-                texts = self.config[section]
-            except KeyError:
-                self.warn("Invalid config section: " + section)
+            if section == "CONFIG":
+                # skip the config section (for now)
+                self.debug("\tSKIPPING CONFIG")
                 continue
+            elif section == "TITLE":
+                kind = self.C_SUBWINDOW
+            else:
+                try:
+                    kind = vars(gui)[section]
+                except KeyError:
+                    self.warn("Invalid config section: " + section)
+                    continue
+
+            self.debug("\tKIND:" + str(kind))
 
             # use the code to get the widget list
             widgets = self.__getItems(kind)
@@ -1285,33 +1297,68 @@ class gui(object):
                 continue
             elif kind in [self.PROPERTIES]:
                 self.warn(section + " - list-style widgets are currently not supported")
+            elif kind in [self.C_SUBWINDOW]:
+                for (key, val) in self.config.items(section):
+                    self.debug("\t\t" + key + "---->" +  val)
+
+                    if key.lower() == "appjar":
+                        self.setTitle(val)
+                    else:
+                        try:
+                            widgets[key].title(val)
+                        except KeyError:
+                            self.warn("Invalid SubWindow: " + str(key))
+
             elif kind in [self.LISTBOX]:
                 for k in widgets.keys():
                     lb = widgets[k]
+
                     # convert data to a list
-                    data = texts.get(k, lb.DEFAULT_TEXT).strip().split("\n")
+                    if self.config.has_option(section, k):
+                        data = self.config.get(section, k)
+                    else:
+                        data = lb.DEFAULT_TEXT
+                    data = data.strip().split("\n")
+
                     # tidy up the list
                     data = [item.strip() for item in data if len(item.strip()) > 0]
                     self.updateListBox(k, data)
+
             elif kind in [self.SPIN]:
                 for k in widgets.keys():
                     sb = widgets[k]
+
                     # convert data to a list
-                    data = texts.get(k, sb.DEFAULT_TEXT).strip().split("\n")
+                    if self.config.has_option(section, k):
+                        data = self.config.get(section, k)
+                    else:
+                        data = sb.DEFAULT_TEXT
+                    data = data.strip().split("\n")
+
                     # tidy up the list
                     data = [item.strip() for item in data if len(item.strip()) > 0]
                     self.changeSpinBox(k, data)
+
             elif kind in [self.OPTION]:
                 for k in widgets.keys():
                     ob = widgets[k]
+
                     # convert data to a list
-                    data = texts.get(k, ob.DEFAULT_TEXT).strip().split("\n")
+                    if self.config.has_option(section, k):
+                        data = self.config.get(section, k)
+                    else:
+                        data = ob.DEFAULT_TEXT
+                    data = data.strip().split("\n")
+
                     # tidy up the list
                     data = [item.strip() for item in data if len(item.strip()) > 0]
                     self.changeOptionBox(k, data)
+
             elif kind in [self.RADIOBUTTON]:
                 for (key, val) in self.config.items(section):
+                    self.debug("\t\t" + key + "---->" +  val)
                     keys = key.split("-")
+                    self.debug("\t\t" + str(keys))
 
                     try:
                         rbs = self.n_rbs[keys[0]]
@@ -1328,14 +1375,27 @@ class gui(object):
             elif kind == self.ENTRY:
                 for k in widgets.keys():
                     ent = widgets[k]
-                    self.updateDefaultText(k, texts.get(k, ent.DEFAULT_TEXT))
+
+                    if self.config.has_option(section, k):
+                        data = self.config.get(section, k)
+                    else:
+                        data = ent.DEFAULT_TEXT
+
+                    self.debug("\t\t" + k + "---->" +  str(data))
+                    self.updateEntryDefault(k, data)
                     self.debug("\t\t" + k + "=" + str(ent.default))
-            elif kind in [self.LABEL, self.BUTTON, self.CHECKBOX, self.MESSAGE, self.LINK]:
-                # relabel each widget
+
+            elif kind in [self.LABEL, self.BUTTON, self.CHECKBOX, self.MESSAGE, self.LINK, self.LABELFRAME]:
                 for k in widgets.keys():
                     widg = widgets[k]
-                    self.debug("\t\t" + k + "---->" +  texts.get(k, widg.DEFAULT_TEXT))
-                    widg.config(text = texts.get(k, widg.DEFAULT_TEXT))
+
+                    if self.config.has_option(section, k):
+                        data = str(self.config.get(section, k))
+                    else:
+                        data = widg.DEFAULT_TEXT
+
+                    self.debug("\t\t" + k + "---->" +  data)
+                    widg.config(text = data)
                     self.debug("\t\t" + k + "=" + widg.cget("text"))
             else:
                 self.warn("Unsupported widget: " + section)
@@ -2237,7 +2297,10 @@ class gui(object):
                             value = "e"
                         item.config(anchor=value)
                 elif option == 'anchor':
-                    item.config(anchor=value)
+                    if kind == self.LABELFRAME:
+                        item.config(labelanchor=value)
+                    else:
+                        item.config(anchor=value)
                 elif option == 'cursor':
                     item.config(cursor=value)
                 elif option == 'tooltip':
@@ -3224,6 +3287,7 @@ class gui(object):
             # first, make a LabelFrame, and position it correctly
             self.__verifyItem(self.n_labelFrames, title, True)
             container = LabelFrame(self.getContainer(), text=title)
+            container.DEFAULT_TEXT = title
             container.isContainer = True
             container.config(
                 background=self.__getContainerBg(),
@@ -3533,7 +3597,7 @@ class gui(object):
             colspan=0,
             rowspan=0,
             sticky=W):
-        self.startContainer(
+        return self.startContainer(
             self.C_LABELFRAME,
             title,
             row,
@@ -3898,9 +3962,9 @@ class gui(object):
         pane.config(orient=VERTICAL)
 
     # function to set position of title for label frame
-    def setLabelFrameAnchor(self, title, anchor):
+    def setLabelFrameTitle(self, title, newTitle):
         frame = self.__verifyItem(self.n_labelFrames, title)
-        frame.config(labelanchor=anchor)
+        frame.config(text=newTitle)
 
     # functions to hide & show the main window
     def hide(self, btn=None):

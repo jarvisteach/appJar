@@ -2,12 +2,15 @@
 ---
 
 ## Version 0.08  
-* [Command line arguments](/pythonCommandLine): appJar now supports two command line arguments for [logging](/pythonLogging) and [internatioanlisation](/pythonInternationalisation/)  
+* [Command line arguments](/pythonCommandLine): appJar now supports command line arguments for [logging](/pythonLogging) and [internatioanlisation](/pythonInternationalisation/) as well as help & version information.  
 
 * Issues Resolved:
+    * [#207](https://github.com/jarvisteach/appJar/issues/207) - Now possible to change the title of a [LabelFrame](/pythonWidgetGrouping/#label-frame), and updated internationalisation support. Also updated docs to show how to change the anchor of the label in a LabelFrame.  
     * [#205](https://github.com/jarvisteach/appJar/issues/205) - Now possible to [select](/pythonWidgets/#set-optionboxes) a disabled item in an OptionBox.  
     * [#204](https://github.com/jarvisteach/appJar/issues/204) - appJar now supports [Command line arguments](/pythonCommandLine)  
+    * [#203](https://github.com/jarvisteach/appJar/issues/203) - updated docs on [LabelFrames](/pythonWidgetGrouping/#label-frame)  
     * [#200](https://github.com/jarvisteach/appJar/issues/200) - Switched [Grid](/pythonDevWidgets/#grid) to use a [ScrollPane](/pythonWidgetGrouping/#scroll-pane) & changed ScrollPane to use AutoScrollbars.  
+    * [#71](https://github.com/jarvisteach/appJar/issues/71) - More work on [Internationalisation](/pythonInternationalisation/) - now supports LabelFrames & Titles  
 
 
 ## Version 0.07  
@@ -18,7 +21,7 @@
 
 
 * Issues Resolved:
-    * [#192](https://github.com/jarvisteach/appJar/issues/192) - Fixed PNG image support in pyhton 2.7 - specifically for toolbars  
+    * [#192](https://github.com/jarvisteach/appJar/issues/192) - Fixed PNG image support in python 2.7 - specifically for toolbars  
     * [#189](https://github.com/jarvisteach/appJar/issues/189) - **VERY** basic support for [ttk](/pythonDevWidgets/#ttk)
     * [#186](https://github.com/jarvisteach/appJar/issues/186) - Changes to [Unicode](/specialCharacters) support  
     * [#185](https://github.com/jarvisteach/appJar/issues/185) - All add functions now return the widget  

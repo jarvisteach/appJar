@@ -1480,7 +1480,7 @@ def test_sets():
 def test_containers():
     print("\tTesting containers")
 
-    app.startLabelFrame("lf1")
+    lf = app.startLabelFrame("lf1")
     app.setLabelFrameAnchor("lf1", "east")
     app.addLabel("lf1_l1", TEXT_ONE)
     app.stopLabelFrame()
@@ -1488,6 +1488,11 @@ def test_containers():
     app.openLabelFrame("lf1")
     app.addLabel("lf1_l2", TEXT_ONE)
     app.stopLabelFrame()
+
+    app.setLabelFrameTitle("lf1", "New title")
+    assert lf.cget("text") == "New title"
+    app.setLabelFrameAnchor("lf1", "ne")
+    assert lf.cget("labelanchor") == "ne"
 
     with pytest.raises(Exception) :
         app.openLabelFrame("crash here")
