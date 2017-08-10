@@ -6386,7 +6386,11 @@ class gui(object):
 
         if fileName is not None:
             self.setEntry(title, fileName)
+
         self.setEntryFocus(title)
+#        ent = self.__verifyItem(self.n_entries, title)
+#        ent.icursor(3)
+#        ent.xview(END)
 
     def __checkDirName(self, title):
         if len(self.getEntry(title)) == 0:
@@ -9939,14 +9943,14 @@ class ScrollPane(Frame):
             # home & end keys
             elif event.keysym == "Home": # event.keycode == 36
                 if ctrl:
-                    self.xscroll(0.0)
+                    self.scrollLeft()
                 else:
-                    self.yscroll(0.0)
+                    self.scrollTop()
             elif event.keysym == "End": # event.keycode == 35
                 if ctrl:
-                    self.xscroll(1.0)
+                    self.scrolRight()
                 else:
-                    self.yscroll(1.0)
+                    self.scrollBottom()
 
             return "break"
         else:
@@ -9955,23 +9959,23 @@ class ScrollPane(Frame):
     def xscroll(self, direction, value=None):
         if not self.hscrollbar.hidden:
             if value is not None: self.canvas.xview_scroll(direction, value)
-            else: self.canvas.xview_scroll(direction)
+            else: self.canvas.xview_moveto(direction)
 
     def yscroll(self, direction, value=None):
         if not self.vscrollbar.hidden:
             if value is not None: self.canvas.yview_scroll(direction, value)
-            else: self.canvas.yview_scroll(direction)
+            else: self.canvas.yview_moveto(direction)
 
     # functions to scroll to the beginning or end
     def scrollLeft(self):
-        self.canvas.xview('moveto', 0.0)
+        self.xscroll(0.0)
     def scrollRight(self):
-        self.canvas.xview('moveto', 1.0)
+        self.xscroll(1.0)
 
     def scrollTop(self):
-        self.canvas.yview('moveto', 0.0)
+        self.yscroll(0.0)
     def scrollBottom(self):
-        self.canvas.yview('moveto', 1.1)
+        self.yscroll(1.0)
 
 
 #################################

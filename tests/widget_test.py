@@ -1695,6 +1695,44 @@ def test_containers():
             event.keysym = key
             sp._ScrollPane__keyPressed(event)
 
+    event = Event()
+    sp._ScrollPane__mouseEnter(event)
+
+    for num in [4, 5]:
+        event.num = num
+        sp._ScrollPane__horizMouseScroll(event)
+        sp._ScrollPane__vertMouseScroll(event)
+
+    event.num = 0
+    for delta in [300, 30, -300, -30]:
+        event.delta = delta
+        sp._ScrollPane__horizMouseScroll(event)
+        sp._ScrollPane__vertMouseScroll(event)
+
+    event.type = "2"    # always 2
+    for state in [0]: # shift=0x0001, ctrl=0x0004, alt=0x20000
+        event.state = state
+        for key in ["Up", "Down", "Left", "Right", "Prior", "Next", "Home", "End"]:
+            event.keysym = key
+            sp._ScrollPane__keyPressed(event)
+
+    event = Event()
+    sp._ScrollPane__mouseLeave(event)
+
+    sp.scrollLeft()
+    sp.scrollRight()
+    sp.scrollTop()
+    sp.scrollBottom()
+
+    event = Event()
+    sp._ScrollPane__mouseEnter(event)
+    sp.scrollLeft()
+    sp.scrollRight()
+    sp.scrollTop()
+    sp.scrollBottom()
+    event = Event()
+    sp._ScrollPane__mouseLeave(event)
+
     print(" >> not implemented...")
     #print("\t >> all tests complete")
 
