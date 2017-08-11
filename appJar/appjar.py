@@ -5079,8 +5079,13 @@ class gui(object):
             else:
                 raise Exception("PNG images only supported in python 3: " + imagePath)
 
-        else:
+        elif fmt == "gif":
             imgObj = PhotoImage(data=imageData)
+
+        else:
+            # expect we already have a PhotoImage object, for example created by PIL
+            imgObj = imageData
+
 
         imgObj.path = None
         imgObj.modTime = datetime.datetime.now()
@@ -5176,12 +5181,12 @@ class gui(object):
         image = self.__getImage(imageFile, False)
         self.__populateImage(name, image)
 
-    def reloadImageData(self, name, imageData):
-        self.setImageData(name, imageData)
+    def reloadImageData(self, name, imageData, fmt="gif"):
+        self.setImageData(name, imageData, fmt)
 
-    def setImageData(self, name, imageData):
+    def setImageData(self, name, imageData, fmt="gif"):
         label = self.__verifyItem(self.n_images, name)
-        image = self.__getImageData(imageData)
+        image = self.__getImageData(imageData, fmt=fmt)
         self.__populateImage(name, image)
 
     # replace the current image, with a new one

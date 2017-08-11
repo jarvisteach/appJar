@@ -10,6 +10,7 @@
     * [#204](https://github.com/jarvisteach/appJar/issues/204) - appJar now supports [Command line arguments](/pythonCommandLine)  
     * [#203](https://github.com/jarvisteach/appJar/issues/203) - updated docs on [LabelFrames](/pythonWidgetGrouping/#label-frame)  
     * [#200](https://github.com/jarvisteach/appJar/issues/200) - Switched [Grid](/pythonDevWidgets/#grid) to use a [ScrollPane](/pythonWidgetGrouping/#scroll-pane) & changed ScrollPane to use AutoScrollbars.  
+    * [#162](https://github.com/jarvisteach/appJar/issues/162) - PhotoImage objects can now be passed directly when [adding/setting ImageData](/pythonImages/#add-images)  
     * [#71](https://github.com/jarvisteach/appJar/issues/71) - More work on [Internationalisation](/pythonInternationalisation/) - now supports LabelFrames, ToggleFrames, TabbedFrames, Properties & Titles  
 
 

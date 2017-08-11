@@ -25,9 +25,10 @@ app.addImage("simple", "balloons.gif")
 app.stopLabelFrame()
 ```
 
-* `.addImageData(title, imgData)`  
+* `.addImageData(title, imgData, fmt="gif")`  
     As above, but receives raw image data.  
     Currently only supports base64 encoded GIF images.  
+    Alternatively, you can pass in a ready made PhotoImage, simply set `fmt` to be 'PhotoImage'.  
 
 * `.setImageLocation(location)`  
     Set a folder for image files.  
@@ -35,12 +36,12 @@ app.stopLabelFrame()
 
 ###Change Images
 
-* `.setImage(title, image)` & `.setImageData(title, imgData)`  
+* `.setImage(title, image)` & `.setImageData(title, imgData, fmt="gif")`  
     This will replace the existing image with the new one.  
     If the image has the same path, it will not be changed.  
-    If imgData, will always be reloaded.  
+    ImageData is always reloaded.  
 
-* `.reloadImage(title, image)` & `.reloadImageData(title, imgData)`  
+* `.reloadImage(title, image)` & `.reloadImageData(title, imgData, fmt="gif")`  
     This will replace the existing image with the new one.  
     It will force an image reload, even if the file name hasn't changed.  
     Useful if an outside agency modifies the image file.  
