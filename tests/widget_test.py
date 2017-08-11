@@ -1059,6 +1059,7 @@ def test_gui_options():
 
     app.setLocation(-200,2000)
     app.setLocation(200,200)
+    app.setLocation("CENTER")
 
     app.setGuiPadding(20,20)
     app.setGuiPadding([20,20])
@@ -1637,6 +1638,7 @@ def test_containers():
 # breaks under python2.7
     app.startSubWindow("sb1", modal=False, transient=False, blocking=False, grouped=False)
     app.addLabel("sb1_l", TEXT_ONE)
+    test_gui_options()
     app.stopSubWindow()
 
     app.openSubWindow("sb1")

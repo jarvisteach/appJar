@@ -132,7 +132,7 @@ class gui(object):
         return pathString
 
     @staticmethod
-    def CENTER(win):
+    def CENTER(win, up=0):
         """
         centers a tkinter window
         http://stackoverflow.com/questions/3352918/
@@ -140,17 +140,23 @@ class gui(object):
         """
         win.attributes('-alpha', 0.0)  # hide the window
         win.update_idletasks()
-        width = win.winfo_width()
+#        width = win.winfo_width()
+        width = win.winfo_reqwidth()
         frm_width = win.winfo_rootx() - win.winfo_x()
         win_width = width + 2 * frm_width
-        height = win.winfo_height()
+#        height = win.winfo_height()
+        height = win.winfo_reqheight()
         titlebar_height = win.winfo_rooty() - win.winfo_y()
         win_height = height + titlebar_height + frm_width
         x = win.winfo_screenwidth() // 2 - win_width // 2
         y = win.winfo_screenheight() // 2 - win_height // 2
-        y = y - 150
-        win.geometry('{}x{}+{}+{}'.format(width, height, x, y))
-        win.deiconify()
+        if up < y:
+            y = y - up
+        else:
+            y = 0
+
+        logging.getLogger("appJar").debug("Setting location: " +str(x)+","+str(y) + " - " + str(width)+","+str(height))
+        win.geometry("+%d+%d" % (x, y))
         win.attributes('-alpha', 1.0)
 
     # figure out where the cursor is with respect to a widget
@@ -493,7 +499,7 @@ class gui(object):
         self.topLevel.protocol("WM_DELETE_WINDOW", self.stop)
         # temporarily hide it
         self.topLevel.withdraw()
-        self.locationSet = False
+        self.topLevel.locationSet = False
 
         # used to keep a handle on the last pop-up dialog
         # allows the dialog to be closed remotely
@@ -1752,17 +1758,9 @@ class gui(object):
             if toggleTb:
                 self.__toggletb()
 
-            # if the window hasn't been positioned by the user, put it in the
-            # middle
-            if not self.locationSet:
-                if self.platform == self.WINDOWS:
-                    x = (m_width - h_width) / 2
-                    y = (m_height - h_height) / 2
-                elif self.platform in [self.MAC, self.LINUX]:
-                    x = (m_width - width) / 2
-                    y = (m_height - height) / 2
-
-                self.setLocation(x, y)
+            # if window hasn't been positioned by the user, put in the middle
+            if not self.__getTopLevel().locationSet:
+                self.CENTER(self.__getTopLevel())
 
     # called to update screen geometry
     def setGeometry(self, geom, height=None):
@@ -1781,24 +1779,23 @@ class gui(object):
                 container.geometry(container.geom)
 
     # called to set screen position
-    def setLocation(self, x, y):
-        # get the window's width & height
-        m_width = self.topLevel.winfo_screenwidth()
-        m_height = self.topLevel.winfo_screenheight()
+    def setLocation(self, x, y=None):
 
-        if x < 0 or x > m_width or y < 0 or y > m_height:
-            self.warn(
-                "Invalid location: " +
-                str(x) +
-                ", " +
-                str(y) +
-                " - ignoring")
-            return
+        if y is None:
+            self.debug("Set location called with no params - CENTERING")
+            self.CENTER(self.__getTopLevel())
+        else:
+            # get the window's width & height
+            m_width = self.topLevel.winfo_screenwidth()
+            m_height = self.topLevel.winfo_screenheight()
 
-        if self.containerStack[-1]['type'] != self.C_SUBWINDOW:
-            self.locationSet = True
+            if x < 0 or x > m_width or y < 0 or y > m_height:
+                self.warn( "Invalid location: " + str(x) + ", " + str(y) + " - ignoring")
+                return
 
-        self.__getTopLevel().geometry("+%d+%d" % (x, y))
+            self.debug("Setting location to: " + str(x) + "," + str(y))
+            self.__getTopLevel().geometry("+%d+%d" % (x, y))
+        self.__getTopLevel().locationSet = True
 
     # called to make sure this window is on top
     def __bringToFront(self, win=None):
@@ -3863,6 +3860,7 @@ class gui(object):
         if title is None:
             title = name
         top = SubWindow()
+        top.locationSet = False
         top.modal = modal
         top.blocking = blocking
         top.title(title)
@@ -3891,6 +3889,8 @@ class gui(object):
         self.__addContainer(name, self.C_SUBWINDOW, top, 0, 1, "")
         if self.winIcon is not None:
             self.setIcon(self.winIcon)
+
+        return top
 
     def stopSubWindow(self):
         if self.containerStack[-1]['type'] == self.C_SUBWINDOW:
@@ -10150,7 +10150,8 @@ class Dialog(Toplevel):
             self.initial_focus = self
 
         self.protocol("WM_DELETE_WINDOW", self.cancel)
-        gui.CENTER(self)
+        gui.CENTER(self, up=150)
+        self.deiconify()
 
         self.initial_focus.focus_set()
         self.wait_window(self)

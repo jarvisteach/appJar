@@ -49,8 +49,12 @@ else:
 * `.setResizable(canResize=True)`  
     Sets whether the GUI can be resized or not.  
 
-* `.setLocation(x, y)`  
+* `.setLocation(x, y=None)`  
     Sets the position of the GUI.  
+    If you want to position the widget in the center of the screen, set `x` to CENTER:
+```python
+app.setLocation("CENTER")
+```
 
 * `.setGuiPadding(x, y)`  
     Sets the size of the border inside the GUI - defaults to 2.  
