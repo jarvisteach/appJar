@@ -3860,6 +3860,7 @@ class gui(object):
         if title is None:
             title = name
         top = SubWindow()
+        self.CENTER(top)
         top.locationSet = False
         top.modal = modal
         top.blocking = blocking
@@ -10129,7 +10130,9 @@ class Dialog(Toplevel):
 
     def __init__(self, parent, title=None):
         Toplevel.__init__(self, parent)
+        gui.CENTER(self, up=150)
         self.transient(parent)
+        self.withdraw()
         parent.POP_UP = self
 
         if title:
@@ -10150,7 +10153,6 @@ class Dialog(Toplevel):
             self.initial_focus = self
 
         self.protocol("WM_DELETE_WINDOW", self.cancel)
-        gui.CENTER(self, up=150)
         self.deiconify()
 
         self.initial_focus.focus_set()
@@ -10293,17 +10295,11 @@ class SubWindow(Toplevel):
         Toplevel.__init__(self)
         self.escapeBindId = None  # used to exit fullscreen
         self.stopFunction = None  # used to stop
-        self.geometry("+%d+%d" % (100, 100))
         self.modal = False
         self.blocking = False
         self.canvasPane = CanvasDnd(self)
         self.canvasPane.pack(fill=BOTH, expand=True)
 
-# removed for python2.7
-#    def __getattr__(self, name):
-#        def handlerFunction(*args, **kwargs):
-#            print("Unknown function:", name, args, kwargs)
-#        return handlerFunction
 
 #####################################
 # SimpleGrid Stuff
