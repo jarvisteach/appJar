@@ -1201,6 +1201,7 @@ class gui(object):
         self.n_pieCharts = {}
         self.n_separators = []
         self.n_widgets = {}
+        self.n_dps = []
 
         # completed containers - in case we want to open them again
         self.n_usedContainers = {}
@@ -4134,6 +4135,12 @@ class gui(object):
         else:
             return False
 
+    def getAllCheckBoxes(self):
+        cbs = {}
+        for k in self.n_cbs:
+            cbs[k] = self.getCheckBox(k)
+        return cbs
+
     def setCheckBox(self, title, ticked=True, callFunction=True):
         cb = self.__verifyItem(self.n_cbs, title)
         if ticked:
@@ -4180,6 +4187,12 @@ class gui(object):
     def getScale(self, title):
         sc = self.__verifyItem(self.n_scales, title)
         return sc.get()
+
+    def getAllScales(self):
+        scales = {}
+        for k in self.n_scales:
+            scales[k] = self.getScale(k)
+        return scales
 
     def setScale(self, title, pos, callFunction=True):
         sc = self.__verifyItem(self.n_scales, title)
@@ -4393,6 +4406,12 @@ class gui(object):
             if val.startswith("-") or len(val) == 0:
                 val = None
             return val
+
+    def getAllOptionBoxes(self):
+        boxes = {}
+        for k in self.n_options:
+            boxes[k] = self.getOptionBox(k)
+        return boxes
 
     def __disableOptionBoxSeparators(self, box):
         # disable any separators
@@ -4695,6 +4714,12 @@ class gui(object):
         props = self.__verifyItem(self.n_props, title)
         return props.getProperties()
 
+    def getAllProperties(self):
+        props = {}
+        for k in self.n_props:
+            props[k] = self.getProperties(k)
+        return props
+
     def getProperty(self, title, prop):
         props = self.__verifyItem(self.n_props, title)
         return props.getProperty(prop)
@@ -4831,6 +4856,12 @@ class gui(object):
     def getSpinBox(self, title):
         spin = self.__verifyItem(self.n_spins, title)
         return spin.get()
+
+    def getAllSpinBoxes(self):
+        boxes = {}
+        for k in self.n_spins:
+            boxes[k] = self.getSpinBox(k)
+        return boxes
 
     # validates that an item in the named spinbox starts with the user_input
     def __validateSpinBox(self, user_input, widget_name):
@@ -5569,6 +5600,12 @@ class gui(object):
         var = self.__verifyItem(self.n_rbVars, title)
         return var.get()
 
+    def getAllRadioButtons(self):
+        rbs = {}
+        for k in self.n_rbs:
+            rbs[k] = self.getRadioButton(k)
+        return rbs
+
     def setRadioButton(self, title, value, callFunction=True):
         vals = self.__verifyItem(self.n_rbVals, title)
         if value not in vals:
@@ -5731,6 +5768,12 @@ class gui(object):
         for loop in range(len(items)):
             values.append(lb.get(items[loop]))
         return values
+
+    def getAllListBoxes(self):
+        boxes = {}
+        for k in self.n_lbs:
+            boxes[k] = self.getListItems(k)
+        return boxes
 
     def getAllListItems(self, title):
         lb = self.__verifyItem(self.n_lbs, title)
@@ -6005,6 +6048,8 @@ class gui(object):
 # DatePicker Widget - using Form Container
 #####################################
     def addDatePicker(self, name, row=None, column=0, colspan=0, rowspan=0):
+#        self.__verifyItem(self.n_dps, name, True)
+        self.n_dps.append(name)
         # initial DatePicker has these dates
         days = range(1, 32)
         self.MONTH_NAMES = calendar.month_name[1:]
@@ -6032,11 +6077,13 @@ class gui(object):
         frame.isContainer = False
 
     def setDatePickerFg(self, name, fg):
+#        self.__verifyItem(self.n_dps, name)
         self.setLabelFg(name + "_DP_DayLabel", fg)
         self.setLabelFg(name + "_DP_MonthLabel", fg)
         self.setLabelFg(name + "_DP_YearLabel", fg)
 
     def setDatePickerChangeFunction(self, title, function):
+#        self.__verifyItem(self.n_dps, title)
         cmd = self.MAKE_FUNC(self.__datePickerChangeFunction, title, True)
         self.setOptionBoxChangeFunction(title + "_DP_DayOptionBox", cmd)
         self.__verifyItem(self.n_options, title + "_DP_DayOptionBox").function = function
@@ -6072,12 +6119,14 @@ class gui(object):
 
     # set a date for the named DatePicker
     def setDatePickerRange(self, title, startYear, endYear=None):
+#        self.__verifyItem(self.n_dps, title)
         if endYear is None:
             endYear = datetime.date.today().year
         years = range(startYear, endYear + 1)
         self.changeOptionBox(title + "_DP_YearOptionBox", years)
 
     def setDatePicker(self, title, date=None):
+#        self.__verifyItem(self.n_dps, title)
         if date is None:
             date = datetime.date.today()
         self.setOptionBox(title + "_DP_YearOptionBox", str(date.year))
@@ -6085,6 +6134,7 @@ class gui(object):
         self.setOptionBox(title + "_DP_DayOptionBox", date.day - 1)
 
     def getDatePicker(self, title):
+#        self.__verifyItem(self.n_dps, title)
         day = int(self.getOptionBox(title + "_DP_DayOptionBox"))
         month = self.MONTH_NAMES.index(
             self.getOptionBox(
@@ -6092,6 +6142,12 @@ class gui(object):
         year = int(self.getOptionBox(title + "_DP_YearOptionBox"))
         date = datetime.date(year, month, day)
         return date
+
+    def getAllDatePickers(self):
+        dps = {}
+        for k in self.n_n_dps:
+            dps[k] = self.getDatePicker(k)
+        return dps
 
 #####################################
 # FUNCTIONS for labels
@@ -6261,6 +6317,12 @@ class gui(object):
 
     def getTextArea(self, title):
         return self.__verifyItem(self.n_textAreas, title).getText()
+
+    def getAllTextAreas(self):
+        areas = {}
+        for k in self.n_textAreas:
+            areas[k] = self.getTextArea(k)
+        return areas
 
     def setTextArea(self, title, text, callFunction=True):
         ta = self.__verifyItem(self.n_textAreas, title)
