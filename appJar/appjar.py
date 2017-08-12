@@ -4152,6 +4152,10 @@ class gui(object):
             if hasattr(cb, 'cmd'):
                 cb.cmd()
 
+    def clearAllCheckBoxes(self, callFunction=False):
+        for cb in self.n_cbs:
+            self.setCheckBox(cb, ticked=False, callFunction=callFunction)
+
 #####################################
 # FUNCTION for scales
 #####################################
@@ -4204,6 +4208,10 @@ class gui(object):
 
         if not callFunction and hasattr(sc, 'cmd'):
             sc.cmd_id = sc.var.trace('w', sc.cmd)
+
+    def clearAllScales(self, callFunction=False):
+        for sc in self.n_scales:
+            self.setScale(sc, 0, callFunction=callFunction)
 
     def setScaleIncrement(self, title, increment):
         sc = self.__verifyItem(self.n_scales, title)
@@ -4912,6 +4920,10 @@ class gui(object):
                 str(vals))
         self.__setSpinBoxVal(spin, val, callFunction)
 
+    def clearAllSpinBoxes(self, callFunction=False):
+        for sb in self.n_spins:
+            self.setSpinBoxPos(sb, 0, callFunction=callFunction)
+
     def setSpinBoxPos(self, title, pos, callFunction=True):
         spin = self.__verifyItem(self.n_spins, title)
         vals = spin.cget("values")  # .split()
@@ -5593,6 +5605,7 @@ class gui(object):
         # and select it, if it's the first item in the list
         if newRb:
             rb.select()
+            var.startVal = name # so we can reset it...
         self.__positionWidget(rb, row, column, colspan, rowspan, EW)
         return rb
 
@@ -5623,6 +5636,10 @@ class gui(object):
 
         if not callFunction and hasattr(var, 'cmd'):
             var.cmd_id = var.trace('w', var.cmd)
+
+    def clearAllRadioButtons(self, callFunction=False):
+        for rb in self.n_rbs:
+            self.setRadioButton(rb, self.n_rbVars[rb].startVal, callFunction=callFunction)
 
     def setRadioTick(self, title, tick=True):
         radios = self.__verifyItem(self.n_rbs, title)
@@ -5863,6 +5880,10 @@ class gui(object):
         lb = self.__verifyItem(self.n_lbs, title)
         lb.selection_clear(0, END)
         lb.delete(0, END)  # clear
+
+    def clearAllListBoxes(self):
+        for lb in self.n_lbs:
+            self.clearListBox(lb)
 
 #####################################
 # FUNCTION for buttons
@@ -6350,6 +6371,10 @@ class gui(object):
         ta.callFunction = callFunction
         ta.delete('1.0', END)
         ta.callFunction = oldCall
+
+    def clearAllTextAreas(self, callFunction=False):
+        for ta in self.n_textAreas:
+            self.clearTextArea(ta, callFunction=callFunction)
 
     def logTextArea(self, title):
         self.__loadHashlib()
@@ -7008,7 +7033,7 @@ class gui(object):
         entry.bind("<FocusIn>", in_command, add="+")
         entry.bind("<FocusOut>", out_command, add="+")
 
-    def clearEntry(self, name, callFunction=True):
+    def clearEntry(self, name, callFunction=True, setFocus=True):
         var = self.__verifyItem(self.n_entryVars, name)
 
         # now call function
@@ -7021,22 +7046,11 @@ class gui(object):
             var.cmd_id = var.trace('w', var.cmd)
 
         self.__updateEntryDefault(name, mode="clear")
-        self.setFocus(name)
+        if setFocus: self.setFocus(name)
 
-    def clearAllEntries(self, callFunction=True):
+    def clearAllEntries(self, callFunction=False):
         for entry in self.n_entryVars:
-            var = self.__verifyItem(self.n_entryVars, entry)
-
-            # now call function
-            if not callFunction and hasattr(var, 'cmd'):
-                var.trace_vdelete('w', var.cmd_id)
-
-            var.set("")
-
-            if not callFunction and hasattr(var, 'cmd'):
-                var.cmd_id = var.trace('w', var.cmd)
-
-            self.__updateEntryDefault(entry, mode="clear")
+            self.clearEntry(entry, callFunction=callFunction, setFocus=False)
 
     def setFocus(self, name):
         self.__verifyItem(self.n_entries, name)
