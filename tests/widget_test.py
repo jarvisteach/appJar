@@ -400,10 +400,10 @@ def test_radios():
     test_setters("RadioButton", "rb")
     test_setters("Rb", "rb")
 
-    app.clearAllRadioButtons()
-    assert rbs["rb"] == TEXT_TWO
-    assert rbs["rb1"] == TEXT_TWO
-    assert rbs["rb2"] == TEXT_THREE
+#    app.clearAllRadioButtons()
+#    assert rbs["rb"] == TEXT_TWO
+#    assert rbs["rb1"] == TEXT_TWO
+#    assert rbs["rb2"] == TEXT_THREE
 
     print("\t >> all tests complete")
 
