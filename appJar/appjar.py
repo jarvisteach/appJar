@@ -5762,6 +5762,7 @@ class gui(object):
     # returns a list containing 0 or more elements
     # all that are in the selected range
     def getListItems(self, title):
+        self.warn(".getListItems() is deprecated. You should be using .getListBox()")
         return self.getListBox(title)
 
     def getListBox(self, title):
@@ -5784,6 +5785,7 @@ class gui(object):
         return list(items)
 
     def getListItemsPos(self, title):
+        self.warn(".getListItemsPos() is deprecated. You should be using .getListBoxPos()")
         return self.getListBoxPos(title)
 
     def getListBoxPos(self, title):

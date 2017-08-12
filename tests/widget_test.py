@@ -364,19 +364,37 @@ def test_buttons():
 def test_radios():
     print("\tTesting radios")
     assert isinstance(app.addRadioButton("rb", TEXT_ONE), Radiobutton)
+
     app.addRadioButton("rb", TEXT_TWO)
     app.addRadioButton("rb", TEXT_THREE)
 
+    app.addRadioButton("rb1", TEXT_TWO)
+    app.addRadioButton("rb1", TEXT_THREE)
+
+    app.addRadioButton("rb2", TEXT_THREE)
+    app.addRadioButton("rb2", TEXT_TWO)
+
     assert app.getRadioButton("rb") == TEXT_ONE
+    assert app.getRadioButton("rb1") == TEXT_TWO
+    assert app.getRadioButton("rb2") == TEXT_THREE
 
     app.setRadioButton("rb", TEXT_TWO)
+    app.setRadioButton("rb1", TEXT_THREE)
+
     assert app.getRadioButton("rb") == TEXT_TWO
+    assert app.getRadioButton("rb1") == TEXT_THREE
+    assert app.getRadioButton("rb2") == TEXT_THREE
 
     app.setRadioTick("rb")
     assert app.getRadioButton("rb") == TEXT_TWO
 
     app.setRadioButton("rb", TEXT_THREE)
     assert app.getRadioButton("rb") == TEXT_THREE
+
+    rbs = app.getAllRadioButtons()
+    assert rbs["rb"] == TEXT_THREE
+    assert rbs["rb1"] == TEXT_THREE
+    assert rbs["rb2"] == TEXT_THREE
 
     # call generic setter functions
     test_setters("RadioButton", "rb")
@@ -401,6 +419,14 @@ def test_checks():
     assert app.getCheckBox("NCB2") is False
     assert app.getCheckBox("NCB3") is False
 
+    cbs = app.getAllCheckBoxes()
+    assert cbs[TEXT_ONE] is False
+    assert cbs[TEXT_TWO] is False
+    assert cbs[TEXT_THREE] is False
+    assert cbs["NCB1"] is False
+    assert cbs["NCB2"] is False
+    assert cbs["NCB3"] is False
+
     app.setCheckBox(TEXT_ONE)
     app.setCheckBox(TEXT_TWO, True)
     app.setCheckBox(TEXT_THREE, False)
@@ -417,10 +443,17 @@ def test_checks():
     assert app.getCheckBox(TEXT_ONE) is True
     assert app.getCheckBox(TEXT_TWO) is True
     assert app.getCheckBox(TEXT_THREE) is False
-
     assert app.getCheckBox("NCB1") is False
     assert app.getCheckBox("NCB2") is True
     assert app.getCheckBox("NCB3") is False
+
+    cbs = app.getAllCheckBoxes()
+    assert cbs[TEXT_ONE] is True
+    assert cbs[TEXT_TWO] is True
+    assert cbs[TEXT_THREE] is False
+    assert cbs["NCB1"] is False
+    assert cbs["NCB2"] is True
+    assert cbs["NCB3"] is False
 
     # call generic setter functions
     test_setters("CheckBox", TEXT_ONE)
@@ -437,6 +470,10 @@ def test_options():
 
     assert app.getOptionBox("l1") == LIST_ONE[0]
     assert app.getOptionBox("l2") == LIST_TWO[0]
+
+    obs = app.getAllOptionBoxes()
+    assert obs["l1"] == LIST_ONE[0]
+    assert obs["l2"] == LIST_TWO[0]
 
     # select new items - by position
     app.setOptionBox("l1", 2)
@@ -462,6 +499,10 @@ def test_options():
     app.setOptionBox("l1", 1)
     assert app.getOptionBox("l2") == LIST_TWO[1]
     assert app.getOptionBox("l1") == LIST_TWO[2]
+
+    obs = app.getAllOptionBoxes()
+    assert obs["l2"] == LIST_TWO[1]
+    assert obs["l1"] == LIST_TWO[2]
 
     assert isinstance(app.addTickOptionBox("tl1", LIST_ONE), OptionMenu)
     app.addTickOptionBox("tl2", LIST_TWO)
@@ -517,7 +558,13 @@ def test_spins():
     assert app.getSpinBox("s1") == "a"
     assert app.getSpinBox("s2") == "a"
     assert app.getSpinBox("s3") == "5"
-    assert app.getSpinBox("s4") == "25"
+    assert app.getSpinBox("s1") == "a"
+
+    sbs = app.getAllSpinBoxes()
+    assert sbs["s2"] == "a"
+    assert sbs["s3"] == "5"
+    assert sbs["s4"] == "25"
+    assert sbs["s4"] == "25"
 
     app.setSpinBox("s1", "b")
     app.setSpinBox("s2", "d")
@@ -528,6 +575,12 @@ def test_spins():
     assert app.getSpinBox("s2") == "d"
     assert app.getSpinBox("s3") == "200"
     assert app.getSpinBox("s4") == "150"
+
+    sbs = app.getAllSpinBoxes()
+    assert sbs["s1"] == "b"
+    assert sbs["s2"] == "d"
+    assert sbs["s3"] == "200"
+    assert sbs["s4"] == "150"
 
     # call generic setter functions
     test_setters("SpinBox", "s1")
@@ -571,15 +624,15 @@ def test_lists():
 #    assert app.getListItems("l1") == ["f"]
 
     app.clearListBox("l1")
-    assert app.getListItems("l1") == []
-    assert app.getListItems("l2") == [LIST_ONE[len(LIST_ONE)-1]]
+    assert app.getListBox("l1") == []
+    assert app.getListBox("l2") == [LIST_ONE[len(LIST_ONE)-1]]
 
     app.updateListItems("l1", LIST_ONE)
     app.selectListItem("l1", LIST_ONE[0])
     app.selectListItem("l1", LIST_ONE[3])
-    assert app.getListItems("l1") == [LIST_ONE[3]]
-    assert app.getListItemsPos("l1") == [3]
-    assert app.getListBoxPos("l1") == [3]
+    assert app.getListBox("l1") == [LIST_ONE[3]]
+    assert app.getListBoxPos("l1") == (3,)
+    assert app.getListItemsPos("l1") == (3,)
 
     app.setListBoxMulti("l1")
     app.selectListItem("l1", LIST_ONE[0])
@@ -594,13 +647,13 @@ def test_lists():
 # SELECTING THE LAST ONE...
 
     app.updateListItems("l2", LIST_TWO, True)
-    assert app.getListItems("l2") == [LIST_TWO[len(LIST_TWO)-1]]
+    assert app.getListBox("l2") == [LIST_TWO[len(LIST_TWO)-1]]
 
     app.addListItem("l2", "new item")
-    assert app.getListItems("l2") == ["new item"]
+    assert app.getListBox("l2") == ["new item"]
 
     app.addListItem("l2", "another new item", select=False)
-    assert app.getListItems("l2") == ["new item"]
+    assert app.getListBox("l2") == ["new item"]
 
     app.addListBox("cl1", LIST_ONE)
     app.setListItemAtPos("cl1", 0, "new_word")
@@ -622,12 +675,16 @@ def test_lists():
     app.addListBox("g2", LIST_TWO)
 
     app.selectListItem("g1", LIST_ONE[0])
-    assert app.getListItems("g1") == [LIST_ONE[0]]
-    assert app.getListItems("g2") == []
+    assert app.getListBox("g1") == [LIST_ONE[0]]
+    assert app.getListBox("g2") == []
+
+    lbs = app.getAllListBoxes()
+    assert lbs["g1"] == [LIST_ONE[0]]
+    assert lbs["g2"] == []
 
     app.selectListItem("g2", LIST_TWO[0])
-    assert app.getListItems("g1") == []
-    assert app.getListItems("g2") == [LIST_TWO[0]]
+    assert app.getListBox("g1") == []
+    assert app.getListBox("g2") == [LIST_TWO[0]]
 
     app.updateListBox("g1", LIST_ONE)
     app.updateListBox("g2", LIST_TWO)
@@ -637,13 +694,17 @@ def test_lists():
 
     app.selectListItem("g1", LIST_ONE[0])
 
-    assert app.getListItems("g1") == [LIST_ONE[0]]
-    assert app.getListItems("g2") == []
+    assert app.getListBox("g1") == [LIST_ONE[0]]
+    assert app.getListBox("g2") == []
+
+    lbs = app.getAllListBoxes()
+    assert lbs["g1"] == [LIST_ONE[0]]
+    assert lbs["g2"] == []
 
     app.selectListItem("g2", LIST_TWO[0])
 
-    assert app.getListItems("g1") == [LIST_ONE[0]]
-    assert app.getListItems("g2") == [LIST_TWO[0]]
+    assert app.getListBox("g1") == [LIST_ONE[0]]
+    assert app.getListBox("g2") == [LIST_TWO[0]]
 
     print("\t>> all tests complete")
 
@@ -660,6 +721,12 @@ def test_scales():
     assert app.getScale("s3") == 0
     assert app.getScale("s4") == 0
 
+    scales = app.getAllScales()
+    assert scales["s1"] == 0
+    assert scales["s2"] == 0
+    assert scales["s3"] == 0
+    assert scales["s4"] == 0
+
     app.setScale("s1", 20)
     app.setScale("s2", 73)
     app.setScale("s3", 100)
@@ -672,6 +739,12 @@ def test_scales():
     assert app.getScale("s2") == 73
     assert app.getScale("s3") == 100
     assert app.getScale("s4") == 100
+
+    scales = app.getAllScales()
+    assert scales["s1"] == 20
+    assert scales["s2"] == 73
+    assert scales["s3"] == 100
+    assert scales["s4"] == 100
 
     app.setScaleRange("s1", 44, 88)
     app.setScaleRange("s2", 22, 55, 33)
@@ -765,6 +838,13 @@ def test_text_areas():
     assert app.getTextArea("st1") == EMPTY
     assert app.getTextArea("st2") == EMPTY
 
+    tas = app.getAllTextAreas()
+
+    assert tas["t1"] == EMPTY
+    assert tas["t2"] == EMPTY
+    assert tas["st1"] == EMPTY
+    assert tas["st2"] == EMPTY
+
     app.logTextArea("t1")
     assert app.textAreaChanged("t1") is False
     app.logTextArea("t2")
@@ -797,6 +877,12 @@ def test_text_areas():
     assert app.getTextArea("t2") == TEXT_TWO
     assert app.getTextArea("st1") == TEXT_THREE
     assert app.getTextArea("st2") == TEXT_FOUR
+
+    tas = app.getAllTextAreas()
+    assert tas["t1"] == TEXT_ONE
+    assert tas["t2"] == TEXT_TWO
+    assert tas["st1"] == TEXT_THREE
+    assert tas["st2"] == TEXT_FOUR
 
     app.clearTextArea("t2")
     app.clearTextArea("st1")
@@ -862,6 +948,10 @@ def test_properties():
     assert compareDictionaries(app.getProperties("p1"), HASH_ONE)
     assert app.getProperties("p2") == {}
 
+    props = app.getAllProperties()
+    assert compareDictionaries(props["p1"], HASH_ONE)
+    assert props["p2"] == {}
+
     validateProp("p1", HASH_ONE)
     app.setPropertyText("p2", "a", "new text")
     app.setPropertyText("p2", "b")
@@ -876,6 +966,8 @@ def test_properties():
     app.setProperties("p2", HASH_ONE)
     validateProp("p2", hash_all)
     assert compareDictionaries(app.getProperties("p2"), hash_all)
+    props = app.getAllProperties()
+    assert compareDictionaries(props["p2"], hash_all)
 
     for key in hash_all.keys():
         hash_all[key] = False
@@ -951,6 +1043,11 @@ def test_date_pickers():
     assert app.getDatePicker("d2") == datetime.date(1980, 5, 5)
     assert app.getDatePicker("d3") == datetime.date(1990, 10, 10)
 
+    dps = app.getAllDatePickers()
+    assert dps["d1"] == datetime.date.today()
+    assert dps["d2"] == datetime.date(1980, 5, 5)
+    assert dps["d3"] == datetime.date(1990, 10, 10)
+
     app.setDatePickerRange("d1", 1940, 1960)
     app.setDatePickerRange("d2", 1980, 2020)
     app.setDatePickerRange("d3", 2020, 2040)
@@ -968,6 +1065,11 @@ def test_date_pickers():
     assert app.getDatePicker("d1") == datetime.date(1950, 5, 5)
     assert app.getDatePicker("d2") == datetime.date(1990, 5, 5)
     assert app.getDatePicker("d3") == datetime.date(2021, 10, 10)
+
+    dps = app.getAllDatePickers()
+    assert dps["d1"] == datetime.date(1950, 5, 5)
+    assert dps["d2"] == datetime.date(1990, 5, 5)
+    assert dps["d3"] == datetime.date(2021, 10, 10)
 
     # call generic setter functions
     test_setters("DatePicker", "d1")
