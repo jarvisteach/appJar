@@ -547,13 +547,16 @@ def test_lists():
     app.setListItemFg("l1", LIST_ONE[1], "green")
 
     assert app.getListItems("l1") == []
+    assert app.getListBox("l1") == []
     assert app.getListItems("l2") == []
+    assert app.getListBox("l2") == []
 
     assert app.getAllListItems("l1") == LIST_ONE
     assert app.getAllListItems("l2") == LIST_TWO
 
     app.addListItem("l1", "f")
     assert app.getListItems("l1") == ["f"]
+    assert app.getListBox("l1") == ["f"]
     assert app.getAllListItems("l1") == LIST_ONE+["f"]
 
     app.addListItems("l2", LIST_ONE)
@@ -575,6 +578,8 @@ def test_lists():
     app.selectListItem("l1", LIST_ONE[0])
     app.selectListItem("l1", LIST_ONE[3])
     assert app.getListItems("l1") == [LIST_ONE[3]]
+    assert app.getListItemsPos("l1") == [3]
+    assert app.getListBoxPos("l1") == [3]
 
     app.setListBoxMulti("l1")
     app.selectListItem("l1", LIST_ONE[0])

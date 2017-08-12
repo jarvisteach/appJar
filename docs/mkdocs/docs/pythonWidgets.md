@@ -50,7 +50,7 @@ app.go()
 
 * `.addSelectableLabel(title, text=None)`  
     This adds a label whose text can be selected with the mouse.  
-    This is really just a *read-only* entry, disguised to look like a label.  
+    This is really just a *read-only* Entry, disguised to look like a label.  
     But it seems to do the trick...  
 
 * `.addFlashLabel(title, text=None)`  
@@ -103,13 +103,13 @@ See the relevant section for a description of what the widget does.
 ____
 Entries are used to capture input from the user. They take a single parameter - a title.
 
-There are four special-case entries:
+There are four special-case Entries:
 
 * NumericEntry - this only allows numbers to be typed in - always returns a float.
 * SecretEntry - this will show stars, instead of the letters typed - useful for capturing passwords.
 * AutoEntry - this takes a list of words to provide auto-completion.  
 * ValidationEntry - can be set to valid/invalid/waiting - will colour the border green/red/black and show a ✔/✖/★  
-* FileEntry/DirectoryEntry - provides a button to select a file/directory and auto-populates the entry  
+* FileEntry/DirectoryEntry - provides a button to select a file/directory and auto-populates the Entry  
 
 ![Entries](img/1_entries.png)
 
@@ -145,26 +145,26 @@ app.go()
 
 #### Set Entries
 * `.setEntry(title, text, callFunction=True)`  
-    This sets the contents of the specified entry box.
+    This sets the contents of the specified Entry.
     Set ```callFunction``` to be False, if you don't want to call any associated functions.  
 
 * `.setEntryDefault(title, text)`  
-    This sets a default value to display in an entry box.  
+    This sets a default value to display in an Entry.  
     Once the user starts typing, it will disappear.  
     The text is centered, shown in a light gray font, and will not be returned by `.getEntry(title)`  
 
 * `.updateEntryDefault(title, text)`  
-    This will update the default value for the specified entry box.  
+    This will update the default value for the specified Entry.  
 
 * `.setEntryUpperCase(title)` & `.setEntryLowerCase(title)`   
-    This will force all text typed into the entry to be uppercase/lowercase.  
+    This will force all text typed into the Entry to be uppercase/lowercase.  
 
 * `.setEntryMaxLength(title, maxLength)`  
-    This will set a maximum length for the specified entry.  
+    This will set a maximum length for the specified Entry.  
     Any additional characters typed will be discarded.  
 
 * `.setEntryValid(title)` & `.setEntryInvalid(title)` & `.setEntryWaitingValidaiton(title)`  
-    These will set the relevant status of a validation entry.  
+    These will set the relevant status of a validation Entry.  
     (Have a look [here](/specialCharacters) for help displaying special characters)  
     ![EntryValidation](img/entValidation.png)
 
@@ -174,22 +174,22 @@ app.go()
     ![AutoEntry](img/1_autoEntry.png)  
 
 * `.clearEntry(title, callFunction=True)`  
-    This will clear the contents of the specified entry box.
+    This will clear the contents of the specified Entry.
     Set ```callFunction``` to be False, if you don't want to call any associated functions.  
 
 * `.clearAllEntries(callFunction=True)`  
-    This will clear all the entry boxes in the GUI.
+    This will clear all the Entries in the GUI.
 
 * `.setFocus(title)`  
-    This will put the cursor in the specified entry box, so that the user can start typing without needing to click.
+    This will put the cursor in the specified Entry, so that the user can start typing without needing to click.
 
 #### Get Entries
 * `.getEntry(title)`  
-    This will return the contents of the specified entry box.  
+    This will return the contents of the specified Entry.  
     NB. *numericEntries* always return a float.  
 
 * `.getAllEntries()`  
-    This will return the contents of all entries in the app, as a dictionary.  
+    This will return the contents of all Entries in the app, as a dictionary.  
     NB. *numericEntries* always return a float.  
 
 ##Button
@@ -299,6 +299,9 @@ app.go()
     app.go()
 ```
 
+* `.getAllRadioButtons()`  
+    This will return the contents of all RadioButtons in the app, as a dictionary.  
+
 ##CheckBox
 ____
 A simple tick-box, with a label, that can be either ON or OFF.  
@@ -337,8 +340,12 @@ app.go()
     Set ```callFunction``` to be False, if you don't want to call any associated functions.  
 
 ####Get CheckBoxes
+
 * `.getCheckBox(title)`  
     This will return True or False, depending on the state of the CheckBox.  
+
+* `.getAllCheckBoxes()`  
+    This will return the contents of all CheckBoxes in the app, as a dictionary.  
 
 ##OptionBox
 ____
@@ -408,10 +415,14 @@ app.go()
     Not available on TickOptionBoxes.  
 
 ####Get OptionBoxes
+
 * `.getOptionBox(title)`  
     This will return the currently displayed value in an OptionBox.  
     Or a dictionary of names, and their boolean value if a TickOptionBox.  
     Will return None, if an invalid option is currently selected.  
+
+* `.getAllOptionBoxes()`  
+    This will return the contents of all OptionBoxes in the app, as a dictionary.  
 
 ##SpinBox
 ____
@@ -457,8 +468,12 @@ app.go()
     Set ```callFunction``` to be False, if you don't want to call any associated functions.  
 
 ####Get SpinBoxes
+
 * `.getSpinBox(title)`  
     This will get the selected value from the specified SpinBox.  
+
+* `.getAllSpinBoxes()`  
+    This will return the contents of all SpinBoxes in the app, as a dictionary.  
 
 ##ListBox
 ____
@@ -541,8 +556,12 @@ app.go()
 ![LB Colours](img/lbCols.png)  
 
 ####Get ListBoxes
-* `.getListItems(title)`  
+
+* `.getListBox(title)`  
     Gets all of the selected items from the specified ListBox.  
+
+* `.getAllListBoxes()`  
+    This will return the contents of all ListBoxes in the app, as a dictionary.  
 
 * `.getAllListItems(title)`  
     Gets all of the items from the specified ListBox.  
@@ -601,8 +620,12 @@ app.go()
     The function must take one parameter, which will be populated with the scale's title.  
 
 ####Get Scales
+
 * `.getScale(title)`  
     Gets the currently selected value from the scale.  
+
+* `.getAllScales()`  
+    This will return the contents of all Scales in the app, as a dictionary.  
 
 ##Message
 ____
@@ -637,7 +660,7 @@ app.go()
 
 ##TextArea
 ____
-Similar to an Entry box, but allows you to type text over multiple lines.  
+Similar to an Entry, but allows you to type text over multiple lines.  
 
 ![TextArea](img/1_textArea.png)  
 
@@ -668,8 +691,12 @@ app.go()
     Set ```callFunction``` to be False, if you don't want to call any associated functions.  
 
 ####Get TextAreas
+
 * `.getTextArea(title)`  
     Gets the contents of the specified TextArea.  
+
+* `.getAllTextAreas()`  
+    This will return the contents of all TextAreas in the app, as a dictionary.  
 
 ##Meter  
 ____
@@ -700,22 +727,26 @@ app.go()
 ```
 
 ####Add Meters
-* `addMeter(name)` & `.addSplitMeter(name)` &  `.addDualMeter(name)`  
+* `.addMeter(name)` & `.addSplitMeter(name)` &  `.addDualMeter(name)`  
     Adds a meter with the specified name, of the specified type..  
 ####Set Meters
-* `setMeter(name, value, text=None)`  
+* `.setMeter(name, value, text=None)`  
     Changes the specified meter to the specified value.  
     For `Meter` & `SplitMeter`should be a value between 0 and 100.  
     For `DualMeter` should be a list of two values, each between 0 and 100.  
 
-* `setMeterFill(name, colour)`  
+* `.setMeterFill(name, colour)`  
     Changes the fill colour of the specified meter.  
     For `SplitMeter` & `DualMeter`should be a list of two colours.  
 
 ####Get Meters
-* `getMeter(name)`  
+
+* `.getMeter(name)`  
     Gets the value of the specified meter.  
     As meters convert their data to a value between 0 and 1, this will return a list of two values: `(0.45, '45 %')`  
+
+* `.getAllMeters()`  
+    This will return the contents of all Meters in the app, as a dictionary.  
 
 ####Background Processing  
 Meters are designed to show progress over time.  
@@ -753,34 +784,38 @@ app.go()
 ```
 
 ####Add Properties
-* `addProperties(title, values)`  
+* `.addProperties(title, values)`  
     Creates a new Properties widget, with the specified title.  
     If values is populated, then the dictionary items will be added to the widget.  
 
 ####Set Properties
 
-* `setPropertyText(title, prop, newText=None)`  
+* `.setPropertyText(title, prop, newText=None)`  
     Change the displayed text for the named property.  
     If no value is provided, the original vaue will be used.  
 
-* `setProperties(title, props, callFunction=True)`  
+* `.setProperties(title, props, callFunction=True)`  
     Adds the dictionary of properties to the widget.  
     If any of them already exist, they will be updated.  
     Set ```callFunction``` to be False, if you don't want to call any associated functions.  
 
-* `setProperty(title, prop, value=False, callFunction=True)`  
+* `.setProperty(title, prop, value=False, callFunction=True)`  
     Sets the named property to the specified value.  
     If it doesn't exist, it will be added first, at the end of the widget.  
     Set ```callFunction``` to be False, if you don't want to call any associated functions.  
 
-* `deleteProperty(title, prop)`  
+* `.deleteProperty(title, prop)`  
     Deletes the named property from the widget.  
 
 ####Get Properties
-* `getProperties(title)`  
+
+* `.getProperties(title)`  
     Gets a dictionary of the all items in the Properties widget.  
 
-* `getProperty(title, prop)`  
+* `.getAllProperties()`  
+    This will return the contents of all Properties in the app, as a dictionary.  
+
+* `.getProperty(title, prop)`  
     Gets the value of the named property.  
 
 ####Examples
@@ -928,3 +963,6 @@ app.go()
 
 * `.getDatePicker(title)`  
     Will return the currently selected date.  
+
+* `.getAllDatePickers()`  
+    This will return the contents of all DatePickers in the app, as a dictionary.  

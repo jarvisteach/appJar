@@ -1201,7 +1201,7 @@ class gui(object):
         self.n_pieCharts = {}
         self.n_separators = []
         self.n_widgets = {}
-        self.n_dps = []
+        self.n_dps = {}
 
         # completed containers - in case we want to open them again
         self.n_usedContainers = {}
@@ -5762,6 +5762,9 @@ class gui(object):
     # returns a list containing 0 or more elements
     # all that are in the selected range
     def getListItems(self, title):
+        return self.getListBox(title)
+
+    def getListBox(self, title):
         lb = self.__verifyItem(self.n_lbs, title)
         items = lb.curselection()
         values = []
@@ -5772,7 +5775,7 @@ class gui(object):
     def getAllListBoxes(self):
         boxes = {}
         for k in self.n_lbs:
-            boxes[k] = self.getListItems(k)
+            boxes[k] = self.getListBox(k)
         return boxes
 
     def getAllListItems(self, title):
@@ -5781,6 +5784,9 @@ class gui(object):
         return list(items)
 
     def getListItemsPos(self, title):
+        return self.getListBoxPos(title)
+
+    def getListBoxPos(self, title):
         lb = self.__verifyItem(self.n_lbs, title)
         items = lb.curselection()
         return items
@@ -6048,8 +6054,8 @@ class gui(object):
 # DatePicker Widget - using Form Container
 #####################################
     def addDatePicker(self, name, row=None, column=0, colspan=0, rowspan=0):
-#        self.__verifyItem(self.n_dps, name, True)
-        self.n_dps.append(name)
+        self.__verifyItem(self.n_dps, name, True)
+        self.n_dps[name] = name
         # initial DatePicker has these dates
         days = range(1, 32)
         self.MONTH_NAMES = calendar.month_name[1:]
@@ -6077,13 +6083,13 @@ class gui(object):
         frame.isContainer = False
 
     def setDatePickerFg(self, name, fg):
-#        self.__verifyItem(self.n_dps, name)
+        self.__verifyItem(self.n_dps, name)
         self.setLabelFg(name + "_DP_DayLabel", fg)
         self.setLabelFg(name + "_DP_MonthLabel", fg)
         self.setLabelFg(name + "_DP_YearLabel", fg)
 
     def setDatePickerChangeFunction(self, title, function):
-#        self.__verifyItem(self.n_dps, title)
+        self.__verifyItem(self.n_dps, title)
         cmd = self.MAKE_FUNC(self.__datePickerChangeFunction, title, True)
         self.setOptionBoxChangeFunction(title + "_DP_DayOptionBox", cmd)
         self.__verifyItem(self.n_options, title + "_DP_DayOptionBox").function = function
@@ -6119,14 +6125,14 @@ class gui(object):
 
     # set a date for the named DatePicker
     def setDatePickerRange(self, title, startYear, endYear=None):
-#        self.__verifyItem(self.n_dps, title)
+        self.__verifyItem(self.n_dps, title)
         if endYear is None:
             endYear = datetime.date.today().year
         years = range(startYear, endYear + 1)
         self.changeOptionBox(title + "_DP_YearOptionBox", years)
 
     def setDatePicker(self, title, date=None):
-#        self.__verifyItem(self.n_dps, title)
+        self.__verifyItem(self.n_dps, title)
         if date is None:
             date = datetime.date.today()
         self.setOptionBox(title + "_DP_YearOptionBox", str(date.year))
@@ -6134,7 +6140,7 @@ class gui(object):
         self.setOptionBox(title + "_DP_DayOptionBox", date.day - 1)
 
     def getDatePicker(self, title):
-#        self.__verifyItem(self.n_dps, title)
+        self.__verifyItem(self.n_dps, title)
         day = int(self.getOptionBox(title + "_DP_DayOptionBox"))
         month = self.MONTH_NAMES.index(
             self.getOptionBox(
@@ -6145,7 +6151,7 @@ class gui(object):
 
     def getAllDatePickers(self):
         dps = {}
-        for k in self.n_n_dps:
+        for k in self.n_dps:
             dps[k] = self.getDatePicker(k)
         return dps
 
@@ -6861,7 +6867,7 @@ class gui(object):
 
     def getAllEntries(self):
         entries = {}
-        for k, v in self.n_entries.items():
+        for k in self.n_entries:
             entries[k] = self.getEntry(k)
         return entries
 
@@ -7119,6 +7125,12 @@ class gui(object):
     def getMeter(self, name):
         item = self.__verifyItem(self.n_meters, name)
         return item.get()
+
+    def getAllMeters(self):
+        meters = {}
+        for k in self.n_meters:
+            meters[k] = self.getMeter(k)
+        return meters
 
     # a single colour for meters, a list of 2 colours for splits & duals
     def setMeterFill(self, name, colour):
