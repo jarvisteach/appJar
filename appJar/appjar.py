@@ -4211,7 +4211,7 @@ class gui(object):
 
     def clearAllScales(self, callFunction=False):
         for sc in self.n_scales:
-            self.setScale(sc, 0, callFunction=callFunction)
+            self.setScale(sc, self.n_scales[sc].cget("from"), callFunction=callFunction)
 
     def setScaleIncrement(self, title, increment):
         sc = self.__verifyItem(self.n_scales, title)

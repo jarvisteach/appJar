@@ -400,10 +400,10 @@ def test_radios():
     test_setters("RadioButton", "rb")
     test_setters("Rb", "rb")
 
-#    app.clearAllRadioButtons()
-#    assert rbs["rb"] == TEXT_TWO
-#    assert rbs["rb1"] == TEXT_TWO
-#    assert rbs["rb2"] == TEXT_THREE
+    app.clearAllRadioButtons()
+    assert app.getRadioButton("rb") == TEXT_ONE
+    assert app.getRadioButton("rb1") == TEXT_TWO
+    assert app.getRadioButton("rb2") == TEXT_THREE
 
     print("\t >> all tests complete")
 
@@ -465,12 +465,12 @@ def test_checks():
     test_setters("Cb", TEXT_ONE)
 
     app.clearAllCheckBoxes()
-    assert cbs[TEXT_ONE] is False
-    assert cbs[TEXT_TWO] is False
-    assert cbs[TEXT_THREE] is False
-    assert cbs["NCB1"] is False
-    assert cbs["NCB2"] is False
-    assert cbs["NCB3"] is False
+    assert app.getCheckBox(TEXT_ONE) is False
+    assert app.getCheckBox(TEXT_TWO) is False
+    assert app.getCheckBox(TEXT_THREE) is False
+    assert app.getCheckBox("NCB1") is False
+    assert app.getCheckBox("NCB2") is False
+    assert app.getCheckBox("NCB3") is False
 
     print("\t >> all tests complete")
 
@@ -571,7 +571,7 @@ def test_spins():
     assert app.getSpinBox("s1") == "a"
     assert app.getSpinBox("s2") == "a"
     assert app.getSpinBox("s3") == "5"
-    assert app.getSpinBox("s4") == "2a"
+    assert app.getSpinBox("s4") == "25"
 
     sbs = app.getAllSpinBoxes()
     assert sbs["s1"] == "a"
@@ -599,11 +599,10 @@ def test_spins():
     test_setters("SpinBox", "s1")
 
     app.clearAllSpinBoxes()
-    assert sbs["s1"] == "a"
-    assert sbs["s2"] == "a"
-    assert sbs["s3"] == "5"
-    assert sbs["s4"] == "25"
-
+    assert app.getSpinBox("s1") == "a"
+    assert app.getSpinBox("s2") == "a"
+    assert app.getSpinBox("s3") == "5"
+    assert app.getSpinBox("s4") == "25"
 
     print("\t>> all tests complete")
 
@@ -727,8 +726,8 @@ def test_lists():
     assert app.getListBox("g2") == [LIST_TWO[0]]
 
     app.clearAllListBoxes()
-    assert lbs["g1"] == []
-    assert lbs["g2"] == []
+    assert app.getListBox("g1") == []
+    assert app.getListBox("g2") == []
 
     print("\t>> all tests complete")
 
@@ -812,10 +811,11 @@ def test_scales():
     test_setters("Scale", "s1")
 
     app.clearAllScales()
-    assert scales["s1"] == 0
-    assert scales["s2"] == 0
-    assert scales["s3"] == 0
-    assert scales["s4"] == 0
+    print( app.getScale("s1"))
+    assert app.getScale("s1") == 44
+    assert app.getScale("s2") == 22
+    assert app.getScale("s3") == 0
+    assert app.getScale("s4") == 0
 
     print("\t >> all tests complete")
 
@@ -926,10 +926,10 @@ def test_text_areas():
     test_setters("TextArea", "t1")
 
     app.clearAllTextAreas()
-    assert tas["t1"] == EMPTY
-    assert tas["t2"] == EMPTY
-    assert tas["st1"] == EMPTY
-    assert tas["st2"] == EMPTY
+    assert app.getTextArea("t1") == EMPTY
+    assert app.getTextArea("t2") == EMPTY
+    assert app.getTextArea("st1") == EMPTY
+    assert app.getTextArea("st2") == EMPTY
 
     print("\t >> all tests complete")
 
