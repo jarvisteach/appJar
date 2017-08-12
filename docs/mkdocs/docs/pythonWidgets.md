@@ -177,8 +177,9 @@ app.go()
     This will clear the contents of the specified Entry.
     Set ```callFunction``` to be False, if you don't want to call any associated functions.  
 
-* `.clearAllEntries(callFunction=True)`  
+* `.clearAllEntries(callFunction=False)`  
     This will clear all the Entries in the GUI.
+    Set ```callFunction``` to be True, if you want to call any associated functions.  
 
 * `.setFocus(title)`  
     This will put the cursor in the specified Entry, so that the user can start typing without needing to click.
@@ -279,6 +280,10 @@ app.go()
     It is possible to use tick-boxes instead of the classic circular radio-button.  
     Setting tick to True will convert all the radio-buttons for this title to tick boxes.  
 
+* `.clearAllRadioButtons(callFunction=False)`  
+    This will reset all RadioButtons in the app to their first value.  
+    Set ```callFunction``` to be True, if you want to call any associated functions.  
+
 ####Get RadioButtons
 * `.getRadioButton(title)`  
     Gets the value of the selected RadioButton, for the specified title.
@@ -335,9 +340,14 @@ app.go()
     The name will be displayed next to the CheckBox, and the title passed to the function as a unique ID.  
 
 ####Set CheckBoxes
+
 * `.setCheckBox(title, ticked=True, callFunction=True)`  
     This will tick the CheckBox, or untick it if ticked is set to False.  
     Set ```callFunction``` to be False, if you don't want to call any associated functions.  
+
+* `.clearAllCheckBoxes(callFunction=False)`  
+    This will clear (untick) all of the CheckBoxes in the app.  
+    Set ```callFunction``` to be True, if you want to call any associated functions.  
 
 ####Get CheckBoxes
 
@@ -467,6 +477,10 @@ app.go()
     This will select the value at the specified position in the SpinBox.  
     Set ```callFunction``` to be False, if you don't want to call any associated functions.  
 
+* `.clearAllSpinBoxes(callFunction=False)`  
+    This will set all SpinBoxes in the app to their first value.  
+    Set ```callFunction``` to be True, if you want to call any associated functions.  
+
 ####Get SpinBoxes
 
 * `.getSpinBox(title)`  
@@ -514,6 +528,10 @@ app.go()
 
 * `.clearListBox(title)`  
     Removes all items from the specified ListBox.  
+
+* `.clearAllListBoxes(callFunction=False)`  
+    This will remove all items from all the ListBoxes in the app.  
+    Set ```callFunction``` to be True, if you want to call any associated functions.  
 
 * `.updateListBox(title, items, select=False)`  
     Replace the contents of the specified ListBox with the new values.  
@@ -619,6 +637,10 @@ app.go()
     Sets a function to call, each time the scale is changed.  
     The function must take one parameter, which will be populated with the scale's title.  
 
+* `.clearAllScales(callFunction=False)`  
+    This will set all Scales in the app to their minimum value.  
+    Set ```callFunction``` to be True, if you want to call any associated functions.  
+
 ####Get Scales
 
 * `.getScale(title)`  
@@ -689,6 +711,10 @@ app.go()
 * `.clearTextArea(title, callFunction=True)`  
     Clears the contents of the specified TextArea.  
     Set ```callFunction``` to be False, if you don't want to call any associated functions.  
+
+* `.clearAllTextAreas(callFunction=False)`  
+    This will clear the contents of all TextAreas in the app.  
+    Set ```callFunction``` to be True, if you want to call any associated functions.  
 
 ####Get TextAreas
 
