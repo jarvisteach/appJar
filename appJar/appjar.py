@@ -5790,7 +5790,9 @@ class gui(object):
 
     def getListBoxPos(self, title):
         lb = self.__verifyItem(self.n_lbs, title)
-        items = lb.curselection()
+        # bug in tkinter 1.160 returns these as strings
+        items = [int(i) for i in lb.curselection()]
+
         return items
 
     def removeListItemAtPos(self, title, pos):

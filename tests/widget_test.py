@@ -632,8 +632,8 @@ def test_lists():
     app.selectListItem("l1", LIST_ONE[3])
     assert app.getListBox("l1") == [LIST_ONE[3]]
     print("POS=", app.getListBoxPos("l1"))
-    assert app.getListBoxPos("l1") == (3,)
-    assert app.getListItemsPos("l1") == (3,)
+    assert app.getListBoxPos("l1") == [3]
+    assert app.getListItemsPos("l1") == [3]
 
     app.setListBoxMulti("l1")
     app.selectListItem("l1", LIST_ONE[0])
