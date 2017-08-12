@@ -400,6 +400,11 @@ def test_radios():
     test_setters("RadioButton", "rb")
     test_setters("Rb", "rb")
 
+    app.clearAllRadioButtons()
+    assert rbs["rb"] == TEXT_TWO
+    assert rbs["rb1"] == TEXT_TWO
+    assert rbs["rb2"] == TEXT_THREE
+
     print("\t >> all tests complete")
 
 
@@ -458,6 +463,14 @@ def test_checks():
     # call generic setter functions
     test_setters("CheckBox", TEXT_ONE)
     test_setters("Cb", TEXT_ONE)
+
+    app.clearAllCheckBoxes()
+    assert cbs[TEXT_ONE] is False
+    assert cbs[TEXT_TWO] is False
+    assert cbs[TEXT_THREE] is False
+    assert cbs["NCB1"] is False
+    assert cbs["NCB2"] is False
+    assert cbs["NCB3"] is False
 
     print("\t >> all tests complete")
 
@@ -558,12 +571,12 @@ def test_spins():
     assert app.getSpinBox("s1") == "a"
     assert app.getSpinBox("s2") == "a"
     assert app.getSpinBox("s3") == "5"
-    assert app.getSpinBox("s1") == "a"
+    assert app.getSpinBox("s4") == "2a"
 
     sbs = app.getAllSpinBoxes()
+    assert sbs["s1"] == "a"
     assert sbs["s2"] == "a"
     assert sbs["s3"] == "5"
-    assert sbs["s4"] == "25"
     assert sbs["s4"] == "25"
 
     app.setSpinBox("s1", "b")
@@ -584,6 +597,12 @@ def test_spins():
 
     # call generic setter functions
     test_setters("SpinBox", "s1")
+
+    app.clearAllSpinBoxes()
+    assert sbs["s1"] == "a"
+    assert sbs["s2"] == "a"
+    assert sbs["s3"] == "5"
+    assert sbs["s4"] == "25"
 
 
     print("\t>> all tests complete")
@@ -707,6 +726,10 @@ def test_lists():
     assert app.getListBox("g1") == [LIST_ONE[0]]
     assert app.getListBox("g2") == [LIST_TWO[0]]
 
+    app.clearAllListBoxes()
+    assert lbs["g1"] == []
+    assert lbs["g2"] == []
+
     print("\t>> all tests complete")
 
 
@@ -787,6 +810,12 @@ def test_scales():
 
     # call generic setter functions
     test_setters("Scale", "s1")
+
+    app.clearAllScales()
+    assert scales["s1"] == 0
+    assert scales["s2"] == 0
+    assert scales["s3"] == 0
+    assert scales["s4"] == 0
 
     print("\t >> all tests complete")
 
@@ -895,6 +924,12 @@ def test_text_areas():
 
     # call generic setter functions
     test_setters("TextArea", "t1")
+
+    app.clearAllTextAreas()
+    assert tas["t1"] == EMPTY
+    assert tas["t2"] == EMPTY
+    assert tas["st1"] == EMPTY
+    assert tas["st2"] == EMPTY
 
     print("\t >> all tests complete")
 
