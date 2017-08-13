@@ -5846,8 +5846,8 @@ class gui(object):
         lb.delete(pos)
         lb.insert(pos, newVal)
 
-    def setListItem(self, title, oldVal, newVal, first=False):
-        for pos in self.__getListPositions(title, oldVal):
+    def setListItem(self, title, item, newVal, first=False):
+        for pos in self.__getListPositions(title, item):
             self.setListItemAtPos(title, pos, newVal)
             if first:
                 break
@@ -10852,9 +10852,10 @@ class AJRectangle(object):
 class GoogleMap(LabelFrame):
     """ Class to wrap a GoogleMap tile download into a widget"""
 
-    def __init__(self, parent):
+    def __init__(self, parent, defaultLocation="Marlborough, UK"):
         LabelFrame.__init__(self, parent, text="GoogleMaps")
         self.parent = parent
+        self.defaultLocation = defaultLocation
 
         self.TERRAINS = ("Roadmap", "Satellite", "Hybrid", "Terrain")
         self.GOOGLE_URL =  "http://maps.google.com/maps/api/staticmap?"
@@ -10961,8 +10962,6 @@ class GoogleMap(LabelFrame):
     def __setMapParams(self):
         if "center" not in self.params or self.params["center"] == None or self.params["center"] == "":
             self.params["center"] = self.getCurrentLocation()
-            if self.params["center"] is None:
-                raise Exception("Unable to contact location server.")
         if "zoom" not in self.params:
             self.params["zoom"] = 16
         if "size" not in self.params:
@@ -11071,7 +11070,7 @@ class GoogleMap(LabelFrame):
             u.close()
             self.mapData = base64.encodestring(self.rawData)
         except Exception as e:
-            logging.getLogger("appJar").exception(e)
+            logging.getLogger("appJar").error("Unable to contact GoogleMaps")
             self.mapData = None
             self.rawData = None
 
@@ -11083,7 +11082,7 @@ class GoogleMap(LabelFrame):
             urlretrieve(self.request, fileName)
             return fileName
         except Exception as e:
-            logging.getLogger("appJar").exception(e)
+            logging.getLogger("appJar").error("Unable to contact GoogleMaps")
             return None
 
     def getCurrentLocation(self):
@@ -11091,8 +11090,8 @@ class GoogleMap(LabelFrame):
         try:
             return self.__locationLookup()
         except Exception as e:
-            logging.getLogger("appJar").exception(e)
-            return None
+            logging.getLogger("appJar").error("Unable to contact location server, using default: " + self.defaultLocation)
+            return self.defaultLocation
 
     def __locationLookup(self):
         data =  urlopen(self.LOCATION_URL).read().decode("utf-8")

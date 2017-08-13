@@ -178,7 +178,7 @@ app.go()
     Set ```callFunction``` to be False, if you don't want to call any associated functions.  
 
 * `.clearAllEntries(callFunction=False)`  
-    This will clear all the Entries in the GUI.
+    This will clear all Entries in the GUI.  
     Set ```callFunction``` to be True, if you want to call any associated functions.  
 
 * `.setFocus(title)`  
@@ -346,7 +346,7 @@ app.go()
     Set ```callFunction``` to be False, if you don't want to call any associated functions.  
 
 * `.clearAllCheckBoxes(callFunction=False)`  
-    This will clear (untick) all of the CheckBoxes in the app.  
+    This will clear (untick) all CheckBoxes in the app.  
     Set ```callFunction``` to be True, if you want to call any associated functions.  
 
 ####Get CheckBoxes
@@ -515,8 +515,8 @@ app.go()
     Adds a list of items to the end of the List Box, selecting the last one.  
 
 ####Set ListBoxes
-* `.setListItem(title, item, oldVal, newVal, first=False)`  
-    `.setListItemAtPos(title, item, pos, newVal)`  
+* `.setListItem(title, item, newVal, first=False)`  
+    `.setListItemAtPos(title, pos, newVal)`  
     Changes the specified list item to the new value.  
     If `first` is set to True, only the first item found will be changed.  
     Otherwise, all occurences of the specified value will be changed.  
@@ -530,7 +530,7 @@ app.go()
     Removes all items from the specified ListBox.  
 
 * `.clearAllListBoxes(callFunction=False)`  
-    This will remove all items from all the ListBoxes in the app.  
+    This will remove all items from all ListBoxes in the app.  
     Set ```callFunction``` to be True, if you want to call any associated functions.  
 
 * `.updateListBox(title, items, select=False)`  

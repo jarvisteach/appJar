@@ -3,10 +3,10 @@ sys.path.append("../../")
 from appJar import gui
 
 def press(btn):
-   item = app.getListItems("list")[0]
-   app.setListItemBg("list", item, "green")
    newVal = app.getEntry("en1")
+   item = app.getListBox("list")[0]
    app.setListItem("list", item, newVal)
+   app.setListItemBg("list", newVal, "green")
 
 
 app=gui()
