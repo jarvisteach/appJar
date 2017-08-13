@@ -1308,6 +1308,8 @@ class gui(object):
 
                     if key.lower() == "appjar":
                         self.setTitle(val)
+                    elif key.lower() == "splash":
+                        self.splashConfig['text'] = val
                     else:
                         try:
                             widgets[key].title(val)
@@ -1498,7 +1500,17 @@ class gui(object):
     def go(self, language=None, startWindow=None):
         """ Most important function! Start the GUI """
 
+        # check if we have a command line language
+        if self.language is not None:
+            language = self.language
+
+        # if language is populated, we are in internationalisation mode
+        # call the setLanguage function - to re-badge all the widgets
+        if language is not None:
+            self.setLanguage(language)
+
         if self.splashConfig is not None:
+            self.debug("SPLASH:" + str(self.splashConfig))
             splash = SplashScreen(
                             self.topLevel,
                             self.splashConfig['text'],
@@ -1509,15 +1521,6 @@ class gui(object):
                             )
             self.topLevel.withdraw()
             self.__bringToFront(splash)
-
-        # check if we have a command line language
-        if self.language is not None:
-            language = self.language
-
-        # if language is populated, we are in internationalisation mode
-        # call the setLanguage function - to re-badge all the widgets
-        if language is not None:
-            self.setLanguage(language)
 
         # check the containers have all been stopped
         if len(self.containerStack) > 1:

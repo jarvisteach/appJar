@@ -69,10 +69,11 @@ Note, changing the text of a widget through `setXXX()` method's will work, but w
     Any widgets added with auto-labels (`.addLabelEntry()`) are also changed here.  
 
 * `[TITLE]`  
-    This allows you to change the GUI's title, or the title of any SubWindows.
+    This allows you to change the [GUI's title](/pythonGuiOptions/#look-feel), the [splashscreen](/splash/) or the title of any [SubWindows](/pythonWidgetGrouping/#sub-window).
 ```
 [TITLE]
 appJar: Main GUI Title
+splash: New Splash Text
 sub1: SubWindow 1 Title
 sub2: SubWindow 2 Title
 ```
