@@ -224,7 +224,7 @@ app.go()
 
     ![Grid](img/dev/grid_3.png)   
 
-    If both parameters are set to a function, then both buttons at the end of each rowm and a row of Entry boxes will be shown:  
+    If both parameters are set to a function, then both buttons at the end of each row and a row of Entry boxes will be shown:  
 
     ![Grid](img/dev/grid_4.png)   
 

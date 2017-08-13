@@ -6036,8 +6036,9 @@ class gui(object):
     # executes the specified function
     def addLink(self, title, func, row=None, column=0, colspan=0, rowspan=0):
         link = self.__buildLink(title)
-        myF = self.MAKE_FUNC(func, title, True)
-        link.registerCallback(myF)
+        if func is not None:
+            myF = self.MAKE_FUNC(func, title, True)
+            link.registerCallback(myF)
         self.__positionWidget(link, row, column, colspan, rowspan)
         return link
 

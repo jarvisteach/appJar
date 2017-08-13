@@ -1167,7 +1167,7 @@ def test_grids():
         ["Clive", 28, "Male"],
         ["Betty", 51, "Female"]],
         action=tester_function,
-        addRow=True)
+        addRow=tester_function)
 
     app.getGridEntries("g1")
     app.getGridSelectedCells("g1")
