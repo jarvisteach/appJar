@@ -104,11 +104,11 @@ def scale(name):
 
 def move(direction):
     if direction == ">":
-        for item in app.getListItems("Animals"):
+        for item in app.getListBox("Animals"):
             app.addListItem("Sports",item) 
             app.removeListItem("Animals", item)
     elif direction == "<":
-        for item in app.getListItems("Sports"):
+        for item in app.getListBox("Sports"):
             app.addListItem("Animals",item) 
             app.removeListItem("Sports", item)
     elif direction == "<<":

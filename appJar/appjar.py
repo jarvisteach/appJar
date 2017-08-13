@@ -2860,6 +2860,10 @@ class gui(object):
     # if the thing calling this generates parameters - then set discard=True
     @staticmethod
     def MAKE_FUNC(funcName, param, discard=False):
+        # make sure we get a function
+        if not callable(funcName) and not hasattr(funcName, '__call__'):
+            raise Exception("Invalid function: " + str(funcName))
+        
         if discard:
             return lambda *args: funcName(param)
         else:
@@ -10183,7 +10187,7 @@ class ScrollPane(Frame):
                     self.scrollTop()
             elif event.keysym == "End": # event.keycode == 35
                 if ctrl:
-                    self.scrolRight()
+                    self.scrollRight()
                 else:
                     self.scrollBottom()
 
@@ -10407,6 +10411,7 @@ class SimpleGrid(ScrollPane):
     def __init__(self, parent, title, data, action=None, addRow=None,
                     actionColumnText="Action", actionButtonLabel="Press",
                     addRowButtonLabel="Add", **opts):
+
         if "buttonFont" in opts:
             self.buttonFont = opts.pop("buttonFont")
         else:
@@ -10414,40 +10419,41 @@ class SimpleGrid(ScrollPane):
 
         ScrollPane.__init__(self, parent, **opts)
 
-        self.addRowEntries = addRow
-        self.data = []
-
         if "font" in opts:
             self.gdFont = opts["font"]
             self.ghFont = opts["font"]
-            self.ghFont.configure(
-                size=self.ghFont.actual("size") + 2,
-                weight="bold")
+            self.ghFont.configure(size=self.ghFont.actual("size") + 2, weight="bold")
         else:
             self.gdFont = font.Font(family="Helvetica", size=12)
             self.ghFont = font.Font(family="Helvetica", size=14, weight="bold")
 
-        # store them in the frame object for access, later
+        # actions
+        self.addRowEntries = addRow
         self.action = action
-        self.entries = []
-        self.numColumns = 0
-        self.numRows = len(data)
-        self.actionColumnText=actionColumnText
-        self.actionButtonLabel=actionButtonLabel
-        self.addRowButtonLabel = addRowButtonLabel
-        # find out the max number of cells in a row
-        for rowNum in range(self.numRows):
-            if len(data[rowNum]) > self.numColumns:
-                self.numColumns = len(data[rowNum])
 
+        # lists to store the data in
+        self.data = []
+        self.entries = []
         # a list of any selected cells
         from collections import OrderedDict
         self.selectedCells = OrderedDict()
 
+        # how many rows & columns
+        self.numColumns = 0
+        # find out the max number of cells in a row
+        for row in data:
+            if len(row) > self.numColumns:
+                self.numColumns = len(row)
+        
+        # headings
+        self.actionColumnText = actionColumnText
+        self.actionButtonLabel = actionButtonLabel
+        self.addRowButtonLabel = addRowButtonLabel
+       
         # colours
         self.cellHeadingBg = "#A9A9A9"      # HEADING BG
-        self.cellBg = "#E0FFFF"        # CELL BG
-        self.cellOverBg = "#C0C0C0"       # mouse over BG
+        self.cellBg = "#E0FFFF"             # CELL BG
+        self.cellOverBg = "#C0C0C0"         # mouse over BG
         self.cellSelectedBg = "#D3D3D3"     # selected cell BG
 
         # add the grid container to the frame
@@ -10455,7 +10461,7 @@ class SimpleGrid(ScrollPane):
         self.gridContainer.pack(expand=True, fill='both')
         self.gridContainer.bind("<Configure>", self.__refreshGrids)
 
-        self.__addRows(data)
+        self.addRows(data)
 
     def config(self, cnf=None, **kw):
         self.configure(cnf, **kw)
@@ -10485,6 +10491,18 @@ class SimpleGrid(ScrollPane):
                 family=buttonFont.actual("family"),
                 size=buttonFont.actual("size"))
 
+    def addRow(self, rowData, scroll=True):
+        self.__hideEntryBoxes()
+        self.__addRow(rowData)
+        self.__showEntryBoxes()
+        if scroll: self.scrollBottom()
+
+    def addRows(self, data, scroll=True):
+        self.__hideEntryBoxes()
+        for row in data: self.__addRow(row)
+        self.__showEntryBoxes()
+        if scroll: self.scrollBottom()
+
     # not finished
     def deleteRow(self, position):
         if 0 > position >= self.numRows:
@@ -10494,30 +10512,11 @@ class SimpleGrid(ScrollPane):
                 self.data[position] = self.data[position+1]
             self.numRows -= 1
                 
-
-    def addRows(self, data):
-        self.__addRows(data)
-
-    def __addRows(self, data):
-        # loop through each row
-        self.rows = data
-        for rowNum in range(self.numRows):
-            self.__addRow(rowNum, data[rowNum])
-
-        # add a row of entry boxes...
-        self.__addEntryBoxes()
-
-    def addRow(self, rowData):
-        self.__removeEntryBoxes()
-        self.__addRow(self.numRows, rowData)
-        self.numRows += 1
-        self.__addEntryBoxes()
-        self.scrollBottom()
-
-    def __addRow(self, rowNum, rowData):
+    def __addRow(self, rowData):
         self.data.append(rowData)
+        rowNum = len(self.data) - 1
         celContents = []
-        # then the cells in that row
+
         for cellNum in range(self.numColumns):
 
             # get a val ("" if no val)
@@ -10528,24 +10527,22 @@ class SimpleGrid(ScrollPane):
             celContents.append(val)
 
             lab = Label(self.gridContainer)
-            if rowNum == 0:
-                lab.configure(
-                    relief=RIDGE,
-                    text=val,
-                    font=self.ghFont,
-                    background=self.cellHeadingBg)
+            if rowNum == 0: # adding title row
+                lab.configure(relief=RIDGE,
+                    text=val, font=self.ghFont,
+                    background=self.cellHeadingBg
+                )
             else:
-                lab.configure(
-                    relief=RIDGE,
-                    text=val,
-                    font=self.gdFont,
-                    background=self.cellBg)
+                lab.configure( relief=RIDGE,
+                    text=val, font=self.gdFont,
+                    background=self.cellBg
+                )
                 lab.bind("<Enter>", self.__gridCellEnter)
                 lab.bind("<Leave>", self.__gridCellLeave)
                 lab.bind("<Button-1>", self.__gridCellClick)
-                gridPos = str(rowNum - 1) + "-" + str(cellNum)
-                self.selectedCells[gridPos] = False
-                lab.gridPos = gridPos
+                
+                lab.gridPos = str(rowNum - 1) + "-" + str(cellNum)
+                self.selectedCells[lab.gridPos] = False
 
             lab.grid(row=rowNum, column=cellNum, sticky=N + E + S + W)
             Grid.columnconfigure(self.gridContainer, cellNum, weight=1)
@@ -10556,36 +10553,41 @@ class SimpleGrid(ScrollPane):
                 widg = Label(self.gridContainer, relief=RIDGE, height=2)
                 # add the title
                 if rowNum == 0:
-                    widg.configure(
-                        text=self.actionColumnText,
-                        font=self.ghFont,
-                        background=self.cellHeadingBg)
+                    widg.configure(text=self.actionColumnText,
+                        font=self.ghFont, background=self.cellHeadingBg
+                    )
                 # add a button
                 else:
-                    but = Button(
-                        widg,
-                        font=self.buttonFont,
+                    but = Button(widg, font=self.buttonFont,
                         text=self.actionButtonLabel,
-                        command=gui.MAKE_FUNC(self.action, rowNum))
+                        command=gui.MAKE_FUNC(self.action, rowNum-1)
+                    )
                     but.place(relx=0.5, rely=0.5, anchor=CENTER)
 
                 widg.grid(row=rowNum, column=cellNum + 1, sticky=N + E + S + W)
 
-    def __removeEntryBoxes(self):
-        if self.addRowEntries is None: return
+    def __hideEntryBoxes(self):
+        if self.addRowEntries is None or len(self.entries) == 0:
+            return
         for e in self.entries:
             e.lab.grid_forget()
-            e.place_forget()
         self.ent_but.lab.grid_forget()
-        self.ent_but.place_forget()
 
-    def __addEntryBoxes(self):
+    def __showEntryBoxes(self):
         if self.addRowEntries is None: return
-        self.entries = []
+        if len(self.entries) > 0:
+            for pos in range(len(self.entries)):
+                self.entries[pos].lab.grid(row=len(self.data), column=pos, sticky=N+E+S+W)
+            self.ent_but.lab.grid(row=len(self.data), column=len(self.entries), sticky=N+E+S+W)
+        else:
+            self.__createEntryBoxes()
+
+    def __createEntryBoxes(self):
+        if self.addRowEntries is None: return
         for cellNum in range(self.numColumns):
             name = "GR" + str(cellNum)
             lab = Label(self.gridContainer, relief=RIDGE, width=6, height=2)
-            lab.grid(row=self.numRows, column=cellNum, sticky=N + E + S + W)
+            lab.grid(row=len(self.data), column=cellNum, sticky=N + E + S + W)
 
             # self.__buildEntry(name, self.gridContainer)
             ent = Entry(lab, width=5)
@@ -10594,18 +10596,13 @@ class SimpleGrid(ScrollPane):
             ent.lab = lab
 
         lab = Label(self.gridContainer, relief=RIDGE, height=2)
-        lab.grid(
-            row=self.numRows,
-            column=self.numColumns,
-            sticky=N + E + S + W)
+        lab.grid(row=len(self.data), column=self.numColumns, sticky=N+E+S+W)
 
         self.ent_but = Button(
-            lab,
-            font=self.buttonFont,
+            lab, font=self.buttonFont,
             text=self.addRowButtonLabel,
-            command=gui.MAKE_FUNC(
-                self.addRowEntries,
-                "newRow"))
+            command=gui.MAKE_FUNC(self.addRowEntries, "newRow")
+        )
         self.ent_but.lab = lab
         self.ent_but.pack(expand=True, fill='both')
 
