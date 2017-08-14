@@ -1025,23 +1025,23 @@ def test_properties():
     assert app.getProperty("p2", "a") is True
 
     app.setProperties("p2", HASH_TWO)
-    assert compareDictionaries(app.getProperties("p2"), HASH_TWO)
+    assert compareDictionaries(HASH_TWO, app.getProperties("p2"))
 
     EMPTY_HASH={}
     for key in HASH_TWO.keys():
         EMPTY_HASH[key] = False
 
     app.resetPropererties("p2")
-    assert compareDictionaries(app.getProperties("p2"), HASH_TWO)
+    assert compareDictionaries(HASH_TWO, app.getProperties("p2"))
 
     app.clearProperties("p2")
-    assert compareDictionaries(app.getProperties("p2"), EMPTY_HASH)
+    assert compareDictionaries(EMPTY_HASH, app.getProperties("p2"))
 
     app.resetPropererties("p2")
-    assert compareDictionaries(app.getProperties("p2"), HASH_TWO)
+    assert compareDictionaries(HASH_TWO, app.getProperties("p2"))
 
     app.clearAllProperties()
-    assert compareDictionaries(app.getProperties("p2"), EMPTY_HASH)
+    assert compareDictionaries(EMPTY_HASH, app.getProperties("p2"))
 
     # call generic setter functions
     test_setters("Properties", "p1")
