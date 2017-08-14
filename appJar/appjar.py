@@ -4755,6 +4755,22 @@ class gui(object):
         props = self.__verifyItem(self.n_props, title)
         props.renameProperty(prop, newText)
 
+    def clearProperties(self, title, callFunction=True):
+        self.__verifyItem(self.n_props, title).clearProperties(callFunction)
+
+    def clearAllProperties(self, callFunction=False):
+        props = {}
+        for k in self.n_props:
+            self.clearProperties(k, callFunction)
+
+    def resetProperties(self, title, callFunction=True):
+        self.__verifyItem(self.n_props, title).resetProperties(callFunction)
+
+    def resetAllProperties(self, callFunction=False):
+        props = {}
+        for k in self.n_props:
+            self.resetProperties(k, callFunction)
+
 #####################################
 # FUNCTION to add spin boxes
 #####################################
@@ -6172,7 +6188,7 @@ class gui(object):
         self.setOptionBox(title + "_DP_MonthOptionBox", date.month - 1)
         self.setOptionBox(title + "_DP_DayOptionBox", date.day - 1)
 
-    def clearDatePicker(self, title, callFunction=False):
+    def clearDatePicker(self, title, callFunction=True):
         self.__verifyItem(self.n_dps, title)
         self.setOptionBox(title + "_DP_YearOptionBox", 0, callFunction)
         self.setOptionBox(title + "_DP_MonthOptionBox", 0, callFunction)
@@ -8966,6 +8982,7 @@ class Properties(LabelFrame):
                 del self.cbs[prop]
             else:
                 self.props[prop].set(value)
+                self.cbs[prop].defaultValue = value
         elif prop is not None:
             var = BooleanVar()
             var.set(value)
@@ -8978,6 +8995,7 @@ class Properties(LabelFrame):
                 bg=self.cget("bg"),
                 font=self.cget("font"),
                 fg=self.cget("fg"))
+            cb.defaultValue = value
             cb.pack(fill="x", expand=1)
             self.props[prop] = var
             self.cbs[prop] = cb
@@ -8999,6 +9017,23 @@ class Properties(LabelFrame):
         for k, v in self.props.items():
             vals[k] = bool(v.get())
         return vals
+
+    def clearProperties(self, callFunction=False):
+        for k, cb in self.cbs.items():
+            cb.deselect()
+
+        if self.cmd is not None and callFunction:
+            self.cmd()
+
+    def resetProperties(self, callFunction=False):
+        for k, cb in self.cbs.items():
+            if cb.defaultValue:
+                cb.select()
+            else:
+                cb.deselect()
+
+        if self.cmd is not None and callFunction:
+            self.cmd()
 
     def getProperty(self, prop):
         if prop in self.props:

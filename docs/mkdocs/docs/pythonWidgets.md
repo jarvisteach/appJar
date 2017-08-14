@@ -833,6 +833,22 @@ app.go()
 * `.deleteProperty(title, prop)`  
     Deletes the named property from the widget.  
 
+* `.resetProperties(title, callFunction=True):  
+    This will reset the specified Properties back to its original values.  
+    Set ```callFunction``` to be False, if you don't want to call any associated functions.  
+
+* `.clearProperties(title, callFunction=True):  
+    This will set all values in the specified Properties to False.  
+    Set ```callFunction``` to be False, if you don't want to call any associated functions.  
+
+* `.resetAllProperties(callFunction=False):  
+    This will reset all Properties in the app back to their original values.  
+    Set ```callFunction``` to be True, if you want to call any associated functions.  
+
+* `.clearAllProperties(callFunction=False):  
+    This will set all values in all Properties in the app to False.  
+    Set ```callFunction``` to be True, if you want to call any associated functions.  
+
 ####Get Properties
 
 * `.getProperties(title)`  
@@ -985,13 +1001,13 @@ app.go()
 * `.setDatePickerChangeFunction(title, function)`  
     Set a function to call when the DatePicker is changed.  
 
-* `.clearDatePicker(title, callFunction=False)`  
+* `.clearDatePicker(title, callFunction=True)`  
     This will reset the specified DatePicker to the earliest available date.  
     Set ```callFunction``` to be False, if you don't want to call any associated functions.  
 
 * `.clearAllDatePickers(callFunction=False)`  
     This will reset all DatePickers in the app to their earliest available date.  
-    Set ```callFunction``` to be False, if you don't want to call any associated functions.  
+    Set ```callFunction``` to be True, if you want to call any associated functions.  
 
 ####Get DatePickers  
 

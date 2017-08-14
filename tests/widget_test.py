@@ -984,6 +984,15 @@ def test_properties():
     assert compareDictionaries(app.getProperties("p1"), HASH_ONE)
     assert app.getProperties("p2") == {}
 
+    app.resetProperties("p1")
+    assert compareDictionaries(app.getProperties("p1"), HASH_ONE)
+    app.resetProperties("p1")
+    assert app.getProperties("p2") == {}
+
+    app.resetAllProperties()
+    assert compareDictionaries(app.getProperties("p1"), HASH_ONE)
+    assert app.getProperties("p2") == {}
+
     props = app.getAllProperties()
     assert compareDictionaries(props["p1"], HASH_ONE)
     assert props["p2"] == {}
@@ -1014,6 +1023,25 @@ def test_properties():
 
     app.setProperty("p2", "a", True)
     assert app.getProperty("p2", "a") is True
+
+    app.setProperties("p2", HASH_TWO)
+    assert compareDictionaries(app.getProperties("p2"), HASH_TWO)
+
+    EMPTY_HASH={}
+    for key in HASH_TWO.keys():
+        EMPTY_HASH[key] = False
+
+    app.resetPropererties("p2")
+    assert compareDictionaries(app.getProperties("p2"), HASH_TWO)
+
+    app.clearProperties("p2")
+    assert compareDictionaries(app.getProperties("p2"), EMPTY_HASH)
+
+    app.resetPropererties("p2")
+    assert compareDictionaries(app.getProperties("p2"), HASH_TWO)
+
+    app.clearAllProperties()
+    assert compareDictionaries(app.getProperties("p2"), EMPTY_HASH)
 
     # call generic setter functions
     test_setters("Properties", "p1")
