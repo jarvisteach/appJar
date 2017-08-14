@@ -6172,6 +6172,16 @@ class gui(object):
         self.setOptionBox(title + "_DP_MonthOptionBox", date.month - 1)
         self.setOptionBox(title + "_DP_DayOptionBox", date.day - 1)
 
+    def clearDatePicker(self, title, callFunction=False):
+        self.__verifyItem(self.n_dps, title)
+        self.setOptionBox(title + "_DP_YearOptionBox", 0, callFunction)
+        self.setOptionBox(title + "_DP_MonthOptionBox", 0, callFunction)
+        self.setOptionBox(title + "_DP_DayOptionBox", 0, callFunction)
+
+    def clearAllDatePickers(self, callFunction=False):
+        for k in self.n_dps:
+            self.clearDatePicker(k, callFunction)
+
     def getDatePicker(self, title):
         self.__verifyItem(self.n_dps, title)
         day = int(self.getOptionBox(title + "_DP_DayOptionBox"))

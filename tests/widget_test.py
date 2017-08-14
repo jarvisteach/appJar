@@ -1107,6 +1107,15 @@ def test_date_pickers():
     assert dps["d2"] == datetime.date(1990, 5, 5)
     assert dps["d3"] == datetime.date(2021, 10, 10)
 
+    app.clearDatePicker("d1")
+    assert app.getDatePicker("d1") == datetime.date(1940, 1, 1)
+
+    app.clearAllDatePickers()
+    assert app.getDatePicker("d1") == datetime.date(1940, 1, 1)
+    assert app.getDatePicker("d2") == datetime.date(1980, 1, 1)
+    assert app.getDatePicker("d3") == datetime.date(2020, 1, 1)
+
+
     # call generic setter functions
     test_setters("DatePicker", "d1")
 

@@ -985,6 +985,14 @@ app.go()
 * `.setDatePickerChangeFunction(title, function)`  
     Set a function to call when the DatePicker is changed.  
 
+* `.clearDatePicker(title, callFunction=False)`  
+    This will reset the specified DatePicker to the earliest available date.  
+    Set ```callFunction``` to be False, if you don't want to call any associated functions.  
+
+* `.clearAllDatePickers(callFunction=False)`  
+    This will reset all DatePickers in the app to their earliest available date.  
+    Set ```callFunction``` to be False, if you don't want to call any associated functions.  
+
 ####Get DatePickers  
 
 * `.getDatePicker(title)`  
