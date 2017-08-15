@@ -1024,6 +1024,9 @@ def test_properties():
     app.setProperty("p2", "a", True)
     assert app.getProperty("p2", "a") is True
 
+    for p in HASH_ONE:
+        app.deleteProperty("p2", p)
+
     app.setProperties("p2", HASH_TWO)
     assert compareDictionaries(HASH_TWO, app.getProperties("p2"))
 
@@ -1031,13 +1034,13 @@ def test_properties():
     for key in HASH_TWO.keys():
         EMPTY_HASH[key] = False
 
-    app.resetPropererties("p2")
+    app.resetProperties("p2")
     assert compareDictionaries(HASH_TWO, app.getProperties("p2"))
 
     app.clearProperties("p2")
     assert compareDictionaries(EMPTY_HASH, app.getProperties("p2"))
 
-    app.resetPropererties("p2")
+    app.resetProperties("p2")
     assert compareDictionaries(HASH_TWO, app.getProperties("p2"))
 
     app.clearAllProperties()
