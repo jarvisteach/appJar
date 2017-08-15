@@ -495,6 +495,18 @@ def test_options():
     assert app.getOptionBox("l1") == LIST_ONE[2]
     assert app.getOptionBox("l2") == LIST_TWO[3]
 
+    app.clearOptionBox("l1")
+    assert app.getOptionBox("l1") == LIST_ONE[0]
+
+    app.setOptionBox("l1", 2)
+    app.clearAllOptionBoxes()
+    assert app.getOptionBox("l1") == LIST_ONE[0]
+    assert app.getOptionBox("l2") == LIST_TWO[0]
+
+    # select new items - by position
+    app.setOptionBox("l1", 2)
+    app.setOptionBox("l2", 3)
+
     # select new items - by value
     app.setOptionBox("l1", LIST_ONE[3])
     app.setOptionBox("l2", LIST_TWO[1])

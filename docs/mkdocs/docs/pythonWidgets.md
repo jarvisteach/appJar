@@ -419,6 +419,14 @@ app.go()
     Set ```callFunction``` to be False, if you don't want to call any associated functions.  
     By default, you can't select a disabled item. You can change this by setting `override` to be True.  
 
+* `.clearOptionBox(title, callFunction=True)`  
+    This will set the OptionBox back to its first item (even if it's disabled).  
+    Set ```callFunction``` to be False, if you don't want to call any associated functions.  
+
+* `.clearAllOptionBoxes(callFunction=False)`  
+    This will set all OptionBoxes in the app back to their first value (even if it's disabled).  
+    Set ```callFunction``` to be True, if you want to call any associated functions.  
+
 * `.deleteOptionBox(title, position)`  
     This will delete the item in the list, at the position specified.  
     Alternatively, the name of an item can be specified.  
@@ -526,8 +534,9 @@ app.go()
     Remove the specified item from the  specified ListBox.  
     Will only remove the first item that matches the parameter.  
 
-* `.clearListBox(title)`  
+* `.clearListBox(title, callFunction=True)`  
     Removes all items from the specified ListBox.  
+    Set ```callFunction``` to be False, if you don't want to call any associated functions.  
 
 * `.clearAllListBoxes(callFunction=False)`  
     This will remove all items from all ListBoxes in the app.  

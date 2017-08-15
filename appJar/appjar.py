@@ -4521,6 +4521,20 @@ class gui(object):
         self.__verifyItem(self.n_optionVars, title)
         self.setOptionBox(title, index, value=None, override=True)
 
+    def clearOptionBox(self, title, callFunction=True):
+        box = self.__verifyItem(self.n_options, title)
+        if box.kind == "ticks":
+            # loop through each tick, set it to False
+            ticks = self.__verifyItem(self.n_optionTicks, title)
+            for k in ticks:
+                self.setOptionBox(title, k, False, callFunction=callFunction)
+        else:
+            self.setOptionBox(title, 0, callFunction=callFunction, override=True)
+
+    def clearAllOptionBoxes(self, callFunction=False):
+        for k in self.n_options:
+            self.clearOptionBox(k, callFunction)
+
     # select the option at the specified position
     def setOptionBox(self, title, index, value=True, callFunction=True, override=False):
         box = self.__verifyItem(self.n_options, title)
@@ -5899,14 +5913,16 @@ class gui(object):
         for pos in self.__getListPositions(title, item):
             self.setListItemAtPosFg(title, pos, col)
 
-    def clearListBox(self, title):
+    def clearListBox(self, title, callFunction=True):
         lb = self.__verifyItem(self.n_lbs, title)
         lb.selection_clear(0, END)
         lb.delete(0, END)  # clear
+        if callFunction and hasattr(lb, 'cmd'):
+            lb.cmd()
 
-    def clearAllListBoxes(self):
+    def clearAllListBoxes(self, callFunction=False):
         for lb in self.n_lbs:
-            self.clearListBox(lb)
+            self.clearListBox(lb, callFunction)
 
 #####################################
 # FUNCTION for buttons
@@ -5914,6 +5930,8 @@ class gui(object):
     def __buildButton(self, title, func, frame, name=None):
         if name is None:
             name = title
+        if isinstance(title, list):
+            raise Exception("Can't add a button using a list of names: " + str(title) + " - you should use .addButtons()")
         self.__verifyItem(self.n_buttons, title, True)
         but = Button(frame)
 
