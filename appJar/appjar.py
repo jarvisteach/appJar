@@ -1431,7 +1431,7 @@ class gui(object):
 
                     # skip validation labels - we don't need to translate them
                     try:
-                        if kind == self.Label and widg.isValidation:
+                        if kind == self.LABEL and widg.isValidation:
                             self.debug("\t\t" + k + "----> skipping, validation label")
 
                             continue
