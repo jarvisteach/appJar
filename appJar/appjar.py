@@ -1495,28 +1495,25 @@ class gui(object):
 
     @staticmethod
     def logMessage(msg, level):
-        p_frame = inspect.stack()[1]
-        pp_frame = inspect.stack()[2]
-        try: ppp_frame = inspect.stack()[3]
-        except: ppp_frame = None # no higher frame
-        # put in try to make sure we GC correctly - is this necessary?
-        try:
-            # try to ensure we only log extras if we're called from above functions
-            if p_frame[3] in ("exception", "critical", "error", "warn", "debug", "info"):
+        frames = inspect.stack()
+        # try to ensure we only log extras if we're called from above functions
+        if frames[1][3] in ("exception", "critical", "error", "warn", "debug", "info"):
 
-                # user logged their own message
-                if ppp_frame is None:
-                    msg = "[line "+str(pp_frame[2])+"]: "+str(msg)
+            callFrame = ""
+            for s in frames:
+                if str(os.path.basename(theMain.__file__)) in s[1]:
+                    callFrame = s
+                    break
 
-                # invalid function called
-                elif pp_frame[3] in ["handlerFunction"]:
-                    msg = "[line "+str(ppp_frame[2])+"]: "+str(msg)
+            if callFrame != "": callFrame = "Line " + str(callFrame[2])
 
-                # appJar logging
-                else:
-                    msg = "[" + str(pp_frame[2]) +"/"+str(pp_frame[3])+"]: "+str(msg)
-        finally:
-            del pp_frame, p_frame, ppp_frame
+            # user generated call
+            if "appjar.py" not in frames[2][1] or frames[2][3] == "handlerFunction":
+                msg = "[" + callFrame + "]: "+str(msg)
+
+            # appJar logging
+            else:
+                msg = "["+callFrame + "->" + str(frames[2][2]) +"/"+str(frames[2][3])+"]: "+str(msg)
 
         logger = logging.getLogger("appJar")
         level = level.upper()
@@ -8139,6 +8136,8 @@ class gui(object):
         if not ToolTip:
             if not hideWarn:
                 self.warn("ToolTips unavailable - check tooltip.py is in the lib folder")
+        elif text == "":
+            self.__disableTooltip(item)
         else:
             # turn off warnings about tooltips
             with PauseLogger():
@@ -8159,13 +8158,13 @@ class gui(object):
         if hasattr(item, "tooltip"):
             item.tooltip.configure(state="normal")
         else:
-            self.warn("Unable to enable tooltip")
+            self.warn("Unable to enable tooltip - none present.")
 
     def __disableTooltip(self, item):
         if hasattr(item, "tooltip"):
             item.tooltip.configure(state="disabled")
         else:
-            self.warn("Unable to disable tooltip")
+            self.warn("Unable to disable tooltip - none present.")
 
 #####################################
 # FUNCTIONS to show pop-up dialogs
