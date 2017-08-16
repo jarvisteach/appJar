@@ -77,6 +77,12 @@ class gui(object):
         - call the go() function
     """
 
+    # static variables
+    exe_file = None
+    exe_path = None
+    lib_file = None
+    lib_path = None
+
     @staticmethod
     def CLEAN_CONFIG_DICTIONARY(**kw):
         """
@@ -124,11 +130,12 @@ class gui(object):
 
         return verString
 
-    def SHOW_PATHS(self):
+    @staticmethod
+    def SHOW_PATHS():
         pathString = \
-            "File Name: " + self.exe_file \
-            + "\nFile Location: " + self.exe_loc \
-            + "\nLib: " + self.lib_path
+            "File Name: " + (gui.exe_file if gui.exe_file is not None else "") \
+            + "\nFile Location: " + (gui.exe_path if gui.exe_path is not None else "") \
+            + "\nLib Location: " + (gui.lib_path if gui.lib_path is not None else "")
 
         return pathString
 
@@ -424,6 +431,9 @@ class gui(object):
 #####################################
     def __init__(self, title=None, geom=None, warn=None, debug=None, handleArgs=True):
 
+        # first up, set the logger
+        logging.basicConfig(level=logging.WARNING, format='%(asctime)s %(name)s:%(levelname)s %(message)s')
+
         # check any command line arguments
         self.language = None
         opts = self.__handleArgs() if handleArgs else None
@@ -436,7 +446,6 @@ class gui(object):
 
         if warn is not None or debug is not None:
             self.warn("Cannot set logging level in __init__. You should use .setLogLevel()")
-        logging.basicConfig(level=logging.WARNING, format='%(asctime)s %(name)s:%(levelname)s %(message)s')
 
         # process any command line arguments
         if opts is not None:
@@ -452,7 +461,7 @@ class gui(object):
                     self.setLogFile(arg)
                 elif opt in ["-V", "--version"]:
                     print("\nappJar Information\n\t"+
-                        self.SHOW_VERSION().replace("\n", "\n\t"))
+                        gui.SHOW_VERSION().replace("\n", "\n\t"))
                     sys.exit()
                 elif opt in ["-h", "--help"]:
                     self.__showHelp()
@@ -472,26 +481,26 @@ class gui(object):
         self.config = None
 
         # set up some default path locations
-        self.lib_file = os.path.abspath(__file__)
 
         # this fails if in interactive mode....
         try:
-            self.exe_file = str(os.path.basename(theMain.__file__))
-            self.exe_loc = str(os.path.dirname(theMain.__file__))
+            gui.exe_file = str(os.path.basename(theMain.__file__))
+            gui.exe_path = str(os.path.dirname(theMain.__file__))
         except:
-            self.exe_file = "appJar"
-            self.exe_loc = ""
+            pass
+
+        gui.lib_file = os.path.abspath(__file__)
+        gui.lib_path = os.path.dirname(gui.lib_file)
 
         # location of appJar
-        self.lib_path = os.path.dirname(self.lib_file)
-        self.resource_path = os.path.join(self.lib_path, "resources")
+        self.resource_path = os.path.join(gui.lib_path, "resources")
         self.icon_path = os.path.join(self.resource_path, "icons")
         self.sound_path = os.path.join(self.resource_path, "sounds")
         self.appJarIcon = os.path.join(self.icon_path, "favicon.ico")
 
         # user configurable
-        self.userImages = self.exe_loc
-        self.userSounds = self.exe_loc
+        self.userImages = gui.exe_path
+        self.userSounds = gui.exe_path
 
         # create the main window - topLevel
         self.topLevel = Tk()
@@ -515,7 +524,8 @@ class gui(object):
 
         # set the windows title
         if title is None:
-            title = self.exe_file
+            title = "appJar" if gui.exe_file is None else gui.exe_file
+
         self.setTitle(title)
 
         # configure the geometry of the window
@@ -1509,20 +1519,28 @@ class gui(object):
         if frames[1][3] in ("exception", "critical", "error", "warn", "debug", "info"):
 
             callFrame = ""
-            for s in frames:
-                if str(os.path.basename(theMain.__file__)) in s[1]:
-                    callFrame = s
-                    break
+            try:
+                progName = gui.exe_file
+                for s in frames:
+                    if progName in s[1]:
+                        callFrame = s
+                        break
+            except: pass
 
-            if callFrame != "": callFrame = "Line " + str(callFrame[2])
+            if callFrame != "":
+                callFrame = "Line " + str(callFrame[2])
 
             # user generated call
             if "appjar.py" not in frames[2][1] or frames[2][3] == "handlerFunction":
-                msg = "[" + callFrame + "]: "+str(msg)
+                if callFrame != "":
+                    msg = "[" + callFrame + "]: "+str(msg)
 
             # appJar logging
             else:
-                msg = "["+callFrame + "->" + str(frames[2][2]) +"/"+str(frames[2][3])+"]: "+str(msg)
+                if callFrame != "":
+                    msg = "["+callFrame + "->" + str(frames[2][2]) +"/"+str(frames[2][3])+"]: "+str(msg)
+                else:
+                    msg = "["+str(frames[2][2]) +"/"+str(frames[2][3])+"]: "+str(msg)
 
         logger = logging.getLogger("appJar")
         level = level.upper()
@@ -8015,9 +8033,9 @@ class gui(object):
                         "---\n" +
                         __copyright__ + "\n" +
                         "---\n\t" +
-                        self.SHOW_VERSION().replace("\n", "\n\t") + "\n" +
+                        gui.SHOW_VERSION().replace("\n", "\n\t") + "\n" +
                         "---\n" +
-                        self.SHOW_PATHS() + "\n" +
+                        gui.SHOW_PATHS() + "\n" +
                         "---")
 
     def appJarHelp(self, menu=None):
