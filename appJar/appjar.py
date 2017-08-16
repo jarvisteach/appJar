@@ -38,6 +38,7 @@ import webbrowser   # links
 import calendar # datepicker
 import datetime # datepicker & image
 import logging  # python's logger
+import inspect  # for logging
 
 import __main__ as theMain
 from platform import system as platform
@@ -155,7 +156,7 @@ class gui(object):
         else:
             y = 0
 
-        logging.getLogger("appJar").debug("Setting location: " +str(x)+","+str(y) + " - " + str(width)+","+str(height))
+        gui.debug("Setting location: " +str(x)+","+str(y) + " - " + str(width)+","+str(height))
         win.geometry("+%d+%d" % (x, y))
         win.attributes('-alpha', 1.0)
 
@@ -173,7 +174,7 @@ class gui(object):
 
         x = event.x_root - master.winfo_rootx()
         y = event.y_root - master.winfo_rooty()
-        logging.getLogger("appJar").debug("<<MOUSE_POS_IN_WIDGET>> " + str(widget) + str(x) + "," + str(y))
+        gui.debug("<<MOUSE_POS_IN_WIDGET>> " + str(widget) + str(x) + "," + str(y))
         return (x, y)
 
     built = False
@@ -435,16 +436,16 @@ class gui(object):
 
         if warn is not None or debug is not None:
             self.warn("Cannot set logging level in __init__. You should use .setLogLevel()")
-        logging.basicConfig(level=logging.WARNING, format='%(asctime)s %(name)s:%(levelname)s: %(message)s')
+        logging.basicConfig(level=logging.WARNING, format='%(asctime)s %(name)s:%(levelname)s %(message)s')
 
         # process any command line arguments
         if opts is not None:
             for opt, arg in opts:
-                if opt == "-c": self.setLogLevel("CRITICAL")
-                elif opt == "-e": self.setLogLevel("ERROR")
-                elif opt == "-w": self.setLogLevel("WARNING")
-                elif opt == "-i": self.setLogLevel("INFO")
-                elif opt == "-d": self.setLogLevel("DEBUG")
+                if opt == "-c": app.setLogLevel("CRITICAL")
+                elif opt == "-e": gui.setLogLevel("ERROR")
+                elif opt == "-w": gui.setLogLevel("WARNING")
+                elif opt == "-i": gui.setLogLevel("INFO")
+                elif opt == "-d": gui.setLogLevel("DEBUG")
                 elif opt in ["-l", "--language"]:
                     self.language = arg
                 elif opt in ["-f", "--file"]:
@@ -762,7 +763,7 @@ class gui(object):
                 try:
                     from idlelib.tree import TreeItem, TreeNode
                 except:
-                    logging.getLogger("appJar").warning("no trees")
+                    gui.warning("no trees")
                     TreeItem = TreeNode = parseString = False
                     ajTreeNode = ajTreeData = False
 
@@ -770,7 +771,7 @@ class gui(object):
                 try:
                     from xml.dom.minidom import parseString
                 except:
-                    logging.getLogger("appJar").warning("no parse string")
+                    gui.warning("no parse string")
                     TreeItem = TreeNode = parseString = False
                     ajTreeNode = ajTreeData = False
                     return
@@ -954,16 +955,16 @@ class gui(object):
                     # not used - for DEBUG
                     def getSelected(self, spaces=1):
                         if spaces == 1:
-                            logging.getLogger("appJar").debug(str(self.node.tagName))
+                            gui.debug(str(self.node.tagName))
                         for c in self.node.childNodes:
                             if c.__class__.__name__ == "Element":
-                                logging.getLogger("appJar").debug(str(" " * spaces) + " >> "+ str(c.tagName))
+                                gui.debug(str(" " * spaces) + " >> "+ str(c.tagName))
                                 node = ajTreeData(c)
                                 node.getSelected(spaces + 2)
                             elif c.__class__.__name__ == "Text":
                                 val = c.data.strip()
                                 if len(val) > 0:
-                                    logging.getLogger("appJar").debug(str(" " * spaces) + " >>>> "+ str(val))
+                                    gui.debug(str(" " * spaces) + " >>>> "+ str(val))
 
 
 #####################################
@@ -1026,31 +1027,31 @@ class gui(object):
 
         # called by DND class, when looking for a DND target
         def dnd_accept(self, source, event):
-            logging.getLogger("appJar").debug("<<WIDGET.dnd_accept>> " + str(widget) + " - " + str(self.dnd_canvas))
+            gui.debug("<<WIDGET.dnd_accept>> " + str(widget) + " - " + str(self.dnd_canvas))
             return self
 
         # This is called when the mouse pointer goes from outside the
         # Target Widget to inside the Target Widget.
         def dnd_enter(self, source, event):
-            logging.getLogger("appJar").debug("<<WIDGET.dnd_enter>> " + str(widget))
+            gui.debug("<<WIDGET.dnd_enter>> " + str(widget))
             XY = gui.MOUSE_POS_IN_WIDGET(self,event)
             source.appear(self, XY)
 
         # This is called when the mouse pointer goes from inside the
         # Target Widget to outside the Target Widget.
         def dnd_leave(self, source, event):
-            logging.getLogger("appJar").debug("<<WIDGET.dnd_leave>> " + str(widget))
+            gui.debug("<<WIDGET.dnd_leave>> " + str(widget))
             # hide the dragged object
             source.vanish()
 
         #This is called if the DraggableWidget is being dropped on us.
         def dnd_commit(self, source, event):
             source.vanish(all=True)
-            logging.getLogger("appJar").debug("<<WIDGET.dnd_commit>> " + str(widget) + " Object received=" + str(source))
+            gui.debug("<<WIDGET.dnd_commit>> " + str(widget) + " Object received=" + str(source))
 
         #This is called when the mouse pointer moves within the TargetWidget.
         def dnd_motion(self, source, event):
-            logging.getLogger("appJar").debug("<<WIDGET.dnd_motion>> " + str(widget))
+            gui.debug("<<WIDGET.dnd_motion>> " + str(widget))
             XY = gui.MOUSE_POS_IN_WIDGET(self,event)
             # move the dragged object
             source.move(self, XY)
@@ -1448,47 +1449,80 @@ class gui(object):
     ### Stuff for logging
     #########################
                 
-    def setLogFile(self, fileName):
+    @staticmethod
+    def setLogFile(fileName):
         # Remove all handlers associated with the root logger object.
         for handler in logging.root.handlers[:]:
             logging.root.removeHandler(handler)
         logging.basicConfig(level=logging.INFO, filename=fileName, format='%(asctime)s %(name)s:%(levelname)s: %(message)s')
-        self.info("Switched to logFile: " + str(fileName))
+        app.info("Switched to logFile: " + str(fileName))
 
     # function to turn off warning messages
     def disableWarnings(self):
-        self.warn("Using old debug setter, should use app.setLogLevel()")
-        self.setLogLevel("ERROR")
+        self.warn("Using old debug setter, should use gui.setLogLevel()")
+        gui.setLogLevel("ERROR")
 
     def enableWarnings(self):
-        self.warn("Using old debug setter, should use app.setLogLevel()")
-        self.setLogLevel("WARNING")
+        self.warn("Using old debug setter, should use gui.setLogLevel()")
+        gui.setLogLevel("WARNING")
 
     # function to turn on debug messages
     def enableDebug(self):
-        self.warn("Using old debug setter, should use app.setLogLevel()")
-        self.setLogLevel("DEBUG")
+        self.warn("Using old debug setter, should use gui.setLogLevel()")
+        gui.setLogLevel("DEBUG")
 
     def disableDebug(self):
-        self.warn("Using old debug setter, should use app.setLogLevel()")
-        self.setLogLevel("INFO")
+        self.warn("Using old debug setter, should use gui.setLogLevel()")
+        gui.setLogLevel("INFO")
 
-    def setLogLevel(self, level):
+    @staticmethod
+    def setLogLevel(level):
         logging.getLogger("appJar").setLevel(getattr(logging, level.upper()))
-        self.info("Log level changed to: " + str(level))
+        gui.info("Log level changed to: " + str(level))
 
-    def exception(self, message): self.logMessage(message, "EXCEPTION")
-    def critical(self, message): self.logMessage(message, "CRITICAL")
-    def error(self, message): self.logMessage(message, "ERROR")
-    def warn(self, message): self.logMessage(message, "WARNING")
-    def debug(self, message): self.logMessage(message, "DEBUG")
-    def info(self, message): self.logMessage(message, "INFO")
+    @staticmethod
+    def exception(message): gui.logMessage(message, "EXCEPTION")
+    @staticmethod
+    def critical(message): gui.logMessage(message, "CRITICAL")
+    @staticmethod
+    def error(message): gui.logMessage(message, "ERROR")
+    @staticmethod
+    def warn(message): gui.logMessage(message, "WARNING")
+    @staticmethod
+    def debug(message): gui.logMessage(message, "DEBUG")
+    @staticmethod
+    def info(message): gui.logMessage(message, "INFO")
 
-    def logMessage(self, msg, level):
+    @staticmethod
+    def logMessage(msg, level):
+        p_frame = inspect.stack()[1]
+        pp_frame = inspect.stack()[2]
+        try: ppp_frame = inspect.stack()[3]
+        except: ppp_frame = None # no higher frame
+        # put in try to make sure we GC correctly - is this necessary?
+        try:
+            # try to ensure we only log extras if we're called from above functions
+            if p_frame[3] in ("exception", "critical", "error", "warn", "debug", "info"):
+
+                # user logged their own message
+                if ppp_frame is None:
+                    msg = "[line "+str(pp_frame[2])+"]: "+str(msg)
+
+                # invalid function called
+                elif pp_frame[3] in ["handlerFunction"]:
+                    msg = "[line "+str(ppp_frame[2])+"]: "+str(msg)
+
+                # appJar logging
+                else:
+                    msg = "[" + str(pp_frame[2]) +"/"+str(pp_frame[3])+"]: "+str(msg)
+        finally:
+            del pp_frame, p_frame, ppp_frame
+
         logger = logging.getLogger("appJar")
         level = level.upper()
+
         if level == "EXCEPTION": logger.exception(msg)
-        if level == "CRITICAL": logger.critical(msg)
+        elif level == "CRITICAL": logger.critical(msg)
         elif level == "ERROR": logger.error(msg)
         elif level == "WARNING": logger.warning(msg)
         elif level == "INFO": logger.info(msg)
@@ -2932,7 +2966,7 @@ class gui(object):
     @staticmethod
     def SET_WIDGET_FG(widget, fg, external=False):
         widgType = widget.__class__.__name__
-        logging.getLogger("appJar").debug("SET_WIDGET_FG: " + str(widgType) + " - " + str(fg))
+        gui.debug("SET_WIDGET_FG: " + str(widgType) + " - " + str(fg))
 
         # only configure these widgets if external
         if widgType == "Link":
@@ -3024,7 +3058,7 @@ class gui(object):
         isDarwin = gui.GET_PLATFORM() == gui.MAC
         isLinux = gui.GET_PLATFORM() == gui.LINUX
 
-        logging.getLogger("appJar").debug("Config " + str(widgType) + " BG to " + str(bg))
+        gui.debug("Config " + str(widgType) + " BG to " + str(bg))
 
         # these have a highlight border to remove
         hideBorders = [ "Text", "AjText",
@@ -4027,12 +4061,9 @@ class gui(object):
     def __getattr__(self, name):
         def handlerFunction(*args, **kwargs):
             self.warn(
-                "Unknown function:" +
-                name +
-                " " +
-                str(args) +
-                " " +
-                str(kwargs))
+                "Unknown function: <" + name +
+                "> Check your spelling, do you need more camelCase?"
+            )
         return handlerFunction
 
     def __setattr__(self, name, value):
@@ -4536,6 +4567,7 @@ class gui(object):
             self.clearOptionBox(k, callFunction)
 
     # select the option at the specified position
+    # if value is None, the item at index will be deleted
     def setOptionBox(self, title, index, value=True, callFunction=True, override=False):
         box = self.__verifyItem(self.n_options, title)
 
@@ -4544,18 +4576,32 @@ class gui(object):
             if index is None:
                 return
             elif index in ticks:
+
                 tick = ticks[index]
 
                 if not callFunction and hasattr(tick, 'cmd'):
                     tick.trace_vdelete('w', tick.cmd_id)
 
-                tick.set(value)
+                if value is None: # then we need to delete it
+                    self.debug("Deleting tick: " + str(index) + " from OptionBox: " + str(title))
+                    try:
+                        index_num = box.options.index(index)
+                    except:
+                        self.warn("Unknown tick in deleteOptionBox: " + str(index) + " in OptionBox: " + str(title))
+                        return
+                    box['menu'].delete(index_num)
+                    del(box.options[index_num])
+                    del self.n_optionTicks[title][index]
+                else:
+                    tick.set(value)
 
                 if not callFunction and hasattr(tick, 'cmd'):
                     tick.cmd_id = tick.trace('w', tick.cmd)
             else:
-                raise Exception("Unknown TickOptionBox: " +
-                                str(index) + " in: " + title)
+                if value is None:
+                    self.warn("Unknown tick in deleteOptionBox: " + str(index) + " in OptionBox: " + str(title))
+                else:
+                    self.warn("Unknown tick in setOptionBox: " + str(index) + " in OptionBox: " + str(title))
         else:
             count = len(box.options)
             if count > 0:
@@ -4565,16 +4611,18 @@ class gui(object):
                     try:
                         index = box.options.index(index)
                     except:
-                        self.warn("Invalid selection option: " + str(index))
+                        if value is None:
+                            self.warn("Unknown option in deleteOptionBox: " + str(index) + " in OptionBox: " + str(title))
+                        else:
+                            self.warn("Unknown option in setOptionBox: " + str(index) + " in OptionBox: " + str(title))
                         return
 
                 if index < 0 or index > count - 1:
-                    self.warn("Invalid selection index: " + str(index) +
-                              ". Should be between 0 and " + str(count - 1) + ".")
+                    self.warn("Invalid option: " + str(index) + ". Should be between 0 and " + str(count - 1) + ".")
                 else:
                     # then we can delete it...
                     if value is None:
-                        self.debug("Deleting index")
+                        self.debug("Deleting option: " + str(index) + " from OptionBox: " + str(title))
                         box['menu'].delete(index)
                         del(box.options[index])
                         self.setOptionBox(title, 0, callFunction=False, override=override)
@@ -4585,15 +4633,12 @@ class gui(object):
 
                         if not box['menu'].invoke(index):
                             if override:
-                                self.debug("Setting option to disabled option: " + str(index))
+                                self.debug("Setting OptionBox: " + str(title) + " to disabled option: " + str(index))
                                 box["menu"].entryconfigure(index, state="normal")
                                 box['menu'].invoke(index)
                                 box["menu"].entryconfigure(index, state="disabled")
                             else:
-                                self.warn(
-                                    "Invalid selection index: " +
-                                    str(index) +
-                                    " is a disabled index.")
+                                self.warn("Unable to set disabled option: " + str(index) + " in OptionBox: " + str(title) + ". Try setting 'override=True'")
 
 
                         if not callFunction and hasattr(box, 'cmd'):
@@ -8096,21 +8141,18 @@ class gui(object):
                 self.warn("ToolTips unavailable - check tooltip.py is in the lib folder")
         else:
             # turn off warnings about tooltips
-            if hideWarn:
-                logging.disable(logging.CRITICAL)
+            with PauseLogger():
+                # if there's already  tt, just change it
+                if hasattr(item, "tt_var"):
+                    item.tt_var.set(text)
+                # otherwise create one
+                else:
+                    var = StringVar(self.topLevel)
+                    var.set(text)
+                    tip = ToolTip(item, delay=500, follow_mouse=1, textvariable=var)
+                    item.tooltip = tip
+                    item.tt_var = var
 
-            # if there's already  tt, just change it
-            if hasattr(item, "tt_var"):
-                item.tt_var.set(text)
-            # otherwise create one
-            else:
-                var = StringVar(self.topLevel)
-                var.set(text)
-                tip = ToolTip(item, delay=500, follow_mouse=1, textvariable=var)
-                item.tooltip = tip
-                item.tt_var = var
-            if hideWarn:
-                logging.disable(logging.NOTSET)
             return item.tt_var
 
     def __enableTooltip(self, item):
@@ -8989,7 +9031,7 @@ class Properties(LabelFrame):
         if prop in self.cbs:
             self.cbs[prop].config(text=newName)
         else:
-            logging.getLogger("appJar").warn("Unknown property: " + str(prop))
+            gui.warn("Unknown property: " + str(prop))
 
     def addProperty(self, prop, value=False, callFunction=True):
         self.changingProps = True
@@ -10947,7 +10989,7 @@ class GoogleMap(LabelFrame):
                 self.w = imgObj.width()
             # python 3.3 fails to load data
             except Exception as e:
-                logging.getLogger("appJar").exception(e)
+                gui.exception(e)
 
         if imgObj is None:
             self.w = self.params['size'].split("x")[0]
@@ -11056,13 +11098,13 @@ class GoogleMap(LabelFrame):
             try:
                 with open(location, "wb") as fh:
                     fh.write(self.rawData)
-                logging.getLogger("appJar").info("Map data written to file: " + str(location))
+                gui.info("Map data written to file: " + str(location))
                 return True
             except  Exception as e:
-                logging.getLogger("appJar").exception(e)
+                gui.exception(e)
                 return False
         else:
-            logging.getLogger("appJar").error("Unable to save map data - no data available")
+            gui.error("Unable to save map data - no data available")
             return False
 
     def setSize(self, size):
@@ -11115,7 +11157,7 @@ class GoogleMap(LabelFrame):
                 self.__placeControls()
             self.buttons[3].registerWebpage(self.request)
         else:
-            logging.getLogger("appJar").error("Unable to update map, as no mapData")
+            gui.error("Unable to update map, as no mapData")
 
     def __buildQueryURL(self):
         self.request = self.GOOGLE_URL + urlencode(self.params)
@@ -11124,7 +11166,7 @@ class GoogleMap(LabelFrame):
             m = quote_plus(m)
             self.request += "&markers=" + m
             
-        logging.getLogger("appJar").debug("GoogleMap search URL: " + self.request)
+        gui.debug("GoogleMap search URL: " + self.request)
 
     def getMapData(self):
         """ will query GoogleMaps & download the image data as a blob """
@@ -11137,7 +11179,7 @@ class GoogleMap(LabelFrame):
             u.close()
             self.mapData = base64.encodestring(self.rawData)
         except Exception as e:
-            logging.getLogger("appJar").error("Unable to contact GoogleMaps")
+            gui.error("Unable to contact GoogleMaps")
             self.mapData = None
             self.rawData = None
 
@@ -11149,20 +11191,20 @@ class GoogleMap(LabelFrame):
             urlretrieve(self.request, fileName)
             return fileName
         except Exception as e:
-            logging.getLogger("appJar").error("Unable to contact GoogleMaps")
+            gui.error("Unable to contact GoogleMaps")
             return None
 
     def getCurrentLocation(self):
-        logging.getLogger("appJar").debug("Location request URL: " + self.LOCATION_URL)
+        gui.debug("Location request URL: " + self.LOCATION_URL)
         try:
             return self.__locationLookup()
         except Exception as e:
-            logging.getLogger("appJar").error("Unable to contact location server, using default: " + self.defaultLocation)
+            gui.error("Unable to contact location server, using default: " + self.defaultLocation)
             return self.defaultLocation
 
     def __locationLookup(self):
         data =  urlopen(self.LOCATION_URL).read().decode("utf-8")
-        logging.getLogger("appJar").debug("Location data: " + data)
+        gui.debug("Location data: " + data)
         data = json.loads(data)
 #        location = data["loc"]
         location = str(data["latitude"]) + "," + str(data["longitude"])
@@ -11233,7 +11275,7 @@ class CanvasDnd(Canvas):
         #Tkdnd is asking us (the TargetWidget) if we want to tell it about a
         #    TargetObject. Since CanvasDnd is also acting as TargetObject we
         #    return 'self', saying that we are willing to be the TargetObject.
-        logging.getLogger("appJar").debug("<<"+str(type(self))+".dnd_accept>> " + str(source))
+        gui.debug("<<"+str(type(self))+".dnd_accept>> " + str(source))
         return self
 
     #----- TargetObject functionality -----
@@ -11241,7 +11283,7 @@ class CanvasDnd(Canvas):
     # This is called when the mouse pointer goes from outside the
     # Target Widget to inside the Target Widget.
     def dnd_enter(self, source, event):
-        logging.getLogger("appJar").debug("<<"+str(type(self))+".dnd_enter>> " + str(source))
+        gui.debug("<<"+str(type(self))+".dnd_enter>> " + str(source))
         XY = gui.MOUSE_POS_IN_WIDGET(self, event)
         # show the dragged object
         source.appear(self ,XY)
@@ -11249,20 +11291,20 @@ class CanvasDnd(Canvas):
     # This is called when the mouse pointer goes from inside the
     # Target Widget to outside the Target Widget.
     def dnd_leave(self, source, event):
-        logging.getLogger("appJar").debug("<<"+str(type(self))+".dnd_leave>> " + str(source))
+        gui.debug("<<"+str(type(self))+".dnd_leave>> " + str(source))
         # hide the dragged object
         source.vanish()
         
     #This is called when the mouse pointer moves withing the TargetWidget.
     def dnd_motion(self, source, event):
-        logging.getLogger("appJar").debug("<<"+str(type(self))+".dnd_motion>> " + str(source))
+        gui.debug("<<"+str(type(self))+".dnd_motion>> " + str(source))
         XY = gui.MOUSE_POS_IN_WIDGET(self,event)
         # move the dragged object
         source.move(self, XY)
         
     #This is called if the DraggableWidget is being dropped on us.
     def dnd_commit(self, source, event):
-        logging.getLogger("appJar").debug("<<"+str(type(self))+".dnd_commit>> " + str(source))
+        gui.debug("<<"+str(type(self))+".dnd_commit>> " + str(source))
 
 # A canvas specifically for deleting dragged objects.
 class TrashBin(CanvasDnd):
@@ -11279,7 +11321,7 @@ class TrashBin(CanvasDnd):
         self.textId = self.create_text(x, y, text='TRASH', anchor="center")
 
     def dnd_commit(self, source, event):
-        logging.getLogger("appJar").debug("<<TRASH_BIN.dnd_commit>> vanishing source")
+        gui.debug("<<TRASH_BIN.dnd_commit>> vanishing source")
         source.vanish(True)
 
     def config(self, **kw):
@@ -11305,7 +11347,7 @@ class DraggableWidget:
     
     def __init__(self, parent, title, name, XY, widg=None):
         self.parent = parent
-        logging.getLogger("appJar").debug("<<DRAGGABLE_WIDGET.__init__>>")
+        gui.debug("<<DRAGGABLE_WIDGET.__init__>>")
 
         #When created we are not on any canvas
         self.Canvas = None
@@ -11326,24 +11368,24 @@ class DraggableWidget:
         
     # this gets called when we are dropped
     def dnd_end(self, target, event):
-        logging.getLogger("appJar").debug("<<DRAGGABLE_WIDGET.dnd_end>> " + str(self.Name) + " target=" + str(target))
+        gui.debug("<<DRAGGABLE_WIDGET.dnd_end>> " + str(self.Name) + " target=" + str(target))
 
         # from somewhere, dropped nowhere - self destruct, or put back
         if self.Canvas is None:
-            logging.getLogger("appJar").debug("<<DRAGGABLE_WIDGET.dnd_end>> dropped with Canvas (None)")
+            gui.debug("<<DRAGGABLE_WIDGET.dnd_end>> dropped with Canvas (None)")
             if DraggableWidget.discardDragged:
-                logging.getLogger("appJar").debug("<<DRAGGABLE_WIDGET.dnd_end>> DISCARDING under order")
+                gui.debug("<<DRAGGABLE_WIDGET.dnd_end>> DISCARDING under order")
             else:
                 if self.OriginalCanvas is not None:
-                    logging.getLogger("appJar").debug("<<DRAGGABLE_WIDGET.dnd_end>> RESTORING")
+                    gui.debug("<<DRAGGABLE_WIDGET.dnd_end>> RESTORING")
                     self.restoreOldData()
                     self.Canvas.dnd_enter(self, event)
                 else:
-                    logging.getLogger("appJar").debug("<<DRAGGABLE_WIDGET.dnd_end>> DISCARDING as nowhere to go")
+                    gui.debug("<<DRAGGABLE_WIDGET.dnd_end>> DISCARDING as nowhere to go")
 
         # have been dropped somewhere
         else:
-            logging.getLogger("appJar").debug("<<DRAGGABLE_WIDGET.dnd_end>> dropped with Canvas("+str(self.Canvas)+") Target=" + str(self.dropTarget))
+            gui.debug("<<DRAGGABLE_WIDGET.dnd_end>> dropped with Canvas("+str(self.Canvas)+") Target=" + str(self.dropTarget))
             if not self.dropTarget:
                 # make the dragged object re-draggable
                 self.Label.bind('<ButtonPress>', self.press)
@@ -11370,10 +11412,10 @@ class DraggableWidget:
 #            self.dropTarget = None
 
         if self.Canvas:
-            logging.getLogger("appJar").debug("<<DRAGGABLE_WIDGET.appear> - ignoring, as we already exist?: " + str(canvas) + str(XY))
+            gui.debug("<<DRAGGABLE_WIDGET.appear> - ignoring, as we already exist?: " + str(canvas) + str(XY))
             return
         else:
-            logging.getLogger("appJar").debug("<<DRAGGABLE_WIDGET.appear> - appearing: " + str(canvas) + str(XY))
+            gui.debug("<<DRAGGABLE_WIDGET.appear> - appearing: " + str(canvas) + str(XY))
 
             self.Canvas = canvas
             self.X, self.Y = XY    
@@ -11387,23 +11429,23 @@ class DraggableWidget:
                 self.OffsetCalculated = True
 
             self.ID = self.Canvas.create_window(self.X-self.OffsetX, self.Y-self.OffsetY, window=self.Label, anchor="nw")
-            logging.getLogger("appJar").debug("<<DRAGGABLE_WIDGET.appear> - created: " + str(self.Label) + str(self.Canvas))
+            gui.debug("<<DRAGGABLE_WIDGET.appear> - created: " + str(self.Label) + str(self.Canvas))
 
     # if there is a label representing us on a canvas, make it go away.
     def vanish(self, all=False):
         # if we had a canvas, delete us
         if self.Canvas:
-            logging.getLogger("appJar").debug("<<DRAGGABLE_WIDGET.vanish> - vanishing")
+            gui.debug("<<DRAGGABLE_WIDGET.vanish> - vanishing")
             self.storeOldData()
             self.Canvas.delete(self.ID)
             self.Canvas = None
             del self.ID
             del self.Label
         else:
-            logging.getLogger("appJar").debug("<<DRAGGABLE_WIDGET.vanish>> ignoring")
+            gui.debug("<<DRAGGABLE_WIDGET.vanish>> ignoring")
 
         if all and self.OriginalCanvas:
-            logging.getLogger("appJar").debug("<<DRAGGABLE_WIDGET.vanish>> restore original")
+            gui.debug("<<DRAGGABLE_WIDGET.vanish>> restore original")
             self.OriginalCanvas.delete(self.OriginalID)
             self.OriginalCanvas = None
             del self.OriginalID
@@ -11411,15 +11453,15 @@ class DraggableWidget:
 
     # if we have a label on a canvas, then move it to the specified location. 
     def move(self, widget, XY):
-        logging.getLogger("appJar").debug("<<DRAGGABLE_WIDGET.move>> " + str(self.Canvas) + str(XY))
+        gui.debug("<<DRAGGABLE_WIDGET.move>> " + str(self.Canvas) + str(XY))
         if self.Canvas:
             self.X, self.Y = XY
             self.Canvas.coords(self.ID, self.X-self.OffsetX, self.Y-self.OffsetY)
         else:
-            logging.getLogger("appJar").error("<<DRAGGABLE_WIDGET.move>> unable to move - NO CANVAS!") 
+            gui.error("<<DRAGGABLE_WIDGET.move>> unable to move - NO CANVAS!") 
 
     def press(self, event):
-        logging.getLogger("appJar").debug("<<DRAGGABLE_WIDGET.press>>")
+        gui.debug("<<DRAGGABLE_WIDGET.press>>")
         self.storeOldData()
 
         self.ID = None
@@ -11433,22 +11475,22 @@ class DraggableWidget:
             self.appear(self.OriginalCanvas, XY)
 
     def storeOldData(self, phantom=False):
-        logging.getLogger("appJar").debug("<<DRAGGABLE_WIDGET.storeOldData>>")
+        gui.debug("<<DRAGGABLE_WIDGET.storeOldData>>")
         self.OriginalID = self.ID
         self.OriginalLabel = self.Label
         self.OriginalText = self.Label['text']
         self.OriginalCanvas = self.Canvas
         if phantom:
-            logging.getLogger("appJar").debug("<<DRAGGABLE_WIDGET.storeOldData>> keeping phantom")
+            gui.debug("<<DRAGGABLE_WIDGET.storeOldData>> keeping phantom")
             self.OriginalLabel["text"] = "<Phantom>"
             self.OriginalLabel["relief"] = RAISED
         else:
-            logging.getLogger("appJar").debug("<<DRAGGABLE_WIDGET.storeOldData>> hiding phantom")
+            gui.debug("<<DRAGGABLE_WIDGET.storeOldData>> hiding phantom")
             self.OriginalCanvas.delete(self.OriginalID)
         
     def restoreOldData(self):
         if self.OriginalID:
-            logging.getLogger("appJar").debug("<<DRAGGABLE_WIDGET.restoreOldData>>")
+            gui.debug("<<DRAGGABLE_WIDGET.restoreOldData>>")
             self.ID = self.OriginalID
             self.Label = self.OriginalLabel
             self.Label['text'] = self.OriginalText
@@ -11457,7 +11499,7 @@ class DraggableWidget:
             self.OriginalCanvas.itemconfigure(self.OriginalID, state='normal')
             self.Label.bind('<ButtonPress>', self.press)
         else:
-            logging.getLogger("appJar").debug("<<DRAGGABLE_WIDGET.restoreOldData>> unable to restore - NO OriginalID")
+            gui.debug("<<DRAGGABLE_WIDGET.restoreOldData>> unable to restore - NO OriginalID")
 
 
 #####################################
