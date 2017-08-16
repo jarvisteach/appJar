@@ -1429,6 +1429,15 @@ class gui(object):
                 for k in widgets.keys():
                     widg = widgets[k]
 
+                    # skip validation labels - we don't need to translate them
+                    try:
+                        if kind == self.Label and widg.isValidation:
+                            self.debug("\t\t" + k + "----> skipping, validation label")
+
+                            continue
+                    except:
+                        pass
+
                     if self.config.has_option(section, k):
                         data = str(self.config.get(section, k))
                     else:
@@ -6760,6 +6769,7 @@ class gui(object):
         lab.pack(side=RIGHT, fill=Y)
         lab.config(font=self.labelFont, background=self.__getContainerBg())
         lab.inContainer = True
+        lab.isValidation = True
         ent.lab = lab
 
         self.n_labels[title] = lab
