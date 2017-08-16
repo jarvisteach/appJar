@@ -10273,6 +10273,7 @@ class ScrollPane(Frame):
 
     def __keyPressed(self, event):
         # work out if alt/ctrl/shift are pressed
+        # http://infohost.nmt.edu/tcc/help/pubs/tkinter/web/event-handlers.html
         state = event.state
         ctrl  = (state & 0x4) != 0
         alt   = (state & 0x8) != 0 or (state & 0x80) != 0 # buggy

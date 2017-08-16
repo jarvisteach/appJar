@@ -1882,6 +1882,15 @@ def test_containers():
 
     sp = app.getWidget(app.SCROLLPANE, "sp1")
 
+
+    for hHidden in [True, False]:
+        for vHidden in [True, False]:
+            sp.hscrollbar.hidden = hHidden
+            sp.vscrollbar.hidden = vHidden
+
+            testScrollPaneScrolling(sp)
+
+def testScrollPaneScrolling(sp):
     event = Event()
 
     sp._ScrollPane__mouseEnter(event)
@@ -1898,8 +1907,11 @@ def test_containers():
         sp._ScrollPane__horizMouseScroll(event)
         sp._ScrollPane__vertMouseScroll(event)
 
+    # shift=0x0001, ctrl=0x0004, alt=0x0008
+    states = [0, 0x0004, 0x0001, 0x0008, 0x0080]
+
     event.type = "2"    # always 2
-    for state in [0]: # shift=0x0001, ctrl=0x0004, alt=0x20000
+    for state in states:
         event.state = state
         for key in ["Up", "Down", "Left", "Right", "Prior", "Next", "Home", "End"]:
             event.keysym = key
@@ -1920,7 +1932,7 @@ def test_containers():
         sp._ScrollPane__vertMouseScroll(event)
 
     event.type = "2"    # always 2
-    for state in [0]: # shift=0x0001, ctrl=0x0004, alt=0x20000
+    for state in states:
         event.state = state
         for key in ["Up", "Down", "Left", "Right", "Prior", "Next", "Home", "End"]:
             event.keysym = key
