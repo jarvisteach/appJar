@@ -4262,14 +4262,8 @@ class gui(object):
 
     def setScale(self, title, pos, callFunction=True):
         sc = self.__verifyItem(self.n_scales, title)
-        # now call function
-        if not callFunction and hasattr(sc, 'cmd'):
-            sc.var.trace_vdelete('w', sc.cmd_id)
-
-        sc.set(pos)
-
-        if not callFunction and hasattr(sc, 'cmd'):
-            sc.cmd_id = sc.var.trace('w', sc.cmd)
+        with PauseCallFunction(callFunction, sc):
+            sc.set(pos)
 
     def clearAllScales(self, callFunction=False):
         for sc in self.n_scales:
@@ -10969,10 +10963,15 @@ class PauseLogger():
 # class to temporarily pause function calling
 #####################################
 # usage:
-# with PausePropagation(callFunction, widg):
+# with PauseCallFunction(callFunction, widg):
 #   doSomething()
+# relies on 3 variables in widg:
+# var - the thing being traced
+# cmd_id - linking to the trace
+# cmd - the function called by the trace
+
 #####################################
-class PausePropagation():
+class PauseCallFunction():
     def __init__(self, callFunction, widg):
         self.callFunction = callFunction
         self.widg = widg
