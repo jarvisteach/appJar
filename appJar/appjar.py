@@ -5840,8 +5840,11 @@ class gui(object):
 
     def selectListItemAtPos(self, title, pos, callFunction=False):
         lb = self.__verifyItem(self.n_lbs, title)
-#        sel = lb.curselection()
-        lb.selection_clear(0, END)
+
+        # clear previous selection if we're not multi
+        if lb.cget("selectmode") != EXTENDED:
+            lb.selection_clear(0, END)
+
         # show & select this item
         if pos >= 0:
             lb.see(pos)
