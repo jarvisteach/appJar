@@ -450,7 +450,7 @@ class gui(object):
         # process any command line arguments
         if opts is not None:
             for opt, arg in opts:
-                if opt == "-c": app.setLogLevel("CRITICAL")
+                if opt == "-c": gui.setLogLevel("CRITICAL")
                 elif opt == "-e": gui.setLogLevel("ERROR")
                 elif opt == "-w": gui.setLogLevel("WARNING")
                 elif opt == "-i": gui.setLogLevel("INFO")

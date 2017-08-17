@@ -119,9 +119,15 @@ def test_entries():
 
     # quick validation check
     app.addValidationEntry("ve1")
+    app.addLabelValidationEntry("lve1")
     app.setEntryValid("ve1")
     app.setEntryInvalid("ve1")
     app.setEntryWaitingValidation("ve1")
+
+    # should fail with warning
+    app.setEntryValid("e1")
+    app.setEntryInvalid("e1")
+    app.setEntryWaitingValidation("e1")
 
     app.addEntry("tester")
     app.setEntryDefault("tester", TEXT_TWO)
@@ -201,6 +207,9 @@ def test_entries():
     assert app.getEntry("ne1") == 0
     app.setEntry("ne1", ".")
     assert app.getEntry("ne1") == 0
+
+    with pytest.raises(Exception) :
+        app.setEntry("ne1", TEXT_ONE)
 
     app.setEntry("lne1", "-")
     assert app.getEntry("lne1") == 0
@@ -965,8 +974,8 @@ def test_meters():
 
     mets = app.getAllMeters()
     assert mets["m1"][0] == 0.45
-    assert mets["spm"][0] == 50
-    assert mets["dum"][0] == [50,10]
+    assert mets["spm"][0] == 0.5
+    assert mets["dum"][0] == [0.5,0.1]
 
     app.setMeterFill("spm", ["red", "green"])
     app.setMeterFill("dum", ["red", "pink"])
