@@ -2088,7 +2088,7 @@ def test_logging():
     app.warn("test logging")
     app.debug("test logging")
     app.info("test logging")
-    app.exception(new Exception("aaa")
+    app.exception(Exception("aaa"))
 
     import logging
     logger = logging.getLogger("appJar")
