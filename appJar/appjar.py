@@ -5547,7 +5547,7 @@ class gui(object):
         self.containerStack[0]['container'].image = image  # keep a reference!
 
     def removeBgImage(self):
-        self.bgLabel.config(image=None)
+        self.bgLabel.config(image="")
         # self.containerStack[0]['container'].config(image=None) # window as a
         # label doesn't work...
         # remove the reference - shouldn't be cached

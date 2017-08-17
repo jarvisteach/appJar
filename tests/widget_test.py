@@ -1296,8 +1296,8 @@ def test_gui_options():
     app.showTitleBar()
 
     app.setBgImage("1_entries.gif")
-    app.removeBgImage()
     app.resizeBgImage()
+    app.removeBgImage()
 
     app.setBg("green")
     app.setFg("orange")
@@ -1310,6 +1310,10 @@ def test_gui_options():
     app.setButtonFont(20)
     app.increaseButtonFont()
     app.decreaseButtonFont()
+
+    app.setBgImage("1_entries.gif")
+    app.resizeBgImage()
+    app.removeBgImage()
 
     print(" >> not implemented...")
     #print("\t >> all tests complete")
