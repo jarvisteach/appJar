@@ -8602,7 +8602,7 @@ class DualMeter(SplitMeter):
             raise Exception("DualMeter.set() requires a list of two arguments")
 
         # make copy, and reduce to decimal
-        vals = [value[0]/100, value[1]/100]
+        vals = [value[0]/100.0, value[1]/100.0]
 
         # normalise
         if vals[0] < -1: vals[0] = -1.0
