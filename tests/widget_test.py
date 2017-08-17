@@ -1388,10 +1388,37 @@ def test_images():
 def test_status():
     print("\tTesting Statusbar")
 
-    app.addStatusbar()
+    app.addStatusbar(TEXT_ONE, 3, "RIGHT")
+    with pytest.raises(Exception) :
+        app.setStatus(TEXT_ONE, 43)
     app.setStatusbar(TEXT_ONE)
+    app.setStatusbar(TEXT_ONE, None)
+    app.setStatusbar(TEXT_ONE, 2)
+
+    app.setStatusBg("red")
+    app.setStatusBg("red", None)
+    app.setStatusBg("pink", 0)
+    with pytest.raises(Exception) :
+        app.setStatusBg("orange", -4)
+
+    app.setStatusbarFg("red")
+    app.setStatusbarFg("yellow", None)
+    app.setStatusbarFg("yellow", 1)
+    with pytest.raises(Exception) :
+        app.setStatusFg("orange", -4)
+
+    app.setStatusbarWidth(100)
+    app.setStatusbarWidth(100, None)
+    app.setStatusbarWidth(100, 2)
+    with pytest.raises(Exception) :
+        app.setStatusWidth(100, 5)
+
     app.clearStatusbar()
-    app.setStatusbarWidth(40)
+    app.clearStatusbar(None)
+    app.clearStatusbar( 2)
+    with pytest.raises(Exception) :
+        app.clearStatusbar(5)
+
 
     print(" >> not implemented...")
     #print("\t >> all tests complete")
