@@ -130,6 +130,9 @@ def test_entries():
     app.addEntry("tester3")
     app.setEntryDefault("tester3", TEXT_TWO)
 
+    app.updateDefaultText("tester3", TEXT_ONE)
+    app.updateEntryDefault("tester3", TEXT_ONE)
+
     app.setEntryMaxLength("tester", 5)
     app.setEntry("tester", MIXED_TEXT)
     assert app.getEntry("tester") == MIXED_TEXT[:5]
@@ -1071,14 +1074,18 @@ def test_separators():
     assert isinstance(app.addVerticalSeparator(), Separator)
     print("\t >> all tests complete")
 
+def linkPressed(link=None):
+    print(link)
 
 def test_links():
     print("\tTesting links")
     assert isinstance(app.addLink("l1", None), Link)
-    assert isinstance(app.addWebLink("l1", "http://appJar.info"), Link)
+    assert isinstance(app.addLink("l2", linkPressed), Link)
+    assert isinstance(app.addWebLink("l3", "http://appJar.info"), Link)
 
     # call generic setter functions
     test_setters("Link", "l1")
+    test_setters("Link", "l2")
 
     print("\t >> all tests complete")
 
@@ -1302,6 +1309,9 @@ def test_widget_arranging():
     #print("\t >> all tests complete")
 
 
+def eventTester(e=None, a=0, b=0, c=0):
+    print(e)
+
 def test_events():
     print("\tTesting events")
 
@@ -1316,6 +1326,13 @@ def test_events():
     app.setPollTime(0.5)
 
     app.setStopFunction(tester_function)
+
+    app.afterIdle(eventTester)
+    app.after(0, eventTester)
+    app.after(5, eventTester)
+
+    app.afterIdle(eventTester, "a")
+    app.after(5, eventTester, "a")
 
     print(" >> not implemented...")
     #print("\t >> all tests complete")
@@ -1525,9 +1542,10 @@ def test_langs():
 def test_tooltips():
     print("\tTesting tooltip")
     app.setLabelTooltip("l1", "message")
+    app.setLabelTooltip("l1", "")
     app.setLabelTooltip("l1", "updated message")
-    app.disableTooltip("l1")
-    app.enableTooltip("l1")
+    app.disableLabelTooltip("l1")
+    app.enableLabelTooltip("l1")
     lab = app.getLabelWidget("l1")
     tip = lab.tooltip
     tip.enter()
@@ -2070,10 +2088,15 @@ def test_logging():
     app.warn("test logging")
     app.debug("test logging")
     app.info("test logging")
+    app.exception(new Exception("aaa")
 
     import logging
     logger = logging.getLogger("appJar")
     logger.error("WITH LOGGING")
+
+    app.setLogFile("msg.log")
+    app.debug("in the log")
+    app.error("in the log")
 
     print(" >> not implemented...")
     #print("\t >> all tests complete")
@@ -2082,6 +2105,7 @@ def test_logging():
 app = gui()
 print(app.SHOW_VERSION())
 print(app.SHOW_PATHS)
+app._gui__showHelp()
 app.showSplash()
 print("NEXT...")
 
