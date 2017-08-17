@@ -1474,7 +1474,7 @@ class gui(object):
         for handler in logging.root.handlers[:]:
             logging.root.removeHandler(handler)
         logging.basicConfig(level=logging.INFO, filename=fileName, format='%(asctime)s %(name)s:%(levelname)s: %(message)s')
-        app.info("Switched to logFile: " + str(fileName))
+        gui.info("Switched to logFile: " + str(fileName))
 
     # function to turn off warning messages
     def disableWarnings(self):

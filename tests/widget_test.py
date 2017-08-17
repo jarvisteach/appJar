@@ -963,11 +963,20 @@ def test_meters():
     app.setMeter("spm", 50)
     app.setMeter("dum", [50, 10])
 
+    mets = app.getAllMeters()
+    assert mets["m1"][0] == 0.45
+    assert mets["spm"][0] == 50
+    assert mets["dum"][0] == [50,10]
+
     app.setMeterFill("spm", ["red", "green"])
     app.setMeterFill("dum", ["red", "pink"])
 
     app.getMeter("spm")
     app.getMeter("dum")
+
+    app.setMeter("m1", 25, TEXT_ONE)
+    app.setMeter("m1", 5000)
+    app.setMeter("m1", -5000)
 
     # call generic setter functions
     test_setters("Meter", "m1")
