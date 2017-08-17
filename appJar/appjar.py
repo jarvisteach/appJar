@@ -10964,6 +10964,25 @@ class PauseLogger():
     def __exit__(self, a, b, c):
         logging.disable(logging.NOTSET)
 
+
+#####################################
+# class to temporarily pause function calling
+#####################################
+# usage:
+# with PausePropagation(callFunction, widg):
+#   doSomething()
+#####################################
+class PausePropagation():
+    def __init__(self, callFunction, widg):
+        self.callFunction = callFunction
+        self.widg = widg
+    def __enter__(self):
+        if not self.callFunction and hasattr(self.widg, 'cmd'):
+            self.widg.var.trace_vdelete('w', self.widg.cmd_id)
+    def __exit__(self, a, b, c):
+        if not self.callFunction and hasattr(self.widg, 'cmd'):
+            self.widg.cmd_id = self.widg.var.trace('w', self.widg.cmd)
+
 #####################################
 # classes to work with image maps
 #####################################

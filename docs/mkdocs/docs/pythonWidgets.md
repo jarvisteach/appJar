@@ -145,7 +145,7 @@ app.go()
 
 #### Set Entries
 * `.setEntry(title, text, callFunction=True)`  
-    This sets the contents of the specified Entry.
+    This sets the contents of the specified Entry.  
     Set ```callFunction``` to be False, if you don't want to call any associated functions.  
 
 * `.setEntryDefault(title, text)`  
