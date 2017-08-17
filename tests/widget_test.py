@@ -208,7 +208,7 @@ def test_entries():
     app.setEntry("ne1", ".")
     assert app.getEntry("ne1") == 0
 
-    with pytest.raises(Exception) :
+    with pytest.raises(Failed) :
         app.setEntry("ne1", TEXT_ONE)
 
     app.setEntry("lne1", "-")
@@ -1285,6 +1285,10 @@ def test_gui_options():
     app.setGuiPadding([20,20])
     app.hideTitleBar()
     app.showTitleBar()
+
+    app.setBgImage("1_entries.gif")
+    app.removeBgImage()
+    app.resizeBgImage()
 
     app.setBg("green")
     app.setFg("orange")
