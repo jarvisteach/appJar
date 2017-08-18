@@ -11,17 +11,24 @@ These are values that can be set when appJar is initially run.
 * `--version` `-v`  
     This will display the version of appJar, then exit.  
 
-* `--language` `-l`  
+* `-l [filename.ini]`  
     This allows you to set the starting language, only useful if using [internationalisation](/pythoninternationalisation/).  
     It will override any language configured in the `.go()` function call.  
 
 * `-c`, `-e`, `-w`, `-i`, `-d`  
     This sets the [logging level](/pythonLogging/):  
-    * `-c` - only log CRIRICAL messages  
-    * `-e` - log ERROR messages and above  
-    * `-w` - log WARNING messages and above
-    * `-i` - log INFO messages and above  
-    * `-d` - log DEBUG messages and above  
+    * `-c`   only log CRITICAL messages  
+    * `-e`   log ERROR messages and above  
+    * `-w`   log WARNING messages and above
+    * `-i`   log INFO messages and above  
+    * `-d`   log DEBUG messages and above  
+
+* `-f [filename.log]`  
+    This allows you to specify a [file](/pythonLogging/#logging-to-file) to log messages to.  
+
+* `--ttk`  
+    This allows you to request appJar uses [ttk widgets](/pythonTtk/) where possible.  
+    It can followed by an optional theme name, to declare which style to use for ttk widgets.  
 
 ### Example  
 

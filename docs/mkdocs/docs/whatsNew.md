@@ -2,18 +2,21 @@
 ---
 
 ## Version 0.08  
-* [Command line arguments](/pythonCommandLine): appJar now supports command line arguments for [logging](/pythonLogging) and [internatioanlisation](/pythonInternationalisation/) as well as help & version information.  
+* [Command line arguments](/pythonCommandLine): appJar now supports command line arguments for [logging](/pythonLogging) and [internationalisation](/pythonInternationalisation/) as well as help & version information.  
 
 * Issues Resolved:
+    * [#217](https://github.com/jarvisteach/appJar/issues/217) - Fixed issues with removing [BG images](/pythonImages/#set-background-images)  
     * [#213](https://github.com/jarvisteach/appJar/issues/213) - Validation entries improved in [Internationalisation](/pythonInternationalisation)  
     * [#212](https://github.com/jarvisteach/appJar/issues/212) - Creating an empty [Tooltip](/pythonDialogs/#tooltips) now doesn't create anything  
     * [#211](https://github.com/jarvisteach/appJar/issues/211) - [Logging](/pythonLogging) now logs line number & function name  
+    * [#209](https://github.com/jarvisteach/appJar/issues/209) - Additional testing for [ScrollPanes](/pythonWidgetGrouping/#scroll-pane) & [Grids](/pythonDevWidgets/#grid)  
     * [#207](https://github.com/jarvisteach/appJar/issues/207) - Now possible to change the title and anchor of a [LabelFrame](/pythonWidgetGrouping/#label-frame)  
     * [#205](https://github.com/jarvisteach/appJar/issues/205) - Now possible to [select](/pythonWidgets/#set-optionboxes) a disabled item in an OptionBox.  
     * [#204](https://github.com/jarvisteach/appJar/issues/204) - appJar now supports [Command line arguments](/pythonCommandLine)  
     * [#203](https://github.com/jarvisteach/appJar/issues/203) - updated docs on [LabelFrames](/pythonWidgetGrouping/#label-frame)  
     * [#202](https://github.com/jarvisteach/appJar/issues/202) - functions now provided to get or clear all values of a selected widget type  
     * [#200](https://github.com/jarvisteach/appJar/issues/200) - Switched [Grid](/pythonDevWidgets/#grid) to use a [ScrollPane](/pythonWidgetGrouping/#scroll-pane) & changed ScrollPane to use AutoScrollbars.  
+    * [#189](https://github.com/jarvisteach/appJar/issues/189) - More work on [ttk](/pythonTtk)  
     * [#177](https://github.com/jarvisteach/appJar/issues/177) - [setLocation](/pythonGuiOptions/#size-location) can now position windows in the center of the screen
     * [#162](https://github.com/jarvisteach/appJar/issues/162) - PhotoImage objects can now be passed directly when [adding/setting ImageData](/pythonImages/#add-images)  
     * [#71](https://github.com/jarvisteach/appJar/issues/71) - More work on [Internationalisation](/pythonInternationalisation/) - now supports LabelFrames, ToggleFrames, TabbedFrames, Properties, SubWindows, SplashScreens & Titles  

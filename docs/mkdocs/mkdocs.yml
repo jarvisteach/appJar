@@ -32,6 +32,7 @@ pages:
     - Internationalisation: pythonInternationalisation.md
     - Logging: pythonLogging.md
     - Command Line Arguments: pythonCommandLine.md
+    - ttk: pythonTtk.md
 - Examples:
     - Raspberry Pi Minecraft: examples/minecraft.md
     - Simple Layout: examples/simple.md

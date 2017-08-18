@@ -39,6 +39,7 @@ import calendar # datepicker
 import datetime # datepicker & image
 import logging  # python's logger
 import inspect  # for logging
+import argparse # argument parser
 
 import __main__ as theMain
 from platform import system as platform
@@ -436,7 +437,7 @@ class gui(object):
 
         # check any command line arguments
         self.language = None
-        opts = self.__handleArgs() if handleArgs else None
+        args = self.__handleArgs() if handleArgs else None
 
         # warn if we're in an untested mode
         self.__checkMode()
@@ -450,32 +451,19 @@ class gui(object):
             self.warn("Cannot set logging level in __init__. You should use .setLogLevel()")
 
         # process any command line arguments
-        if opts is not None:
-            # process these first
-            if "-V" in opts or "--version" in opts:
-                print("\nappJar Information\n\t"+
-                    gui.SHOW_VERSION().replace("\n", "\n\t"))
-                sys.exit()
-            elif "-h" in opts or "--help" in opts:
-                self.__showHelp()
-                sys.exit()
+        if handleArgs:
+            if args.c: gui.setLogLevel("CRITICAL")
+            elif args.e: gui.setLogLevel("ERROR")
+            elif args.w: gui.setLogLevel("WARNING")
+            elif args.i: gui.setLogLevel("INFO")
+            elif args.d: gui.setLogLevel("DEBUG")
 
-            # if we didn't exit, next set the log level
-            for opt, arg in opts:
-                if opt == "-c": gui.setLogLevel("CRITICAL")
-                elif opt == "-e": gui.setLogLevel("ERROR")
-                elif opt == "-w": gui.setLogLevel("WARNING")
-                elif opt == "-i": gui.setLogLevel("INFO")
-                elif opt == "-d": gui.setLogLevel("DEBUG")
-
-            # process the rest
-            for opt, arg in opts:
-                if opt in ["-l", "--language"]:
-                    self.language = arg
-                elif opt in ["-t", "--ttk"]:
-                    self.useTtk()
-                elif opt in ["--theme"]:
-                    self.ttkStyle = arg
+            self.language = args.l
+            if args.f: gui.setLogFile(args.f)
+            if args.ttk:
+                self.useTtk()
+                if args.ttk is not True:
+                    self.ttkStyle = args.ttk
 
         # a stack to hold containers as being built
         # done here, as initArrays is called elsewhere - to reset the gubbins
@@ -615,30 +603,22 @@ class gui(object):
         if self.ttkStyle is not None:
             self.setTtkTheme(self.ttkStyle)
 
-    # function to check command line parameters
-    def __showHelp(self):
-        print("\nUsage:\n  " + sys.argv[0] + " [-cewid] [-h --help] [-V --version] [-l --language] <language> [-f --file] <filename> [-t --ttk] [--theme] <theme>")
-        print("\nOptions:")
-        print("  -h, --help:\t\t\tShow help.")
-        print("  -V, --version:\t\tShow version information.")
-        print("  -l, --language <language>:\tSet the language file to use.")
-        print("  -t,--ttk:\t\t\tEnable ttk.")
-        print("  --theme:\t\t\tSet a ttk theme.")
-        print("  -f,--file <filename>:\t\tSet the log file to use.")
-        print("  -c:\t\t\t\tOnly log CRITICAL messages.")
-        print("  -e:\t\t\t\tLog ERROR messages and above.")
-        print("  -w:\t\t\t\tLog WARNING messages and above.")
-        print("  -i:\t\t\t\tLog INFO messages and above.")
-        print("  -d:\t\t\t\tLog DEBUG messages and above.")
-
     def __handleArgs(self):
-        import getopt
-        try:
-            opts, args = getopt.getopt(sys.argv[1:], "cewidVhtl:f:", ["version", "language=", "file=", "help", "ttk", "theme="])
-            return opts
-        except getopt.GetoptError:
-            self.__showHelp()
-            sys.exit(2)
+        parser = argparse.ArgumentParser(
+            description="appJar - the easiest way to create GUIs in python",
+            epilog="For more information, go to: http://appJar.info"
+        )
+        parser.add_argument("-v", "--version", action="version", version=gui.SHOW_VERSION(), help="show version information and exit")
+        logGroup = parser.add_mutually_exclusive_group()
+        logGroup.add_argument("-c", action="store_const", const=True, help="only log CRITICAL messages")
+        logGroup.add_argument("-e", action="store_const", const=True, help="log ERROR messages and above")
+        logGroup.add_argument("-w", action="store_const", const=True, help="log WARNING messages and above")
+        logGroup.add_argument("-i", action="store_const", const=True, help="log INFO messages and above")
+        logGroup.add_argument("-d", action="store_const", const=True, help="log DEBUG messages and above")
+        parser.add_argument("-l", metavar="LANGUAGE.ini", help="set a language file to use")
+        parser.add_argument("-f", metavar="file.log", help="set a log file to use")
+        parser.add_argument("--ttk", metavar="THEME", const=True, nargs="?", help="enable ttk, with an optional theme")
+        return parser.parse_args()
 
     # function to check on mode
     def __checkMode(self):
