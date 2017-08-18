@@ -440,6 +440,8 @@ class gui(object):
 
         # warn if we're in an untested mode
         self.__checkMode()
+        self.ttkFlag = False
+        self.ttkStyle = None
 
         # first out, verify the platform
         self.platform = gui.GET_PLATFORM()
@@ -449,23 +451,31 @@ class gui(object):
 
         # process any command line arguments
         if opts is not None:
+            # process these first
+            if "-V" in opts or "--version" in opts:
+                print("\nappJar Information\n\t"+
+                    gui.SHOW_VERSION().replace("\n", "\n\t"))
+                sys.exit()
+            elif "-h" in opts or "--help" in opts:
+                self.__showHelp()
+                sys.exit()
+
+            # if we didn't exit, next set the log level
             for opt, arg in opts:
                 if opt == "-c": gui.setLogLevel("CRITICAL")
                 elif opt == "-e": gui.setLogLevel("ERROR")
                 elif opt == "-w": gui.setLogLevel("WARNING")
                 elif opt == "-i": gui.setLogLevel("INFO")
                 elif opt == "-d": gui.setLogLevel("DEBUG")
-                elif opt in ["-l", "--language"]:
+
+            # process the rest
+            for opt, arg in opts:
+                if opt in ["-l", "--language"]:
                     self.language = arg
-                elif opt in ["-f", "--file"]:
-                    self.setLogFile(arg)
-                elif opt in ["-V", "--version"]:
-                    print("\nappJar Information\n\t"+
-                        gui.SHOW_VERSION().replace("\n", "\n\t"))
-                    sys.exit()
-                elif opt in ["-h", "--help"]:
-                    self.__showHelp()
-                    sys.exit()
+                elif opt in ["-t", "--ttk"]:
+                    self.useTtk()
+                elif opt in ["--theme"]:
+                    self.ttkStyle = arg
 
         # a stack to hold containers as being built
         # done here, as initArrays is called elsewhere - to reset the gubbins
@@ -602,20 +612,18 @@ class gui(object):
             except: # file not found
                 self.debug("Error setting Windows default icon")
 
-    def useTtk(self):
-        global ttk
-        try:
-            import ttk
-        except:
-            from tkinter import ttk
+        if self.ttkStyle is not None:
+            self.setTtkTheme(self.ttkStyle)
 
     # function to check command line parameters
     def __showHelp(self):
-        print("\nUsage:\n  " + sys.argv[0] + " [-cewid] [-h --help] [-V --version] [-l --language] <language> [-f --file] <filename>")
+        print("\nUsage:\n  " + sys.argv[0] + " [-cewid] [-h --help] [-V --version] [-l --language] <language> [-f --file] <filename> [-t --ttk] [--theme] <theme>")
         print("\nOptions:")
         print("  -h, --help:\t\t\tShow help.")
         print("  -V, --version:\t\tShow version information.")
         print("  -l, --language <language>:\tSet the language file to use.")
+        print("  -t,--ttk:\t\t\tEnable ttk.")
+        print("  --theme:\t\t\tSet a ttk theme.")
         print("  -f,--file <filename>:\t\tSet the log file to use.")
         print("  -c:\t\t\t\tOnly log CRITICAL messages.")
         print("  -e:\t\t\t\tLog ERROR messages and above.")
@@ -626,7 +634,7 @@ class gui(object):
     def __handleArgs(self):
         import getopt
         try:
-            opts, args = getopt.getopt(sys.argv[1:], "cewidVhl:f:", ["version", "language=", "file=", "help"])
+            opts, args = getopt.getopt(sys.argv[1:], "cewidVhtl:f:", ["version", "language=", "file=", "help", "ttk", "theme="])
             return opts
         except getopt.GetoptError:
             self.__showHelp()
@@ -665,6 +673,32 @@ class gui(object):
 #####################################
 # library loaders
 #####################################
+
+    def useTtk(self):
+        global ttk
+        try:
+            import ttk
+        except:
+            try: 
+                from tkinter import ttk
+            except:
+                gui.error("ttk not available")
+                return
+        self.ttkFlag = True
+        gui.debug("Mode switched to ttk")
+
+    # only call this after the main tk has been created
+    # otherwise we get two windows!
+    def setTtkTheme(self, theme=None):
+        self.ttkStyle = ttk.Style()
+        if theme is not None:
+            try:
+                self.ttkStyle.theme_use(theme)
+            except:
+                self.error("ttk theme: " + str(theme) + " unavailable. Try one of: " + str(self.ttkStyle.theme_names()))
+                return
+
+        gui.debug("ttk theme switched to: " + str(self.ttkStyle.theme_use()))
 
     # textarea
     def __loadHashlib(self):
@@ -3190,8 +3224,9 @@ class gui(object):
             sticky=W + E):
         # allow item to be added to container
         container = self.getContainer()
-        gui.SET_WIDGET_FG(widget, self.__getContainerFg())
-        gui.SET_WIDGET_BG(widget, self.__getContainerBg())
+        if not self.ttkFlag:
+            gui.SET_WIDGET_FG(widget, self.__getContainerFg())
+            gui.SET_WIDGET_BG(widget, self.__getContainerBg())
 
         # alpha paned window placement
         if self.containerStack[-1]['type'] == self.C_PANEDFRAME:
@@ -3379,17 +3414,17 @@ class gui(object):
         if fType == self.C_LABELFRAME:
             # first, make a LabelFrame, and position it correctly
             self.__verifyItem(self.n_labelFrames, title, True)
-            container = LabelFrame(self.getContainer(), text=title)
+            if not self.ttkFlag:
+                container = LabelFrame(self.getContainer(), text=title, relief="groove")
+                container.config(background=self.__getContainerBg(), font=self.labelFrameFont)
+            else:
+                container = ttk.LabelFrame(self.getContainer(), text=title, relief="groove")
+
             container.DEFAULT_TEXT = title
             container.isContainer = True
-            container.config(
-                background=self.__getContainerBg(),
-                font=self.labelFrameFont,
-                relief="groove")
             self.setPadX(5)
             self.setPadY(5)
-            self.__positionWidget(
-                container, row, column, colspan, rowspan, "nsew")
+            self.__positionWidget(container, row, column, colspan, rowspan, "nsew")
             self.n_labelFrames[title] = container
 
             # now, add to top of stack
@@ -4170,17 +4205,20 @@ class gui(object):
     def addCheckBox(self, title, row=None, column=0, colspan=0, rowspan=0, name=None):
         self.__verifyItem(self.n_cbs, title, True)
         var = IntVar(self.topLevel)
-        cb = Checkbutton(self.getContainer())
         if name is None:
             name = title
-        cb.config(
-            text=name,
-            variable=var,
-            font=self.cbFont,
-            background=self.__getContainerBg(),
-            activebackground=self.__getContainerBg())
+
+        if not self.ttkFlag:
+            cb = Checkbutton(self.getContainer(), text=name, variable=var)
+            cb.config(
+                font=self.cbFont,
+                background=self.__getContainerBg(),
+                activebackground=self.__getContainerBg(),
+                anchor=W)
+        else:
+            cb = ttk.Checkbutton(self.getContainer(), text=name, variable=var)
+
         cb.DEFAULT_TEXT = name
-        cb.config(anchor=W)
         cb.bind("<Button-1>", self.__grabFocus)
         self.n_cbs[title] = cb
         self.n_boxVars[title] = var
@@ -4224,16 +4262,15 @@ class gui(object):
 
     def __buildScale(self, title, frame):
         self.__verifyItem(self.n_scales, title, True)
-        scale = ajScale(frame, increment=10)
-        scale.var = DoubleVar(self.topLevel)
-        scale.config(
-            variable=scale.var,
-            repeatinterval=10,
-            digits=1,
-            orient=HORIZONTAL,
-            showvalue=False,
-            highlightthickness=1)
+        var = DoubleVar(self.topLevel)
+        if not self.ttkFlag:
+            scale = ajScale(frame, increment=10, variable=var, repeatinterval=10, orient=HORIZONTAL)
+            scale.config(digits=1, showvalue=False, highlightthickness=1)
+        else:
+            scale = ajScale(frame, increment=10, variable=var, repeatinterval=10, orient=HORIZONTAL)
+
         scale.bind("<Button-1>", self.__grabFocus, "+")
+        scale.var = var
         scale.inContainer = False
         self.n_scales[title] = scale
         return scale
@@ -5680,16 +5717,18 @@ class gui(object):
             newRb = True
 
         # finally, create the actual RadioButton
-        rb = Radiobutton(self.getContainer())
-        rb.config(
-            text=name,
-            variable=var,
-            value=name,
-            anchor=W,
-            background=self.__getContainerBg(),
-            activebackground=self.__getContainerBg(),
-            font=self.rbFont,
-            indicatoron = 1)
+        if not self.ttkFlag:
+            rb = Radiobutton(self.getContainer(), text=name, variable=var, value=name)
+            rb.config(
+                anchor=W,
+                background=self.__getContainerBg(),
+                activebackground=self.__getContainerBg(),
+                font=self.rbFont,
+                indicatoron=1
+            )
+        else:
+            rb = ttk.Radiobutton(self.getContainer(), text=name, variable=var, value=name)
+
         rb.bind("<Button-1>", self.__grabFocus)
         rb.DEFAULT_TEXT = name
 
@@ -5704,7 +5743,7 @@ class gui(object):
 
         # and select it, if it's the first item in the list
         if newRb:
-            rb.select()
+            rb.select() if not self.ttkFlag else rb.invoke()
             var.startVal = name # so we can reset it...
         self.__positionWidget(rb, row, column, colspan, rowspan, EW)
         return rb
@@ -5999,20 +6038,23 @@ class gui(object):
         if isinstance(title, list):
             raise Exception("Can't add a button using a list of names: " + str(title) + " - you should use .addButtons()")
         self.__verifyItem(self.n_buttons, title, True)
-        but = Button(frame)
+        if not self.ttkFlag:
+            but = Button(frame, text=name)
+            but.config(font=self.buttonFont)
+            if self.platform in [self.MAC, self.LINUX]:
+                but.config(highlightbackground=self.__getContainerBg())
+        else:
+            but = ttk.Button(frame, text=name)
 
-        but.config(text=name, font=self.buttonFont)
         but.DEFAULT_TEXT = name
 
         if func is not None:
             command = self.MAKE_FUNC(func, title)
             bindCommand = self.MAKE_FUNC(func, title, True)
-
             but.config(command=command)
+
         #    but.bind('<Return>', bindCommand)
 
-        if self.platform in [self.MAC, self.LINUX]:
-            but.config(highlightbackground=self.__getContainerBg())
 
         #but.bind("<Tab>", self.__focusNextWindow)
         #but.bind("<Shift-Tab>", self.__focusLastWindow)
@@ -6348,27 +6390,25 @@ class gui(object):
         :raises ItemLookupError: raised if the title is not unique
         """
         self.__verifyItem(self.n_labels, title, True)
-        container = self.getContainer()
+        if text is None:
+            text = ""
+
         if not selectable:
-            lab = Label(container)
+            if not self.ttkFlag:
+                lab = Label(self.getContainer(), text=text)
+                lab.config(justify=LEFT, font=self.labelFont, background=self.__getContainerBg())
+                lab.origBg = self.__getContainerBg()
+            else:
+                lab = ttk.Label(self.getContainer(), text=text)
         else:
-            lab = SelectableLabel(container)
+            lab = SelectableLabel(self.getContainer(), text=text)
+            lab.config(justify=LEFT, font=self.labelFont, background=self.__getContainerBg())
+            lab.origBg = self.__getContainerBg()
 
         lab.inContainer = False
-        if text is not None:
-            lab.config(text=text)
-            lab.DEFAULT_TEXT = text
-        else:
-            lab.DEFAULT_TEXT = ""
+        lab.DEFAULT_TEXT = text
 
-        lab.origBg = self.__getContainerBg()
-
-        lab.config(
-            justify=LEFT,
-            font=self.labelFont,
-            background=lab.origBg)
         self.n_labels[title] = lab
-
         self.__positionWidget(lab, row, column, colspan, rowspan)
         return lab
 
@@ -6644,12 +6684,20 @@ class gui(object):
         # if we are an autocompleter
         if len(words) > 0:
             ent = AutoCompleteEntry(words, self.topLevel, frame)
-            ent.config(font=self.entryFont)
         else:
-            ent = Entry(frame)
-            ent.var = StringVar(self.topLevel)
-            ent.config(textvariable=ent.var, font=self.entryFont)
+            var = StringVar(self.topLevel)
+            if not self.ttkFlag:
+                ent = Entry(frame, textvariable=var)
+            else:
+                ent = ttk.Entry(frame, textvariable=var)
+
+            ent.var = var
             ent.var.auto_id = None
+
+        if not self.ttkFlag:
+            ent.config(font=self.entryFont)
+            if self.platform in [self.MAC, self.LINUX]:
+                ent.config(highlightbackground=self.__getContainerBg())
 
         # vars to store any limit traces
         ent.var.uc_id = None
@@ -6668,8 +6716,6 @@ class gui(object):
         if secret:
             ent.config(show="*")
 
-        if self.platform in [self.MAC, self.LINUX]:
-            ent.config(highlightbackground=self.__getContainerBg())
         ent.bind("<Tab>", self.__focusNextWindow)
         ent.bind("<Shift-Tab>", self.__focusLastWindow)
 
@@ -10090,6 +10136,7 @@ class SelectableLabel(Entry):
         self.configure(relief=FLAT, state="readonly", readonlybackground='#FFFFFF', fg='#000000', highlightthickness=0)
         self.var = StringVar(parent)
         self.configure(textvariable=self.var)
+        self.configure(**opts)
 
     def cget(self, kw):
         if kw == "text":
@@ -10969,7 +11016,6 @@ class PauseLogger():
 # var - the thing being traced
 # cmd_id - linking to the trace
 # cmd - the function called by the trace
-
 #####################################
 class PauseCallFunction():
     def __init__(self, callFunction, widg):
