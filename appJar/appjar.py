@@ -2068,12 +2068,15 @@ class gui(object):
     # all widgets will then need to use it
     # and here we update all....
     def setFg(self, colour, override=False):
-        self.containerStack[-1]['fg']=colour
-        gui.SET_WIDGET_FG(self.containerStack[-1]['container'], colour, override)
+        if not self.ttkFlag:
+            self.containerStack[-1]['fg']=colour
+            gui.SET_WIDGET_FG(self.containerStack[-1]['container'], colour, override)
 
-        for child in self.containerStack[-1]['container'].winfo_children():
-            if not self.__isWidgetContainer(child):
-                gui.SET_WIDGET_FG(child, colour, override)
+            for child in self.containerStack[-1]['container'].winfo_children():
+                if not self.__isWidgetContainer(child):
+                    gui.SET_WIDGET_FG(child, colour, override)
+        else:
+            gui.warn("In ttk mode - can't set FG to " + str(colour))
 
     # self.topLevel = Tk()
     # self.appWindow = CanvasDnd, fills all of self.topLevel
@@ -2081,15 +2084,18 @@ class gui(object):
     # self.container = Frame, at bottom of appWindow => C_ROOT container
     # self.bglabel = Label, filling all of container
     def setBg(self, colour, override=False, tint=False):
-        if self.containerStack[-1]['type'] == self.C_ROOT:
-            self.appWindow.config(background=colour)
-            self.bgLabel.config(background=colour)
+        if not self.ttkFlag:
+            if self.containerStack[-1]['type'] == self.C_ROOT:
+                self.appWindow.config(background=colour)
+                self.bgLabel.config(background=colour)
 
-        self.containerStack[-1]['container'].config(background=colour)
+            self.containerStack[-1]['container'].config(background=colour)
 
-        for child in self.containerStack[-1]['container'].winfo_children():
-            if not self.__isWidgetContainer(child):
-                gui.SET_WIDGET_BG(child, colour, override, tint)
+            for child in self.containerStack[-1]['container'].winfo_children():
+                if not self.__isWidgetContainer(child):
+                    gui.SET_WIDGET_BG(child, colour, override, tint)
+        else:
+            gui.warn("In ttk mode - can't set BG to " + str(colour))
 
     @staticmethod
     def __isWidgetContainer(widget):
