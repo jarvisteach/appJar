@@ -1561,7 +1561,7 @@ def test_menus():
 def test_toolbars():
     print("\tTesting Toolbar")
 
-    app.addToolbar(["a", "b", "c"],tester_function)
+    app.addToolbar(["a", "b", "c", "ABOUT"], tester_function, True)
 
     app.setToolbarEnabled()
     app.setToolbarDisabled()

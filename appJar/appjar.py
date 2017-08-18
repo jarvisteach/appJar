@@ -1309,6 +1309,8 @@ class gui(object):
                 continue
             elif section == "TITLE":
                 kind = self.C_SUBWINDOW
+            elif section == "TOOLBAR":
+                kind = "TOOLBAR"
             else:
                 try:
                     kind = vars(gui)[section]
@@ -1334,7 +1336,11 @@ class gui(object):
                     if key.lower() == "appjar":
                         self.setTitle(val)
                     elif key.lower() == "splash":
-                        self.splashConfig['text'] = val
+                        if self.splashConfig is not None:
+                            self.debug("\t\t Updated splash to: " + str(val))
+                            self.splashConfig['text'] = val
+                        else:
+                            self.debug("\t\t No splash to update")
                     else:
                         try:
                             widgets[key].title(val)
@@ -1470,6 +1476,18 @@ class gui(object):
                     self.debug("\t\t" + k + "---->" +  data)
                     widg.config(text = data)
                     self.debug("\t\t" + k + "=" + widg.cget("text"))
+            elif kind == "TOOLBAR":
+                for k in widgets.keys():
+                    but = widgets[k]
+                    if but.image is None:
+                        if self.config.has_option(section, k):
+                            data = str(self.config.get(section, k))
+                        else:
+                            data = but.DEFAULT_TEXT
+
+                        self.debug("\t\t" + k + "---->" +  data)
+                        but.config(text = data)
+                        self.debug("\t\t" + k + "=" + but.cget("text"))
             else:
                 self.warn("Unsupported widget: " + section)
                 continue
@@ -2277,6 +2295,8 @@ class gui(object):
             return self.n_subWindows
         elif kind in [ self.SCROLLPANE, self.C_SCROLLPANE ]:
             return self.n_scrollPanes
+        elif kind == "TOOLBAR":
+            return self.n_tbButts
         else:
             raise Exception("Unknown widget type: " + str(kind))
 
@@ -7420,13 +7440,13 @@ class gui(object):
                 u = self.MAKE_FUNC(funcs[i], t)
 
             but.config(text=t, command=u, relief=FLAT, font=self.tbFont)
+            but.image = image
             if image is not None:
-                but.image = image
                 # works on Mac & Windows :)
                 but.config(image=image, compound=TOP, text="", justify=LEFT)
             but.pack(side=LEFT, padx=2, pady=2)
             but.tt_var = self.__addTooltip(but, t.title(), True)
-
+            but.DEFAULT_TEXT=t
 
         # add the pinned image
         self.pinBut = None

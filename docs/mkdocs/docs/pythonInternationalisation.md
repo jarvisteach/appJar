@@ -101,7 +101,7 @@ sub2: SubWindow 2 Title
 * `[ENTRY]`  
     The text provided here will be used for the default value, if one is being used.  
 
-* `[SCALE]`, `[TEXTAREA]`, `[METER]`  
+* `[SCALE]`, `[TEXTAREA]`, `[METER]`, `[PIECHART]`, `[TREE]`  
     These widgets have no text to change.  
 
 * `[LISTBOX]`, `[SPIN]`, `[OPTION]`  
@@ -116,10 +116,19 @@ fruits:
     bananas
 ```
 
+* `[TOOLBAR]`  
+    Each button should be on a new line, if the button has an image the line will be ignored.    
+```
+[TOOLBAR]
+button1: New Button Name
+button2: Another New Button Name
+button3: One More New Button Name
+OPEN: This will be ignored because it has an image...
+```
+
 * The following are currently in development:  
-    `[POPUP]`, `[PIECHART]`, `[TREE]`, `[GRID]`  
-    `[MENUBAR]`, `[STATUSBAR]`, `[TOOLBAR]`, `[TOOLTIP]`  
-    `[PAGEDWINDOW]`  
+    `[POPUP]`, `[GRID]`, `[PAGEDWINDOW]`  
+    `[MENUBAR]`, `[STATUSBAR]`, `[TOOLTIP]`  
     `[SOUND]` & `[IMAGE]`  
 
 * `[EXTERNAL]`  

@@ -28,7 +28,7 @@ def bar(btn):
     else: app.showToolbar()
 
 
-tools = ["ABOUT", "REFRESH", "OPEN", "CLOSE", "SAVE",
+tools = ["aaa", "bbb", "ABOUT", "REFRESH", "OPEN", "CLOSE", "SAVE",
         "NEW", "SETTINGS", "PRINT", "SEARCH", "UNDO",
         "REDO", "PREFERENCES", "HOME", "HELP", "CALENDAR",
         "WEB", "OFF"]
@@ -61,7 +61,7 @@ app.setExpand("column")
 app.addButtons(["HIDE", "SHOW"], bar)
 app.stopAllPanedFrames()
 
-app.addToolbar(tools, tbFunc, True, False)
+app.addToolbar(tools, tbFunc, True)
 app.addStatusbar(fields=3, side="RIGHT")
 app.setStatusbarBg("red", 2)
 app.setStatusbarFg("white", 2)
