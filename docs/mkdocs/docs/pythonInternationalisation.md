@@ -126,8 +126,18 @@ button3: One More New Button Name
 OPEN: This will be ignored because it has an image...
 ```
 
+* `[GRID]`  
+    There are three user-configurable items in a grid; the buttons & label in the right-hand column.  
+    These should each be preceeded by the name of the grid:  
+```
+[GRID]
+financesGrid-actionHeading: Update Row
+financesGrid-actionButton: Update
+financesGrid-addButton: Add
+```
+
 * The following are currently in development:  
-    `[POPUP]`, `[GRID]`, `[PAGEDWINDOW]`  
+    `[POPUP]`, `[PAGEDWINDOW]`  
     `[MENUBAR]`, `[STATUSBAR]`, `[TOOLTIP]`  
     `[SOUND]` & `[IMAGE]`  
 

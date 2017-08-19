@@ -210,6 +210,8 @@ class gui(object):
     MICROBIT = 19
     WIDGET = 20
     MAP = 21
+    TREE = 22
+    TOOLBAR = 23
 
     RB = 60
     CB = 40
@@ -1300,17 +1302,15 @@ class gui(object):
         # change the text
         for section in self.config.sections():
             section = section.upper()
-            self.debug("\tSECTION:" + section)
+            self.debug("\tSection:" + section)
 
             # convert the section title to its code
             if section == "CONFIG":
                 # skip the config section (for now)
-                self.debug("\tSKIPPING CONFIG")
+                self.debug("\tSkipping CONFIG")
                 continue
             elif section == "TITLE":
                 kind = self.C_SUBWINDOW
-            elif section == "TOOLBAR":
-                kind = "TOOLBAR"
             else:
                 try:
                     kind = vars(gui)[section]
@@ -1326,7 +1326,7 @@ class gui(object):
             if kind in [self.SCALE]:
                 self.warn("No text is displayed in " + section + ". Maybe it has a Label?")
                 continue
-            elif kind in [self.TEXTAREA, self.METER]:
+            elif kind in [self.TEXTAREA, self.METER, self.PIECHART, self.TREE]:
                 self.warn("No text is displayed in " + section)
                 continue
             elif kind in [self.C_SUBWINDOW]:
@@ -1337,15 +1337,15 @@ class gui(object):
                         self.setTitle(val)
                     elif key.lower() == "splash":
                         if self.splashConfig is not None:
-                            self.debug("\t\t Updated splash to: " + str(val))
+                            self.debug("\t\t Updated SPLASH to: " + str(val))
                             self.splashConfig['text'] = val
                         else:
-                            self.debug("\t\t No splash to update")
+                            self.debug("\t\t No SPLASH to update")
                     else:
                         try:
                             widgets[key].title(val)
                         except KeyError:
-                            self.warn("Invalid SubWindow: " + str(key))
+                            self.warn("Invalid SUBWINDOW: " + str(key))
 
             elif kind in [self.LISTBOX]:
                 for k in widgets.keys():
@@ -1421,7 +1421,7 @@ class gui(object):
                         try:
                             self.setTabText(keys[0], keys[1], val)
                         except ItemLookupError:
-                            self.warn("Invalid tab name: " + key)
+                            self.warn("Invalid TABBEDFRAME: " + str(keys[0]) + " with TAB: " + str(keys[1]))
 
             elif kind in [self.PROPERTIES]:
                 for (key, val) in self.config.items(section):
@@ -1434,13 +1434,26 @@ class gui(object):
                         try:
                             self.setPropertyText(keys[0], keys[1], val)
                         except ItemLookupError:
-                            self.warn("Invalid properties: " + keys[0])
+                            self.warn("Invalid PROPERTIES: " + keys[0])
                         except KeyError:
-                            self.warn("Invalid property: " + keys[1])
+                            self.warn("Invalid PROPERTY: " + keys[1])
 
-            elif kind in [self.PIECHART, self.GRID]:
-                self.warn(section + " - widgets not yet implemented")
-                continue
+            elif kind == self.GRID:
+                for (key, val) in self.config.items(section):
+                    self.debug("\t\t" + key + "---->" +  val)
+                    keys = key.split("-")
+                    self.debug("\t\t" + str(keys))
+                    if len(keys) != 2:
+                        self.warn("Invalid GRID key: " + key)
+                    else:
+                        if keys[1] not in ["actionHeading", "actionButton", "addButton"]:
+                            self.warn("Invalid GRID label: " + str(keys[1]) + " for GRID: " + str(keys[0]))
+                        else:
+                            try:
+                                self.confGrid(keys[0], keys[1], val)
+                            except ItemLookupError:
+                                self.warn("Invalid GRID: " + str(keys[0]))
+
             elif kind == self.ENTRY:
                 for k in widgets.keys():
                     ent = widgets[k]
@@ -1476,7 +1489,7 @@ class gui(object):
                     self.debug("\t\t" + k + "---->" +  data)
                     widg.config(text = data)
                     self.debug("\t\t" + k + "=" + widg.cget("text"))
-            elif kind == "TOOLBAR":
+            elif kind == self.TOOLBAR:
                 for k in widgets.keys():
                     but = widgets[k]
                     if but.image is None:
@@ -2266,6 +2279,10 @@ class gui(object):
             return self.n_grids
         elif kind == self.WIDGET:
             return self.n_widgets
+        elif kind == self.TREE:
+            return self.n_trees
+        elif kind == self.TOOLBAR:
+            return self.n_tbButts
 
         elif kind in [ self.LABELFRAME, self.C_LABELFRAME ]:
             return self.n_labelFrames
@@ -2295,8 +2312,6 @@ class gui(object):
             return self.n_subWindows
         elif kind in [ self.SCROLLPANE, self.C_SCROLLPANE ]:
             return self.n_scrollPanes
-        elif kind == "TOOLBAR":
-            return self.n_tbButts
         else:
             raise Exception("Unknown widget type: " + str(kind))
 
@@ -3660,9 +3675,9 @@ class gui(object):
             rowspan=0,
             action=None,
             addRow=None,
-            actionColumnText="Action",
-            actionButtonLabel="Press",
-            addRowButtonLabel="Add"):
+            actionHeading="Action",
+            actionButton="Press",
+            addButton="Add"):
         self.__verifyItem(self.n_grids, title, True)
         grid = SimpleGrid(
             self.getContainer(),
@@ -3670,9 +3685,9 @@ class gui(object):
             data,
             action,
             addRow,
-            actionColumnText,
-            actionButtonLabel,
-            addRowButtonLabel,
+            actionHeading,
+            actionButton,
+            addButton,
             buttonFont=self.buttonFont)
         grid.config(font=self.gridFont, background=self.__getContainerBg())
         self.__positionWidget(
@@ -3694,6 +3709,11 @@ class gui(object):
     def addGridRow(self, title, data):
         grid=self.__verifyItem(self.n_grids, title)
         grid.addRow(data)
+
+    def confGrid(self, title, field, value):
+        grid=self.__verifyItem(self.n_grids, title)
+        kw={field:value}
+        grid.config(**kw)
 
     ########################################
 
@@ -10596,8 +10616,8 @@ class SimpleGrid(ScrollPane):
     addRow = False
 
     def __init__(self, parent, title, data, action=None, addRow=None,
-                    actionColumnText="Action", actionButtonLabel="Press",
-                    addRowButtonLabel="Add", **opts):
+                    actionHeading="Action", actionButton="Press",
+                    addButton="Add", **opts):
 
         if "buttonFont" in opts:
             self.buttonFont = opts.pop("buttonFont")
@@ -10621,6 +10641,7 @@ class SimpleGrid(ScrollPane):
         # lists to store the data in
         self.data = []
         self.entries = []
+        self.rightColumn = []
         # a list of any selected cells
         from collections import OrderedDict
         self.selectedCells = OrderedDict()
@@ -10633,9 +10654,9 @@ class SimpleGrid(ScrollPane):
                 self.numColumns = len(row)
         
         # headings
-        self.actionColumnText = actionColumnText
-        self.actionButtonLabel = actionButtonLabel
-        self.addRowButtonLabel = addRowButtonLabel
+        self.actionHeading = actionHeading
+        self.actionButton= actionButton
+        self.addButton= addButton
        
         # colours
         self.cellHeadingBg = "#A9A9A9"      # HEADING BG
@@ -10656,39 +10677,50 @@ class SimpleGrid(ScrollPane):
     def configure(self, cnf=None, **kw):
         kw = gui.CLEAN_CONFIG_DICTIONARY(**kw)
         if "bg" in kw:
-            self.gridContainer.config(bg=kw["bg"])
-            self.canvas.config(bg=kw["bg"])
-            self.interior.config(bg=kw["bg"])
+            bg = kw.pop("bg")
+            self.gridContainer.config(bg=bg)
+            self.canvas.config(bg=bg)
+            self.interior.config(bg=bg)
         if "activebackground" in kw:
             self.cellSelectedBg = kw.pop("activebackground")
         if "inactivebackground" in kw:
             self.cellBg = kw.pop("inactivebackground")
         if "font" in kw:
             font = kw.pop("font")
-            self.gdFont.configure(
-                family=font.actual("family"),
-                size=font.actual("size"))
-            self.ghFont.configure(
-                family=font.actual("family"),
-                size=font.actual("size") + 2,
-                weight="bold")
+            self.gdFont.configure(family=font.actual("family"), size=font.actual("size"))
+            self.ghFont.configure(family=font.actual("family"), size=font.actual("size") + 2, weight="bold")
         if "buttonFont" in kw:
             buttonFont = kw.pop("buttonFont")
-            self.buttonFont.configure(
-                family=buttonFont.actual("family"),
-                size=buttonFont.actual("size"))
+            self.buttonFont.configure(family=buttonFont.actual("family"), size=buttonFont.actual("size"))
+
+        # allow labels to be updated
+        if "actionheading" in kw:
+            self.actionHeading = kw.pop("actionheading")
+            if len(self.rightColumn) > 0:
+                self.rightColumn[0].config(text=self.actionHeading)
+        if "actionbutton" in kw:
+            self.actionButton = kw.pop("actionbutton")
+            if len(self.rightColumn) > 1:
+                for pos in range(1, len(self.rightColumn)):
+                    self.rightColumn[pos].config(text=self.actionButton)
+        if "addbutton" in kw:
+            self.addButton = kw.pop("addbutton")
+            self.ent_but.config(text=self.addButton)
 
     def addRow(self, rowData, scroll=True):
         self.__hideEntryBoxes()
         self.__addRow(rowData)
         self.__showEntryBoxes()
-        if scroll: self.scrollBottom()
+        if scroll:
+            self.scrollBottom()
 
     def addRows(self, data, scroll=True):
         self.__hideEntryBoxes()
-        for row in data: self.__addRow(row)
+        for row in data:
+            self.__addRow(row)
         self.__showEntryBoxes()
-        if scroll: self.scrollBottom()
+        if scroll:
+            self.scrollBottom()
 
     # not finished
     def deleteRow(self, position):
@@ -10698,6 +10730,8 @@ class SimpleGrid(ScrollPane):
             for loop in range(position, self.numRows -2):
                 self.data[position] = self.data[position+1]
             self.numRows -= 1
+
+        #self.rightRow.delete(position)
                 
     def __addRow(self, rowData):
         self.data.append(rowData)
@@ -10731,27 +10765,29 @@ class SimpleGrid(ScrollPane):
                 lab.gridPos = str(rowNum - 1) + "-" + str(cellNum)
                 self.selectedCells[lab.gridPos] = False
 
-            lab.grid(row=rowNum, column=cellNum, sticky=N + E + S + W)
+            lab.grid(row=rowNum, column=cellNum, sticky=N+E+S+W)
             Grid.columnconfigure(self.gridContainer, cellNum, weight=1)
             Grid.rowconfigure(self.gridContainer, rowNum, weight=1)
 
-            # add some buttons for each row
-            if self.action is not None:
-                widg = Label(self.gridContainer, relief=RIDGE, height=2)
-                # add the title
-                if rowNum == 0:
-                    widg.configure(text=self.actionColumnText,
-                        font=self.ghFont, background=self.cellHeadingBg
-                    )
-                # add a button
-                else:
-                    but = Button(widg, font=self.buttonFont,
-                        text=self.actionButtonLabel,
-                        command=gui.MAKE_FUNC(self.action, rowNum-1)
-                    )
-                    but.place(relx=0.5, rely=0.5, anchor=CENTER)
+        # add some buttons for each row
+        if self.action is not None:
+            widg = Label(self.gridContainer, relief=RIDGE, height=2)
+            # add the title
+            if rowNum == 0:
+                widg.configure(text=self.actionHeading,
+                    font=self.ghFont, background=self.cellHeadingBg
+                )
+                self.rightColumn.append(widg)
+            # add a button
+            else:
+                but = Button(widg, font=self.buttonFont,
+                    text=self.actionButton,
+                    command=gui.MAKE_FUNC(self.action, rowNum-1)
+                )
+                but.place(relx=0.5, rely=0.5, anchor=CENTER)
+                self.rightColumn.append(but)
 
-                widg.grid(row=rowNum, column=cellNum + 1, sticky=N + E + S + W)
+            widg.grid(row=rowNum, column=cellNum + 1, sticky=N+E+S+W)
 
     def __hideEntryBoxes(self):
         if self.addRowEntries is None or len(self.entries) == 0:
@@ -10787,7 +10823,7 @@ class SimpleGrid(ScrollPane):
 
         self.ent_but = Button(
             lab, font=self.buttonFont,
-            text=self.addRowButtonLabel,
+            text=self.addButton,
             command=gui.MAKE_FUNC(self.addRowEntries, "newRow")
         )
         self.ent_but.lab = lab
