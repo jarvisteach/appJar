@@ -1301,6 +1301,7 @@ class gui(object):
         # loop through each section, get the relative set of widgets
         # change the text
         for section in self.config.sections():
+            getWidgets = True
             section = section.upper()
             self.debug("\tSection:" + section)
 
@@ -1318,6 +1319,9 @@ class gui(object):
                     self.setStatusbarHeader(self.config.items(section)[0][1])
             elif section == "TITLE":
                 kind = self.C_SUBWINDOW
+            elif section.startswith("TOOLTIP-"):
+                kind = "TOOLTIP"
+                getWidgets = False
             else:
                 try:
                     kind = vars(gui)[section]
@@ -1327,8 +1331,9 @@ class gui(object):
 
             self.debug("\tKIND:" + str(kind))
 
-            # use the code to get the widget list
-            widgets = self.__getItems(kind)
+            # if necessary, use the code to get the widget list
+            if getWidgets:
+                widgets = self.__getItems(kind)
 
             if kind in [self.SCALE]:
                 self.warn("No text is displayed in " + section + ". Maybe it has a Label?")
@@ -1525,6 +1530,22 @@ class gui(object):
                         self.debug("\t\t" + k + "---->" +  data)
                         but.config(text = data)
                         self.debug("\t\t" + k + "=" + but.cget("text"))
+
+            elif kind == "TOOLTIP":
+                try:
+                    kind = self.WIDGETS[vars(gui)[section.split("-")[1]]]
+                    func = getattr(self, "set"+kind+"Tooltip")
+                except KeyError:
+                    self.warn("Invalid config section: TOOLTIP-" + section)
+                    return
+                self.debug("Parsing TOOLTIPs for: " + str(kind))
+
+                for (key, val) in self.config.items(section):
+                    try:
+                        func(key, val)
+                    except ItemLookupError:
+                        self.warn("Invalid TOOLTIP for: " + kind + ", with key: " + key)
+                        continue
             else:
                 self.warn("Unsupported widget: " + section)
                 continue

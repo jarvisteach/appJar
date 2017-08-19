@@ -1613,6 +1613,11 @@ def test_tooltips():
     tip.enter()
     tip.leave()
     tip.motion()
+
+    app.setEntryTooltip("e1", "tooltip text")
+    app.setEntryTooltip("ne1", "tooltip text")
+    app.setEntryTooltip("se1", "tooltip text")
+
     print(" >> not implemented...")
     #print("\t >> all tests complete")
 

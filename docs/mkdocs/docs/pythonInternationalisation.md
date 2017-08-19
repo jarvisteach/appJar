@@ -152,6 +152,16 @@ Address Book-prevButton: Vorhergehend
 Address Book-nextButton: Danach
 ```
 
+* `[TOOLTIP-XXX]`  
+    To translate [tooltips](/pythonDialogs/#tooltips) there should be a section for each widget type, of format: `[TOOLTIP-ENTRY]`:  
+```
+[TOOLTIP-LABEL]
+l1: New tooltip text.
+l2: Another new tooltip text
+[TOOLTIP-ENTRY]
+e1: Some more tooltip text
+```
+
 * The following are currently in development:  
     `[DATEPICKER]`, `[POPUP]`, `[MENUBAR]` & `[TOOLTIP]`  
     `[SOUND]` & `[IMAGE]`  
