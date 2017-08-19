@@ -63,8 +63,10 @@ This will override any language set in the call to `.go()`, and removes the need
 
 **NB.** changing the text of a widget through `setXXX()` method's will work, but will not be remembered if the language is changed.  
 
-* `[LABEL]`, `[BUTTON]`, `[CHECKBOX]`, `[MESSAGE]`, `[LINK]`, `[LABELFRAME]`, `[TOGGLEFRAME]`  
+* `[LABEL]`, `[BUTTON]`, `[CHECKBOX]`, `[MESSAGE]`, `[LINK]`, `[IMAGE]`  
+    `[LABELFRAME]`, `[TOGGLEFRAME]`  
     As demonstrated above, use the widget ID, followed by the text to update it with.  
+    For images, you should provide a valid filename.  
     Any labels created by [auto-label](/pythonWidgets/#auto-labelled-widgets) widgets are also set here.  
 
 * `[ENTRY]`  
@@ -168,8 +170,7 @@ This will override any language set in the call to `.go()`, and removes the need
     `[FRAME]`, `[SCROLLPANE]`, `[PANEDFRAME]`  
     These widgets are not included in translation, as they have no static text to change.  
 
-* `[DATEPICKER]`, `[POPUP]`, `[MENUBAR]`  
-    `[SOUND]` & `[IMAGE]`  
+* `[DATEPICKER]`, `[POPUP]`, `[MENUBAR]`, `[SOUND]`  
     These widgets have not yet been implemented.  
 
 * `[EXTERNAL]`  

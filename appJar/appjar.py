@@ -1493,6 +1493,19 @@ class gui(object):
                     self.updateEntryDefault(k, data)
                     self.debug("\t\t" + k + "=" + str(ent.default))
 
+            elif kind in [self.IMAGE]:
+                for k in widgets.keys():
+                    if self.config.has_option(section, k):
+                        data = str(self.config.get(section, k))
+
+                        try:
+                            self.setImage(k, data)
+                            self.debug("\t\t" + k + "---->" +  data)
+                        except:
+                            self.error("Failed to update image: " + str(k) + " to: " + str(data))
+                    else:
+                        self.debug("No translation for: " + str(k))
+
             elif kind in [self.LABEL, self.BUTTON, self.CHECKBOX, self.MESSAGE,
                             self.LINK, self.LABELFRAME, self.TOGGLEFRAME]:
                 for k in widgets.keys():
@@ -5270,8 +5283,9 @@ class gui(object):
         self.topLevel.after(0, self.__getImage, fullPath)
 
         leaveImg = lab.image.path
-        lab.bind("<Leave>", lambda e: self.setImage(title, leaveImg))
-        lab.bind("<Enter>", lambda e: self.setImage(title, fullPath))
+        lab.bind("<Leave>", lambda e: self.setImage(title, leaveImg, True))
+        lab.bind("<Enter>", lambda e: self.setImage(title, fullPath, True))
+        lab.hasMouseOver = True
 
     # function to set an image location
     def setImageLocation(self, location):
@@ -5440,7 +5454,7 @@ class gui(object):
         self.__populateImage(name, image)
 
     # replace the current image, with a new one
-    def setImage(self, name, imageFile):
+    def setImage(self, name, imageFile, internal=False):
         label = self.__verifyItem(self.n_images, name)
         imageFile = self.getImagePath(imageFile)
 
@@ -5452,10 +5466,10 @@ class gui(object):
             return
         else:
             image = self.__getImage(imageFile)
-            self.__populateImage(name, image)
+            self.__populateImage(name, image, internal)
 
     # internal function to update the image in a label
-    def __populateImage(self, name, image):
+    def __populateImage(self, name, image, internal=False):
         label = self.__verifyItem(self.n_images, name)
 
         label.image.animating = False
@@ -5473,6 +5487,10 @@ class gui(object):
                 name,
                 True)
             self.n_imageAnimationIds[name] = anim_id
+
+        if not internal and label.hasMouseOver:
+            leaveImg = label.image.path
+            label.bind("<Leave>", lambda e: self.setImage(name, leaveImg, True))
 
         # removed - keep the label the same size, and crop images
         #h = image.height()
@@ -5525,6 +5543,7 @@ class gui(object):
         self.__verifyItem(self.n_images, name, True)
         imgObj = self.__getImage(imageFile)
         self.__addImageObj(name, imgObj, row, column, colspan, rowspan)
+        self.n_images[name].hasMouseOver = False
         return imgObj
 
     def __addImageObj(self, name, img, row=None, column=0, colspan=0, rowspan=0):
