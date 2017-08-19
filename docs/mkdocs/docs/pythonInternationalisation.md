@@ -102,6 +102,8 @@ sub2: SubWindow 2 Title
     The text provided here will be used for the default value, if one is being used.  
 
 * `[SCALE]`, `[TEXTAREA]`, `[METER]`, `[PIECHART]`, `[TREE]`  
+    `[GOOGLEMAPS]`, `[MICROBIT]`, `[PLOT]`, `[SEPARATOR]`, `[GRIP]`
+    `[FRAME]`, `[SCROLLPANE]`, `[PANEDFRAME]`
     These widgets have no text to change.  
 
 * `[LISTBOX]`, `[SPIN]`, `[OPTION]`  
@@ -136,6 +138,10 @@ financesGrid-actionButton: Update
 financesGrid-addButton: Add
 ```
 
+* `[STATUSBAR]`  
+    It's possible to change any pre-configured header for the statusbar.  
+    Set a field called `header` to the desired value.  
+
 * `[PAGEDWINDOW]`  
     There are three user-configurable items in a PagedWindow; the title, previous & next buttons.  
     These should each be preceeded by the name of the PagedWindow:  
@@ -147,8 +153,7 @@ Address Book-nextButton: Danach
 ```
 
 * The following are currently in development:  
-    `[POPUP]`, `[PAGEDWINDOW]`  
-    `[MENUBAR]`, `[STATUSBAR]`, `[TOOLTIP]`  
+    `[DATEPICKER]`, `[POPUP]`, `[MENUBAR]` & `[TOOLTIP]`  
     `[SOUND]` & `[IMAGE]`  
 
 * `[EXTERNAL]`  

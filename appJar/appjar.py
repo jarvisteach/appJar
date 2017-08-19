@@ -1309,6 +1309,13 @@ class gui(object):
                 # skip the config section (for now)
                 self.debug("\tSkipping CONFIG")
                 continue
+            elif section == "STATUSBAR":
+                if len(self.config.items(section)) != 1 or self.config.items(section)[0][0] != "header":
+                    self.warn("Skipping invalid STATUSBAR config.")
+                    continue
+                else:
+                    self.debug("\tSetting STATUSBAR: " + str(self.config.items(section)[0][1]))
+                    self.setStatusbarHeader(self.config.items(section)[0][1])
             elif section == "TITLE":
                 kind = self.C_SUBWINDOW
             else:
@@ -8168,6 +8175,10 @@ class gui(object):
                 self.status[i].pack(side=RIGHT)
             else:
                 self.status[i].pack(side=LEFT, expand=1, fill=BOTH)
+
+    def setStatusbarHeader(self, header):
+        if self.hasStatus:
+            self.header = header
 
     def setStatus(self, text, field=0):
         self.warn("setStatus() is deprecated, please use setStatusbar()")
