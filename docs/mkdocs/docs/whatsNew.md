@@ -3,6 +3,8 @@
 
 ## Version 0.08  
 * [Command line arguments](/pythonCommandLine): appJar now supports command line arguments for [logging](/pythonLogging) and [internationalisation](/pythonInternationalisation/) as well as help & version information.  
+* [Internationalisation](/pythonInternationalisation/) now supports all widgets, making it easy to switch the language of your GUI  
+* [ScrollPanes](/pythonWidgetGrouping/#scroll-pane) & [Grids](/pythonDevWidgets/#grid) greatly improved  
 
 * Issues Resolved:
     * [#217](https://github.com/jarvisteach/appJar/issues/217) - Fixed issues with removing [BG images](/pythonImages/#set-background-images)  
