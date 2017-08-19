@@ -198,7 +198,9 @@ class gui(object):
     LISTBOX = 7
     MESSAGE = 8
     SPIN = 9
+    SPINBOX = 9
     OPTION = 10
+    OPTIONBOX = 10
     TEXTAREA = 11
     LINK = 12
     METER = 13
@@ -1310,13 +1312,6 @@ class gui(object):
                 # skip the config section (for now)
                 self.debug("\tSkipping CONFIG")
                 continue
-            elif section == "STATUSBAR":
-                if len(self.config.items(section)) != 1 or self.config.items(section)[0][0] != "header":
-                    self.warn("Skipping invalid STATUSBAR config.")
-                    continue
-                else:
-                    self.debug("\tSetting STATUSBAR: " + str(self.config.items(section)[0][1]))
-                    self.setStatusbarHeader(self.config.items(section)[0][1])
             elif section == "TITLE":
                 kind = self.C_SUBWINDOW
             elif section.startswith("TOOLTIP-"):
@@ -1353,6 +1348,9 @@ class gui(object):
                             self.splashConfig['text'] = val
                         else:
                             self.debug("\t\t No SPLASH to update")
+                    elif key.lower() == "statusbar":
+                        self.debug("\tSetting STATUSBAR: " + str(val))
+                        self.setStatusbarHeader(val)
                     else:
                         try:
                             widgets[key].title(val)
@@ -1374,7 +1372,7 @@ class gui(object):
                     data = [item.strip() for item in data if len(item.strip()) > 0]
                     self.updateListBox(k, data)
 
-            elif kind in [self.SPIN]:
+            elif kind in [self.SPIN, self.SPINBOX]:
                 for k in widgets.keys():
                     sb = widgets[k]
 
@@ -1389,7 +1387,7 @@ class gui(object):
                     data = [item.strip() for item in data if len(item.strip()) > 0]
                     self.changeSpinBox(k, data)
 
-            elif kind in [self.OPTION]:
+            elif kind in [self.OPTION, self.OPTIONBOX]:
                 for k in widgets.keys():
                     ob = widgets[k]
 
@@ -2298,9 +2296,9 @@ class gui(object):
             return self.n_rbs
         elif kind in [self.LB, self.LISTBOX]:
             return self.n_lbs
-        elif kind == self.SPIN:
+        elif kind in [self.SPIN, self.SPINBOX]:
             return self.n_spins
-        elif kind == self.OPTION:
+        elif kind in [self.OPTION, self.OPTIONBOX]:
             return self.n_options
         elif kind == self.TEXTAREA:
             return self.n_textAreas

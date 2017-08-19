@@ -1,13 +1,13 @@
 #ttk
 
-appJar includes experimental support for *ttk*,  a tk themed widget set.  
-This is very **BETA.*, and most stuff will break!
+appJar includes experimental support for *ttk*,  a [tk themed widget set](https://docs.python.org/3/library/tkinter.ttk.html#module-tkinter.ttk).  
+This is very **BETA**, and most stuff will break!
 
 ## Setup
 ---
 
-* `.usettk()`  
-    Calling this at the start of your program will tell it to use ttk widgets.  
+* `.useTtk()`  
+    Calling this at the start of your program will tell it to use ttk widgets where possible.  
 
 * `.setTtkTheme(theme)`  
     This allows you to choose which theme to use.  
@@ -22,7 +22,7 @@ Simply use the `--ttk` flag, with an optional theme name:
 python3 themes.py --ttk  # turn on ttk widgets
 ```  
 
-It's also possible to set the file name to log to:
+Turn on ttk widgets and set a theme:  
 
 ```sh
 python3 themes.py --ttk aqua # turn on ttk with the aqua theme

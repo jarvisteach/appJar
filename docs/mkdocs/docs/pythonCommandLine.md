@@ -35,7 +35,7 @@ These are values that can be set when appJar is initially run.
 The following example will start the app logging DEBUG messages, and using an ENGLISH language file:  
 
 ```sh
-python3 demoApp.py -d -l ENGLISH
+    python3 demoApp.py -d -l ENGLISH
 ```
 
 ### Disabling  
