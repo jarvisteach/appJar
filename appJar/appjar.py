@@ -1454,6 +1454,22 @@ class gui(object):
                             except ItemLookupError:
                                 self.warn("Invalid GRID: " + str(keys[0]))
 
+            elif kind == self.PAGEDWINDOW:
+                for (key, val) in self.config.items(section):
+                    self.debug("\t\t" + key + "---->" +  val)
+                    keys = key.split("-")
+                    self.debug("\t\t" + str(keys))
+                    if len(keys) != 2:
+                        self.warn("Invalid PAGEDWINDOW key: " + key)
+                    else:
+                        if keys[1] not in ["prevButton", "nextButton", "title"]:
+                            self.warn("Invalid PAGEDWINDOW label: " + str(keys[1]) + " for PAGEDWINDOW: " + str(keys[0]))
+                        else:
+                            try:
+                                widgets[keys[0]].config(**{keys[1]:val})
+                            except KeyError:
+                                self.warn("Invalid PAGEDWINDOW: " + str(keys[0]))
+
             elif kind == self.ENTRY:
                 for k in widgets.keys():
                     ent = widgets[k]
@@ -1489,6 +1505,7 @@ class gui(object):
                     self.debug("\t\t" + k + "---->" +  data)
                     widg.config(text = data)
                     self.debug("\t\t" + k + "=" + widg.cget("text"))
+
             elif kind == self.TOOLBAR:
                 for k in widgets.keys():
                     but = widgets[k]
@@ -3848,7 +3865,7 @@ class gui(object):
 
     def showPagedWindowPageNumber(self, title, show=True):
         pager = self.__verifyItem(self.n_pagedWindows, title)
-        pager.showLabel(show)
+        pager.showPageNumber(show)
 
     def showPagedWindowTitle(self, title, show=True):
         pager = self.__verifyItem(self.n_pagedWindows, title)
@@ -9494,7 +9511,7 @@ class PagedWindow(Frame):
         # globals to hold list of frames(pages) and current page
         self.currentPage = -1
         self.frames = []
-        self.shouldShowLabel = True
+        self.shouldShowPageNumber = True
         self.shouldShowTitle = True
         self.title = title
         self.navPos = 1
@@ -9559,8 +9576,7 @@ class PagedWindow(Frame):
             self.titleLabel.grid(
                 row=0, column=0, columnspan=3, sticky=N + W + E)
 
-        # show the label
-        self.__setLabel()
+        self.__updatePageNumber()
 
     def config(self, cnf=None, **kw):
         self.configure(cnf, **kw)
@@ -9579,17 +9595,31 @@ class PagedWindow(Frame):
             self.titleLabel.config(fg=kw["fg"])
             kw.pop("fg")
 
+        if "prevbutton" in kw:
+            self.prevButton.config(text=kw.pop("prevbutton"))
+
+        if "nextbutton" in kw:
+            self.nextButton.config(text=kw.pop("nextbutton"))
+
+        if "title" in kw:
+            self.title = kw.pop("title")
+            self.showTitle()
+
+        if "showtitle" in kw:
+            kw.pop("showtitle")
+
+        if "showpagenumber" in kw:
+            self.shouldShowPageNumber = kw.pop("showpagenumber")
+            self.__updatePageNumber()
+
+        if "command" in kw:
+            self.pageChangeEvent = kw.pop("command")
+
         if PYTHON2:
             Frame.config(self, cnf, **kw)
         else:
             super(Frame, self).config(cnf, **kw)
 
-#    def setBg(self, colour):
-#        self.config(bg=colour)
-#
-#    def setFg(self, colour):
-#        self.poslabel.config(fg=colour)
-#        self.titleLabel.config(fg=colour)
 
     # functions to change the labels of the two buttons
     def setPrevButton(self, title):
@@ -9645,9 +9675,10 @@ class PagedWindow(Frame):
                 padx=5,
                 pady=pady)
 
-    def showLabel(self, val=True):
-        self.shouldShowLabel = val
-        self.__setLabel()
+    # whether to showPageNumber
+    def showPageNumber(self, val=True):
+        self.shouldShowPageNumber = val
+        self.__updatePageNumber()
 
     def setTitle(self, title):
         self.title = title
@@ -9663,8 +9694,8 @@ class PagedWindow(Frame):
             self.titleLabel.grid_remove()
 
     # function to update the contents of the label
-    def __setLabel(self):
-        if self.shouldShowLabel:
+    def __updatePageNumber(self):
+        if self.shouldShowPageNumber:
             self.posLabel.config(
                 text=str(self.currentPage + 1) + "/" + str(len(self.frames)))
         else:
@@ -9707,7 +9738,7 @@ class PagedWindow(Frame):
         # update the buttons & labels
         if self.currentPage > 0:
             self.prevButton.config(state="normal")
-        self.__setLabel()
+        self.__updatePageNumber()
         return self.frames[-1]
 
     def stopPage(self):
@@ -9745,7 +9776,7 @@ class PagedWindow(Frame):
             pady=5)
         self.frames[self.currentPage].grid_columnconfigure(0, weight=1)
         self.frames[self.currentPage].config(width=self.maxX, height=self.maxY)
-        self.__setLabel()
+        self.__updatePageNumber()
 
         # update the buttons
         if len(self.frames) == 1:   # only 1 page - no buttons

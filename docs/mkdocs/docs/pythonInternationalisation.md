@@ -127,13 +127,23 @@ OPEN: This will be ignored because it has an image...
 ```
 
 * `[GRID]`  
-    There are three user-configurable items in a grid; the buttons & label in the right-hand column.  
-    These should each be preceeded by the name of the grid:  
+    There are three user-configurable items in a Grid; the buttons & label in the right-hand column.  
+    These should each be preceeded by the name of the Grid:  
 ```
 [GRID]
 financesGrid-actionHeading: Update Row
 financesGrid-actionButton: Update
 financesGrid-addButton: Add
+```
+
+* `[PAGEDWINDOW]`  
+    There are three user-configurable items in a PagedWindow; the title, previous & next buttons.  
+    These should each be preceeded by the name of the PagedWindow:  
+```
+[PAGEDWINDOW]
+Address Book-title: AddressBuch
+Address Book-prevButton: Vorhergehend
+Address Book-nextButton: Danach
 ```
 
 * The following are currently in development:  
