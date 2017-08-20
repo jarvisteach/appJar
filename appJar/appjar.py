@@ -1364,9 +1364,15 @@ class gui(object):
                     key = key.strip().split("-")
                     self.debug("\t\t" + str(key) + ": " + str(val))
                     if len(key) == 1:
-                        self.renameMenu(key[0], val)
+                        try:
+                            self.renameMenu(key[0], val)
+                        except:
+                            self.warn("Invalid key")
                     elif len(key) == 2:
-                        self.renameMenuItem(key[0], key[1], val)
+                        try:
+                            self.renameMenuItem(key[0], key[1], val)
+                        except:
+                            self.warn("Invalid key")
                 continue
             else:
                 try:
