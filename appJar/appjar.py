@@ -5539,14 +5539,6 @@ class gui(object):
         #label.config(height=h, width=w)
         self.topLevel.update_idletasks()
 
-    # load image from base-64 encoded GIF
-    # use base64 module to convert binary data to base64
-    def addImageData(self, name, imageData, row=None, column=0, colspan=0, rowspan=0, fmt="gif"):
-        self.__verifyItem(self.n_images, name, True)
-        imgObj = self.__getImageData(imageData, fmt)
-        self.__addImageObj(name, imgObj, row, column, colspan, rowspan)
-        return imgObj
-
     # function to configure an image map
     def setImageMap(self, name, func, coords):
         img = self.__verifyItem(self.n_images, name)
@@ -5572,17 +5564,18 @@ class gui(object):
         img.MAP_FUNC("UNKNOWN: " + str(event.x) + ", " + str(event.y))
 
     # must be GIF or PNG
-    def addImage(
-            self,
-            name,
-            imageFile,
-            row=None,
-            column=0,
-            colspan=0,
-            rowspan=0):
-        #image = re.escape(image)
+    def addImage(self, name, imageFile, row=None, column=0, colspan=0, rowspan=0):
         self.__verifyItem(self.n_images, name, True)
         imgObj = self.__getImage(imageFile)
+        self.__addImageObj(name, imgObj, row, column, colspan, rowspan)
+        self.n_images[name].hasMouseOver = False
+        return imgObj
+
+    # load image from base-64 encoded GIF
+    # use base64 module to convert binary data to base64
+    def addImageData(self, name, imageData, row=None, column=0, colspan=0, rowspan=0, fmt="gif"):
+        self.__verifyItem(self.n_images, name, True)
+        imgObj = self.__getImageData(imageData, fmt)
         self.__addImageObj(name, imgObj, row, column, colspan, rowspan)
         self.n_images[name].hasMouseOver = False
         return imgObj
