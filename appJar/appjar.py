@@ -4689,6 +4689,9 @@ class gui(object):
         self.__verifyItem(self.n_optionVars, title)
         self.setOptionBox(title, index, value=None, override=True)
 
+    def renameOptionBoxItem(self, title, item, newName=None):
+        self.__verifyItem(self.n_optionVars, title)
+
     def clearOptionBox(self, title, callFunction=True):
         box = self.__verifyItem(self.n_options, title)
         if box.kind == "ticks":
@@ -4709,37 +4712,41 @@ class gui(object):
         box = self.__verifyItem(self.n_options, title)
 
         if box.kind == "ticks":
+            gui.debug("Updating tickOptionBox")
             ticks = self.__verifyItem(self.n_optionTicks, title)
             if index is None:
+                gui.debug("Index empty - nothing to update")
                 return
             elif index in ticks:
+                gui.debug("Updating: " + str(index))
 
                 tick = ticks[index]
 
-                if not callFunction and hasattr(tick, 'cmd'):
-                    tick.trace_vdelete('w', tick.cmd_id)
-
-                if value is None: # then we need to delete it
-                    self.debug("Deleting tick: " + str(index) + " from OptionBox: " + str(title))
-                    try:
-                        index_num = box.options.index(index)
-                    except:
-                        self.warn("Unknown tick in deleteOptionBox: " + str(index) + " in OptionBox: " + str(title))
-                        return
-                    box['menu'].delete(index_num)
-                    del(box.options[index_num])
-                    del self.n_optionTicks[title][index]
-                else:
-                    tick.set(value)
-
-                if not callFunction and hasattr(tick, 'cmd'):
-                    tick.cmd_id = tick.trace('w', tick.cmd)
+                with PauseCallFunction(callFunction, tick, useVar=False):
+                    if value is None: # then we need to delete it
+                        gui.debug("delete mode")
+                        self.debug("Deleting tick: " + str(index) + " from OptionBox: " + str(title))
+                        try:
+                            index_num = box.options.index(index)
+                        except:
+                            self.warn("Unknown tick in deleteOptionBox: " + str(index) +
+                                    " in OptionBox: " + str(title))
+                            return
+                        box['menu'].delete(index_num)
+                        del(box.options[index_num])
+                        del self.n_optionTicks[title][index]
+                    else:
+                        gui.debug("set mode: " + str(value))
+                        tick.set(value)
             else:
                 if value is None:
-                    self.warn("Unknown tick in deleteOptionBox: " + str(index) + " in OptionBox: " + str(title))
+                    self.warn("Unknown tick in deleteOptionBox: " + str(index) +
+                            " in OptionBox: " + str(title))
                 else:
-                    self.warn("Unknown tick in setOptionBox: " + str(index) + " in OptionBox: " + str(title))
+                    self.warn("Unknown tick in setOptionBox: " + str(index) +
+                            " in OptionBox: " + str(title))
         else:
+            gui.debug("Updating regular optionBox " + str(callFunction))
             count = len(box.options)
             if count > 0:
                 if index is None:
@@ -4749,13 +4756,18 @@ class gui(object):
                         index = box.options.index(index)
                     except:
                         if value is None:
-                            self.warn("Unknown option in deleteOptionBox: " + str(index) + " in OptionBox: " + str(title))
+                            self.warn("Unknown option in deleteOptionBox: " + str(index) +
+                                    " in OptionBox: " + str(title))
                         else:
-                            self.warn("Unknown option in setOptionBox: " + str(index) + " in OptionBox: " + str(title))
+                            self.warn("Unknown option in setOptionBox: " + str(index) +
+                                    " in OptionBox: " + str(title))
                         return
 
+                gui.debug("Updating item at index: " + str(index))
+
                 if index < 0 or index > count - 1:
-                    self.warn("Invalid option: " + str(index) + ". Should be between 0 and " + str(count - 1) + ".")
+                    self.warn("Invalid option: " + str(index) + ". Should be between 0 and " +
+                            str(count - 1) + ".")
                 else:
                     # then we can delete it...
                     if value is None:
@@ -4763,23 +4775,30 @@ class gui(object):
                         box['menu'].delete(index)
                         del(box.options[index])
                         self.setOptionBox(title, 0, callFunction=False, override=override)
+                    elif value is True:
+                        with PauseCallFunction(callFunction, box):
+                            if not box['menu'].invoke(index):
+                                if override:
+                                    self.debug("Setting OptionBox: " + str(title) +
+                                            " to disabled option: " + str(index))
+                                    box["menu"].entryconfigure(index, state="normal")
+                                    box['menu'].invoke(index)
+                                    box["menu"].entryconfigure(index, state="disabled")
+                                else:
+                                    self.warn("Unable to set disabled option: " + str(index) +
+                                            " in OptionBox: " + str(title) + ". Try setting 'override=True'")
                     else:
-                        # now call function
-                        if not callFunction and hasattr(box, 'cmd'):
-                            box.var.trace_vdelete('w', box.cmd_id)
-
-                        if not box['menu'].invoke(index):
-                            if override:
-                                self.debug("Setting OptionBox: " + str(title) + " to disabled option: " + str(index))
-                                box["menu"].entryconfigure(index, state="normal")
-                                box['menu'].invoke(index)
-                                box["menu"].entryconfigure(index, state="disabled")
-                            else:
-                                self.warn("Unable to set disabled option: " + str(index) + " in OptionBox: " + str(title) + ". Try setting 'override=True'")
-
-
-                        if not callFunction and hasattr(box, 'cmd'):
-                            box.cmd_id = box.var.trace('w', box.cmd)
+                        with PauseCallFunction(callFunction, box):
+                            if not box['menu'].invoke(index):
+                                if override:
+                                    self.debug("Setting OptionBox: " + str(title) +
+                                            " to disabled option: " + str(index))
+                                    box["menu"].entryconfigure(index, state="normal")
+                                    box['menu'].invoke(index)
+                                    box["menu"].entryconfigure(index, state="disabled")
+                                else:
+                                    self.warn("Unable to set disabled option: " + str(index) +
+                                            " in OptionBox: " + str(title) + ". Try setting 'override=True'")
             else:
                 self.__verifyItem(self.n_optionVars, title).set("")
                 self.warn("No items to select from: " + title)
@@ -11140,15 +11159,24 @@ class PauseLogger():
 # cmd - the function called by the trace
 #####################################
 class PauseCallFunction():
-    def __init__(self, callFunction, widg):
+    def __init__(self, callFunction, widg, useVar=True):
         self.callFunction = callFunction
         self.widg = widg
+        if useVar:
+            self.tracer = self.widg.var
+        else:
+            self.tracer = self.widg
+        gui.debug("PauseCallFunction: callFunction=" +
+                str(callFunction) + ", useVar=" + str(useVar))
+
     def __enter__(self):
         if not self.callFunction and hasattr(self.widg, 'cmd'):
-            self.widg.var.trace_vdelete('w', self.widg.cmd_id)
+            self.tracer.trace_vdelete('w', self.widg.cmd_id)
+            gui.debug("callFunction paused")
     def __exit__(self, a, b, c):
         if not self.callFunction and hasattr(self.widg, 'cmd'):
-            self.widg.cmd_id = self.widg.var.trace('w', self.widg.cmd)
+            self.widg.cmd_id = self.tracer.trace('w', self.widg.cmd)
+            gui.debug("callFunction resumed")
 
 #####################################
 # classes to work with image maps
