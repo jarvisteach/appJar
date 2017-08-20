@@ -1378,6 +1378,7 @@ def test_images():
     print("\tTesting images")
 
     assert isinstance(app.addImage("im1", "1_flash.gif"), PhotoImage)
+    app.addAnimatedImage("anim1", "1_flash.gif")
 
     app.setAnimationSpeed("im1", 10)
     app.startAnimation("im1")
@@ -1397,6 +1398,7 @@ def test_images():
     app.setImageMap("im2", click, coords)
     assert isinstance(app.addImage("im3", "1_checks.png"), PhotoImage)
     assert isinstance(app.addImage("im4", "sc.jpg"), PhotoImage)
+    app.getImageDimensions("im3")
 
 # jpeg...
 
@@ -1419,6 +1421,7 @@ def test_images():
     assert isinstance(app.addImageData("id1", photo), PhotoImage)
     app.setImageData("id1", photo)
     app.reloadImageData("id1", photo)
+    app.clearImageCache()
 
     print(" >> not implemented...")
     #print("\t >> all tests complete")
@@ -1666,7 +1669,7 @@ def test_sounds():
         app.soundLoop("error4.wav")
         app.stopSound()
 
-        app.playNote"b7", "BREVE")
+        app.playNote("b7", "BREVE")
     except:
         print("Sound not supported on this platform")
     print(" >> not implemented...")
