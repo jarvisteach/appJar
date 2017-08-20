@@ -5141,13 +5141,8 @@ class gui(object):
         vals = self.__getSpinBoxValsAsList(vals)
         val = str(value)
         if val not in vals:
-            raise Exception(
-                "Invalid value: " +
-                val +
-                ". Not in SpinBox: " +
-                title +
-                "=" +
-                str(vals))
+            raise Exception( "Invalid value: " + val + ". Not in SpinBox: " +
+                        title + "=" + str(vals))
         self.__setSpinBoxVal(spin, val, callFunction)
 
     def clearAllSpinBoxes(self, callFunction=False):
@@ -5160,13 +5155,8 @@ class gui(object):
         vals = self.__getSpinBoxValsAsList(vals)
         pos = int(pos)
         if pos < 0 or pos >= len(vals):
-            raise Exception(
-                "Invalid position: " +
-                str(pos) +
-                ". No position in SpinBox: " +
-                title +
-                "=" +
-                str(vals))
+            raise Exception( "Invalid position: " + str(pos) + ". No position in SpinBox: " +
+                        title + "=" + str(vals))
         pos = len(vals) - 1 - pos
         val = vals[pos]
         self.__setSpinBoxVal(spin, val, callFunction)
@@ -11147,6 +11137,7 @@ class PauseCallFunction():
         if not self.callFunction and hasattr(self.widg, 'cmd'):
             self.tracer.trace_vdelete('w', self.widg.cmd_id)
             gui.debug("callFunction paused")
+
     def __exit__(self, a, b, c):
         if not self.callFunction and hasattr(self.widg, 'cmd'):
             self.widg.cmd_id = self.tracer.trace('w', self.widg.cmd)
