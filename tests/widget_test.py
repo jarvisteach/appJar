@@ -1414,8 +1414,11 @@ def test_images():
 
     app.setImageLocation("images")
     app.addImage("iml", "1_entries.gif")
+    app.setImageSubmitFunction("im1", click)
 
     assert isinstance(app.addImageData("id1", photo), PhotoImage)
+    app.setImageData("id1", photo)
+    app.reloadImageData("id1", photo)
 
     print(" >> not implemented...")
     #print("\t >> all tests complete")
