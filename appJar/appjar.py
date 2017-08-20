@@ -473,6 +473,8 @@ class gui(object):
         # done here, as initArrays is called elsewhere - to reset the gubbins
         self.containerStack = []
 
+        self.translations = {"POPUP":{}, "SOUND":{}, "EXTERNAL":{}}
+
         # first up, set up all the data stores
         self.__initArrays()
 
@@ -1272,6 +1274,26 @@ class gui(object):
         self.config.optionxform = str
         self.changeLanguage(language)
 
+    def translate(self, key, default=None):
+        return self.__translate(key, "EXTERNAL", default)
+
+    def __translateSound(self, key):
+        return self.__translate(key, "SOUND", key)
+
+    def __translatePopup(self, key, value):
+        pop = self.__translate(key, "POPUP")
+        if pop is None:
+            return (key, value)
+        else:
+            return (pop[0], pop[1])
+
+    def __translate(self, key, section, default=None):
+        if key in self.translations[section]:
+            return self.translations[section][key]
+        else:
+            return default
+        
+
     # function to update languages
     def changeLanguage(self, language):
         if self.config is None:
@@ -1300,6 +1322,7 @@ class gui(object):
                 return
 
         self.debug("Switching to: " + language)
+        self.translations = {"POPUP":{}, "SOUND":{}, "EXTERNAL":{}}
         # loop through each section, get the relative set of widgets
         # change the text
         for section in self.config.sections():
@@ -1317,14 +1340,21 @@ class gui(object):
             elif section.startswith("TOOLTIP-"):
                 kind = "TOOLTIP"
                 getWidgets = False
+            elif section == "POPUP":
+                for (key, val) in self.config.items(section):
+                    val = val.strip().split("\n")
+                    self.translations["POPUP"][key] = val
+                    self.debug("\t\t" + str(key) + ": " + str(val))
+            elif section == "SOUND":
+                for (key, val) in self.config.items(section):
+                    self.translations["SOUND"][key] = val
+                    self.debug("\t\t" + str(key) + ": " + str(val))
             else:
                 try:
                     kind = vars(gui)[section]
                 except KeyError:
                     self.warn("Invalid config section: " + section)
                     continue
-
-            self.debug("\tKIND:" + str(kind))
 
             # if necessary, use the code to get the widget list
             if getWidgets:
@@ -1489,9 +1519,8 @@ class gui(object):
                     else:
                         data = ent.DEFAULT_TEXT
 
-                    self.debug("\t\t" + k + "---->" +  str(data))
+                    self.debug("\t\t" + k + ": " +  str(data))
                     self.updateEntryDefault(k, data)
-                    self.debug("\t\t" + k + "=" + str(ent.default))
 
             elif kind in [self.IMAGE]:
                 for k in widgets.keys():
@@ -1500,7 +1529,7 @@ class gui(object):
 
                         try:
                             self.setImage(k, data)
-                            self.debug("\t\t" + k + "---->" +  data)
+                            self.debug("\t\t" + k + ": " +  data)
                         except:
                             self.error("Failed to update image: " + str(k) + " to: " + str(data))
                     else:
@@ -1525,9 +1554,8 @@ class gui(object):
                     else:
                         data = widg.DEFAULT_TEXT
 
-                    self.debug("\t\t" + k + "---->" +  data)
+                    self.debug("\t\t" + k + ": " +  data)
                     widg.config(text = data)
-                    self.debug("\t\t" + k + "=" + widg.cget("text"))
 
             elif kind == self.TOOLBAR:
                 for k in widgets.keys():
@@ -1538,9 +1566,8 @@ class gui(object):
                         else:
                             data = but.DEFAULT_TEXT
 
-                        self.debug("\t\t" + k + "---->" +  data)
+                        self.debug("\t\t" + k + ": " +  data)
                         but.config(text = data)
-                        self.debug("\t\t" + k + "=" + but.cget("text"))
 
             elif kind == "TOOLTIP":
                 try:
@@ -8344,6 +8371,7 @@ class gui(object):
 
     def okBox(self, title, message):
         self.topLevel.update_idletasks()
+        title, message = self.__translatePopup(title, message)
         return MessageBox.askokcancel(title, message)
 
     def retryBox(self, title, message):
