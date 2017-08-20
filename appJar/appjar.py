@@ -4668,15 +4668,8 @@ class gui(object):
                     label=option, command=lambda temp=option: box.setvar(
                         box.cget("textvariable"), value=temp))
 
-            ov = self.n_optionVars[title]
-
-            if not callFunction and hasattr(box, 'cmd'):
-                ov.trace_vdelete('w', box.cmd_id)
-
-            ov.set(options[0])
-
-            if not callFunction and hasattr(box, 'cmd'):
-                box.cmd_id = ov.trace('w', box.cmd)
+            with PauseCallFunction(callFunction, box):
+                box.var.set(options[0])
 
         box.options = options
 
@@ -4769,8 +4762,7 @@ class gui(object):
                     self.warn("Invalid option: " + str(index) + ". Should be between 0 and " +
                             str(count - 1) + ".")
                 else:
-                    # then we can delete it...
-                    if value is None:
+                    if value is None: # then we can delete it...
                         self.debug("Deleting option: " + str(index) + " from OptionBox: " + str(title))
                         box['menu'].delete(index)
                         del(box.options[index])
@@ -5872,16 +5864,11 @@ class gui(object):
                 "Invalid radio button: '" +
                 value +
                 "' doesn't exist")
-        var = self.n_rbVars[title]
 
         # now call function
-        if not callFunction and hasattr(var, 'cmd'):
-            var.trace_vdelete('w', var.cmd_id)
-
-        var.set(value)
-
-        if not callFunction and hasattr(var, 'cmd'):
-            var.cmd_id = var.trace('w', var.cmd)
+        var = self.n_rbVars[title]
+        with PauseCallFunction(callFunction, var, False):
+            var.set(value)
 
     def clearAllRadioButtons(self, callFunction=False):
         for rb in self.n_rbs:
