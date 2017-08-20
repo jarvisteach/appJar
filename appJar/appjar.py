@@ -57,6 +57,7 @@ FigureCanvasTkAgg = Figure = None # matplotlib
 parseString = TreeItem = TreeNode = None # ajTree
 ajTreeNode = ajTreeData = None
 base64 = urlencode = urlopen = urlretrieve = quote_plus = json = None # GoogleMap
+ConfigParser = codecs = ParsingError = None # used to parse language files
 
 # details
 __author__ = "Richard Jarvis"
@@ -686,6 +687,26 @@ class gui(object):
 
         gui.debug("ttk theme switched to: " + str(self.ttkStyle.theme_use()))
 
+    # internationalisation
+    def __loadConfigParser(self):
+        global ConfigParser, ParsingError, codecs
+        if ConfigParser is None:
+            try:
+                from configparser import ConfigParser
+                from configparser import ParsingError
+                import codecs
+            except:
+                try:
+                    from ConfigParser import ConfigParser
+                    from ConfigParser import ParsingError
+                    import codecs
+                except:
+                    ConfigParser = ParsingError = codecs = False
+                    self.config = None
+                    return
+            self.config = ConfigParser()
+            self.config.optionxform = str
+
     # textarea
     def __loadHashlib(self):
         global hashlib
@@ -1261,20 +1282,6 @@ class gui(object):
         # the dnd manager
         self.dnd = None
 
-    def setLanguage(self, language):
-        try:
-            from configparser import ConfigParser
-        except:
-            try:
-                from ConfigParser import ConfigParser
-            except:
-                self.warn("Internationalisation not supported, configparser not available.")
-                self.config = None
-                return
-        self.config = ConfigParser()
-        self.config.optionxform = str
-        self.changeLanguage(language)
-
     def translate(self, key, default=None):
         return self.__translate(key, "EXTERNAL", default)
 
@@ -1293,33 +1300,38 @@ class gui(object):
             return self.translations[section][key]
         else:
             return default
-        
+
+    def setLanguage(self, language):
+        self.changeLanguage(language)
 
     # function to update languages
     def changeLanguage(self, language):
-        if self.config is None:
-            self.warn("Internationalisation not supported")
+        self.__loadConfigParser()
+        if not ConfigParser:
+            self.error("Internationalisation not supported")
             return
 
-        language = language.upper()
-        import codecs
+        language = language.upper() + ".ini"
         if not PYTHON2:
             try:
-                with codecs.open(language + ".ini", "r", "utf8") as langFile:
+                with codecs.open(language, "r", "utf8") as langFile:
                     self.config.read_file(langFile)
             except FileNotFoundError:
-                self.warn("Invalid language: " + language)
+                self.error("Invalid language, file not found: " + language)
                 return
         else:
             try:
                 try:
-                    with codecs.open(language + ".ini", "r", "utf8") as langFile:
+                    with codecs.open(language, "r", "utf8") as langFile:
                         self.config.read_file(langFile)
                 except AttributeError:
-                    with codecs.open(language + ".ini", "r", "utf8") as langFile:
+                    with codecs.open(language, "r", "utf8") as langFile:
                         self.config.readfp(langFile)
             except IOError:
-                self.warn("Invalid language: " + language)
+                self.error("Invalid language, file not found: " + language)
+                return
+            except ParsingError:
+                self.error("Translation failed - language file contains errors, ensure there is no whitespace at the beginning of any lines.")
                 return
 
         self.debug("Switching to: " + language)
@@ -1329,7 +1341,7 @@ class gui(object):
         for section in self.config.sections():
             getWidgets = True
             section = section.upper()
-            self.debug("\tSection:" + section)
+            self.debug("\tSection: " + section)
 
             # convert the section title to its code
             if section == "CONFIG":
@@ -1346,6 +1358,15 @@ class gui(object):
                     if section == "POPUP": val = val.strip().split("\n")
                     self.translations[section][key] = val
                     self.debug("\t\t" + str(key) + ": " + str(val))
+                continue
+            elif section == "MENUBAR":
+                for (key, val) in self.config.items(section):
+                    key = key.strip().split("-")
+                    self.debug("\t\t" + str(key) + ": " + str(val))
+                    if len(key) == 1:
+                        self.renameMenu(key[0], val)
+                    elif len(key) == 2:
+                        self.renameMenuItem(key[0], key[1], val)
                 continue
             else:
                 try:
@@ -1683,9 +1704,9 @@ class gui(object):
             language = self.language
 
         # if language is populated, we are in internationalisation mode
-        # call the setLanguage function - to re-badge all the widgets
+        # call the changeLanguage function - to re-badge all the widgets
         if language is not None:
-            self.setLanguage(language)
+            self.changeLanguage(language)
 
         if self.splashConfig is not None:
             self.debug("SPLASH:" + str(self.splashConfig))
@@ -7999,21 +8020,11 @@ class gui(object):
             for item in range(numMenus+1):
                 self.menuBar.entryconfig(item, state=NORMAL)
 
-    def disableMenu(
-        self,
-        title,
-        limit=None): self.__changeMenuState(
-        title,
-        DISABLED,
-        limit)
+    def disableMenu( self, title, limit=None):
+        self.__changeMenuState(title, DISABLED, limit)
 
-    def enableMenu(
-        self,
-        title,
-        limit=None): self.__changeMenuState(
-        title,
-        NORMAL,
-        limit)
+    def enableMenu( self, title, limit=None):
+        self.__changeMenuState(title, NORMAL, limit)
 
     def __changeMenuState(self, title, state, limit=None):
         theMenu = self.__verifyItem(self.n_menus, title)
@@ -8040,6 +8051,14 @@ class gui(object):
     def enableMenuItem(self, title, item):
         theMenu = self.__verifyItem(self.n_menus, title)
         theMenu.entryconfigure(item, state=NORMAL)
+
+    def renameMenu(self, title, newName):
+        theMenu = self.__verifyItem(self.n_menus, title)
+        self.menuBar.entryconfigure(title, label=newName)
+
+    def renameMenuItem(self, title, item, newName):
+        theMenu = self.__verifyItem(self.n_menus, title)
+        theMenu.entryconfigure(item, label=newName)
 
     #################
     # wrappers for getters

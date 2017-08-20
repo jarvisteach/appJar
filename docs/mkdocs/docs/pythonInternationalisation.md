@@ -12,18 +12,18 @@ For example, a file called `ENGLISH.ini` might contain:
 
 ```sh
 [LABEL]
-    l1: some text
-    l2: some more text
+l1: some text
+l2: some more text
 
 [BUTTON]
-    b1: button a
-    b2: button b
+b1: button a
+b2: button b
 
 [ENTRY]
-    e1: --default text--
+e1: --default text--
 
 [LINK]
-    l1: New link title
+l1: New link title
 ```
 
 If no translation is found, the widget's initial value will be used as a default.  
@@ -74,12 +74,12 @@ This will override any language set in the call to `.go()`, and removes the need
 
 ```sh
 [IMAGE]
-    default-flag.jpg: mexican-flag.jpg
+default-flag.jpg: mexican-flag.jpg
 
 [SOUND]
-    default-anthem.wav: mexican-anthem.wav
-    default-speech.wav: mexaican-speech.wav
-    default-welcome.wav: mexican-welcome.wav
+default-anthem.wav: mexican-anthem.wav
+default-speech.wav: mexaican-speech.wav
+default-welcome.wav: mexican-welcome.wav
 ```  
 
 * `[TITLE]`  
@@ -87,11 +87,11 @@ This will override any language set in the call to `.go()`, and removes the need
 
 ```sh
 [TITLE]
-    appJar: Main GUI Title
-    splash: New Splash Text
-    statusbar: DATA
-    sub1: SubWindow 1 Title
-    sub2: SubWindow 2 Title
+appJar: Main GUI Title
+splash: New Splash Text
+statusbar: DATA
+sub1: SubWindow 1 Title
+sub2: SubWindow 2 Title
 ```
 
 * `[RADIOBUTTON]`, `[PROPERTIES]`, `[TABBEDFRAME]`  
@@ -100,19 +100,19 @@ This will override any language set in the call to `.go()`, and removes the need
 
 ```sh
 [RADIOBUTTON]
-    Food-rb1: baguettes
-    Food-rb2: fromage
-    Food-rb3: vin
+Food-rb1: baguettes
+Food-rb2: fromage
+Food-rb3: vin
 
 [PROPERTIES]
-    props-prop1: Extra Cheese
-    props-prop2: Sweetcorn
-    props-prop3: Pineapple
+props-prop1: Extra Cheese
+props-prop2: Sweetcorn
+props-prop3: Pineapple
 
 [TABBEDFRAME]
-    mainFrame-Tab1: Information
-    mainFrame-Tab2: Extras
-    mainFrame-Tab3: Details
+mainFrame-Tab1: Information
+mainFrame-Tab2: Extras
+mainFrame-Tab3: Details
 ```
 
 * `[GRID]` & `[PAGEDWINDOW]`  
@@ -122,14 +122,14 @@ This will override any language set in the call to `.go()`, and removes the need
     These should each be preceeded by the name of the widget:  
 ```sh
 [GRID]
-    financesGrid-actionHeading: Update Row
-    financesGrid-actionButton: Update
-    financesGrid-addButton: Add
+financesGrid-actionHeading: Update Row
+financesGrid-actionButton: Update
+financesGrid-addButton: Add
 
 [PAGEDWINDOW]
-    Address Book-title: AddressBuch
-    Address Book-prevButton: Vorhergehend
-    Address Book-nextButton: Danach
+Address Book-title: AddressBuch
+Address Book-prevButton: Vorhergehend
+Address Book-nextButton: Danach
 ```
 
 * `[LISTBOX]`, `[SPINBOX]`, `[OPTIONBOX]`  
@@ -137,19 +137,19 @@ This will override any language set in the call to `.go()`, and removes the need
     **NB.** You can't translate a SpinBox that was generated from a range.  
 ```sh
 [LISTBOX]
-    fruits:
-        apples
-        pears
-        grapes
-        bananas
+fruits:
+    apples
+    pears
+    grapes
+    bananas
 
 [SPINBOX]
-    weekdays:
-        Monday
-        Tuesday
-        Wednesday
-        Thursday
-        Friday
+weekdays:
+    Monday
+    Tuesday
+    Wednesday
+    Thursday
+    Friday
 ```
 
 * `[POPUP]`  
@@ -158,12 +158,12 @@ This will override any language set in the call to `.go()`, and removes the need
 
 ```sh
 [POPUP]
-    EXIT-POPUP:
-        Confirm Exit
-        Press OK to confirm exit.
-    SAVE-POPUP:
-        Confirm Save
-        Press OK to confirm you want to save the file.
+EXIT-POPUP:
+    Confirm Exit
+    Press OK to confirm exit.
+SAVE-POPUP:
+    Confirm Save
+    Press OK to confirm you want to save the file.
 ```  
 
 ```python
@@ -182,21 +182,21 @@ def quit(btn):
     Each button should be on a new line, if the button has an image the line will be ignored.    
 ```sh
 [TOOLBAR]
-    button1: New Button Name
-    button2: Another New Button Name
-    button3: One More New Button Name
-    OPEN: This will be ignored because it has an image...
+button1: New Button Name
+button2: Another New Button Name
+button3: One More New Button Name
+OPEN: This will be ignored because it has an image...
 ```
 
 * `[TOOLTIP-XXX]`  
     To translate [tooltips](/pythonDialogs/#tooltips) you will need a new section for each widget type, of the format: `[TOOLTIP-XXX]`:  
 ```sh
 [TOOLTIP-LABEL]
-    l1: New tooltip text.
-    l2: Another new tooltip text
+l1: New tooltip text.
+l2: Another new tooltip text
 
 [TOOLTIP-ENTRY]
-    e1: Some more tooltip text
+e1: Some more tooltip text
 ```
 
 ### External Translations
@@ -205,9 +205,9 @@ It's also possible to store additional translations to use on the fly. These are
 
 ```sh
 [EXTERNAL]
-    VALUE-1: This is some translated text.
-    VALUE-2: This is some more translated text.
-    VALUE-3: This is the last piece of translated text.
+VALUE-1: This is some translated text.
+VALUE-2: This is some more translated text.
+VALUE-3: This is the last piece of translated text.
 ```
 
 These can then be accessed by using appJar's `.translate(key, default=None)` function.  
