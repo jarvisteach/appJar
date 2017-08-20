@@ -769,10 +769,11 @@ class gui(object):
     def __loadWinsound(self):
         # only try to import winsound if we're on windows
         global winsound
-        if winsound is None and platform() in ["win32", "Windows"]:
-            import winsound
-        else:
-            winsound = False
+        if winsound is None:
+            if platform() in ["win32", "Windows"]:
+                import winsound
+            else:
+                winsound = False
 
     def __importPngimagetk(self):
         global PngImageTk
@@ -1345,6 +1346,7 @@ class gui(object):
                     if section == "POPUP": val = val.strip().split("\n")
                     self.translations[section][key] = val
                     self.debug("\t\t" + str(key) + ": " + str(val))
+                continue
             else:
                 try:
                     kind = vars(gui)[section]
@@ -1545,7 +1547,7 @@ class gui(object):
                         data = widg.DEFAULT_TEXT
 
                     self.debug("\t\t" + k + ": " +  data)
-                    widg.config(text = data)
+                    widg.config(text=data)
 
             elif kind == self.TOOLBAR:
                 for k in widgets.keys():
@@ -5709,7 +5711,7 @@ class gui(object):
     # internal function to manage sound availability
     def __soundWrap(self, sound, isFile=False, repeat=False, wait=False):
         self.__loadWinsound()
-        if True or self.platform == self.WINDOWS and winsound is not False:
+        if self.platform == self.WINDOWS and winsound is not False:
             sound = self.__translateSound(sound)
             if self.userSounds is not None and sound is not None:
                 sound = os.path.join(self.userSounds, sound)
