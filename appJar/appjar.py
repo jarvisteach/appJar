@@ -1340,14 +1340,10 @@ class gui(object):
             elif section.startswith("TOOLTIP-"):
                 kind = "TOOLTIP"
                 getWidgets = False
-            elif section == "POPUP":
+            elif section in ["SOUND", "EXTERNAL", "POPUP"]:
                 for (key, val) in self.config.items(section):
-                    val = val.strip().split("\n")
-                    self.translations["POPUP"][key] = val
-                    self.debug("\t\t" + str(key) + ": " + str(val))
-            elif section == "SOUND":
-                for (key, val) in self.config.items(section):
-                    self.translations["SOUND"][key] = val
+                    if section == "POPUP": val = val.strip().split("\n")
+                    self.translations[section][key] = val
                     self.debug("\t\t" + str(key) + ": " + str(val))
             else:
                 try:
@@ -1368,7 +1364,7 @@ class gui(object):
                 continue
             elif kind in [self.C_SUBWINDOW]:
                 for (key, val) in self.config.items(section):
-                    self.debug("\t\t" + key + "---->" +  val)
+                    self.debug("\t\t" + key + ": " +  val)
 
                     if key.lower() == "appjar":
                         self.setTitle(val)
@@ -1434,9 +1430,8 @@ class gui(object):
 
             elif kind in [self.RADIOBUTTON]:
                 for (key, val) in self.config.items(section):
-                    self.debug("\t\t" + key + "---->" +  val)
+                    self.debug("\t\t" + key + ": " +  val)
                     keys = key.split("-")
-                    self.debug("\t\t" + str(keys))
                     if len(keys) != 2:
                         self.warn("Invalid RADIOBUTTON key:" + key)
                     else:
@@ -1452,9 +1447,8 @@ class gui(object):
 
             elif kind in [self.TABBEDFRAME]:
                 for (key, val) in self.config.items(section):
-                    self.debug("\t\t" + key + "---->" +  val)
+                    self.debug("\t\t" + key + ": " +  val)
                     keys = key.split("-")
-                    self.debug("\t\t" + str(keys))
                     if len(keys) != 2:
                         self.warn("Invalid TABBEDFRAME key: " + key)
                     else:
@@ -1465,9 +1459,8 @@ class gui(object):
 
             elif kind in [self.PROPERTIES]:
                 for (key, val) in self.config.items(section):
-                    self.debug("\t\t" + key + "---->" +  val)
+                    self.debug("\t\t" + key + ": " +  val)
                     keys = key.split("-")
-                    self.debug("\t\t" + str(keys))
                     if len(keys) != 2:
                         self.warn("Invalid PROPERTIES key: " + key)
                     else:
@@ -1480,9 +1473,8 @@ class gui(object):
 
             elif kind == self.GRID:
                 for (key, val) in self.config.items(section):
-                    self.debug("\t\t" + key + "---->" +  val)
+                    self.debug("\t\t" + key + ": " +  val)
                     keys = key.split("-")
-                    self.debug("\t\t" + str(keys))
                     if len(keys) != 2:
                         self.warn("Invalid GRID key: " + key)
                     else:
@@ -1496,9 +1488,8 @@ class gui(object):
 
             elif kind == self.PAGEDWINDOW:
                 for (key, val) in self.config.items(section):
-                    self.debug("\t\t" + key + "---->" +  val)
+                    self.debug("\t\t" + key + ": " +  val)
                     keys = key.split("-")
-                    self.debug("\t\t" + str(keys))
                     if len(keys) != 2:
                         self.warn("Invalid PAGEDWINDOW key: " + key)
                     else:
@@ -1543,8 +1534,7 @@ class gui(object):
                     # skip validation labels - we don't need to translate them
                     try:
                         if kind == self.LABEL and widg.isValidation:
-                            self.debug("\t\t" + k + "----> skipping, validation label")
-
+                            self.debug("\t\t" + k + ": skipping, validation label")
                             continue
                     except:
                         pass
@@ -5719,7 +5709,8 @@ class gui(object):
     # internal function to manage sound availability
     def __soundWrap(self, sound, isFile=False, repeat=False, wait=False):
         self.__loadWinsound()
-        if self.platform == self.WINDOWS and winsound is not False:
+        if True or self.platform == self.WINDOWS and winsound is not False:
+            sound = self.__translateSound(sound)
             if self.userSounds is not None and sound is not None:
                 sound = os.path.join(self.userSounds, sound)
             if isFile:
