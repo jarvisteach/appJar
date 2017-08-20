@@ -1595,6 +1595,11 @@ def test_langs():
     app.setLanguage("GERMAN")
     # test real stuff
     app.setLanguage("FRENCH")
+    app.translate("this")
+    try:
+        app.playSound("error1.wav")
+    except:
+        pass # only works on windows
     app.changeLanguage("ENGLISH")
     print(" >> not implemented...")
     #print("\t >> all tests complete")
@@ -1644,8 +1649,21 @@ def test_sounds():
     print("\tTesting sounds")
 # only support windows
     try:
+        app.bell()
         app.soundError()
         app.soundWarning()
+
+        app.playSound("error1.wav")
+        app.stopSound()
+        app.soundLoop("error2.wav")
+        app.stopSound()
+        app.setSoundLocation("sounds")
+        app.playSound("error3.wav")
+        app.stopSound()
+        app.soundLoop("error4.wav")
+        app.stopSound()
+
+        app.playNote"b7", "BREVE")
     except:
         print("Sound not supported on this platform")
     print(" >> not implemented...")
