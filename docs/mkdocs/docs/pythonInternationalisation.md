@@ -10,7 +10,7 @@ Within that file will be a **[SECTION]** for each widget type, followed by a lis
 
 For example, a file called `ENGLISH.ini` might contain:  
 
-```
+```sh
 [LABEL]
     l1: some text
     l2: some more text
@@ -63,19 +63,29 @@ This will override any language set in the call to `.go()`, and removes the need
 
 **NB.** changing the text of a widget through `setXXX()` method's will work, but will not be remembered if the language is changed.  
 
-* `[LABEL]`, `[BUTTON]`, `[CHECKBOX]`, `[MESSAGE]`, `[LINK]`, `[IMAGE]`  
-    `[LABELFRAME]`, `[TOGGLEFRAME]`  
+* `[LABEL]`, `[BUTTON]`, `[ENTRY]`, `[CHECKBOX]`, `[MESSAGE]`, `[LINK]`, `[LABELFRAME]`, `[TOGGLEFRAME]`  
     As demonstrated above, use the widget ID, followed by the text to update it with.  
-    For images, you should provide a valid filename.  
     Any labels created by [auto-label](/pythonWidgets/#auto-labelled-widgets) widgets are also set here.  
+    **NB.** Only the *default value* of entries will be translated.  
 
-* `[ENTRY]`  
-    The text provided here will be used for the default value, if one is being used.  
+* `[IMAGE]` & `[SOUND]`  
+    For [images](/pythonImages/), you should provide a valid filename.  
+    For [sounds](/pythonSound/), the filename will be translated when the sound function is called - it will be modified with the sound folder *after* translation.  
+
+```sh
+[IMAGE]
+    default-flag.jpg: mexican-flag.jpg
+
+[SOUND]
+    default-anthem.wav: mexican-anthem.wav
+    default-speech.wav: mexaican-speech.wav
+    default-welcome.wav: mexican-welcome.wav
+```  
 
 * `[TITLE]`  
     This allows you to change the [GUI's title](/pythonGuiOptions/#look-feel), the [splashscreen's](/splash/) text, the [statusbar](/pythonBars/#statusbar)'s header or the title of any [SubWindows](/pythonWidgetGrouping/#sub-window).
 
-```
+```sh
 [TITLE]
     appJar: Main GUI Title
     splash: New Splash Text
@@ -88,7 +98,7 @@ This will override any language set in the call to `.go()`, and removes the need
     For these, the ID must be in two parts: the name of the button group/properties/frame followed by the name of the button/property/tab.  
     The two should be joined together with a dash:  
 
-```
+```sh
 [RADIOBUTTON]
     Food-rb1: baguettes
     Food-rb2: fromage
@@ -110,7 +120,7 @@ This will override any language set in the call to `.go()`, and removes the need
     There are three configurable items in a [Grid](/pythonDevWidgets/#grid); the buttons & label in the right-hand column.  
     There are three configurable items in a [PagedWindow](/pythonWidgetGrouping/#paged-window); the title, previous & next buttons.  
     These should each be preceeded by the name of the widget:  
-```
+```sh
 [GRID]
     financesGrid-actionHeading: Update Row
     financesGrid-actionButton: Update
@@ -125,7 +135,7 @@ This will override any language set in the call to `.go()`, and removes the need
 * `[LISTBOX]`, `[SPINBOX]`, `[OPTIONBOX]`  
     These have multiple values for a single widget, so each value should be on a new line, afet the ID.  
     **NB.** You can't translate a SpinBox that was generated from a range.  
-```
+```sh
 [LISTBOX]
     fruits:
         apples
@@ -142,9 +152,35 @@ This will override any language set in the call to `.go()`, and removes the need
         Friday
 ```
 
+* `[POPUP]`  
+    Popups have two pieces of translatable text - the title & message, it's not possible to translate the buttons.  
+    As with SpinBoxes & ListBoxes, the title & messages should be put on separate lines:  
+
+```sh
+[POPUP]
+    EXIT-POPUP:
+        Confirm Exit
+        Press OK to confirm exit.
+    SAVE-POPUP:
+        Confirm Save
+        Press OK to confirm you want to save the file.
+```  
+
+```python
+def saveFile(btn):
+    # SAVE-POPUP is a translation key, so the two parameters shoud be replaced
+    if app.okBox("SAVE-POPUP", "Confirm you want to save."):
+        saveFile()
+
+def quit(btn):
+    # SAVE-POPUP is a translation key, so the two parameters shoud be replaced
+    if app.okBox("EXIT-POPUP", "Confirm you want to exit."):
+        app.stop()
+```  
+
 * `[TOOLBAR]`  
     Each button should be on a new line, if the button has an image the line will be ignored.    
-```
+```sh
 [TOOLBAR]
     button1: New Button Name
     button2: Another New Button Name
@@ -154,7 +190,7 @@ This will override any language set in the call to `.go()`, and removes the need
 
 * `[TOOLTIP-XXX]`  
     To translate [tooltips](/pythonDialogs/#tooltips) you will need a new section for each widget type, of the format: `[TOOLTIP-XXX]`:  
-```
+```sh
 [TOOLTIP-LABEL]
     l1: New tooltip text.
     l2: Another new tooltip text
@@ -163,6 +199,29 @@ This will override any language set in the call to `.go()`, and removes the need
     e1: Some more tooltip text
 ```
 
+### External Translations
+
+It's also possible to store additional translations to use on the fly. These are extra pieces of text you might want to translate during the running of the application, which aren't linked directly to a widget.  
+
+```sh
+[EXTERNAL]
+    VALUE-1: This is some translated text.
+    VALUE-2: This is some more translated text.
+    VALUE-3: This is the last piece of translated text.
+```
+
+These can then be accessed by using appJar's `.translate(key, default=None)` function.  
+
+```python
+# this funciton will print out some translated text
+def showMessage():
+    print(app.translate("VALUE-1"))
+    print(app.translate("VALUE-2"))
+    print(app.translate("VALUE-3"))
+```  
+
+The `default` value will be returned if no translation is found.  
+
 ### Widgets Not Supported  
 
 * `[SCALE]`, `[TEXTAREA]`, `[METER]`, `[PIECHART]`, `[TREE]`  
@@ -170,11 +229,8 @@ This will override any language set in the call to `.go()`, and removes the need
     `[FRAME]`, `[SCROLLPANE]`, `[PANEDFRAME]`  
     These widgets are not included in translation, as they have no static text to change.  
 
-* `[DATEPICKER]`, `[POPUP]`, `[MENUBAR]`, `[SOUND]`  
+* `[DATEPICKER]`, `[MENUBAR]`  
     These widgets have not yet been implemented.  
-
-* `[EXTERNAL]`  
-    This feature is not yet available.  
 
 ### Platform Support
 **NB.** your platform might not support the characters you want to display.  
@@ -182,13 +238,13 @@ In which case, you'll need to install the relevant font.
 
 For example, to get Korean characters to show on a Raspberry Pi, try:  
 
-```
+```sh
     sudo apt-get install fonts-nanum
 ```
 
 If you're after other languages, you can try:  
 
-```
+```sh
     apt-cache search chinese
 ``` 
 
