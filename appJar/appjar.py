@@ -5860,10 +5860,7 @@ class gui(object):
     def setRadioButton(self, title, value, callFunction=True):
         vals = self.__verifyItem(self.n_rbVals, title)
         if value not in vals:
-            raise Exception(
-                "Invalid radio button: '" +
-                value +
-                "' doesn't exist")
+            raise Exception("Invalid radio button: '" + value + "' doesn't exist") 
 
         # now call function
         var = self.n_rbVars[title]
@@ -7164,13 +7161,8 @@ class gui(object):
         self.__updateEntryDefault(name, mode="set")
 
         # now call function
-        if not callFunction and hasattr(var, 'cmd'):
-            var.trace_vdelete('w', var.cmd_id)
-
-        var.set(text)
-
-        if not callFunction and hasattr(var, 'cmd'):
-            var.cmd_id = var.trace('w', var.cmd)
+        with PauseCallFunction(callFunction, var, False):
+            var.set(text)
 
     def setEntryMaxLength(self, name, length):
         var = self.__verifyItem(self.n_entryVars, name)
@@ -7296,13 +7288,8 @@ class gui(object):
         var = self.__verifyItem(self.n_entryVars, name)
 
         # now call function
-        if not callFunction and hasattr(var, 'cmd'):
-            var.trace_vdelete('w', var.cmd_id)
-
-        var.set("")
-
-        if not callFunction and hasattr(var, 'cmd'):
-            var.cmd_id = var.trace('w', var.cmd)
+        with PauseCallFunction(callFunction, var, False):
+            var.set("")
 
         self.__updateEntryDefault(name, mode="clear")
         if setFocus: self.setFocus(name)
