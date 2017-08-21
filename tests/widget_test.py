@@ -1520,33 +1520,8 @@ def test_menus():
     app.addMenuWindow()
     app.addMenuHelp(tester_function)
 
-    app.createRightClickMenu("RCLICK")
-    app.addLabel("RCLICK", "RCLICK")
-    app.setLabelRightClick("RCLICK", "RCLICK")
-
     app.addEntry("RCLICK")
     app.addMenuEdit()
-
-# this causes testing to hang - the popup doesn't go....
-
-#    event = Event()
-#    event.widget = ent
-#    event.x_root = 100
-#    event.y_root = 100
-#
-#    for type in [None, "9", "3", "4", "2"]:
-#        event.type = type
-#        app._gui__rightClick(event)
-#        app.setEntry("RCLICK", "text")
-#        app._gui__rightClick(event)
-
-
-# this breaks - there is no widget in focus??
-#    for action in ["Cut", "Copy", "Paste", "Select All", "Clear Clipboard", "Clear All", "Undo", "Redo"]:
-#        app.setEntry("RCLICK", action)
-#        app.setEntryFocus("RCLICK")
-#        app._gui__copyAndPasteHelper(action)
-
 
     app.enableMenubar()
     app.disableMenubar()
@@ -1562,6 +1537,26 @@ def test_menus():
 
     print(" >> not implemented...")
     #print("\t >> all tests complete")
+
+def test_rightClick():
+# this causes testing to hang - the popup doesn't go....
+    event = Event()
+    event.widget = ent
+    event.x_root = 100
+    event.y_root = 100
+
+    for type in [None, "9", "3", "4", "2"]:
+        event.type = type
+        app._gui__rightClick(event)
+        app.setEntry("RCLICK", "text")
+        app._gui__rightClick(event)
+
+
+# this breaks - there is no widget in focus??
+    for action in ["Cut", "Copy", "Paste", "Select All", "Clear Clipboard", "Clear All", "Undo", "Redo"]:
+        app.setEntry("RCLICK", action)
+        app.setEntryFocus("RCLICK")
+        app._gui__copyAndPasteHelper(action)
 
 
 def test_toolbars():
@@ -1750,7 +1745,7 @@ def test_setters(widg_type, widg_id):
     exec("app.set" + widg_type + "Function(\""+widg_id +"\", tester_function)")
     exec("app.set" + widg_type + "ChangeFunction(\""+widg_id +"\", tester_function)")
     exec("app.set" + widg_type + "SubmitFunction(\""+widg_id +"\", tester_function)")
-    exec("app.set" + widg_type + "RightClick(\""+widg_id +"\", tester_function)")
+    exec("app.set" + widg_type + "RightClick(\""+widg_id +"\", 'RCLICK'")
 
     exec("app.get"+widg_type+"Widget(\""+widg_id+"\")")
 
@@ -2110,6 +2105,8 @@ def test_googlemap():
 
     app.setGoogleMapMarker("gm2", "")
     app.saveGoogleMap("gm2", "gm.gif")
+    app.getMapFile()
+    app.getMapFile("image.map")
 
     print(" >> not implemented...")
     #print("\t >> all tests complete")
@@ -2194,6 +2191,7 @@ def test_logging():
 
 
 app = gui()
+app.createRightClickMenu("RCLICK")
 print(app.SHOW_VERSION())
 print(app.SHOW_PATHS)
 app._gui__showHelp()
@@ -2311,6 +2309,10 @@ def test_gui2(btn=None):
 
 app2 = gui()
 app2.useTtk()
+app.setTtkTheme()
+app.setTtkTheme("broken")
+app.setTtkTheme("default")
+
 app2.showSplash(text="New test", fill="green", stripe="pink", fg="green", font=50)
 app2.startLabelFrame("l1")
 app2.addLabel("l1", "here")
