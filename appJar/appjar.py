@@ -2310,15 +2310,8 @@ class gui(object):
             widget.bind('<<Paste>>', self.__checkCopyAndPaste)
 
         else:
-            widget.var.trace(
-                "w",
-                lambda name,
-                index,
-                mode,
-                e=None,
-                w=widget: self.__checkCopyAndPaste(
-                    e,
-                    w))  # ENTRY/OPTION
+            widget.var.trace("w", lambda name, index, mode,
+                e=None, w=widget: self.__checkCopyAndPaste(e, w))  # ENTRY/OPTION
 
         if self.platform in [self.WINDOWS, self.LINUX]:
             widget.bind('<Button-3>', self.__rightClick)
@@ -2329,8 +2322,7 @@ class gui(object):
         event.widget.focus()
         if menu == "EDIT":
             if self.__checkCopyAndPaste(event):
-                self.n_menus[menu].tk_popup(
-                    event.x_root - 10, event.y_root - 10)
+                self.n_menus[menu].tk_popup(event.x_root - 10, event.y_root - 10)
         else:
             self.n_menus[menu].tk_popup(event.x_root - 10, event.y_root - 10)
         return "break"
