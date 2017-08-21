@@ -1378,6 +1378,7 @@ def test_images():
     print("\tTesting images")
 
     assert isinstance(app.addImage("im1", "1_flash.gif"), PhotoImage)
+    app.addAnimatedImage("anim1", "1_flash.gif")
 
     app.setAnimationSpeed("im1", 10)
     app.startAnimation("im1")
@@ -1397,6 +1398,7 @@ def test_images():
     app.setImageMap("im2", click, coords)
     assert isinstance(app.addImage("im3", "1_checks.png"), PhotoImage)
     assert isinstance(app.addImage("im4", "sc.jpg"), PhotoImage)
+    app.getImageDimensions("im3")
 
 # jpeg...
 
@@ -1414,8 +1416,12 @@ def test_images():
 
     app.setImageLocation("images")
     app.addImage("iml", "1_entries.gif")
+    app.setImageSubmitFunction("im1", click)
 
     assert isinstance(app.addImageData("id1", photo), PhotoImage)
+    app.setImageData("id1", photo)
+    app.reloadImageData("id1", photo)
+    app.clearImageCache()
 
     print(" >> not implemented...")
     #print("\t >> all tests complete")
@@ -1514,33 +1520,8 @@ def test_menus():
     app.addMenuWindow()
     app.addMenuHelp(tester_function)
 
-    app.createRightClickMenu("RCLICK")
-    app.addLabel("RCLICK", "RCLICK")
-    app.setLabelRightClick("RCLICK", "RCLICK")
-
     app.addEntry("RCLICK")
     app.addMenuEdit()
-
-# this causes testing to hang - the popup doesn't go....
-
-#    event = Event()
-#    event.widget = ent
-#    event.x_root = 100
-#    event.y_root = 100
-#
-#    for type in [None, "9", "3", "4", "2"]:
-#        event.type = type
-#        app._gui__rightClick(event)
-#        app.setEntry("RCLICK", "text")
-#        app._gui__rightClick(event)
-
-
-# this breaks - there is no widget in focus??
-#    for action in ["Cut", "Copy", "Paste", "Select All", "Clear Clipboard", "Clear All", "Undo", "Redo"]:
-#        app.setEntry("RCLICK", action)
-#        app.setEntryFocus("RCLICK")
-#        app._gui__copyAndPasteHelper(action)
-
 
     app.enableMenubar()
     app.disableMenubar()
@@ -1556,6 +1537,26 @@ def test_menus():
 
     print(" >> not implemented...")
     #print("\t >> all tests complete")
+
+def test_rightClick():
+# this causes testing to hang - the popup doesn't go....
+    event = Event()
+    event.widget = ent
+    event.x_root = 100
+    event.y_root = 100
+
+    for type in [None, "9", "3", "4", "2"]:
+        event.type = type
+        app._gui__rightClick(event)
+        app.setEntry("RCLICK", "text")
+        app._gui__rightClick(event)
+
+
+# this breaks - there is no widget in focus??
+    for action in ["Cut", "Copy", "Paste", "Select All", "Clear Clipboard", "Clear All", "Undo", "Redo"]:
+        app.setEntry("RCLICK", action)
+        app.setEntryFocus("RCLICK")
+        app._gui__copyAndPasteHelper(action)
 
 
 def test_toolbars():
@@ -1595,6 +1596,11 @@ def test_langs():
     app.setLanguage("GERMAN")
     # test real stuff
     app.setLanguage("FRENCH")
+    app.translate("this")
+    try:
+        app.playSound("error1.wav")
+    except:
+        pass # only works on windows
     app.changeLanguage("ENGLISH")
     print(" >> not implemented...")
     #print("\t >> all tests complete")
@@ -1644,8 +1650,21 @@ def test_sounds():
     print("\tTesting sounds")
 # only support windows
     try:
+        app.bell()
         app.soundError()
         app.soundWarning()
+
+        app.playSound("error1.wav")
+        app.stopSound()
+        app.soundLoop("error2.wav")
+        app.stopSound()
+        app.setSoundLocation("sounds")
+        app.playSound("error3.wav")
+        app.stopSound()
+        app.soundLoop("error4.wav")
+        app.stopSound()
+
+        app.playNote("b7", "BREVE")
     except:
         print("Sound not supported on this platform")
     print(" >> not implemented...")
@@ -1726,7 +1745,7 @@ def test_setters(widg_type, widg_id):
     exec("app.set" + widg_type + "Function(\""+widg_id +"\", tester_function)")
     exec("app.set" + widg_type + "ChangeFunction(\""+widg_id +"\", tester_function)")
     exec("app.set" + widg_type + "SubmitFunction(\""+widg_id +"\", tester_function)")
-    exec("app.set" + widg_type + "RightClick(\""+widg_id +"\", tester_function)")
+    exec("app.set" + widg_type + "RightClick(\""+widg_id +"\", 'RCLICK'")
 
     exec("app.get"+widg_type+"Widget(\""+widg_id+"\")")
 
@@ -2086,6 +2105,8 @@ def test_googlemap():
 
     app.setGoogleMapMarker("gm2", "")
     app.saveGoogleMap("gm2", "gm.gif")
+    app.getMapFile()
+    app.getMapFile("image.map")
 
     print(" >> not implemented...")
     #print("\t >> all tests complete")
@@ -2170,6 +2191,7 @@ def test_logging():
 
 
 app = gui()
+app.createRightClickMenu("RCLICK")
 print(app.SHOW_VERSION())
 print(app.SHOW_PATHS)
 app._gui__showHelp()
@@ -2287,6 +2309,10 @@ def test_gui2(btn=None):
 
 app2 = gui()
 app2.useTtk()
+app.setTtkTheme()
+app.setTtkTheme("broken")
+app.setTtkTheme("default")
+
 app2.showSplash(text="New test", fill="green", stripe="pink", fg="green", font=50)
 app2.startLabelFrame("l1")
 app2.addLabel("l1", "here")

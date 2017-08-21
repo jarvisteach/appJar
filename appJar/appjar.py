@@ -57,6 +57,7 @@ FigureCanvasTkAgg = Figure = None # matplotlib
 parseString = TreeItem = TreeNode = None # ajTree
 ajTreeNode = ajTreeData = None
 base64 = urlencode = urlopen = urlretrieve = quote_plus = json = None # GoogleMap
+ConfigParser = codecs = ParsingError = None # used to parse language files
 
 # details
 __author__ = "Richard Jarvis"
@@ -686,6 +687,26 @@ class gui(object):
 
         gui.debug("ttk theme switched to: " + str(self.ttkStyle.theme_use()))
 
+    # internationalisation
+    def __loadConfigParser(self):
+        global ConfigParser, ParsingError, codecs
+        if ConfigParser is None:
+            try:
+                from configparser import ConfigParser
+                from configparser import ParsingError
+                import codecs
+            except:
+                try:
+                    from ConfigParser import ConfigParser
+                    from ConfigParser import ParsingError
+                    import codecs
+                except:
+                    ConfigParser = ParsingError = codecs = False
+                    self.config = None
+                    return
+            self.config = ConfigParser()
+            self.config.optionxform = str
+
     # textarea
     def __loadHashlib(self):
         global hashlib
@@ -769,10 +790,11 @@ class gui(object):
     def __loadWinsound(self):
         # only try to import winsound if we're on windows
         global winsound
-        if winsound is None and platform() in ["win32", "Windows"]:
-            import winsound
-        else:
-            winsound = False
+        if winsound is None:
+            if platform() in ["win32", "Windows"]:
+                import winsound
+            else:
+                winsound = False
 
     def __importPngimagetk(self):
         global PngImageTk
@@ -1260,20 +1282,6 @@ class gui(object):
         # the dnd manager
         self.dnd = None
 
-    def setLanguage(self, language):
-        try:
-            from configparser import ConfigParser
-        except:
-            try:
-                from ConfigParser import ConfigParser
-            except:
-                self.warn("Internationalisation not supported, configparser not available.")
-                self.config = None
-                return
-        self.config = ConfigParser()
-        self.config.optionxform = str
-        self.changeLanguage(language)
-
     def translate(self, key, default=None):
         return self.__translate(key, "EXTERNAL", default)
 
@@ -1292,33 +1300,38 @@ class gui(object):
             return self.translations[section][key]
         else:
             return default
-        
+
+    def setLanguage(self, language):
+        self.changeLanguage(language)
 
     # function to update languages
     def changeLanguage(self, language):
-        if self.config is None:
-            self.warn("Internationalisation not supported")
+        self.__loadConfigParser()
+        if not ConfigParser:
+            self.error("Internationalisation not supported")
             return
 
-        language = language.upper()
-        import codecs
+        language = language.upper() + ".ini"
         if not PYTHON2:
             try:
-                with codecs.open(language + ".ini", "r", "utf8") as langFile:
+                with codecs.open(language, "r", "utf8") as langFile:
                     self.config.read_file(langFile)
             except FileNotFoundError:
-                self.warn("Invalid language: " + language)
+                self.error("Invalid language, file not found: " + language)
                 return
         else:
             try:
                 try:
-                    with codecs.open(language + ".ini", "r", "utf8") as langFile:
+                    with codecs.open(language, "r", "utf8") as langFile:
                         self.config.read_file(langFile)
                 except AttributeError:
-                    with codecs.open(language + ".ini", "r", "utf8") as langFile:
+                    with codecs.open(language, "r", "utf8") as langFile:
                         self.config.readfp(langFile)
             except IOError:
-                self.warn("Invalid language: " + language)
+                self.error("Invalid language, file not found: " + language)
+                return
+            except ParsingError:
+                self.error("Translation failed - language file contains errors, ensure there is no whitespace at the beginning of any lines.")
                 return
 
         self.debug("Switching to: " + language)
@@ -1328,7 +1341,7 @@ class gui(object):
         for section in self.config.sections():
             getWidgets = True
             section = section.upper()
-            self.debug("\tSection:" + section)
+            self.debug("\tSection: " + section)
 
             # convert the section title to its code
             if section == "CONFIG":
@@ -1345,6 +1358,22 @@ class gui(object):
                     if section == "POPUP": val = val.strip().split("\n")
                     self.translations[section][key] = val
                     self.debug("\t\t" + str(key) + ": " + str(val))
+                continue
+            elif section == "MENUBAR":
+                for (key, val) in self.config.items(section):
+                    key = key.strip().split("-")
+                    self.debug("\t\t" + str(key) + ": " + str(val))
+                    if len(key) == 1:
+                        try:
+                            self.renameMenu(key[0], val)
+                        except:
+                            self.warn("Invalid key")
+                    elif len(key) == 2:
+                        try:
+                            self.renameMenuItem(key[0], key[1], val)
+                        except:
+                            self.warn("Invalid key")
+                continue
             else:
                 try:
                     kind = vars(gui)[section]
@@ -1545,7 +1574,7 @@ class gui(object):
                         data = widg.DEFAULT_TEXT
 
                     self.debug("\t\t" + k + ": " +  data)
-                    widg.config(text = data)
+                    widg.config(text=data)
 
             elif kind == self.TOOLBAR:
                 for k in widgets.keys():
@@ -1681,9 +1710,9 @@ class gui(object):
             language = self.language
 
         # if language is populated, we are in internationalisation mode
-        # call the setLanguage function - to re-badge all the widgets
+        # call the changeLanguage function - to re-badge all the widgets
         if language is not None:
-            self.setLanguage(language)
+            self.changeLanguage(language)
 
         if self.splashConfig is not None:
             self.debug("SPLASH:" + str(self.splashConfig))
@@ -2281,15 +2310,8 @@ class gui(object):
             widget.bind('<<Paste>>', self.__checkCopyAndPaste)
 
         else:
-            widget.var.trace(
-                "w",
-                lambda name,
-                index,
-                mode,
-                e=None,
-                w=widget: self.__checkCopyAndPaste(
-                    e,
-                    w))  # ENTRY/OPTION
+            widget.var.trace("w", lambda name, index, mode,
+                e=None, w=widget: self.__checkCopyAndPaste(e, w))  # ENTRY/OPTION
 
         if self.platform in [self.WINDOWS, self.LINUX]:
             widget.bind('<Button-3>', self.__rightClick)
@@ -2300,8 +2322,7 @@ class gui(object):
         event.widget.focus()
         if menu == "EDIT":
             if self.__checkCopyAndPaste(event):
-                self.n_menus[menu].tk_popup(
-                    event.x_root - 10, event.y_root - 10)
+                self.n_menus[menu].tk_popup(event.x_root - 10, event.y_root - 10)
         else:
             self.n_menus[menu].tk_popup(event.x_root - 10, event.y_root - 10)
         return "break"
@@ -5516,14 +5537,6 @@ class gui(object):
         #label.config(height=h, width=w)
         self.topLevel.update_idletasks()
 
-    # load image from base-64 encoded GIF
-    # use base64 module to convert binary data to base64
-    def addImageData(self, name, imageData, row=None, column=0, colspan=0, rowspan=0, fmt="gif"):
-        self.__verifyItem(self.n_images, name, True)
-        imgObj = self.__getImageData(imageData, fmt)
-        self.__addImageObj(name, imgObj, row, column, colspan, rowspan)
-        return imgObj
-
     # function to configure an image map
     def setImageMap(self, name, func, coords):
         img = self.__verifyItem(self.n_images, name)
@@ -5549,17 +5562,18 @@ class gui(object):
         img.MAP_FUNC("UNKNOWN: " + str(event.x) + ", " + str(event.y))
 
     # must be GIF or PNG
-    def addImage(
-            self,
-            name,
-            imageFile,
-            row=None,
-            column=0,
-            colspan=0,
-            rowspan=0):
-        #image = re.escape(image)
+    def addImage(self, name, imageFile, row=None, column=0, colspan=0, rowspan=0):
         self.__verifyItem(self.n_images, name, True)
         imgObj = self.__getImage(imageFile)
+        self.__addImageObj(name, imgObj, row, column, colspan, rowspan)
+        self.n_images[name].hasMouseOver = False
+        return imgObj
+
+    # load image from base-64 encoded GIF
+    # use base64 module to convert binary data to base64
+    def addImageData(self, name, imageData, row=None, column=0, colspan=0, rowspan=0, fmt="gif"):
+        self.__verifyItem(self.n_images, name, True)
+        imgObj = self.__getImageData(imageData, fmt)
         self.__addImageObj(name, imgObj, row, column, colspan, rowspan)
         self.n_images[name].hasMouseOver = False
         return imgObj
@@ -5709,7 +5723,7 @@ class gui(object):
     # internal function to manage sound availability
     def __soundWrap(self, sound, isFile=False, repeat=False, wait=False):
         self.__loadWinsound()
-        if True or self.platform == self.WINDOWS and winsound is not False:
+        if self.platform == self.WINDOWS and winsound is not False:
             sound = self.__translateSound(sound)
             if self.userSounds is not None and sound is not None:
                 sound = os.path.join(self.userSounds, sound)
@@ -7997,21 +8011,11 @@ class gui(object):
             for item in range(numMenus+1):
                 self.menuBar.entryconfig(item, state=NORMAL)
 
-    def disableMenu(
-        self,
-        title,
-        limit=None): self.__changeMenuState(
-        title,
-        DISABLED,
-        limit)
+    def disableMenu( self, title, limit=None):
+        self.__changeMenuState(title, DISABLED, limit)
 
-    def enableMenu(
-        self,
-        title,
-        limit=None): self.__changeMenuState(
-        title,
-        NORMAL,
-        limit)
+    def enableMenu( self, title, limit=None):
+        self.__changeMenuState(title, NORMAL, limit)
 
     def __changeMenuState(self, title, state, limit=None):
         theMenu = self.__verifyItem(self.n_menus, title)
@@ -8038,6 +8042,14 @@ class gui(object):
     def enableMenuItem(self, title, item):
         theMenu = self.__verifyItem(self.n_menus, title)
         theMenu.entryconfigure(item, state=NORMAL)
+
+    def renameMenu(self, title, newName):
+        theMenu = self.__verifyItem(self.n_menus, title)
+        self.menuBar.entryconfigure(title, label=newName)
+
+    def renameMenuItem(self, title, item, newName):
+        theMenu = self.__verifyItem(self.n_menus, title)
+        theMenu.entryconfigure(item, label=newName)
 
     #################
     # wrappers for getters
