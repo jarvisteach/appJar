@@ -1745,7 +1745,7 @@ def test_setters(widg_type, widg_id):
     exec("app.set" + widg_type + "Function(\""+widg_id +"\", tester_function)")
     exec("app.set" + widg_type + "ChangeFunction(\""+widg_id +"\", tester_function)")
     exec("app.set" + widg_type + "SubmitFunction(\""+widg_id +"\", tester_function)")
-    exec("app.set" + widg_type + "RightClick(\""+widg_id +"\", 'RCLICK'")
+    exec("app.set" + widg_type + "RightClick('" + widg_id + "', 'RCLICK')")
 
     exec("app.get"+widg_type+"Widget(\""+widg_id+"\")")
 
@@ -2309,9 +2309,9 @@ def test_gui2(btn=None):
 
 app2 = gui()
 app2.useTtk()
-app.setTtkTheme()
-app.setTtkTheme("broken")
-app.setTtkTheme("default")
+app2.setTtkTheme()
+app2.setTtkTheme("broken")
+app2.setTtkTheme("default")
 
 app2.showSplash(text="New test", fill="green", stripe="pink", fg="green", font=50)
 app2.startLabelFrame("l1")
