@@ -2,7 +2,7 @@ import sys
 sys.path.append("../../")
 
 def press(btn):
-    app.playSound("song1.wav")
+#    app.playSound("song1.wav")
     if btn == "PRESS":
         print(app.translate("msg1"))
         app.okBox("OK", "EMPTY")
@@ -17,4 +17,5 @@ app.addLabel("l1", "DEFAULT")
 app.addLabel("l2", "DEFAULT")
 app.addLabel("l3", "DEFAULT")
 app.addButtons(["PRESS", "PRESS2"], press)
+app.setButton("PRESS", "P")
 app.go("ENGLISH")
