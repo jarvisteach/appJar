@@ -523,6 +523,7 @@ def test_options():
     # select new items - by value
     app.setOptionBox("l1", LIST_ONE[3])
     app.setOptionBox("l2", LIST_TWO[1])
+    app.renameOptionBoxItem("l2", LIST_TWO[0], "newName")
 
     assert app.getOptionBox("l1") == LIST_ONE[3]
     assert app.getOptionBox("l2") == LIST_TWO[1]
@@ -580,7 +581,6 @@ def test_options():
 
     # call generic setter functions
     test_setters("OptionBox", "l1")
-
 
     print("\t>> all tests complete")
 

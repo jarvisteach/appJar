@@ -419,8 +419,12 @@ app.go()
     Set ```callFunction``` to be False, if you don't want to call any associated functions.  
     By default, you can't select a disabled item. You can change this by setting `override` to be True.  
 
+* `.renameOptionBoxItem(title, item, newName, callFunction=False)`  
+    This will rename the specified item in the named OptionBox.  
+    Set ```callFunction``` to be True, if you want to call any associated `change` functions.  
+
 * `.clearOptionBox(title, callFunction=True)`  
-    This will set the OptionBox back to its first item (even if it's disabled).  
+    This will set the named OptionBox back to its first value (even if it's disabled).  
     Set ```callFunction``` to be False, if you don't want to call any associated functions.  
 
 * `.clearAllOptionBoxes(callFunction=False)`  
