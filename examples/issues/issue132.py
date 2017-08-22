@@ -3,22 +3,23 @@ sys.path.append("../../")
 from appJar import gui
 
 def caller(event=None):
-    print(event)
+    print("EVENT BY:", event)
 
 def get(btn):
     if btn == "GET":
+        print(app.getOptionBox("pp"))
         print(app.getOptionBox("Favourite Pets"))
     elif btn == "CLEAR":
         app.clearOptionBox("Favourite Pets", callFunction=app.getCheckBox("OPTION - call"))
     elif btn == "ALL":
         app.clearAllOptionBoxes(callFunction=app.getCheckBox("OPTION - call"))
     elif btn == "DEL":
-        app.deleteOptionBox("pp", "Fish")
+        app.deleteOptionBox("pp", app.getOptionBox("pp"))
         app.deleteOptionBox("Favourite Pets", "Fish")
     elif btn == "RENAME":
-        print("renaming")
-        app.setOptionBox("pp", app.getOptionBox("pp"), callFunction=app.getEntry("e1"))
-#        app.setOptionBox("Favourite Pets", "Fish")
+        pp = app.getOptionBox("pp")
+        val = app.getEntry("e1")
+        app.renameOptionBoxItem("pp", pp, val, callFunction=app.getEntry("e1"))
 
 def press(btn):
     if btn == "OPTION":

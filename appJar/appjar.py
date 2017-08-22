@@ -29,8 +29,7 @@ except ImportError:
     PYTHON2 = False
     PY_NAME = "python3"
 
-import os
-import sys
+import os, sys, locale
 import re
 import imghdr   # images
 import time     # splashscreen
@@ -69,6 +68,7 @@ __maintainer__ = "Richard Jarvis"
 __email__ = "info@appJar.info"
 __status__ = "Development"
 __url__ = "http://appJar.info"
+__locale__ = locale.getdefaultlocale()[0]
 
 # class to allow simple creation of tkinter GUIs
 class gui(object):
@@ -128,7 +128,8 @@ class gui(object):
             + "\nTCL: " + str(TclVersion) \
             + ", TK: " + str(TkVersion) \
             + "\nPlatform: " + str(platform()) \
-            + "\npid: " + str(os.getpid())
+            + "\npid: " + str(os.getpid()) \
+            + "\nlocale: " + str(__locale__)
 
         return verString
 
@@ -4483,6 +4484,18 @@ class gui(object):
 # FUNCTION for optionMenus
 #####################################
     def __buildOptionBox(self, frame, title, options, kind="normal"):
+        """
+        Internal wrapper, used for building OptionBoxes.
+        It will use the kind to choose either a standard OptionBox or a TickOptionBox.
+        ref: http://stackoverflow.com/questions/29019760/how-to-create-a-combobox-that-includes-checkbox-for-each-item
+
+        :param frame: this should be a container, used as the parent for the OptionBox
+        :param title: the key used to reference this OptionBox
+        :param options: a list of values to put in the OptionBox, can be len 0
+        :param kind: the style of OptionBox: notmal or ticks
+        :returns: the created OptionBox
+        :raises ItemLookupError: if the title is already in use
+        """
         self.__verifyItem(self.n_options, title, True)
 
         # create a string var to hold selected item
@@ -4497,7 +4510,6 @@ class gui(object):
             option.kind = "normal"
 
         elif kind == "ticks":
-            # http://stackoverflow.com/questions/29019760/how-to-create-a-combobox-that-includes-checkbox-for-each-item
             option = OptionMenu(frame, variable=var, value="")
             self.__buildTickOptionBox(title, option, options)
         else:
@@ -4546,6 +4558,17 @@ class gui(object):
         return option
 
     def __buildTickOptionBox(self, title, option, options):
+        """
+        Internal wrapper, used for building TickOptionBoxes.
+        Called by __buildOptionBox & changeOptionBox.
+        Will add each of the options as a tick box, and use the title as a disabled header.
+
+        :param title: the key used to reference this OptionBox
+        :param option: an existing OptionBox that will be emptied & repopulated
+        :param options: a list of values to put in the OptionBox, can be len 0
+        :returns: None - the option param is modified
+        :raises ItemLookupError: if the title can't be found
+        """
         # delete any items - either the initial one when created, or any existing ones if changing
         option['menu'].delete(0, 'end')
         var = self.__verifyItem(self.n_optionVars, title, False)
@@ -4558,60 +4581,74 @@ class gui(object):
         self.n_optionTicks[title] = vals
         option.kind = "ticks"
 
-    def addOptionBox(
-            self,
-            title,
-            options,
-            row=None,
-            column=0,
-            colspan=0,
-            rowspan=0):
+    def addOptionBox(self, title, options, row=None, column=0, colspan=0, rowspan=0):
+        """
+        Adds a new standard OptionBox.
+        Simply calls internal function __buildOptionBox.
+
+        :param title: the key used to reference this OptionBox
+        :param options: a list of values to put in the OptionBox, can be len 0
+        :returns: the created OptionBox
+        :raises ItemLookupError: if the title is already in use
+        """
         option = self.__buildOptionBox(self.getContainer(), title, options)
         self.__positionWidget(option, row, column, colspan, rowspan)
         return option
 
-    def addTickOptionBox(
-            self,
-            title,
-            options,
-            row=None,
-            column=0,
-            colspan=0,
-            rowspan=0):
-        tick = self.__buildOptionBox(
-            self.getContainer(), title, options, "ticks")
-        self.__positionWidget(tick, row, column, colspan, rowspan)
-        return tick
+    def addLabelOptionBox(self, title, options, row=None, column=0, colspan=0, rowspan=0):
+        """
+        Adds a new standard OptionBox, with a Label before it.
+        Simply calls internal function __buildOptionBox, placing it in a LabelBox.
 
-    def addLabelTickOptionBox(
-            self,
-            title,
-            options,
-            row=None,
-            column=0,
-            colspan=0,
-            rowspan=0):
-        frame = self.__getLabelBox(title)
-        tick = self.__buildOptionBox(frame, title, options, "ticks")
-        self.__packLabelBox(frame, tick)
-        self.__positionWidget(frame, row, column, colspan, rowspan)
-        return tick
-
-    def addLabelOptionBox(
-            self,
-            title,
-            options,
-            row=None,
-            column=0,
-            colspan=0,
-            rowspan=0):
+        :param title: the key used to reference this OptionBox and text for the Label
+        :param options: a list of values to put in the OptionBox, can be len 0
+        :returns: the created OptionBox (not the LabelBox)
+        :raises ItemLookupError: if the title is already in use
+        """
         frame = self.__getLabelBox(title)
         option = self.__buildOptionBox(frame, title, options)
         self.__packLabelBox(frame, option)
         self.__positionWidget(frame, row, column, colspan, rowspan)
         return option
 
+    def addTickOptionBox(self, title, options, row=None, column=0, colspan=0, rowspan=0):
+        """
+        Adds a new TickOptionBox.
+        Simply calls internal function __buildOptionBox.
+
+        :param title: the key used to reference this TickOptionBox
+        :param options: a list of values to put in the TickOptionBox, can be len 0
+        :returns: the created TickOptionBox
+        :raises ItemLookupError: if the title is already in use
+        """
+        tick = self.__buildOptionBox(self.getContainer(), title, options, "ticks")
+        self.__positionWidget(tick, row, column, colspan, rowspan)
+        return tick
+
+    def addLabelTickOptionBox(self, title, options, row=None, column=0, colspan=0, rowspan=0):
+        """
+        Adds a new TickOptionBox, with a Label before it
+        Simply calls internal function __buildOptionBox, placing it in a LabelBox
+
+        :param title: the key used to reference this TickOptionBox, and text for the Label
+        :param options: a list of values to put in the TickOptionBox, can be len 0
+        :returns: the created TickOptionBox (not the LabelBox)
+        :raises ItemLookupError: if the title is already in use
+        """
+        frame = self.__getLabelBox(title)
+        tick = self.__buildOptionBox(frame, title, options, "ticks")
+        self.__packLabelBox(frame, tick)
+        self.__positionWidget(frame, row, column, colspan, rowspan)
+        return tick
+
     def getOptionBox(self, title):
+        """
+        Gets the selected item from the named OptionBox
+
+        :param title: the OptionBox to check
+        :returns: the selected item in an OptionBox or a dictionary of all items and their status for a TickOptionBox
+        :raises ItemLookupError: if the title can't be found
+        """
         box = self.__verifyItem(self.n_options, title)
 
         if box.kind == "ticks":
@@ -4629,18 +4666,37 @@ class gui(object):
             return val
 
     def getAllOptionBoxes(self):
+        """
+        Convenience function to get the selected items for all OptionBoxes in the GUI.
+
+        :returns: a dictionary containing the result of calling getOptionBox for every OptionBox/TickOptionBox in the GUI
+        """
         boxes = {}
         for k in self.n_options:
             boxes[k] = self.getOptionBox(k)
         return boxes
 
     def __disableOptionBoxSeparators(self, box):
-        # disable any separators
+        """
+        Loops through all items in box and if they start with a dash, disables them
+
+        :param box: the OptionBox to process
+        :returns: None
+        """
         for pos, item in enumerate(box.options):
             if item.startswith("-"):
                 box["menu"].entryconfigure(pos, state="disabled")
 
     def __configOptionBoxList(self, title, options, kind):
+        """
+        Tidies up the list provided when an OptionBox is created/changed
+
+        :param title: the title for the OptionBox - only used by TickOptionBox to calculate max size
+        :param options: the list to tidy
+        :param kind: The type of option box (normal or ticks)
+        :returns: a tuple containing the maxSize (width) and tidied list of items
+        """
+
         # deal with a dict_keys object - messy!!!!
         if not isinstance(options, list):
             options = list(options)
@@ -4680,9 +4736,18 @@ class gui(object):
             maxSize += 3
         return maxSize, options
 
-    # function to replace the current contents of an option box
-    # http://www.prasannatech.net/2009/06/tkinter-optionmenu-changing-choices.html
     def changeOptionBox(self, title, options, index=None, callFunction=False):
+        """
+        Changes the entire contents of the named OptionBox
+        ref: http://www.prasannatech.net/2009/06/tkinter-optionmenu-changing-choices.html
+
+        :param title: the OptionBox to change
+        :param options: the new values to put in the OptionBox
+        :param index: an optional initial value to select
+        :param callFunction: whether to generate an event to notify that the widget has changed
+        :returns: None
+        :raises ItemLookupError: if the title can't be found
+        """
         # get the optionBox & associated var
         box = self.__verifyItem(self.n_options, title)
 
@@ -4717,13 +4782,41 @@ class gui(object):
         self.setOptionBox(title, index, callFunction=False, override=True)
 
     def deleteOptionBox(self, title, index):
+        """
+        Deleted the specified item from the named OptionBox
+
+        :param title: the OptionBox to change
+        :param inde: the value to delete - either a numeric index, or the text of an item
+        :returns: None
+        :raises ItemLookupError: if the title can't be found
+        """
         self.__verifyItem(self.n_optionVars, title)
         self.setOptionBox(title, index, value=None, override=True)
 
-    def renameOptionBoxItem(self, title, item, newName=None):
+    def renameOptionBoxItem(self, title, item, newName=None, callFunction=False):
+        """
+        Changes the text of the specified item in the named OptionBox
+
+        :param title: the OptionBox to change
+        :param item: the item to rename
+        :param newName: the value to rename it with
+        :param callFunction: whether to generate an event to notify that the widget has changed
+        :returns: None
+        :raises ItemLookupError: if the title can't be found
+        """
         self.__verifyItem(self.n_optionVars, title)
+        self.setOptionBox(title, item, value=newName, callFunction=callFunction)
 
     def clearOptionBox(self, title, callFunction=True):
+        """
+        Deselects any items selected in the named OptionBox
+        If a TickOptionBox, all items will be set to False (unticked)
+
+        :param title: the OptionBox to change
+        :param callFunction: whether to generate an event to notify that the widget has changed
+        :returns: None
+        :raises ItemLookupError: if the title can't be found
+        """
         box = self.__verifyItem(self.n_options, title)
         if box.kind == "ticks":
             # loop through each tick, set it to False
@@ -4734,12 +4827,29 @@ class gui(object):
             self.setOptionBox(title, 0, callFunction=callFunction, override=True)
 
     def clearAllOptionBoxes(self, callFunction=False):
+        """
+        Convenience function to clear all OptionBoxes in the GUI
+        Will simply call clearOptionBox on each OptionBox/TickOptionBox
+
+        :param callFunction: whether to generate an event to notify that the widget has changed
+        :returns: None
+        """
         for k in self.n_options:
             self.clearOptionBox(k, callFunction)
 
-    # select the option at the specified position
-    # if value is None, the item at index will be deleted
     def setOptionBox(self, title, index, value=True, callFunction=True, override=False):
+        """
+        Main purpose is to select/deselect the item at the specified position
+        But will also: delete an item if value is set to None or rename an item if value is set to a String
+
+        :param title: the OptionBox to change
+        :param index: the position or value of the item to select/delete
+        :param value: determines what to do to the item: if set to None, will delete the item, else it sets the items state
+        :param callFunction: whether to generate an event to notify that the widget has changed
+        :param override: if set to True, allows a disabled item to be selected
+        :returns: None
+        :raises ItemLookupError: if the title can't be found
+        """
         box = self.__verifyItem(self.n_options, title)
 
         if box.kind == "ticks":
@@ -4755,7 +4865,6 @@ class gui(object):
 
                 with PauseCallFunction(callFunction, tick, useVar=False):
                     if value is None: # then we need to delete it
-                        gui.debug("delete mode")
                         self.debug("Deleting tick: " + str(index) + " from OptionBox: " + str(title))
                         try:
                             index_num = box.options.index(index)
@@ -4766,9 +4875,12 @@ class gui(object):
                         box['menu'].delete(index_num)
                         del(box.options[index_num])
                         del self.n_optionTicks[title][index]
-                    else:
-                        gui.debug("set mode: " + str(value))
+                    elif isinstance(value, bool):
+                        gui.debug("Updating tick: " + str(index) + " from OptionBox: " + str(title) + "to: " + str(value))
                         tick.set(value)
+                    else:
+                        gui.debug("Renaming tick: " + str(index) + " from OptionBox: " + str(title) + "to: " + str(value))
+                        tick.config(text=value)
             else:
                 if value is None:
                     self.warn("Unknown tick in deleteOptionBox: " + str(index) +
@@ -4805,7 +4917,8 @@ class gui(object):
                         box['menu'].delete(index)
                         del(box.options[index])
                         self.setOptionBox(title, 0, callFunction=False, override=override)
-                    elif value is True:
+                    elif isinstance(value, bool):
+                        gui.debug("Updating: " + str(index) + " from OptionBox: " + str(title) + "to: " + str(value))
                         with PauseCallFunction(callFunction, box):
                             if not box['menu'].invoke(index):
                                 if override:
@@ -4818,17 +4931,8 @@ class gui(object):
                                     self.warn("Unable to set disabled option: " + str(index) +
                                             " in OptionBox: " + str(title) + ". Try setting 'override=True'")
                     else:
-                        with PauseCallFunction(callFunction, box):
-                            if not box['menu'].invoke(index):
-                                if override:
-                                    self.debug("Setting OptionBox: " + str(title) +
-                                            " to disabled option: " + str(index))
-                                    box["menu"].entryconfigure(index, state="normal")
-                                    box['menu'].invoke(index)
-                                    box["menu"].entryconfigure(index, state="disabled")
-                                else:
-                                    self.warn("Unable to set disabled option: " + str(index) +
-                                            " in OptionBox: " + str(title) + ". Try setting 'override=True'")
+                        gui.debug("Renaming: " + str(index) + " from OptionBox: " + str(title) + "to: " + str(value))
+                        box["menu"].entryconfigure(index, label=value)
             else:
                 self.__verifyItem(self.n_optionVars, title).set("")
                 self.warn("No items to select from: " + title)
