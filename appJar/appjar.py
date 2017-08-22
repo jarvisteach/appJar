@@ -6671,6 +6671,15 @@ class gui(object):
 # FUNCTIONS to add Text Area
 #####################################
     def __buildTextArea(self, title, frame, scrollable=False):
+        """
+        Internal wrapper, used for building TextAreas.
+
+        :param title: the key used to reference this TextArea
+        :param frame: this should be a container, used as the parent for the OptionBox
+        :param scrollable: the key used to reference this TextArea
+        :returns: the created TextArea
+        :raises ItemLookupError: if the title is already in use
+        """
         self.__verifyItem(self.n_textAreas, title, True)
         if scrollable:
             text = AjScrolledText(frame)
@@ -6694,75 +6703,125 @@ class gui(object):
         return text
 
     def addTextArea(self, title, row=None, column=0, colspan=0, rowspan=0):
+        """
+        Adds a TextArea with the specified title
+        Simply calls internal __buildTextArea function before positioning the widget
+
+        :param title: the key used to reference this TextArea
+        :returns: the created TextArea
+        :raises ItemLookupError: if the title is already in use
+        """
         text = self.__buildTextArea(title, self.getContainer())
-        self.__positionWidget(
-            text,
-            row,
-            column,
-            colspan,
-            rowspan,
-            N + E + S + W)
+        self.__positionWidget(text, row, column, colspan, rowspan, N+E+S+W)
         return text
 
-    def addScrolledTextArea(
-            self,
-            title,
-            row=None,
-            column=0,
-            colspan=0,
-            rowspan=0):
+    def addScrolledTextArea(self, title, row=None, column=0, colspan=0, rowspan=0):
+        """
+        Adds a Scrollable TextArea with the specified title
+        Simply calls internal __buildTextArea functio, specifying a ScrollabelTextArea before positioning the widget
+
+        :param title: the key used to reference this TextArea
+        :returns: the created TextArea
+        :raises ItemLookupError: if the title is already in use
+        """
         text = self.__buildTextArea(title, self.getContainer(), True)
-        self.__positionWidget(
-            text,
-            row,
-            column,
-            colspan,
-            rowspan,
-            N + E + S + W)
+        self.__positionWidget(text, row, column, colspan, rowspan, N+E+S+W)
         return text
 
     def getTextArea(self, title):
+        """
+        Gets the text in the specified TextArea
+
+        :param title: the TextArea to check
+        :returns: the text in the specified TextArea
+        :raises ItemLookupError: if the title can't be found
+        """
         return self.__verifyItem(self.n_textAreas, title).getText()
 
     def getAllTextAreas(self):
+        """
+        Convenience function to get the text for all TextAreas in the GUI.
+
+        :returns: a dictionary containing the result of calling getTextArea for every TextArea in the GUI
+        """
         areas = {}
         for k in self.n_textAreas:
             areas[k] = self.getTextArea(k)
         return areas
 
-    def setTextArea(self, title, text, callFunction=True):
+    def setTextArea(self, title, text, end=True, callFunction=True):
+        """
+        Add the supplied text to the specified TextArea
+
+        :param title: the TextArea to change
+        :param text: the text to add to the TextArea
+        :param end: where to insert the text, by default it is added to the end. Set end to False to add to the beginning.
+        :param callFunction: whether to generate an event to notify that the widget has changed
+        :returns: None
+        :raises ItemLookupError: if the title can't be found
+        """
         ta = self.__verifyItem(self.n_textAreas, title)
 
-        oldCall = ta.callFunction
-        ta.callFunction = callFunction
-        ta.insert('1.0', text)
-        ta.callFunction = oldCall
+        ta.pauseCallFunction(callFunction)
+        if end:
+            ta.insert(END, text)
+        else:
+            ta.insert('1.0', text)
+        ta.resumeCallFunction()
 
-    # functions to try to monitor text areas
     def clearTextArea(self, title, callFunction=True):
-        ta = self.__verifyItem(self.n_textAreas, title)
+        """
+        Removes all text from the specified TextArea
 
-        oldCall = ta.callFunction
-        ta.callFunction = callFunction
+        :param title: the TextArea to change
+        :param callFunction: whether to generate an event to notify that the widget has changed
+        :returns: None
+        :raises ItemLookupError: if the title can't be found
+        """
+        ta = self.__verifyItem(self.n_textAreas, title)
+        ta.pauseCallFunction(callFunction)
         ta.delete('1.0', END)
-        ta.callFunction = oldCall
+        ta.resumeCallFunction()
 
     def clearAllTextAreas(self, callFunction=False):
+        """
+        Convenience function to clear all TextAreas in the GUI
+        Will simply call clearTextArea on each TextArea
+
+        :param callFunction: whether to generate an event to notify that the widget has changed
+        :returns: None
+        """
         for ta in self.n_textAreas:
             self.clearTextArea(ta, callFunction=callFunction)
 
     def logTextArea(self, title):
+        """
+        Creates an md5 hash - can be used later to check if the TextArea has changed
+        The hash is stored in the widget
+
+        :param title: the TextArea to hash
+        :returns: None
+        :raises ItemLookupError: if the title can't be found
+        """
         self.__loadHashlib()
         if hashlib is False:
-            self.warn("Unable to log TextArea, haslib librray not available")
+            self.warn("Unable to log TextArea, hashlib library not available")
         else:
             text = self.__verifyItem(self.n_textAreas, title)
             text.__hash = text.getTextAreaHash()
 
     def textAreaChanged(self, title):
+        """
+        Creates a temporary md5 hash - and compares it with a previously generated & stored hash
+        The previous hash has to be generated manually, by calling logTextArea
+
+        :param title: the TextArea to hash
+        :returns: bool - True if the TextArea has changed or False if it hasn't
+        :raises ItemLookupError: if the title can't be found
+        """
         self.__loadHashlib()
         if hashlib is False:
-            self.warn("Unable to lof TextArea, haslib librray not available")
+            self.warn("Unable to log TextArea, hashlib library not available")
         else:
             text = self.__verifyItem(self.n_textAreas, title)
             return text.__hash != text.getTextAreaHash()
@@ -10299,6 +10358,14 @@ class TextParent():
         self.bind('<<Modified>>', self._beenModified)
         self.__hash = None
         self.callFunction = True
+        self.oldCallFunction = True
+
+    def pauseCallFunction(self, callFunction=False):
+        self.oldCallFunction = self.callFunction
+        self.callFunction = callFunction
+
+    def resumeCallFunction(self):
+        self.callFunction = self.oldCallFunction
 
     def _beenModified(self, event=None):
         # stop recursive calls

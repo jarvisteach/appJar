@@ -717,8 +717,10 @@ app.go()
 ![ScrolledTextArea](img/2_textArea.png)  
 
 ####Set TextAreas
-* `.setTextArea(title, text, callFunction=True)`  
-    Changes the contents of the specified TextArea, to the specified text.  
+* `.setTextArea(title, text, end=True, callFunction=True)`  
+    Adds the supplied text to the specified TextArea.  
+    By default, the text is added to the end.  
+    Set `end` to be False if you want to add at the beginning.  
     Set ```callFunction``` to be False, if you don't want to call any associated functions.  
 
 * `.clearTextArea(title, callFunction=True)`  
