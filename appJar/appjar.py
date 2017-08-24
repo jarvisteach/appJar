@@ -62,7 +62,7 @@ ConfigParser = codecs = ParsingError = None # used to parse language files
 __author__ = "Richard Jarvis"
 __copyright__ = "Copyright 2016-2017, Richard Jarvis"
 __credits__ = ["Graham Turner", "Sarah Murch"]
-__license__ = "GPL"
+__license__ = "Apache 2.0"
 __version__ = "0.08"
 __maintainer__ = "Richard Jarvis"
 __email__ = "info@appJar.info"
