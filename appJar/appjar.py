@@ -6692,7 +6692,7 @@ class gui(object):
             text = AjScrolledText(frame)
         else:
             text = AjText(frame)
-        text.config(font=self.taFont, width=20, height=10, undo=True)
+        text.config(font=self.taFont, width=20, height=10, undo=True, wrap=WORD)
 
         if self.platform in [self.MAC, self.LINUX]:
             text.config(highlightbackground=self.__getContainerBg())
