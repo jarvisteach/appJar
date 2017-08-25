@@ -68,7 +68,10 @@ __maintainer__ = "Richard Jarvis"
 __email__ = "info@appJar.info"
 __status__ = "Development"
 __url__ = "http://appJar.info"
-__locale__ = locale.getdefaultlocale()[0]
+try:
+    __locale__ = locale.getdefaultlocale()[0]
+except ValueError:
+    __locale__ = None
 
 # class to allow simple creation of tkinter GUIs
 class gui(object):
@@ -193,6 +196,8 @@ class gui(object):
     WINDOW = 0
     LABEL = 1
     ENTRY = 2
+    FILE_ENTRY = 24
+    DIRECTORY_ENTRY = 25
     BUTTON = 3
     CHECKBOX = 4
     SCALE = 5
@@ -298,6 +303,8 @@ class gui(object):
         LABELFRAME: "LabelFrame",
         FRAME: "Frame",
         TABBEDFRAME: "TabbedFrame",
+        FILE_ENTRY: "FileEntry",
+        DIRECTORY_ENTRY: "DirectoryEntry",
 #       TAB:"Tab",
         PANEDFRAME: "PanedFrame",
         WIDGET: "Widget",
@@ -2338,7 +2345,7 @@ class gui(object):
             return self.n_messages
         elif kind == self.BUTTON:
             return self.n_buttons
-        elif kind == self.ENTRY:
+        elif kind in [self.ENTRY, self.FILE_ENTRY, self.DIRECTORY_ENTRY]:
             return self.n_entries
         elif kind == self.SCALE:
             return self.n_scales
@@ -2686,7 +2693,7 @@ class gui(object):
                 # need to trace the variable??
                 widget.cmd_id = widget.var.trace('w', cmd)
                 widget.cmd = cmd
-        elif kind == self.ENTRY:
+        elif kind in [self.ENTRY, self.FILE_ENTRY, self.DIRECTORY_ENTRY]:
             if eventType == "change":
                 # not populated by change/submit
                 if key is None:
@@ -2694,15 +2701,15 @@ class gui(object):
                 cmd = self.MAKE_FUNC(function, key, True)
                 # get Entry variable
                 var = self.__verifyItem(self.n_entryVars, name)
-                var.cmd_id = var.trace('w', cmd)
-                var.cmd = cmd
+                widget.cmd_id = var.trace('w', cmd)
+                widget.cmd = cmd
             else:
                 # not populated by change/submit
                 if key is None:
                     key = name
-                cmd = self.MAKE_FUNC(function, key, True)
-                widget.bind('<Return>', cmd)
-                widget.cmd = cmd
+                sbm = self.MAKE_FUNC(function, key, True)
+                widget.sbm_id = widget.bind('<Return>', sbm)
+                widget.sbm = sbm
         elif kind == self.TEXTAREA:
             if eventType == "change":
                 # get Entry variable
@@ -7412,17 +7419,20 @@ class gui(object):
 
         current = self.n_entryVars[name].get()
 
-        # clear & remove default
-        if mode == "set" or (mode in [ "in", "clear"] and entry.showingDefault):
-            var.set("")
-            entry.showingDefault = False
-            entry.config(justify=entry.oldJustify, foreground=entry.oldFg)
-        elif mode == "out" and current == "":
-            var.set(entry.default)
-            entry.config(justify='center', foreground='grey')
-            entry.showingDefault = True
-        elif mode == "update" and entry.showingDefault:
-            var.set(entry.default)
+        # disable any change function
+        with PauseCallFunction(False, entry, True):
+
+            # clear & remove default
+            if mode == "set" or (mode in [ "in", "clear"] and entry.showingDefault):
+                var.set("")
+                entry.showingDefault = False
+                entry.config(justify=entry.oldJustify, foreground=entry.oldFg)
+            elif mode == "out" and current == "":
+                var.set(entry.default)
+                entry.config(justify='center', foreground='grey')
+                entry.showingDefault = True
+            elif mode == "update" and entry.showingDefault:
+                var.set(entry.default)
 
         # re-enable any limits
         if var.lc_id is not None:
