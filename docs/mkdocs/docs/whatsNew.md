@@ -24,6 +24,7 @@
     * [#162](https://github.com/jarvisteach/appJar/issues/162) - PhotoImage objects can now be passed directly when [adding/setting ImageData](/pythonImages/#add-images)  
     * [#132](https://github.com/jarvisteach/appJar/issues/132) - Now possible to [Delete and Rename](/pythonWidgets/#set-optionboxes) OptionBox items.
     * [#71](https://github.com/jarvisteach/appJar/issues/71) - More work on [Internationalisation](/pythonInternationalisation/) - now supports Images, LabelFrames, ToggleFrames, TabbedFrames, Properties, Grids, Toolbars, Tooltips, SubWindows, PagedWindows, SplashScreens & Titles  
+    * [#69](https://github.com/jarvisteach/appJar/issues/69) - Changes to [TextAreas](/pythonWidgets/#textarea) - now, lines wrap on spaces & [setTextArea()](/pythonWidgets/#set-textareas) now appends to the text  
 
 
 ## Version 0.07  
