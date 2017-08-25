@@ -2701,8 +2701,8 @@ class gui(object):
                 cmd = self.MAKE_FUNC(function, key, True)
                 # get Entry variable
                 var = self.__verifyItem(self.n_entryVars, name)
-                widget.cmd_id = var.trace('w', cmd)
-                widget.cmd = cmd
+                var.cmd_id = var.trace('w', cmd)
+                var.cmd = cmd
             else:
                 # not populated by change/submit
                 if key is None:
@@ -7420,7 +7420,7 @@ class gui(object):
         current = self.n_entryVars[name].get()
 
         # disable any change function
-        with PauseCallFunction(False, entry, True):
+        with PauseCallFunction(False, var, False):
 
             # clear & remove default
             if mode == "set" or (mode in [ "in", "clear"] and entry.showingDefault):
