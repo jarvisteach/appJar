@@ -75,12 +75,14 @@ except ValueError:
 
 # class to allow simple creation of tkinter GUIs
 class gui(object):
-    """
-        Class to represent the GUI
+    """ Class to represent the GUI
         - Create one of these
         - add some widgets
         - call the go() function
     """
+
+    # ensure only one instance of gui is created
+    instantiated = False
 
     # static variables
     exe_file = None
@@ -90,8 +92,7 @@ class gui(object):
 
     @staticmethod
     def CLEAN_CONFIG_DICTIONARY(**kw):
-        """
-            Used by all Classes to tidy up dictionaries passed into config functions
+        """ Used by all Classes to tidy up dictionaries passed into config functions
             Allows us to more quickly process the dictionaries when overriding config
         """
         try:
@@ -147,8 +148,7 @@ class gui(object):
 
     @staticmethod
     def CENTER(win, up=0):
-        """
-        centers a tkinter window
+        """ Centers a tkinter window
         http://stackoverflow.com/questions/3352918/
         :param win: the root or Toplevel window to center
         """
@@ -444,6 +444,11 @@ class gui(object):
 # CONSTRUCTOR - creates the GUI
 #####################################
     def __init__(self, title=None, geom=None, warn=None, debug=None, handleArgs=True):
+
+        if self.__class__.instantiated:
+            raise Exception("You cannot have more than one instance of gui, try using a subWindow.")
+        else:
+            self.__class__.instantiated = True
 
         # first up, set the logger
         logging.basicConfig(level=logging.WARNING, format='%(asctime)s %(name)s:%(levelname)s %(message)s')
@@ -1800,7 +1805,7 @@ class gui(object):
             self.stop()
 
     def setStopFunction(self, function):
-        """ set a function to call when the GUI is quit. Must return True or False """
+        """ Set a function to call when the GUI is quit. Must return True or False """
         tl = self.__getTopLevel()
         tl.stopFunction = function
         # link to exit item in topMenu
@@ -1828,6 +1833,7 @@ class gui(object):
                 pass
             self.topLevel.quit()
             self.topLevel.destroy()
+            self.__class__.instantiated = False
 
 #####################################
 # Functions for configuring polling events
@@ -4491,8 +4497,7 @@ class gui(object):
 # FUNCTION for optionMenus
 #####################################
     def __buildOptionBox(self, frame, title, options, kind="normal"):
-        """
-        Internal wrapper, used for building OptionBoxes.
+        """ Internal wrapper, used for building OptionBoxes.
         It will use the kind to choose either a standard OptionBox or a TickOptionBox.
         ref: http://stackoverflow.com/questions/29019760/how-to-create-a-combobox-that-includes-checkbox-for-each-item
 
@@ -4565,8 +4570,7 @@ class gui(object):
         return option
 
     def __buildTickOptionBox(self, title, option, options):
-        """
-        Internal wrapper, used for building TickOptionBoxes.
+        """ Internal wrapper, used for building TickOptionBoxes.
         Called by __buildOptionBox & changeOptionBox.
         Will add each of the options as a tick box, and use the title as a disabled header.
 
@@ -4589,8 +4593,7 @@ class gui(object):
         option.kind = "ticks"
 
     def addOptionBox(self, title, options, row=None, column=0, colspan=0, rowspan=0):
-        """
-        Adds a new standard OptionBox.
+        """ Adds a new standard OptionBox.
         Simply calls internal function __buildOptionBox.
 
         :param title: the key used to reference this OptionBox
@@ -4603,8 +4606,7 @@ class gui(object):
         return option
 
     def addLabelOptionBox(self, title, options, row=None, column=0, colspan=0, rowspan=0):
-        """
-        Adds a new standard OptionBox, with a Label before it.
+        """ Adds a new standard OptionBox, with a Label before it.
         Simply calls internal function __buildOptionBox, placing it in a LabelBox.
 
         :param title: the key used to reference this OptionBox and text for the Label
@@ -4619,8 +4621,7 @@ class gui(object):
         return option
 
     def addTickOptionBox(self, title, options, row=None, column=0, colspan=0, rowspan=0):
-        """
-        Adds a new TickOptionBox.
+        """ Adds a new TickOptionBox.
         Simply calls internal function __buildOptionBox.
 
         :param title: the key used to reference this TickOptionBox
@@ -4633,8 +4634,7 @@ class gui(object):
         return tick
 
     def addLabelTickOptionBox(self, title, options, row=None, column=0, colspan=0, rowspan=0):
-        """
-        Adds a new TickOptionBox, with a Label before it
+        """ Adds a new TickOptionBox, with a Label before it
         Simply calls internal function __buildOptionBox, placing it in a LabelBox
 
         :param title: the key used to reference this TickOptionBox, and text for the Label
@@ -4649,8 +4649,7 @@ class gui(object):
         return tick
 
     def getOptionBox(self, title):
-        """
-        Gets the selected item from the named OptionBox
+        """ Gets the selected item from the named OptionBox
 
         :param title: the OptionBox to check
         :returns: the selected item in an OptionBox or a dictionary of all items and their status for a TickOptionBox
@@ -4673,8 +4672,7 @@ class gui(object):
             return val
 
     def getAllOptionBoxes(self):
-        """
-        Convenience function to get the selected items for all OptionBoxes in the GUI.
+        """ Convenience function to get the selected items for all OptionBoxes in the GUI.
 
         :returns: a dictionary containing the result of calling getOptionBox for every OptionBox/TickOptionBox in the GUI
         """
@@ -4684,8 +4682,7 @@ class gui(object):
         return boxes
 
     def __disableOptionBoxSeparators(self, box):
-        """
-        Loops through all items in box and if they start with a dash, disables them
+        """ Loops through all items in box and if they start with a dash, disables them
 
         :param box: the OptionBox to process
         :returns: None
@@ -4695,8 +4692,7 @@ class gui(object):
                 box["menu"].entryconfigure(pos, state="disabled")
 
     def __configOptionBoxList(self, title, options, kind):
-        """
-        Tidies up the list provided when an OptionBox is created/changed
+        """ Tidies up the list provided when an OptionBox is created/changed
 
         :param title: the title for the OptionBox - only used by TickOptionBox to calculate max size
         :param options: the list to tidy
@@ -4744,8 +4740,7 @@ class gui(object):
         return maxSize, options
 
     def changeOptionBox(self, title, options, index=None, callFunction=False):
-        """
-        Changes the entire contents of the named OptionBox
+        """ Changes the entire contents of the named OptionBox
         ref: http://www.prasannatech.net/2009/06/tkinter-optionmenu-changing-choices.html
 
         :param title: the OptionBox to change
@@ -4789,8 +4784,7 @@ class gui(object):
         self.setOptionBox(title, index, callFunction=False, override=True)
 
     def deleteOptionBox(self, title, index):
-        """
-        Deleted the specified item from the named OptionBox
+        """ Deleted the specified item from the named OptionBox
 
         :param title: the OptionBox to change
         :param inde: the value to delete - either a numeric index, or the text of an item
@@ -4801,9 +4795,7 @@ class gui(object):
         self.setOptionBox(title, index, value=None, override=True)
 
     def renameOptionBoxItem(self, title, item, newName=None, callFunction=False):
-        """
-        Changes the text of the specified item in the named OptionBox
-
+        """ Changes the text of the specified item in the named OptionBox
         :param title: the OptionBox to change
         :param item: the item to rename
         :param newName: the value to rename it with
@@ -4815,8 +4807,7 @@ class gui(object):
         self.setOptionBox(title, item, value=newName, callFunction=callFunction)
 
     def clearOptionBox(self, title, callFunction=True):
-        """
-        Deselects any items selected in the named OptionBox
+        """ Deselects any items selected in the named OptionBox
         If a TickOptionBox, all items will be set to False (unticked)
 
         :param title: the OptionBox to change
@@ -4834,8 +4825,7 @@ class gui(object):
             self.setOptionBox(title, 0, callFunction=callFunction, override=True)
 
     def clearAllOptionBoxes(self, callFunction=False):
-        """
-        Convenience function to clear all OptionBoxes in the GUI
+        """ Convenience function to clear all OptionBoxes in the GUI
         Will simply call clearOptionBox on each OptionBox/TickOptionBox
 
         :param callFunction: whether to generate an event to notify that the widget has changed
@@ -4845,8 +4835,7 @@ class gui(object):
             self.clearOptionBox(k, callFunction)
 
     def setOptionBox(self, title, index, value=True, callFunction=True, override=False):
-        """
-        Main purpose is to select/deselect the item at the specified position
+        """ Main purpose is to select/deselect the item at the specified position
         But will also: delete an item if value is set to None or rename an item if value is set to a String
 
         :param title: the OptionBox to change
@@ -4940,6 +4929,10 @@ class gui(object):
                     else:
                         gui.debug("Renaming: " + str(index) + " from OptionBox: " + str(title) + "to: " + str(value))
                         box["menu"].entryconfigure(index, label=value)
+
+                        # need to reload the variable
+                        # every time the optionbox changes, we need to log the new value
+                        # then we can use it here....
             else:
                 self.__verifyItem(self.n_optionVars, title).set("")
                 self.warn("No items to select from: " + title)
@@ -6678,8 +6671,7 @@ class gui(object):
 # FUNCTIONS to add Text Area
 #####################################
     def __buildTextArea(self, title, frame, scrollable=False):
-        """
-        Internal wrapper, used for building TextAreas.
+        """ Internal wrapper, used for building TextAreas.
 
         :param title: the key used to reference this TextArea
         :param frame: this should be a container, used as the parent for the OptionBox
@@ -6710,8 +6702,7 @@ class gui(object):
         return text
 
     def addTextArea(self, title, row=None, column=0, colspan=0, rowspan=0):
-        """
-        Adds a TextArea with the specified title
+        """ Adds a TextArea with the specified title
         Simply calls internal __buildTextArea function before positioning the widget
 
         :param title: the key used to reference this TextArea
@@ -6723,8 +6714,7 @@ class gui(object):
         return text
 
     def addScrolledTextArea(self, title, row=None, column=0, colspan=0, rowspan=0):
-        """
-        Adds a Scrollable TextArea with the specified title
+        """ Adds a Scrollable TextArea with the specified title
         Simply calls internal __buildTextArea functio, specifying a ScrollabelTextArea before positioning the widget
 
         :param title: the key used to reference this TextArea
@@ -6736,8 +6726,7 @@ class gui(object):
         return text
 
     def getTextArea(self, title):
-        """
-        Gets the text in the specified TextArea
+        """ Gets the text in the specified TextArea
 
         :param title: the TextArea to check
         :returns: the text in the specified TextArea
@@ -6746,8 +6735,7 @@ class gui(object):
         return self.__verifyItem(self.n_textAreas, title).getText()
 
     def getAllTextAreas(self):
-        """
-        Convenience function to get the text for all TextAreas in the GUI.
+        """ Convenience function to get the text for all TextAreas in the GUI.
 
         :returns: a dictionary containing the result of calling getTextArea for every TextArea in the GUI
         """
@@ -6757,8 +6745,7 @@ class gui(object):
         return areas
 
     def setTextArea(self, title, text, end=True, callFunction=True):
-        """
-        Add the supplied text to the specified TextArea
+        """ Add the supplied text to the specified TextArea
 
         :param title: the TextArea to change
         :param text: the text to add to the TextArea
@@ -6777,8 +6764,7 @@ class gui(object):
         ta.resumeCallFunction()
 
     def clearTextArea(self, title, callFunction=True):
-        """
-        Removes all text from the specified TextArea
+        """ Removes all text from the specified TextArea
 
         :param title: the TextArea to change
         :param callFunction: whether to generate an event to notify that the widget has changed
@@ -6791,8 +6777,7 @@ class gui(object):
         ta.resumeCallFunction()
 
     def clearAllTextAreas(self, callFunction=False):
-        """
-        Convenience function to clear all TextAreas in the GUI
+        """ Convenience function to clear all TextAreas in the GUI
         Will simply call clearTextArea on each TextArea
 
         :param callFunction: whether to generate an event to notify that the widget has changed
@@ -6802,8 +6787,7 @@ class gui(object):
             self.clearTextArea(ta, callFunction=callFunction)
 
     def logTextArea(self, title):
-        """
-        Creates an md5 hash - can be used later to check if the TextArea has changed
+        """ Creates an md5 hash - can be used later to check if the TextArea has changed
         The hash is stored in the widget
 
         :param title: the TextArea to hash
@@ -6818,8 +6802,7 @@ class gui(object):
             text.__hash = text.getTextAreaHash()
 
     def textAreaChanged(self, title):
-        """
-        Creates a temporary md5 hash - and compares it with a previously generated & stored hash
+        """ Creates a temporary md5 hash - and compares it with a previously generated & stored hash
         The previous hash has to be generated manually, by calling logTextArea
 
         :param title: the TextArea to hash
@@ -11606,7 +11589,7 @@ class GoogleMap(LabelFrame):
             self.rawData = None
 
     def getMapFile(self, fileName):
-        """ will query GoogleMaps & download the iamge into the named file """
+        """ will query GoogleMaps & download the image into the named file """
         self.__buildQueryURL()
         self.buttons[3].registerWebpage(self.request)
         try:
