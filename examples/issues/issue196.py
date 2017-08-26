@@ -5,8 +5,9 @@ from appJar import gui
 
 def changeCol(col):
     app.setBg(col)
-    app.setTextAreaFg("st1", col)
-    app.setTextAreaFg("t1", col)
+    app.setFg(col, True)
+#    app.setTextAreaFg("st1", col)
+#    app.setTextAreaFg("t1", col)
 
 app=gui()
 app.setBg("blue")
