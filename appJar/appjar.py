@@ -2220,6 +2220,17 @@ class gui(object):
 
             for child in self.containerStack[-1]['container'].winfo_children():
                 if not self.__isWidgetContainer(child):
+
+                    # horrible hack to deal with weird ScrolledText
+                    # winfo_children returns ScrolledText as a Frame
+                    # therefore can;t call some functions
+                    # this gets the ScrolledText version
+                    if child.__class__.__name__ == "Frame":
+                        for val in self.n_textAreas.values():
+                            if str(val) == str(child):
+                                child = val
+                                break
+
                     gui.SET_WIDGET_BG(child, colour, override, tint)
         else:
             gui.warn("In ttk mode - can't set BG to " + str(colour))

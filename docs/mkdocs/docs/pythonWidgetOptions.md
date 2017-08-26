@@ -1,14 +1,14 @@
 #Changing Widgets  
 ----
-There are a lot of things that can be change in a widget.  
+There are a lot of things that can be changed in a widget.  
 There is a pattern to how this works, you simply specify the widget type and the parameter, eg:
 
 * `.setLabelBg(name, value)`
 * `.setButtonFg(name, value)`
 * `.setListBoxState(name, value)`
 
-The list of widgets is defined in `gui.WIDGETS`, it contains:
-Label, Message, Button, Entry, Scale, SpinBox, OptionBox, TextArea, Link, Meter, Image, RadioButton, CheckBox, ListBox, LabelFrame, PanedWindow, NoteBook
+This should work for most widgets & containers.  
+Some widgets have different types, eg. TextArea & ScrolledTextArea, all types can be configured with the main widget name.  
 
 ###Basic  Looks
 ----
