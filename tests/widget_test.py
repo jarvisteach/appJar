@@ -566,6 +566,13 @@ def test_options():
     for item in LIST_ONE:
         assert app.getOptionBox("tl1")[item] is False
 
+    app.renameOptionBoxItem("tl1", LIST_ONE[1], "new")
+    NEW_TICKS = app.getOptionBox("tl1")
+    NEW_LIST = LIST_ONE
+    NEW_LIST.pop(1)
+    for item in NEW_LIST:
+        assert item in NEW_TICKS
+
     # test override disabled
     app.addOptionBox("l3", LIST_THREE)
     assert app.getOptionBox("l3") is None

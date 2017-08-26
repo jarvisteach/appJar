@@ -4690,6 +4690,8 @@ class gui(object):
         for pos, item in enumerate(box.options):
             if item.startswith("-"):
                 box["menu"].entryconfigure(pos, state="disabled")
+            else:
+                box["menu"].entryconfigure(pos, state="normal")
 
     def __configOptionBoxList(self, title, options, kind):
         """ Tidies up the list provided when an OptionBox is created/changed
@@ -4858,25 +4860,29 @@ class gui(object):
                 gui.debug("Updating: " + str(index))
 
                 tick = ticks[index]
+                try:
+                    index_num = box.options.index(index)
+                except:
+                    self.warn("Unknown tick: " + str(index) + " in OptionBox: " + str(title))
+                    return
 
                 with PauseCallFunction(callFunction, tick, useVar=False):
                     if value is None: # then we need to delete it
                         self.debug("Deleting tick: " + str(index) + " from OptionBox: " + str(title))
-                        try:
-                            index_num = box.options.index(index)
-                        except:
-                            self.warn("Unknown tick in deleteOptionBox: " + str(index) +
-                                    " in OptionBox: " + str(title))
-                            return
                         box['menu'].delete(index_num)
                         del(box.options[index_num])
                         del self.n_optionTicks[title][index]
                     elif isinstance(value, bool):
-                        gui.debug("Updating tick: " + str(index) + " from OptionBox: " + str(title) + "to: " + str(value))
+                        gui.debug("Updating tick: " + str(index) + " from OptionBox: " + str(title) + " to: " + str(value))
                         tick.set(value)
                     else:
-                        gui.debug("Renaming tick: " + str(index) + " from OptionBox: " + str(title) + "to: " + str(value))
-                        tick.config(text=value)
+                        gui.debug("Renaming tick: " + str(index) + " from OptionBox: " + str(title) + " to: " + str(value))
+                        ticks = self.n_optionTicks[title]
+                        ticks[value] = ticks.pop(index)
+                        box.options[index_num] = value
+                        self.changeOptionBox(title, box.options)
+                        for tick in ticks:
+                            self.n_optionTicks[title][tick].set(ticks[tick].get())
             else:
                 if value is None:
                     self.warn("Unknown tick in deleteOptionBox: " + str(index) +
@@ -4885,7 +4891,7 @@ class gui(object):
                     self.warn("Unknown tick in setOptionBox: " + str(index) +
                             " in OptionBox: " + str(title))
         else:
-            gui.debug("Updating regular optionBox " + str(callFunction))
+            gui.debug("Updating regular optionBox: " + str(title) + " at: " + str(index) + " to: " + str(value))
             count = len(box.options)
             if count > 0:
                 if index is None:
@@ -4902,7 +4908,7 @@ class gui(object):
                                     " in OptionBox: " + str(title))
                         return
 
-                gui.debug("Updating item at index: " + str(index))
+                gui.debug("--> index now: " + str(index))
 
                 if index < 0 or index > count - 1:
                     self.warn("Invalid option: " + str(index) + ". Should be between 0 and " +
@@ -4914,7 +4920,7 @@ class gui(object):
                         del(box.options[index])
                         self.setOptionBox(title, 0, callFunction=False, override=override)
                     elif isinstance(value, bool):
-                        gui.debug("Updating: " + str(index) + " from OptionBox: " + str(title) + "to: " + str(value))
+                        gui.debug("Updating: " + str(index) + " from OptionBox: " + str(title) + " to: " + str(index))
                         with PauseCallFunction(callFunction, box):
                             if not box['menu'].invoke(index):
                                 if override:
@@ -4926,13 +4932,14 @@ class gui(object):
                                 else:
                                     self.warn("Unable to set disabled option: " + str(index) +
                                             " in OptionBox: " + str(title) + ". Try setting 'override=True'")
+                            else:
+                                gui.debug("Invoked item: " + str(index))
                     else:
                         gui.debug("Renaming: " + str(index) + " from OptionBox: " + str(title) + "to: " + str(value))
-                        box["menu"].entryconfigure(index, label=value)
+                        pos = box.options.index(self.n_optionVars[title].get())
+                        box.options[index] = value
+                        self.changeOptionBox(title, box.options, pos)
 
-                        # need to reload the variable
-                        # every time the optionbox changes, we need to log the new value
-                        # then we can use it here....
             else:
                 self.__verifyItem(self.n_optionVars, title).set("")
                 self.warn("No items to select from: " + title)

@@ -17,9 +17,9 @@ def get(btn):
         app.deleteOptionBox("pp", app.getOptionBox("pp"))
         app.deleteOptionBox("Favourite Pets", "Fish")
     elif btn == "RENAME":
-        pp = app.getOptionBox("pp")
         val = app.getEntry("e1")
-        app.renameOptionBoxItem("pp", pp, val, callFunction=app.getEntry("e1"))
+#        app.renameOptionBoxItem("pp", app.getOptionBox("pp"), val, callFunction=app.getEntry("e1"))
+        app.renameOptionBoxItem("Favourite Pets", "Cats", val, callFunction=app.getEntry("e1"))
 
 def press(btn):
     if btn == "OPTION":
