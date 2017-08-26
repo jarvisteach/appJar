@@ -39,6 +39,7 @@ import datetime # datepicker & image
 import logging  # python's logger
 import inspect  # for logging
 import argparse # argument parser
+from threading import Thread
 
 import __main__ as theMain
 from platform import system as platform
@@ -1862,8 +1863,17 @@ class gui(object):
         return self.after_cancel(id)
 
     def after_cancel(self, id):
-        self.topLevel.after_cancel(id)
-        
+        return self.topLevel.after_cancel(id)
+
+    @staticmethod
+    def thread(func, *args):
+        """ will run the supplied function in a separate thread
+
+        param func: the function to run
+        """
+        t = Thread(target=func, args=args)
+        t.daemon = True
+        t.start()
 
     # internal function, called by 'after' function, after sleeping
     def __poll(self):
@@ -3091,7 +3101,7 @@ class gui(object):
 #####################################
 # FUNCTION for managing commands
 #####################################
-    # funcion to wrap up lambda
+    # function to wrap up lambda
     # if the thing calling this generates parameters - then set discard=True
     @staticmethod
     def MAKE_FUNC(funcName, param, discard=False):
@@ -11510,11 +11520,11 @@ class GoogleMap(LabelFrame):
 
     def removeMarkers(self):
         self.markers = []
-        self.parent.after(0, self.updateMap())
+        gui.thread(self.updateMap)
 
     def addMarker(self, location):
         self.markers.append(location)
-        self.parent.after(0, self.updateMap())
+        gui.thread(self.updateMap)
 
     def saveTile(self, location):
         if self.rawData is not None:
@@ -11533,7 +11543,7 @@ class GoogleMap(LabelFrame):
     def setSize(self, size):
         if size != self.params["size"]:
             self.params["size"] = size.lower()
-            self.parent.after(0, self.updateMap())
+            gui.thread(self.updateMap)
 
     def changeTerrain(self, terrainType):
         terrainType = terrainType.title()
@@ -11541,26 +11551,26 @@ class GoogleMap(LabelFrame):
             self.terrainType.set(terrainType)
             if self.params["maptype"] != self.terrainType.get().lower():
                 self.params["maptype"] = self.terrainType.get().lower()
-                self.parent.after(0, self.updateMap())
+                gui.thread(self.updateMap)
 
     def changeLocation(self, location):
         self.location.set(location) # update the entry
         if self.params["center"] != location:
             self.params["center"] = location
-            self.parent.after(0, self.updateMap())
+            gui.thread(self.updateMap)
 
     def setZoom(self, zoom):
         if 0 <= zoom <= 22:
             self.params["zoom"] = zoom
-            self.parent.after(0, self.updateMap())
+            gui.thread(self.updateMap)
 
     def zoom(self, mod):
         if mod == "+" and self.params["zoom"] < 22:
             self.params["zoom"] += 1
-            self.parent.after(0, self.updateMap())
+            gui.thread(self.updateMap)
         elif mod == "-" and self.params["zoom"] > 0:
             self.params["zoom"] -= 1
-            self.parent.after(0, self.updateMap())
+            gui.thread(self.updateMap)
 
     def updateMap(self):
         self.getMapData()
