@@ -2198,6 +2198,8 @@ def test_logging():
 
 
 app = gui()
+with pytest.raises(Exception) :
+    app3 = gui()
 app.createRightClickMenu("RCLICK")
 print(app.SHOW_VERSION())
 print(app.SHOW_PATHS)
