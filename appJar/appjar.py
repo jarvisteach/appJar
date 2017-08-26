@@ -56,7 +56,7 @@ winsound = None
 FigureCanvasTkAgg = Figure = None # matplotlib
 parseString = TreeItem = TreeNode = None # ajTree
 ajTreeNode = ajTreeData = None
-base64 = urlencode = urlopen = urlretrieve = quote_plus = json = None # GoogleMap
+base64 = urlencode = urlopen = urlretrieve = quote_plus = json = Queue = None # GoogleMap
 ConfigParser = codecs = ParsingError = None # used to parse language files
 
 # details
@@ -774,12 +774,13 @@ class gui(object):
                     types = False
 
     def __loadURL(self):
-        global base64, urlencode, urlopen, urlretrieve, quote_plus, json
+        global base64, urlencode, urlopen, urlretrieve, quote_plus, json, Queue
         if urlencode is None:
             try: # python 2
                 from urllib import urlencode, urlopen, urlretrieve, quote_plus
                 import json
                 import base64
+                import Queue
             except ImportError: # python 3
                 try:
                     from urllib.parse import urlencode
@@ -788,8 +789,9 @@ class gui(object):
                     from urllib.request import urlretrieve
                     import json
                     import base64
+                    import queue as Queue
                 except:
-                    base64 = urlencode = urlopen = urlretrieve = quote_plus = json = False
+                    base64 = urlencode = urlopen = urlretrieve = quote_plus = json = Queue = False
 
     def __loadNanojpeg(self):
         global nanojpeg, array
@@ -11397,6 +11399,8 @@ class GoogleMap(LabelFrame):
     def __init__(self, parent, defaultLocation="Marlborough, UK"):
         LabelFrame.__init__(self, parent, text="GoogleMaps")
         self.parent = parent
+        self.imageQueue = Queue.Queue()
+        self.parent.after(200, self.updateMap)
         self.defaultLocation = defaultLocation
 
         self.TERRAINS = ("Roadmap", "Satellite", "Hybrid", "Terrain")
@@ -11520,11 +11524,11 @@ class GoogleMap(LabelFrame):
 
     def removeMarkers(self):
         self.markers = []
-        gui.thread(self.updateMap)
+        gui.thread(self.getMapData)
 
     def addMarker(self, location):
         self.markers.append(location)
-        gui.thread(self.updateMap)
+        gui.thread(self.getMapData)
 
     def saveTile(self, location):
         if self.rawData is not None:
@@ -11543,7 +11547,7 @@ class GoogleMap(LabelFrame):
     def setSize(self, size):
         if size != self.params["size"]:
             self.params["size"] = size.lower()
-            gui.thread(self.updateMap)
+            gui.thread(self.getMapData)
 
     def changeTerrain(self, terrainType):
         terrainType = terrainType.title()
@@ -11551,30 +11555,31 @@ class GoogleMap(LabelFrame):
             self.terrainType.set(terrainType)
             if self.params["maptype"] != self.terrainType.get().lower():
                 self.params["maptype"] = self.terrainType.get().lower()
-                gui.thread(self.updateMap)
+                gui.thread(self.getMapData)
 
     def changeLocation(self, location):
         self.location.set(location) # update the entry
         if self.params["center"] != location:
             self.params["center"] = location
-            gui.thread(self.updateMap)
+            gui.thread(self.getMapData)
 
     def setZoom(self, zoom):
         if 0 <= zoom <= 22:
             self.params["zoom"] = zoom
-            gui.thread(self.updateMap)
+            gui.thread(self.getMapData)
 
     def zoom(self, mod):
         if mod == "+" and self.params["zoom"] < 22:
             self.params["zoom"] += 1
-            gui.thread(self.updateMap)
+            gui.thread(self.getMapData)
         elif mod == "-" and self.params["zoom"] > 0:
             self.params["zoom"] -= 1
-            gui.thread(self.updateMap)
+            gui.thread(self.getMapData)
 
     def updateMap(self):
-        self.getMapData()
-        if self.mapData is not None:
+        if not self.imageQueue.empty():
+            self.rawData = self.imageQueue.get()
+            self.mapData = base64.encodestring(self.rawData)
             imgObj = PhotoImage(data=self.mapData)
             self.canvas.itemconfig(self.image_on_canvas, image=imgObj)
             self.canvas.img = imgObj
@@ -11589,8 +11594,7 @@ class GoogleMap(LabelFrame):
                 self.canvas.config(width=self.w, height=self.h)
                 self.__placeControls()
             self.buttons[3].registerWebpage(self.request)
-        else:
-            gui.error("Unable to update map, as no mapData")
+        self.parent.after(200, self.updateMap)
 
     def __buildQueryURL(self):
         self.request = self.GOOGLE_URL + urlencode(self.params)
@@ -11608,13 +11612,11 @@ class GoogleMap(LabelFrame):
         self.__buildQueryURL()
         try:
             u = urlopen(self.request)
-            self.rawData = u.read()
+            rawData = u.read()
             u.close()
-            self.mapData = base64.encodestring(self.rawData)
+            self.imageQueue.put(rawData)
         except Exception as e:
             gui.error("Unable to contact GoogleMaps")
-            self.mapData = None
-            self.rawData = None
 
     def getMapFile(self, fileName):
         """ will query GoogleMaps & download the image into the named file """

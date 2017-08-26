@@ -82,7 +82,7 @@ A number of pop-ups (aka dialogs) are available, to add a different user experie
     * ```title``` this will set a title for the dialog  
     * `fileName` this will set a starting file name to save as  
     * `dirName` this will set a starting directory, defaults to the current working directory  
-    `fileExt` this will set a file extension to start with
+    `fileExt` this will set a file extension to start with  
     * `fileTypes=[('images', '*.png'), ('images', '*.jpg')]`  
     This will set the allowed file extensions, it should be a list of tuples. They will be grouped by the name.  
     * `asFile` this will determine whether a path or actual Python file object is returned, defaults to filename   

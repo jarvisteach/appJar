@@ -778,7 +778,15 @@ def test_scales():
     assert isinstance(app.addScale("s1"), ajScale)
     app.addScale("s2")
     app.addScale("s3")
-    app.addScale("s4")
+    sc = app.addScale("s4")
+
+    event = Event()
+    event.widget = sc
+    event.x_root = sc.winfo_rootx() + 5
+    event.y_root = sc.winfo_rooty() + 5
+    event.x = sc.winfo_rootx() + 5
+    event.y = sc.winfo_rooty() + 5
+    sc.jump(event)
 
     assert app.getScale("s1") == 0
     assert app.getScale("s2") == 0
@@ -2196,6 +2204,21 @@ def test_logging():
     print(" >> not implemented...")
     #print("\t >> all tests complete")
 
+def dragFunc(val=None):
+    pass
+
+def dropFunc(val=None):
+    pass
+
+def test_dnd():
+    app.addLabel("ddd", "DND TESTER")
+    # internal drag & drop
+    app.setLabelDroppable("ddd", dropFunc)
+    app.setLabelDraggable("ddd", dragFunc)
+
+    # external drag & drop
+    app.setLabelDropTarget("ddd", dropFunc)
+    app.setLabelDragSource("ddd", dragFunc)
 
 app = gui()
 with pytest.raises(Exception) :
@@ -2255,6 +2278,7 @@ test_langs()
 
 test_containers()
 test_messages()
+test_dnd()
 
 
 
