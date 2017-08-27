@@ -1587,6 +1587,10 @@ def test_toolbars():
     app.setToolbarButtonDisabled("a")
     app.setToolbarButtonEnabled("a")
 
+    app.setToolbarPinned()
+    app.setToolbarPinned(True)
+    app.setToolbarPinned(False)
+
     app.showToolbar()
     app.hideToolbar()
     app.showToolbar()
@@ -1594,10 +1598,19 @@ def test_toolbars():
     app.setToolbarImage("a", "1_entries.gif")
     app.setToolbarImage("b", "1_checks.png")
 
+    app._gui__minToolbar()
+    app._gui__minToolbar()
+    app._gui__maxToolbar()
+    app._gui__minToolbar()
+
+    app._gui__toggletb()
+    app._gui__toggletb()
+    app._gui__toggletb()
+
 # doesn't work in python 2.7
-#    app.setToolbarIcon("a", "web")
-#    app.setToolbarIcon("b", "weight")
-#    app.setToolbarIcon("c", "wi-fi")
+    app.setToolbarIcon("a", "web")
+    app.setToolbarIcon("b", "weight")
+    app.setToolbarIcon("c", "wi-fi")
 
     print(" >> not implemented...")
     #print("\t >> all tests complete")
