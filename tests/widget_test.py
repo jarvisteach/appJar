@@ -9,7 +9,7 @@ photo="R0lGODlhPQBEAPeoAJosM//AwO/AwHVYZ/z595kzAP/s7P+goOXMv8+fhw/v739/f+8PD98fH
 
 
 sys.path.append("../")
-from appJar import gui, SelectableLabel, AutoCompleteEntry, ajScale, AjText, AjScrolledText, Meter, Properties, Link, Separator, Grip, PieChart
+from appJar import gui, SelectableLabel, AutoCompleteEntry, ajScale, AjText, AjScrolledText, Meter, Properties, Link, Separator, Grip, PieChart, DraggableWidget
 
 PY_VER = str(sys.version_info[0]) + "." + str(sys.version_info[1])
 
@@ -46,7 +46,6 @@ def test_grid_layout():
     app.addLabel("lay2", TEXT_ONE, 1, 1)
     app.addLabel("lay3", TEXT_ONE, 1, 1, 1)
     app.addLabel("lay4", TEXT_ONE, 1, 1, 1, 1)
-
     app.addLabel("lay5", TEXT_ONE, 2)
     app.addLabel("lay6", TEXT_ONE, 2, 2)
     app.addLabel("lay7", TEXT_ONE, 2, 2, 2)
@@ -118,6 +117,7 @@ def test_entries():
     app.setAutoEntryNumRows("ae1", 5)
 
     # quick validation check
+    app.addEntry("focusEnt")
     app.addValidationEntry("ve1")
     app.addLabelValidationEntry("lve1")
     app.setEntryValid("ve1")
@@ -2211,7 +2211,11 @@ def dropFunc(val=None):
     pass
 
 def test_dnd():
+    dw = DraggableWidget(app.topLevel.canvasPane, "a", "b", [10,10])
     app.addLabel("ddd", "DND TESTER")
+    tb = app.addTrashBin("tb")
+    tb.config(fg="red")
+    tb.dnd_commit(dw, None)
     # internal drag & drop
     app.setLabelDroppable("ddd", dropFunc)
     app.setLabelDraggable("ddd", dragFunc)
@@ -2219,6 +2223,23 @@ def test_dnd():
     # external drag & drop
     app.setLabelDropTarget("ddd", dropFunc)
     app.setLabelDragSource("ddd", dragFunc)
+
+def test_focus():
+    print("testing focus\n")
+
+    app.addEntry("entFocus")
+    app.setEntryFocus("entFocus")
+    try: assert app.getFocus() == "entFocus"
+    except: pass
+
+    app.addLabel("labFocus", "text")
+    app.setLabelFocus("labFocus")
+    with pytest.raises(Exception) :
+        assert app.getFocus() == "labFocus"
+
+    print(" >> not implemented...")
+    #print("\t >> all tests complete")
+
 
 app = gui()
 with pytest.raises(Exception) :
@@ -2296,6 +2317,7 @@ def test_gui(btn=None):
     if doStop == 0:
         test_pop_ups()
     if doStop == 2:
+        test_focus()
         test_sets()
         test_langs()
         test_widget_arranging()
