@@ -111,6 +111,12 @@ def test_entries():
     assert isinstance(app.addEntry("e1"), Entry)
     assert isinstance(app.addNumericEntry("ne1"), Entry)
     assert isinstance(app.addSecretEntry("se1"), Entry)
+
+    # three key things: after, before, actual
+    assert app._gui__validateNumericEntry("1", None, "1", "", "1", None, None, None)
+    assert not app._gui__validateNumericEntry("1", None, "a", "", "a", None, None, None)
+    assert app._gui__validateNumericEntry("2", None, "a", "", "a", None, None, None)
+
     app.addFileEntry("fe1")
     app.addDirectoryEntry("de1")
     assert isinstance(app.addAutoEntry("ae1", ["a", "b", "c"]), AutoCompleteEntry)
@@ -136,17 +142,25 @@ def test_entries():
     app.addEntry("tester3")
     app.setEntryDefault("tester3", TEXT_TWO)
 
+    app._gui__entryIn("tester")
+    app._gui__entryOut("tester")
+    app._gui__entryIn("tester")
+    app._gui__entryOut("tester")
+
     app.updateDefaultText("tester3", TEXT_ONE)
     app.updateEntryDefault("tester3", TEXT_ONE)
 
+    app.setEntryMaxLength("tester", 3)
     app.setEntryMaxLength("tester", 5)
     app.setEntry("tester", MIXED_TEXT)
     assert app.getEntry("tester") == MIXED_TEXT[:5]
 
     app.setEntryUpperCase("tester2")
+    app.setEntryUpperCase("tester2")
     app.setEntry("tester2", MIXED_TEXT)
     assert app.getEntry("tester2") == MIXED_TEXT.upper()
 
+    app.setEntryLowerCase("tester3")
     app.setEntryLowerCase("tester3")
     app.setEntry("tester3", MIXED_TEXT)
     assert app.getEntry("tester3") == MIXED_TEXT.lower()
@@ -1112,9 +1126,12 @@ def test_properties():
 
 def test_separators():
     print("\tTesting separators")
+    assert isinstance(app.addSeparator(colour="red"), Separator)
     assert isinstance(app.addSeparator(), Separator)
     assert isinstance(app.addHorizontalSeparator(), Separator)
+    assert isinstance(app.addHorizontalSeparator(colour="green"), Separator)
     assert isinstance(app.addVerticalSeparator(), Separator)
+    assert isinstance(app.addVerticalSeparator(colour="pink"), Separator)
     print("\t >> all tests complete")
 
 def linkPressed(link=None):
@@ -1577,9 +1594,12 @@ def test_rightClick():
 def test_toolbars():
     print("\tTesting Toolbar")
 
-    app.addToolbar(["a", "b", "c", "ABOUT"], tester_function, True)
+    app.addToolbar(["a", "b", "c", "ABOUT"], 
+        [tester_function, tester_function, tester_function, tester_function],
+        True)
 
     app.setToolbarEnabled()
+    app.setToolbarDisabled()
     app.setToolbarDisabled()
     app.setToolbarEnabled()
 
@@ -1606,6 +1626,11 @@ def test_toolbars():
     app._gui__toggletb()
     app._gui__toggletb()
     app._gui__toggletb()
+
+    app.setToolbarEnabled()
+    app.setToolbarDisabled()
+    app.setToolbarDisabled()
+    app.setToolbarEnabled()
 
 # doesn't work in python 2.7
     app.setToolbarIcon("a", "web")
@@ -2376,6 +2401,7 @@ def test_gui2(btn=None):
     doStop += 1
 
 app2 = gui()
+app2.addToolbar("a", tester_function, True)
 app2.useTtk()
 app2.setTtkTheme()
 app2.setTtkTheme("broken")

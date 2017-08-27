@@ -7831,7 +7831,10 @@ class gui(object):
 
         if self.pinBut is not None:
             if disabled:
-                self.pinBut.unbind("<Button-1>", self.pinBut.eventId)
+                # this fails if not bound
+                if self.pinBut.eventId:
+                    self.pinBut.unbind("<Button-1>", self.pinBut.eventId)
+                self.pinBut.eventId = None
                 self.__disableTooltip(self.pinBut)
                 self.pinBut.config(cursor="")
             else:
