@@ -4463,10 +4463,6 @@ class gui(object):
         sc = self.__verifyItem(self.n_scales, title)
         sc.increment = increment
 
-    def setScaleWidth(self, title, width):
-        sc = self.__verifyItem(self.n_scales, title)
-        sc.config(width=width)
-
     def setScaleLength(self, title, length):
         sc = self.__verifyItem(self.n_scales, title)
         sc.config(sliderlength=length)

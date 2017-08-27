@@ -346,13 +346,21 @@ def test_entries():
 
     print("\t >> all tests complete")
 
+def tst_but(btn):
+    print(btn)
 
 def test_buttons():
     print("\tTesting buttons")
+    with pytest.raises(Exception) :
+        app.addButton(["brk1", "brk1", "brk1", "brk1"], [None, None])
+
+    assert isinstance(app.addButton("b1_func", tst_but), Button)
     assert isinstance(app.addButton("b1", None), Button)
     app.addButtons(["bb1", "bb2", "bb3", "bb4"], None)
     with pytest.raises(Exception) :
         app.addButtons(["brk1", "brk1", "brk1", "brk1"], [None, None])
+    with pytest.raises(Exception) :
+        app.addButtons("Broken Buttons", None)
     app.addButtons(
             [["a2b1", "a2b2", "a2b3", "a2b4"],
             ["b2b1", "b2b2", "b2b3", "b2b4"],
@@ -413,6 +421,8 @@ def test_radios():
     assert app.getRadioButton("rb2") == TEXT_THREE
 
     app.setRadioTick("rb")
+    app.setRadioTick("rb", True)
+    app.setRadioTick("rb", False)
     assert app.getRadioButton("rb") == TEXT_TWO
 
     app.setRadioButton("rb", TEXT_THREE)
@@ -458,6 +468,7 @@ def test_checks():
     assert cbs["NCB1"] is False
     assert cbs["NCB2"] is False
     assert cbs["NCB3"] is False
+    app.setCheckBoxChangeFunction(TEXT_ONE, tester_function)
 
     app.setCheckBox(TEXT_ONE)
     app.setCheckBox(TEXT_TWO, True)
@@ -568,6 +579,14 @@ def test_options():
 
     app.setOptionBox("tl1", LIST_ONE[1], True)
     app.setOptionBox("tl2", LIST_TWO[2], True)
+    assert app.getOptionBox("tl2")[LIST_TWO[2]] is True
+
+    app.clearOptionBox("tl2")
+    for item in LIST_TWO:
+        assert app.getOptionBox("tl2")[item] is False
+
+    app.setOptionBox("tl2", LIST_TWO[2], True)
+
 
     assert app.getOptionBox("tl1")[LIST_ONE[1]] is True
     assert app.getOptionBox("tl2")[LIST_TWO[2]] is True
@@ -602,6 +621,7 @@ def test_options():
 
     # call generic setter functions
     test_setters("OptionBox", "l1")
+    test_setters("OptionBox", "tl1")
 
     print("\t>> all tests complete")
 
@@ -613,6 +633,9 @@ def test_spins():
     app.addSpinBox("s2", ["a", "b", "c", "d", "e"])
     assert isinstance(app.addSpinBoxRange("s3", 5, 200), Spinbox)
     app.addSpinBoxRange("s4", 25, 200)
+
+    with pytest.raises(Exception) :
+        app.addSpinBox("bs", 77)
 
     assert app.getSpinBox("s1") == "a"
     assert app.getSpinBox("s2") == "a"
@@ -699,7 +722,14 @@ def test_lists():
     assert app.getListBoxPos("l1") == [3]
     assert app.getListItemsPos("l1") == [3]
 
+    app.setListSingle("l1")
+    app.setListBoxSingle("l1")
+
     app.setListBoxMulti("l1")
+    app.setListBoxMulti("l1", True)
+    app.setListBoxMulti("l1", False)
+    app.setListBoxMulti("l1")
+
     app.selectListItem("l1", LIST_ONE[0])
     app.selectListItem("l1", LIST_ONE[3])
     assert app.getListItems("l1") == [LIST_ONE[0], LIST_ONE[3]]
@@ -722,6 +752,8 @@ def test_lists():
     assert app.getAllListItems("cl1")[0] == "new_word"
     app.setListItem("cl1", "new_word", "newer_word")
     assert app.getAllListItems("cl1")[0] == "newer_word"
+    app.setListItem("cl1", "newer_word", "newest_word", first=True)
+    assert app.getAllListItems("cl1")[0] == "newest_word"
 
     app.updateListItems("l2", LIST_TWO, True)
     app.removeListItem("l2", LIST_TWO[1])
@@ -731,6 +763,9 @@ def test_lists():
 
     app.updateListItems("l2", LIST_TWO, True)
     app.removeListItemAtPos("l2", 1)
+    with pytest.raises(Exception) :
+        app.removeListItemAtPos("l2", 10000)
+
     tmp_list = LIST_TWO
     tmp_list.remove(tmp_list[1])
     assert app.getAllListItems("l2") == tmp_list
@@ -1050,6 +1085,12 @@ def validateProp(p, d):
 
 def test_properties():
     print("\tTesting properties")
+
+    app.startToggleFrame("PP_frame")
+    assert isinstance(app.addProperties("tog_p1", HASH_ONE), Properties)
+    app.stopToggleFrame()
+
+
     assert isinstance(app.addProperties("p1", HASH_ONE), Properties)
     app.addProperties("p2")
 
@@ -1328,6 +1369,7 @@ def test_gui_options():
     app.hideTitleBar()
     app.showTitleBar()
 
+    app.resizeBgImage()
     app.setBgImage("1_entries.gif")
     app.resizeBgImage()
     app.removeBgImage()
@@ -1417,7 +1459,7 @@ def test_images():
     app.stopAnimation("im1")
     app.startAnimation("im1")
 
-    app.addImage("im2", "1_entries.gif")
+    im = app.addImage("im2", "1_entries.gif")
 
     coords = {
         "America":[32, 17, 242, 167],
@@ -1428,16 +1470,24 @@ def test_images():
         print(area)
 
     app.setImageMap("im2", click, coords)
+    event = Event()
+    event.widget = im
+    event.x = 100
+    event.y = 100
+    app._gui__imageMap("im2", event)
+
     assert isinstance(app.addImage("im3", "1_checks.png"), PhotoImage)
     assert isinstance(app.addImage("im4", "sc.jpg"), PhotoImage)
     app.getImageDimensions("im3")
 
 # jpeg...
 
+    app.setImage("im3", None)
     app.setImage("im3", "1_entries.gif")
     app.reloadImage("im3", "1_entries.gif")
     app.setImageMouseOver("im1", "1_checks.png")
     app.setImageSize("im2", 40, 40)
+    app.zoomImage("im1", -2)
     app.zoomImage("im1", 2)
 
     app.shrinkImage("im3", 2)
@@ -1445,6 +1495,11 @@ def test_images():
 
 #    app.setBgImage("1_checks.png")
 #    app.removeBgImage()
+
+    assert app.getImagePath(None) is None
+
+    with pytest.raises(Exception) :
+        app.setImageLocation("FRance")
 
     app.setImageLocation("images")
     app.addImage("iml", "1_entries.gif")
@@ -1702,21 +1757,34 @@ def test_messages():
 def test_sounds():
     print("\tTesting sounds")
 # only support windows
+    app.bell()
     try:
-        app.bell()
         app.soundError()
         app.soundWarning()
+    except:
+        print("Sound not supported on this platform")
 
+    try:
         app.playSound("error1.wav")
         app.stopSound()
         app.soundLoop("error2.wav")
         app.stopSound()
-        app.setSoundLocation("sounds")
+    except:
+        print("Sound not supported on this platform")
+
+    with pytest.raises(Exception) :
+        app.setSoundLocation("FRance")
+    app.setSoundLocation("sounds")
+
+    try:
         app.playSound("error3.wav")
         app.stopSound()
         app.soundLoop("error4.wav")
         app.stopSound()
+    except:
+        print("Sound not supported on this platform")
 
+    try:
         app.playNote("b7", "BREVE")
     except:
         print("Sound not supported on this platform")
@@ -1788,6 +1856,8 @@ def test_setters(widg_type, widg_id):
     exec("app.set" + widg_type + "Sticky(\""+widg_id +"\", 'left')")
     exec("app.set" + widg_type + "Sticky(\""+widg_id +"\", 'right')")
     exec("app.set" + widg_type + "Sticky(\""+widg_id +"\", 'both')")
+    exec("app.set" + widg_type + "Sticky(\""+widg_id +"\", 'n')")
+    exec("app.set" + widg_type + "Sticky(\""+widg_id +"\", 'w')")
 
     exec("app.set" + widg_type + "DragFunction(\""+widg_id +"\", tester_function )")
     exec("app.set" + widg_type + "DragFunction(\""+widg_id +"\", [tester_function,tester_function] )")
@@ -1840,6 +1910,9 @@ def test_containers():
     app.addLabel("lf1_l1", TEXT_ONE)
     app.stopLabelFrame()
 
+    with pytest.raises(Exception) :
+        app.stopLabelFrame()
+
     app.openLabelFrame("lf1")
     app.addLabel("lf1_l2", TEXT_ONE)
     app.stopLabelFrame()
@@ -1855,6 +1928,9 @@ def test_containers():
     tog = app.startToggleFrame("tf1")
     app.addLabel("tf1_l1", TEXT_ONE)
     app.stopToggleFrame()
+
+    with pytest.raises(Exception) :
+        app.stopToggleFrame()
 
     app.setToggleFrameText("tf1", "New text")
     assert tog.cget("text") == "New text"
@@ -1879,7 +1955,6 @@ def test_containers():
     app.startTabbedFrame("tbf1")
     app.startTab("tab1")
     app.addLabel("tbf1_l1", TEXT_ONE)
-    app.stopTab()
     app.startTab("tab2")
     app.addLabel("tbf2_l1", TEXT_ONE)
     app.stopTab()
@@ -1887,6 +1962,15 @@ def test_containers():
     # empty tab
     app.stopTab()
     app.stopTabbedFrame()
+
+    with pytest.raises(Exception) :
+        app.startTab()
+
+    with pytest.raises(Exception) :
+        app.stopTab()
+
+    with pytest.raises(Exception) :
+        app.stopTabbedFrame()
 
     app.setTabText("tbf1", "tab2", "new text")
     app.setTabText("tbf1", "tab3")
@@ -1900,7 +1984,6 @@ def test_containers():
     app.openTabbedFrame("tbf1")
     app.startTab("tab4")
     app.addLabel("tbf4_l1", TEXT_ONE)
-    app.stopTab()
     app.stopTabbedFrame()
 
     app.setTabbedFrameInactiveFg("tbf1", "red")
@@ -1932,7 +2015,6 @@ def test_containers():
     app.startPagedWindow("pg1")
     app.startPage()
     app.addLabel("pg1_l1", TEXT_ONE)
-    app.stopPage()
     app.startPage()
     app.addLabel("pg2_l1", TEXT_ONE)
     app.stopPage()
@@ -1940,6 +2022,15 @@ def test_containers():
     app.addLabel("pg3_l1", TEXT_ONE)
     app.stopPage()
     app.stopPagedWindow()
+
+    with pytest.raises(Exception) :
+        app.startPage()
+
+    with pytest.raises(Exception) :
+        app.stopPage()
+
+    with pytest.raises(Exception) :
+        app.stopPagedWindow()
 
     app.startPagedWindow("ppp2")
     app.startPage("ppp2_p1")
@@ -1995,6 +2086,8 @@ def test_containers():
     app.addLabel("sb1_l", TEXT_ONE)
     test_gui_options()
     app.stopSubWindow()
+    with pytest.raises(Exception) :
+        app.stopSubWindow()
 
     app.openSubWindow("sb1")
     app.addLabel("sb1_l2", TEXT_ONE)
@@ -2033,12 +2126,17 @@ def test_containers():
     app.addLabel("fr1_l2", TEXT_ONE)
     app.stopFrame()
 
+    with pytest.raises(Exception) :
+        app.stopFrame()
+
     app.startScrollPane("sp1")
     app.addLabel("sp_l", TEXT_ONE)
     app.stopScrollPane()
     app.openScrollPane("sp1")
     app.addLabel("sp_l2", TEXT_ONE)
     app.stopScrollPane()
+    with pytest.raises(Exception) :
+        app.stopScrollPane()
 
     sp = app.getWidget(app.SCROLLPANE, "sp1")
 
@@ -2257,9 +2355,10 @@ def test_dnd():
     tb = app.addTrashBin("tb")
     tb.config(fg="red")
     tb.dnd_commit(dw, None)
+
     # internal drag & drop
-    app.setLabelDroppable("ddd", dropFunc)
-    app.setLabelDraggable("ddd", dragFunc)
+    app.registerLabelDroppable("ddd", dropFunc)
+    app.registerLabelDraggable("ddd", dragFunc)
 
     # external drag & drop
     app.setLabelDropTarget("ddd", dropFunc)
@@ -2287,7 +2386,7 @@ with pytest.raises(Exception) :
     app3 = gui()
 app.createRightClickMenu("RCLICK")
 print(app.SHOW_VERSION())
-print(app.SHOW_PATHS)
+print(app.SHOW_PATHS())
 app._gui__showHelp()
 app.showSplash()
 print("NEXT...")
