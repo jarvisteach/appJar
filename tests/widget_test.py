@@ -64,6 +64,8 @@ def test_labels():
     print("\tTesting labels")
     assert isinstance(app.addEmptyLabel("el1"), Label)
     assert isinstance(app.addLabel("l0", TEXT_ONE), Label)
+    with pytest.raises(Exception) :
+        app.addLabel("l0", "crash here")
     app.addLabel("l1", TEXT_ONE)
     row = app.getRow()
     app.addLabel("rowl1", TEXT_ONE, row)
@@ -109,6 +111,8 @@ def test_labels():
 def test_entries():
     print("\tTesting entries")
     assert isinstance(app.addEntry("e1"), Entry)
+    with pytest.raises(Exception) :
+        app.addEntry("e1")
     assert isinstance(app.addNumericEntry("ne1"), Entry)
     assert isinstance(app.addSecretEntry("se1"), Entry)
 
@@ -355,6 +359,8 @@ def test_buttons():
         app.addButton(["brk1", "brk1", "brk1", "brk1"], [None, None])
 
     assert isinstance(app.addButton("b1_func", tst_but), Button)
+    with pytest.raises(Exception):
+        app.addButton("b1_func", None)
     assert isinstance(app.addButton("b1", None), Button)
     app.addButtons(["bb1", "bb2", "bb3", "bb4"], None)
     with pytest.raises(Exception) :
@@ -401,6 +407,8 @@ def test_radios():
     assert isinstance(app.addRadioButton("rb", TEXT_ONE), Radiobutton)
 
     app.addRadioButton("rb", TEXT_TWO)
+    with pytest.raises(Exception):
+        app.addRadioButton("rb", TEXT_TWO)
     app.addRadioButton("rb", TEXT_THREE)
 
     app.addRadioButton("rb1", TEXT_TWO)
@@ -449,6 +457,8 @@ def test_checks():
     print("\tTesting checks")
     assert isinstance(app.addCheckBox(TEXT_ONE), Checkbutton)
     app.addCheckBox(TEXT_TWO)
+    with pytest.raises(Exception):
+        app.addCheckBox(TEXT_TWO)
     app.addCheckBox(TEXT_THREE)
     assert isinstance(app.addNamedCheckBox(TEXT_TWO, "NCB1"), Checkbutton)
     app.addNamedCheckBox(TEXT_TWO, "NCB2")
@@ -518,6 +528,8 @@ def test_options():
     # add two option boxes
     assert isinstance(app.addOptionBox("l1", LIST_ONE), OptionMenu)
     app.addOptionBox("l2", LIST_TWO)
+    with pytest.raises(Exception):
+        app.addOptionBox("l2", LIST_TWO)
 
     assert app.getOptionBox("l1") == LIST_ONE[0]
     assert app.getOptionBox("l2") == LIST_TWO[0]
@@ -633,6 +645,8 @@ def test_spins():
     app.addSpinBox("s2", ["a", "b", "c", "d", "e"])
     assert isinstance(app.addSpinBoxRange("s3", 5, 200), Spinbox)
     app.addSpinBoxRange("s4", 25, 200)
+    with pytest.raises(Exception) :
+        app.addSpinBoxRange("s4", 25, 200)
 
     with pytest.raises(Exception) :
         app.addSpinBox("bs", 77)
@@ -681,6 +695,8 @@ def test_lists():
 
     assert isinstance(app.addListBox("l1", LIST_ONE), Listbox)
     app.addListBox("l2", LIST_TWO)
+    with pytest.raises(Exception) :
+        app.addListBox("l2", LIST_TWO)
     app.setListBoxFunction("l1", tester_function)
 
     app.setListItemBg("l1", LIST_ONE[1], "red")
@@ -826,6 +842,8 @@ def test_scales():
     print("\tTesting scales")
     assert isinstance(app.addScale("s1"), ajScale)
     app.addScale("s2")
+    with pytest.raises(Exception) :
+        app.addScale("s2")
     app.addScale("s3")
     sc = app.addScale("s4")
 
@@ -922,6 +940,8 @@ def test_message_boxes():
     print("\tTesting messages")
     assert isinstance(app.addMessage("m1", TEXT_ONE), Message)
     app.addMessage("m2", TEXT_TWO)
+    with pytest.raises(Exception) :
+        app.addMessage("m2", TEXT_TWO)
     assert isinstance(app.addEmptyMessage("m3"), Message)
     app.addEmptyMessage("m4")
 
@@ -958,6 +978,8 @@ def test_text_areas():
     print("\tTesting text areas")
     assert isinstance(app.addTextArea("t1"), AjText)
     app.addTextArea("t2")
+    with pytest.raises(Exception) :
+        app.addTextArea("t2")
     assert isinstance(app.addScrolledTextArea("st1"), AjScrolledText)
     app.addScrolledTextArea("st2")
 
@@ -1035,6 +1057,8 @@ def test_text_areas():
 def test_meters():
     print("\tTesting meters")
     assert isinstance(app.addMeter("m1"), Meter)
+    with pytest.raises(Exception) :
+        app.addMeter("m1")
     assert app.getMeter("m1")[0] == 0
 
     app.setMeter("m1", 45)
@@ -1093,6 +1117,8 @@ def test_properties():
 
     assert isinstance(app.addProperties("p1", HASH_ONE), Properties)
     app.addProperties("p2")
+    with pytest.raises(Exception) :
+        app.addProperties("p2")
 
     assert compareDictionaries(app.getProperties("p1"), HASH_ONE)
     assert app.getProperties("p2") == {}
@@ -1181,6 +1207,8 @@ def linkPressed(link=None):
 def test_links():
     print("\tTesting links")
     assert isinstance(app.addLink("l1", None), Link)
+#    with pytest.raises(Exception) :
+#        app.addLink("l1", None)
     assert isinstance(app.addLink("l2", linkPressed), Link)
     assert isinstance(app.addWebLink("l3", "http://appJar.info"), Link)
 
@@ -1215,6 +1243,8 @@ def test_auto_labels():
 def test_date_pickers():
     print("\tTesting date pickers")
     app.addDatePicker("d1")
+    with pytest.raises(Exception) :
+        app.addDatePicker("d1")
     app.addDatePicker("d2")
     app.addDatePicker("d3")
 
@@ -1280,6 +1310,9 @@ def test_pies():
     app.setPieChart("p1", "fish", 20)
     app.setPieChart("p1", "apples", 0)
 
+    with pytest.raises(Exception) :
+        app.addPieChart("p1", {"apples": 50, "oranges": 200, "grapes": 75, "beef": 300, "turkey": 150})
+
     # call generic setter functions
     test_setters("PieChart", "p1")
 
@@ -1296,6 +1329,9 @@ def test_trees():
         <person><name>CLive</name><age>28</age><gender>Male</gender></person>
         <person><name>Betty</name><age>51</age><gender>Female</gender></person>
         </people>""")
+
+    with pytest.raises(Exception) :
+        app.addTree("t1", "")
 
     app.setTreeDoubleClickFunction("t1", tester_function)
     app.setTreeEditFunction("t1", tester_function)
@@ -1328,6 +1364,9 @@ def test_grids():
         ["Betty", 51, "Female"]],
         action=tester_function,
         addRow=tester_function)
+
+    with pytest.raises(Exception) :
+        app.addGrid("g1", [])
 
     app.getGridEntries("g1")
     app.getGridSelectedCells("g1")
@@ -1452,6 +1491,8 @@ def test_images():
     print("\tTesting images")
 
     assert isinstance(app.addImage("im1", "1_flash.gif"), PhotoImage)
+    with pytest.raises(Exception) :
+        app.addImage("im1", "1_flash.gif")
     app.addAnimatedImage("anim1", "1_flash.gif")
 
     app.setAnimationSpeed("im1", 10)
@@ -2238,6 +2279,8 @@ def test_plots():
 def test_googlemap():
     print("\tTesting GoogleMaps:", PY_VER)
     app.addGoogleMap("gm2")
+    with pytest.raises(Exception) :
+        app.addGoogleMap("gm2")
     app.setGoogleMapLocation("gm2", "spain")
     app.searchGoogleMap("gm2", "germany")
     app.setGoogleMapTerrain("gm2", "Satellite")
@@ -2268,6 +2311,8 @@ def test_googlemap():
 def test_microbits():
     print("\tTesting plots:", PY_VER)
     app.addMicroBit("mb1")
+    with pytest.raises(Exception) :
+        app.addMicroBit("mb1")
     app.clearMicroBit("mb1")
     app.setMicroBitImage("mb1", "09090:90909:90009:09090:00900")
     app.clearMicroBit("mb1")
