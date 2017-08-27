@@ -9,6 +9,7 @@ Simple tKinter GUIs in Python
 [![Test Coverage][coveralls-image]][coveralls-link]
 [![Code Health][landscape-image]][landscape-link]
 [![Code Climate][climate-image]][climate-link]
+[![irc][irc-image]][irc-link]
 
 [pypi-v-image]: https://img.shields.io/pypi/v/appJar.png
 [pypi-v-link]: https://pypi.python.org/pypi/appJar
@@ -20,6 +21,8 @@ Simple tKinter GUIs in Python
 [landscape-link]: https://landscape.io/github/jarvisteach/appJar/appJar
 [coveralls-image]: https://coveralls.io/repos/github/jarvisteach/appJar/badge.svg
 [coveralls-link]: https://coveralls.io/github/jarvisteach/appJar
+[irc-image]:https://img.shields.io/badge/irc-%23appJar-lightgrey.svg
+[irc-link]:irc://freenode/channel?appJar
 
 Download Here: https://github.com/jarvisteach/appJar/raw/appJar/releases/appJar.zip
 
