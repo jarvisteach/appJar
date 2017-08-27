@@ -4,7 +4,12 @@ sys.path.append("../")
 from appJar import gui
 
 def press(btn):
-    print(app.getOptionBox("Fred"))
+    if btn == "Enable":
+        app.enableToggleFrame("Favourites")
+    elif btn == "Disable":
+        app.disableToggleFrame("Favourites")
+    else:
+        print(app.getOptionBox("Fred"))
 
 app=gui()
 app.setBg("yellow")
@@ -28,14 +33,15 @@ app.addRadioButton("fav", "Pears")
 app.addRadioButton("fav", "Grapes")
 app.stopToggleFrame()
 
-def press(btn):
+def get(btn):
     text = app.textBox("Text", "Text")
     if btn == "One":
         app.setToggleFrameText("Names", text)
     else:
         app.setToggleFrameText("Favourites", text)
 
-app.addButtons(["One", "Two"], press)
+app.addButtons(["One", "Two"], get)
+app.addButtons(["Enable", "Disable"], press)
 
 
 app.go()

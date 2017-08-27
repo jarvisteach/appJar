@@ -1871,7 +1871,10 @@ def test_containers():
     app.stopToggleFrame()
 
     app.disableToggleFrame("tf1")
+    app.disableToggleFrame("tf1")
     app.enableToggleFrame("tf1")
+    app.enableToggleFrame("tf1")
+    app.disableToggleFrame("tf1")
 
     app.startTabbedFrame("tbf1")
     app.startTab("tab1")

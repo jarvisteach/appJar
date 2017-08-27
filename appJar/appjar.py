@@ -3927,10 +3927,6 @@ class gui(object):
         toggle = self.__verifyItem(self.n_toggleFrames, title)
         toggle.config(text=newText)
 
-    def disableToggleFrame(self, title, disabled=True):
-        toggle = self.__verifyItem(self.n_toggleFrames, title)
-        toggle.disable(disabled)
-
     def getToggleFrameState(self, title):
         toggle = self.__verifyItem(self.n_toggleFrames, title)
         return toggle.isShowing()
