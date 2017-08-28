@@ -39,7 +39,6 @@ import datetime # datepicker & image
 import logging  # python's logger
 import inspect  # for logging
 import argparse # argument parser
-from threading import Thread
 
 import __main__ as theMain
 from platform import system as platform
@@ -56,8 +55,9 @@ winsound = None
 FigureCanvasTkAgg = Figure = None # matplotlib
 parseString = TreeItem = TreeNode = None # ajTree
 ajTreeNode = ajTreeData = None
-base64 = urlencode = urlopen = urlretrieve = quote_plus = json = Queue = None # GoogleMap
+base64 = urlencode = urlopen = urlretrieve = quote_plus = json = None # GoogleMap
 ConfigParser = codecs = ParsingError = None # used to parse language files
+Thread = Queue = None
 
 # details
 __author__ = "Richard Jarvis"
@@ -230,6 +230,7 @@ class gui(object):
     LABELFRAME = 30
     FRAME = 36
     TABBEDFRAME = 31
+    NOTEBOOK = 37
     PANEDFRAME = 32
     SCROLLPANE = 33
     PAGEDWINDOW = 34
@@ -267,6 +268,8 @@ class gui(object):
     # 2 containers for tabbedFrame
     C_TABBEDFRAME = 'tabbedFrame'
     C_TAB = 'tab'
+    C_NOTEBOOK = 'notebook'
+    C_NOTE = 'note'
     # 2 containers for panedFrame
     C_PANEDFRAME = 'panedFrame'
     C_PANE = 'pane'
@@ -304,6 +307,7 @@ class gui(object):
         LABELFRAME: "LabelFrame",
         FRAME: "Frame",
         TABBEDFRAME: "TabbedFrame",
+        NOTEBOOK: "Notebook",
         FILE_ENTRY: "FileEntry",
         DIRECTORY_ENTRY: "DirectoryEntry",
 #       TAB:"Tab",
@@ -775,23 +779,42 @@ class gui(object):
 
     def __loadURL(self):
         global base64, urlencode, urlopen, urlretrieve, quote_plus, json, Queue
-        if urlencode is None:
-            try: # python 2
-                from urllib import urlencode, urlopen, urlretrieve, quote_plus
-                import json
-                import base64
+        self.__loadThreading()
+        if self.Queue:
+            if urlencode is None:
+                try: # python 2
+                    from urllib import urlencode, urlopen, urlretrieve, quote_plus
+                    import json
+                    import base64
+                except ImportError: # python 3
+                    try:
+                        from urllib.parse import urlencode
+                        from urllib.parse import quote_plus
+                        from urllib.request import urlopen
+                        from urllib.request import urlretrieve
+                        import json
+                        import base64
+                    except:
+                        base64 = urlencode = urlopen = urlretrieve = quote_plus = json = Queue = False
+        else:
+            base64 = urlencode = urlopen = urlretrieve = quote_plus = json = Queue = False
+
+    def __loadThreading(self):
+        global Thread, Queue
+        if Thread is None:
+            try:
+                from threading import Thread
                 import Queue
             except ImportError: # python 3
                 try:
-                    from urllib.parse import urlencode
-                    from urllib.parse import quote_plus
-                    from urllib.request import urlopen
-                    from urllib.request import urlretrieve
-                    import json
-                    import base64
+                    from threading import Thread
                     import queue as Queue
                 except:
-                    base64 = urlencode = urlopen = urlretrieve = quote_plus = json = Queue = False
+                    Thread = Queue = False
+                return
+
+            self.eventQueue = Queue.PriorityQueue()
+            self.after(100, self.__processEventQueue)
 
     def __loadNanojpeg(self):
         global nanojpeg, array
@@ -1260,6 +1283,7 @@ class gui(object):
         self.n_labelFrames = {}
         self.n_ajFrame = {}
         self.n_tabbedFrames = {}
+        self.n_notebooks = {}
         self.n_panedFrames = {}
         self.n_panes = {}
         self.n_pagedWindows = {}
@@ -1867,15 +1891,48 @@ class gui(object):
     def after_cancel(self, id):
         return self.topLevel.after_cancel(id)
 
-    @staticmethod
-    def thread(func, *args):
+    def queueFunction(self, func, *args, **kwargs):
+        """ adds the specified function & arguments to the event queue
+        Functions in the event queue are actioned by the gui's main thread
+
+        :param func: the function to call
+        :param *args: any number of ordered arguments
+        :param **kwargs: any number of named arguments
+        :raises Full: if unable to add the function to the queue
+        """
+        self.__loadThreading()
+        if Queue is False:
+            gui.warn("Unable to queueFunction - threading not possible.")
+        else:
+            self.eventQueue.put((5, func, args, kwargs), block=False)
+
+    def queuePriorityFunction(self, func, *args, **kwargs):
+        self.__loadThreading()
+        if Queue is False:
+            gui.warn("Unable to queueFunction - threading not possible.")
+        else:
+            self.eventQueue.put((1, func, args, kwargs), block=False)
+
+    def __processEventQueue(self):
+        if not self.eventQueue.empty():
+            priority, func, args, kwargs = self.eventQueue.get()
+            gui.debug("FUNCTION: " + str(func) + "(" + str(args) + ")")
+            func(*args, **kwargs)
+
+        self.after(100, self.__processEventQueue)
+
+    def thread(self, func, *args):
         """ will run the supplied function in a separate thread
 
         param func: the function to run
         """
-        t = Thread(target=func, args=args)
-        t.daemon = True
-        t.start()
+        self.__loadThreading()
+        if Queue is False:
+            gui.warn("Unable to queueFunction - threading not possible.")
+        else:
+            t = Thread(target=func, args=args)
+            t.daemon = True
+            t.start()
 
     # internal function, called by 'after' function, after sleeping
     def __poll(self):
@@ -2433,6 +2490,8 @@ class gui(object):
         elif kind in [ self.C_TAB ]:
             # no dict of tabs - the container manages them...
             return self.n_tabbedFrames
+        elif kind in [ self.NOTE ]:
+            return self.n_notebooks
 
         elif kind in [ self.PANEDFRAME ]:
             return self.n_panedFrames
@@ -3496,6 +3555,12 @@ class gui(object):
     def openTab(self, frameTitle, tabTitle):
         self.__openContainer(self.C_TAB, frameTitle+"__"+tabTitle)
 
+    def openNotebook(self, title):
+        self.__openContainer(self.C_NOTEBOOK, title)
+
+    def openNote(self, frameTitle, tabTitle):
+        self.__openContainer(self.C_NOTEBOOK, frameTitle+"__"+tabTitle)
+
     def openPanedFrame(self, title):
         self.__openContainer(self.C_PANEDFRAME, title)
 
@@ -3618,6 +3683,29 @@ class gui(object):
             tabTitle = self.containerStack[-1]['title'] + "__" + title
             self.__addContainer(tabTitle,
                 self.C_TAB, self.containerStack[-1]['container'].addTab(title), 0, 1, sticky)
+        elif fType == self.C_NOTEBOOK:
+            self.__verifyItem(self.n_notebooks, title, True)
+            notebook = ttk.Notebook(self.getContainer())
+#            tabbedFrame.isContainer = True
+            self.__positionWidget(
+                notebook,
+                row,
+                column,
+                colspan,
+                rowspan,
+                sticky=sticky)
+            self.n_notebooks[title] = notebook
+
+            # now, add to top of stack
+            self.__addContainer(title, self.C_NOTEBOOK, notebook, 0, 1, sticky)
+            return notebook
+        elif fType == self.C_NOTE:
+            # add to top of stack
+            self.containerStack[-1]['widgets'] = True
+            noteTitle = self.containerStack[-1]['title'] + "__" + title
+            frame = ttk.Frame(self.containerStack[-1]['container'])
+            self.containerStack[-1]['container'].add(frame, text=title)
+            self.__addContainer(noteTitle, self.C_NOTE, frame, 0, 1, sticky)
         elif fType == self.C_PANEDFRAME:
             # if we previously put a frame for widgets
             # remove it
@@ -3715,6 +3803,47 @@ class gui(object):
             return page
         else:
             raise Exception("Unknown container: " + fType)
+
+    def startNotebook(
+            self,
+            title,
+            row=None,
+            column=0,
+            colspan=0,
+            rowspan=0,
+            sticky="NSEW"):
+        return self.startContainer(
+            self.C_NOTEBOOK,
+            title,
+            row,
+            column,
+            colspan,
+            rowspan,
+            sticky)
+
+    def stopNotebook(self):
+        # auto close the existing TAB - keep it?
+        if self.containerStack[-1]['type'] == self.C_NOTE:
+            self.warn("You didn't STOP the previous NOTE")
+            self.stopContainer()
+        self.stopContainer()
+
+    def startNote(self, title):
+        # auto close the previous TAB - keep it?
+        if self.containerStack[-1]['type'] == self.C_NOTE:
+            self.warn("You didn't STOP the previous NOTE")
+            self.stopContainer()
+        elif self.containerStack[-1]['type'] != self.C_NOTEBOOK:
+            raise Exception(
+                "Can't add a Note to the current container: ", self.containerStack[-1]['type'])
+        self.startContainer(self.C_NOTE, title)
+
+    def stopNote(self):
+        if self.containerStack[-1]['type'] != self.C_NOTE:
+            raise Exception("Can't stop a NOTE, currently in:",
+                            self.containerStack[-1]['type'])
+        self.stopContainer()
+
 
     ####### Tabbed Frames ########
 
@@ -4968,7 +5097,7 @@ class gui(object):
         if urlencode is False:
             raise Exception("Unable to load GoogleMaps - urlencode library not available")
         self.__verifyItem(self.n_maps, title, True)
-        gMap = GoogleMap(self.getContainer())
+        gMap = GoogleMap(self.getContainer(), self)
         self.__positionWidget(gMap, row, column, colspan, rowspan)
         self.n_maps[title] = gMap
         return gMap
@@ -11391,12 +11520,15 @@ class AJRectangle(object):
 class GoogleMap(LabelFrame):
     """ Class to wrap a GoogleMap tile download into a widget"""
 
-    def __init__(self, parent, defaultLocation="Marlborough, UK"):
+    def __init__(self, parent, app, defaultLocation="Marlborough, UK"):
         LabelFrame.__init__(self, parent, text="GoogleMaps")
         self.parent = parent
         self.imageQueue = Queue.Queue()
         self.parent.after(200, self.updateMap)
         self.defaultLocation = defaultLocation
+        self.currentLocation = self.defaultLocation
+        self.parent.after(0, self.updateLocation)
+        self.app = app
 
         self.TERRAINS = ("Roadmap", "Satellite", "Hybrid", "Terrain")
         self.GOOGLE_URL =  "http://maps.google.com/maps/api/staticmap?"
@@ -11411,7 +11543,7 @@ class GoogleMap(LabelFrame):
         imgObj = None
         self.rawData = None
         self.mapData = None
-        self.getMapData()
+        self.app.thread(self.getMapData)
 
         # if we got some map data then load it
         if self.mapData is not None:
@@ -11502,7 +11634,7 @@ class GoogleMap(LabelFrame):
 
     def __setMapParams(self):
         if "center" not in self.params or self.params["center"] == None or self.params["center"] == "":
-            self.params["center"] = self.getCurrentLocation()
+            self.params["center"] = self.currentLocation
         if "zoom" not in self.params:
             self.params["zoom"] = 16
         if "size" not in self.params:
@@ -11519,11 +11651,11 @@ class GoogleMap(LabelFrame):
 
     def removeMarkers(self):
         self.markers = []
-        gui.thread(self.getMapData)
+        self.app.thread(self.getMapData)
 
     def addMarker(self, location):
         self.markers.append(location)
-        gui.thread(self.getMapData)
+        self.app.thread(self.getMapData)
 
     def saveTile(self, location):
         if self.rawData is not None:
@@ -11542,7 +11674,7 @@ class GoogleMap(LabelFrame):
     def setSize(self, size):
         if size != self.params["size"]:
             self.params["size"] = size.lower()
-            gui.thread(self.getMapData)
+            self.app.thread(self.getMapData)
 
     def changeTerrain(self, terrainType):
         terrainType = terrainType.title()
@@ -11550,26 +11682,30 @@ class GoogleMap(LabelFrame):
             self.terrainType.set(terrainType)
             if self.params["maptype"] != self.terrainType.get().lower():
                 self.params["maptype"] = self.terrainType.get().lower()
-                gui.thread(self.getMapData)
+                self.app.thread(self.getMapData)
 
     def changeLocation(self, location):
         self.location.set(location) # update the entry
         if self.params["center"] != location:
             self.params["center"] = location
-            gui.thread(self.getMapData)
+            self.app.thread(self.getMapData)
 
     def setZoom(self, zoom):
         if 0 <= zoom <= 22:
             self.params["zoom"] = zoom
-            gui.thread(self.getMapData)
+            self.app.thread(self.getMapData)
 
     def zoom(self, mod):
         if mod == "+" and self.params["zoom"] < 22:
             self.params["zoom"] += 1
-            gui.thread(self.getMapData)
+            self.app.thread(self.getMapData)
         elif mod == "-" and self.params["zoom"] > 0:
             self.params["zoom"] -= 1
-            gui.thread(self.getMapData)
+            self.app.thread(self.getMapData)
+
+    def updateLocation(self):
+        self.app.thread(self.getCurrentLocation)
+        self.parent.after(5000, self.updateLocation)
 
     def updateMap(self):
         if not self.imageQueue.empty():
@@ -11603,15 +11739,19 @@ class GoogleMap(LabelFrame):
     def getMapData(self):
         """ will query GoogleMaps & download the image data as a blob """
         if self.params['center'] == "":
-            self.params["center"] = self.getCurrentLocation()
+            self.params["center"] = self.currentLocation
         self.__buildQueryURL()
-        try:
-            u = urlopen(self.request)
-            rawData = u.read()
-            u.close()
-            self.imageQueue.put(rawData)
-        except Exception as e:
-            gui.error("Unable to contact GoogleMaps")
+        gotMap = False
+        while not gotMap:
+            try:
+                u = urlopen(self.request)
+                rawData = u.read()
+                u.close()
+                self.imageQueue.put(rawData)
+                gotMap = True
+            except Exception as e:
+                gui.error("Unable to contact GoogleMaps")
+                time.sleep(1)
 
     def getMapFile(self, fileName):
         """ will query GoogleMaps & download the image into the named file """
@@ -11626,14 +11766,19 @@ class GoogleMap(LabelFrame):
 
     def getCurrentLocation(self):
         gui.debug("Location request URL: " + self.LOCATION_URL)
-        try:
-            return self.__locationLookup()
-        except Exception as e:
-            gui.error("Unable to contact location server, using default: " + self.defaultLocation)
-            return self.defaultLocation
+        gotLocation = False
+        while not gotLocation:
+            try:
+                self.currentLocation = self.__locationLookup()
+                gotLocation = True
+            except Exception as e:
+                gui.error("Unable to contact location server, using default: " + self.defaultLocation)
+            time.sleep(1)
 
     def __locationLookup(self):
-        data =  urlopen(self.LOCATION_URL).read().decode("utf-8")
+        u =  urlopen(self.LOCATION_URL)
+        data = u.read().decode("utf-8")
+        u.close()
         gui.debug("Location data: " + data)
         data = json.loads(data)
 #        location = data["loc"]
