@@ -1,4 +1,5 @@
 import sys
+import time
 import datetime
 import pytest
 
@@ -1486,6 +1487,16 @@ def test_events():
     print(" >> not implemented...")
     #print("\t >> all tests complete")
 
+def run_events():
+
+    time.sleep(1)
+    assert app.getLabel("test_threads") == "full"
+    app.queuePriorityFunction(app.setLabel, "test_threads", "priority")
+    app.queuePriorityFunction(checkPriority)
+
+def checkPriority():
+    print("SHOULD be PRIOR>>>", app.getLabel("test_threads"))
+    assert app.getLabel("test_threads") == "priority"
 
 def test_images():
     print("\tTesting images")
@@ -2189,6 +2200,8 @@ def test_containers():
 
             testScrollPaneScrolling(sp)
 
+
+
 def testScrollPaneScrolling(sp):
     event = Event()
 
@@ -2501,6 +2514,7 @@ def test_gui(btn=None):
     global doStop
     if doStop == 0:
         test_pop_ups()
+        app.thread(run_events)
     if doStop == 2:
         test_focus()
         test_sets()
@@ -2519,17 +2533,20 @@ def test_gui(btn=None):
         doStop += 1
         print("Waiting", doStop)
     else:
-        print("Stopping app")
+        print("HERE WE GO: Stopping app")
         try:
             app.stop()
-        except:
-            print("weird error...")
+        except Exception as e:
+            print("weird error...: ", e)
 
 app.registerEvent(test_gui)
 app.setPollTime(1000)
+app.addLabel("test_threads", "empty")
+assert app.getLabel("test_threads") == "empty"
+app.queueFunction(app.setLabel, "test_threads", "full")
 app.go("CANADIAN")
 
-print("<<<Widget Test Suite Complete>>>")
+print("<<<Widget Test Suite Complete on app>>>")
 del app
 
 doStop = 0
@@ -2553,6 +2570,28 @@ app2.useTtk()
 app2.setTtkTheme()
 app2.setTtkTheme("broken")
 app2.setTtkTheme("default")
+app2.startNotebook("nb1")
+app2.startNote("nb1_n1")
+app2.addLabel("nb1_l1", TEXT_ONE)
+app2.startNote("nb1_n2")
+app2.addLabel("nb2_l1", TEXT_ONE)
+app2.stopNote()
+app2.startNote("nb1_n3")
+app2.addLabel("nb3_l1", TEXT_ONE)
+app2.stopNote()
+app2.stopNotebook()
+
+with pytest.raises(Exception) :
+    app2.startNote()
+
+with pytest.raises(Exception) :
+    app2.stopNote()
+
+with pytest.raises(Exception) :
+    app2.stopNotebook()
+
+with pytest.raises(Exception) :
+    app2.startNotebook("nb1")
 
 app2.showSplash(text="New test", fill="green", stripe="pink", fg="green", font=50)
 app2.startLabelFrame("l1")

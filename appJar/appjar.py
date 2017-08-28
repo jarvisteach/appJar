@@ -811,10 +811,9 @@ class gui(object):
                     import queue as Queue
                 except:
                     Thread = Queue = False
-                return
+                    return
 
-            self.eventQueue = Queue.PriorityQueue()
-            self.after(100, self.__processEventQueue)
+            self.eventQueue = Queue.Queue()
 
     def __loadNanojpeg(self):
         global nanojpeg, array
@@ -945,7 +944,7 @@ class gui(object):
                         if PYTHON2:
                             TreeNode.drawtext(self)
                         else:
-                            super(ajTreeNode, self).drawtext()
+                            super(__class__, self).drawtext()
 
                         self.colourLabels()
 
@@ -955,7 +954,7 @@ class gui(object):
                         if PYTHON2:
                             TreeNode.edit_finish(self, event)
                         else:
-                            super(ajTreeNode, self).edit_finish(event)
+                            super(__class__, self).edit_finish(event)
                         if self.editEvent is not None:
                             self.editEvent()
 
@@ -1820,6 +1819,9 @@ class gui(object):
         # start the call back & flash loops
         self.__poll()
         self.__flash()
+        # if the Queue has been created - then we might get events
+        if Queue:
+            self.__processEventQueue()
 
         # start the main loop
         try:
@@ -1848,16 +1850,23 @@ class gui(object):
             self.topLevel.after_cancel(self.pollId)
             self.topLevel.after_cancel(self.flashId)
             self.topLevel.after_cancel(self.preloadAnimatedImageId)
+            if Queue:
+                self.topLevel.after_cancel(self.processQueueId)
 
             # stop any animations
             for key in self.n_imageAnimationIds:
                 self.topLevel.after_cancel(self.n_imageAnimationIds[key])
+
+            # stop any maps
+            for key in self.n_maps:
+                self.n_maps[key].stopUpdates()
 
             # stop any sounds, ignore error when not on Windows
             try:
                 self.stopSound()
             except:
                 pass
+
             self.topLevel.quit()
             self.topLevel.destroy()
             self.__class__.instantiated = False
@@ -1919,7 +1928,7 @@ class gui(object):
             gui.debug("FUNCTION: " + str(func) + "(" + str(args) + ")")
             func(*args, **kwargs)
 
-        self.after(100, self.__processEventQueue)
+        self.processQueueId = self.after(100, self.__processEventQueue)
 
     def thread(self, func, *args):
         """ will run the supplied function in a separate thread
@@ -4414,7 +4423,7 @@ class gui(object):
         if PYTHON2:
             object.__setattr__(self, name, value)
         else:
-            super(gui, self).__setattr__(name, value)
+            super(__class__, self).__setattr__(name, value)
 
 #####################################
 # FUNCTION to add labels before a widget
@@ -8848,7 +8857,7 @@ class Meter(Frame):
         if PYTHON2:
             Frame.config(self, cnf, **kw)
         else:
-            super(Frame, self).config(cnf, **kw)
+            super(__class__, self).config(cnf, **kw)
 
         self.makeBar()
 
@@ -9185,7 +9194,7 @@ class TabbedFrame(Frame):
         if PYTHON2:
             Frame.config(self, cnf, **kw)
         else:
-            super(Frame, self).config(cnf, **kw)
+            super(__class__, self).config(cnf, **kw)
 
     def addTab(self, text, **kwargs):
         # check for duplicates
@@ -9447,7 +9456,7 @@ class Link(Label):
         if PYTHON2:
             Label.config(self, **kw)
         else:
-            super(Label, self).config(**kw)
+            super(__class__, self).config(**kw)
 
 #####################################
 # Properties Widget
@@ -9500,7 +9509,7 @@ class Properties(LabelFrame):
         if PYTHON2:
             LabelFrame.config(self, cnf, **kw)
         else:
-            super(LabelFrame, self).config(cnf, **kw)
+            super(__class__, self).config(cnf, **kw)
 
     def addProperties(self, props, callFunction=True):
 
@@ -9639,7 +9648,7 @@ class Separator(Frame):
         if PYTHON2:
             Frame.config(self, cnf, **kw)
         else:
-            super(Frame, self).config(cnf, **kw)
+            super(__class__, self).config(cnf, **kw)
 
 #####################################
 # Pie Chart Class
@@ -9837,7 +9846,7 @@ class ToggleFrame(Frame):
         if PYTHON2:
             Frame.config(self, cnf, **kw)
         else:
-            super(Frame, self).config(cnf, **kw)
+            super(__class__, self).config(cnf, **kw)
 
 
     def cget(self, option):
@@ -9847,7 +9856,7 @@ class ToggleFrame(Frame):
         if PYTHON2:
             return Frame.cget(self, option)
         else:
-            return super(Frame, self).cget(option)
+            return super(__class__, self).cget(option)
 
     def toggle(self):
         if not self.showing:
@@ -9991,7 +10000,7 @@ class PagedWindow(Frame):
         if PYTHON2:
             Frame.config(self, cnf, **kw)
         else:
-            super(Frame, self).config(cnf, **kw)
+            super(__class__, self).config(cnf, **kw)
 
 
     # functions to change the labels of the two buttons
@@ -10378,7 +10387,7 @@ class ParentBox(Frame):
         if PYTHON2:
             Frame.config(self, cnf, **kw)
         else:
-            super(Frame, self).config(cnf, **kw)
+            super(__class__, self).config(cnf, **kw)
 
     def processConfig(self, kw):
         return kw
@@ -10414,7 +10423,7 @@ class ListBoxContainer(Frame):
         if PYTHON2:
             Frame.config(self, cnf, **kw)
         else:
-            super(Frame, self).config(cnf, **kw)
+            super(__class__, self).config(cnf, **kw)
 
 
 class Pane(Frame):
@@ -10467,7 +10476,7 @@ class AutoScrollbar(Scrollbar):
         if PYTHON2:
             Scrollbar.config(self, cnf, **kw)
         else:
-            super(Scrollbar, self).config(cnf, **kw)
+            super(__class__, self).config(cnf, **kw)
 
 #######################
 # Upgraded scale - http://stackoverflow.com/questions/42843425/change-trough-increment-in-python-tkinter-scale-without-affecting-slider/
@@ -10583,7 +10592,7 @@ class SelectableLabel(Entry):
             if PYTHON2:
                 return Entry.cget(self, kw)
             else:
-                return super(Entry, self).cget(kw)
+                return super(__class__, self).cget(kw)
 
     def config(self, cnf=None, **kw):
         self.configure(cnf, **kw)
@@ -10600,7 +10609,7 @@ class SelectableLabel(Entry):
         if PYTHON2:
             Entry.config(self, cnf, **kw)
         else:
-            super(Entry, self).config(cnf, **kw)
+            super(__class__, self).config(cnf, **kw)
 
 
 #######################
@@ -10658,7 +10667,7 @@ class ScrollPane(Frame):
         if PYTHON2:
             Frame.config(self, **kw)
         else:
-            super(Frame, self).config(**kw)
+            super(__class__, self).config(**kw)
 
     # track changes to the canvas and frame width and sync them,
     # http://www.scriptscoop2.com/t/35d742299f35/python-tkinter-scrollbar-for-frame.html
@@ -10932,7 +10941,7 @@ class SimpleEntryDialog(Dialog):
         if PYTHON2:
             Dialog.__init__(self, parent, title)
         else:
-            super(SimpleEntryDialog, self).__init__(parent, title)
+            super(__class__, self).__init__(parent, title)
 
     def clearError(self, e):
         if self.error:
@@ -10968,7 +10977,7 @@ class TextDialog(SimpleEntryDialog):
         if PYTHON2:
             SimpleEntryDialog.__init__(self, parent, title, question, defaultVar)
         else:
-            super(TextDialog, self).__init__(parent, title, question, defaultVar)
+            super(__class__, self).__init__(parent, title, question, defaultVar)
 
     def validate(self):
         res = self.e1.get()
@@ -10988,7 +10997,7 @@ class NumDialog(SimpleEntryDialog):
         if PYTHON2:
             SimpleEntryDialog.__init__(self, parent, title, question)
         else:
-            super(NumDialog, self).__init__(parent, title, question)
+            super(__class__, self).__init__(parent, title, question)
 
     def validate(self):
         res = self.e1.get()
@@ -11522,18 +11531,19 @@ class GoogleMap(LabelFrame):
 
     def __init__(self, parent, app, defaultLocation="Marlborough, UK"):
         LabelFrame.__init__(self, parent, text="GoogleMaps")
+        self.API_KEY = ""
         self.parent = parent
         self.imageQueue = Queue.Queue()
-        self.parent.after(200, self.updateMap)
         self.defaultLocation = defaultLocation
-        self.currentLocation = self.defaultLocation
-        self.parent.after(0, self.updateLocation)
+        self.currentLocation = None
         self.app = app
 
         self.TERRAINS = ("Roadmap", "Satellite", "Hybrid", "Terrain")
-        self.GOOGLE_URL =  "http://maps.google.com/maps/api/staticmap?"
+        self.MAP_URL =  "http://maps.google.com/maps/api/staticmap?"
+        self.GEO_URL = "https://maps.googleapis.com/maps/api/geocode/json?"
         self.LOCATION_URL = "http://freegeoip.net/json/"
 #        self.LOCATION_URL = "http://ipinfo.io/json"
+        self.setCurrentLocation()
 
         # the parameters that we store
         # keeps getting updated, then sent to GoogleMaps
@@ -11544,6 +11554,8 @@ class GoogleMap(LabelFrame):
         self.rawData = None
         self.mapData = None
         self.app.thread(self.getMapData)
+
+        self.updateMapId = self.parent.after(500, self.updateMap)
 
         # if we got some map data then load it
         if self.mapData is not None:
@@ -11614,6 +11626,13 @@ class GoogleMap(LabelFrame):
 
         self.__placeControls()
 
+    def destroy(self):
+        self.stopUpdates()
+        if PYTHON2:
+            LabelFrame.destroy(self)
+        else:
+            super(__class__, self).destroy()
+
     def __removeControls(self):
         self.locationEntry.place_forget()
         self.terrainOption.place_forget()
@@ -11621,6 +11640,9 @@ class GoogleMap(LabelFrame):
         self.buttons[1].place_forget()
         self.buttons[2].place_forget()
         self.buttons[3].place_forget()
+
+    def stopUpdates(self):
+        self.parent.after_cancel(self.updateMapId)
 
     def __placeControls(self):
         self.locationEntry.place(rely=0, relx=0, x=8, y=8, anchor=NW)
@@ -11703,10 +11725,6 @@ class GoogleMap(LabelFrame):
             self.params["zoom"] -= 1
             self.app.thread(self.getMapData)
 
-    def updateLocation(self):
-        self.app.thread(self.getCurrentLocation)
-        self.parent.after(5000, self.updateLocation)
-
     def updateMap(self):
         if not self.imageQueue.empty():
             self.rawData = self.imageQueue.get()
@@ -11725,16 +11743,25 @@ class GoogleMap(LabelFrame):
                 self.canvas.config(width=self.w, height=self.h)
                 self.__placeControls()
             self.buttons[3].registerWebpage(self.request)
-        self.parent.after(200, self.updateMap)
+        self.updateMapId = self.parent.after(200, self.updateMap)
 
     def __buildQueryURL(self):
-        self.request = self.GOOGLE_URL + urlencode(self.params)
+        self.request = self.MAP_URL + urlencode(self.params)
         if len(self.markers) > 0:
             m = "|".join(self.markers)
             m = quote_plus(m)
             self.request += "&markers=" + m
             
         gui.debug("GoogleMap search URL: " + self.request)
+
+    def __buildGeoURL(self, location):
+        """ for future use - gets the location
+        """
+        p = {}
+        p["address"] = location
+        p["key"] = self.API_KEY
+        req = self.GEO_URL + urlencode(p)
+        return req
 
     def getMapData(self):
         """ will query GoogleMaps & download the image data as a blob """
@@ -11764,16 +11791,13 @@ class GoogleMap(LabelFrame):
             gui.error("Unable to contact GoogleMaps")
             return None
 
-    def getCurrentLocation(self):
+    def setCurrentLocation(self):
         gui.debug("Location request URL: " + self.LOCATION_URL)
-        gotLocation = False
-        while not gotLocation:
-            try:
-                self.currentLocation = self.__locationLookup()
-                gotLocation = True
-            except Exception as e:
-                gui.error("Unable to contact location server, using default: " + self.defaultLocation)
-            time.sleep(1)
+        try:
+            self.currentLocation = self.__locationLookup()
+        except Exception as e:
+            gui.error("Unable to contact location server, using default: " + self.defaultLocation)
+            self.currentLocation = self.defaultLocation
 
     def __locationLookup(self):
         u =  urlopen(self.LOCATION_URL)
@@ -11911,7 +11935,7 @@ class TrashBin(CanvasDnd):
         if PYTHON2:
             CanvasDnd.config(self, **kw)
         else:
-            super(CanvasDnd, self).config(**kw)
+            super(__class__, self).config(**kw)
 
 # This is a prototype thing to be dragged and dropped.
 class DraggableWidget:
