@@ -22,7 +22,7 @@ Simple tKinter GUIs in Python
 [coveralls-image]: https://coveralls.io/repos/github/jarvisteach/appJar/badge.svg
 [coveralls-link]: https://coveralls.io/github/jarvisteach/appJar
 [irc-image]:https://img.shields.io/badge/irc-%23appJar-lightgrey.svg
-[irc-link]:irc://freenode/channel?appJar
+[irc-link]:http://webchat.freenode.net/?channels=appJar&nick=appJarGuest
 
 Download Here: https://github.com/jarvisteach/appJar/raw/appJar/releases/appJar.zip
 
