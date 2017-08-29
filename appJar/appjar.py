@@ -597,6 +597,7 @@ class gui(object):
         self.hasMenu = False
         self.hasStatus = False
         self.hasTb = False
+        self.tbPinned = True
         self.copyAndPaste = CopyAndPaste(self.topLevel)
 
         # won't pack, if don't pack it here
@@ -615,10 +616,6 @@ class gui(object):
         # set up the main container to be able to host an image
         self.__configBg(container)
 
-        # an array to hold any threaded events....
-        self.events = []
-        self.pollTime = 250
-        self.built = True
         if self.platform == self.WINDOWS:
             try:
                 self.setIcon(self.appJarIcon)
@@ -627,6 +624,17 @@ class gui(object):
 
         if self.ttkStyle is not None:
             self.setTtkTheme(self.ttkStyle)
+
+        # for configuting event processing
+        self.EVENT_SIZE = 1000
+        self.EVENT_SPEED = 100
+        self.preloadAnimatedImageId = None
+        self.processQueueId = None
+
+        # an array to hold any threaded events....
+        self.events = []
+        self.pollTime = 250
+        self.built = True
 
     def __handleArgs(self):
         parser = argparse.ArgumentParser(
@@ -780,7 +788,7 @@ class gui(object):
     def __loadURL(self):
         global base64, urlencode, urlopen, urlretrieve, quote_plus, json, Queue
         self.__loadThreading()
-        if self.Queue:
+        if Queue:
             if urlencode is None:
                 try: # python 2
                     from urllib import urlencode, urlopen, urlretrieve, quote_plus
@@ -813,7 +821,8 @@ class gui(object):
                     Thread = Queue = False
                     return
 
-            self.eventQueue = Queue.Queue()
+            self.eventQueue = Queue.Queue(maxsize=self.EVENT_SIZE)
+            self.__processEventQueue()
 
     def __loadNanojpeg(self):
         global nanojpeg, array
@@ -1782,6 +1791,7 @@ class gui(object):
         # create appJar menu, if no menuBar created
         if not self.hasMenu:
             self.addAppJarMenu()
+
         if self.platform == self.WINDOWS:
             self.menuBar.add_cascade(menu=self.n_menus["WIN_SYS"])
         self.topLevel.config(menu=self.menuBar)
@@ -1819,9 +1829,6 @@ class gui(object):
         # start the call back & flash loops
         self.__poll()
         self.__flash()
-        # if the Queue has been created - then we might get events
-        if Queue:
-            self.__processEventQueue()
 
         # start the main loop
         try:
@@ -1849,8 +1856,9 @@ class gui(object):
             # stop the after loops
             self.topLevel.after_cancel(self.pollId)
             self.topLevel.after_cancel(self.flashId)
-            self.topLevel.after_cancel(self.preloadAnimatedImageId)
-            if Queue:
+            if self.preloadAnimatedImageId:
+                self.topLevel.after_cancel(self.preloadAnimatedImageId)
+            if self.processQueueId:
                 self.topLevel.after_cancel(self.processQueueId)
 
             # stop any animations
@@ -1928,7 +1936,7 @@ class gui(object):
             gui.debug("FUNCTION: " + str(func) + "(" + str(args) + ")")
             func(*args, **kwargs)
 
-        self.processQueueId = self.after(100, self.__processEventQueue)
+        self.processQueueId = self.after(self.EVENT_SPEED, self.__processEventQueue)
 
     def thread(self, func, *args):
         """ will run the supplied function in a separate thread
@@ -2499,12 +2507,12 @@ class gui(object):
         elif kind in [ self.C_TAB ]:
             # no dict of tabs - the container manages them...
             return self.n_tabbedFrames
-        elif kind in [ self.NOTE ]:
+        elif kind in [ self.NOTEBOOK, self.C_NOTEBOOK, self.C_NOTE ]:
             return self.n_notebooks
 
         elif kind in [ self.PANEDFRAME ]:
             return self.n_panedFrames
-        elif kind in [ self.PANE, self.C_PANE ]:
+        elif kind in [ self.C_PANE ]:
             return self.n_panes
 
         elif kind in [ self.C_SUBWINDOW ]:
@@ -4417,8 +4425,8 @@ class gui(object):
         return handlerFunction
 
     def __setattr__(self, name, value):
-        if self.built and not hasattr(
-                self, name):  # would this create a new attribute?
+        # would this create a new attribute?
+        if self.built and not hasattr(self, name):
             raise AttributeError("Creating new attributes is not allowed!")
         if PYTHON2:
             object.__setattr__(self, name, value)
@@ -11556,6 +11564,7 @@ class GoogleMap(LabelFrame):
         self.app.thread(self.getMapData)
 
         self.updateMapId = self.parent.after(500, self.updateMap)
+        self.request = "http://maps.google.com"
 
         # if we got some map data then load it
         if self.mapData is not None:

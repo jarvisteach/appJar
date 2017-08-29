@@ -1299,7 +1299,7 @@ def test_date_pickers():
 
 
     # call generic setter functions
-    test_setters("DatePicker", "d1")
+#    test_setters("DatePicker", "d1")
 
     print("\t >> all tests complete")
 
@@ -1349,7 +1349,7 @@ def test_trees():
     app.setTreeColours("t1", "red", "yellow", "yellow", "red")
 
     # call generic setter functions
-    test_setters("Tree", "t1")
+#    test_setters("Tree", "t1")
 
     print(" >> not implemented...")
     #print("\t >> all tests complete")
@@ -2291,7 +2291,7 @@ def test_plots():
 
 def test_googlemap():
     print("\tTesting GoogleMaps:", PY_VER)
-    app.addGoogleMap("gm2")
+    gm2 = app.addGoogleMap("gm2")
     with pytest.raises(Exception) :
         app.addGoogleMap("gm2")
     app.setGoogleMapLocation("gm2", "spain")
@@ -2315,8 +2315,7 @@ def test_googlemap():
 
     app.setGoogleMapMarker("gm2", "")
     app.saveGoogleMap("gm2", "gm.gif")
-    app.getMapFile()
-    app.getMapFile("image.map")
+    gm2.getMapFile("image.map")
 
     print(" >> not implemented...")
     #print("\t >> all tests complete")
@@ -2445,7 +2444,6 @@ with pytest.raises(Exception) :
 app.createRightClickMenu("RCLICK")
 print(app.SHOW_VERSION())
 print(app.SHOW_PATHS())
-app._gui__showHelp()
 app.showSplash()
 print("NEXT...")
 
