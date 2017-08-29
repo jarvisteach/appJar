@@ -1659,7 +1659,7 @@ def test_menus():
     app.addMenuWindow()
     app.addMenuHelp(tester_function)
 
-    app.addEntry("RCLICK")
+    app.addEntry("RCLICK2")
     app.addMenuEdit()
 
     app.enableMenubar()
@@ -1677,8 +1677,17 @@ def test_menus():
     print(" >> not implemented...")
     #print("\t >> all tests complete")
 
+def dismissEditMenu():
+    for i in range(100):
+        print("dismissit...")
+        app.n_menus["EDIT"].unpost()
+        app.n_menus["EDIT"].invoke(1)
+        time.sleep(250)
+
 def test_rightClick():
 # this causes testing to hang - the popup doesn't go....
+    ent = app.addEntry("RCLICK")
+    app.setEntryFocus("RCLICK")
     event = Event()
     event.widget = ent
     event.x_root = 100
@@ -1689,7 +1698,6 @@ def test_rightClick():
         app._gui__rightClick(event)
         app.setEntry("RCLICK", "text")
         app._gui__rightClick(event)
-
 
 # this breaks - there is no widget in focus??
     for action in ["Cut", "Copy", "Paste", "Select All", "Clear Clipboard", "Clear All", "Undo", "Redo"]:
@@ -2513,6 +2521,9 @@ def test_gui(btn=None):
     if doStop == 0:
         test_pop_ups()
         app.thread(run_events)
+        app.setEntryFocus("e1")
+        app.thread(dismissEditMenu)
+        app.thread(test_rightClick)
     if doStop == 2:
         test_focus()
         test_sets()
