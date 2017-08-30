@@ -29,8 +29,7 @@ except ImportError:
     PYTHON2 = False
     PY_NAME = "python3"
 
-import os
-import sys
+import os, sys, locale
 import re
 import imghdr   # images
 import time     # splashscreen
@@ -57,26 +56,34 @@ FigureCanvasTkAgg = Figure = None # matplotlib
 parseString = TreeItem = TreeNode = None # ajTree
 ajTreeNode = ajTreeData = None
 base64 = urlencode = urlopen = urlretrieve = quote_plus = json = None # GoogleMap
+ConfigParser = codecs = ParsingError = None # used to parse language files
+Thread = Queue = None
 
 # details
 __author__ = "Richard Jarvis"
 __copyright__ = "Copyright 2016-2017, Richard Jarvis"
 __credits__ = ["Graham Turner", "Sarah Murch"]
-__license__ = "GPL"
+__license__ = "Apache 2.0"
 __version__ = "0.08"
 __maintainer__ = "Richard Jarvis"
 __email__ = "info@appJar.info"
 __status__ = "Development"
 __url__ = "http://appJar.info"
+try:
+    __locale__ = locale.getdefaultlocale()[0]
+except ValueError:
+    __locale__ = None
 
 # class to allow simple creation of tkinter GUIs
 class gui(object):
-    """
-        Class to represent the GUI
+    """ Class to represent the GUI
         - Create one of these
         - add some widgets
         - call the go() function
     """
+
+    # ensure only one instance of gui is created
+    instantiated = False
 
     # static variables
     exe_file = None
@@ -86,8 +93,7 @@ class gui(object):
 
     @staticmethod
     def CLEAN_CONFIG_DICTIONARY(**kw):
-        """
-            Used by all Classes to tidy up dictionaries passed into config functions
+        """ Used by all Classes to tidy up dictionaries passed into config functions
             Allows us to more quickly process the dictionaries when overriding config
         """
         try:
@@ -127,7 +133,8 @@ class gui(object):
             + "\nTCL: " + str(TclVersion) \
             + ", TK: " + str(TkVersion) \
             + "\nPlatform: " + str(platform()) \
-            + "\npid: " + str(os.getpid())
+            + "\npid: " + str(os.getpid()) \
+            + "\nlocale: " + str(__locale__)
 
         return verString
 
@@ -142,8 +149,7 @@ class gui(object):
 
     @staticmethod
     def CENTER(win, up=0):
-        """
-        centers a tkinter window
+        """ Centers a tkinter window
         http://stackoverflow.com/questions/3352918/
         :param win: the root or Toplevel window to center
         """
@@ -191,6 +197,8 @@ class gui(object):
     WINDOW = 0
     LABEL = 1
     ENTRY = 2
+    FILE_ENTRY = 24
+    DIRECTORY_ENTRY = 25
     BUTTON = 3
     CHECKBOX = 4
     SCALE = 5
@@ -222,6 +230,7 @@ class gui(object):
     LABELFRAME = 30
     FRAME = 36
     TABBEDFRAME = 31
+    NOTEBOOK = 37
     PANEDFRAME = 32
     SCROLLPANE = 33
     PAGEDWINDOW = 34
@@ -259,6 +268,8 @@ class gui(object):
     # 2 containers for tabbedFrame
     C_TABBEDFRAME = 'tabbedFrame'
     C_TAB = 'tab'
+    C_NOTEBOOK = 'notebook'
+    C_NOTE = 'note'
     # 2 containers for panedFrame
     C_PANEDFRAME = 'panedFrame'
     C_PANE = 'pane'
@@ -296,6 +307,9 @@ class gui(object):
         LABELFRAME: "LabelFrame",
         FRAME: "Frame",
         TABBEDFRAME: "TabbedFrame",
+        NOTEBOOK: "Notebook",
+        FILE_ENTRY: "FileEntry",
+        DIRECTORY_ENTRY: "DirectoryEntry",
 #       TAB:"Tab",
         PANEDFRAME: "PanedFrame",
         WIDGET: "Widget",
@@ -435,6 +449,11 @@ class gui(object):
 # CONSTRUCTOR - creates the GUI
 #####################################
     def __init__(self, title=None, geom=None, warn=None, debug=None, handleArgs=True):
+
+        if self.__class__.instantiated:
+            raise Exception("You cannot have more than one instance of gui, try using a subWindow.")
+        else:
+            self.__class__.instantiated = True
 
         # first up, set the logger
         logging.basicConfig(level=logging.WARNING, format='%(asctime)s %(name)s:%(levelname)s %(message)s')
@@ -578,6 +597,7 @@ class gui(object):
         self.hasMenu = False
         self.hasStatus = False
         self.hasTb = False
+        self.tbPinned = True
         self.copyAndPaste = CopyAndPaste(self.topLevel)
 
         # won't pack, if don't pack it here
@@ -596,10 +616,6 @@ class gui(object):
         # set up the main container to be able to host an image
         self.__configBg(container)
 
-        # an array to hold any threaded events....
-        self.events = []
-        self.pollTime = 250
-        self.built = True
         if self.platform == self.WINDOWS:
             try:
                 self.setIcon(self.appJarIcon)
@@ -608,6 +624,17 @@ class gui(object):
 
         if self.ttkStyle is not None:
             self.setTtkTheme(self.ttkStyle)
+
+        # for configuting event processing
+        self.EVENT_SIZE = 1000
+        self.EVENT_SPEED = 100
+        self.preloadAnimatedImageId = None
+        self.processQueueId = None
+
+        # an array to hold any threaded events....
+        self.events = []
+        self.pollTime = 250
+        self.built = True
 
     def __handleArgs(self):
         parser = argparse.ArgumentParser(
@@ -686,6 +713,26 @@ class gui(object):
 
         gui.debug("ttk theme switched to: " + str(self.ttkStyle.theme_use()))
 
+    # internationalisation
+    def __loadConfigParser(self):
+        global ConfigParser, ParsingError, codecs
+        if ConfigParser is None:
+            try:
+                from configparser import ConfigParser
+                from configparser import ParsingError
+                import codecs
+            except:
+                try:
+                    from ConfigParser import ConfigParser
+                    from ConfigParser import ParsingError
+                    import codecs
+                except:
+                    ConfigParser = ParsingError = codecs = False
+                    self.config = None
+                    return
+            self.config = ConfigParser()
+            self.config.optionxform = str
+
     # textarea
     def __loadHashlib(self):
         global hashlib
@@ -739,22 +786,43 @@ class gui(object):
                     types = False
 
     def __loadURL(self):
-        global base64, urlencode, urlopen, urlretrieve, quote_plus, json
-        if urlencode is None:
-            try: # python 2
-                from urllib import urlencode, urlopen, urlretrieve, quote_plus
-                import json
-                import base64
-            except ImportError: # python 3
-                try:
-                    from urllib.parse import urlencode
-                    from urllib.parse import quote_plus
-                    from urllib.request import urlopen
-                    from urllib.request import urlretrieve
+        global base64, urlencode, urlopen, urlretrieve, quote_plus, json, Queue
+        self.__loadThreading()
+        if Queue:
+            if urlencode is None:
+                try: # python 2
+                    from urllib import urlencode, urlopen, urlretrieve, quote_plus
                     import json
                     import base64
+                except ImportError: # python 3
+                    try:
+                        from urllib.parse import urlencode
+                        from urllib.parse import quote_plus
+                        from urllib.request import urlopen
+                        from urllib.request import urlretrieve
+                        import json
+                        import base64
+                    except:
+                        base64 = urlencode = urlopen = urlretrieve = quote_plus = json = Queue = False
+        else:
+            base64 = urlencode = urlopen = urlretrieve = quote_plus = json = Queue = False
+
+    def __loadThreading(self):
+        global Thread, Queue
+        if Thread is None:
+            try:
+                from threading import Thread
+                import Queue
+            except ImportError: # python 3
+                try:
+                    from threading import Thread
+                    import queue as Queue
                 except:
-                    base64 = urlencode = urlopen = urlretrieve = quote_plus = json = False
+                    Thread = Queue = False
+                    return
+
+            self.eventQueue = Queue.Queue(maxsize=self.EVENT_SIZE)
+            self.__processEventQueue()
 
     def __loadNanojpeg(self):
         global nanojpeg, array
@@ -885,7 +953,7 @@ class gui(object):
                         if PYTHON2:
                             TreeNode.drawtext(self)
                         else:
-                            super(ajTreeNode, self).drawtext()
+                            super(__class__, self).drawtext()
 
                         self.colourLabels()
 
@@ -895,7 +963,7 @@ class gui(object):
                         if PYTHON2:
                             TreeNode.edit_finish(self, event)
                         else:
-                            super(ajTreeNode, self).edit_finish(event)
+                            super(__class__, self).edit_finish(event)
                         if self.editEvent is not None:
                             self.editEvent()
 
@@ -1223,6 +1291,7 @@ class gui(object):
         self.n_labelFrames = {}
         self.n_ajFrame = {}
         self.n_tabbedFrames = {}
+        self.n_notebooks = {}
         self.n_panedFrames = {}
         self.n_panes = {}
         self.n_pagedWindows = {}
@@ -1261,20 +1330,6 @@ class gui(object):
         # the dnd manager
         self.dnd = None
 
-    def setLanguage(self, language):
-        try:
-            from configparser import ConfigParser
-        except:
-            try:
-                from ConfigParser import ConfigParser
-            except:
-                self.warn("Internationalisation not supported, configparser not available.")
-                self.config = None
-                return
-        self.config = ConfigParser()
-        self.config.optionxform = str
-        self.changeLanguage(language)
-
     def translate(self, key, default=None):
         return self.__translate(key, "EXTERNAL", default)
 
@@ -1293,33 +1348,38 @@ class gui(object):
             return self.translations[section][key]
         else:
             return default
-        
+
+    def setLanguage(self, language):
+        self.changeLanguage(language)
 
     # function to update languages
     def changeLanguage(self, language):
-        if self.config is None:
-            self.warn("Internationalisation not supported")
+        self.__loadConfigParser()
+        if not ConfigParser:
+            self.error("Internationalisation not supported")
             return
 
-        language = language.upper()
-        import codecs
+        language = language.upper() + ".ini"
         if not PYTHON2:
             try:
-                with codecs.open(language + ".ini", "r", "utf8") as langFile:
+                with codecs.open(language, "r", "utf8") as langFile:
                     self.config.read_file(langFile)
             except FileNotFoundError:
-                self.warn("Invalid language: " + language)
+                self.error("Invalid language, file not found: " + language)
                 return
         else:
             try:
                 try:
-                    with codecs.open(language + ".ini", "r", "utf8") as langFile:
+                    with codecs.open(language, "r", "utf8") as langFile:
                         self.config.read_file(langFile)
                 except AttributeError:
-                    with codecs.open(language + ".ini", "r", "utf8") as langFile:
+                    with codecs.open(language, "r", "utf8") as langFile:
                         self.config.readfp(langFile)
             except IOError:
-                self.warn("Invalid language: " + language)
+                self.error("Invalid language, file not found: " + language)
+                return
+            except ParsingError:
+                self.error("Translation failed - language file contains errors, ensure there is no whitespace at the beginning of any lines.")
                 return
 
         self.debug("Switching to: " + language)
@@ -1329,7 +1389,7 @@ class gui(object):
         for section in self.config.sections():
             getWidgets = True
             section = section.upper()
-            self.debug("\tSection:" + section)
+            self.debug("\tSection: " + section)
 
             # convert the section title to its code
             if section == "CONFIG":
@@ -1346,6 +1406,21 @@ class gui(object):
                     if section == "POPUP": val = val.strip().split("\n")
                     self.translations[section][key] = val
                     self.debug("\t\t" + str(key) + ": " + str(val))
+                continue
+            elif section == "MENUBAR":
+                for (key, val) in self.config.items(section):
+                    key = key.strip().split("-")
+                    self.debug("\t\t" + str(key) + ": " + str(val))
+                    if len(key) == 1:
+                        try:
+                            self.renameMenu(key[0], val)
+                        except:
+                            self.warn("Invalid key")
+                    elif len(key) == 2:
+                        try:
+                            self.renameMenuItem(key[0], key[1], val)
+                        except:
+                            self.warn("Invalid key")
                 continue
             else:
                 try:
@@ -1683,9 +1758,9 @@ class gui(object):
             language = self.language
 
         # if language is populated, we are in internationalisation mode
-        # call the setLanguage function - to re-badge all the widgets
+        # call the changeLanguage function - to re-badge all the widgets
         if language is not None:
-            self.setLanguage(language)
+            self.changeLanguage(language)
 
         if self.splashConfig is not None:
             self.debug("SPLASH:" + str(self.splashConfig))
@@ -1716,6 +1791,7 @@ class gui(object):
         # create appJar menu, if no menuBar created
         if not self.hasMenu:
             self.addAppJarMenu()
+
         if self.platform == self.WINDOWS:
             self.menuBar.add_cascade(menu=self.n_menus["WIN_SYS"])
         self.topLevel.config(menu=self.menuBar)
@@ -1765,7 +1841,7 @@ class gui(object):
             self.stop()
 
     def setStopFunction(self, function):
-        """ set a function to call when the GUI is quit. Must return True or False """
+        """ Set a function to call when the GUI is quit. Must return True or False """
         tl = self.__getTopLevel()
         tl.stopFunction = function
         # link to exit item in topMenu
@@ -1780,19 +1856,28 @@ class gui(object):
             # stop the after loops
             self.topLevel.after_cancel(self.pollId)
             self.topLevel.after_cancel(self.flashId)
-            self.topLevel.after_cancel(self.preloadAnimatedImageId)
+            if self.preloadAnimatedImageId:
+                self.topLevel.after_cancel(self.preloadAnimatedImageId)
+            if self.processQueueId:
+                self.topLevel.after_cancel(self.processQueueId)
 
             # stop any animations
             for key in self.n_imageAnimationIds:
                 self.topLevel.after_cancel(self.n_imageAnimationIds[key])
+
+            # stop any maps
+            for key in self.n_maps:
+                self.n_maps[key].stopUpdates()
 
             # stop any sounds, ignore error when not on Windows
             try:
                 self.stopSound()
             except:
                 pass
+
             self.topLevel.quit()
             self.topLevel.destroy()
+            self.__class__.instantiated = False
 
 #####################################
 # Functions for configuring polling events
@@ -1821,8 +1906,50 @@ class gui(object):
         return self.after_cancel(id)
 
     def after_cancel(self, id):
-        self.topLevel.after_cancel(id)
-        
+        return self.topLevel.after_cancel(id)
+
+    def queueFunction(self, func, *args, **kwargs):
+        """ adds the specified function & arguments to the event queue
+        Functions in the event queue are actioned by the gui's main thread
+
+        :param func: the function to call
+        :param *args: any number of ordered arguments
+        :param **kwargs: any number of named arguments
+        :raises Full: if unable to add the function to the queue
+        """
+        self.__loadThreading()
+        if Queue is False:
+            gui.warn("Unable to queueFunction - threading not possible.")
+        else:
+            self.eventQueue.put((5, func, args, kwargs), block=False)
+
+    def queuePriorityFunction(self, func, *args, **kwargs):
+        self.__loadThreading()
+        if Queue is False:
+            gui.warn("Unable to queueFunction - threading not possible.")
+        else:
+            self.eventQueue.put((1, func, args, kwargs), block=False)
+
+    def __processEventQueue(self):
+        if not self.eventQueue.empty():
+            priority, func, args, kwargs = self.eventQueue.get()
+            gui.debug("FUNCTION: " + str(func) + "(" + str(args) + ")")
+            func(*args, **kwargs)
+
+        self.processQueueId = self.after(self.EVENT_SPEED, self.__processEventQueue)
+
+    def thread(self, func, *args):
+        """ will run the supplied function in a separate thread
+
+        param func: the function to run
+        """
+        self.__loadThreading()
+        if Queue is False:
+            gui.warn("Unable to queueFunction - threading not possible.")
+        else:
+            t = Thread(target=func, args=args)
+            t.daemon = True
+            t.start()
 
     # internal function, called by 'after' function, after sleeping
     def __poll(self):
@@ -2179,6 +2306,17 @@ class gui(object):
 
             for child in self.containerStack[-1]['container'].winfo_children():
                 if not self.__isWidgetContainer(child):
+
+                    # horrible hack to deal with weird ScrolledText
+                    # winfo_children returns ScrolledText as a Frame
+                    # therefore can;t call some functions
+                    # this gets the ScrolledText version
+                    if child.__class__.__name__ == "Frame":
+                        for val in self.n_textAreas.values():
+                            if str(val) == str(child):
+                                child = val
+                                break
+
                     gui.SET_WIDGET_BG(child, colour, override, tint)
         else:
             gui.warn("In ttk mode - can't set BG to " + str(colour))
@@ -2283,15 +2421,8 @@ class gui(object):
             widget.bind('<<Paste>>', self.__checkCopyAndPaste)
 
         else:
-            widget.var.trace(
-                "w",
-                lambda name,
-                index,
-                mode,
-                e=None,
-                w=widget: self.__checkCopyAndPaste(
-                    e,
-                    w))  # ENTRY/OPTION
+            widget.var.trace("w", lambda name, index, mode,
+                e=None, w=widget: self.__checkCopyAndPaste(e, w))  # ENTRY/OPTION
 
         if self.platform in [self.WINDOWS, self.LINUX]:
             widget.bind('<Button-3>', self.__rightClick)
@@ -2302,8 +2433,7 @@ class gui(object):
         event.widget.focus()
         if menu == "EDIT":
             if self.__checkCopyAndPaste(event):
-                self.n_menus[menu].tk_popup(
-                    event.x_root - 10, event.y_root - 10)
+                self.n_menus[menu].tk_popup(event.x_root - 10, event.y_root - 10)
         else:
             self.n_menus[menu].tk_popup(event.x_root - 10, event.y_root - 10)
         return "break"
@@ -2318,7 +2448,7 @@ class gui(object):
             return self.n_messages
         elif kind == self.BUTTON:
             return self.n_buttons
-        elif kind == self.ENTRY:
+        elif kind in [self.ENTRY, self.FILE_ENTRY, self.DIRECTORY_ENTRY]:
             return self.n_entries
         elif kind == self.SCALE:
             return self.n_scales
@@ -2377,10 +2507,12 @@ class gui(object):
         elif kind in [ self.C_TAB ]:
             # no dict of tabs - the container manages them...
             return self.n_tabbedFrames
+        elif kind in [ self.NOTEBOOK, self.C_NOTEBOOK, self.C_NOTE ]:
+            return self.n_notebooks
 
         elif kind in [ self.PANEDFRAME ]:
             return self.n_panedFrames
-        elif kind in [ self.PANE, self.C_PANE ]:
+        elif kind in [ self.C_PANE ]:
             return self.n_panes
 
         elif kind in [ self.C_SUBWINDOW ]:
@@ -2666,7 +2798,7 @@ class gui(object):
                 # need to trace the variable??
                 widget.cmd_id = widget.var.trace('w', cmd)
                 widget.cmd = cmd
-        elif kind == self.ENTRY:
+        elif kind in [self.ENTRY, self.FILE_ENTRY, self.DIRECTORY_ENTRY]:
             if eventType == "change":
                 # not populated by change/submit
                 if key is None:
@@ -2680,9 +2812,9 @@ class gui(object):
                 # not populated by change/submit
                 if key is None:
                     key = name
-                cmd = self.MAKE_FUNC(function, key, True)
-                widget.bind('<Return>', cmd)
-                widget.cmd = cmd
+                sbm = self.MAKE_FUNC(function, key, True)
+                widget.sbm_id = widget.bind('<Return>', sbm)
+                widget.sbm = sbm
         elif kind == self.TEXTAREA:
             if eventType == "change":
                 # get Entry variable
@@ -3047,7 +3179,7 @@ class gui(object):
 #####################################
 # FUNCTION for managing commands
 #####################################
-    # funcion to wrap up lambda
+    # function to wrap up lambda
     # if the thing calling this generates parameters - then set discard=True
     @staticmethod
     def MAKE_FUNC(funcName, param, discard=False):
@@ -3440,6 +3572,12 @@ class gui(object):
     def openTab(self, frameTitle, tabTitle):
         self.__openContainer(self.C_TAB, frameTitle+"__"+tabTitle)
 
+    def openNotebook(self, title):
+        self.__openContainer(self.C_NOTEBOOK, title)
+
+    def openNote(self, frameTitle, tabTitle):
+        self.__openContainer(self.C_NOTEBOOK, frameTitle+"__"+tabTitle)
+
     def openPanedFrame(self, title):
         self.__openContainer(self.C_PANEDFRAME, title)
 
@@ -3562,6 +3700,29 @@ class gui(object):
             tabTitle = self.containerStack[-1]['title'] + "__" + title
             self.__addContainer(tabTitle,
                 self.C_TAB, self.containerStack[-1]['container'].addTab(title), 0, 1, sticky)
+        elif fType == self.C_NOTEBOOK:
+            self.__verifyItem(self.n_notebooks, title, True)
+            notebook = ttk.Notebook(self.getContainer())
+#            tabbedFrame.isContainer = True
+            self.__positionWidget(
+                notebook,
+                row,
+                column,
+                colspan,
+                rowspan,
+                sticky=sticky)
+            self.n_notebooks[title] = notebook
+
+            # now, add to top of stack
+            self.__addContainer(title, self.C_NOTEBOOK, notebook, 0, 1, sticky)
+            return notebook
+        elif fType == self.C_NOTE:
+            # add to top of stack
+            self.containerStack[-1]['widgets'] = True
+            noteTitle = self.containerStack[-1]['title'] + "__" + title
+            frame = ttk.Frame(self.containerStack[-1]['container'])
+            self.containerStack[-1]['container'].add(frame, text=title)
+            self.__addContainer(noteTitle, self.C_NOTE, frame, 0, 1, sticky)
         elif fType == self.C_PANEDFRAME:
             # if we previously put a frame for widgets
             # remove it
@@ -3659,6 +3820,47 @@ class gui(object):
             return page
         else:
             raise Exception("Unknown container: " + fType)
+
+    def startNotebook(
+            self,
+            title,
+            row=None,
+            column=0,
+            colspan=0,
+            rowspan=0,
+            sticky="NSEW"):
+        return self.startContainer(
+            self.C_NOTEBOOK,
+            title,
+            row,
+            column,
+            colspan,
+            rowspan,
+            sticky)
+
+    def stopNotebook(self):
+        # auto close the existing TAB - keep it?
+        if self.containerStack[-1]['type'] == self.C_NOTE:
+            self.warn("You didn't STOP the previous NOTE")
+            self.stopContainer()
+        self.stopContainer()
+
+    def startNote(self, title):
+        # auto close the previous TAB - keep it?
+        if self.containerStack[-1]['type'] == self.C_NOTE:
+            self.warn("You didn't STOP the previous NOTE")
+            self.stopContainer()
+        elif self.containerStack[-1]['type'] != self.C_NOTEBOOK:
+            raise Exception(
+                "Can't add a Note to the current container: ", self.containerStack[-1]['type'])
+        self.startContainer(self.C_NOTE, title)
+
+    def stopNote(self):
+        if self.containerStack[-1]['type'] != self.C_NOTE:
+            raise Exception("Can't stop a NOTE, currently in:",
+                            self.containerStack[-1]['type'])
+        self.stopContainer()
+
 
     ####### Tabbed Frames ########
 
@@ -3870,10 +4072,6 @@ class gui(object):
     def setToggleFrameText(self, title, newText):
         toggle = self.__verifyItem(self.n_toggleFrames, title)
         toggle.config(text=newText)
-
-    def disableToggleFrame(self, title, disabled=True):
-        toggle = self.__verifyItem(self.n_toggleFrames, title)
-        toggle.disable(disabled)
 
     def getToggleFrameState(self, title):
         toggle = self.__verifyItem(self.n_toggleFrames, title)
@@ -4227,13 +4425,13 @@ class gui(object):
         return handlerFunction
 
     def __setattr__(self, name, value):
-        if self.built and not hasattr(
-                self, name):  # would this create a new attribute?
+        # would this create a new attribute?
+        if self.built and not hasattr(self, name):
             raise AttributeError("Creating new attributes is not allowed!")
         if PYTHON2:
             object.__setattr__(self, name, value)
         else:
-            super(gui, self).__setattr__(name, value)
+            super(__class__, self).__setattr__(name, value)
 
 #####################################
 # FUNCTION to add labels before a widget
@@ -4411,10 +4609,6 @@ class gui(object):
         sc = self.__verifyItem(self.n_scales, title)
         sc.increment = increment
 
-    def setScaleWidth(self, title, width):
-        sc = self.__verifyItem(self.n_scales, title)
-        sc.config(width=width)
-
     def setScaleLength(self, title, length):
         sc = self.__verifyItem(self.n_scales, title)
         sc.config(sliderlength=length)
@@ -4464,6 +4658,17 @@ class gui(object):
 # FUNCTION for optionMenus
 #####################################
     def __buildOptionBox(self, frame, title, options, kind="normal"):
+        """ Internal wrapper, used for building OptionBoxes.
+        It will use the kind to choose either a standard OptionBox or a TickOptionBox.
+        ref: http://stackoverflow.com/questions/29019760/how-to-create-a-combobox-that-includes-checkbox-for-each-item
+
+        :param frame: this should be a container, used as the parent for the OptionBox
+        :param title: the key used to reference this OptionBox
+        :param options: a list of values to put in the OptionBox, can be len 0
+        :param kind: the style of OptionBox: notmal or ticks
+        :returns: the created OptionBox
+        :raises ItemLookupError: if the title is already in use
+        """
         self.__verifyItem(self.n_options, title, True)
 
         # create a string var to hold selected item
@@ -4478,7 +4683,6 @@ class gui(object):
             option.kind = "normal"
 
         elif kind == "ticks":
-            # http://stackoverflow.com/questions/29019760/how-to-create-a-combobox-that-includes-checkbox-for-each-item
             option = OptionMenu(frame, variable=var, value="")
             self.__buildTickOptionBox(title, option, options)
         else:
@@ -4527,6 +4731,16 @@ class gui(object):
         return option
 
     def __buildTickOptionBox(self, title, option, options):
+        """ Internal wrapper, used for building TickOptionBoxes.
+        Called by __buildOptionBox & changeOptionBox.
+        Will add each of the options as a tick box, and use the title as a disabled header.
+
+        :param title: the key used to reference this OptionBox
+        :param option: an existing OptionBox that will be emptied & repopulated
+        :param options: a list of values to put in the OptionBox, can be len 0
+        :returns: None - the option param is modified
+        :raises ItemLookupError: if the title can't be found
+        """
         # delete any items - either the initial one when created, or any existing ones if changing
         option['menu'].delete(0, 'end')
         var = self.__verifyItem(self.n_optionVars, title, False)
@@ -4539,60 +4753,69 @@ class gui(object):
         self.n_optionTicks[title] = vals
         option.kind = "ticks"
 
-    def addOptionBox(
-            self,
-            title,
-            options,
-            row=None,
-            column=0,
-            colspan=0,
-            rowspan=0):
+    def addOptionBox(self, title, options, row=None, column=0, colspan=0, rowspan=0):
+        """ Adds a new standard OptionBox.
+        Simply calls internal function __buildOptionBox.
+
+        :param title: the key used to reference this OptionBox
+        :param options: a list of values to put in the OptionBox, can be len 0
+        :returns: the created OptionBox
+        :raises ItemLookupError: if the title is already in use
+        """
         option = self.__buildOptionBox(self.getContainer(), title, options)
         self.__positionWidget(option, row, column, colspan, rowspan)
         return option
 
-    def addTickOptionBox(
-            self,
-            title,
-            options,
-            row=None,
-            column=0,
-            colspan=0,
-            rowspan=0):
-        tick = self.__buildOptionBox(
-            self.getContainer(), title, options, "ticks")
-        self.__positionWidget(tick, row, column, colspan, rowspan)
-        return tick
+    def addLabelOptionBox(self, title, options, row=None, column=0, colspan=0, rowspan=0):
+        """ Adds a new standard OptionBox, with a Label before it.
+        Simply calls internal function __buildOptionBox, placing it in a LabelBox.
 
-    def addLabelTickOptionBox(
-            self,
-            title,
-            options,
-            row=None,
-            column=0,
-            colspan=0,
-            rowspan=0):
-        frame = self.__getLabelBox(title)
-        tick = self.__buildOptionBox(frame, title, options, "ticks")
-        self.__packLabelBox(frame, tick)
-        self.__positionWidget(frame, row, column, colspan, rowspan)
-        return tick
-
-    def addLabelOptionBox(
-            self,
-            title,
-            options,
-            row=None,
-            column=0,
-            colspan=0,
-            rowspan=0):
+        :param title: the key used to reference this OptionBox and text for the Label
+        :param options: a list of values to put in the OptionBox, can be len 0
+        :returns: the created OptionBox (not the LabelBox)
+        :raises ItemLookupError: if the title is already in use
+        """
         frame = self.__getLabelBox(title)
         option = self.__buildOptionBox(frame, title, options)
         self.__packLabelBox(frame, option)
         self.__positionWidget(frame, row, column, colspan, rowspan)
         return option
 
+    def addTickOptionBox(self, title, options, row=None, column=0, colspan=0, rowspan=0):
+        """ Adds a new TickOptionBox.
+        Simply calls internal function __buildOptionBox.
+
+        :param title: the key used to reference this TickOptionBox
+        :param options: a list of values to put in the TickOptionBox, can be len 0
+        :returns: the created TickOptionBox
+        :raises ItemLookupError: if the title is already in use
+        """
+        tick = self.__buildOptionBox(self.getContainer(), title, options, "ticks")
+        self.__positionWidget(tick, row, column, colspan, rowspan)
+        return tick
+
+    def addLabelTickOptionBox(self, title, options, row=None, column=0, colspan=0, rowspan=0):
+        """ Adds a new TickOptionBox, with a Label before it
+        Simply calls internal function __buildOptionBox, placing it in a LabelBox
+
+        :param title: the key used to reference this TickOptionBox, and text for the Label
+        :param options: a list of values to put in the TickOptionBox, can be len 0
+        :returns: the created TickOptionBox (not the LabelBox)
+        :raises ItemLookupError: if the title is already in use
+        """
+        frame = self.__getLabelBox(title)
+        tick = self.__buildOptionBox(frame, title, options, "ticks")
+        self.__packLabelBox(frame, tick)
+        self.__positionWidget(frame, row, column, colspan, rowspan)
+        return tick
+
     def getOptionBox(self, title):
+        """ Gets the selected item from the named OptionBox
+
+        :param title: the OptionBox to check
+        :returns: the selected item in an OptionBox or a dictionary of all items and their status for a TickOptionBox
+        :raises ItemLookupError: if the title can't be found
+        """
         box = self.__verifyItem(self.n_options, title)
 
         if box.kind == "ticks":
@@ -4610,18 +4833,36 @@ class gui(object):
             return val
 
     def getAllOptionBoxes(self):
+        """ Convenience function to get the selected items for all OptionBoxes in the GUI.
+
+        :returns: a dictionary containing the result of calling getOptionBox for every OptionBox/TickOptionBox in the GUI
+        """
         boxes = {}
         for k in self.n_options:
             boxes[k] = self.getOptionBox(k)
         return boxes
 
     def __disableOptionBoxSeparators(self, box):
-        # disable any separators
+        """ Loops through all items in box and if they start with a dash, disables them
+
+        :param box: the OptionBox to process
+        :returns: None
+        """
         for pos, item in enumerate(box.options):
             if item.startswith("-"):
                 box["menu"].entryconfigure(pos, state="disabled")
+            else:
+                box["menu"].entryconfigure(pos, state="normal")
 
     def __configOptionBoxList(self, title, options, kind):
+        """ Tidies up the list provided when an OptionBox is created/changed
+
+        :param title: the title for the OptionBox - only used by TickOptionBox to calculate max size
+        :param options: the list to tidy
+        :param kind: The type of option box (normal or ticks)
+        :returns: a tuple containing the maxSize (width) and tidied list of items
+        """
+
         # deal with a dict_keys object - messy!!!!
         if not isinstance(options, list):
             options = list(options)
@@ -4661,9 +4902,17 @@ class gui(object):
             maxSize += 3
         return maxSize, options
 
-    # function to replace the current contents of an option box
-    # http://www.prasannatech.net/2009/06/tkinter-optionmenu-changing-choices.html
     def changeOptionBox(self, title, options, index=None, callFunction=False):
+        """ Changes the entire contents of the named OptionBox
+        ref: http://www.prasannatech.net/2009/06/tkinter-optionmenu-changing-choices.html
+
+        :param title: the OptionBox to change
+        :param options: the new values to put in the OptionBox
+        :param index: an optional initial value to select
+        :param callFunction: whether to generate an event to notify that the widget has changed
+        :returns: None
+        :raises ItemLookupError: if the title can't be found
+        """
         # get the optionBox & associated var
         box = self.__verifyItem(self.n_options, title)
 
@@ -4698,13 +4947,37 @@ class gui(object):
         self.setOptionBox(title, index, callFunction=False, override=True)
 
     def deleteOptionBox(self, title, index):
+        """ Deleted the specified item from the named OptionBox
+
+        :param title: the OptionBox to change
+        :param inde: the value to delete - either a numeric index, or the text of an item
+        :returns: None
+        :raises ItemLookupError: if the title can't be found
+        """
         self.__verifyItem(self.n_optionVars, title)
         self.setOptionBox(title, index, value=None, override=True)
 
-    def renameOptionBoxItem(self, title, item, newName=None):
+    def renameOptionBoxItem(self, title, item, newName=None, callFunction=False):
+        """ Changes the text of the specified item in the named OptionBox
+        :param title: the OptionBox to change
+        :param item: the item to rename
+        :param newName: the value to rename it with
+        :param callFunction: whether to generate an event to notify that the widget has changed
+        :returns: None
+        :raises ItemLookupError: if the title can't be found
+        """
         self.__verifyItem(self.n_optionVars, title)
+        self.setOptionBox(title, item, value=newName, callFunction=callFunction)
 
     def clearOptionBox(self, title, callFunction=True):
+        """ Deselects any items selected in the named OptionBox
+        If a TickOptionBox, all items will be set to False (unticked)
+
+        :param title: the OptionBox to change
+        :param callFunction: whether to generate an event to notify that the widget has changed
+        :returns: None
+        :raises ItemLookupError: if the title can't be found
+        """
         box = self.__verifyItem(self.n_options, title)
         if box.kind == "ticks":
             # loop through each tick, set it to False
@@ -4715,12 +4988,27 @@ class gui(object):
             self.setOptionBox(title, 0, callFunction=callFunction, override=True)
 
     def clearAllOptionBoxes(self, callFunction=False):
+        """ Convenience function to clear all OptionBoxes in the GUI
+        Will simply call clearOptionBox on each OptionBox/TickOptionBox
+
+        :param callFunction: whether to generate an event to notify that the widget has changed
+        :returns: None
+        """
         for k in self.n_options:
             self.clearOptionBox(k, callFunction)
 
-    # select the option at the specified position
-    # if value is None, the item at index will be deleted
     def setOptionBox(self, title, index, value=True, callFunction=True, override=False):
+        """ Main purpose is to select/deselect the item at the specified position
+        But will also: delete an item if value is set to None or rename an item if value is set to a String
+
+        :param title: the OptionBox to change
+        :param index: the position or value of the item to select/delete
+        :param value: determines what to do to the item: if set to None, will delete the item, else it sets the items state
+        :param callFunction: whether to generate an event to notify that the widget has changed
+        :param override: if set to True, allows a disabled item to be selected
+        :returns: None
+        :raises ItemLookupError: if the title can't be found
+        """
         box = self.__verifyItem(self.n_options, title)
 
         if box.kind == "ticks":
@@ -4733,23 +5021,29 @@ class gui(object):
                 gui.debug("Updating: " + str(index))
 
                 tick = ticks[index]
+                try:
+                    index_num = box.options.index(index)
+                except:
+                    self.warn("Unknown tick: " + str(index) + " in OptionBox: " + str(title))
+                    return
 
                 with PauseCallFunction(callFunction, tick, useVar=False):
                     if value is None: # then we need to delete it
-                        gui.debug("delete mode")
                         self.debug("Deleting tick: " + str(index) + " from OptionBox: " + str(title))
-                        try:
-                            index_num = box.options.index(index)
-                        except:
-                            self.warn("Unknown tick in deleteOptionBox: " + str(index) +
-                                    " in OptionBox: " + str(title))
-                            return
                         box['menu'].delete(index_num)
                         del(box.options[index_num])
                         del self.n_optionTicks[title][index]
-                    else:
-                        gui.debug("set mode: " + str(value))
+                    elif isinstance(value, bool):
+                        gui.debug("Updating tick: " + str(index) + " from OptionBox: " + str(title) + " to: " + str(value))
                         tick.set(value)
+                    else:
+                        gui.debug("Renaming tick: " + str(index) + " from OptionBox: " + str(title) + " to: " + str(value))
+                        ticks = self.n_optionTicks[title]
+                        ticks[value] = ticks.pop(index)
+                        box.options[index_num] = value
+                        self.changeOptionBox(title, box.options)
+                        for tick in ticks:
+                            self.n_optionTicks[title][tick].set(ticks[tick].get())
             else:
                 if value is None:
                     self.warn("Unknown tick in deleteOptionBox: " + str(index) +
@@ -4758,7 +5052,7 @@ class gui(object):
                     self.warn("Unknown tick in setOptionBox: " + str(index) +
                             " in OptionBox: " + str(title))
         else:
-            gui.debug("Updating regular optionBox " + str(callFunction))
+            gui.debug("Updating regular optionBox: " + str(title) + " at: " + str(index) + " to: " + str(value))
             count = len(box.options)
             if count > 0:
                 if index is None:
@@ -4775,7 +5069,7 @@ class gui(object):
                                     " in OptionBox: " + str(title))
                         return
 
-                gui.debug("Updating item at index: " + str(index))
+                gui.debug("--> index now: " + str(index))
 
                 if index < 0 or index > count - 1:
                     self.warn("Invalid option: " + str(index) + ". Should be between 0 and " +
@@ -4786,7 +5080,8 @@ class gui(object):
                         box['menu'].delete(index)
                         del(box.options[index])
                         self.setOptionBox(title, 0, callFunction=False, override=override)
-                    elif value is True:
+                    elif isinstance(value, bool):
+                        gui.debug("Updating: " + str(index) + " from OptionBox: " + str(title) + " to: " + str(index))
                         with PauseCallFunction(callFunction, box):
                             if not box['menu'].invoke(index):
                                 if override:
@@ -4798,18 +5093,14 @@ class gui(object):
                                 else:
                                     self.warn("Unable to set disabled option: " + str(index) +
                                             " in OptionBox: " + str(title) + ". Try setting 'override=True'")
+                            else:
+                                gui.debug("Invoked item: " + str(index))
                     else:
-                        with PauseCallFunction(callFunction, box):
-                            if not box['menu'].invoke(index):
-                                if override:
-                                    self.debug("Setting OptionBox: " + str(title) +
-                                            " to disabled option: " + str(index))
-                                    box["menu"].entryconfigure(index, state="normal")
-                                    box['menu'].invoke(index)
-                                    box["menu"].entryconfigure(index, state="disabled")
-                                else:
-                                    self.warn("Unable to set disabled option: " + str(index) +
-                                            " in OptionBox: " + str(title) + ". Try setting 'override=True'")
+                        gui.debug("Renaming: " + str(index) + " from OptionBox: " + str(title) + "to: " + str(value))
+                        pos = box.options.index(self.n_optionVars[title].get())
+                        box.options[index] = value
+                        self.changeOptionBox(title, box.options, pos)
+
             else:
                 self.__verifyItem(self.n_optionVars, title).set("")
                 self.warn("No items to select from: " + title)
@@ -4823,7 +5114,7 @@ class gui(object):
         if urlencode is False:
             raise Exception("Unable to load GoogleMaps - urlencode library not available")
         self.__verifyItem(self.n_maps, title, True)
-        gMap = GoogleMap(self.getContainer())
+        gMap = GoogleMap(self.getContainer(), self)
         self.__positionWidget(gMap, row, column, colspan, rowspan)
         self.n_maps[title] = gMap
         return gMap
@@ -5518,14 +5809,6 @@ class gui(object):
         #label.config(height=h, width=w)
         self.topLevel.update_idletasks()
 
-    # load image from base-64 encoded GIF
-    # use base64 module to convert binary data to base64
-    def addImageData(self, name, imageData, row=None, column=0, colspan=0, rowspan=0, fmt="gif"):
-        self.__verifyItem(self.n_images, name, True)
-        imgObj = self.__getImageData(imageData, fmt)
-        self.__addImageObj(name, imgObj, row, column, colspan, rowspan)
-        return imgObj
-
     # function to configure an image map
     def setImageMap(self, name, func, coords):
         img = self.__verifyItem(self.n_images, name)
@@ -5551,17 +5834,18 @@ class gui(object):
         img.MAP_FUNC("UNKNOWN: " + str(event.x) + ", " + str(event.y))
 
     # must be GIF or PNG
-    def addImage(
-            self,
-            name,
-            imageFile,
-            row=None,
-            column=0,
-            colspan=0,
-            rowspan=0):
-        #image = re.escape(image)
+    def addImage(self, name, imageFile, row=None, column=0, colspan=0, rowspan=0):
         self.__verifyItem(self.n_images, name, True)
         imgObj = self.__getImage(imageFile)
+        self.__addImageObj(name, imgObj, row, column, colspan, rowspan)
+        self.n_images[name].hasMouseOver = False
+        return imgObj
+
+    # load image from base-64 encoded GIF
+    # use base64 module to convert binary data to base64
+    def addImageData(self, name, imageData, row=None, column=0, colspan=0, rowspan=0, fmt="gif"):
+        self.__verifyItem(self.n_images, name, True)
+        imgObj = self.__getImageData(imageData, fmt)
         self.__addImageObj(name, imgObj, row, column, colspan, rowspan)
         self.n_images[name].hasMouseOver = False
         return imgObj
@@ -6555,12 +6839,20 @@ class gui(object):
 # FUNCTIONS to add Text Area
 #####################################
     def __buildTextArea(self, title, frame, scrollable=False):
+        """ Internal wrapper, used for building TextAreas.
+
+        :param title: the key used to reference this TextArea
+        :param frame: this should be a container, used as the parent for the OptionBox
+        :param scrollable: the key used to reference this TextArea
+        :returns: the created TextArea
+        :raises ItemLookupError: if the title is already in use
+        """
         self.__verifyItem(self.n_textAreas, title, True)
         if scrollable:
             text = AjScrolledText(frame)
         else:
             text = AjText(frame)
-        text.config(font=self.taFont, width=20, height=10, undo=True)
+        text.config(font=self.taFont, width=20, height=10, undo=True, wrap=WORD)
 
         if self.platform in [self.MAC, self.LINUX]:
             text.config(highlightbackground=self.__getContainerBg())
@@ -6578,75 +6870,116 @@ class gui(object):
         return text
 
     def addTextArea(self, title, row=None, column=0, colspan=0, rowspan=0):
+        """ Adds a TextArea with the specified title
+        Simply calls internal __buildTextArea function before positioning the widget
+
+        :param title: the key used to reference this TextArea
+        :returns: the created TextArea
+        :raises ItemLookupError: if the title is already in use
+        """
         text = self.__buildTextArea(title, self.getContainer())
-        self.__positionWidget(
-            text,
-            row,
-            column,
-            colspan,
-            rowspan,
-            N + E + S + W)
+        self.__positionWidget(text, row, column, colspan, rowspan, N+E+S+W)
         return text
 
-    def addScrolledTextArea(
-            self,
-            title,
-            row=None,
-            column=0,
-            colspan=0,
-            rowspan=0):
+    def addScrolledTextArea(self, title, row=None, column=0, colspan=0, rowspan=0):
+        """ Adds a Scrollable TextArea with the specified title
+        Simply calls internal __buildTextArea functio, specifying a ScrollabelTextArea before positioning the widget
+
+        :param title: the key used to reference this TextArea
+        :returns: the created TextArea
+        :raises ItemLookupError: if the title is already in use
+        """
         text = self.__buildTextArea(title, self.getContainer(), True)
-        self.__positionWidget(
-            text,
-            row,
-            column,
-            colspan,
-            rowspan,
-            N + E + S + W)
+        self.__positionWidget(text, row, column, colspan, rowspan, N+E+S+W)
         return text
 
     def getTextArea(self, title):
+        """ Gets the text in the specified TextArea
+
+        :param title: the TextArea to check
+        :returns: the text in the specified TextArea
+        :raises ItemLookupError: if the title can't be found
+        """
         return self.__verifyItem(self.n_textAreas, title).getText()
 
     def getAllTextAreas(self):
+        """ Convenience function to get the text for all TextAreas in the GUI.
+
+        :returns: a dictionary containing the result of calling getTextArea for every TextArea in the GUI
+        """
         areas = {}
         for k in self.n_textAreas:
             areas[k] = self.getTextArea(k)
         return areas
 
-    def setTextArea(self, title, text, callFunction=True):
+    def setTextArea(self, title, text, end=True, callFunction=True):
+        """ Add the supplied text to the specified TextArea
+
+        :param title: the TextArea to change
+        :param text: the text to add to the TextArea
+        :param end: where to insert the text, by default it is added to the end. Set end to False to add to the beginning.
+        :param callFunction: whether to generate an event to notify that the widget has changed
+        :returns: None
+        :raises ItemLookupError: if the title can't be found
+        """
         ta = self.__verifyItem(self.n_textAreas, title)
 
-        oldCall = ta.callFunction
-        ta.callFunction = callFunction
-        ta.insert('1.0', text)
-        ta.callFunction = oldCall
+        ta.pauseCallFunction(callFunction)
+        if end:
+            ta.insert(END, text)
+        else:
+            ta.insert('1.0', text)
+        ta.resumeCallFunction()
 
-    # functions to try to monitor text areas
     def clearTextArea(self, title, callFunction=True):
-        ta = self.__verifyItem(self.n_textAreas, title)
+        """ Removes all text from the specified TextArea
 
-        oldCall = ta.callFunction
-        ta.callFunction = callFunction
+        :param title: the TextArea to change
+        :param callFunction: whether to generate an event to notify that the widget has changed
+        :returns: None
+        :raises ItemLookupError: if the title can't be found
+        """
+        ta = self.__verifyItem(self.n_textAreas, title)
+        ta.pauseCallFunction(callFunction)
         ta.delete('1.0', END)
-        ta.callFunction = oldCall
+        ta.resumeCallFunction()
 
     def clearAllTextAreas(self, callFunction=False):
+        """ Convenience function to clear all TextAreas in the GUI
+        Will simply call clearTextArea on each TextArea
+
+        :param callFunction: whether to generate an event to notify that the widget has changed
+        :returns: None
+        """
         for ta in self.n_textAreas:
             self.clearTextArea(ta, callFunction=callFunction)
 
     def logTextArea(self, title):
+        """ Creates an md5 hash - can be used later to check if the TextArea has changed
+        The hash is stored in the widget
+
+        :param title: the TextArea to hash
+        :returns: None
+        :raises ItemLookupError: if the title can't be found
+        """
         self.__loadHashlib()
         if hashlib is False:
-            self.warn("Unable to log TextArea, haslib librray not available")
+            self.warn("Unable to log TextArea, hashlib library not available")
         else:
             text = self.__verifyItem(self.n_textAreas, title)
             text.__hash = text.getTextAreaHash()
 
     def textAreaChanged(self, title):
+        """ Creates a temporary md5 hash - and compares it with a previously generated & stored hash
+        The previous hash has to be generated manually, by calling logTextArea
+
+        :param title: the TextArea to hash
+        :returns: bool - True if the TextArea has changed or False if it hasn't
+        :raises ItemLookupError: if the title can't be found
+        """
         self.__loadHashlib()
         if hashlib is False:
-            self.warn("Unable to lof TextArea, haslib librray not available")
+            self.warn("Unable to log TextArea, hashlib library not available")
         else:
             text = self.__verifyItem(self.n_textAreas, title)
             return text.__hash != text.getTextAreaHash()
@@ -7237,17 +7570,20 @@ class gui(object):
 
         current = self.n_entryVars[name].get()
 
-        # clear & remove default
-        if mode == "set" or (mode in [ "in", "clear"] and entry.showingDefault):
-            var.set("")
-            entry.showingDefault = False
-            entry.config(justify=entry.oldJustify, foreground=entry.oldFg)
-        elif mode == "out" and current == "":
-            var.set(entry.default)
-            entry.config(justify='center', foreground='grey')
-            entry.showingDefault = True
-        elif mode == "update" and entry.showingDefault:
-            var.set(entry.default)
+        # disable any change function
+        with PauseCallFunction(False, var, False):
+
+            # clear & remove default
+            if mode == "set" or (mode in [ "in", "clear"] and entry.showingDefault):
+                var.set("")
+                entry.showingDefault = False
+                entry.config(justify=entry.oldJustify, foreground=entry.oldFg)
+            elif mode == "out" and current == "":
+                var.set(entry.default)
+                entry.config(justify='center', foreground='grey')
+                entry.showingDefault = True
+            elif mode == "update" and entry.showingDefault:
+                var.set(entry.default)
 
         # re-enable any limits
         if var.lc_id is not None:
@@ -7633,7 +7969,10 @@ class gui(object):
 
         if self.pinBut is not None:
             if disabled:
-                self.pinBut.unbind("<Button-1>", self.pinBut.eventId)
+                # this fails if not bound
+                if self.pinBut.eventId:
+                    self.pinBut.unbind("<Button-1>", self.pinBut.eventId)
+                self.pinBut.eventId = None
                 self.__disableTooltip(self.pinBut)
                 self.pinBut.config(cursor="")
             else:
@@ -7999,21 +8338,11 @@ class gui(object):
             for item in range(numMenus+1):
                 self.menuBar.entryconfig(item, state=NORMAL)
 
-    def disableMenu(
-        self,
-        title,
-        limit=None): self.__changeMenuState(
-        title,
-        DISABLED,
-        limit)
+    def disableMenu( self, title, limit=None):
+        self.__changeMenuState(title, DISABLED, limit)
 
-    def enableMenu(
-        self,
-        title,
-        limit=None): self.__changeMenuState(
-        title,
-        NORMAL,
-        limit)
+    def enableMenu( self, title, limit=None):
+        self.__changeMenuState(title, NORMAL, limit)
 
     def __changeMenuState(self, title, state, limit=None):
         theMenu = self.__verifyItem(self.n_menus, title)
@@ -8040,6 +8369,14 @@ class gui(object):
     def enableMenuItem(self, title, item):
         theMenu = self.__verifyItem(self.n_menus, title)
         theMenu.entryconfigure(item, state=NORMAL)
+
+    def renameMenu(self, title, newName):
+        theMenu = self.__verifyItem(self.n_menus, title)
+        self.menuBar.entryconfigure(title, label=newName)
+
+    def renameMenuItem(self, title, item, newName):
+        theMenu = self.__verifyItem(self.n_menus, title)
+        theMenu.entryconfigure(item, label=newName)
 
     #################
     # wrappers for getters
@@ -8528,7 +8865,7 @@ class Meter(Frame):
         if PYTHON2:
             Frame.config(self, cnf, **kw)
         else:
-            super(Frame, self).config(cnf, **kw)
+            super(__class__, self).config(cnf, **kw)
 
         self.makeBar()
 
@@ -8865,7 +9202,7 @@ class TabbedFrame(Frame):
         if PYTHON2:
             Frame.config(self, cnf, **kw)
         else:
-            super(Frame, self).config(cnf, **kw)
+            super(__class__, self).config(cnf, **kw)
 
     def addTab(self, text, **kwargs):
         # check for duplicates
@@ -9127,7 +9464,7 @@ class Link(Label):
         if PYTHON2:
             Label.config(self, **kw)
         else:
-            super(Label, self).config(**kw)
+            super(__class__, self).config(**kw)
 
 #####################################
 # Properties Widget
@@ -9180,7 +9517,7 @@ class Properties(LabelFrame):
         if PYTHON2:
             LabelFrame.config(self, cnf, **kw)
         else:
-            super(LabelFrame, self).config(cnf, **kw)
+            super(__class__, self).config(cnf, **kw)
 
     def addProperties(self, props, callFunction=True):
 
@@ -9319,7 +9656,7 @@ class Separator(Frame):
         if PYTHON2:
             Frame.config(self, cnf, **kw)
         else:
-            super(Frame, self).config(cnf, **kw)
+            super(__class__, self).config(cnf, **kw)
 
 #####################################
 # Pie Chart Class
@@ -9517,7 +9854,7 @@ class ToggleFrame(Frame):
         if PYTHON2:
             Frame.config(self, cnf, **kw)
         else:
-            super(Frame, self).config(cnf, **kw)
+            super(__class__, self).config(cnf, **kw)
 
 
     def cget(self, option):
@@ -9527,7 +9864,7 @@ class ToggleFrame(Frame):
         if PYTHON2:
             return Frame.cget(self, option)
         else:
-            return super(Frame, self).cget(option)
+            return super(__class__, self).cget(option)
 
     def toggle(self):
         if not self.showing:
@@ -9671,7 +10008,7 @@ class PagedWindow(Frame):
         if PYTHON2:
             Frame.config(self, cnf, **kw)
         else:
-            super(Frame, self).config(cnf, **kw)
+            super(__class__, self).config(cnf, **kw)
 
 
     # functions to change the labels of the two buttons
@@ -10058,7 +10395,7 @@ class ParentBox(Frame):
         if PYTHON2:
             Frame.config(self, cnf, **kw)
         else:
-            super(Frame, self).config(cnf, **kw)
+            super(__class__, self).config(cnf, **kw)
 
     def processConfig(self, kw):
         return kw
@@ -10094,7 +10431,7 @@ class ListBoxContainer(Frame):
         if PYTHON2:
             Frame.config(self, cnf, **kw)
         else:
-            super(Frame, self).config(cnf, **kw)
+            super(__class__, self).config(cnf, **kw)
 
 
 class Pane(Frame):
@@ -10147,7 +10484,7 @@ class AutoScrollbar(Scrollbar):
         if PYTHON2:
             Scrollbar.config(self, cnf, **kw)
         else:
-            super(Scrollbar, self).config(cnf, **kw)
+            super(__class__, self).config(cnf, **kw)
 
 #######################
 # Upgraded scale - http://stackoverflow.com/questions/42843425/change-trough-increment-in-python-tkinter-scale-without-affecting-slider/
@@ -10185,6 +10522,14 @@ class TextParent():
         self.bind('<<Modified>>', self._beenModified)
         self.__hash = None
         self.callFunction = True
+        self.oldCallFunction = True
+
+    def pauseCallFunction(self, callFunction=False):
+        self.oldCallFunction = self.callFunction
+        self.callFunction = callFunction
+
+    def resumeCallFunction(self):
+        self.callFunction = self.oldCallFunction
 
     def _beenModified(self, event=None):
         # stop recursive calls
@@ -10255,7 +10600,7 @@ class SelectableLabel(Entry):
             if PYTHON2:
                 return Entry.cget(self, kw)
             else:
-                return super(Entry, self).cget(kw)
+                return super(__class__, self).cget(kw)
 
     def config(self, cnf=None, **kw):
         self.configure(cnf, **kw)
@@ -10272,7 +10617,7 @@ class SelectableLabel(Entry):
         if PYTHON2:
             Entry.config(self, cnf, **kw)
         else:
-            super(Entry, self).config(cnf, **kw)
+            super(__class__, self).config(cnf, **kw)
 
 
 #######################
@@ -10330,7 +10675,7 @@ class ScrollPane(Frame):
         if PYTHON2:
             Frame.config(self, **kw)
         else:
-            super(Frame, self).config(**kw)
+            super(__class__, self).config(**kw)
 
     # track changes to the canvas and frame width and sync them,
     # http://www.scriptscoop2.com/t/35d742299f35/python-tkinter-scrollbar-for-frame.html
@@ -10604,7 +10949,7 @@ class SimpleEntryDialog(Dialog):
         if PYTHON2:
             Dialog.__init__(self, parent, title)
         else:
-            super(SimpleEntryDialog, self).__init__(parent, title)
+            super(__class__, self).__init__(parent, title)
 
     def clearError(self, e):
         if self.error:
@@ -10640,7 +10985,7 @@ class TextDialog(SimpleEntryDialog):
         if PYTHON2:
             SimpleEntryDialog.__init__(self, parent, title, question, defaultVar)
         else:
-            super(TextDialog, self).__init__(parent, title, question, defaultVar)
+            super(__class__, self).__init__(parent, title, question, defaultVar)
 
     def validate(self):
         res = self.e1.get()
@@ -10660,7 +11005,7 @@ class NumDialog(SimpleEntryDialog):
         if PYTHON2:
             SimpleEntryDialog.__init__(self, parent, title, question)
         else:
-            super(NumDialog, self).__init__(parent, title, question)
+            super(__class__, self).__init__(parent, title, question)
 
     def validate(self):
         res = self.e1.get()
@@ -11192,15 +11537,21 @@ class AJRectangle(object):
 class GoogleMap(LabelFrame):
     """ Class to wrap a GoogleMap tile download into a widget"""
 
-    def __init__(self, parent, defaultLocation="Marlborough, UK"):
+    def __init__(self, parent, app, defaultLocation="Marlborough, UK"):
         LabelFrame.__init__(self, parent, text="GoogleMaps")
+        self.API_KEY = ""
         self.parent = parent
+        self.imageQueue = Queue.Queue()
         self.defaultLocation = defaultLocation
+        self.currentLocation = None
+        self.app = app
 
         self.TERRAINS = ("Roadmap", "Satellite", "Hybrid", "Terrain")
-        self.GOOGLE_URL =  "http://maps.google.com/maps/api/staticmap?"
+        self.MAP_URL =  "http://maps.google.com/maps/api/staticmap?"
+        self.GEO_URL = "https://maps.googleapis.com/maps/api/geocode/json?"
         self.LOCATION_URL = "http://freegeoip.net/json/"
 #        self.LOCATION_URL = "http://ipinfo.io/json"
+        self.setCurrentLocation()
 
         # the parameters that we store
         # keeps getting updated, then sent to GoogleMaps
@@ -11210,7 +11561,10 @@ class GoogleMap(LabelFrame):
         imgObj = None
         self.rawData = None
         self.mapData = None
-        self.getMapData()
+        self.app.thread(self.getMapData)
+
+        self.updateMapId = self.parent.after(500, self.updateMap)
+        self.request = "http://maps.google.com"
 
         # if we got some map data then load it
         if self.mapData is not None:
@@ -11281,6 +11635,13 @@ class GoogleMap(LabelFrame):
 
         self.__placeControls()
 
+    def destroy(self):
+        self.stopUpdates()
+        if PYTHON2:
+            LabelFrame.destroy(self)
+        else:
+            super(__class__, self).destroy()
+
     def __removeControls(self):
         self.locationEntry.place_forget()
         self.terrainOption.place_forget()
@@ -11288,6 +11649,9 @@ class GoogleMap(LabelFrame):
         self.buttons[1].place_forget()
         self.buttons[2].place_forget()
         self.buttons[3].place_forget()
+
+    def stopUpdates(self):
+        self.parent.after_cancel(self.updateMapId)
 
     def __placeControls(self):
         self.locationEntry.place(rely=0, relx=0, x=8, y=8, anchor=NW)
@@ -11301,7 +11665,7 @@ class GoogleMap(LabelFrame):
 
     def __setMapParams(self):
         if "center" not in self.params or self.params["center"] == None or self.params["center"] == "":
-            self.params["center"] = self.getCurrentLocation()
+            self.params["center"] = self.currentLocation
         if "zoom" not in self.params:
             self.params["zoom"] = 16
         if "size" not in self.params:
@@ -11318,11 +11682,11 @@ class GoogleMap(LabelFrame):
 
     def removeMarkers(self):
         self.markers = []
-        self.parent.after(0, self.updateMap())
+        self.app.thread(self.getMapData)
 
     def addMarker(self, location):
         self.markers.append(location)
-        self.parent.after(0, self.updateMap())
+        self.app.thread(self.getMapData)
 
     def saveTile(self, location):
         if self.rawData is not None:
@@ -11341,7 +11705,7 @@ class GoogleMap(LabelFrame):
     def setSize(self, size):
         if size != self.params["size"]:
             self.params["size"] = size.lower()
-            self.parent.after(0, self.updateMap())
+            self.app.thread(self.getMapData)
 
     def changeTerrain(self, terrainType):
         terrainType = terrainType.title()
@@ -11349,30 +11713,31 @@ class GoogleMap(LabelFrame):
             self.terrainType.set(terrainType)
             if self.params["maptype"] != self.terrainType.get().lower():
                 self.params["maptype"] = self.terrainType.get().lower()
-                self.parent.after(0, self.updateMap())
+                self.app.thread(self.getMapData)
 
     def changeLocation(self, location):
         self.location.set(location) # update the entry
         if self.params["center"] != location:
             self.params["center"] = location
-            self.parent.after(0, self.updateMap())
+            self.app.thread(self.getMapData)
 
     def setZoom(self, zoom):
         if 0 <= zoom <= 22:
             self.params["zoom"] = zoom
-            self.parent.after(0, self.updateMap())
+            self.app.thread(self.getMapData)
 
     def zoom(self, mod):
         if mod == "+" and self.params["zoom"] < 22:
             self.params["zoom"] += 1
-            self.parent.after(0, self.updateMap())
+            self.app.thread(self.getMapData)
         elif mod == "-" and self.params["zoom"] > 0:
             self.params["zoom"] -= 1
-            self.parent.after(0, self.updateMap())
+            self.app.thread(self.getMapData)
 
     def updateMap(self):
-        self.getMapData()
-        if self.mapData is not None:
+        if not self.imageQueue.empty():
+            self.rawData = self.imageQueue.get()
+            self.mapData = base64.encodestring(self.rawData)
             imgObj = PhotoImage(data=self.mapData)
             self.canvas.itemconfig(self.image_on_canvas, image=imgObj)
             self.canvas.img = imgObj
@@ -11387,11 +11752,10 @@ class GoogleMap(LabelFrame):
                 self.canvas.config(width=self.w, height=self.h)
                 self.__placeControls()
             self.buttons[3].registerWebpage(self.request)
-        else:
-            gui.error("Unable to update map, as no mapData")
+        self.updateMapId = self.parent.after(200, self.updateMap)
 
     def __buildQueryURL(self):
-        self.request = self.GOOGLE_URL + urlencode(self.params)
+        self.request = self.MAP_URL + urlencode(self.params)
         if len(self.markers) > 0:
             m = "|".join(self.markers)
             m = quote_plus(m)
@@ -11399,23 +11763,34 @@ class GoogleMap(LabelFrame):
             
         gui.debug("GoogleMap search URL: " + self.request)
 
+    def __buildGeoURL(self, location):
+        """ for future use - gets the location
+        """
+        p = {}
+        p["address"] = location
+        p["key"] = self.API_KEY
+        req = self.GEO_URL + urlencode(p)
+        return req
+
     def getMapData(self):
         """ will query GoogleMaps & download the image data as a blob """
         if self.params['center'] == "":
-            self.params["center"] = self.getCurrentLocation()
+            self.params["center"] = self.currentLocation
         self.__buildQueryURL()
-        try:
-            u = urlopen(self.request)
-            self.rawData = u.read()
-            u.close()
-            self.mapData = base64.encodestring(self.rawData)
-        except Exception as e:
-            gui.error("Unable to contact GoogleMaps")
-            self.mapData = None
-            self.rawData = None
+        gotMap = False
+        while not gotMap:
+            try:
+                u = urlopen(self.request)
+                rawData = u.read()
+                u.close()
+                self.imageQueue.put(rawData)
+                gotMap = True
+            except Exception as e:
+                gui.error("Unable to contact GoogleMaps")
+                time.sleep(1)
 
     def getMapFile(self, fileName):
-        """ will query GoogleMaps & download the iamge into the named file """
+        """ will query GoogleMaps & download the image into the named file """
         self.__buildQueryURL()
         self.buttons[3].registerWebpage(self.request)
         try:
@@ -11425,16 +11800,18 @@ class GoogleMap(LabelFrame):
             gui.error("Unable to contact GoogleMaps")
             return None
 
-    def getCurrentLocation(self):
+    def setCurrentLocation(self):
         gui.debug("Location request URL: " + self.LOCATION_URL)
         try:
-            return self.__locationLookup()
+            self.currentLocation = self.__locationLookup()
         except Exception as e:
             gui.error("Unable to contact location server, using default: " + self.defaultLocation)
-            return self.defaultLocation
+            self.currentLocation = self.defaultLocation
 
     def __locationLookup(self):
-        data =  urlopen(self.LOCATION_URL).read().decode("utf-8")
+        u =  urlopen(self.LOCATION_URL)
+        data = u.read().decode("utf-8")
+        u.close()
         gui.debug("Location data: " + data)
         data = json.loads(data)
 #        location = data["loc"]
@@ -11567,7 +11944,7 @@ class TrashBin(CanvasDnd):
         if PYTHON2:
             CanvasDnd.config(self, **kw)
         else:
-            super(CanvasDnd, self).config(**kw)
+            super(__class__, self).config(**kw)
 
 # This is a prototype thing to be dragged and dropped.
 class DraggableWidget:

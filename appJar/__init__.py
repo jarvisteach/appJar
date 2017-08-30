@@ -10,3 +10,4 @@ from appJar.appjar import Link
 from appJar.appjar import Separator
 from appJar.appjar import Grip
 from appJar.appjar import PieChart
+from appJar.appjar import DraggableWidget

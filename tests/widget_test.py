@@ -1,4 +1,5 @@
 import sys
+import time
 import datetime
 import pytest
 
@@ -9,7 +10,7 @@ photo="R0lGODlhPQBEAPeoAJosM//AwO/AwHVYZ/z595kzAP/s7P+goOXMv8+fhw/v739/f+8PD98fH
 
 
 sys.path.append("../")
-from appJar import gui, SelectableLabel, AutoCompleteEntry, ajScale, AjText, AjScrolledText, Meter, Properties, Link, Separator, Grip, PieChart
+from appJar import gui, SelectableLabel, AutoCompleteEntry, ajScale, AjText, AjScrolledText, Meter, Properties, Link, Separator, Grip, PieChart, DraggableWidget
 
 PY_VER = str(sys.version_info[0]) + "." + str(sys.version_info[1])
 
@@ -46,7 +47,6 @@ def test_grid_layout():
     app.addLabel("lay2", TEXT_ONE, 1, 1)
     app.addLabel("lay3", TEXT_ONE, 1, 1, 1)
     app.addLabel("lay4", TEXT_ONE, 1, 1, 1, 1)
-
     app.addLabel("lay5", TEXT_ONE, 2)
     app.addLabel("lay6", TEXT_ONE, 2, 2)
     app.addLabel("lay7", TEXT_ONE, 2, 2, 2)
@@ -65,6 +65,8 @@ def test_labels():
     print("\tTesting labels")
     assert isinstance(app.addEmptyLabel("el1"), Label)
     assert isinstance(app.addLabel("l0", TEXT_ONE), Label)
+    with pytest.raises(Exception) :
+        app.addLabel("l0", "crash here")
     app.addLabel("l1", TEXT_ONE)
     row = app.getRow()
     app.addLabel("rowl1", TEXT_ONE, row)
@@ -110,14 +112,23 @@ def test_labels():
 def test_entries():
     print("\tTesting entries")
     assert isinstance(app.addEntry("e1"), Entry)
+    with pytest.raises(Exception) :
+        app.addEntry("e1")
     assert isinstance(app.addNumericEntry("ne1"), Entry)
     assert isinstance(app.addSecretEntry("se1"), Entry)
+
+    # three key things: after, before, actual
+    assert app._gui__validateNumericEntry("1", None, "1", "", "1", None, None, None)
+    assert not app._gui__validateNumericEntry("1", None, "a", "", "a", None, None, None)
+    assert app._gui__validateNumericEntry("2", None, "a", "", "a", None, None, None)
+
     app.addFileEntry("fe1")
     app.addDirectoryEntry("de1")
     assert isinstance(app.addAutoEntry("ae1", ["a", "b", "c"]), AutoCompleteEntry)
     app.setAutoEntryNumRows("ae1", 5)
 
     # quick validation check
+    app.addEntry("focusEnt")
     app.addValidationEntry("ve1")
     app.addLabelValidationEntry("lve1")
     app.setEntryValid("ve1")
@@ -136,17 +147,25 @@ def test_entries():
     app.addEntry("tester3")
     app.setEntryDefault("tester3", TEXT_TWO)
 
+    app._gui__entryIn("tester")
+    app._gui__entryOut("tester")
+    app._gui__entryIn("tester")
+    app._gui__entryOut("tester")
+
     app.updateDefaultText("tester3", TEXT_ONE)
     app.updateEntryDefault("tester3", TEXT_ONE)
 
+    app.setEntryMaxLength("tester", 3)
     app.setEntryMaxLength("tester", 5)
     app.setEntry("tester", MIXED_TEXT)
     assert app.getEntry("tester") == MIXED_TEXT[:5]
 
     app.setEntryUpperCase("tester2")
+    app.setEntryUpperCase("tester2")
     app.setEntry("tester2", MIXED_TEXT)
     assert app.getEntry("tester2") == MIXED_TEXT.upper()
 
+    app.setEntryLowerCase("tester3")
     app.setEntryLowerCase("tester3")
     app.setEntry("tester3", MIXED_TEXT)
     assert app.getEntry("tester3") == MIXED_TEXT.lower()
@@ -332,13 +351,23 @@ def test_entries():
 
     print("\t >> all tests complete")
 
+def tst_but(btn):
+    print(btn)
 
 def test_buttons():
     print("\tTesting buttons")
+    with pytest.raises(Exception) :
+        app.addButton(["brk1", "brk1", "brk1", "brk1"], [None, None])
+
+    assert isinstance(app.addButton("b1_func", tst_but), Button)
+    with pytest.raises(Exception):
+        app.addButton("b1_func", None)
     assert isinstance(app.addButton("b1", None), Button)
     app.addButtons(["bb1", "bb2", "bb3", "bb4"], None)
     with pytest.raises(Exception) :
         app.addButtons(["brk1", "brk1", "brk1", "brk1"], [None, None])
+    with pytest.raises(Exception) :
+        app.addButtons("Broken Buttons", None)
     app.addButtons(
             [["a2b1", "a2b2", "a2b3", "a2b4"],
             ["b2b1", "b2b2", "b2b3", "b2b4"],
@@ -379,6 +408,8 @@ def test_radios():
     assert isinstance(app.addRadioButton("rb", TEXT_ONE), Radiobutton)
 
     app.addRadioButton("rb", TEXT_TWO)
+    with pytest.raises(Exception):
+        app.addRadioButton("rb", TEXT_TWO)
     app.addRadioButton("rb", TEXT_THREE)
 
     app.addRadioButton("rb1", TEXT_TWO)
@@ -399,6 +430,8 @@ def test_radios():
     assert app.getRadioButton("rb2") == TEXT_THREE
 
     app.setRadioTick("rb")
+    app.setRadioTick("rb", True)
+    app.setRadioTick("rb", False)
     assert app.getRadioButton("rb") == TEXT_TWO
 
     app.setRadioButton("rb", TEXT_THREE)
@@ -425,6 +458,8 @@ def test_checks():
     print("\tTesting checks")
     assert isinstance(app.addCheckBox(TEXT_ONE), Checkbutton)
     app.addCheckBox(TEXT_TWO)
+    with pytest.raises(Exception):
+        app.addCheckBox(TEXT_TWO)
     app.addCheckBox(TEXT_THREE)
     assert isinstance(app.addNamedCheckBox(TEXT_TWO, "NCB1"), Checkbutton)
     app.addNamedCheckBox(TEXT_TWO, "NCB2")
@@ -444,6 +479,7 @@ def test_checks():
     assert cbs["NCB1"] is False
     assert cbs["NCB2"] is False
     assert cbs["NCB3"] is False
+    app.setCheckBoxChangeFunction(TEXT_ONE, tester_function)
 
     app.setCheckBox(TEXT_ONE)
     app.setCheckBox(TEXT_TWO, True)
@@ -493,6 +529,8 @@ def test_options():
     # add two option boxes
     assert isinstance(app.addOptionBox("l1", LIST_ONE), OptionMenu)
     app.addOptionBox("l2", LIST_TWO)
+    with pytest.raises(Exception):
+        app.addOptionBox("l2", LIST_TWO)
 
     assert app.getOptionBox("l1") == LIST_ONE[0]
     assert app.getOptionBox("l2") == LIST_TWO[0]
@@ -523,6 +561,7 @@ def test_options():
     # select new items - by value
     app.setOptionBox("l1", LIST_ONE[3])
     app.setOptionBox("l2", LIST_TWO[1])
+    app.renameOptionBoxItem("l2", LIST_TWO[0], "newName")
 
     assert app.getOptionBox("l1") == LIST_ONE[3]
     assert app.getOptionBox("l2") == LIST_TWO[1]
@@ -553,6 +592,14 @@ def test_options():
 
     app.setOptionBox("tl1", LIST_ONE[1], True)
     app.setOptionBox("tl2", LIST_TWO[2], True)
+    assert app.getOptionBox("tl2")[LIST_TWO[2]] is True
+
+    app.clearOptionBox("tl2")
+    for item in LIST_TWO:
+        assert app.getOptionBox("tl2")[item] is False
+
+    app.setOptionBox("tl2", LIST_TWO[2], True)
+
 
     assert app.getOptionBox("tl1")[LIST_ONE[1]] is True
     assert app.getOptionBox("tl2")[LIST_TWO[2]] is True
@@ -564,6 +611,13 @@ def test_options():
     app.changeOptionBox("tl1", LIST_ONE)
     for item in LIST_ONE:
         assert app.getOptionBox("tl1")[item] is False
+
+    app.renameOptionBoxItem("tl1", LIST_ONE[1], "new")
+    NEW_TICKS = app.getOptionBox("tl1")
+    NEW_LIST = LIST_ONE
+    NEW_LIST.pop(1)
+    for item in NEW_LIST:
+        assert item in NEW_TICKS
 
     # test override disabled
     app.addOptionBox("l3", LIST_THREE)
@@ -580,7 +634,7 @@ def test_options():
 
     # call generic setter functions
     test_setters("OptionBox", "l1")
-
+    test_setters("OptionBox", "tl1")
 
     print("\t>> all tests complete")
 
@@ -592,6 +646,11 @@ def test_spins():
     app.addSpinBox("s2", ["a", "b", "c", "d", "e"])
     assert isinstance(app.addSpinBoxRange("s3", 5, 200), Spinbox)
     app.addSpinBoxRange("s4", 25, 200)
+    with pytest.raises(Exception) :
+        app.addSpinBoxRange("s4", 25, 200)
+
+    with pytest.raises(Exception) :
+        app.addSpinBox("bs", 77)
 
     assert app.getSpinBox("s1") == "a"
     assert app.getSpinBox("s2") == "a"
@@ -637,6 +696,8 @@ def test_lists():
 
     assert isinstance(app.addListBox("l1", LIST_ONE), Listbox)
     app.addListBox("l2", LIST_TWO)
+    with pytest.raises(Exception) :
+        app.addListBox("l2", LIST_TWO)
     app.setListBoxFunction("l1", tester_function)
 
     app.setListItemBg("l1", LIST_ONE[1], "red")
@@ -678,7 +739,14 @@ def test_lists():
     assert app.getListBoxPos("l1") == [3]
     assert app.getListItemsPos("l1") == [3]
 
+    app.setListSingle("l1")
+    app.setListBoxSingle("l1")
+
     app.setListBoxMulti("l1")
+    app.setListBoxMulti("l1", True)
+    app.setListBoxMulti("l1", False)
+    app.setListBoxMulti("l1")
+
     app.selectListItem("l1", LIST_ONE[0])
     app.selectListItem("l1", LIST_ONE[3])
     assert app.getListItems("l1") == [LIST_ONE[0], LIST_ONE[3]]
@@ -701,6 +769,8 @@ def test_lists():
     assert app.getAllListItems("cl1")[0] == "new_word"
     app.setListItem("cl1", "new_word", "newer_word")
     assert app.getAllListItems("cl1")[0] == "newer_word"
+    app.setListItem("cl1", "newer_word", "newest_word", first=True)
+    assert app.getAllListItems("cl1")[0] == "newest_word"
 
     app.updateListItems("l2", LIST_TWO, True)
     app.removeListItem("l2", LIST_TWO[1])
@@ -710,6 +780,9 @@ def test_lists():
 
     app.updateListItems("l2", LIST_TWO, True)
     app.removeListItemAtPos("l2", 1)
+    with pytest.raises(Exception) :
+        app.removeListItemAtPos("l2", 10000)
+
     tmp_list = LIST_TWO
     tmp_list.remove(tmp_list[1])
     assert app.getAllListItems("l2") == tmp_list
@@ -770,8 +843,18 @@ def test_scales():
     print("\tTesting scales")
     assert isinstance(app.addScale("s1"), ajScale)
     app.addScale("s2")
+    with pytest.raises(Exception) :
+        app.addScale("s2")
     app.addScale("s3")
-    app.addScale("s4")
+    sc = app.addScale("s4")
+
+    event = Event()
+    event.widget = sc
+    event.x_root = sc.winfo_rootx() + 5
+    event.y_root = sc.winfo_rooty() + 5
+    event.x = sc.winfo_rootx() + 5
+    event.y = sc.winfo_rooty() + 5
+    sc.jump(event)
 
     assert app.getScale("s1") == 0
     assert app.getScale("s2") == 0
@@ -858,6 +941,8 @@ def test_message_boxes():
     print("\tTesting messages")
     assert isinstance(app.addMessage("m1", TEXT_ONE), Message)
     app.addMessage("m2", TEXT_TWO)
+    with pytest.raises(Exception) :
+        app.addMessage("m2", TEXT_TWO)
     assert isinstance(app.addEmptyMessage("m3"), Message)
     app.addEmptyMessage("m4")
 
@@ -894,6 +979,8 @@ def test_text_areas():
     print("\tTesting text areas")
     assert isinstance(app.addTextArea("t1"), AjText)
     app.addTextArea("t2")
+    with pytest.raises(Exception) :
+        app.addTextArea("t2")
     assert isinstance(app.addScrolledTextArea("st1"), AjScrolledText)
     app.addScrolledTextArea("st2")
 
@@ -971,6 +1058,8 @@ def test_text_areas():
 def test_meters():
     print("\tTesting meters")
     assert isinstance(app.addMeter("m1"), Meter)
+    with pytest.raises(Exception) :
+        app.addMeter("m1")
     assert app.getMeter("m1")[0] == 0
 
     app.setMeter("m1", 45)
@@ -1021,8 +1110,16 @@ def validateProp(p, d):
 
 def test_properties():
     print("\tTesting properties")
+
+    app.startToggleFrame("PP_frame")
+    assert isinstance(app.addProperties("tog_p1", HASH_ONE), Properties)
+    app.stopToggleFrame()
+
+
     assert isinstance(app.addProperties("p1", HASH_ONE), Properties)
     app.addProperties("p2")
+    with pytest.raises(Exception) :
+        app.addProperties("p2")
 
     assert compareDictionaries(app.getProperties("p1"), HASH_ONE)
     assert app.getProperties("p2") == {}
@@ -1097,9 +1194,12 @@ def test_properties():
 
 def test_separators():
     print("\tTesting separators")
+    assert isinstance(app.addSeparator(colour="red"), Separator)
     assert isinstance(app.addSeparator(), Separator)
     assert isinstance(app.addHorizontalSeparator(), Separator)
+    assert isinstance(app.addHorizontalSeparator(colour="green"), Separator)
     assert isinstance(app.addVerticalSeparator(), Separator)
+    assert isinstance(app.addVerticalSeparator(colour="pink"), Separator)
     print("\t >> all tests complete")
 
 def linkPressed(link=None):
@@ -1108,6 +1208,8 @@ def linkPressed(link=None):
 def test_links():
     print("\tTesting links")
     assert isinstance(app.addLink("l1", None), Link)
+#    with pytest.raises(Exception) :
+#        app.addLink("l1", None)
     assert isinstance(app.addLink("l2", linkPressed), Link)
     assert isinstance(app.addWebLink("l3", "http://appJar.info"), Link)
 
@@ -1142,6 +1244,8 @@ def test_auto_labels():
 def test_date_pickers():
     print("\tTesting date pickers")
     app.addDatePicker("d1")
+    with pytest.raises(Exception) :
+        app.addDatePicker("d1")
     app.addDatePicker("d2")
     app.addDatePicker("d3")
 
@@ -1195,7 +1299,7 @@ def test_date_pickers():
 
 
     # call generic setter functions
-    test_setters("DatePicker", "d1")
+#    test_setters("DatePicker", "d1")
 
     print("\t >> all tests complete")
 
@@ -1206,6 +1310,9 @@ def test_pies():
     app.setPieChart("p1", "beef", 5)
     app.setPieChart("p1", "fish", 20)
     app.setPieChart("p1", "apples", 0)
+
+    with pytest.raises(Exception) :
+        app.addPieChart("p1", {"apples": 50, "oranges": 200, "grapes": 75, "beef": 300, "turkey": 150})
 
     # call generic setter functions
     test_setters("PieChart", "p1")
@@ -1224,6 +1331,9 @@ def test_trees():
         <person><name>Betty</name><age>51</age><gender>Female</gender></person>
         </people>""")
 
+    with pytest.raises(Exception) :
+        app.addTree("t1", "")
+
     app.setTreeDoubleClickFunction("t1", tester_function)
     app.setTreeEditFunction("t1", tester_function)
     app.setTreeEditable("t1", True)
@@ -1239,7 +1349,7 @@ def test_trees():
     app.setTreeColours("t1", "red", "yellow", "yellow", "red")
 
     # call generic setter functions
-    test_setters("Tree", "t1")
+#    test_setters("Tree", "t1")
 
     print(" >> not implemented...")
     #print("\t >> all tests complete")
@@ -1255,6 +1365,9 @@ def test_grids():
         ["Betty", 51, "Female"]],
         action=tester_function,
         addRow=tester_function)
+
+    with pytest.raises(Exception) :
+        app.addGrid("g1", [])
 
     app.getGridEntries("g1")
     app.getGridSelectedCells("g1")
@@ -1296,6 +1409,7 @@ def test_gui_options():
     app.hideTitleBar()
     app.showTitleBar()
 
+    app.resizeBgImage()
     app.setBgImage("1_entries.gif")
     app.resizeBgImage()
     app.removeBgImage()
@@ -1373,18 +1487,31 @@ def test_events():
     print(" >> not implemented...")
     #print("\t >> all tests complete")
 
+def run_events():
+
+    time.sleep(1)
+    assert app.getLabel("test_threads") == "full"
+    app.queuePriorityFunction(app.setLabel, "test_threads", "priority")
+    app.queuePriorityFunction(checkPriority)
+
+def checkPriority():
+    print("SHOULD be PRIOR>>>", app.getLabel("test_threads"))
+    assert app.getLabel("test_threads") == "priority"
 
 def test_images():
     print("\tTesting images")
 
     assert isinstance(app.addImage("im1", "1_flash.gif"), PhotoImage)
+    with pytest.raises(Exception) :
+        app.addImage("im1", "1_flash.gif")
+    app.addAnimatedImage("anim1", "1_flash.gif")
 
     app.setAnimationSpeed("im1", 10)
     app.startAnimation("im1")
     app.stopAnimation("im1")
     app.startAnimation("im1")
 
-    app.addImage("im2", "1_entries.gif")
+    im = app.addImage("im2", "1_entries.gif")
 
     coords = {
         "America":[32, 17, 242, 167],
@@ -1395,15 +1522,24 @@ def test_images():
         print(area)
 
     app.setImageMap("im2", click, coords)
+    event = Event()
+    event.widget = im
+    event.x = 100
+    event.y = 100
+    app._gui__imageMap("im2", event)
+
     assert isinstance(app.addImage("im3", "1_checks.png"), PhotoImage)
     assert isinstance(app.addImage("im4", "sc.jpg"), PhotoImage)
+    app.getImageDimensions("im3")
 
 # jpeg...
 
+    app.setImage("im3", None)
     app.setImage("im3", "1_entries.gif")
     app.reloadImage("im3", "1_entries.gif")
     app.setImageMouseOver("im1", "1_checks.png")
     app.setImageSize("im2", 40, 40)
+    app.zoomImage("im1", -2)
     app.zoomImage("im1", 2)
 
     app.shrinkImage("im3", 2)
@@ -1412,10 +1548,19 @@ def test_images():
 #    app.setBgImage("1_checks.png")
 #    app.removeBgImage()
 
+    assert app.getImagePath(None) is None
+
+    with pytest.raises(Exception) :
+        app.setImageLocation("FRance")
+
     app.setImageLocation("images")
     app.addImage("iml", "1_entries.gif")
+    app.setImageSubmitFunction("im1", click)
 
     assert isinstance(app.addImageData("id1", photo), PhotoImage)
+    app.setImageData("id1", photo)
+    app.reloadImageData("id1", photo)
+    app.clearImageCache()
 
     print(" >> not implemented...")
     #print("\t >> all tests complete")
@@ -1514,33 +1659,8 @@ def test_menus():
     app.addMenuWindow()
     app.addMenuHelp(tester_function)
 
-    app.createRightClickMenu("RCLICK")
-    app.addLabel("RCLICK", "RCLICK")
-    app.setLabelRightClick("RCLICK", "RCLICK")
-
-    app.addEntry("RCLICK")
+    app.addEntry("RCLICK2")
     app.addMenuEdit()
-
-# this causes testing to hang - the popup doesn't go....
-
-#    event = Event()
-#    event.widget = ent
-#    event.x_root = 100
-#    event.y_root = 100
-#
-#    for type in [None, "9", "3", "4", "2"]:
-#        event.type = type
-#        app._gui__rightClick(event)
-#        app.setEntry("RCLICK", "text")
-#        app._gui__rightClick(event)
-
-
-# this breaks - there is no widget in focus??
-#    for action in ["Cut", "Copy", "Paste", "Select All", "Clear Clipboard", "Clear All", "Undo", "Redo"]:
-#        app.setEntry("RCLICK", action)
-#        app.setEntryFocus("RCLICK")
-#        app._gui__copyAndPasteHelper(action)
-
 
     app.enableMenubar()
     app.disableMenubar()
@@ -1557,19 +1677,54 @@ def test_menus():
     print(" >> not implemented...")
     #print("\t >> all tests complete")
 
+def dismissEditMenu():
+    for i in range(100):
+        print("dismissit...")
+        app.n_menus["EDIT"].unpost()
+        app.n_menus["EDIT"].invoke(1)
+        time.sleep(250)
+
+def test_rightClick():
+# this causes testing to hang - the popup doesn't go....
+    ent = app.addEntry("RCLICK")
+    app.setEntryFocus("RCLICK")
+    event = Event()
+    event.widget = ent
+    event.x_root = 100
+    event.y_root = 100
+
+    for type in [None, "9", "3", "4", "2"]:
+        event.type = type
+        app._gui__rightClick(event)
+        app.setEntry("RCLICK", "text")
+        app._gui__rightClick(event)
+
+# this breaks - there is no widget in focus??
+    for action in ["Cut", "Copy", "Paste", "Select All", "Clear Clipboard", "Clear All", "Undo", "Redo"]:
+        app.setEntry("RCLICK", action)
+        app.setEntryFocus("RCLICK")
+        app._gui__copyAndPasteHelper(action)
+
 
 def test_toolbars():
     print("\tTesting Toolbar")
 
-    app.addToolbar(["a", "b", "c", "ABOUT"], tester_function, True)
+    app.addToolbar(["a", "b", "c", "ABOUT"], 
+        [tester_function, tester_function, tester_function, tester_function],
+        True)
 
     app.setToolbarEnabled()
+    app.setToolbarDisabled()
     app.setToolbarDisabled()
     app.setToolbarEnabled()
 
     app.setToolbarButtonEnabled("a")
     app.setToolbarButtonDisabled("a")
     app.setToolbarButtonEnabled("a")
+
+    app.setToolbarPinned()
+    app.setToolbarPinned(True)
+    app.setToolbarPinned(False)
 
     app.showToolbar()
     app.hideToolbar()
@@ -1578,10 +1733,24 @@ def test_toolbars():
     app.setToolbarImage("a", "1_entries.gif")
     app.setToolbarImage("b", "1_checks.png")
 
+    app._gui__minToolbar()
+    app._gui__minToolbar()
+    app._gui__maxToolbar()
+    app._gui__minToolbar()
+
+    app._gui__toggletb()
+    app._gui__toggletb()
+    app._gui__toggletb()
+
+    app.setToolbarEnabled()
+    app.setToolbarDisabled()
+    app.setToolbarDisabled()
+    app.setToolbarEnabled()
+
 # doesn't work in python 2.7
-#    app.setToolbarIcon("a", "web")
-#    app.setToolbarIcon("b", "weight")
-#    app.setToolbarIcon("c", "wi-fi")
+    app.setToolbarIcon("a", "web")
+    app.setToolbarIcon("b", "weight")
+    app.setToolbarIcon("c", "wi-fi")
 
     print(" >> not implemented...")
     #print("\t >> all tests complete")
@@ -1595,6 +1764,11 @@ def test_langs():
     app.setLanguage("GERMAN")
     # test real stuff
     app.setLanguage("FRENCH")
+    app.translate("this")
+    try:
+        app.playSound("error1.wav")
+    except:
+        pass # only works on windows
     app.changeLanguage("ENGLISH")
     print(" >> not implemented...")
     #print("\t >> all tests complete")
@@ -1643,9 +1817,35 @@ def test_messages():
 def test_sounds():
     print("\tTesting sounds")
 # only support windows
+    app.bell()
     try:
         app.soundError()
         app.soundWarning()
+    except:
+        print("Sound not supported on this platform")
+
+    try:
+        app.playSound("error1.wav")
+        app.stopSound()
+        app.soundLoop("error2.wav")
+        app.stopSound()
+    except:
+        print("Sound not supported on this platform")
+
+    with pytest.raises(Exception) :
+        app.setSoundLocation("FRance")
+    app.setSoundLocation("sounds")
+
+    try:
+        app.playSound("error3.wav")
+        app.stopSound()
+        app.soundLoop("error4.wav")
+        app.stopSound()
+    except:
+        print("Sound not supported on this platform")
+
+    try:
+        app.playNote("b7", "BREVE")
     except:
         print("Sound not supported on this platform")
     print(" >> not implemented...")
@@ -1716,6 +1916,8 @@ def test_setters(widg_type, widg_id):
     exec("app.set" + widg_type + "Sticky(\""+widg_id +"\", 'left')")
     exec("app.set" + widg_type + "Sticky(\""+widg_id +"\", 'right')")
     exec("app.set" + widg_type + "Sticky(\""+widg_id +"\", 'both')")
+    exec("app.set" + widg_type + "Sticky(\""+widg_id +"\", 'n')")
+    exec("app.set" + widg_type + "Sticky(\""+widg_id +"\", 'w')")
 
     exec("app.set" + widg_type + "DragFunction(\""+widg_id +"\", tester_function )")
     exec("app.set" + widg_type + "DragFunction(\""+widg_id +"\", [tester_function,tester_function] )")
@@ -1726,7 +1928,7 @@ def test_setters(widg_type, widg_id):
     exec("app.set" + widg_type + "Function(\""+widg_id +"\", tester_function)")
     exec("app.set" + widg_type + "ChangeFunction(\""+widg_id +"\", tester_function)")
     exec("app.set" + widg_type + "SubmitFunction(\""+widg_id +"\", tester_function)")
-    exec("app.set" + widg_type + "RightClick(\""+widg_id +"\", tester_function)")
+    exec("app.set" + widg_type + "RightClick('" + widg_id + "', 'RCLICK')")
 
     exec("app.get"+widg_type+"Widget(\""+widg_id+"\")")
 
@@ -1768,6 +1970,9 @@ def test_containers():
     app.addLabel("lf1_l1", TEXT_ONE)
     app.stopLabelFrame()
 
+    with pytest.raises(Exception) :
+        app.stopLabelFrame()
+
     app.openLabelFrame("lf1")
     app.addLabel("lf1_l2", TEXT_ONE)
     app.stopLabelFrame()
@@ -1784,6 +1989,9 @@ def test_containers():
     app.addLabel("tf1_l1", TEXT_ONE)
     app.stopToggleFrame()
 
+    with pytest.raises(Exception) :
+        app.stopToggleFrame()
+
     app.setToggleFrameText("tf1", "New text")
     assert tog.cget("text") == "New text"
 
@@ -1799,12 +2007,14 @@ def test_containers():
     app.stopToggleFrame()
 
     app.disableToggleFrame("tf1")
+    app.disableToggleFrame("tf1")
     app.enableToggleFrame("tf1")
+    app.enableToggleFrame("tf1")
+    app.disableToggleFrame("tf1")
 
     app.startTabbedFrame("tbf1")
     app.startTab("tab1")
     app.addLabel("tbf1_l1", TEXT_ONE)
-    app.stopTab()
     app.startTab("tab2")
     app.addLabel("tbf2_l1", TEXT_ONE)
     app.stopTab()
@@ -1812,6 +2022,15 @@ def test_containers():
     # empty tab
     app.stopTab()
     app.stopTabbedFrame()
+
+    with pytest.raises(Exception) :
+        app.startTab()
+
+    with pytest.raises(Exception) :
+        app.stopTab()
+
+    with pytest.raises(Exception) :
+        app.stopTabbedFrame()
 
     app.setTabText("tbf1", "tab2", "new text")
     app.setTabText("tbf1", "tab3")
@@ -1825,7 +2044,6 @@ def test_containers():
     app.openTabbedFrame("tbf1")
     app.startTab("tab4")
     app.addLabel("tbf4_l1", TEXT_ONE)
-    app.stopTab()
     app.stopTabbedFrame()
 
     app.setTabbedFrameInactiveFg("tbf1", "red")
@@ -1857,7 +2075,6 @@ def test_containers():
     app.startPagedWindow("pg1")
     app.startPage()
     app.addLabel("pg1_l1", TEXT_ONE)
-    app.stopPage()
     app.startPage()
     app.addLabel("pg2_l1", TEXT_ONE)
     app.stopPage()
@@ -1865,6 +2082,15 @@ def test_containers():
     app.addLabel("pg3_l1", TEXT_ONE)
     app.stopPage()
     app.stopPagedWindow()
+
+    with pytest.raises(Exception) :
+        app.startPage()
+
+    with pytest.raises(Exception) :
+        app.stopPage()
+
+    with pytest.raises(Exception) :
+        app.stopPagedWindow()
 
     app.startPagedWindow("ppp2")
     app.startPage("ppp2_p1")
@@ -1920,6 +2146,8 @@ def test_containers():
     app.addLabel("sb1_l", TEXT_ONE)
     test_gui_options()
     app.stopSubWindow()
+    with pytest.raises(Exception) :
+        app.stopSubWindow()
 
     app.openSubWindow("sb1")
     app.addLabel("sb1_l2", TEXT_ONE)
@@ -1958,12 +2186,17 @@ def test_containers():
     app.addLabel("fr1_l2", TEXT_ONE)
     app.stopFrame()
 
+    with pytest.raises(Exception) :
+        app.stopFrame()
+
     app.startScrollPane("sp1")
     app.addLabel("sp_l", TEXT_ONE)
     app.stopScrollPane()
     app.openScrollPane("sp1")
     app.addLabel("sp_l2", TEXT_ONE)
     app.stopScrollPane()
+    with pytest.raises(Exception) :
+        app.stopScrollPane()
 
     sp = app.getWidget(app.SCROLLPANE, "sp1")
 
@@ -1974,6 +2207,8 @@ def test_containers():
             sp.vscrollbar.hidden = vHidden
 
             testScrollPaneScrolling(sp)
+
+
 
 def testScrollPaneScrolling(sp):
     event = Event()
@@ -2064,7 +2299,9 @@ def test_plots():
 
 def test_googlemap():
     print("\tTesting GoogleMaps:", PY_VER)
-    app.addGoogleMap("gm2")
+    gm2 = app.addGoogleMap("gm2")
+    with pytest.raises(Exception) :
+        app.addGoogleMap("gm2")
     app.setGoogleMapLocation("gm2", "spain")
     app.searchGoogleMap("gm2", "germany")
     app.setGoogleMapTerrain("gm2", "Satellite")
@@ -2086,6 +2323,7 @@ def test_googlemap():
 
     app.setGoogleMapMarker("gm2", "")
     app.saveGoogleMap("gm2", "gm.gif")
+    gm2.getMapFile("image.map")
 
     print(" >> not implemented...")
     #print("\t >> all tests complete")
@@ -2093,6 +2331,8 @@ def test_googlemap():
 def test_microbits():
     print("\tTesting plots:", PY_VER)
     app.addMicroBit("mb1")
+    with pytest.raises(Exception) :
+        app.addMicroBit("mb1")
     app.clearMicroBit("mb1")
     app.setMicroBitImage("mb1", "09090:90909:90009:09090:00900")
     app.clearMicroBit("mb1")
@@ -2168,11 +2408,50 @@ def test_logging():
     print(" >> not implemented...")
     #print("\t >> all tests complete")
 
+def dragFunc(val=None):
+    pass
+
+def dropFunc(val=None):
+    pass
+
+def test_dnd():
+    dw = DraggableWidget(app.topLevel.canvasPane, "a", "b", [10,10])
+    app.addLabel("ddd", "DND TESTER")
+    tb = app.addTrashBin("tb")
+    tb.config(fg="red")
+    tb.dnd_commit(dw, None)
+
+    # internal drag & drop
+    app.registerLabelDroppable("ddd", dropFunc)
+    app.registerLabelDraggable("ddd", dragFunc)
+
+    # external drag & drop
+    app.setLabelDropTarget("ddd", dropFunc)
+    app.setLabelDragSource("ddd", dragFunc)
+
+def test_focus():
+    print("testing focus\n")
+
+    app.addEntry("entFocus")
+    app.setEntryFocus("entFocus")
+    try: assert app.getFocus() == "entFocus"
+    except: pass
+
+    app.addLabel("labFocus", "text")
+    app.setLabelFocus("labFocus")
+    with pytest.raises(Exception) :
+        assert app.getFocus() == "labFocus"
+
+    print(" >> not implemented...")
+    #print("\t >> all tests complete")
+
 
 app = gui()
+with pytest.raises(Exception) :
+    app3 = gui()
+app.createRightClickMenu("RCLICK")
 print(app.SHOW_VERSION())
-print(app.SHOW_PATHS)
-app._gui__showHelp()
+print(app.SHOW_PATHS())
 app.showSplash()
 print("NEXT...")
 
@@ -2224,6 +2503,7 @@ test_langs()
 
 test_containers()
 test_messages()
+test_dnd()
 
 
 
@@ -2240,7 +2520,12 @@ def test_gui(btn=None):
     global doStop
     if doStop == 0:
         test_pop_ups()
+        app.thread(run_events)
+        app.setEntryFocus("e1")
+        app.thread(dismissEditMenu)
+        app.thread(test_rightClick)
     if doStop == 2:
+        test_focus()
         test_sets()
         test_langs()
         test_widget_arranging()
@@ -2257,17 +2542,20 @@ def test_gui(btn=None):
         doStop += 1
         print("Waiting", doStop)
     else:
-        print("Stopping app")
+        print("HERE WE GO: Stopping app")
         try:
             app.stop()
-        except:
-            print("weird error...")
+        except Exception as e:
+            print("weird error...: ", e)
 
 app.registerEvent(test_gui)
 app.setPollTime(1000)
+app.addLabel("test_threads", "empty")
+assert app.getLabel("test_threads") == "empty"
+app.queueFunction(app.setLabel, "test_threads", "full")
 app.go("CANADIAN")
 
-print("<<<Widget Test Suite Complete>>>")
+print("<<<Widget Test Suite Complete on app>>>")
 del app
 
 doStop = 0
@@ -2286,7 +2574,34 @@ def test_gui2(btn=None):
     doStop += 1
 
 app2 = gui()
+app2.addToolbar("a", tester_function, True)
 app2.useTtk()
+app2.setTtkTheme()
+app2.setTtkTheme("broken")
+app2.setTtkTheme("default")
+app2.startNotebook("nb1")
+app2.startNote("nb1_n1")
+app2.addLabel("nb1_l1", TEXT_ONE)
+app2.startNote("nb1_n2")
+app2.addLabel("nb2_l1", TEXT_ONE)
+app2.stopNote()
+app2.startNote("nb1_n3")
+app2.addLabel("nb3_l1", TEXT_ONE)
+app2.stopNote()
+app2.stopNotebook()
+
+with pytest.raises(Exception) :
+    app2.startNote()
+
+with pytest.raises(Exception) :
+    app2.stopNote()
+
+with pytest.raises(Exception) :
+    app2.stopNotebook()
+
+with pytest.raises(Exception) :
+    app2.startNotebook("nb1")
+
 app2.showSplash(text="New test", fill="green", stripe="pink", fg="green", font=50)
 app2.startLabelFrame("l1")
 app2.addLabel("l1", "here")

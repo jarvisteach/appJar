@@ -12,4 +12,5 @@ def press(btn):
 app=gui()
 app.addDatePicker("dp1")
 app.addButtons(["CLEAR", "CLEAR ALL", "GET", "SET"], press)
+app.setBg("red")
 app.go()

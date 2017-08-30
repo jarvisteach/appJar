@@ -19,6 +19,7 @@ pages:
     - Sounds: pythonSound.md
     - Bars: pythonBars.md
     - Pop-ups: pythonDialogs.md
+    - Multiple Windows: pythonSubWindows.md
     - Splashscreen: splash.md
     - Special Characters: specialCharacters.md
     - Beta Widgets...: pythonDevWidgets.md

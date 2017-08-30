@@ -419,8 +419,12 @@ app.go()
     Set ```callFunction``` to be False, if you don't want to call any associated functions.  
     By default, you can't select a disabled item. You can change this by setting `override` to be True.  
 
+* `.renameOptionBoxItem(title, item, newName, callFunction=False)`  
+    This will rename the specified item in the named OptionBox.  
+    Set ```callFunction``` to be True, if you want to call any associated `change` functions.  
+
 * `.clearOptionBox(title, callFunction=True)`  
-    This will set the OptionBox back to its first item (even if it's disabled).  
+    This will set the named OptionBox back to its first value (even if it's disabled).  
     Set ```callFunction``` to be False, if you don't want to call any associated functions.  
 
 * `.clearAllOptionBoxes(callFunction=False)`  
@@ -713,8 +717,10 @@ app.go()
 ![ScrolledTextArea](img/2_textArea.png)  
 
 ####Set TextAreas
-* `.setTextArea(title, text, callFunction=True)`  
-    Changes the contents of the specified TextArea, to the specified text.  
+* `.setTextArea(title, text, end=True, callFunction=True)`  
+    Adds the supplied text to the specified TextArea.  
+    By default, the text is added to the end.  
+    Set `end` to be False if you want to add at the beginning.  
     Set ```callFunction``` to be False, if you don't want to call any associated functions.  
 
 * `.clearTextArea(title, callFunction=True)`  
