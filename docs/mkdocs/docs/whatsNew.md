@@ -2,13 +2,19 @@
 ---
 
 ## Version 0.08  
+* [Events](/pythonEvents/), [Threads](/pythonThreads/), [Loops & Sleeps](/pythonLoopsAndSleeps/) have been improved. It's now possible to run background tasks (such as a download) and update the GUI safely.   
 * [Command line arguments](/pythonCommandLine): appJar now supports command line arguments for [logging](/pythonLogging) and [internationalisation](/pythonInternationalisation/) as well as help & version information.  
-* [Internationalisation](/pythonInternationalisation/) now supports all widgets, making it easy to switch the language of your GUI  
+* [Internationalisation](/pythonInternationalisation/) is now greatly imporved - nearly everything supoprts multiple languages.  
 * [ScrollPanes](/pythonWidgetGrouping/#scroll-pane) & [Grids](/pythonDevWidgets/#grid) greatly improved  
+* Much more friendly [license](/License/)  
 
 * Issues Resolved:
     * [#228](https://github.com/jarvisteach/appJar/issues/228) - appJar prevents you from creating more than one gui at a time  
+    * [#226](https://github.com/jarvisteach/appJar/issues/226) - fixed issues on [file/directory entries](/pythonWidgets/#entry)
+    * [#223](https://github.com/jarvisteach/appJar/issues/223) - fixed issues with [sound](/pythonSound/) import  
     * [#217](https://github.com/jarvisteach/appJar/issues/217) - Fixed issues with removing [BG images](/pythonImages/#set-background-images)  
+    * [#216](https://github.com/jarvisteach/appJar/issues/216) - Improvements to [integrated testing](https://travis-ci.org/jarvisteach/appJar)  
+    * [#215](https://github.com/jarvisteach/appJar/issues/215) - Changed [licensing](/License/)  
     * [#213](https://github.com/jarvisteach/appJar/issues/213) - Validation entries improved in [Internationalisation](/pythonInternationalisation)  
     * [#212](https://github.com/jarvisteach/appJar/issues/212) - Creating an empty [Tooltip](/pythonDialogs/#tooltips) now doesn't create anything  
     * [#211](https://github.com/jarvisteach/appJar/issues/211) - [Logging](/pythonLogging) now logs line number & function name  
@@ -25,6 +31,7 @@
     * [#177](https://github.com/jarvisteach/appJar/issues/177) - [setLocation](/pythonGuiOptions/#size-location) can now position windows in the center of the screen
     * [#162](https://github.com/jarvisteach/appJar/issues/162) - PhotoImage objects can now be passed directly when [adding/setting ImageData](/pythonImages/#add-images)  
     * [#132](https://github.com/jarvisteach/appJar/issues/132) - Now possible to [Delete and Rename](/pythonWidgets/#set-optionboxes) OptionBox items.
+    * [#120](https://github.com/jarvisteach/appJar/issues/120) - Improvements to [events](/pythonEvents/) & introduction of [threading](/pythonEvents/)  
     * [#71](https://github.com/jarvisteach/appJar/issues/71) - More work on [Internationalisation](/pythonInternationalisation/) - now supports Images, LabelFrames, ToggleFrames, TabbedFrames, Properties, Grids, Toolbars, Tooltips, SubWindows, PagedWindows, SplashScreens & Titles  
     * [#69](https://github.com/jarvisteach/appJar/issues/69) - Changes to [TextAreas](/pythonWidgets/#textarea) - now, lines wrap on spaces & [setTextArea()](/pythonWidgets/#set-textareas) now appends to the text  
 

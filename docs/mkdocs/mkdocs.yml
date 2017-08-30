@@ -6,7 +6,7 @@ repo_url: https://github.com/jarvisteach/appJar
 google_analytics: ['UA-79206647-1', 'appjar.info']
 theme: united
 theme_dir: custom_united
-copyright: <p>Richard Jarvis, 2016-2017</p>
+copyright: <p>&#9400 Richard Jarvis, 2016-2017</p>
 site_description: Python library for building simple tkinter GUIs
 site_author: Richard Jarvis
 extra_css: [extra.css]
@@ -24,12 +24,16 @@ pages:
     - Special Characters: specialCharacters.md
     - Beta Widgets...: pythonDevWidgets.md
 - Configuration:
-    - Arranging widgets: pythonWidgetLayout.md
-    - Grouping widgets: pythonWidgetGrouping.md
-    - Changing widgets: pythonWidgetOptions.md
     - GUI Options: pythonGuiOptions.md
-    - GUI Events: pythonEvents.md
-    - Drag'n Drop: pythonDnD.md
+    - Widgets:
+        - Layout: pythonWidgetLayout.md
+        - Configurtation: pythonWidgetOptions.md
+        - Grouping: pythonWidgetGrouping.md
+    - Events:
+        - Events: pythonEvents.md
+        - Loops & Sleeps: pythonLoopsAndSleeps.md
+        - Threads: pythonThreads.md
+        - Drag'n Drop: pythonDnD.md
     - Internationalisation: pythonInternationalisation.md
     - Logging: pythonLogging.md
     - Command Line Arguments: pythonCommandLine.md
