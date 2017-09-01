@@ -39,6 +39,7 @@ import datetime # datepicker & image
 import logging  # python's logger
 import inspect  # for logging
 import argparse # argument parser
+from contextlib import contextmanager # generators
 
 import __main__ as theMain
 from platform import system as platform
@@ -1750,6 +1751,13 @@ class gui(object):
 #####################################
 # Event Loop - must always be called at end
 #####################################
+    def __enter__(self):
+        print("starting")
+        self.go()
+
+    def __exit__(self, a, b, c):
+        self.stop()
+
     def go(self, language=None, startWindow=None):
         """ Most important function! Start the GUI """
 
@@ -3838,12 +3846,24 @@ class gui(object):
             rowspan,
             sticky)
 
+    @contextmanager
+    def notebook(self, title, row=None, column=0, colspan=0, rowspan=0, sticky="NSEW"):
+        note = self.startNotebook(title, row, column, colspan, rowspan, sticky)
+        try: yield note
+        finally: self.stopNotebook()
+
     def stopNotebook(self):
         # auto close the existing TAB - keep it?
         if self.containerStack[-1]['type'] == self.C_NOTE:
             self.warn("You didn't STOP the previous NOTE")
             self.stopContainer()
         self.stopContainer()
+
+    @contextmanager
+    def note(self, title):
+        note = self.startNote(ttle)
+        try: yield note
+        finally: self.stopNote()
 
     def startNote(self, title):
         # auto close the previous TAB - keep it?
@@ -3863,6 +3883,12 @@ class gui(object):
 
 
     ####### Tabbed Frames ########
+
+    @contextmanager
+    def tabbedFrame(self, title, row=None, column=0, colspan=0, rowspan=0, sticky="NSEW"):
+        tabs = self.startTabbedFrame(title, row, column, colspan, rowspan, sticky)
+        try: yield tabs
+        finally: self.stopTabbedFrame()
 
     def startTabbedFrame(
             self,
@@ -3916,6 +3942,12 @@ class gui(object):
         #gui.SET_WIDGET_BG(tab, colour)
         for child in tab.winfo_children():
             gui.SET_WIDGET_BG(child, colour)
+
+    @contextmanager
+    def tab(self, title):
+        tab = self.startTab(title)
+        try: yield tab
+        finally: self.stopTab()
 
     def startTab(self, title):
         # auto close the previous TAB - keep it?
@@ -3994,6 +4026,12 @@ class gui(object):
 
     ########################################
 
+    @contextmanager
+    def panedFrame(self, title, row=None, column=0, colspan=0, rowspan=0, sticky="NSEW"):
+        pane = self.startPanedFrame(title, row, column, colspan, rowspan, sticky)
+        try: yield pane
+        finally: self.stopPanedFrame()
+
     def startPanedFrame(
             self,
             title,
@@ -4011,6 +4049,12 @@ class gui(object):
             rowspan,
             sticky)
 
+    @contextmanager
+    def panedFrameVertical(self, title, row=None, column=0, colspan=0, rowspan=0, sticky="NSEW"):
+        pane = self.startPanedFrameVertical(title, row, column, colspan, rowspan, sticky)
+        try: yield pane
+        finally: self.stopPanedFrame()
+
     def startPanedFrameVertical(
             self,
             title,
@@ -4022,41 +4066,26 @@ class gui(object):
         self.startPanedFrame(title, row, column, colspan, rowspan, sticky)
         self.setPanedFrameVertical(title)
 
+    @contextmanager
+    def labelFrame(self, title, row=None, column=0, colspan=0, rowspan=0, sticky=W):
+        lf = self.startLabelFrame(title, row, column, colspan, rowspan, sticky)
+        try: yield lf
+        finally: self.stopLabelFrame()
+
     # sticky is alignment inside frame
     # frame will be added as other widgets
-    def startLabelFrame(
-            self,
-            title,
-            row=None,
-            column=0,
-            colspan=0,
-            rowspan=0,
-            sticky=W):
-        return self.startContainer(
-            self.C_LABELFRAME,
-            title,
-            row,
-            column,
-            colspan,
-            rowspan,
-            sticky)
+    def startLabelFrame(self, title, row=None, column=0, colspan=0, rowspan=0, sticky=W):
+        return self.startContainer(self.C_LABELFRAME, title, row, column, colspan, rowspan, sticky)
+
+    @contextmanager
+    def toggleFrame(self, title, row=None, column=0, colspan=0, rowspan=0):
+        tog = self.startToggleFrame(title, row, column, colspan, rowspan)
+        try: yield tog
+        finally: self.stopToggleFrame()
 
     ###### TOGGLE FRAMES #######
-    def startToggleFrame(
-            self,
-            title,
-            row=None,
-            column=0,
-            colspan=0,
-            rowspan=0):
-        return self.startContainer(
-            self.C_TOGGLEFRAME,
-            title,
-            row,
-            column,
-            colspan,
-            rowspan,
-            sticky="new")
+    def startToggleFrame(self, title, row=None, column=0, colspan=0, rowspan=0):
+        return self.startContainer(self.C_TOGGLEFRAME, title, row, column, colspan, rowspan, sticky="new")
 
     def stopToggleFrame(self):
         if self.containerStack[-1]['type'] != self.C_TOGGLEFRAME:
@@ -4076,6 +4105,12 @@ class gui(object):
     def getToggleFrameState(self, title):
         toggle = self.__verifyItem(self.n_toggleFrames, title)
         return toggle.isShowing()
+
+    @contextmanager
+    def pagedWindow(self, title, row=None, column=0, colspan=0, rowspan=0):
+        pw = self.startPagedWindow(title, row, column, colspan, rowspan)
+        try: yield pw
+        finally: self.stopPagedWindow()
 
     ###### PAGED WINDOWS #######
     def startPagedWindow(
@@ -4131,6 +4166,13 @@ class gui(object):
         pager = self.__verifyItem(self.n_pagedWindows, title)
         pager.setTitle(pageTitle)
 
+    @contextmanager
+    def page(self, row=None, column=0, colspan=0, rowspan=0, sticky="nw"):
+        pg = self.startPage(row, column, colspan, rowspan, sticky)
+        try: yield pg
+        finally: self.stopPage()
+
+
     def startPage(self, row=None, column=0, colspan=0, rowspan=0, sticky="nw"):
         if self.containerStack[-1]['type'] == self.C_PAGE:
             self.warn("You didn't STOP the previous PAGE")
@@ -4182,6 +4224,12 @@ class gui(object):
         self.stopContainer()
 
     ###### PAGED WINDOWS #######
+    @contextmanager
+    def scrollPane(self, title, row=None, column=0, colspan=0, rowspan=0, sticky="NSEW"):
+        sp = self.startScrollPane(title, row, column, colspan, rowspan, sticky)
+        try: yield sp
+        finally: self.stopScrollPane()
+
 
     def startScrollPane(
             self,
@@ -4236,6 +4284,12 @@ class gui(object):
             except:
                 break
 
+    @contextmanager
+    def frame(self, title, row=None, column=0, colspan=0, rowspan=0, sticky="NSEW"):
+        fr = self.startFrame(title, row, column, colspan, rowspan, sticky)
+        try: yield fr
+        finally: self.stopFrame()
+
     def startFrame(
             self,
             title,
@@ -4254,6 +4308,12 @@ class gui(object):
             sticky)
 
     ### SUB WINDOWS ###
+
+    @contextmanager
+    def subWindow(self, name, title=None, modal=False, blocking=False, transient=False, grouped=True):
+        sw = self.startSubWindow(name, title, modal, blocking, transient, grouped)
+        try: yield sw
+        finally: self.stopSubWindow()
 
     def startSubWindow(self, name, title=None, modal=False, blocking=False, transient=False, grouped=True):
         self.__verifyItem(self.n_subWindows, name, True)
@@ -10092,12 +10152,13 @@ class PagedWindow(Frame):
             self.posLabel.config(text="")
 
     # get the current frame being shown - for adding widgets
-    def getPage(self):
-        return self.frames[self.currentPage]
+    def getPage(self, page=None):
+        if page == None: page = self.currentPage
+        return self.frames[page]
 
-    # get the named frame - for adding widgets
-    def getPage(self, num):
-        return self.frames[num]
+#    # get the named frame - for adding widgets
+#    def getPage(self, num):
+#        return self.frames[num]
 
     # get current page number
     def getPageNumber(self):
