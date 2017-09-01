@@ -1752,11 +1752,17 @@ class gui(object):
 # Event Loop - must always be called at end
 #####################################
     def __enter__(self):
-        print("starting")
-        self.go()
+        self.debug("ContextManager: initialised")
+        return self
 
-    def __exit__(self, a, b, c):
-        self.stop()
+    def __exit__(self, eType, eValue, eTrace):
+        if eType is not None:
+            self.error("ContextManager: failed")
+            return False
+        else:
+            self.debug("ContextManager: starting")
+            self.go()
+            return True
 
     def go(self, language=None, startWindow=None):
         """ Most important function! Start the GUI """
