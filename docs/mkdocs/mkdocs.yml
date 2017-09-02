@@ -7,7 +7,7 @@ google_analytics: ['UA-79206647-1', 'appjar.info']
 theme: united
 theme_dir: custom_united
 copyright: <p>&#9400 Richard Jarvis, 2016-2017</p>
-site_description: Python library for building simple tkinter GUIs
+site_description: The easiest way to build tkinter GUIs in Python.
 site_author: Richard Jarvis
 extra_css: [extra.css]
 strict: true
@@ -29,6 +29,7 @@ pages:
         - Layout: pythonWidgetLayout.md
         - Configurtation: pythonWidgetOptions.md
         - Grouping: pythonWidgetGrouping.md
+        - The power of WITH: pythonContextManager.md
     - Events:
         - Events: pythonEvents.md
         - Loops & Sleeps: pythonLoopsAndSleeps.md
