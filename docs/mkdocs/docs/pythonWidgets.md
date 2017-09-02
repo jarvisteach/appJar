@@ -103,7 +103,7 @@ See the relevant section for a description of what the widget does.
 ____
 Entries are used to capture input from the user. They take a single parameter - a title.
 
-There are four special-case Entries:
+There are five special-case Entries:
 
 * NumericEntry - this only allows numbers to be typed in - always returns a float.
 * SecretEntry - this will show stars, instead of the letters typed - useful for capturing passwords.
