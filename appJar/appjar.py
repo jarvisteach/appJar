@@ -3772,6 +3772,7 @@ class gui(object):
             self.__addContainer(title, self.C_PANE, pane, 0, 1, sticky)
             return pane
         elif fType == self.C_SCROLLPANE:
+            self.__verifyItem(self.n_scrollPanes, title, True)
             scrollPane = ScrollPane(self.getContainer(), bg=self.__getContainerBg())#, width=100, height=100)
             scrollPane.isContainer = True
 #                self.containerStack[-1]['container'].add(scrollPane)
@@ -3788,6 +3789,7 @@ class gui(object):
             self.__addContainer(title, self.C_SCROLLPANE, scrollPane, 0, 1, sticky)
             return scrollPane
         elif fType == self.C_TOGGLEFRAME:
+            self.__verifyItem(self.n_toggleFrames, title, True)
             toggleFrame = ToggleFrame(self.getContainer(), title=title, bg=self.__getContainerBg())
             toggleFrame.configure(font=self.toggleFrameFont)
             toggleFrame.isContainer = True
@@ -3854,7 +3856,10 @@ class gui(object):
 
     @contextmanager
     def notebook(self, title, row=None, column=0, colspan=0, rowspan=0, sticky="NSEW"):
-        note = self.startNotebook(title, row, column, colspan, rowspan, sticky)
+        try:
+            note = self.startNotebook(title, row, column, colspan, rowspan, sticky)
+        except ItemLookupError:
+            note = self.openNotebook(title)
         try: yield note
         finally: self.stopNotebook()
 
@@ -3866,8 +3871,11 @@ class gui(object):
         self.stopContainer()
 
     @contextmanager
-    def note(self, title):
-        note = self.startNote(ttle)
+    def note(self, title, tabTitle=None):
+        if tabTitle is None:
+            note = self.startNote(ttle)
+        else:
+            self.openNote(title, tabTitle)
         try: yield note
         finally: self.stopNote()
 
@@ -3892,7 +3900,10 @@ class gui(object):
 
     @contextmanager
     def tabbedFrame(self, title, row=None, column=0, colspan=0, rowspan=0, sticky="NSEW"):
-        tabs = self.startTabbedFrame(title, row, column, colspan, rowspan, sticky)
+        try:
+            tabs = self.startTabbedFrame(title, row, column, colspan, rowspan, sticky)
+        except ItemLookupError:
+            tabs = self.openTabbedFrame(title)
         try: yield tabs
         finally: self.stopTabbedFrame()
 
@@ -3950,8 +3961,11 @@ class gui(object):
             gui.SET_WIDGET_BG(child, colour)
 
     @contextmanager
-    def tab(self, title):
-        tab = self.startTab(title)
+    def tab(self, title, tabTitle=None):
+        if tabTitle is None:
+            tab = self.startTab(title)
+        else:
+            tab = self.openTab(title, tabTitle)
         try: yield tab
         finally: self.stopTab()
 
@@ -4034,7 +4048,10 @@ class gui(object):
 
     @contextmanager
     def panedFrame(self, title, row=None, column=0, colspan=0, rowspan=0, sticky="NSEW"):
-        pane = self.startPanedFrame(title, row, column, colspan, rowspan, sticky)
+        try:
+            pane = self.startPanedFrame(title, row, column, colspan, rowspan, sticky)
+        except ItemLookupError:
+            pane = self.openPane(title)
         try: yield pane
         finally: self.stopPanedFrame()
 
@@ -4057,7 +4074,10 @@ class gui(object):
 
     @contextmanager
     def panedFrameVertical(self, title, row=None, column=0, colspan=0, rowspan=0, sticky="NSEW"):
-        pane = self.startPanedFrameVertical(title, row, column, colspan, rowspan, sticky)
+        try:
+            pane = self.startPanedFrameVertical(title, row, column, colspan, rowspan, sticky)
+        except ItemLookupError:
+            pane = self.openPane(title)
         try: yield pane
         finally: self.stopPanedFrame()
 
@@ -4074,7 +4094,10 @@ class gui(object):
 
     @contextmanager
     def labelFrame(self, title, row=None, column=0, colspan=0, rowspan=0, sticky=W):
-        lf = self.startLabelFrame(title, row, column, colspan, rowspan, sticky)
+        try:
+            lf = self.startLabelFrame(title, row, column, colspan, rowspan, sticky)
+        except ItemLookupError:
+            lf = self.openLabelFrame(title)
         try: yield lf
         finally: self.stopLabelFrame()
 
@@ -4085,7 +4108,10 @@ class gui(object):
 
     @contextmanager
     def toggleFrame(self, title, row=None, column=0, colspan=0, rowspan=0):
-        tog = self.startToggleFrame(title, row, column, colspan, rowspan)
+        try:
+            tog = self.startToggleFrame(title, row, column, colspan, rowspan)
+        except ItemLookupError:
+            tog = self.openToggleFrame(title)
         try: yield tog
         finally: self.stopToggleFrame()
 
@@ -4114,7 +4140,10 @@ class gui(object):
 
     @contextmanager
     def pagedWindow(self, title, row=None, column=0, colspan=0, rowspan=0):
-        pw = self.startPagedWindow(title, row, column, colspan, rowspan)
+        try:
+            pw = self.startPagedWindow(title, row, column, colspan, rowspan)
+        except ItemLookupError:
+            pw = self.openPagedWindow(title)
         try: yield pw
         finally: self.stopPagedWindow()
 
@@ -4173,8 +4202,11 @@ class gui(object):
         pager.setTitle(pageTitle)
 
     @contextmanager
-    def page(self, row=None, column=0, colspan=0, rowspan=0, sticky="nw"):
-        pg = self.startPage(row, column, colspan, rowspan, sticky)
+    def page(self, row=None, column=0, colspan=0, rowspan=0, sticky="nw", windowTitle=None, pageNumber=None):
+        if windowTitle is None:
+            pg = self.startPage(row, column, colspan, rowspan, sticky)
+        else:
+            pg = self.openPage(windowTitle, pageNumber)
         try: yield pg
         finally: self.stopPage()
 
@@ -4232,7 +4264,10 @@ class gui(object):
     ###### PAGED WINDOWS #######
     @contextmanager
     def scrollPane(self, title, row=None, column=0, colspan=0, rowspan=0, sticky="NSEW"):
-        sp = self.startScrollPane(title, row, column, colspan, rowspan, sticky)
+        try:
+            sp = self.startScrollPane(title, row, column, colspan, rowspan, sticky)
+        except ItemLookupError:
+            sp = self.openScrollPane(title)
         try: yield sp
         finally: self.stopScrollPane()
 
@@ -4292,7 +4327,10 @@ class gui(object):
 
     @contextmanager
     def frame(self, title, row=None, column=0, colspan=0, rowspan=0, sticky="NSEW"):
-        fr = self.startFrame(title, row, column, colspan, rowspan, sticky)
+        try:
+            fr = self.startFrame(title, row, column, colspan, rowspan, sticky)
+        except ItemLookupError:
+            fr = self.openFrame(title)
         try: yield fr
         finally: self.stopFrame()
 
@@ -4317,7 +4355,10 @@ class gui(object):
 
     @contextmanager
     def subWindow(self, name, title=None, modal=False, blocking=False, transient=False, grouped=True):
-        sw = self.startSubWindow(name, title, modal, blocking, transient, grouped)
+        try:
+            sw = self.startSubWindow(name, title, modal, blocking, transient, grouped)
+        except ItemLookupError:
+            sw = self.openSubWindow(name)
         try: yield sw
         finally: self.stopSubWindow()
 
