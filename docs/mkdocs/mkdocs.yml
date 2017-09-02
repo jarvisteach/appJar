@@ -1,4 +1,4 @@
-site_name: appJar
+site_name: appJar - easy tkinter GUIs in Python
 site_url: http://appjar.info
 site_favicon: /img/favicon.ico
 site_dir: ../../../jarvisteach.github.io/
@@ -7,7 +7,7 @@ google_analytics: ['UA-79206647-1', 'appjar.info']
 theme: united
 theme_dir: custom_united
 copyright: <p>Richard Jarvis, 2016-2017</p>
-site_description: Python library for building simple tkinter GUIs
+site_description: The easiest way to build tkinter GUIs in Python.
 site_author: Richard Jarvis
 extra_css: [extra.css]
 strict: true
