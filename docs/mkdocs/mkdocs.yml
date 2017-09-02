@@ -25,6 +25,7 @@ pages:
     - Beta Widgets...: pythonDevWidgets.md
 - Configuration:
     - Arranging widgets: pythonWidgetLayout.md
+    - The power of WITH: pythonContextManager.md
     - Grouping widgets: pythonWidgetGrouping.md
     - Changing widgets: pythonWidgetOptions.md
     - GUI Options: pythonGuiOptions.md
