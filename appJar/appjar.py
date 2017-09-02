@@ -5319,6 +5319,7 @@ class gui(object):
         axes.clear()
         axes.plot(t, s)
         self.refreshPlot(title)
+        return axes
 
 
 #####################################
@@ -11968,6 +11969,7 @@ class GoogleMap(LabelFrame):
         axes.clear()
         axes.plot(t, s)
         self.refreshPlot(title)
+        return axes
 
 
 #####################################

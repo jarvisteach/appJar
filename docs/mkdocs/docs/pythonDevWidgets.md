@@ -262,14 +262,30 @@ Support for embedding very basic [MatPlotLib](http://matplotlib.org) plots.
 ![Plot](img/1_plot.png)  
 ```python
 from numpy import sin, pi, arange
-from appJar import gui
+from appJar import gui 
+import random
 
-x = arange(0.0, 3.0, 0.01)
-y = sin(2*pi*x)
-
+def getXY():
+    x = arange(0.0, 3.0, 0.01)
+    y = sin(random.randint(1,10) * pi * x)
+    return x,y 
+    
+def generate(btn):
+    # *getXY() will unpack the two return values
+    # and pass them as separate parameters
+    app.updatePlot("p1", *getXY())
+    showLabels()
+    
+def showLabels():
+    axes.legend(['The curve'])
+    axes.set_xlabel("X Axes")
+    axes.set_ylabel("Y Axes")
+    app.refreshPlot("p1")
+    
 app = gui()
-axes = app.addPlot("p1", x, y)
-axes.legend(['key data'])
+axes = app.addPlot("p1", *getXY())
+showLabels()
+app.addButton("Generate", generate)
 app.go()
 ```
 
@@ -278,7 +294,8 @@ app.go()
     Returns the plot object, to allow further customisation.  
 
 * `.updatePlot(title, x, y)`  
-    Update the specified plot with the specified x and y values.
+    Update the specified plot with the specified x and y values.  
+    Note, if you do this you will lose any customisations applied to the axes.  
 
 * `.refreshPlot(title)`  
-    Redraw the plot, call after changing the axes object...  
+    Call this any time you modify the axes.  
