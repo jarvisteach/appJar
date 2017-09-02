@@ -9,7 +9,7 @@ with gui("My first GUI") as app:
     with app.labelFrame("Left"):
         app.addLabel("left", "Hello world!")
 
-    with app.labelFrame("Right", row=0, column=1):
+    with app.abelFrame("Right", row=0, column=1):
         app.addLabel("right", "Hello world again!")
 
     app.addNamedButton("PRESS ME", "Pop-up", app.showSubWindow, colspan=2)
