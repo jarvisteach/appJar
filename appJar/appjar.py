@@ -1863,6 +1863,34 @@ class gui(object):
         if self.containerStack[-1]['type'] != self.C_SUBWINDOW:
             tl.createcommand('exit', self.stop)
 
+    def saveSettings(self):
+        props = {}
+        # get geometry: widthxheight+x+y
+        props["geom"] = self.topLevel.geometry()
+        props["fullscreen"] = self.topLevel.attributes('-fullscreen')
+
+        # get toolbar setting
+        props["tbPinned"] = self.tbPinned
+
+        # get container settings
+        props["togs"] = {}
+        for k, v in self.n_toggleFrames.items():
+            props["togs"][k] = v.isShowing()
+
+        props["tabs"] = {}
+        for k, v in self.n_tabbedFrames.items():
+            props["tabs"][k] = v.getSelectedTab()
+
+        props["pages"] = {}
+        for k, v in self.n_pagedWindows.items():
+            props["pages"][k] = v.getPageNumber()
+
+        # pane positions?
+        # sub windows geom & visibility
+        # scrollpane x & y positions
+
+        return props
+
     def stop(self, event=None):
         """ Closes the GUI. If a stop function is set, will only close the GUI if True """
         theFunc = self.__getTopLevel().stopFunction
@@ -9933,6 +9961,7 @@ class ToggleFrame(Frame):
         self.titleLabel.grid(row=0, column=0)
         self.toggleButton.grid(row=0, column=1)
         self.subFrame.grid(row=1, column=0, sticky=EW)
+        self.firstTime = True
 
     def config(self, cnf=None, **kw):
         self.configure(cnf, **kw)
@@ -9989,7 +10018,9 @@ class ToggleFrame(Frame):
     def stop(self):
         self.update_idletasks()
         self.titleFrame.config(width=self.winfo_reqwidth())
-        self.toggle()
+        if self.firstTime:
+            self.firstTime = False
+            self.toggle()
 
     def isShowing(self):
         return self.showing
