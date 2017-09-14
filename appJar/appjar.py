@@ -5981,6 +5981,12 @@ class gui(object):
         self.n_images[name].hasMouseOver = False
         return imgObj
 
+    # uses built-in icons to add an image
+    def addIcon(self, name, iconName, row=None, column=0, colspan=0, rowspan=0):
+        icon = os.path.join(self.icon_path, iconName.lower()+".png")
+        with PauseLogger():
+            return self.addImage(name, icon, row, column, colspan, rowspan)
+
     # load image from base-64 encoded GIF
     # use base64 module to convert binary data to base64
     def addImageData(self, name, imageData, row=None, column=0, colspan=0, rowspan=0, fmt="gif"):
@@ -6610,6 +6616,11 @@ class gui(object):
         self.__positionWidget(but, row, column, colspan, rowspan, None)
         self.setButtonImage(title, imgFile)
         return but
+
+    def addIconButton(self, title, func, iconName, row=None, column=0, colspan=0, rowspan=0):
+        icon = os.path.join(self.icon_path, iconName.lower()+".png")
+        with PauseLogger():
+            return self.addImageButton(title, func, icon, row, column, colspan, rowspan)
 
     def setButton(self, name, text):
         but = self.__verifyItem(self.n_buttons, name)

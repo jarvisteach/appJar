@@ -2,6 +2,7 @@ import sys
 import time
 import datetime
 import pytest
+import os
 
 try: from tkinter import Event, Label, Entry, Button, Radiobutton, Checkbutton, OptionMenu, Spinbox, Listbox, Message, PhotoImage
 except: from Tkinter import Event, Label, Entry, Button, Radiobutton, Checkbutton, OptionMenu, Spinbox, Listbox, Message, PhotoImage
@@ -394,6 +395,7 @@ def test_buttons():
     assert but1.cget("text") == ""
 
     assert isinstance(app.addImageButton("ib1", None, "1_entries.gif"), Button)
+    assert isinstance(app.addIconButton("ib2", None, "map"), Button)
     but1 = app.getButtonWidget("ib1")
     assert but1.cget("text") == ""
 
@@ -1512,6 +1514,8 @@ def test_images():
     app.startAnimation("im1")
 
     im = app.addImage("im2", "1_entries.gif")
+    ic = app.addIcon("ic2", "map")
+    ic2 = app.addImage("ic3", os.path.join(app.icon_path, "map.png"))
 
     coords = {
         "America":[32, 17, 242, 167],
