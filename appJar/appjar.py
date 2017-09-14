@@ -449,7 +449,7 @@ class gui(object):
 #####################################
 # CONSTRUCTOR - creates the GUI
 #####################################
-    def __init__(self, title=None, geom=None, warn=None, debug=None, handleArgs=True):
+    def __init__(self, title=None, geom=None, warn=None, debug=None, handleArgs=True, language=None, startWindow=None):
 
         if self.__class__.instantiated:
             raise Exception("You cannot have more than one instance of gui, try using a subWindow.")
@@ -460,7 +460,8 @@ class gui(object):
         logging.basicConfig(level=logging.WARNING, format='%(asctime)s %(name)s:%(levelname)s %(message)s')
 
         # check any command line arguments
-        self.language = None
+        self.language = language
+        self.startWindow = startWindow
         args = self.__handleArgs() if handleArgs else None
 
         # warn if we're in an untested mode
@@ -482,7 +483,7 @@ class gui(object):
             elif args.i: gui.setLogLevel("INFO")
             elif args.d: gui.setLogLevel("DEBUG")
 
-            self.language = args.l
+            if args.l: self.language = args.l
             if args.f: gui.setLogFile(args.f)
             if args.ttk:
                 self.useTtk()
@@ -1761,7 +1762,7 @@ class gui(object):
             return False
         else:
             self.debug("ContextManager: starting")
-            self.go()
+            self.go(startWindow=self.startWindow)
             return True
 
     def go(self, language=None, startWindow=None):
@@ -8827,44 +8828,67 @@ class gui(object):
     def getPopUp(self):
         return self.topLevel.POP_UP
 
-    def infoBox(self, title, message):
+    def infoBox(self, title, message, parent=None):
         self.topLevel.update_idletasks()
-        MessageBox.showinfo(title, message)
+        if parent is None:
+            MessageBox.showinfo(title, message)
+        else:
+            opts = {"parent": self.n_subWindows[parent]}
+            MessageBox.showinfo(title, message, **opts)
         self.__bringToFront()
 
-    def errorBox(self, title, message):
+    def errorBox(self, title, message, parent=None):
         self.topLevel.update_idletasks()
-        MessageBox.showerror(title, message)
+        if parent is None:
+            MessageBox.showerror(title, message)
+        else:
+            opts = {"parent": self.n_subWindows[parent]}
+            MessageBox.showerror(title, message, **opts)
         self.__bringToFront()
 
-    def warningBox(self, title, message):
+    def warningBox(self, title, message, parent=None):
         self.topLevel.update_idletasks()
-        MessageBox.showwarning(title, message)
+        if parent is None:
+            MessageBox.showwarning(title, message)
+        else:
+            opts = {"parent": self.n_subWindows[parent]}
+            MessageBox.showwarning(title, message, **opts)
         self.__bringToFront()
 
-    def yesNoBox(self, title, message):
+    def yesNoBox(self, title, message, parent=None):
         self.topLevel.update_idletasks()
-        return MessageBox.askyesno(title, message)
+        if parent is None:
+            return MessageBox.askyesno(title, message)
+        else:
+            opts = {"parent": self.n_subWindows[parent]}
+            return MessageBox.askyesno(title=title, message=message, **opts)
 
-    def questionBox(self, title, message):
+    def questionBox(self, title, message, parent=None):
         self.topLevel.update_idletasks()
-        return MessageBox.askquestion(title, message)
+        if parent is None:
+            return MessageBox.askquestion(title, message)
+        else:
+            opts = {"parent": self.n_subWindows[parent]}
+            return MessageBox.askquestion(title, message, **opts)
 
-    def okBox(self, title, message):
+    def okBox(self, title, message, parent=None):
         self.topLevel.update_idletasks()
         title, message = self.__translatePopup(title, message)
-        return MessageBox.askokcancel(title, message)
+        if parent is None:
+            return MessageBox.askokcancel(title, message)
+        else:
+            opts = {"parent": self.n_subWindows[parent]}
+            return MessageBox.askokcancel(title, message, **opts)
 
-    def retryBox(self, title, message):
+    def retryBox(self, title, message, parent=None):
         self.topLevel.update_idletasks()
-        return MessageBox.askretrycancel(title, message)
+        if parent is None:
+            return MessageBox.askretrycancel(title, message)
+        else:
+            opts = {"parent": self.n_subWindows[parent]}
+            return MessageBox.askretrycancel(title, message, **opts)
 
-    def openBox(
-            self,
-            title=None,
-            dirName=None,
-            fileTypes=None,
-            asFile=False):
+    def openBox(self, title=None, dirName=None, fileTypes=None, asFile=False, parent=None):
 
         self.topLevel.update_idletasks()
 
@@ -8877,6 +8901,8 @@ class gui(object):
             options['initialdir'] = dirName
         if fileTypes is not None:
             options['filetypes'] = fileTypes
+        if parent is not None:
+            options["parent"] = self.n_subWindows[parent]
 
         if asFile:
             return filedialog.askopenfile(mode="r", **options)
@@ -8884,14 +8910,8 @@ class gui(object):
         else:
             return filedialog.askopenfilename(**options)
 
-    def saveBox(
-            self,
-            title=None,
-            fileName=None,
-            dirName=None,
-            fileExt=".txt",
-            fileTypes=None,
-            asFile=False):
+    def saveBox( self, title=None, fileName=None, dirName=None, fileExt=".txt",
+            fileTypes=None, asFile=False, parent=None):
         self.topLevel.update_idletasks()
         if fileTypes is None:
             fileTypes = [('all files', '.*'), ('text files', '.txt')]
@@ -8902,6 +8922,8 @@ class gui(object):
         options['initialdir'] = dirName
         options['initialfile'] = fileName
         options['title'] = title
+        if parent is not None:
+            options["parent"] = self.n_subWindows[parent]
 
         if asFile:
             return filedialog.asksaveasfile(mode='w', **options)
@@ -8909,12 +8931,15 @@ class gui(object):
         else:
             return filedialog.asksaveasfilename(**options)
 
-    def directoryBox(self, title=None, dirName=None):
+    def directoryBox(self, title=None, dirName=None, parent=None):
         self.topLevel.update_idletasks()
         options = {}
         options['initialdir'] = dirName
         options['title'] = title
         options['mustexist'] = False
+        if parent is not None:
+            options["parent"] = self.n_subWindows[parent]
+
         fileName = filedialog.askdirectory(**options)
 
         if fileName == "":
@@ -8922,30 +8947,44 @@ class gui(object):
         else:
             return fileName
 
-    def colourBox(self, colour='#ff0000'):
+    def colourBox(self, colour='#ff0000', parent=None):
         self.topLevel.update_idletasks()
-        col = askcolor(colour)
+        if parent is None:
+            col = askcolor(colour)
+        else:
+            opts = {"parent": self.n_subWindows[parent]}
+            col = askcolor(colour, **opts)
 
         if col[1] is None:
             return None
         else:
             return col[1]
 
-    def textBox(self, title, question, defaultValue=None):
+    def textBox(self, title, question, defaultValue=None, parent=None):
         self.topLevel.update_idletasks()
         if defaultValue is not None:
             defaultVar = StringVar(self.topLevel)
             defaultVar.set(defaultValue)
         else:
             defaultVar = None
-        return TextDialog(self.topLevel, title, question, defaultVar=defaultVar).result
+        if parent is None:
+            parent = self.topLevel
+        else:
+            parent = self.n_subWindows[parent]
 
-    def numberBox(self, title, question):
-        return self.numBox(title, question)
+        return TextDialog(parent, title, question, defaultVar=defaultVar).result
 
-    def numBox(self, title, question):
+    def numberBox(self, title, question, parent=None):
+        return self.numBox(title, question, parent)
+
+    def numBox(self, title, question, parent=None):
         self.topLevel.update_idletasks()
-        return NumDialog(self.topLevel, title, question).result
+        if parent is None:
+            parent = self.topLevel
+        else:
+            parent = self.n_subWindows[parent]
+
+        return NumDialog(parent, title, question).result
 
 #####################################
 # ProgressBar Class
