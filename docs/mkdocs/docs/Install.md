@@ -25,6 +25,11 @@ from appJar import gui
 ```
 (As long as it's in the same folder as your code, it'll work...)  
 
+### Linux
+If you're on Linux you might be able to make this even simpler.  
+You might have a `site-packages` folder, that is already in your path.  
+In this case, put the `appJar` folder in `~/.local/lib/python3.x/site-packages/` where 3.x is the version of python that you use.  
+
 ##Multi-user Set-up  
 If you're trying to install appJar in a school, everyone can download their own copy ([see above](#single-user-set-up)), or:  
 
