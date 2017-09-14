@@ -2603,7 +2603,7 @@ with pytest.raises(Exception) :
     app2.startNotebook("nb1")
 
 app2.showSplash(text="New test", fill="green", stripe="pink", fg="green", font=50)
-app2.startLabelFrame("l1")
+app2.startLabelFrame("l1", hideTitle=True)
 app2.addLabel("l1", "here")
 app2.registerEvent(test_gui2)
 app2.setPollTime(1000)

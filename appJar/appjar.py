@@ -4121,9 +4121,9 @@ class gui(object):
         self.setPanedFrameVertical(title)
 
     @contextmanager
-    def labelFrame(self, title, row=None, column=0, colspan=0, rowspan=0, sticky=W):
+    def labelFrame(self, title, row=None, column=0, colspan=0, rowspan=0, sticky=W, hideTitle=False):
         try:
-            lf = self.startLabelFrame(title, row, column, colspan, rowspan, sticky)
+            lf = self.startLabelFrame(title, row, column, colspan, rowspan, sticky, hideTitle)
         except ItemLookupError:
             lf = self.openLabelFrame(title)
         try: yield lf
@@ -4131,8 +4131,12 @@ class gui(object):
 
     # sticky is alignment inside frame
     # frame will be added as other widgets
-    def startLabelFrame(self, title, row=None, column=0, colspan=0, rowspan=0, sticky=W):
-        return self.startContainer(self.C_LABELFRAME, title, row, column, colspan, rowspan, sticky)
+    def startLabelFrame(self, title, row=None, column=0, colspan=0, rowspan=0, sticky=W, hideTitle=False):
+        lf = self.startContainer(self.C_LABELFRAME, title, row, column, colspan, rowspan, sticky)
+        if hideTitle:
+            self.setLabelFrameTitle(title, "")
+
+        return lf
 
     @contextmanager
     def toggleFrame(self, title, row=None, column=0, colspan=0, rowspan=0):
