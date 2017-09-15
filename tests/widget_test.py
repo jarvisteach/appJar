@@ -1482,6 +1482,8 @@ def test_events():
     app.afterIdle(eventTester)
     app.after(0, eventTester)
     app.after(5, eventTester)
+    e_id = app.after(10, eventTester)
+    app.afterCancel(e_id)
 
     app.afterIdle(eventTester, "a")
     app.after(5, eventTester, "a")
@@ -2367,11 +2369,11 @@ def test_pop_ups():
     print("\tTesting popups")
     print("Registering event:")
     app.topLevel.after(500, closePop)
-    a = app.textBox("a", "a", "initial")
+    a = app.textBox("POP_TEXT", "a", "initial")
     assert a is None
     print("Registering event:")
     app.topLevel.after(500, closePop)
-    a = app.numberBox("a", "a")
+    a = app.numberBox("POP_NUM", "a")
     assert a is None
 
     print(" >> not implemented...")
@@ -2557,6 +2559,7 @@ app.setPollTime(1000)
 app.addLabel("test_threads", "empty")
 assert app.getLabel("test_threads") == "empty"
 app.queueFunction(app.setLabel, "test_threads", "full")
+app.saveSettings()
 app.go("CANADIAN")
 
 print("<<<Widget Test Suite Complete on app>>>")
@@ -2616,5 +2619,32 @@ app2.startSubWindow("login")
 app2.addLabel("log_l1", "Login page")
 app2.stopSubWindow()
 app2.go(startWindow="login")
+
+with gui() as app3:
+    with app3.tabbedFrame("tf"):
+        with app3.tab("t1"):
+            with app3.labelFrame("lf1"):
+                app3.addLabel("l1", "label")
+            with app3.toggleFrame("tf1"):
+                app3.addCheckBox("cb1")
+        with app3.tab("t2"):
+            with app3.panedFrame("pf1"):
+                with app3.panedFrameVertical("vpf1"):
+                    app3.addLabel("l2", "label")
+        with app3.tab("t3"):
+            with app3.pagedWindow("pages"):
+                with app3.page():
+                    app3.addLabel("l3", "label")
+                with app3.page():
+                    app3.addLabel("l4", "label")
+        with app3.tab("t4"):
+            with app3.frame("f1"):
+                app3.addLabel("l5", "label")
+            with app3.scrollPane("sf1"):
+                app3.addLabel("l6", "label")
+    with app3.subWindow("s1"):
+        app3.addLabel("l7", "label")
+
+    app3.after(2000, app3.stop)
 
 print("<<<Widget Test Suite Complete>>>")

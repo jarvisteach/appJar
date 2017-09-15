@@ -6,7 +6,7 @@ One thing I really wanted to get into appJar, was some indentation - I wanted th
 I also wanted to simplify the creation of containers and even the GUI itself.  
 
 So, now you can!  
-(**NB.** this is a new feature, so you migth find some issues...)  
+(**NB.** this is a new feature, so you might find some issues...)  
 
 ```python
 with gui("My first GUI") as app:
