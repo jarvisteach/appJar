@@ -34,4 +34,3 @@ with gui(startWindow="sub1", language="FRENCH") as app:
 
     app.registerEvent(closePop)
     app.setPollTime(1000)
-    #app.go(startWindow="sub1")

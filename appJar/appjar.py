@@ -4077,12 +4077,18 @@ class gui(object):
 
     @contextmanager
     def panedFrame(self, title, row=None, column=0, colspan=0, rowspan=0, sticky="NSEW"):
+        reOpen = False
         try:
             pane = self.startPanedFrame(title, row, column, colspan, rowspan, sticky)
         except ItemLookupError:
+            reOpen = True
             pane = self.openPane(title)
         try: yield pane
-        finally: self.stopPanedFrame()
+        finally:
+            if reOpen:
+                self.stopContainer()
+            else:
+                self.stopPanedFrame()
 
     def startPanedFrame(
             self,
@@ -4103,12 +4109,18 @@ class gui(object):
 
     @contextmanager
     def panedFrameVertical(self, title, row=None, column=0, colspan=0, rowspan=0, sticky="NSEW"):
+        reOpen = False
         try:
             pane = self.startPanedFrameVertical(title, row, column, colspan, rowspan, sticky)
         except ItemLookupError:
+            reOpen = True
             pane = self.openPane(title)
         try: yield pane
-        finally: self.stopPanedFrame()
+        finally:
+            if reOpen:
+                self.stopContainer()
+            else:
+                self.stopPanedFrame()
 
     def startPanedFrameVertical(
             self,
