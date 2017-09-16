@@ -11767,10 +11767,10 @@ class GoogleMap(LabelFrame):
         imgObj = None
         self.rawData = None
         self.mapData = None
+        self.request = None
         self.app.thread(self.getMapData)
 
         self.updateMapId = self.parent.after(500, self.updateMap)
-        self.request = "http://maps.google.com"
 
         # if we got some map data then load it
         if self.mapData is not None:
@@ -11867,7 +11867,7 @@ class GoogleMap(LabelFrame):
         self.buttons[2].place(rely=1.0, relx=1.0, x=-5, y=-56, anchor=SE)
         self.buttons[3].place(rely=1.0, relx=1.0, x=-5, y=-74, anchor=SE)
 
-        self.buttons[3].registerWebpage(self.request)
+        if self.request is not None: self.buttons[3].registerWebpage(self.request)
 
     def __setMapParams(self):
         if "center" not in self.params or self.params["center"] == None or self.params["center"] == "":
@@ -11944,20 +11944,24 @@ class GoogleMap(LabelFrame):
         if not self.imageQueue.empty():
             self.rawData = self.imageQueue.get()
             self.mapData = base64.encodestring(self.rawData)
-            imgObj = PhotoImage(data=self.mapData)
-            self.canvas.itemconfig(self.image_on_canvas, image=imgObj)
-            self.canvas.img = imgObj
+            try:
+                imgObj = PhotoImage(data=self.mapData)
+            except:
+                gui.error("Error parsing image data")
+            else:
+                self.canvas.itemconfig(self.image_on_canvas, image=imgObj)
+                self.canvas.img = imgObj
 
-            h = imgObj.height()
-            w = imgObj.width()
+                h = imgObj.height()
+                w = imgObj.width()
 
-            if h != self.h or w != self.w:
-                self.__removeControls()
-                self.h = h
-                self.w = w
-                self.canvas.config(width=self.w, height=self.h)
-                self.__placeControls()
-            self.buttons[3].registerWebpage(self.request)
+                if h != self.h or w != self.w:
+                    self.__removeControls()
+                    self.h = h
+                    self.w = w
+                    self.canvas.config(width=self.w, height=self.h)
+                    self.__placeControls()
+                if self.request is not None: self.buttons[3].registerWebpage(self.request)
         self.updateMapId = self.parent.after(200, self.updateMap)
 
     def __buildQueryURL(self):
@@ -11985,15 +11989,19 @@ class GoogleMap(LabelFrame):
         self.__buildQueryURL()
         gotMap = False
         while not gotMap:
-            try:
-                u = urlopen(self.request)
-                rawData = u.read()
-                u.close()
-                self.imageQueue.put(rawData)
-                gotMap = True
-            except Exception as e:
-                gui.error("Unable to contact GoogleMaps")
-                time.sleep(1)
+            if self.request is not None:
+                try:
+                    u = urlopen(self.request)
+                    rawData = u.read()
+                    u.close()
+                    self.imageQueue.put(rawData)
+                    gotMap = True
+                except Exception as e:
+                    gui.error("Unable to contact GoogleMaps")
+                    time.sleep(1)
+            else:
+                gui.debug("No request")
+                time.sleep(.25)
 
     def getMapFile(self, fileName):
         """ will query GoogleMaps & download the image into the named file """
