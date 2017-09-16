@@ -1214,6 +1214,12 @@ def test_links():
 #        app.addLink("l1", None)
     assert isinstance(app.addLink("l2", linkPressed), Link)
     assert isinstance(app.addWebLink("l3", "http://appJar.info"), Link)
+    with pytest.raises(Exception) :
+        app.addWebLink("l4", "appJar.info")
+
+    link = app.addLink("lx", linkPressed)
+    link.enter(None)
+    link.leave(None)
 
     # call generic setter functions
     test_setters("Link", "l1")
@@ -1225,7 +1231,16 @@ def test_links():
 def test_grips():
     print("\tTesting grips")
     assert isinstance(app.addGrip(), Grip)
-    app.addGrip()
+    grip = app.addGrip()
+    event = Event()
+    event.widget = grip
+    event.x = 100
+    event.y = 100
+    grip.StartMove(event)
+    event.x = 150
+    event.y = 150
+    grip.OnMotion(event)
+    grip.StopMove(event)
     print("\t >> all tests complete")
 
 
@@ -2059,10 +2074,22 @@ def test_containers():
     app.addLabel("tbf4_l2", TEXT_ONE)
     app.stopTab()
 
+    with pytest.raises(Exception) :
+        app.setTabbedFrameSelectedTab("tbf1", "tab3303")
+
     app.setTabbedFrameDisabledTab("tbf1", "tab3")
+    assert app.setTabbedFrameSelectedTab("tbf1", "tab3") is None
     app.setTabbedFrameDisableAllTabs("tbf1")
 
     app.setTabbedFrameTabExpand("tbf1")
+
+    def tabber(btn):
+        print(btn)
+
+    app.setTabbedFrameCommand("tbf1", tabber)
+    app.setTabbedFrameDisableAllTabs("tbf1", False)
+    app.setTabbedFrameSelectedTab("tbf1", "tab3")
+    assert app.getTabbedFrameSelectedTab("tbf1") == "tab3"
 
     app.startPanedFrame("p1")
     app.addLabel("p1_l1", TEXT_ONE)
@@ -2581,6 +2608,8 @@ def test_gui2(btn=None):
     doStop += 1
 
 app2 = gui()
+app2.addStatusbar()
+app2.setStatusbar("a")
 app2.addToolbar("a", tester_function, True)
 app2.useTtk()
 app2.setTtkTheme()
@@ -2621,6 +2650,7 @@ app2.stopSubWindow()
 app2.go(startWindow="login")
 
 with gui() as app3:
+    app3.addStatus(TEXT_ONE, 1, "LEFT")
     with app3.tabbedFrame("tf"):
         with app3.tab("t1"):
             with app3.labelFrame("lf1"):
