@@ -11867,7 +11867,18 @@ class GoogleMap(LabelFrame):
         self.buttons[2].place(rely=1.0, relx=1.0, x=-5, y=-56, anchor=SE)
         self.buttons[3].place(rely=1.0, relx=1.0, x=-5, y=-74, anchor=SE)
 
-        if self.request is not None: self.buttons[3].registerWebpage(self.request)
+        if self.request is not None:
+            self.buttons[3].registerWebpage(self.request)
+            self.__addTooltip(self.buttons[3], self.request)
+
+    def __addTooltip(self, but, text):
+        # generate a tooltip
+        if ToolTip is not False:
+            tt = ToolTip(
+                but,
+                text,
+                delay=1000,
+                follow_mouse=1)
 
     def __setMapParams(self):
         if "center" not in self.params or self.params["center"] == None or self.params["center"] == "":
@@ -11961,7 +11972,9 @@ class GoogleMap(LabelFrame):
                     self.w = w
                     self.canvas.config(width=self.w, height=self.h)
                     self.__placeControls()
-                if self.request is not None: self.buttons[3].registerWebpage(self.request)
+                if self.request is not None:
+                    self.buttons[3].registerWebpage(self.request)
+                    self.__addTooltip(self.buttons[3], self.request)
         self.updateMapId = self.parent.after(200, self.updateMap)
 
     def __buildQueryURL(self):
