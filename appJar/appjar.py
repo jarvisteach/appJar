@@ -7358,10 +7358,7 @@ class gui(object):
         if fileName is not None:
             self.setEntry(title, fileName)
 
-        self.setEntryFocus(title)
-#        ent = self.__verifyItem(self.n_entries, title)
-#        ent.icursor(3)
-#        ent.xview(END)
+        self.topLevel.after(250, self.setEntryFocus, title)
 
     def __checkDirName(self, title):
         if len(self.getEntry(title)) == 0:
