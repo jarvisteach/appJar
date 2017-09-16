@@ -449,7 +449,7 @@ class gui(object):
 #####################################
 # CONSTRUCTOR - creates the GUI
 #####################################
-    def __init__(self, title=None, geom=None, warn=None, debug=None, handleArgs=True):
+    def __init__(self, title=None, geom=None, warn=None, debug=None, handleArgs=True, language=None, startWindow=None):
 
         if self.__class__.instantiated:
             raise Exception("You cannot have more than one instance of gui, try using a subWindow.")
@@ -460,7 +460,8 @@ class gui(object):
         logging.basicConfig(level=logging.WARNING, format='%(asctime)s %(name)s:%(levelname)s %(message)s')
 
         # check any command line arguments
-        self.language = None
+        self.language = language
+        self.startWindow = startWindow
         args = self.__handleArgs() if handleArgs else None
 
         # warn if we're in an untested mode
@@ -482,7 +483,7 @@ class gui(object):
             elif args.i: gui.setLogLevel("INFO")
             elif args.d: gui.setLogLevel("DEBUG")
 
-            self.language = args.l
+            if args.l: self.language = args.l
             if args.f: gui.setLogFile(args.f)
             if args.ttk:
                 self.useTtk()
@@ -1761,7 +1762,7 @@ class gui(object):
             return False
         else:
             self.debug("ContextManager: starting")
-            self.go()
+            self.go(startWindow=self.startWindow)
             return True
 
     def go(self, language=None, startWindow=None):
@@ -1862,6 +1863,34 @@ class gui(object):
         # only if in root
         if self.containerStack[-1]['type'] != self.C_SUBWINDOW:
             tl.createcommand('exit', self.stop)
+
+    def saveSettings(self):
+        props = {}
+        # get geometry: widthxheight+x+y
+        props["geom"] = self.topLevel.geometry()
+        props["fullscreen"] = self.topLevel.attributes('-fullscreen')
+
+        # get toolbar setting
+        props["tbPinned"] = self.tbPinned
+
+        # get container settings
+        props["togs"] = {}
+        for k, v in self.n_toggleFrames.items():
+            props["togs"][k] = v.isShowing()
+
+        props["tabs"] = {}
+        for k, v in self.n_tabbedFrames.items():
+            props["tabs"][k] = v.getSelectedTab()
+
+        props["pages"] = {}
+        for k, v in self.n_pagedWindows.items():
+            props["pages"][k] = v.getPageNumber()
+
+        # pane positions?
+        # sub windows geom & visibility
+        # scrollpane x & y positions
+
+        return props
 
     def stop(self, event=None):
         """ Closes the GUI. If a stop function is set, will only close the GUI if True """
@@ -4048,12 +4077,18 @@ class gui(object):
 
     @contextmanager
     def panedFrame(self, title, row=None, column=0, colspan=0, rowspan=0, sticky="NSEW"):
+        reOpen = False
         try:
             pane = self.startPanedFrame(title, row, column, colspan, rowspan, sticky)
         except ItemLookupError:
+            reOpen = True
             pane = self.openPane(title)
         try: yield pane
-        finally: self.stopPanedFrame()
+        finally:
+            if reOpen:
+                self.stopContainer()
+            else:
+                self.stopPanedFrame()
 
     def startPanedFrame(
             self,
@@ -4074,12 +4109,18 @@ class gui(object):
 
     @contextmanager
     def panedFrameVertical(self, title, row=None, column=0, colspan=0, rowspan=0, sticky="NSEW"):
+        reOpen = False
         try:
             pane = self.startPanedFrameVertical(title, row, column, colspan, rowspan, sticky)
         except ItemLookupError:
+            reOpen = True
             pane = self.openPane(title)
         try: yield pane
-        finally: self.stopPanedFrame()
+        finally:
+            if reOpen:
+                self.stopContainer()
+            else:
+                self.stopPanedFrame()
 
     def startPanedFrameVertical(
             self,
@@ -4093,9 +4134,9 @@ class gui(object):
         self.setPanedFrameVertical(title)
 
     @contextmanager
-    def labelFrame(self, title, row=None, column=0, colspan=0, rowspan=0, sticky=W):
+    def labelFrame(self, title, row=None, column=0, colspan=0, rowspan=0, sticky=W, hideTitle=False):
         try:
-            lf = self.startLabelFrame(title, row, column, colspan, rowspan, sticky)
+            lf = self.startLabelFrame(title, row, column, colspan, rowspan, sticky, hideTitle)
         except ItemLookupError:
             lf = self.openLabelFrame(title)
         try: yield lf
@@ -4103,8 +4144,12 @@ class gui(object):
 
     # sticky is alignment inside frame
     # frame will be added as other widgets
-    def startLabelFrame(self, title, row=None, column=0, colspan=0, rowspan=0, sticky=W):
-        return self.startContainer(self.C_LABELFRAME, title, row, column, colspan, rowspan, sticky)
+    def startLabelFrame(self, title, row=None, column=0, colspan=0, rowspan=0, sticky=W, hideTitle=False):
+        lf = self.startContainer(self.C_LABELFRAME, title, row, column, colspan, rowspan, sticky)
+        if hideTitle:
+            self.setLabelFrameTitle(title, "")
+
+        return lf
 
     @contextmanager
     def toggleFrame(self, title, row=None, column=0, colspan=0, rowspan=0):
@@ -5949,6 +5994,12 @@ class gui(object):
         self.n_images[name].hasMouseOver = False
         return imgObj
 
+    # uses built-in icons to add an image
+    def addIcon(self, name, iconName, row=None, column=0, colspan=0, rowspan=0):
+        icon = os.path.join(self.icon_path, iconName.lower()+".png")
+        with PauseLogger():
+            return self.addImage(name, icon, row, column, colspan, rowspan)
+
     # load image from base-64 encoded GIF
     # use base64 module to convert binary data to base64
     def addImageData(self, name, imageData, row=None, column=0, colspan=0, rowspan=0, fmt="gif"):
@@ -6578,6 +6629,11 @@ class gui(object):
         self.__positionWidget(but, row, column, colspan, rowspan, None)
         self.setButtonImage(title, imgFile)
         return but
+
+    def addIconButton(self, title, func, iconName, row=None, column=0, colspan=0, rowspan=0):
+        icon = os.path.join(self.icon_path, iconName.lower()+".png")
+        with PauseLogger():
+            return self.addImageButton(title, func, icon, row, column, colspan, rowspan)
 
     def setButton(self, name, text):
         but = self.__verifyItem(self.n_buttons, name)
@@ -8784,44 +8840,67 @@ class gui(object):
     def getPopUp(self):
         return self.topLevel.POP_UP
 
-    def infoBox(self, title, message):
+    def infoBox(self, title, message, parent=None):
         self.topLevel.update_idletasks()
-        MessageBox.showinfo(title, message)
+        if parent is None:
+            MessageBox.showinfo(title, message)
+        else:
+            opts = {"parent": self.n_subWindows[parent]}
+            MessageBox.showinfo(title, message, **opts)
         self.__bringToFront()
 
-    def errorBox(self, title, message):
+    def errorBox(self, title, message, parent=None):
         self.topLevel.update_idletasks()
-        MessageBox.showerror(title, message)
+        if parent is None:
+            MessageBox.showerror(title, message)
+        else:
+            opts = {"parent": self.n_subWindows[parent]}
+            MessageBox.showerror(title, message, **opts)
         self.__bringToFront()
 
-    def warningBox(self, title, message):
+    def warningBox(self, title, message, parent=None):
         self.topLevel.update_idletasks()
-        MessageBox.showwarning(title, message)
+        if parent is None:
+            MessageBox.showwarning(title, message)
+        else:
+            opts = {"parent": self.n_subWindows[parent]}
+            MessageBox.showwarning(title, message, **opts)
         self.__bringToFront()
 
-    def yesNoBox(self, title, message):
+    def yesNoBox(self, title, message, parent=None):
         self.topLevel.update_idletasks()
-        return MessageBox.askyesno(title, message)
+        if parent is None:
+            return MessageBox.askyesno(title, message)
+        else:
+            opts = {"parent": self.n_subWindows[parent]}
+            return MessageBox.askyesno(title=title, message=message, **opts)
 
-    def questionBox(self, title, message):
+    def questionBox(self, title, message, parent=None):
         self.topLevel.update_idletasks()
-        return MessageBox.askquestion(title, message)
+        if parent is None:
+            return MessageBox.askquestion(title, message)
+        else:
+            opts = {"parent": self.n_subWindows[parent]}
+            return MessageBox.askquestion(title, message, **opts)
 
-    def okBox(self, title, message):
+    def okBox(self, title, message, parent=None):
         self.topLevel.update_idletasks()
         title, message = self.__translatePopup(title, message)
-        return MessageBox.askokcancel(title, message)
+        if parent is None:
+            return MessageBox.askokcancel(title, message)
+        else:
+            opts = {"parent": self.n_subWindows[parent]}
+            return MessageBox.askokcancel(title, message, **opts)
 
-    def retryBox(self, title, message):
+    def retryBox(self, title, message, parent=None):
         self.topLevel.update_idletasks()
-        return MessageBox.askretrycancel(title, message)
+        if parent is None:
+            return MessageBox.askretrycancel(title, message)
+        else:
+            opts = {"parent": self.n_subWindows[parent]}
+            return MessageBox.askretrycancel(title, message, **opts)
 
-    def openBox(
-            self,
-            title=None,
-            dirName=None,
-            fileTypes=None,
-            asFile=False):
+    def openBox(self, title=None, dirName=None, fileTypes=None, asFile=False, parent=None):
 
         self.topLevel.update_idletasks()
 
@@ -8834,6 +8913,8 @@ class gui(object):
             options['initialdir'] = dirName
         if fileTypes is not None:
             options['filetypes'] = fileTypes
+        if parent is not None:
+            options["parent"] = self.n_subWindows[parent]
 
         if asFile:
             return filedialog.askopenfile(mode="r", **options)
@@ -8841,14 +8922,8 @@ class gui(object):
         else:
             return filedialog.askopenfilename(**options)
 
-    def saveBox(
-            self,
-            title=None,
-            fileName=None,
-            dirName=None,
-            fileExt=".txt",
-            fileTypes=None,
-            asFile=False):
+    def saveBox( self, title=None, fileName=None, dirName=None, fileExt=".txt",
+            fileTypes=None, asFile=False, parent=None):
         self.topLevel.update_idletasks()
         if fileTypes is None:
             fileTypes = [('all files', '.*'), ('text files', '.txt')]
@@ -8859,6 +8934,8 @@ class gui(object):
         options['initialdir'] = dirName
         options['initialfile'] = fileName
         options['title'] = title
+        if parent is not None:
+            options["parent"] = self.n_subWindows[parent]
 
         if asFile:
             return filedialog.asksaveasfile(mode='w', **options)
@@ -8866,12 +8943,15 @@ class gui(object):
         else:
             return filedialog.asksaveasfilename(**options)
 
-    def directoryBox(self, title=None, dirName=None):
+    def directoryBox(self, title=None, dirName=None, parent=None):
         self.topLevel.update_idletasks()
         options = {}
         options['initialdir'] = dirName
         options['title'] = title
         options['mustexist'] = False
+        if parent is not None:
+            options["parent"] = self.n_subWindows[parent]
+
         fileName = filedialog.askdirectory(**options)
 
         if fileName == "":
@@ -8879,30 +8959,44 @@ class gui(object):
         else:
             return fileName
 
-    def colourBox(self, colour='#ff0000'):
+    def colourBox(self, colour='#ff0000', parent=None):
         self.topLevel.update_idletasks()
-        col = askcolor(colour)
+        if parent is None:
+            col = askcolor(colour)
+        else:
+            opts = {"parent": self.n_subWindows[parent]}
+            col = askcolor(colour, **opts)
 
         if col[1] is None:
             return None
         else:
             return col[1]
 
-    def textBox(self, title, question, defaultValue=None):
+    def textBox(self, title, question, defaultValue=None, parent=None):
         self.topLevel.update_idletasks()
         if defaultValue is not None:
             defaultVar = StringVar(self.topLevel)
             defaultVar.set(defaultValue)
         else:
             defaultVar = None
-        return TextDialog(self.topLevel, title, question, defaultVar=defaultVar).result
+        if parent is None:
+            parent = self.topLevel
+        else:
+            parent = self.n_subWindows[parent]
 
-    def numberBox(self, title, question):
-        return self.numBox(title, question)
+        return TextDialog(parent, title, question, defaultVar=defaultVar).result
 
-    def numBox(self, title, question):
+    def numberBox(self, title, question, parent=None):
+        return self.numBox(title, question, parent)
+
+    def numBox(self, title, question, parent=None):
         self.topLevel.update_idletasks()
-        return NumDialog(self.topLevel, title, question).result
+        if parent is None:
+            parent = self.topLevel
+        else:
+            parent = self.n_subWindows[parent]
+
+        return NumDialog(parent, title, question).result
 
 #####################################
 # ProgressBar Class
@@ -9933,6 +10027,7 @@ class ToggleFrame(Frame):
         self.titleLabel.grid(row=0, column=0)
         self.toggleButton.grid(row=0, column=1)
         self.subFrame.grid(row=1, column=0, sticky=EW)
+        self.firstTime = True
 
     def config(self, cnf=None, **kw):
         self.configure(cnf, **kw)
@@ -9989,7 +10084,9 @@ class ToggleFrame(Frame):
     def stop(self):
         self.update_idletasks()
         self.titleFrame.config(width=self.winfo_reqwidth())
-        self.toggle()
+        if self.firstTime:
+            self.firstTime = False
+            self.toggle()
 
     def isShowing(self):
         return self.showing
@@ -11670,10 +11767,10 @@ class GoogleMap(LabelFrame):
         imgObj = None
         self.rawData = None
         self.mapData = None
+        self.request = None
         self.app.thread(self.getMapData)
 
         self.updateMapId = self.parent.after(500, self.updateMap)
-        self.request = "http://maps.google.com"
 
         # if we got some map data then load it
         if self.mapData is not None:
@@ -11770,7 +11867,7 @@ class GoogleMap(LabelFrame):
         self.buttons[2].place(rely=1.0, relx=1.0, x=-5, y=-56, anchor=SE)
         self.buttons[3].place(rely=1.0, relx=1.0, x=-5, y=-74, anchor=SE)
 
-        self.buttons[3].registerWebpage(self.request)
+        if self.request is not None: self.buttons[3].registerWebpage(self.request)
 
     def __setMapParams(self):
         if "center" not in self.params or self.params["center"] == None or self.params["center"] == "":
@@ -11847,20 +11944,24 @@ class GoogleMap(LabelFrame):
         if not self.imageQueue.empty():
             self.rawData = self.imageQueue.get()
             self.mapData = base64.encodestring(self.rawData)
-            imgObj = PhotoImage(data=self.mapData)
-            self.canvas.itemconfig(self.image_on_canvas, image=imgObj)
-            self.canvas.img = imgObj
+            try:
+                imgObj = PhotoImage(data=self.mapData)
+            except:
+                gui.error("Error parsing image data")
+            else:
+                self.canvas.itemconfig(self.image_on_canvas, image=imgObj)
+                self.canvas.img = imgObj
 
-            h = imgObj.height()
-            w = imgObj.width()
+                h = imgObj.height()
+                w = imgObj.width()
 
-            if h != self.h or w != self.w:
-                self.__removeControls()
-                self.h = h
-                self.w = w
-                self.canvas.config(width=self.w, height=self.h)
-                self.__placeControls()
-            self.buttons[3].registerWebpage(self.request)
+                if h != self.h or w != self.w:
+                    self.__removeControls()
+                    self.h = h
+                    self.w = w
+                    self.canvas.config(width=self.w, height=self.h)
+                    self.__placeControls()
+                if self.request is not None: self.buttons[3].registerWebpage(self.request)
         self.updateMapId = self.parent.after(200, self.updateMap)
 
     def __buildQueryURL(self):
@@ -11888,15 +11989,19 @@ class GoogleMap(LabelFrame):
         self.__buildQueryURL()
         gotMap = False
         while not gotMap:
-            try:
-                u = urlopen(self.request)
-                rawData = u.read()
-                u.close()
-                self.imageQueue.put(rawData)
-                gotMap = True
-            except Exception as e:
-                gui.error("Unable to contact GoogleMaps")
-                time.sleep(1)
+            if self.request is not None:
+                try:
+                    u = urlopen(self.request)
+                    rawData = u.read()
+                    u.close()
+                    self.imageQueue.put(rawData)
+                    gotMap = True
+                except Exception as e:
+                    gui.error("Unable to contact GoogleMaps")
+                    time.sleep(1)
+            else:
+                gui.debug("No request")
+                time.sleep(.25)
 
     def getMapFile(self, fileName):
         """ will query GoogleMaps & download the image into the named file """

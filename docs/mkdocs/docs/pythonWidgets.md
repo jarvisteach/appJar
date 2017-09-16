@@ -224,7 +224,7 @@ That way, multiple widgets can use the same function, but different actions can 
 
 * `.addButton(title, function)`  
     Add a single button to the GUI, the text on the button will be the same as the button's title.  
-    A function should be specified, which will be called when the button is clicked.
+    A function should be specified, which will be called when the button is clicked, where the title is passed as a parameter to the function.  
 
 * `.addButtons(titles, functions)`  
     It's possible to add a list of buttons to the GUI.  
@@ -232,8 +232,11 @@ That way, multiple widgets can use the same function, but different actions can 
     A single function can be passed, to use for all buttons.  
     Or a list of functions can be passed, which MUST correspond to the buttons.  
 
-* `.addImageButton(name, title, function, imgFile)`  
-    This creates the named button, as above, using the specified image.
+* `.addImageButton(title, function, imgFile)`  
+    This creates the named button, as above, using the specified image.  
+
+* `.addIconButton(title, function, iconName)`  
+    This creates the named button, as above, using the named icon.  
 
 * `.addNamedButton(name, title, function)`  
     By default, it's not possible to have two buttons with the same text.  

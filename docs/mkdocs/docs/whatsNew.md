@@ -9,8 +9,13 @@
 * Much more friendly [license](/License/)  
 
 * Issues Resolved:
+    * [#249](https://github.com/jarvisteach/appJar/issues/249) - Can now set a parent for [dialogs](/pythonDialogs/) so that if they are launched from a [SubWindow](/pythonWidgetGrouping/#sub-window) they behave properly.  
+    * [#248](https://github.com/jarvisteach/appJar/issues/248) - Can now [add icons](/pythonImages/#add-images) and [iconButtons](/pythonWidgets/#add-buttons) using inbuilt icon set.  
+    * [#246](https://github.com/jarvisteach/appJar/issues/246) - Can now hide titles on [labelFrames](/pythonWidgetGrouping/#label-frame)  
+    * [#243](https://github.com/jarvisteach/appJar/issues/243) - Fixed bug in [ToggleFrames](/pythonWidgetGrouping/#toggle-frame)  
+    * [#241](https://github.com/jarvisteach/appJar/issues/241) - Notes on installing on [linux](/Install/#single-user-set-up)  
     * [#228](https://github.com/jarvisteach/appJar/issues/228) - appJar prevents you from creating more than one gui at a time  
-    * [#226](https://github.com/jarvisteach/appJar/issues/226) - fixed issues on [file/directory entries](/pythonWidgets/#entry)
+    * [#226](https://github.com/jarvisteach/appJar/issues/226) - fixed issues on [file/directory entries](/pythonWidgets/#entry)  
     * [#223](https://github.com/jarvisteach/appJar/issues/223) - fixed issues with [sound](/pythonSound/) import  
     * [#217](https://github.com/jarvisteach/appJar/issues/217) - Fixed issues with removing [BG images](/pythonImages/#set-background-images)  
     * [#216](https://github.com/jarvisteach/appJar/issues/216) - Improvements to [integrated testing](https://travis-ci.org/jarvisteach/appJar)  

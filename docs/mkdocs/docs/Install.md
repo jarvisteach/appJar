@@ -1,7 +1,7 @@
 #Set-up Instructions
 ---
 appJar was designed for use in schools - it therefore doesn't require any kind of special  *installation*.  
-Instead, just [DOWNLOAD](https://github.com/RWBA/appJar/blob/appJar/releases/appJar.zip?raw=true) the ZIP file, unzip, and go - just put the folder in the [right place](/install/#single-user-set-up).  
+Instead, just [DOWNLOAD](https://github.com/RWBA/appJar/blob/appJar/releases/appJar.zip?raw=true) the ZIP file, unzip, and go - just put the folder in the [right place](#single-user-set-up).  
 
 ##Pip Installation  
 However, if you can install python packages - we support that too!  
@@ -25,8 +25,13 @@ from appJar import gui
 ```
 (As long as it's in the same folder as your code, it'll work...)  
 
+### Linux
+If you're on Linux you might be able to make this even simpler.  
+You might have a `site-packages` folder, that is already in your path.  
+In this case, put the `appJar` folder in `~/.local/lib/python3.x/site-packages/` where 3.x is the version of python that you use.  
+
 ##Multi-user Set-up  
-If you're trying to install appJar in a school, everyone can download their own copy ([see above](/install/#single-user-set-up)), or:  
+If you're trying to install appJar in a school, everyone can download their own copy ([see above](#single-user-set-up)), or:  
 
 * Put the **appJar folder** in a **shared location** (eg. a folder on a network drive): `E:\PYLIB`  
 * Then have pupils include the following 2-lines at the start of their code:
@@ -87,3 +92,7 @@ If you're running python in  IDLE, you'll need to add appJar to your **site-pack
     import sys
     print(sys.version) 
 ```
+
+## Pyscripter/PortablePython
+
+If you are using [PortablePython](http://portablepython.com/wiki/Download/) then you simply need to drop the appJar folder into the Lib folder of the PortablePython installation.  

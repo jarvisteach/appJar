@@ -56,9 +56,10 @@ app.go()
 ```
 
 #### Start/Stop Label Frames  
-* `.startLabelFrame(name)` & `.stopLabelFrame()`  
+* `.startLabelFrame(name, hideTitle=False)` & `.stopLabelFrame()`  
     Used to start and stop a *LabelFrame*  
     The specified title will be used as the label for the frame.  
+    Set hideTitle to be True if you don;t want to show a title.  
 
 * `.openLabelFrame(title)`  
     Used to reopen the named *LabelFrame*.  

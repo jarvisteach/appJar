@@ -8,7 +8,7 @@ Written by a teacher, in the classroom, for students.
 **appJar** is designed to run on as many versions of [Python](https://www.python.org/downloads/) as possible - so it should work in your school.  
 
 There are no other dependencies - simply [download](https://github.com/RWBA/appJar/blob/appJar/releases/appJar.zip?raw=true), unzip, and put it in your code folder.  
-Check out the [installation](/install) instructions for other ways to get **appJar** working.  
+Check out the [installation](/Install) instructions for other ways to get **appJar** working.  
 
 GUIs in Python are hard, there's a huge amount of [boilerplate code](https://en.wikipedia.org/wiki/Boilerplate_code) required to get things working - so we hide all that.  
 We're also not big fans of lots of parameters, so we keep them to a minimum, instead giving functions to get & set most things.  

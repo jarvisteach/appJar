@@ -2,6 +2,7 @@ import sys
 import time
 import datetime
 import pytest
+import os
 
 try: from tkinter import Event, Label, Entry, Button, Radiobutton, Checkbutton, OptionMenu, Spinbox, Listbox, Message, PhotoImage
 except: from Tkinter import Event, Label, Entry, Button, Radiobutton, Checkbutton, OptionMenu, Spinbox, Listbox, Message, PhotoImage
@@ -373,6 +374,13 @@ def test_buttons():
             ["b2b1", "b2b2", "b2b3", "b2b4"],
             ["c2b1", "c2b2", "c2b3", "c2b4"]],
         None)
+
+    def buts(btn):
+        print(btn)
+    app.addButtons(["bl1", "bl2"], buts)
+
+
+
     assert isinstance(app.addNamedButton("butName", "nb1", None), Button)  # name/title
 
     but1 = app.getButtonWidget("b1")
@@ -394,6 +402,7 @@ def test_buttons():
     assert but1.cget("text") == ""
 
     assert isinstance(app.addImageButton("ib1", None, "1_entries.gif"), Button)
+    assert isinstance(app.addIconButton("ib2", None, "map"), Button)
     but1 = app.getButtonWidget("ib1")
     assert but1.cget("text") == ""
 
@@ -421,6 +430,9 @@ def test_radios():
     assert app.getRadioButton("rb") == TEXT_ONE
     assert app.getRadioButton("rb1") == TEXT_TWO
     assert app.getRadioButton("rb2") == TEXT_THREE
+
+    with pytest.raises(Exception):
+        app.setRadioButton("rb", "BROKEN_BUTTON")
 
     app.setRadioButton("rb", TEXT_TWO)
     app.setRadioButton("rb1", TEXT_THREE)
@@ -662,6 +674,15 @@ def test_spins():
     assert sbs["s2"] == "a"
     assert sbs["s3"] == "5"
     assert sbs["s4"] == "25"
+
+    app.setSpinBoxPos("s4", 1)
+    with pytest.raises(Exception) :
+        app.setSpinBoxPos("s4", -50)
+    with pytest.raises(Exception) :
+        app.setSpinBoxPos("s4", 50000)
+    with pytest.raises(Exception) :
+        app.setSpinBox("s4", "not in spinbox")
+
 
     app.setSpinBox("s1", "b")
     app.setSpinBox("s2", "d")
@@ -1212,6 +1233,12 @@ def test_links():
 #        app.addLink("l1", None)
     assert isinstance(app.addLink("l2", linkPressed), Link)
     assert isinstance(app.addWebLink("l3", "http://appJar.info"), Link)
+    with pytest.raises(Exception) :
+        app.addWebLink("l4", "appJar.info")
+
+    link = app.addLink("lx", linkPressed)
+    link.enter(None)
+    link.leave(None)
 
     # call generic setter functions
     test_setters("Link", "l1")
@@ -1223,7 +1250,16 @@ def test_links():
 def test_grips():
     print("\tTesting grips")
     assert isinstance(app.addGrip(), Grip)
-    app.addGrip()
+    grip = app.addGrip()
+    event = Event()
+    event.widget = grip
+    event.x = 100
+    event.y = 100
+    grip.StartMove(event)
+    event.x = 150
+    event.y = 150
+    grip.OnMotion(event)
+    grip.StopMove(event)
     print("\t >> all tests complete")
 
 
@@ -1249,6 +1285,10 @@ def test_date_pickers():
     app.addDatePicker("d2")
     app.addDatePicker("d3")
 
+    def changer(btn):
+        print(btn)
+    app.setDatePickerChangeFunction("d2", changer)
+
     assert app.getDatePicker("d1") == datetime.date(1970, 1, 1)
     assert app.getDatePicker("d2") == datetime.date(1970, 1, 1)
     assert app.getDatePicker("d3") == datetime.date(1970, 1, 1)
@@ -1256,6 +1296,8 @@ def test_date_pickers():
     app.setDatePicker("d1")
     app.setDatePicker("d2", datetime.date(1980, 5, 5))
     app.setDatePicker("d3", datetime.date(1990, 10, 10))
+
+    app.setDatePickerFg("d1", "green")
 
     assert app.getDatePicker("d1") == datetime.date.today()
     assert app.getDatePicker("d2") == datetime.date(1980, 5, 5)
@@ -1266,6 +1308,7 @@ def test_date_pickers():
     assert dps["d2"] == datetime.date(1980, 5, 5)
     assert dps["d3"] == datetime.date(1990, 10, 10)
 
+    app.setDatePickerRange("d1", 1940, None)
     app.setDatePickerRange("d1", 1940, 1960)
     app.setDatePickerRange("d2", 1980, 2020)
     app.setDatePickerRange("d3", 2020, 2040)
@@ -1480,6 +1523,8 @@ def test_events():
     app.afterIdle(eventTester)
     app.after(0, eventTester)
     app.after(5, eventTester)
+    e_id = app.after(10, eventTester)
+    app.afterCancel(e_id)
 
     app.afterIdle(eventTester, "a")
     app.after(5, eventTester, "a")
@@ -1506,12 +1551,15 @@ def test_images():
         app.addImage("im1", "1_flash.gif")
     app.addAnimatedImage("anim1", "1_flash.gif")
 
+    app.setAnimationSpeed("im1", -10)
     app.setAnimationSpeed("im1", 10)
     app.startAnimation("im1")
     app.stopAnimation("im1")
     app.startAnimation("im1")
 
     im = app.addImage("im2", "1_entries.gif")
+    ic = app.addIcon("ic2", "map")
+    ic2 = app.addImage("ic3", os.path.join(app.icon_path, "map.png"))
 
     coords = {
         "America":[32, 17, 242, 167],
@@ -2053,10 +2101,22 @@ def test_containers():
     app.addLabel("tbf4_l2", TEXT_ONE)
     app.stopTab()
 
+    with pytest.raises(Exception) :
+        app.setTabbedFrameSelectedTab("tbf1", "tab3303")
+
     app.setTabbedFrameDisabledTab("tbf1", "tab3")
+    assert app.setTabbedFrameSelectedTab("tbf1", "tab3") is None
     app.setTabbedFrameDisableAllTabs("tbf1")
 
     app.setTabbedFrameTabExpand("tbf1")
+
+    def tabber(btn):
+        print(btn)
+
+    app.setTabbedFrameCommand("tbf1", tabber)
+    app.setTabbedFrameDisableAllTabs("tbf1", False)
+    app.setTabbedFrameSelectedTab("tbf1", "tab3")
+    assert app.getTabbedFrameSelectedTab("tbf1") == "tab3"
 
     app.startPanedFrame("p1")
     app.addLabel("p1_l1", TEXT_ONE)
@@ -2363,11 +2423,11 @@ def test_pop_ups():
     print("\tTesting popups")
     print("Registering event:")
     app.topLevel.after(500, closePop)
-    a = app.textBox("a", "a", "initial")
+    a = app.textBox("POP_TEXT", "a", "initial")
     assert a is None
     print("Registering event:")
     app.topLevel.after(500, closePop)
-    a = app.numberBox("a", "a")
+    a = app.numberBox("POP_NUM", "a")
     assert a is None
 
     print(" >> not implemented...")
@@ -2553,6 +2613,7 @@ app.setPollTime(1000)
 app.addLabel("test_threads", "empty")
 assert app.getLabel("test_threads") == "empty"
 app.queueFunction(app.setLabel, "test_threads", "full")
+app.saveSettings()
 app.go("CANADIAN")
 
 print("<<<Widget Test Suite Complete on app>>>")
@@ -2574,6 +2635,8 @@ def test_gui2(btn=None):
     doStop += 1
 
 app2 = gui()
+app2.addStatusbar()
+app2.setStatusbar("a")
 app2.addToolbar("a", tester_function, True)
 app2.useTtk()
 app2.setTtkTheme()
@@ -2603,7 +2666,7 @@ with pytest.raises(Exception) :
     app2.startNotebook("nb1")
 
 app2.showSplash(text="New test", fill="green", stripe="pink", fg="green", font=50)
-app2.startLabelFrame("l1")
+app2.startLabelFrame("l1", hideTitle=True)
 app2.addLabel("l1", "here")
 app2.registerEvent(test_gui2)
 app2.setPollTime(1000)
@@ -2612,5 +2675,33 @@ app2.startSubWindow("login")
 app2.addLabel("log_l1", "Login page")
 app2.stopSubWindow()
 app2.go(startWindow="login")
+
+with gui() as app3:
+    app3.addStatus(TEXT_ONE, 1, "LEFT")
+    with app3.tabbedFrame("tf"):
+        with app3.tab("t1"):
+            with app3.labelFrame("lf1"):
+                app3.addLabel("l1", "label")
+            with app3.toggleFrame("tf1"):
+                app3.addCheckBox("cb1")
+        with app3.tab("t2"):
+            with app3.panedFrame("pf1"):
+                with app3.panedFrameVertical("vpf1"):
+                    app3.addLabel("l2", "label")
+        with app3.tab("t3"):
+            with app3.pagedWindow("pages"):
+                with app3.page():
+                    app3.addLabel("l3", "label")
+                with app3.page():
+                    app3.addLabel("l4", "label")
+        with app3.tab("t4"):
+            with app3.frame("f1"):
+                app3.addLabel("l5", "label")
+            with app3.scrollPane("sf1"):
+                app3.addLabel("l6", "label")
+    with app3.subWindow("s1"):
+        app3.addLabel("l7", "label")
+
+    app3.after(2000, app3.stop)
 
 print("<<<Widget Test Suite Complete>>>")

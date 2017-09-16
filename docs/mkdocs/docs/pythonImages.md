@@ -11,6 +11,12 @@ Getting the path for images right can be **TRICKY**
 It's therefore best to put images in the same folder as your Python code.  
 Or, create an image folder and set it using the `.setImageLocation(location)` function.  
 
+#### Built-in icons
+appJar has a host of built-in icons you can use.  
+They are all located in a folder called: `gui.icon_path`  
+If you want to use one, you could first just use `.addIcon()` or `.addIconButton()`  
+Otherwise concatenate `gui.icon_oath` with the icon name and `.png`  
+
 ###Add Images
 
 * `.addImage(title, file)`  
@@ -30,11 +36,16 @@ app.stopLabelFrame()
     Currently only supports base64 encoded GIF images.  
     Alternatively, you can pass in a ready made PhotoImage, simply set `fmt` to be 'PhotoImage'.  
 
+* `.addIcon(title, iconName)`  
+    This will create an image as above, but use one of appJar's inbuilt icons.  
+    Simply pass the name of one of the icons.  
+
 * `.setImageLocation(location)`  
     Set a folder for image files.  
     This will be put before the names of any image files used.  
 
-###Change Images
+
+### Change Images
 
 * `.setImage(title, image)` & `.setImageData(title, imgData, fmt="gif")`  
     This will replace the existing image with the new one.  
