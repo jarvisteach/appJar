@@ -53,7 +53,7 @@ app.go()
 ---
 Of course, the whole point of making a GUI, is to be interactive - this requires **events**.  
 
-The idea behind [event-driven programming](https://en.wikipedia.org/wiki/Event-driven_programming) is that each time the user clicks, presses or drags something (the event) the GUI should respond.  
+The idea behind [event-driven programming](https://en.wikipedia.org/wiki/Event-driven_programming) is that each time the user clicks, presses or drags something (an event) the GUI should respond.  
 
 * First, add some more widgets ([Entry Boxes](/pythonWidgets/#entry)), for the user to interact with:
 

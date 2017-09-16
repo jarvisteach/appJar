@@ -14,8 +14,8 @@ Or, create an image folder and set it using the `.setImageLocation(location)` fu
 #### Built-in icons
 appJar has a host of built-in icons you can use.  
 They are all located in a folder called: `gui.icon_path`  
-If you want to use one, you could first just use `.addIcon()` or `.addIconButton()`  
-Otherwise concatenate `gui.icon_oath` with the icon name and `.png`  
+If you want to use one, you could just use `.addIcon()` or `.addIconButton()`  
+Otherwise, concatenate `gui.icon_path` with the icon's name and `.png`  
 
 ###Add Images
 

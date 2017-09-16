@@ -95,4 +95,4 @@ If you're running python in  IDLE, you'll need to add appJar to your **site-pack
 
 ## Pyscripter/PortablePython
 
-If you are using [PortablePython](http://portablepython.com/wiki/Download/) then you simply need to drop the appJar folder into the Lib folder of the PortablePython installation.  
+If you are using [PortablePython](http://portablepython.com/wiki/Download/) then you simply need to drop the appJar folder into the `Lib` folder of the PortablePython installation.  

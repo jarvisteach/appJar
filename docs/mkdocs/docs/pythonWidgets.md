@@ -236,7 +236,7 @@ That way, multiple widgets can use the same function, but different actions can 
     This creates the named button, as above, using the specified image.  
 
 * `.addIconButton(title, function, iconName)`  
-    This creates the named button, as above, using the named icon.  
+    This creates the named button, as above, using the specified icon.  
 
 * `.addNamedButton(name, title, function)`  
     By default, it's not possible to have two buttons with the same text.  
