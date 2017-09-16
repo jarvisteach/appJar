@@ -374,6 +374,13 @@ def test_buttons():
             ["b2b1", "b2b2", "b2b3", "b2b4"],
             ["c2b1", "c2b2", "c2b3", "c2b4"]],
         None)
+
+    def buts(btn):
+        print(btn)
+    app.addButtons(["bl1", "bl2"], buts)
+
+
+
     assert isinstance(app.addNamedButton("butName", "nb1", None), Button)  # name/title
 
     but1 = app.getButtonWidget("b1")
@@ -423,6 +430,9 @@ def test_radios():
     assert app.getRadioButton("rb") == TEXT_ONE
     assert app.getRadioButton("rb1") == TEXT_TWO
     assert app.getRadioButton("rb2") == TEXT_THREE
+
+    with pytest.raises(Exception):
+        app.setRadioButton("rb", "BROKEN_BUTTON")
 
     app.setRadioButton("rb", TEXT_TWO)
     app.setRadioButton("rb1", TEXT_THREE)
@@ -664,6 +674,15 @@ def test_spins():
     assert sbs["s2"] == "a"
     assert sbs["s3"] == "5"
     assert sbs["s4"] == "25"
+
+    app.setSpinBoxPos("s4", 1)
+    with pytest.raises(Exception) :
+        app.setSpinBoxPos("s4", -50)
+    with pytest.raises(Exception) :
+        app.setSpinBoxPos("s4", 50000)
+    with pytest.raises(Exception) :
+        app.setSpinBox("s4", "not in spinbox")
+
 
     app.setSpinBox("s1", "b")
     app.setSpinBox("s2", "d")
@@ -1266,6 +1285,10 @@ def test_date_pickers():
     app.addDatePicker("d2")
     app.addDatePicker("d3")
 
+    def changer(btn):
+        print(btn)
+    app.setDatePickerChangeFunction("d2", changer)
+
     assert app.getDatePicker("d1") == datetime.date(1970, 1, 1)
     assert app.getDatePicker("d2") == datetime.date(1970, 1, 1)
     assert app.getDatePicker("d3") == datetime.date(1970, 1, 1)
@@ -1273,6 +1296,8 @@ def test_date_pickers():
     app.setDatePicker("d1")
     app.setDatePicker("d2", datetime.date(1980, 5, 5))
     app.setDatePicker("d3", datetime.date(1990, 10, 10))
+
+    app.setDatePickerFg("d1", "green")
 
     assert app.getDatePicker("d1") == datetime.date.today()
     assert app.getDatePicker("d2") == datetime.date(1980, 5, 5)
@@ -1283,6 +1308,7 @@ def test_date_pickers():
     assert dps["d2"] == datetime.date(1980, 5, 5)
     assert dps["d3"] == datetime.date(1990, 10, 10)
 
+    app.setDatePickerRange("d1", 1940, None)
     app.setDatePickerRange("d1", 1940, 1960)
     app.setDatePickerRange("d2", 1980, 2020)
     app.setDatePickerRange("d3", 2020, 2040)
@@ -1525,6 +1551,7 @@ def test_images():
         app.addImage("im1", "1_flash.gif")
     app.addAnimatedImage("anim1", "1_flash.gif")
 
+    app.setAnimationSpeed("im1", -10)
     app.setAnimationSpeed("im1", 10)
     app.startAnimation("im1")
     app.stopAnimation("im1")
