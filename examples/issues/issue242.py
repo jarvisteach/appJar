@@ -11,16 +11,18 @@ def getXY():
 
 def generate(btn):
     app.updatePlot("p1", *getXY())
-    showLabels()
+#    showLabels()
 
 def showLabels():
+    axes = app.getWidget(app.PLOT, "p1").axes
     axes.legend(['The curve'])
+
     axes.set_xlabel("X Axes")
     axes.set_ylabel("Y Axes")
     app.refreshPlot("p1")
 
 app = gui()
-axes = app.addPlot("p1", *getXY())
+app.addPlot("p1", *getXY())
 showLabels()
 app.addButton("Generate", generate)
 app.go()
