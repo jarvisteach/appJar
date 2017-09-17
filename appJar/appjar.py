@@ -5803,8 +5803,7 @@ class gui(object):
         if fmt=="png":
             self.__importPngimagetk()
             if PngImageTk is False:
-                raise Exception(
-                    "TKINTERPNG library not found, PNG files not supported: " + imagePath)
+                raise Exception("TKINTERPNG library not found, PNG files not supported: imageData")
             if sys.version_info >= (2, 7):
                 self.warn(
                     "Image processing for .PNGs is slow. .GIF is the recommended format")
@@ -5812,7 +5811,7 @@ class gui(object):
 #                png.convert()
 #                photo = png.image
             else:
-                raise Exception("PNG images only supported in python 3: " + imagePath)
+                raise Exception("PNG images only supported in python 3: imageData")
 
         elif fmt == "gif":
             imgObj = PhotoImage(data=imageData)
@@ -9500,7 +9499,7 @@ class TabbedFrame(Frame):
         if tabName not in self.widgetStore.keys():
             raise ItemLookupError("Invalid tab name: " + tabName)
         if newName is None:
-            newname = self.widgetStore[tabName][0].DEFAULT_TEXT
+            newName = self.widgetStore[tabName][0].DEFAULT_TEXT
 
         self.widgetStore[tabName][0].config(text=newName)
 
@@ -11888,7 +11887,7 @@ class GoogleMap(LabelFrame):
                 follow_mouse=1)
 
     def __setMapParams(self):
-        if "center" not in self.params or self.params["center"] == None or self.params["center"] == "":
+        if "center" not in self.params or self.params["center"] is None or self.params["center"] == "":
             self.params["center"] = self.currentLocation
         if "zoom" not in self.params:
             self.params["zoom"] = 16
