@@ -293,9 +293,10 @@ app.go()
     Create a plot with the specified x and y values.  
     Returns the plot object, to allow further customisation.  
 
-* `.updatePlot(title, x, y)`  
+* `.updatePlot(title, x, y, keepLabels=False)`  
     Update the specified plot with the specified x and y values.  
-    Note, if you do this you will lose any customisations applied to the axes.  
+    **NB.** if you do this you will lose any customisations applied to the axes.  
+    If you set `keepLabels` to True, then the axis labels & title will be retained.  
 
 * `.refreshPlot(title)`  
     Call this any time you modify the axes.  

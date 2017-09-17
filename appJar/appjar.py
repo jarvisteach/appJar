@@ -1948,11 +1948,11 @@ class gui(object):
     def after_idle(self, callback, *args):
         return self.topLevel.after_idle(callback, *args)
 
-    def afterCancel(self, id):
-        return self.after_cancel(id)
+    def afterCancel(self, afterId):
+        return self.after_cancel(afterId)
 
-    def after_cancel(self, id):
-        return self.topLevel.after_cancel(id)
+    def after_cancel(self, afterId):
+        return self.topLevel.after_cancel(afterId)
 
     def queueFunction(self, func, *args, **kwargs):
         """ adds the specified function & arguments to the event queue
@@ -5364,10 +5364,24 @@ class gui(object):
         canvas = self.__verifyItem(self.n_plots, title)
         canvas.draw()
 
-    def updatePlot(self, title, t, s):
+    def updatePlot(self, title, t, s, keepLabels=False):
         axes = self.__verifyItem(self.n_plots, title).axes
+
+        if keepLabels:
+            xLab = axes.get_xlabel()
+            yLab = axes.get_ylabel()
+            pTitle = axes.get_title()
+            handles, legends = axes.get_legend_handles_labels()
+
         axes.clear()
         axes.plot(t, s)
+
+        if keepLabels:
+            axes.set_xlabel(xLab)
+            axes.set_ylabel(yLab)
+            axes.set_title(pTitle)
+            axes.legend(handles, legends)
+
         self.refreshPlot(title)
         return axes
 
@@ -12051,50 +12065,6 @@ class GoogleMap(LabelFrame):
 #        location = data["loc"]
         location = str(data["latitude"]) + "," + str(data["longitude"])
         return location
-
-#####################################
-# FUNCTION for matplotlib
-#####################################
-    def addPlot(
-            self,
-            title,
-            t, s,
-            row=None,
-            column=0,
-            colspan=0,
-            rowspan=0):
-        self.__verifyItem(self.n_plots, title, True)
-
-        self.__loadMatplotlib()
-        if FigureCanvasTkAgg is False:
-            raise Exception("Unable to load MatPlotLib - plots not available")
-        else:
-            fig = Figure()
-
-            axes = fig.add_subplot(111)
-            axes.plot(t,s)
-
-            canvas = FigureCanvasTkAgg(fig, self.getContainer())
-            canvas.fig = fig
-            canvas.axes = axes
-            canvas.show()
-    #        canvas.get_tk_widget().pack(side=TOP, fill=BOTH, expand=1)
-            canvas._tkcanvas.pack(side=TOP, fill=BOTH, expand=1)
-
-            self.__positionWidget(canvas.get_tk_widget(), row, column, colspan, rowspan)
-            self.n_plots[title] = canvas
-            return axes
-
-    def refreshPlot(self, title):
-        canvas = self.__verifyItem(self.n_plots, title)
-        canvas.draw()
-
-    def updatePlot(self, title, t, s):
-        axes = self.__verifyItem(self.n_plots, title).axes
-        axes.clear()
-        axes.plot(t, s)
-        self.refreshPlot(title)
-        return axes
 
 
 #####################################

@@ -10,7 +10,7 @@ def getXY():
     return x,y
 
 def generate(btn):
-    app.updatePlot("p1", *getXY())
+    app.updatePlot("p1", *getXY(), keepLabels=True)
 #    showLabels()
 
 def showLabels():
@@ -19,6 +19,7 @@ def showLabels():
 
     axes.set_xlabel("X Axes")
     axes.set_ylabel("Y Axes")
+    axes.set_title("Demo Data")
     app.refreshPlot("p1")
 
 app = gui()

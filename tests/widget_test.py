@@ -2353,8 +2353,12 @@ def test_plots():
         y = [2,4,6,8,10]
         axes = app.addPlot("p1", x, y)
         axes.legend(["key data"])
+        axes.set_xlabel("X lab")
+        axes.set_ylabel("Y lab")
+        axes.set_title("title")
         app.refreshPlot("p1")
         app.updatePlot("p1", x, y)
+        app.updatePlot("p1", x, y, keepLabels=True)
         print(" >> not implemented...")
         #print("\t >> all tests complete")
 

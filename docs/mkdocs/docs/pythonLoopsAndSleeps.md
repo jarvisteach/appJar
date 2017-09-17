@@ -19,7 +19,7 @@ This will cause the specified `function` to be executed after the specified numb
 Additional parameters for the function can be specified, by setting `*args`.  
 It will return an ID, which can be used to cancel the function, if it hasn't already started.  
 
-* `.afterCancel(id)`  
+* `.afterCancel(afterId)`  
 This will cancel the specified function, if it hasn't already started.  
 
 ## Infinite Loops  

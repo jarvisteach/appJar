@@ -2,7 +2,8 @@ doc-warnings: false
 test-warnings: false
 strictness: medium
 max-line-length: 160
-ignore-paths: examples
+ignore-paths:
+ - examples
 python-targets:
     - 2
     - 3
@@ -10,3 +11,4 @@ pylint:
     disable:
         - unused-argument
         - too-many-arguments
+        - bare-except
