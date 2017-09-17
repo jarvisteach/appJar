@@ -1578,7 +1578,9 @@ def test_images():
 
     assert isinstance(app.addImage("im3", "1_checks.png"), PhotoImage)
     assert isinstance(app.addImage("im4", "sc.jpg"), PhotoImage)
-    app.getImageDimensions("im3")
+    dat = app.getImageDimensions("im3")
+    assert dat[0] == 115
+    assert dat[1] == 146
 
 # jpeg...
 
@@ -2637,7 +2639,7 @@ def test_gui2(btn=None):
 
 print("<<<Starting app2>>>")
 
-app2 = gui()
+app2 = gui(warn=True)
 app2.addStatusbar()
 app2.setStatusbar("a")
 app2.addToolbar("a", tester_function, True)
@@ -2687,7 +2689,7 @@ app2.go(startWindow="login")
 print("<<<Widget Test Suite Complete on app2 >>>")
 
 print("<<<Starting app3>>>")
-with gui() as app3:
+with gui(debug=True) as app3:
     app3.addStatus(TEXT_ONE, 1, "LEFT")
     with app3.tabbedFrame("tf"):
         with app3.tab("t1"):
