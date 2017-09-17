@@ -1726,13 +1726,14 @@ def test_menus():
     #print("\t >> all tests complete")
 
 def dismissEditMenu():
-    for i in range(100):
+    for i in range(10):
         print("dismissit...")
         app.n_menus["EDIT"].unpost()
         app.n_menus["EDIT"].invoke(1)
-        time.sleep(250)
+        time.sleep(.2)
 
 def test_rightClick():
+# called in a thread
 # this causes testing to hang - the popup doesn't go....
     ent = app.addEntry("RCLICK")
     app.setEntryFocus("RCLICK")
@@ -2584,7 +2585,10 @@ def test_gui(btn=None):
         app.setEntryFocus("e1")
         app.thread(dismissEditMenu)
         app.thread(test_rightClick)
-    if doStop == 2:
+        doStop += 1
+    elif doStop == 1:
+        doStop += 1
+    elif doStop == 2:
         test_focus()
         test_sets()
         test_langs()
@@ -2592,21 +2596,14 @@ def test_gui(btn=None):
         test_gui_options()
         doStop += 1
     elif doStop == 3:
-        try:
-            app.removeAllWidgets()
-        except:
-# test_gui is sitll in event loop for second GUI - causes this to be called - but no app...
-            print("weird error")
+        app.removeAllWidgets()
         doStop += 1
     elif doStop < 5:
         doStop += 1
         print("Waiting", doStop)
     else:
         print("HERE WE GO: Stopping app")
-        try:
-            app.stop()
-        except Exception as e:
-            print("weird error...: ", e)
+        app.stop()
 
 app.registerEvent(test_gui)
 app.setPollTime(1000)
@@ -2619,20 +2616,22 @@ app.go("CANADIAN")
 print("<<<Widget Test Suite Complete on app>>>")
 del app
 
-doStop = 0
+doStopAgain = 0
 def test_gui2(btn=None):
     print("Testing GUI2")
-    global doStop
-    if doStop == 5:
+    global doStopAgain
+    if doStopAgain == 5:
         print("Show app2")
         app2.show()
-    elif doStop == 6:
+    elif doStopAgain == 6:
         print("Hide app2")
         app2.hide()
-    elif doStop == 8:
+    elif doStopAgain == 8:
         print("Stopping app2")
         app2.stop()
-    doStop += 1
+    doStopAgain += 1
+
+print("<<<Starting app2>>>")
 
 app2 = gui()
 app2.addStatusbar()
@@ -2674,8 +2673,16 @@ app2.setGeometry("fullscreen")
 app2.startSubWindow("login")
 app2.addLabel("log_l1", "Login page")
 app2.stopSubWindow()
+
+with app2.notebook("wnb"):
+    with app2.note("wn"):
+        app2.addLabel("wnlabel", "wnlabel")
+
 app2.go(startWindow="login")
 
+print("<<<Widget Test Suite Complete on app2 >>>")
+
+print("<<<Starting app3>>>")
 with gui() as app3:
     app3.addStatus(TEXT_ONE, 1, "LEFT")
     with app3.tabbedFrame("tf"):
@@ -2703,5 +2710,7 @@ with gui() as app3:
         app3.addLabel("l7", "label")
 
     app3.after(2000, app3.stop)
+
+print("<<<Widget Test Suite Complete on app3 >>>")
 
 print("<<<Widget Test Suite Complete>>>")

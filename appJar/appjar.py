@@ -456,6 +456,8 @@ class gui(object):
         else:
             self.__class__.instantiated = True
 
+        self.alive = True
+
         # first up, set the logger
         logging.basicConfig(level=logging.WARNING, format='%(asctime)s %(name)s:%(levelname)s %(message)s')
 
@@ -1897,6 +1899,7 @@ class gui(object):
         theFunc = self.__getTopLevel().stopFunction
         if theFunc is None or theFunc():
             # stop the after loops
+            self.alive = False
             self.topLevel.after_cancel(self.pollId)
             self.topLevel.after_cancel(self.flashId)
             if self.preloadAnimatedImageId:
@@ -1974,6 +1977,7 @@ class gui(object):
             self.eventQueue.put((1, func, args, kwargs), block=False)
 
     def __processEventQueue(self):
+        if not self.alive: return
         if not self.eventQueue.empty():
             priority, func, args, kwargs = self.eventQueue.get()
             gui.debug("FUNCTION: " + str(func) + "(" + str(args) + ")")
@@ -1996,6 +2000,7 @@ class gui(object):
 
     # internal function, called by 'after' function, after sleeping
     def __poll(self):
+        if not self.alive: return
         # run any registered actions
         for e in self.events:
             # execute the event
@@ -3902,7 +3907,7 @@ class gui(object):
     @contextmanager
     def note(self, title, tabTitle=None):
         if tabTitle is None:
-            note = self.startNote(ttle)
+            note = self.startNote(title)
         else:
             self.openNote(title, tabTitle)
         try: yield note
@@ -5640,6 +5645,7 @@ class gui(object):
 #####################################
     # looks up label containing image
     def __animateImage(self, title, firstTime=False):
+        if not self.alive: return
         try:
             lab = self.__verifyItem(self.n_images, title)
         except ItemLookupError:
@@ -5675,6 +5681,7 @@ class gui(object):
             self.__animateImage(title)
 
     def __preloadAnimatedImage(self, img):
+        if not self.alive: return
         if img.cached:
             return
         try:
@@ -6893,6 +6900,7 @@ class gui(object):
 # FUNCTIONS for labels
 #####################################
     def __flash(self):
+        if not self.alive: return
         if self.doFlash:
             for lab in self.n_flashLabs:
                 bg = lab.cget("background")
@@ -11742,6 +11750,7 @@ class GoogleMap(LabelFrame):
 
     def __init__(self, parent, app, defaultLocation="Marlborough, UK"):
         LabelFrame.__init__(self, parent, text="GoogleMaps")
+        self.alive = True
         self.API_KEY = ""
         self.parent = parent
         self.imageQueue = Queue.Queue()
@@ -11854,6 +11863,7 @@ class GoogleMap(LabelFrame):
         self.buttons[3].place_forget()
 
     def stopUpdates(self):
+        self.alive = False
         self.parent.after_cancel(self.updateMapId)
 
     def __placeControls(self):
@@ -11949,6 +11959,7 @@ class GoogleMap(LabelFrame):
             self.app.thread(self.getMapData)
 
     def updateMap(self):
+        if not self.alive: return
         if not self.imageQueue.empty():
             self.rawData = self.imageQueue.get()
             self.mapData = base64.encodestring(self.rawData)
