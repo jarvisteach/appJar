@@ -55,7 +55,7 @@ class PhotoImage(PhotoImage):
                 fromBox = fromBox[1:]
             args = args + ("-from",) + tuple(fromBox)
         if grey:
-            if grey == True or grey == "-grayscale":
+            if grey is True or grey == "-grayscale":
                 args = args + ("-grayscale",)
 
 
@@ -92,7 +92,7 @@ class PngImageTk(object):
     # Convert pixeldata into a PhotoImage object
     def convert(self):
         alphapixels = []
-        if self.meta["alpha"] == True:
+        if self.meta["alpha"] is True:
             values = 4
             a_append = alphapixels.append
         else:
@@ -117,7 +117,7 @@ class PngImageTk(object):
             chunked = chunks(row, values) #RGB/RGBA format = 3/4 values
                         
             for item in chunked:
-                if alpha == True:
+                if alpha is True:
                     # if 100% transparent, remember this pixel so we can make it transparent later
                     if item[3] == 0:
                         a_append((x, y))
