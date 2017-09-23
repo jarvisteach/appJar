@@ -93,6 +93,29 @@ If you're running python in  IDLE, you'll need to add appJar to your **site-pack
     print(sys.version) 
 ```
 
-## Pyscripter/PortablePython
+## PyScripter  
+
+If you're using [PyScripter](https://sourceforge.net/projects/pyscripter/) then follow the installation instructions above.  
+
+If you're having problems appending to the path, you can try escaping the path:  
+
+* `sys.path.append("E:\\PYLIB")` - putting double slashes might fix the issue.  
+
+Alternatively, you can use the PyScripter menus:  
+
+* Put appJar in a folder - in this case it's on the Desktop  
+
+* Click **Tools** -> **Python Path...**  
+![System](img/py_sc0.png)
+
+* Either type or navigate to the folder containing appJar  
+![System](img/py_sc1.png)
+
+* Press **Add**, followed by **OK**  
+![System](img/py_sc2.png)
+
+**NB.** You will have to do this every time you run PyScripter, so it's better to get appJar installed properly if you can.  
+
+## PortablePython
 
 If you are using [PortablePython](http://portablepython.com/wiki/Download/) then you simply need to drop the appJar folder into the `Lib` folder of the PortablePython installation.  

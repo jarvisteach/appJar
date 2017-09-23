@@ -22,6 +22,7 @@ These are things you can add to the GUI:
 * **Sounds** - a section on how to get your GUI to make some noise  
 * **Bars** - menubars, statusbars & toolbars that can be added to your GUI  
 * **Pop-ups** - the different pop-ups that can be shown  
+* **Multiple Windows** - information on creating separate windows  
 * **Splashscreen** - a splashscreen to show at loadtime  
 * **Special Characters** - guidance on how to include special characters  
 * **Beta widgets** - some other available widgets, just not quite finished  
@@ -29,13 +30,13 @@ These are things you can add to the GUI:
 ###Configuration  
 These are ways of changing how the GUI looks or operates:  
 
-* **Arranging Widgets** - guidance on how to change the way widgets are laid out in the GUI  
-* **Grouping Widgets**a - various containers for grouping widgets together in a GUI  
-* **Changing Widgets** - how to change the way widgets look & act  
-* **GUI Options** - how to change the general appearance/set-up of the entire GUI  
-* **GUI Events** - how to get the GUI to respond to various user interactions or repeat things in the background   
-* **Drag'n Drop** - how to implement drag and drop functionality  
+* **GUI Options** - options for configuring general GUI settings  
+* **Widgets** - options for configuring the layout and look & feel of widgets  
+* **Events** - options for delaying actions, making them repeat or run in the background  
 * **Internationalisation** - how to support multiple languages in your GUI  
+* **Logging** - how to turn on/off appJar's logging capabilities  
+* **Command Line Arguments** - hw t use various command line arguments  
+* **ttk** - how to enable ttk support  
 
 ##Understanding the Docs  
 
