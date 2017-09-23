@@ -51,6 +51,7 @@ pages:
     - Acknowledgements: Thanks.md
     - Contributing: contributing.md
     - Change-Log: whatsNew.md
+    - Old Documentation: oldDocs.md
     - Other Help:
         - Python: pythonBasics.md
         - Algorithms: algorithms.md
