@@ -47,6 +47,15 @@ app = gui("Example")
 app.addLabel("label1", "Hello World")  
 app.go()  
 ```
+
+or:  
+
+```
+from appJar import gui  
+with gui("Example") as app:
+    app.addLabel("label1", "Hello World")  
+```
+
 ### Reasoning:
  - Designed to be as easy as possible, yet still provide a lot of tkinter functionality
  - Provides 3 functions for most widgets:
