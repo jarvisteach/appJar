@@ -158,11 +158,18 @@ class gui(object):
         scr_height = win.winfo_screenheight()
 
         if gui.GET_PLATFORM() != gui.LINUX:
+            trans = win.attributes('-alpha')
             win.attributes('-alpha', 0.0)
 
         win.update_idletasks()
         width = win.winfo_reqwidth()
         height = win.winfo_reqheight()
+
+        if hasattr(win, 'geom'):
+            geom = win.geom.split("x")
+            if len(geom) == 2:
+                width=int(geom[0])
+                height=int(geom[1])
 
         outer_frame_width = win.winfo_rootx() - win.winfo_x()
         titlebar_height = win.winfo_rooty() - win.winfo_y()
@@ -181,8 +188,9 @@ class gui(object):
 
         gui.debug("Setting location: " +str(x)+","+str(y) + " - " + str(width)+","+str(height))
         win.geometry("+%d+%d" % (x, y))
+
         if gui.GET_PLATFORM() != gui.LINUX:
-            win.attributes('-alpha', 1.0)
+            win.attributes('-alpha', trans)
 
     # figure out where the cursor is with respect to a widget
     @staticmethod
@@ -4464,7 +4472,7 @@ class gui(object):
     def setSubWindowLocation(self, title, x, y):
         tl = self.__verifyItem(self.n_subWindows, title)
         tl.geometry("+%d+%d" % (x, y))
-        top.locationSet = True
+        tl.locationSet = True
 
     # functions to show/hide/destroy SubWindows
     def showSubWindow(self, title):

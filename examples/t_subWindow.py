@@ -32,5 +32,5 @@ with gui() as app:
         app.addLabel("l3", "Sub Window three - TRANSPARENCY")
 
     with app.subWindow("pos"):
-        app.setLocation(900,900)
+        app.setLocation(700,700)
         app.addLabel("l4", "Sub Window four - LOCATION")
