@@ -4270,6 +4270,9 @@ class gui(object):
 
     @contextmanager
     def page(self, row=None, column=0, colspan=0, rowspan=0, sticky="nw", windowTitle=None, pageNumber=None):
+        if row is not None and not isinstance(row, int):
+            raise Exception("You must name the parameters when you open a page")
+
         if windowTitle is None:
             pg = self.startPage(row, column, colspan, rowspan, sticky)
         else:
