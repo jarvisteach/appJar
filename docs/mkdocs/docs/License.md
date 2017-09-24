@@ -12,7 +12,7 @@ So, you're free to use it, modify it & redistribute it, as long as you acknowled
 
 ---
 
-Copyright 2017 Richard Jarvis
+Copyright 2015-2017 Richard Jarvis
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.

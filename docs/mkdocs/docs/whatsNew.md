@@ -2,6 +2,7 @@
 ---
 
 ## Version 0.08  
+* Create a GUI in **TWO** lines using [context managers](/pythonContextManager/) - appJar now allows you to use `with` to create a GUI and [containers](/pythonWidgetGrouping)  
 * [Events](/pythonEvents/), [Threads](/pythonThreads/), [Loops & Sleeps](/pythonLoopsAndSleeps/) have been improved. It's now possible to run background tasks (such as a download) and update the GUI safely.   
 * [Command line arguments](/pythonCommandLine): appJar now supports command line arguments for [logging](/pythonLogging) and [internationalisation](/pythonInternationalisation/) as well as help & version information.  
 * [Internationalisation](/pythonInternationalisation/) is now greatly imporved - nearly everything supoprts multiple languages.  
@@ -14,6 +15,7 @@
     * [#246](https://github.com/jarvisteach/appJar/issues/246) - Can now hide titles on [labelFrames](/pythonWidgetGrouping/#label-frame)  
     * [#243](https://github.com/jarvisteach/appJar/issues/243) - Fixed bug in [ToggleFrames](/pythonWidgetGrouping/#toggle-frame)  
     * [#241](https://github.com/jarvisteach/appJar/issues/241) - Notes on installing on [linux](/Install/#single-user-set-up)  
+    * [#234](https://github.com/jarvisteach/appJar/issues/234) - Support for [ContextManagers](/pythonContextManager/) throughout appJar  
     * [#228](https://github.com/jarvisteach/appJar/issues/228) - appJar prevents you from creating more than one gui at a time  
     * [#226](https://github.com/jarvisteach/appJar/issues/226) - fixed issues on [file/directory entries](/pythonWidgets/#entry)  
     * [#223](https://github.com/jarvisteach/appJar/issues/223) - fixed issues with [sound](/pythonSound/) import  

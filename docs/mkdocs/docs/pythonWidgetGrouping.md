@@ -387,6 +387,8 @@ app.go()
 
 * `.openPagedWindow(title)` & `.openPage(windowTitle, pageNumber)`   
     Used to reopen the named *PagedWindow* or *Page*.  
+    **NB.** `pageNumber` must be an integer, starting at 1 for the first page.  
+
 #### Set Paged Windows
 * `.setPagedWindowTitle(title, title)` & `.setPagedWindowButtons(title, [buttons])`  
     Used to change the text in the title and buttons.  

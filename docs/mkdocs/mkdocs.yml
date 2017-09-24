@@ -6,7 +6,7 @@ repo_url: https://github.com/jarvisteach/appJar
 google_analytics: ['UA-79206647-1', 'appjar.info']
 theme: united
 theme_dir: custom_united
-copyright: <p>&#9400 Richard Jarvis, 2016-2017</p>
+copyright: <p>&#169; Richard Jarvis, 2015-2017</p>
 site_description: The easiest way to build tkinter GUIs in Python.
 site_author: Richard Jarvis
 extra_css: [extra.css]

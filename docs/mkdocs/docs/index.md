@@ -10,7 +10,7 @@ Written by a teacher, in the classroom, for students.
 There are no other dependencies - simply [download](https://github.com/RWBA/appJar/blob/appJar/releases/appJar.zip?raw=true), unzip, and put it in your code folder.  
 Check out the [installation](/Install) instructions for other ways to get **appJar** working.  
 
-GUIs in Python are hard, there's a huge amount of [boilerplate code](https://en.wikipedia.org/wiki/Boilerplate_code) required to get things working - so we hide all that.  
+GUIs in Python are hard, there's a huge amount of [boilerplate code](https://en.wikipedia.org/wiki/Boilerplate_code) required to get things working - so we hide all of that.  
 We're also not big fans of lots of parameters, so we keep them to a minimum, instead giving functions to get & set most things.  
 
 ### Hello appJar  
