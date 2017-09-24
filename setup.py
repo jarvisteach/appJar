@@ -2,7 +2,7 @@ from distutils.core import setup
 setup(
     name="appJar",
     packages=["appJar"],
-    version="0.081",
+    version="0.080",
     description="An easy-to-use, feature-rich GUI wrapper for tkinter. Designed specifically for use in the classroom, but powerful enough to be used anywhere.",
     author="Richard Jarvis",
     author_email="info@appjar.info",
