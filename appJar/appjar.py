@@ -4506,7 +4506,7 @@ class gui(object):
                 tl.killLab.destroy()
                 tl.killLab = None
             if tl.modal:
-                self.topLevel.grab_set()
+                tl.grab_release()
                 self.topLevel.focus_set()
 
     def destroySubWindow(self, title):
@@ -4517,7 +4517,7 @@ class gui(object):
                 tl.killLab.destroy()
                 tl.killLab = None
             tl.withdraw()
-            self.topLevel.grab_set()
+            tl.grab_release()
             self.topLevel.focus_set()
 
             # get rid of all the kids!
@@ -11166,6 +11166,7 @@ class Dialog(Toplevel):
 
     # called when cancel button pressed
     def cancel(self, event=None):
+        self.grab_release()
         self.parent.focus_set()  # give focus back to the parent
         self.destroy()
 
