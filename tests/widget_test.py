@@ -2156,7 +2156,7 @@ def test_containers():
         app.stopPagedWindow()
 
     app.startPagedWindow("ppp2")
-    app.startPage("ppp2_p1")
+    app.startPage()
     app.addLabel("ppp2_p1_l1")
     app.stopPagedWindow()
 
