@@ -154,18 +154,26 @@ class gui(object):
         http://stackoverflow.com/questions/3352918/
         :param win: the root or Toplevel window to center
         """
-        win.attributes('-alpha', 0.0)  # hide the window
+        scr_width = win.winfo_screenwidth()
+        scr_height = win.winfo_screenheight()
+
+        if gui.GET_PLATFORM() != gui.LINUX:
+            win.attributes('-alpha', 0.0)
+
         win.update_idletasks()
-#        width = win.winfo_width()
         width = win.winfo_reqwidth()
-        frm_width = win.winfo_rootx() - win.winfo_x()
-        win_width = width + 2 * frm_width
-#        height = win.winfo_height()
         height = win.winfo_reqheight()
+
+        outer_frame_width = win.winfo_rootx() - win.winfo_x()
         titlebar_height = win.winfo_rooty() - win.winfo_y()
-        win_height = height + titlebar_height + frm_width
-        x = win.winfo_screenwidth() // 2 - win_width // 2
-        y = win.winfo_screenheight() // 2 - win_height // 2
+
+        actual_width = width + (outer_frame_width * 2)
+        actual_height = height + titlebar_height + outer_frame_width
+
+        x = (scr_width // 2) - (actual_width // 2)
+        y = (scr_height // 2) - (actual_height // 2)
+
+        # move the window up a bit if requested
         if up < y:
             y = y - up
         else:
@@ -173,7 +181,8 @@ class gui(object):
 
         gui.debug("Setting location: " +str(x)+","+str(y) + " - " + str(width)+","+str(height))
         win.geometry("+%d+%d" % (x, y))
-        win.attributes('-alpha', 1.0)
+        if gui.GET_PLATFORM() != gui.LINUX:
+            win.attributes('-alpha', 1.0)
 
     # figure out where the cursor is with respect to a widget
     @staticmethod
@@ -4417,17 +4426,12 @@ class gui(object):
         if title is None:
             title = name
         top = SubWindow()
-        self.CENTER(top)
+        top.withdraw()
         top.locationSet = False
         top.modal = modal
         top.blocking = blocking
         top.title(title)
-        top.protocol(
-            "WM_DELETE_WINDOW",
-            self.MAKE_FUNC(
-                self.hideSubWindow,
-                name))
-        top.withdraw()
+        top.protocol("WM_DELETE_WINDOW", self.MAKE_FUNC(self.hideSubWindow, name))
         top.win = self
 
         # have this respond to topLevel window style events
@@ -4460,10 +4464,14 @@ class gui(object):
     def setSubWindowLocation(self, title, x, y):
         tl = self.__verifyItem(self.n_subWindows, title)
         tl.geometry("+%d+%d" % (x, y))
+        top.locationSet = True
 
     # functions to show/hide/destroy SubWindows
     def showSubWindow(self, title):
         tl = self.__verifyItem(self.n_subWindows, title)
+        if not tl.locationSet:
+            self.CENTER(tl)
+            tl.locationSet = True
         tl.deiconify()
         tl.config(takefocus=True)
 
