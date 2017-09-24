@@ -382,11 +382,11 @@ with gui("ShowCase") as app:
     # paged window
     with app.subWindow("AddressBook", transient=True):
         with app.pagedWindow("AddressBook"):
-            with app.page("Page 1"):
+            with app.page():
                 app.addLabel("PP1", "PP1")
-            with app.page("Page 2"):
+            with app.page():
                 app.addLabel("PP2", "PP2")
-            with app.page("Page 3"):
+            with app.page():
                 app.addLabel("PP3", "PP3")
 
     logout()

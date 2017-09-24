@@ -14,6 +14,7 @@ def launch(win):
 
 with gui() as app:
     app.setLocation(100,100)
+    app.setLogLevel("debug")
 
     app.addButtons(["modal", "full", "trans", "pos"], launch)
 

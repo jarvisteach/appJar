@@ -4269,19 +4269,16 @@ class gui(object):
         pager.setTitle(pageTitle)
 
     @contextmanager
-    def page(self, row=None, column=0, colspan=0, rowspan=0, sticky="nw", windowTitle=None, pageNumber=None):
-        if row is not None and not isinstance(row, int):
-            raise Exception("You must name the parameters when you open a page")
-
+    def page(self, windowTitle=None, pageNumber=None, sticky="nw"):
         if windowTitle is None:
-            pg = self.startPage(row, column, colspan, rowspan, sticky)
+            pg = self.startPage(sticky)
         else:
             pg = self.openPage(windowTitle, pageNumber)
         try: yield pg
         finally: self.stopPage()
 
 
-    def startPage(self, row=None, column=0, colspan=0, rowspan=0, sticky="nw"):
+    def startPage(self, sticky="nw"):
         if self.containerStack[-1]['type'] == self.C_PAGE:
             self.warn("You didn't STOP the previous PAGE")
             self.stopPage()
@@ -4298,10 +4295,10 @@ class gui(object):
         self.startContainer(
             self.C_PAGE,
             pageTitle,
-            row,
-            column,
-            colspan,
-            rowspan,
+            row=None,
+            column=None,
+            colspan=None,
+            rowspan=None,
             sticky=sticky)
 
     def stopPage(self):
