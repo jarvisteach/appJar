@@ -256,3 +256,6 @@ app.setStatusbarFg("white", 2)
 
 * `.setStatusbarWidth(width, field=0)`  
     Set the width of the specified statusbar field (in characters).  
+
+* `.setStatusbarHeader(header)`  
+    Set a new header value to be used from the next time the statusbar text is updated.  

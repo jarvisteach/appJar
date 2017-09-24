@@ -8,9 +8,9 @@ Written by a teacher, in the classroom, for students.
 **appJar** is designed to run on as many versions of [Python](https://www.python.org/downloads/) as possible - so it should work in your school.  
 
 There are no other dependencies - simply [download](https://github.com/RWBA/appJar/blob/appJar/releases/appJar.zip?raw=true), unzip, and put it in your code folder.  
-Check out the [installation](/install) instructions for other ways to get **appJar** working.  
+Check out the [installation](/Install) instructions for other ways to get **appJar** working.  
 
-GUIs in Python are hard, there's a huge amount of [boilerplate code](https://en.wikipedia.org/wiki/Boilerplate_code) required to get things working - so we hide all that.  
+GUIs in Python are hard, there's a huge amount of [boilerplate code](https://en.wikipedia.org/wiki/Boilerplate_code) required to get things working - so we hide all of that.  
 We're also not big fans of lots of parameters, so we keep them to a minimum, instead giving functions to get & set most things.  
 
 ### Hello appJar  
@@ -53,7 +53,7 @@ app.go()
 ---
 Of course, the whole point of making a GUI, is to be interactive - this requires **events**.  
 
-The idea behind [event-driven programming](https://en.wikipedia.org/wiki/Event-driven_programming) is that each time the user clicks, presses or drags something (the event) the GUI should respond.  
+The idea behind [event-driven programming](https://en.wikipedia.org/wiki/Event-driven_programming) is that each time the user clicks, presses or drags something (an event) the GUI should respond.  
 
 * First, add some more widgets ([Entry Boxes](/pythonWidgets/#entry)), for the user to interact with:
 

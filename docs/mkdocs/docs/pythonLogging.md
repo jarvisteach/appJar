@@ -1,4 +1,4 @@
-#Logging in appJar
+# Logging in appJar
 ---
 
 **appJar** makes use of Python's built in [logging capabilities](https://docs.python.org/3.6/library/logging.html#levels).  
@@ -26,24 +26,38 @@ You can also use the following convenience functions for logging messages:
 * `.critical(msg)`
 * `.error(msg)`
 * `.warn(msg)`
-* `.debug(msg)`
 * `.info(msg)`
+* `.debug(msg)`
 
-##Logging to file
+## Logging to file
 ---
 
 One of the benefits of using Python's logging capabilites, is the ability to have them logged to a file.  
 By setting a `fileName`, messages will no longer appear on the screen. Instead, they will be written to the named file.  
 The `logLevel` is also increased to **DEBUG**  
 
-##External Logging
+## Command Line Arguments  
+---
+
+It's possible to set the starting log level using a [command line argument](/pythonCommandLine/).  
+Simply use the first letter of the desired log level as an argument when you start your app:  
+```sh
+python3 logging.py -d  # log DEBUG messages and above
+```
+
+It's also possible to set the file name to log to:  
+```sh
+python3 logging.py -f debug.log  # log messages to a file called debug.log
+```
+
+## External Logging
 ---
 
 If you want to bypass the **appJar** functions, and use the logger directly in your code, simply request your own copy of the logger: `logger = logging.getLogger("appJar")`.  
 
 You can then talk directly to the same logging mechanism that **appJar** uses.  
 
-##How to use
+## How to use
 ---
 The idea behind having different levels of logging, is that you don't have to remove all of your debug & testing messages. It is common to include lots of testing messages during development, and then remove them once we're satisfied the code is working. However, these might sometimes prove useful in the future, when trying to diagnose something that has gone wrong.  
 

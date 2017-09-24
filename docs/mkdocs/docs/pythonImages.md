@@ -11,6 +11,12 @@ Getting the path for images right can be **TRICKY**
 It's therefore best to put images in the same folder as your Python code.  
 Or, create an image folder and set it using the `.setImageLocation(location)` function.  
 
+#### Built-in icons
+appJar has a host of built-in icons you can use.  
+They are all located in a folder called: `gui.icon_path`  
+If you want to use one, you could just use `.addIcon()` or `.addIconButton()`  
+Otherwise, concatenate `gui.icon_path` with the icon's name and `.png`  
+
 ###Add Images
 
 * `.addImage(title, file)`  
@@ -25,22 +31,28 @@ app.addImage("simple", "balloons.gif")
 app.stopLabelFrame()
 ```
 
-* `.addImageData(title, imgData)`  
+* `.addImageData(title, imgData, fmt="gif")`  
     As above, but receives raw image data.  
     Currently only supports base64 encoded GIF images.  
+    Alternatively, you can pass in a ready made PhotoImage, simply set `fmt` to be 'PhotoImage'.  
+
+* `.addIcon(title, iconName)`  
+    This will create an image as above, but use one of appJar's inbuilt icons.  
+    Simply pass the name of one of the icons.  
 
 * `.setImageLocation(location)`  
     Set a folder for image files.  
     This will be put before the names of any image files used.  
 
-###Change Images
 
-* `.setImage(title, image)` & `.setImageData(title, imgData)`  
+### Change Images
+
+* `.setImage(title, image)` & `.setImageData(title, imgData, fmt="gif")`  
     This will replace the existing image with the new one.  
     If the image has the same path, it will not be changed.  
-    If imgData, will always be reloaded.  
+    ImageData is always reloaded.  
 
-* `.reloadImage(title, image)` & `.reloadImageData(title, imgData)`  
+* `.reloadImage(title, image)` & `.reloadImageData(title, imgData, fmt="gif")`  
     This will replace the existing image with the new one.  
     It will force an image reload, even if the file name hasn't changed.  
     Useful if an outside agency modifies the image file.  

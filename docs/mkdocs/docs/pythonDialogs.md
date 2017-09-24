@@ -19,48 +19,58 @@ A number of pop-ups (aka dialogs) are available, to add a different user experie
 
 ### Message Boxes
 ---
-* `.infoBox(title, message)`  
+* `.infoBox(title, message, parent=None)`  
     Shows a simple information message, with an OK button.  
+    If this dialog is being launched from a [subWindow](/pythonWidgetGrouping/#sub-window) set `parent` to be the name of the subWindow.  
     ![InfoBox](img/dialogs/info.gif)
 
-* `.errorBox(title, message)`  
+* `.errorBox(title, message, parent=None)`  
     Shows a simple error message, with an OK button.  
+    If this dialog is being launched from a [subWindow](/pythonWidgetGrouping/#sub-window) set `parent` to be the name of the subWindow.  
     ![ErrorBox](img/dialogs/error.gif)
 
-* `.warningBox(title, message)`  
+* `.warningBox(title, message, parent=None)`  
     Shows a simple warning message, with an OK message.  
+    If this dialog is being launched from a [subWindow](/pythonWidgetGrouping/#sub-window) set `parent` to be the name of the subWindow.  
     ![WarningBox](img/dialogs/warning.gif)
 
 ### Question Boxes
 ---
-* `.yesNoBox(title, message)`  
+* `.yesNoBox(title, message, parent=None)`  
     Shows a question, with Yes/No buttons. Returns True/False.  
+    If this dialog is being launched from a [subWindow](/pythonWidgetGrouping/#sub-window) set `parent` to be the name of the subWindow.  
     ![yesNoBox](img/dialogs/yesno.gif)
 
-* `.questionBox(title, message)`  
+* `.questionBox(title, message, parent=None)`  
     Shows a question, with Yes/No buttons. Returns True/False.  
+    If this dialog is being launched from a [subWindow](/pythonWidgetGrouping/#sub-window) set `parent` to be the name of the subWindow.  
     ![QuestionBox](img/dialogs/question.gif)
 
-* `.okBox(title, message)`  
+* `.okBox(title, message, parent=None)`  
     Shows a question, with OK/Cancel buttons. Returns True/False.  
+    If this dialog is being launched from a [subWindow](/pythonWidgetGrouping/#sub-window) set `parent` to be the name of the subWindow.  
     ![OkBox](img/dialogs/ok.gif)
 
-* `.retryBox(title, message)`  
+* `.retryBox(title, message, parent=None)`  
     Shows a question, with Cancel/Retry buttons. Returns True/False.  
+    If this dialog is being launched from a [subWindow](/pythonWidgetGrouping/#sub-window) set `parent` to be the name of the subWindow.  
     ![RetryBox](img/dialogs/retry.gif)
 
-* `.textBox(title, message)`  
+* `.textBox(title, message, parent=None)`  
     Shows a question requesting a text response. Returns a String, or None if Cancel pressed.  
+    If this dialog is being launched from a [subWindow](/pythonWidgetGrouping/#sub-window) set `parent` to be the name of the subWindow.  
     ![TextBox](img/dialogs/text.gif)
 
-* `.numberBox(title, message)`  
+* `.numberBox(title, message, parent=None)`  
     Shows a question requesting a numeric response. Returns a number, or None if Cancel pressed.  
+    If this dialog is being launched from a [subWindow](/pythonWidgetGrouping/#sub-window) set `parent` to be the name of the subWindow.  
     ![NumberBox](img/dialogs/num.gif)
 
 ### File Boxes
 ---
-* `.openBox(title=None, dirName=None, fileTypes=None, asFile=False)`  
+* `.openBox(title=None, dirName=None, fileTypes=None, asFile=False, parent=None)`  
     Shows an open file dialog.  
+    If this dialog is being launched from a [subWindow](/pythonWidgetGrouping/#sub-window) set `parent` to be the name of the subWindow.  
 
     ![OpenBox](img/dialogs/openBox_1.png)  
     ![OpenBox](img/dialogs/openBox_2.png)  
@@ -73,8 +83,9 @@ A number of pop-ups (aka dialogs) are available, to add a different user experie
     * `asFile` this will determine whether a path or actual Python file object is returned, defaults to filename   
 
 
-* `.saveBox(title=None, fileName=none, dirName=None, fileExt=".txt", fileTypes=None, asFile=None)`  
+* `.saveBox(title=None, fileName=none, dirName=None, fileExt=".txt", fileTypes=None, asFile=None, parent=None)`  
     Shows a save file dialog.  
+    If this dialog is being launched from a [subWindow](/pythonWidgetGrouping/#sub-window) set `parent` to be the name of the subWindow.  
 
     ![SaveBox](img/dialogs/save.png)  
 
@@ -82,13 +93,14 @@ A number of pop-ups (aka dialogs) are available, to add a different user experie
     * ```title``` this will set a title for the dialog  
     * `fileName` this will set a starting file name to save as  
     * `dirName` this will set a starting directory, defaults to the current working directory  
-    `fileExt` this will set a file extension to start with
+    `fileExt` this will set a file extension to start with  
     * `fileTypes=[('images', '*.png'), ('images', '*.jpg')]`  
     This will set the allowed file extensions, it should be a list of tuples. They will be grouped by the name.  
     * `asFile` this will determine whether a path or actual Python file object is returned, defaults to filename   
 
-* `.directoryBox(title=None, dirName=None)`
+* `.directoryBox(title=None, dirName=None, parent=None)`
     Shows a choose directory dialog.  
+    If this dialog is being launched from a [subWindow](/pythonWidgetGrouping/#sub-window) set `parent` to be the name of the subWindow.  
 
     ![DirectoryBox](img/dialogs/directory.png)  
 
@@ -97,8 +109,9 @@ A number of pop-ups (aka dialogs) are available, to add a different user experie
 
 ### Other Boxes
 ---
-* `.colourBox(colour="#FF0000")`
+* `.colourBox(colour="#FF0000", parent=None)`
     Shows a dialog for choosing colours.  
+    If this dialog is being launched from a [subWindow](/pythonWidgetGrouping/#sub-window) set `parent` to be the name of the subWindow.  
 
     ![ColourBox](img/dialogs/colour.png)  
 

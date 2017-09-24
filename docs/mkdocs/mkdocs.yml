@@ -6,8 +6,8 @@ repo_url: https://github.com/jarvisteach/appJar
 google_analytics: ['UA-79206647-1', 'appjar.info']
 theme: united
 theme_dir: custom_united
-copyright: <p>Richard Jarvis, 2016-2017</p>
-site_description: Python library for building simple tkinter GUIs
+copyright: <p>&#169; Richard Jarvis, 2015-2017</p>
+site_description: The easiest way to build tkinter GUIs in Python.
 site_author: Richard Jarvis
 extra_css: [extra.css]
 strict: true
@@ -19,32 +19,42 @@ pages:
     - Sounds: pythonSound.md
     - Bars: pythonBars.md
     - Pop-ups: pythonDialogs.md
+    - Multiple Windows: pythonSubWindows.md
     - Splashscreen: splash.md
     - Special Characters: specialCharacters.md
     - Beta Widgets...: pythonDevWidgets.md
 - Configuration:
-    - Arranging widgets: pythonWidgetLayout.md
-    - Grouping widgets: pythonWidgetGrouping.md
-    - Changing widgets: pythonWidgetOptions.md
     - GUI Options: pythonGuiOptions.md
-    - GUI Events: pythonEvents.md
-    - Drag'n Drop: pythonDnD.md
+    - Widgets:
+        - Layout: pythonWidgetLayout.md
+        - Configurtation: pythonWidgetOptions.md
+        - Grouping: pythonWidgetGrouping.md
+        - The power of WITH: pythonContextManager.md
+    - Events:
+        - Events: pythonEvents.md
+        - Loops & Sleeps: pythonLoopsAndSleeps.md
+        - Threads: pythonThreads.md
+        - Drag'n Drop: pythonDnD.md
     - Internationalisation: pythonInternationalisation.md
     - Logging: pythonLogging.md
+    - Command Line Arguments: pythonCommandLine.md
+    - ttk: pythonTtk.md
 - Examples:
     - Raspberry Pi Minecraft: examples/minecraft.md
     - Simple Layout: examples/simple.md
 - Help:
     - Guidance: guidance.md
     - Installation: Install.md
-    - Python: pythonBasics.md
-    - Algorithms: algorithms.md
-    - Git: gitGuide.md
     - Packaging: packaging.md
-    - Change-Log: whatsNew.md
     - License: License.md
     - Support: Support.md
-    - Contributing: contributing.md
     - Acknowledgements: Thanks.md
+    - Contributing: contributing.md
+    - Change-Log: whatsNew.md
+    - Old Documentation: oldDocs.md
+    - Other Help:
+        - Python: pythonBasics.md
+        - Algorithms: algorithms.md
+        - Git & PyPi: gitGuide.md
 extra:
     theme_inverse: false

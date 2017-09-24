@@ -1,7 +1,49 @@
 #Change-Log
 ---
 
-## Version (0.07)  
+## Version 0.08  
+* Create a GUI in **TWO** lines using [context managers](/pythonContextManager/) - appJar now allows you to use `with` to create a GUI and [containers](/pythonWidgetGrouping)  
+* [Events](/pythonEvents/), [Threads](/pythonThreads/), [Loops & Sleeps](/pythonLoopsAndSleeps/) have been improved. It's now possible to run background tasks (such as a download) and update the GUI safely.   
+* [Command line arguments](/pythonCommandLine): appJar now supports command line arguments for [logging](/pythonLogging) and [internationalisation](/pythonInternationalisation/) as well as help & version information.  
+* [Internationalisation](/pythonInternationalisation/) is now greatly imporved - nearly everything supoprts multiple languages.  
+* [ScrollPanes](/pythonWidgetGrouping/#scroll-pane) & [Grids](/pythonDevWidgets/#grid) greatly improved  
+* Much more friendly [license](/License/)  
+
+* Issues Resolved:
+    * [#249](https://github.com/jarvisteach/appJar/issues/249) - Can now set a parent for [dialogs](/pythonDialogs/) so that if they are launched from a [SubWindow](/pythonWidgetGrouping/#sub-window) they behave properly.  
+    * [#248](https://github.com/jarvisteach/appJar/issues/248) - Can now [add icons](/pythonImages/#add-images) and [iconButtons](/pythonWidgets/#add-buttons) using inbuilt icon set.  
+    * [#246](https://github.com/jarvisteach/appJar/issues/246) - Can now hide titles on [labelFrames](/pythonWidgetGrouping/#label-frame)  
+    * [#243](https://github.com/jarvisteach/appJar/issues/243) - Fixed bug in [ToggleFrames](/pythonWidgetGrouping/#toggle-frame)  
+    * [#241](https://github.com/jarvisteach/appJar/issues/241) - Notes on installing on [linux](/Install/#single-user-set-up)  
+    * [#234](https://github.com/jarvisteach/appJar/issues/234) - Support for [ContextManagers](/pythonContextManager/) throughout appJar  
+    * [#228](https://github.com/jarvisteach/appJar/issues/228) - appJar prevents you from creating more than one gui at a time  
+    * [#226](https://github.com/jarvisteach/appJar/issues/226) - fixed issues on [file/directory entries](/pythonWidgets/#entry)  
+    * [#223](https://github.com/jarvisteach/appJar/issues/223) - fixed issues with [sound](/pythonSound/) import  
+    * [#217](https://github.com/jarvisteach/appJar/issues/217) - Fixed issues with removing [BG images](/pythonImages/#set-background-images)  
+    * [#216](https://github.com/jarvisteach/appJar/issues/216) - Improvements to [integrated testing](https://travis-ci.org/jarvisteach/appJar)  
+    * [#215](https://github.com/jarvisteach/appJar/issues/215) - Changed [licensing](/License/)  
+    * [#213](https://github.com/jarvisteach/appJar/issues/213) - Validation entries improved in [Internationalisation](/pythonInternationalisation)  
+    * [#212](https://github.com/jarvisteach/appJar/issues/212) - Creating an empty [Tooltip](/pythonDialogs/#tooltips) now doesn't create anything  
+    * [#211](https://github.com/jarvisteach/appJar/issues/211) - [Logging](/pythonLogging) now logs line number & function name  
+    * [#209](https://github.com/jarvisteach/appJar/issues/209) - Additional testing for [ScrollPanes](/pythonWidgetGrouping/#scroll-pane) & [Grids](/pythonDevWidgets/#grid)  
+    * [#207](https://github.com/jarvisteach/appJar/issues/207) - Now possible to change the title and anchor of a [LabelFrame](/pythonWidgetGrouping/#label-frame)  
+    * [#206](https://github.com/jarvisteach/appJar/issues/206) - New method for [pausing functions](/pythonEvents/#user-actions) when stopping infinite loops  
+    * [#205](https://github.com/jarvisteach/appJar/issues/205) - Now possible to [select](/pythonWidgets/#set-optionboxes) a disabled item in an OptionBox.  
+    * [#204](https://github.com/jarvisteach/appJar/issues/204) - appJar now supports [Command line arguments](/pythonCommandLine)  
+    * [#203](https://github.com/jarvisteach/appJar/issues/203) - updated docs on [LabelFrames](/pythonWidgetGrouping/#label-frame)  
+    * [#202](https://github.com/jarvisteach/appJar/issues/202) - functions now provided to get or clear all values of a selected widget type  
+    * [#200](https://github.com/jarvisteach/appJar/issues/200) - Switched [Grid](/pythonDevWidgets/#grid) to use a [ScrollPane](/pythonWidgetGrouping/#scroll-pane) & changed ScrollPane to use AutoScrollbars.  
+    * [#196](https://github.com/jarvisteach/appJar/issues/196) - Resolved issue with configuing [ScrolledTextAreas](/pythonWidgets/#textarea)  
+    * [#189](https://github.com/jarvisteach/appJar/issues/189) - More work on [ttk](/pythonTtk)  
+    * [#177](https://github.com/jarvisteach/appJar/issues/177) - [setLocation](/pythonGuiOptions/#size-location) can now position windows in the center of the screen
+    * [#162](https://github.com/jarvisteach/appJar/issues/162) - PhotoImage objects can now be passed directly when [adding/setting ImageData](/pythonImages/#add-images)  
+    * [#132](https://github.com/jarvisteach/appJar/issues/132) - Now possible to [Delete and Rename](/pythonWidgets/#set-optionboxes) OptionBox items.
+    * [#120](https://github.com/jarvisteach/appJar/issues/120) - Improvements to [events](/pythonEvents/) & introduction of [threading](/pythonEvents/)  
+    * [#71](https://github.com/jarvisteach/appJar/issues/71) - More work on [Internationalisation](/pythonInternationalisation/) - now supports Images, LabelFrames, ToggleFrames, TabbedFrames, Properties, Grids, Toolbars, Tooltips, SubWindows, PagedWindows, SplashScreens & Titles  
+    * [#69](https://github.com/jarvisteach/appJar/issues/69) - Changes to [TextAreas](/pythonWidgets/#textarea) - now, lines wrap on spaces & [setTextArea()](/pythonWidgets/#set-textareas) now appends to the text  
+
+
+## Version 0.07  
 * New widgets: [GoogleMaps](/pythonDevWidgets/#googlemaps) - a widget to show a GoogleMap tile & control widgets, [ImageMaps](/pythonImages/#image-maps) - clickable ImageMap with linked functions, [FileEntries](/pythonWidgets/#entry) - Entries linked with File/Directory dialogs  
 * Widget enhancements: [Pinnable Toolbars](/pythonBars/#set-toolbars), [SelectableLabels](/pythonWidgets/#add-labels), better [Tooltips](/pythonDialogs/#tooltips), [NamedCheckBoxes](/pythonWidgets/#add-checkboxes) & settable [ListBoxes](/pythonWidgets/#set-listboxes)  
 * Update to event model and [documentation](/pythonEvents) - now clearer how to perform different actions, and function names updated.  
@@ -9,7 +51,7 @@
 
 
 * Issues Resolved:
-    * [#192](https://github.com/jarvisteach/appJar/issues/192) - Fixed PNG image support in pyhton 2.7 - specifically for toolbars  
+    * [#192](https://github.com/jarvisteach/appJar/issues/192) - Fixed PNG image support in python 2.7 - specifically for toolbars  
     * [#189](https://github.com/jarvisteach/appJar/issues/189) - **VERY** basic support for [ttk](/pythonDevWidgets/#ttk)
     * [#186](https://github.com/jarvisteach/appJar/issues/186) - Changes to [Unicode](/specialCharacters) support  
     * [#185](https://github.com/jarvisteach/appJar/issues/185) - All add functions now return the widget  
@@ -33,12 +75,12 @@
     * [#59](https://github.com/jarvisteach/appJar/issues/59) - [SelectableLabels](/pythonWidgets/#add-labels)  
     * [#7](https://github.com/jarvisteach/appJar/issues/7) -  Can now [Set Foreground](/pythonGuiOptions/#colour) across the whole GUI  
 
-## Version (0.061)  
+## Version 0.061  
 
 * Issues Resolved:  
     * [#154](https://github.com/jarvisteach/appJar/issues/154) - Fixed bug with AutoEntry not showing drop-down in right position, when placed in a container  
 
-## Version (0.06)  
+## Version 0.06  
 * New widgets: [MicroBit](/pythonDevWidgets/#microbit-emulator), [Validation Entries](/pythonWidgets/#entry)  
 * Widget enhancements: Can now set some rules for [entries](/pythonWidgets/#set-entries)  
 * New documentation: [packaging](/packaging), [special characters](/specialCharacters), [events](/pythonEvents), [drag'n drop](/pythonDnD)  
@@ -67,15 +109,15 @@
     * [#42](https://github.com/jarvisteach/appJar/issues/42) - Added functionality to [change TickOptionBoxes](/pythonWidgets/#set-optionboxes)  
     * [#33](https://github.com/jarvisteach/appJar/issues/33) - Added convenience function to [setTreeColours](/pythonDevWidgets/#tree)  
 
-## Version (0.052)  
+## Version 0.052  
 * Issues Resolved:  
     * [#114](https://github.com/jarvisteach/appJar/issues/114) - ability to stop functions being called when a set method is activated
 
-## Version (0.051)  
+## Version 0.051  
 * Issues Resolved:  
     * [#109](https://github.com/jarvisteach/appJar/issues/109) - Labelled Auto Entry, contributed by [jacobthetechy](https://github.com/jacobthetechy)
 
-## Version (0.05)  
+## Version 0.05  
 * [Open Container](/pythonWidgetGrouping/#reopening-containers) - implemented issue [#83](https://github.com/jarvisteach/appJar/issues/83), can now reopen a container, perform operations on it, and close it.  
 * Changed disable entry to readonly, allows entries to be copied ([#86](https://github.com/jarvisteach/appJar/issues/86))  
 * Images now support [raw image data](/pythonImages/#add-images).  

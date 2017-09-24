@@ -54,7 +54,7 @@ A self-contained GoogleMaps widget.
 It provides useful functionality for finding somewhere on Earth.  
 All requests for map data are performed in the background, so the UI shouldn't become unresponsive.  
 
-![GoogleMaps](img/gMap_2.png)
+![GoogleMaps](img/gmap_2.png)
 
 ```python
 from appjar import gui
@@ -224,7 +224,7 @@ app.go()
 
     ![Grid](img/dev/grid_3.png)   
 
-    If both parameters are set to a function, then both buttons at the end of each rowm and a row of Entry boxes will be shown:  
+    If both parameters are set to a function, then both buttons at the end of each row and a row of Entry boxes will be shown:  
 
     ![Grid](img/dev/grid_4.png)   
 
@@ -262,14 +262,30 @@ Support for embedding very basic [MatPlotLib](http://matplotlib.org) plots.
 ![Plot](img/1_plot.png)  
 ```python
 from numpy import sin, pi, arange
-from appJar import gui
+from appJar import gui 
+import random
 
-x = arange(0.0, 3.0, 0.01)
-y = sin(2*pi*x)
-
+def getXY():
+    x = arange(0.0, 3.0, 0.01)
+    y = sin(random.randint(1,10) * pi * x)
+    return x,y 
+    
+def generate(btn):
+    # *getXY() will unpack the two return values
+    # and pass them as separate parameters
+    app.updatePlot("p1", *getXY())
+    showLabels()
+    
+def showLabels():
+    axes.legend(['The curve'])
+    axes.set_xlabel("X Axes")
+    axes.set_ylabel("Y Axes")
+    app.refreshPlot("p1")
+    
 app = gui()
-axes = app.addPlot("p1", x, y)
-axes.legend(['key data'])
+axes = app.addPlot("p1", *getXY())
+showLabels()
+app.addButton("Generate", generate)
 app.go()
 ```
 
@@ -277,8 +293,10 @@ app.go()
     Create a plot with the specified x and y values.  
     Returns the plot object, to allow further customisation.  
 
-* `.updatePlot(title, x, y)`  
-    Update the specified plot with the specified x and y values.
+* `.updatePlot(title, x, y, keepLabels=False)`  
+    Update the specified plot with the specified x and y values.  
+    **NB.** if you do this you will lose any customisations applied to the axes.  
+    If you set `keepLabels` to True, then the axis labels & title will be retained.  
 
 * `.refreshPlot(title)`  
-    Redraw the plot, call after changing the axes object...  
+    Call this any time you modify the axes.  

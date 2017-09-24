@@ -1,40 +1,37 @@
+import sys
+sys.path.append("../")
 from appJar import gui
 
 def checkDone():
     return True
 
 def launch(win):
-    if win == "one": app.showSubWindow("one")
-    elif win == "two": app.showSubWindow("two")
-    elif win == "three": app.showSubWindow("three")
-    elif win == "four": app.showSubWindow("four")
+    if win == "modal": app.showSubWindow("modal")
+    elif win == "full": app.showSubWindow("full")
+    elif win == "trans": app.showSubWindow("trans")
+    elif win == "pos": app.showSubWindow("pos")
     elif win == "in": app.showSubWindow("inner")
 
-app=gui()
-app.setLocation(100,100)
+with gui() as app:
+    app.setLocation(100,100)
+    app.setLogLevel("debug")
 
-app.addButtons(["one", "two", "three", "four"], launch)
+    app.addButtons(["modal", "full", "trans", "pos"], launch)
 
-app.startSubWindow("one", modal=True)
-app.setBg("orange")
-app.setGeometry("400x400")
-app.setStopFunction(checkDone)
-app.addLabel("l1", "In sub window - MODAL")
-app.stopSubWindow()
+    with app.subWindow("modal", modal=True):
+        app.setBg("orange")
+        app.setGeometry("400x400")
+        app.setStopFunction(checkDone)
+        app.addLabel("l1", "In sub window - MODAL")
 
-app.startSubWindow("two")
-app.setGeometry("fullscreen")
-app.addLabel("l2", "Sub Window two - FULLSCREEN")
-app.stopSubWindow()
+    with app.subWindow("full"):
+        app.setGeometry("fullscreen")
+        app.addLabel("l2", "Sub Window two - FULLSCREEN")
 
-app.startSubWindow("three")
-app.setTransparency(50)
-app.addLabel("l3", "Sub Window three - TRANSPARENCY")
-app.stopSubWindow()
+    with app.subWindow("trans"):
+        app.setTransparency(50)
+        app.addLabel("l3", "Sub Window three - TRANSPARENCY")
 
-app.startSubWindow("four")
-app.setLocation(900,900)
-app.addLabel("l4", "Sub Window four - LOCATION")
-app.stopSubWindow()
-
-app.go()
+    with app.subWindow("pos"):
+        app.setLocation(700,700)
+        app.addLabel("l4", "Sub Window four - LOCATION")
