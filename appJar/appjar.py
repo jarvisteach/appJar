@@ -695,11 +695,14 @@ class gui(object):
         # set up a background image holder
         # alternative to label option above, as label doesn't update widgets
         # properly
-        self.bgLabel = Label(container)
-        self.bgLabel.config(
-            anchor=CENTER,
-            font=self.labelFont,
-            background=self.__getContainerBg())
+
+        if not self.ttkFlag:
+            self.bgLabel = Label(
+                container, anchor=CENTER,
+                font=self.labelFont,
+                background=self.__getContainerBg())
+        else:
+            self.bgLabel = ttk.LabelFrame(container)
         self.bgLabel.place(x=0, y=0, relwidth=1, relheight=1)
         container.image = None
 
@@ -4615,7 +4618,8 @@ class gui(object):
 
         # first, make a frame
         frame = LabelBox(self.getContainer())
-        frame.config(background=self.__getContainerBg())
+        if not self.ttkFlag:
+            frame.config(background=self.__getContainerBg())
         self.n_frames.append(frame)
 
         # if this is a big label, update the others to match...
@@ -4626,16 +4630,19 @@ class gui(object):
 #                self.n_frameLabs[na].config(width=self.labWidth)
 
         # next make the label
-        lab = Label(frame)
+        if self.ttkFlag:
+            lab = ttk.Label(frame)
+        else:
+            lab = Label(frame, background=self.__getContainerBg())
         frame.theLabel = lab
         lab.hidden = False
         lab.inContainer = True
         lab.config(
-            anchor=W,
             text=title,
+            anchor=W,
             justify=LEFT,
             font=self.labelFont,
-            background=self.__getContainerBg())
+        )
 #            lab.config( width=self.labWidth)
         lab.DEFAULT_TEXT = title
 
@@ -6741,8 +6748,9 @@ class gui(object):
         link = Link(self.getContainer())
         link.config(
             text=title,
-            font=self.linkFont,
-            background=self.__getContainerBg())
+            font=self.linkFont)
+        if not self.ttk:
+            link.config(background=self.__getContainerBg())
         self.n_links[title] = link
         return link
 
@@ -7004,15 +7012,15 @@ class gui(object):
     # adds a set of labels, in the row, spannning specified columns
     def addLabels(self, names, row=None, colspan=0, rowspan=0):
         frame = WidgetBox(self.getContainer())
-        frame.config(background=self.__getContainerBg())
+        if not self.ttkFlag:
+            frame.config(background=self.__getContainerBg())
         for i in range(len(names)):
             self.__verifyItem(self.n_labels, names[i], True)
-            lab = Label(frame)
-            lab.config(
-                text=names[i],
-                font=self.labelFont,
-                justify=LEFT,
-                background=self.__getContainerBg())
+            if not self.ttkFlag:
+                lab = Label(frame, text=names[i])
+                lab.config(font=self.labelFont, justify=LEFT, background=self.__getContainerBg())
+            else:
+                lab = ttk.Label(frame, text=names[i])
             lab.DEFAULT_TEXT = names[i]
             lab.inContainer = False
 
@@ -10606,7 +10614,6 @@ class AutoCompleteEntry(Entry):
 #####################################
 # Named classes for containing groups
 #####################################
-
 
 class ParentBox(Frame):
 
