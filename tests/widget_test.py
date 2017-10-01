@@ -2622,6 +2622,37 @@ app.go("CANADIAN")
 print("<<<Widget Test Suite Complete on app>>>")
 del app
 
+print("<<<Starting app3>>>")
+with gui(debug=True) as app3:
+    app3.addStatus(TEXT_ONE, 1, "LEFT")
+    with app3.tabbedFrame("tf"):
+        with app3.tab("t1"):
+            with app3.labelFrame("lf1"):
+                app3.addLabel("l1", "label")
+            with app3.toggleFrame("tf1"):
+                app3.addCheckBox("cb1")
+        with app3.tab("t2"):
+            with app3.panedFrame("pf1"):
+                with app3.panedFrameVertical("vpf1"):
+                    app3.addLabel("l2", "label")
+        with app3.tab("t3"):
+            with app3.pagedWindow("pages"):
+                with app3.page():
+                    app3.addLabel("l3", "label")
+                with app3.page():
+                    app3.addLabel("l4", "label")
+        with app3.tab("t4"):
+            with app3.frame("f1"):
+                app3.addLabel("l5", "label")
+            with app3.scrollPane("sf1"):
+                app3.addLabel("l6", "label")
+    with app3.subWindow("s1"):
+        app3.addLabel("l7", "label")
+
+    app3.after(2000, app3.stop)
+
+print("<<<Widget Test Suite Complete on app3 >>>")
+
 doStopAgain = 0
 def test_gui2(btn=None):
     print("Testing GUI2")
@@ -2686,37 +2717,7 @@ with app2.notebook("wnb"):
 
 app2.go(startWindow="login")
 
+del app2
 print("<<<Widget Test Suite Complete on app2 >>>")
-
-print("<<<Starting app3>>>")
-with gui(debug=True) as app3:
-    app3.addStatus(TEXT_ONE, 1, "LEFT")
-    with app3.tabbedFrame("tf"):
-        with app3.tab("t1"):
-            with app3.labelFrame("lf1"):
-                app3.addLabel("l1", "label")
-            with app3.toggleFrame("tf1"):
-                app3.addCheckBox("cb1")
-        with app3.tab("t2"):
-            with app3.panedFrame("pf1"):
-                with app3.panedFrameVertical("vpf1"):
-                    app3.addLabel("l2", "label")
-        with app3.tab("t3"):
-            with app3.pagedWindow("pages"):
-                with app3.page():
-                    app3.addLabel("l3", "label")
-                with app3.page():
-                    app3.addLabel("l4", "label")
-        with app3.tab("t4"):
-            with app3.frame("f1"):
-                app3.addLabel("l5", "label")
-            with app3.scrollPane("sf1"):
-                app3.addLabel("l6", "label")
-    with app3.subWindow("s1"):
-        app3.addLabel("l7", "label")
-
-    app3.after(2000, app3.stop)
-
-print("<<<Widget Test Suite Complete on app3 >>>")
 
 print("<<<Widget Test Suite Complete>>>")
