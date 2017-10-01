@@ -1,7 +1,6 @@
-#ttk
+# ttk (very BETA)
 
 appJar includes experimental support for *ttk*,  a [tk themed widget set](https://docs.python.org/3/library/tkinter.ttk.html#module-tkinter.ttk).  
-This is very **BETA**, and most stuff will break!
 
 ## Setup
 ---

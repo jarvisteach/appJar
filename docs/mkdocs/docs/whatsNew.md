@@ -2,7 +2,7 @@
 ---
 
 ## Version 0.82  
-* Some tweaks to ttk [#189)(https://github.com/jarvisteach/appJar/issues/189) support - more reliable  
+* Some tweaks to [ttk support](/pythonTtk)
 * Fixes to documentation  
 
 ## Version 0.8  
