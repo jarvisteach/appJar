@@ -6,6 +6,9 @@ This is very **BETA**, and most stuff will break!
 ## Setup
 ---
 
+* `.go(useTtk=True)`  
+    Enabling ttk in the appJar constructor also sets the topLevel Frame to be a ttk.Frame - the preferred option.  
+
 * `.useTtk()`  
     Calling this at the start of your program will tell it to use ttk widgets where possible.  
 
