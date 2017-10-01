@@ -27,7 +27,7 @@ pages:
     - GUI Options: pythonGuiOptions.md
     - Widgets:
         - Layout: pythonWidgetLayout.md
-        - Configurtation: pythonWidgetOptions.md
+        - Configuration: pythonWidgetOptions.md
         - Grouping: pythonWidgetGrouping.md
         - The power of WITH: pythonContextManager.md
     - Events:
