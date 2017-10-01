@@ -1,6 +1,10 @@
 #Change-Log
 ---
 
+## Version 0.82  
+* Some tweaks to ttk [#189)(https://github.com/jarvisteach/appJar/issues/189) support - more reliable  
+* Fixes to documentation  
+
 ## Version 0.8  
 * Changed versioning - PyPi difficulties, combined with close to a 1.0 release...
 * Create a GUI in **TWO** lines using [context managers](/pythonContextManager/) - appJar now allows you to use `with` to create a GUI and [containers](/pythonWidgetGrouping)  
