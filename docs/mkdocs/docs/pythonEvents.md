@@ -7,7 +7,7 @@ The `Button` has an event automatically linked to it - whenever you press it, a 
 
 ## Types of Event  
 ---
-appJar currenly has four basic types of event you can register:  
+appJar currently has four basic types of event you can register:  
 
 * `.set XXX ChangeFunction(title, function)` call a function whenever the widget *changes*  
 * `.set XXX SubmitFunction(title, function)` call a function when the widget is *submitted*    

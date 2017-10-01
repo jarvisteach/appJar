@@ -11,7 +11,7 @@ There is a beta version of drag and drop **between labels**.
 
 * `.set XXX DragFunction(name, [startDragFunction, stopDragFunction]`)  
     Set functions to call when the mouse button is dragged from the named widget, or released over any widget.  
-    The first function will be called when the mouse is initially draged.  
+    The first function will be called when the mouse is initially dragged.  
     The second function will be called when the mouse is released.  
 
 ```python
@@ -75,7 +75,7 @@ Or, if it's an image, the image will be replaced.
 
 If no function has been set, the contents of the widget will be replaced with the filename/URI.  
 If you'd rather append the URI/filename - set `replace` to be False.  
-If a function has been set, it will be called, passing in the filename/URI as the only paramter.  
+If a function has been set, it will be called, passing in the filename/URI as the only parameter.  
 
 There is currently no support for registering *Drag* events.  
 

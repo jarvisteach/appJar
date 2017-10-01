@@ -133,7 +133,7 @@ Address Book-nextButton: Danach
 ```
 
 * `[LISTBOX]`, `[SPINBOX]`, `[OPTIONBOX]`  
-    These have multiple values for a single widget, so each value should be on a new line, afet the ID.  
+    These have multiple values for a single widget, so each value should be on a new line, after the ID.  
     **NB.** You can't translate a SpinBox that was generated from a range.  
 ```sh
 [LISTBOX]
@@ -168,12 +168,12 @@ SAVE-POPUP:
 
 ```python
 def saveFile(btn):
-    # SAVE-POPUP is a translation key, so the two parameters shoud be replaced
+    # SAVE-POPUP is a translation key, so the two parameters should be replaced
     if app.okBox("SAVE-POPUP", "Confirm you want to save."):
         saveFile()
 
 def quit(btn):
-    # SAVE-POPUP is a translation key, so the two parameters shoud be replaced
+    # SAVE-POPUP is a translation key, so the two parameters should be replaced
     if app.okBox("EXIT-POPUP", "Confirm you want to exit."):
         app.stop()
 ```  
@@ -213,7 +213,7 @@ VALUE-3: This is the last piece of translated text.
 These can then be accessed by using appJar's `.translate(key, default=None)` function.  
 
 ```python
-# this funciton will print out some translated text
+# this function will print out some translated text
 def showMessage():
     print(app.translate("VALUE-1"))
     print(app.translate("VALUE-2"))

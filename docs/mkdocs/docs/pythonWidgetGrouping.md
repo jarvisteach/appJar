@@ -282,7 +282,7 @@ app.go()
 ![E-Panes](img/layouts/pane3.png)  
 
 * Start an initial pane  
-* Start a second, vertical pane inside the intial pane  
+* Start a second, vertical pane inside the initial pane  
 * Start all additional panes inside the second pane  
 
 ```python
@@ -396,7 +396,7 @@ app.go()
 
 * `.setPagedWindowButtonsTop(title, top=True)`  
     Used to position the navigation buttons.  By default, they are at the bottom.  
-    Call this funtion to move them to the top.  
+    Call this function to move them to the top.  
 
 * `.setPagedWindowPage(title, pageNum)`  
     Used to display the selected page.  

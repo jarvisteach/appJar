@@ -1,7 +1,7 @@
 #Packaging appJar Apps ![PyInstaller](img/pyinstaller-draft1a-100_trans.png)
 ---
 
-The recomended way to package appJar is to use [PyInstaller](http://www.pyinstaller.org)  
+The recommended way to package appJar is to use [PyInstaller](http://www.pyinstaller.org)  
 
 Simply [download](http://www.pyinstaller.org/downloads.html) and [install](https://pyinstaller.readthedocs.io/en/stable/installation.html) PyInstaller.  
 
@@ -29,4 +29,4 @@ To include images, include the following option:
 ---
 This has been tested & works under both Windows & Linux, although no success (yet) on OSX.  
 
-A lot more detail will be provided here, in a future releasse, on the exact process to follow to get everything built into  your package.  
+A lot more detail will be provided here, in a future release, on the exact process to follow to get everything built into  your package.  

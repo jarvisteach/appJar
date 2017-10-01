@@ -51,7 +51,7 @@ app.registerEvent(getLocation)
 ## Conditional Loops
 ---
 
-If you want your loop to only repeat a certain number of times or unti a condition is met, you can put a decision at the beginning of the function and still use appJar's built in loop.  
+If you want your loop to only repeat a certain number of times or until a condition is met, you can put a decision at the beginning of the function and still use appJar's built in loop.  
 
 You can use this method to simulate both `while` and `for` loops.  
 
@@ -71,7 +71,7 @@ app.registerEvent(countdown)
 ## Advanced Loops  
 ---
 
-If you want more control over your loops, you can simuate your own...  
+If you want more control over your loops, you can simulate your own...  
 
 Using the `.after()` function mentioned above, you can simulate a loop, by having your function call `.after()` again.  
 

@@ -534,7 +534,7 @@ app.go()
     `.setListItemAtPos(title, pos, newVal)`  
     Changes the specified list item to the new value.  
     If `first` is set to True, only the first item found will be changed.  
-    Otherwise, all occurences of the specified value will be changed.  
+    Otherwise, all occurrences of the specified value will be changed.  
 
 * `.removeListItem(title, item)`  
     `.removeListItemAtPos(title, pos)`  
@@ -836,7 +836,7 @@ app.go()
 
 * `.setPropertyText(title, prop, newText=None)`  
     Change the displayed text for the named property.  
-    If no value is provided, the original vaue will be used.  
+    If no value is provided, the original value will be used.  
 
 * `.setProperties(title, props, callFunction=True)`  
     Adds the dictionary of properties to the widget.  

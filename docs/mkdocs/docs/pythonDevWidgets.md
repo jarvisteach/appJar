@@ -74,7 +74,7 @@ app.go()
 #### Set GoogleMaps  
 
 * `.searchGoogleMap(title, location)`  
-    Update the named GoogleMap widget to show the specified locaiton.  
+    Update the named GoogleMap widget to show the specified location.  
 
 * `.zoomGoogleMap(title, mod)`  
     Change the zoom level of the named GoogleMap.  
