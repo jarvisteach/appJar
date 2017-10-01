@@ -468,7 +468,7 @@ class gui(object):
 #####################################
 # CONSTRUCTOR - creates the GUI
 #####################################
-    def __init__(self, title=None, geom=None, warn=None, debug=None, handleArgs=True, language=None, startWindow=None):
+    def __init__(self, title=None, geom=None, warn=None, debug=None, handleArgs=True, language=None, startWindow=None, useTtk=False):
 
         if self.__class__.instantiated:
             raise Exception("You cannot have more than one instance of gui, try using a subWindow.")
@@ -488,6 +488,8 @@ class gui(object):
         # warn if we're in an untested mode
         self.__checkMode()
         self.ttkFlag = False
+        if useTtk:
+            self.useTtk()
         self.ttkStyle = None
 
         # first out, verify the platform

@@ -35,7 +35,7 @@ class app(appJar.gui):
     """HS602 utility app using appJar."""
     def __init__(self):
         # Init defaults and call main window.
-        super().__init__()
+        super().__init__(useTtk=True)
         self.useTtk()
         self.setTitle(self.lang('title'))
         self.main()
