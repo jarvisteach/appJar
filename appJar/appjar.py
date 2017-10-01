@@ -59,6 +59,8 @@ ajTreeNode = ajTreeData = None
 base64 = urlencode = urlopen = urlretrieve = quote_plus = json = None # GoogleMap
 ConfigParser = codecs = ParsingError = None # used to parse language files
 Thread = Queue = None
+frameBase = Frame
+labelBase = Label
 
 # details
 __author__ = "Richard Jarvis"
@@ -627,10 +629,11 @@ class gui(object):
         self.tbMinMade = False
 
         # create the main container for this GUI
-        container = Frame(self.appWindow)
+        container = frameBase(self.appWindow)
         # container = Label(self.appWindow) # made as a label, so we can set an
         # image
-        container.config(padx=2, pady=2, background=self.topLevel.cget("bg"))
+        if not self.ttkFlag:
+            container.config(padx=2, pady=2, background=self.topLevel.cget("bg"))
         container.pack(fill=BOTH, expand=True)
         self.__addContainer("root", self.C_ROOT, container, 0, 1)
 
@@ -712,7 +715,7 @@ class gui(object):
 #####################################
 
     def useTtk(self):
-        global ttk
+        global ttk, frameBase, labelBase
         try:
             import ttk
         except:
@@ -722,6 +725,8 @@ class gui(object):
                 gui.error("ttk not available")
                 return
         self.ttkFlag = True
+        frameBase = ttk.Frame
+        labelBase = ttk.Label
         gui.debug("Mode switched to ttk")
 
     # only call this after the main tk has been created
@@ -9870,11 +9875,11 @@ class ajFrame(Frame):
 #####################################
 
 
-class Separator(Frame):
+class Separator(frameBase):
 
     def __init__(self, parent, orient="horizontal", *args, **options):
-        Frame.__init__(self, parent, *args, **options)
-        self.line = Frame(self)
+        frameBase.__init__(self, parent, *args, **options)
+        self.line = frameBase(self)
         if orient == "horizontal":
             self.line.config(
                 relief="ridge",
@@ -9898,7 +9903,7 @@ class Separator(Frame):
             self.line.config(bg=kw.pop("fg"))
 
         if PYTHON2:
-            Frame.config(self, cnf, **kw)
+            frameBase.config(self, cnf, **kw)
         else:
             super(__class__, self).config(cnf, **kw)
 
@@ -10615,10 +10620,10 @@ class AutoCompleteEntry(Entry):
 # Named classes for containing groups
 #####################################
 
-class ParentBox(Frame):
+class ParentBox(frameBase):
 
     def __init__(self, parent, **opts):
-        Frame.__init__(self, parent)
+        frameBase.__init__(self, parent)
         self.setup()
 
     def setup(self):
@@ -10640,7 +10645,7 @@ class ParentBox(Frame):
 
         # propagate anything left
         if PYTHON2:
-            Frame.config(self, cnf, **kw)
+            frameBase.config(self, cnf, **kw)
         else:
             super(__class__, self).config(cnf, **kw)
 

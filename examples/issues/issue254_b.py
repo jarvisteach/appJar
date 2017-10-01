@@ -22,6 +22,7 @@ class app(appJar.gui):
         self.startLabelFrame('Fooframe')
         self.addLabelNumericEntry(self.lang('foo'), None)
         self.addLink("Click me", self.lang)
+        self.addSeparator()
         self.addWebLink("Click me 2", "http://www.yahoo.com")
         self.addLabels(["a", "b", "c"])
         self.addButton('foo_button', None, 0, 1)
