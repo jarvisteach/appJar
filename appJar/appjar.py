@@ -120,7 +120,7 @@ class gui(object):
             return gui.WINDOWS
         elif platform() == "Darwin":
             return gui.MAC
-        elif platform() == "Linux":
+        elif platform() in ["Linux", "FreeBSD"]:
             return gui.LINUX
         else:
             raise Exception("Unsupported platform: " + platform())
