@@ -1,12 +1,16 @@
 #Change-Log
 ---
 
+## Version 0.82  
+* Some tweaks to [ttk support](/pythonTtk)
+* Fixes to documentation  
+
 ## Version 0.8  
 * Changed versioning - PyPi difficulties, combined with close to a 1.0 release...
 * Create a GUI in **TWO** lines using [context managers](/pythonContextManager/) - appJar now allows you to use `with` to create a GUI and [containers](/pythonWidgetGrouping)  
 * [Events](/pythonEvents/), [Threads](/pythonThreads/), [Loops & Sleeps](/pythonLoopsAndSleeps/) have been improved. It's now possible to run background tasks (such as a download) and update the GUI safely.   
 * [Command line arguments](/pythonCommandLine): appJar now supports command line arguments for [logging](/pythonLogging) and [internationalisation](/pythonInternationalisation/) as well as help & version information.  
-* [Internationalisation](/pythonInternationalisation/) is now greatly imporved - nearly everything supoprts multiple languages.  
+* [Internationalisation](/pythonInternationalisation/) is now greatly improved - nearly everything supports multiple languages.  
 * [ScrollPanes](/pythonWidgetGrouping/#scroll-pane) & [Grids](/pythonDevWidgets/#grid) greatly improved  
 * Much more friendly [license](/License/)  
 

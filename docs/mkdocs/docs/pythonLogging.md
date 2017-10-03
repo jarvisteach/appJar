@@ -32,7 +32,7 @@ You can also use the following convenience functions for logging messages:
 ## Logging to file
 ---
 
-One of the benefits of using Python's logging capabilites, is the ability to have them logged to a file.  
+One of the benefits of using Python's logging capabilities, is the ability to have them logged to a file.  
 By setting a `fileName`, messages will no longer appear on the screen. Instead, they will be written to the named file.  
 The `logLevel` is also increased to **DEBUG**  
 

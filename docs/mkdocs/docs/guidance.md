@@ -2,7 +2,7 @@
 ---
 
 ##Navigating the Docs  
-The onine documentation aims to be as consistant as possible.  
+The online documentation aims to be as consistant as possible.  
 
 There are two main sections:  
 
@@ -42,7 +42,7 @@ These are ways of changing how the GUI looks or operates:
 
 When I first started appJar, I didn't really know any Python. I grew up on Pascal & Java, followed by JavaScript & PHP - appjar is therefore all in [CamelCase](https://en.wikipedia.org/wiki/Camel_case).
 
-Also, because of this, the concept of [named parameters](https://en.wikipedia.org/wiki/Named_parameter) is also not really used (except in the more recent parts). Again, I learnt programming without this concept, and generally teach programming without this concept. You'll therefore find that sometimes you have to make two-or-three function calls, to acheive something that could be done with one - if I had more named parameters.
+Also, because of this, the concept of [named parameters](https://en.wikipedia.org/wiki/Named_parameter) is also not really used (except in the more recent parts). Again, I learnt programming without this concept, and generally teach programming without this concept. You'll therefore find that sometimes you have to make two-or-three function calls, to achieve something that could be done with one - if I had more named parameters.
 
 I've tried to keep function names standardised:
 
@@ -51,7 +51,7 @@ I've tried to keep function names standardised:
 * `.set XXX YYY()` - to change some property of something in the GUI  
 * `.get XXX()` - to get something from the GUI
 
-When the docs list the parameters available on a function, any with an `=` means they are optional, with the dafault being shown.  
+When the docs list the parameters available on a function, any with an `=` means they are optional, with the default being shown.  
 
 For example:  
 

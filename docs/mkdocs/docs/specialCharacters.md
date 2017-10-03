@@ -25,7 +25,7 @@ app.addLabel("cross", CROSS)
 By putting `\u` at the start of the String, you tell Python it is a Unicode character.  
 This works well in Python 3.x, as it knows what unicode characters are.
 
-If you're still using python 2.x (not recomended), you'll need to use a little extra magic:  
+If you're still using python 2.x (not recommended), you'll need to use a little extra magic:  
 
 ```python
 TICK=u"\u2714"
@@ -101,7 +101,7 @@ As of Python 3.3, the `u` prefix was brought back (although it doesn't do anythi
 
 So, the best solution, if you want your code to work on all versions of Python, is to not use the `u` prefix, and instead change the way Python2 works.  
 
-If you include `from __future__ import unicode_literals` at the start of your code, you can include uncicode characters in Python2, without using the `u` prefix - `print('\u23F9')` will then work on every version of python.  
+If you include `from __future__ import unicode_literals` at the start of your code, you can include unicode characters in Python2, without using the `u` prefix - `print('\u23F9')` will then work on every version of python.  
 
 ### Easter Egg
 ---

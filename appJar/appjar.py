@@ -59,13 +59,15 @@ ajTreeNode = ajTreeData = None
 base64 = urlencode = urlopen = urlretrieve = quote_plus = json = None # GoogleMap
 ConfigParser = codecs = ParsingError = None # used to parse language files
 Thread = Queue = None
+frameBase = Frame
+labelBase = Label
 
 # details
 __author__ = "Richard Jarvis"
 __copyright__ = "Copyright 2016-2017, Richard Jarvis"
 __credits__ = ["Graham Turner", "Sarah Murch"]
 __license__ = "Apache 2.0"
-__version__ = "0.8.0"
+__version__ = "0.82.0"
 __maintainer__ = "Richard Jarvis"
 __email__ = "info@appJar.info"
 __status__ = "Development"
@@ -466,7 +468,7 @@ class gui(object):
 #####################################
 # CONSTRUCTOR - creates the GUI
 #####################################
-    def __init__(self, title=None, geom=None, warn=None, debug=None, handleArgs=True, language=None, startWindow=None):
+    def __init__(self, title=None, geom=None, warn=None, debug=None, handleArgs=True, language=None, startWindow=None, useTtk=False):
 
         if self.__class__.instantiated:
             raise Exception("You cannot have more than one instance of gui, try using a subWindow.")
@@ -486,6 +488,8 @@ class gui(object):
         # warn if we're in an untested mode
         self.__checkMode()
         self.ttkFlag = False
+        if useTtk:
+            self.useTtk()
         self.ttkStyle = None
 
         # first out, verify the platform
@@ -627,10 +631,11 @@ class gui(object):
         self.tbMinMade = False
 
         # create the main container for this GUI
-        container = Frame(self.appWindow)
+        container = frameBase(self.appWindow)
         # container = Label(self.appWindow) # made as a label, so we can set an
         # image
-        container.config(padx=2, pady=2, background=self.topLevel.cget("bg"))
+        if not self.ttkFlag:
+            container.config(padx=2, pady=2, background=self.topLevel.cget("bg"))
         container.pack(fill=BOTH, expand=True)
         self.__addContainer("root", self.C_ROOT, container, 0, 1)
 
@@ -695,11 +700,14 @@ class gui(object):
         # set up a background image holder
         # alternative to label option above, as label doesn't update widgets
         # properly
-        self.bgLabel = Label(container)
-        self.bgLabel.config(
-            anchor=CENTER,
-            font=self.labelFont,
-            background=self.__getContainerBg())
+
+        if not self.ttkFlag:
+            self.bgLabel = Label(
+                container, anchor=CENTER,
+                font=self.labelFont,
+                background=self.__getContainerBg())
+        else:
+            self.bgLabel = ttk.LabelFrame(container)
         self.bgLabel.place(x=0, y=0, relwidth=1, relheight=1)
         container.image = None
 
@@ -709,7 +717,7 @@ class gui(object):
 #####################################
 
     def useTtk(self):
-        global ttk
+        global ttk, frameBase, labelBase
         try:
             import ttk
         except:
@@ -719,6 +727,8 @@ class gui(object):
                 gui.error("ttk not available")
                 return
         self.ttkFlag = True
+        frameBase = ttk.Frame
+        labelBase = ttk.Label
         gui.debug("Mode switched to ttk")
 
     # only call this after the main tk has been created
@@ -4615,7 +4625,8 @@ class gui(object):
 
         # first, make a frame
         frame = LabelBox(self.getContainer())
-        frame.config(background=self.__getContainerBg())
+        if not self.ttkFlag:
+            frame.config(background=self.__getContainerBg())
         self.n_frames.append(frame)
 
         # if this is a big label, update the others to match...
@@ -4626,16 +4637,19 @@ class gui(object):
 #                self.n_frameLabs[na].config(width=self.labWidth)
 
         # next make the label
-        lab = Label(frame)
+        if self.ttkFlag:
+            lab = ttk.Label(frame)
+        else:
+            lab = Label(frame, background=self.__getContainerBg())
         frame.theLabel = lab
         lab.hidden = False
         lab.inContainer = True
         lab.config(
-            anchor=W,
             text=title,
+            anchor=W,
             justify=LEFT,
             font=self.labelFont,
-            background=self.__getContainerBg())
+        )
 #            lab.config( width=self.labWidth)
         lab.DEFAULT_TEXT = title
 
@@ -6741,8 +6755,9 @@ class gui(object):
         link = Link(self.getContainer())
         link.config(
             text=title,
-            font=self.linkFont,
-            background=self.__getContainerBg())
+            font=self.linkFont)
+        if not self.ttk:
+            link.config(background=self.__getContainerBg())
         self.n_links[title] = link
         return link
 
@@ -7004,15 +7019,15 @@ class gui(object):
     # adds a set of labels, in the row, spannning specified columns
     def addLabels(self, names, row=None, colspan=0, rowspan=0):
         frame = WidgetBox(self.getContainer())
-        frame.config(background=self.__getContainerBg())
+        if not self.ttkFlag:
+            frame.config(background=self.__getContainerBg())
         for i in range(len(names)):
             self.__verifyItem(self.n_labels, names[i], True)
-            lab = Label(frame)
-            lab.config(
-                text=names[i],
-                font=self.labelFont,
-                justify=LEFT,
-                background=self.__getContainerBg())
+            if not self.ttkFlag:
+                lab = Label(frame, text=names[i])
+                lab.config(font=self.labelFont, justify=LEFT, background=self.__getContainerBg())
+            else:
+                lab = ttk.Label(frame, text=names[i])
             lab.DEFAULT_TEXT = names[i]
             lab.inContainer = False
 
@@ -9862,11 +9877,11 @@ class ajFrame(Frame):
 #####################################
 
 
-class Separator(Frame):
+class Separator(frameBase):
 
     def __init__(self, parent, orient="horizontal", *args, **options):
-        Frame.__init__(self, parent, *args, **options)
-        self.line = Frame(self)
+        frameBase.__init__(self, parent, *args, **options)
+        self.line = frameBase(self)
         if orient == "horizontal":
             self.line.config(
                 relief="ridge",
@@ -9890,7 +9905,7 @@ class Separator(Frame):
             self.line.config(bg=kw.pop("fg"))
 
         if PYTHON2:
-            Frame.config(self, cnf, **kw)
+            frameBase.config(self, cnf, **kw)
         else:
             super(__class__, self).config(cnf, **kw)
 
@@ -10607,11 +10622,10 @@ class AutoCompleteEntry(Entry):
 # Named classes for containing groups
 #####################################
 
-
-class ParentBox(Frame):
+class ParentBox(frameBase):
 
     def __init__(self, parent, **opts):
-        Frame.__init__(self, parent)
+        frameBase.__init__(self, parent)
         self.setup()
 
     def setup(self):
@@ -10633,7 +10647,7 @@ class ParentBox(Frame):
 
         # propagate anything left
         if PYTHON2:
-            Frame.config(self, cnf, **kw)
+            frameBase.config(self, cnf, **kw)
         else:
             super(__class__, self).config(cnf, **kw)
 
