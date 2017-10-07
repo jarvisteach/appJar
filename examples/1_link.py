@@ -1,3 +1,5 @@
+import sys
+sys.path.append("../")
 from appJar import gui
 def press(btn):
     app.infoBox("Info", "You clicked the link!")

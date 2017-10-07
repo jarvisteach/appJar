@@ -131,7 +131,7 @@ def test_entries():
     # quick validation check
     app.addEntry("focusEnt")
     app.addValidationEntry("ve1")
-    app.addLabelValidationEntry("lve1")
+#    app.addLabelValidationEntry("lve1")
     app.setEntryValid("ve1")
     app.setEntryInvalid("ve1")
     app.setEntryWaitingValidation("ve1")
@@ -551,12 +551,18 @@ def test_options():
     assert obs["l1"] == LIST_ONE[0]
     assert obs["l2"] == LIST_TWO[0]
 
-    # select new items - by position
-    app.setOptionBox("l1", 2)
-    app.setOptionBox("l2", 3)
+    print(LIST_ONE)
+    print(LIST_TWO)
 
-    assert app.getOptionBox("l1") == LIST_ONE[2]
-    assert app.getOptionBox("l2") == LIST_TWO[3]
+    # select new items - by position
+    app.setOptionBox("l1", 3)
+    app.setOptionBox("l2", 1)
+
+    print( app.getOptionBox("l1") , LIST_ONE[3])
+    print( app.getOptionBox("l2") , LIST_TWO[1])
+
+    assert app.getOptionBox("l2") == LIST_TWO[1]
+    assert app.getOptionBox("l1") == LIST_ONE[3]
 
     app.clearOptionBox("l1")
     assert app.getOptionBox("l1") == LIST_ONE[0]
@@ -939,7 +945,7 @@ def test_scales():
     assert app.getScale("s3") == 100
     assert app.getScale("s4") == 100
 
-    sc = app.getWidget(app.SCALE, "s1")
+    sc = app.getWidget(app.Widgets.Scale, "s1")
 
     sc._ajScale__jump("trough1")
     sc._ajScale__jump("trough2")
@@ -2194,7 +2200,7 @@ def test_containers():
     app.addLabel("pg2_np", TEXT_ONE)
     app.stopPage()
 
-    pw = app.getWidget("pagedWindow", "pg1")
+    pw = app.getWidget(app.Widgets.PagedWindow, "pg1")
     pw.showFirst()
     pw.showFirst()
     pw.showPrev()
@@ -2261,7 +2267,7 @@ def test_containers():
     with pytest.raises(Exception) :
         app.stopScrollPane()
 
-    sp = app.getWidget(app.SCROLLPANE, "sp1")
+    sp = app.getWidget(app.Widgets.ScrollPane, "sp1")
 
 
     for hHidden in [True, False]:
@@ -2514,8 +2520,8 @@ def test_focus():
 
 
 app = gui()
-with pytest.raises(Exception) :
-    app3 = gui()
+#with pytest.raises(Exception) :
+#    app3 = gui()
 app.createRightClickMenu("RCLICK")
 print(app.SHOW_VERSION())
 print(app.SHOW_PATHS())
