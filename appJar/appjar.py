@@ -393,12 +393,12 @@ class gui(object):
                 "DatePicker", "Separator",
                 "LabelFrame", "Frame", "TabbedFrame", "PanedFrame", "ToggleFrame",
                 "FrameBox", "FrameLabel", "ContainerLog", "FlashLabel",
-                "AnimationID", "ImageCache", "Menu",
+                "AnimationID", "ImageCache", "Menu", "RB_VALS",
                 "SubWindow", "ScrollPane", "PagedWindow", "Notebook", "Tree",
                 "Widget", "Window", "Toolbar", "RootPage",
                 "Note", "Tab", "Page", "Pane"],
             deprecated=["Cb", "Rb", "Lb", "Spin", "Option"],
-            excluded=["DatePicker", "SubWindow", "Window", "Toolbar",
+            excluded=["DatePicker", "SubWindow", "Window", "Toolbar", "RB_VALS",
                 "Note", "Tab", "Page", "Pane", "RootPage", "FlashLabel",
                 "AnimationID", "ImageCache", "TickOptionBox", "Accelerators",
                 "FrameBox", "FrameLabel", "ContainerLog", "Menu"]
@@ -1194,40 +1194,22 @@ class gui(object):
 # set the arrays we use to store everything
 #####################################
     def __initArrays(self):
-        # set up a row counter - used to auto add rows
-        # breaks once user sets own row
-
-        # set up a minimum label width for label combos
-        self.labWidth = 1
-
         # validate function callbacks - used by numeric texts
         # created first time a widget is used
         self.validateNumeric = None
         self.validateSpinBox = None
 
-        # set up flash variable
-        self.doFlash = False
-
-        # used to hide/show title bar
-        self.hasTitleBar = True
-        # records if we're in fullscreen - stops hideTitle from breaking
-        self.isFullscreen = False
-
-        # splash screen?
-        self.splashConfig = None
-
-        # store the path to any icon
-        self.winIcon = None
-
+        self.labWidth = 1 # minimum label width for label combos
+        self.doFlash = False # set up flash variable
+        self.hasTitleBar = True # used to hide/show title bar
+        self.isFullscreen = False # records if we're in fullscreen - stops hideTitle from breaking
+        self.splashConfig = None # splash screen?
+        self.winIcon = None # store the path to any icon
+        self.dnd = None # the dnd manager
 
         # collections of widgets, widget name is key
         self.widgetManager = WidgetManager()
 
-        # variables associated with widgets
-        self.n_rbVals = {}
-
-        # the dnd manager
-        self.dnd = None
 
     def translate(self, key, default=None):
         return self.__translate(key, "EXTERNAL", default)
@@ -2384,87 +2366,16 @@ class gui(object):
 # FUNCTION to configure widgets
 #####################################
     def __getItems(self, kind):
-        if kind == self.Widgets.Label:
-            return self.widgetManager.group(self.Widgets.Label)
-        elif kind == self.Widgets.Message:
-            return self.widgetManager.group(self.Widgets.Message)
-        elif kind == self.Widgets.Button:
-            return self.widgetManager.group(self.Widgets.Button)
-        elif kind in [self.Widgets.Entry, self.Widgets.FileEntry, self.Widgets.DirectoryEntry]:
+        if kind in [self.Widgets.FileEntry, self.Widgets.DirectoryEntry]:
             return self.widgetManager.group(self.Widgets.Entry)
-        elif kind == self.Widgets.Scale:
-            return self.widgetManager.group(self.Widgets.Scale)
-        elif kind == self.Widgets.CheckBox:
-            return self.widgetManager.group(self.Widgets.CheckBox)
-        elif kind == self.Widgets.RadioButton:
-            return self.widgetManager.group(self.Widgets.RadioButton)
-        elif kind == self.Widgets.ListBox:
-            return self.widgetManager.group(self.Widgets.ListBox)
-        elif kind == self.Widgets.SpinBox:
-            return self.widgetManager.group(self.Widgets.SpinBox)
-        elif kind == self.Widgets.OptionBox:
-            return self.widgetManager.group(self.Widgets.OptionBox)
-        elif kind == self.Widgets.TextArea:
-            return self.widgetManager.group(self.Widgets.TextArea)
-        elif kind == self.Widgets.Link:
-            return self.widgetManager.group(self.Widgets.Link)
-        elif kind == self.Widgets.Meter:
-            return self.widgetManager.group(self.Widgets.Meter)
-        elif kind == self.Widgets.Image:
-            return self.widgetManager.group(self.Widgets.Image)
-        elif kind == self.Widgets.Map:
-            return self.widgetManager.group(self.Widgets.Map)
-        elif kind == self.Widgets.PieChart:
-            return self.widgetManager.group(self.Widgets.PieChart)
-        elif kind == self.Widgets.Properties:
-            return self.widgetManager.group(self.Widgets.Properties)
-        elif kind == self.Widgets.Plot:
-            return self.widgetManager.group(self.Widgets.Plot)
-        elif kind == self.Widgets.MicroBit:
-            return self.widgetManager.group(self.Widgets.MicroBit)
-        elif kind == self.Widgets.Grid:
-            return self.widgetManager.group(self.Widgets.Grid)
-        elif kind == self.Widgets.Widget:
-            return self.widgetManager.group(self.Widgets.Widget)
-        elif kind == self.Widgets.Tree:
-            return self.widgetManager.group(self.Widgets.Tree)
-        elif kind == self.Widgets.Toolbar:
-            return self.widgetManager.group(self.Widgets.Toolbar)
-
-        elif kind == self.Widgets.LabelFrame:
-            return self.widgetManager.group(self.Widgets.LabelFrame)
-        elif kind == self.Widgets.Frame:
-            return self.widgetManager.group(self.Widgets.Frame)
-        elif kind == self.Widgets.FrameBox:
-            return self.widgetManager.group(self.Widgets.FrameBox)
-        elif kind == self.Widgets.ToggleFrame:
-            return self.widgetManager.group(self.Widgets.ToggleFrame)
-
-        elif kind == self.Widgets.PagedWindow:
+        elif kind == self.Widgets.Page: # no dict of pages - the container manages them...
             return self.widgetManager.group(self.Widgets.PagedWindow)
-        elif kind == self.Widgets.Page:
-            # no dict of pages - the container manages them...
-            return self.widgetManager.group(self.Widgets.PagedWindow)
-
-        elif kind == self.Widgets.TabbedFrame:
+        elif kind == self.Widgets.Tab: # no dict of tabs - the container manages them...
             return self.widgetManager.group(self.Widgets.TabbedFrame)
-        elif kind == self.Widgets.Tab:
-            # no dict of tabs - the container manages them...
-            return self.widgetManager.group(self.Widgets.TabbedFrame)
-        elif kind in [self.Widgets.Notebook, self.Widgets.Note]:
+        elif kind == self.Widgets.Note:
             return self.widgetManager.group(self.Widgets.Notebook)
-
-        elif kind == self.Widgets.PanedFrame:
-            return self.widgetManager.group(self.Widgets.PanedFrame)
-        elif kind == self.Widgets.Pane:
-            return self.widgetManager.group(self.Widgets.Pane)
-
-        elif kind == self.Widgets.SubWindow:
-            return self.widgetManager.group(self.Widgets.SubWindow)
-        elif kind == self.Widgets.ScrollPane:
-            return self.widgetManager.group(self.Widgets.ScrollPane)
         else:
-            raise Exception("Unknown widget type: " + str(kind))
+            return self.widgetManager.group(kind)
 
     def configureAllWidgets(self, kind, option, value):
         items = list(self.__getItems(kind))
@@ -6159,7 +6070,7 @@ class gui(object):
         if (title in self.widgetManager.group(self.Widgets.RadioButton, group=WidgetManager.VARS)):
             var = self.widgetManager.get(self.Widgets.RadioButton, title, group=WidgetManager.VARS)
             # also get the list of rbVals
-            vals = self.n_rbVals[title]
+            vals = self.widgetManager.get(self.Widgets.RB_VALS, title)
             # and if we already have the new item in that list - reject it
             if name in vals:
                 raise Exception(
@@ -6174,7 +6085,7 @@ class gui(object):
             var = StringVar(self.topLevel)
             vals = [name]
             self.widgetManager.add(self.Widgets.RadioButton, title, var, group=WidgetManager.VARS)
-            self.n_rbVals[title] = vals
+            self.widgetManager.add(self.Widgets.RB_VALS, title, vals)
             newRb = True
 
         # finally, create the actual RadioButton
@@ -6220,7 +6131,7 @@ class gui(object):
         return rbs
 
     def setRadioButton(self, title, value, callFunction=True):
-        vals = self.__verifyItem(self.n_rbVals, title)
+        vals = self.widgetManager.get(self.Widgets.RB_VALS, title)
         if value not in vals:
             raise Exception("Invalid radio button: '" + value + "' doesn't exist") 
 
@@ -7737,7 +7648,7 @@ class gui(object):
             return self.__lookupValue(self.widgetManager.group(self.Widgets.ListBox), widg)
         elif name == "Button":
             # merge together Buttons & Toolbar Buttons
-            z = self.n_buttons.copy()
+            z = self.widgetManager.group(self.Widgets.Button).copy()
             z.update(self.widgetManager.group(self.Widgets.Toolbar))
             return self.__lookupValue(z, widg)
         elif name == "Entry":
