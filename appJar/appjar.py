@@ -401,6 +401,7 @@ class gui(object):
             excluded=["DatePicker", "SubWindow", "Window", "Toolbar", "RB_VALS",
                 "Note", "Tab", "Page", "Pane", "RootPage", "FlashLabel",
                 "AnimationID", "ImageCache", "TickOptionBox", "Accelerators",
+                "FileEntry", "DirectoryEntry",
                 "FrameBox", "FrameLabel", "ContainerLog", "Menu"]
         )
 
@@ -425,20 +426,15 @@ class gui(object):
         # a stack to hold containers as being built
         # done here, as initArrays is called elsewhere - to reset the gubbins
         self.containerStack = []
-
         self.translations = {"POPUP":{}, "SOUND":{}, "EXTERNAL":{}}
-
         # first up, set up all the data stores
-        self.__initArrays()
-
+        self.__initVars()
         # dynamically create lots of functions for configuring stuff
         self.__buildConfigFuncs()
-
         # language parser
         self.config = None
 
         # set up some default path locations
-
         # this fails if in interactive mode....
         try:
             gui.exe_file = str(os.path.basename(theMain.__file__))
@@ -508,11 +504,7 @@ class gui(object):
         self.lbFont = font.Font(family="Helvetica", size=12)
         self.taFont = font.Font(family="Helvetica", size=12)
         self.meterFont = font.Font(family="Helvetica", size=12, weight='bold')
-        self.linkFont = font.Font(
-            family="Helvetica",
-            size=12,
-            weight='bold',
-            underline=1)
+        self.linkFont = font.Font(family="Helvetica", size=12, weight='bold', underline=1)
         self.labelFrameFont = font.Font(family="Helvetica", size=12)
         self.frameFont = font.Font(family="Helvetica", size=12)
         self.toggleFrameFont = font.Font(family="Helvetica", size=12)
@@ -1193,7 +1185,7 @@ class gui(object):
 #####################################
 # set the arrays we use to store everything
 #####################################
-    def __initArrays(self):
+    def __initVars(self):
         # validate function callbacks - used by numeric texts
         # created first time a widget is used
         self.validateNumeric = None
@@ -1312,7 +1304,7 @@ class gui(object):
 
             # if necessary, use the code to get the widget list
             if getWidgets:
-                widgets = self.__getItems(kind)
+                widgets = self.widgetManager.group(kind)
 
             if kind in [self.Widgets.Scale]:
                 self.warn("No text is displayed in " + section + ". Maybe it has a Label?")
@@ -2378,7 +2370,7 @@ class gui(object):
             return self.widgetManager.group(kind)
 
     def configureAllWidgets(self, kind, option, value):
-        items = list(self.__getItems(kind))
+        items = list(self.widgetManager.group(kind))
         self.configureWidgets(kind, items, option, value)
 
     def configureWidgets(self, kind, names, option, value):
@@ -2396,8 +2388,7 @@ class gui(object):
     def getWidget(self, kind, name):
         # get the list of items for this type, and validate the widget is in
         # the list
-        items = self.__getItems(kind)
-        return self.__verifyItem(items, name, False)
+        return self.widgetManager.get(kind, name)
 
     def addWidget(self, title, widg, row=None, column=0, colspan=0, rowspan=0):
         self.widgetManager.verify(self.Widgets.Widget, title)
@@ -2422,10 +2413,10 @@ class gui(object):
                 "->" + name + " use " + deprecated + " instead")
         # get the list of items for this type, and validate the widgetis in the
         # list
-        items = self.__getItems(kind)
-        self.__verifyItem(items, name)
+        self.widgetManager.check(kind, name)
+        items = self.widgetManager.group(kind)
 
-        if kind in [self.RB, self.Widgets.RadioButton] and option not in ["change"]:
+        if kind == self.Widgets.RadioButton and option not in ["change"]:
             items = items[name]
         else:
             items = [items[name]]
@@ -2544,19 +2535,9 @@ class gui(object):
                         item.config(ipadx=value[0], ipady=value[1])
                 elif option == 'rightClick':
                     if self.platform in [self.WINDOWS, self.LINUX]:
-                        item.bind(
-                            '<Button-3>',
-                            lambda e,
-                            menu=value: self.__rightClick(
-                                e,
-                                menu))
+                        item.bind('<Button-3>', lambda e, menu=value: self.__rightClick(e, menu))
                     else:
-                        item.bind(
-                            '<Button-2>',
-                            lambda e,
-                            menu=value: self.__rightClick(
-                                e,
-                                menu))
+                        item.bind('<Button-2>', lambda e, menu=value: self.__rightClick(e, menu))
                 elif option == 'internalDrop':
                     self.__registerInternalDropTarget(item, value)
 
@@ -2600,7 +2581,7 @@ class gui(object):
 
             def getLabel(f):
                 # loop through all labels
-                items = self.__getItems(kind)
+                items = self.widgetManager.group(kind)
                 for key, value in items.items():
                     if self.__isMouseInWidget(value):
                         f(key)
@@ -2688,7 +2669,7 @@ class gui(object):
             cmd = self.MAKE_FUNC(function, name, True)
             widget.bind('<<ListboxSelect>>', cmd)
             widget.cmd = cmd
-        elif kind in [self.RB, self.Widgets.RadioButton]:
+        elif kind in [self.Widgets.RadioButton]:
             cmd = self.MAKE_FUNC(function, name, True)
             # get rb variable
             var = self.widgetManager.get(self.Widgets.RadioButton, name, group=WidgetManager.VARS)
@@ -2698,7 +2679,7 @@ class gui(object):
             cmd = self.MAKE_FUNC(function, name, True)
             widget.setChangeFunction(cmd)
         else:
-            if kind not in [self.Widgets.SpinBox, self.Widgets.CheckBox, self.CB]:
+            if kind not in [self.Widgets.SpinBox, self.Widgets.CheckBox]:
                 self.warn("Unmanaged binding of " + str(eventType) + " to " + str(name))
             cmd = self.MAKE_FUNC(function, name)
             widget.config(command=cmd)
@@ -2710,7 +2691,6 @@ class gui(object):
         # and make all the below functons for each one
         for v in self.Widgets.funcs():
             k = self.Widgets.get(v)
-#        for k, v in self.WIDGETS.items():
             exec( "def set" + v +
                 "Bg(self, name, val): self.configureWidgets(" +
                 str(k) + ", name, 'background', val)")
@@ -2933,25 +2913,23 @@ class gui(object):
 #####################################
     def __widgetHasContainer(self, kind, item):
         if kind in [
-                self.Widgets.Scale,
-                self.Widgets.Entry,
-                self.Widgets.SpinBox,
-                self.Widgets.OptionBox,
-                self.Widgets.Label] and item.inContainer:
+            self.Widgets.Scale,
+            self.Widgets.Entry,
+            self.Widgets.SpinBox,
+            self.Widgets.OptionBox,
+            self.Widgets.Label] and item.inContainer:
             return True
         else:
             return False
 
     def hideWidgetType(self, kind, name):
-        # get the dictionary of items, and find the item in it
-        items = self.__getItems(kind)
-        item = self.__verifyItem(items, name)
+        item = self.widgetManager.get(kind, name)
 
         if self.__widgetHasContainer(kind, item):
             widget = item.master
             self.widgetManager.get(self.Widgets.FrameLabel, name).hidden = True
         else:
-            if kind in [self.RB, self.Widgets.RadioButton]:
+            if kind in [self.Widgets.RadioButton]:
                 for rb in item:
                     if rb.text == name:
                         widget = rb
@@ -2962,9 +2940,7 @@ class gui(object):
 #                  self.__updateLabelBoxes(name)
 
     def showWidgetType(self, kind, name):
-        # get the dictionary of items, and find the item in it
-        items = self.__getItems(kind)
-        item = self.__verifyItem(items, name)
+        item = self.widgetManager.get(kind, name)
 
         if self.__widgetHasContainer(kind, item):
             widget = item.master
@@ -2978,9 +2954,7 @@ class gui(object):
 #                  self.__updateLabelBoxes(name)
 
     def removeWidgetType(self, kind, name):
-        # get the dictionary of items, and find the item in it
-        items = self.__getItems(kind)
-        item = self.__verifyItem(items, name)
+        item = self.widgetManager.get(kind, name)
 
         # if it's a flasher, remove it
         if item in self.widgetManager.group(self.Widgets.FlashLabel):
@@ -3004,13 +2978,13 @@ class gui(object):
             item.destroy()
 
         # finally remove it from the dictionary
-        items.pop(name)
+        item = self.widgetManager.remove(kind, name)
 
     def removeAllWidgets(self):
         for child in self.containerStack[0]['container'].winfo_children():
             child.destroy()
         self.__configBg(self.containerStack[0]['container'])
-        self.__initArrays()
+        self.__initVars()
         self.setGeom(None)
 
 #####################################
@@ -3042,16 +3016,6 @@ class gui(object):
 #####################################
 # FUNCTION to position a widget
 #####################################
-    # checks if the item already exists
-    def __verifyItem(self, items, item, newItem=False):
-        if not newItem and item not in items:
-            raise ItemLookupError("Invalid key: " + item + " does not exist")
-        elif not newItem and item in items:
-            return items[item]
-        elif newItem and item in items:
-            raise ItemLookupError(
-                "Duplicate key: '" + item + "' already exists")
-
     def getRow(self):
         return self.containerStack[-1]['emptyRow']
 
@@ -4309,7 +4273,7 @@ class gui(object):
             k = self.Widgets.get(v)
 #        for k, v in self.WIDGETS.items():
             if widgType == v:
-                widgets = self.__getItems(k)
+                widgets = self.widgetManager.group(k)
                 if self.destroyWidget(widget, widgets):
                     break
                 break
