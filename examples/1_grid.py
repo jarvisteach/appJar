@@ -10,7 +10,10 @@ def press(btn):
     elif btn=="DOWN": app.decreaseFont()
     elif btn=="FRENCH": app.setLanguage("FRENCH")
     elif btn=="newRow": app.addGridRow("grid", app.getGridEntries("grid"))
-app=gui()
+    else:
+        print(btn)
+        app.deleteGridRow("grid", int(btn))
+app=gui("600x600", "600x600")
 #app.setFg("orange")
 #app.setBg("red")
 app.addGrid("grid", [["A","B","C"], [3,4,5,6,7,8], [2,4,6,8]], action=press, addRow=press)

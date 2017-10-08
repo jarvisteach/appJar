@@ -3830,6 +3830,10 @@ class gui(object):
         grid = self.widgetManager.get(self.Widgets.Grid, title)
         grid.addRow(data)
 
+    def deleteGridRow(self, title, rowNum):
+        grid = self.widgetManager.get(self.Widgets.Grid, title)
+        grid.deleteRow(rowNum)
+
     def confGrid(self, title, field, value):
         grid = self.widgetManager.get(self.Widgets.Grid, title)
         kw = {field:value}
@@ -11025,6 +11029,11 @@ class SubWindow(Toplevel):
 # SimpleGrid Stuff
 #####################################
 
+class GridCell(Label):
+    def __init__(self, parent, **opts):
+        Label.__init__(self, parent, **opts)
+        self.selected = False
+
 # first row is used as a header
 # SimpleGrid is a ScrollPane, where a Frame has been placed on the canvas - called GridContainer
 class SimpleGrid(ScrollPane):
@@ -11056,12 +11065,9 @@ class SimpleGrid(ScrollPane):
         self.action = action
 
         # lists to store the data in
-        self.data = []
+        self.cells = []
         self.entries = []
         self.rightColumn = []
-        # a list of any selected cells
-        from collections import OrderedDict
-        self.selectedCells = OrderedDict()
 
         # how many rows & columns
         self.numColumns = 0
@@ -11144,17 +11150,38 @@ class SimpleGrid(ScrollPane):
         if 0 > position >= self.numRows:
             raise Exception("Invalid row number.")
         else:
-            for loop in range(position, self.numRows -2):
-                self.data[position] = self.data[position+1]
-            self.numRows -= 1
+            # forget the specified row & butotn
+            for cell in self.cells[position+1]:
+                cell.grid_forget()
+            if self.action is not None:
+                self.rightColumn[position+1].grid_forget()
 
-        #self.rightRow.delete(position)
-                
+            # loop through all rows after, forget them, move them, grid them
+            for loop in range(position+1, len(self.cells)-1):
+                # forget the next row
+                for cell in self.cells[loop+1]:
+                    cell.grid_forget()
+
+                # move data
+                self.cells[loop] = self.cells[loop+1]
+
+                # add its button
+                if self.action is not None:
+                    self.rightColumn[loop+1].grid_forget()
+                    self.rightColumn[loop] = self.rightColumn[loop+1]
+                    self.rightColumn[loop+1].grid(row=loop, column=self.numColumns, sticky=N+E+S+W)
+
+                # re-grid them
+                for cellNum in range(len(self.cells[loop])):
+                    self.cells[loop][cellNum].grid(row=loop, column=cellNum, sticky=N+E+S+W)
+
+            # lose last item from lists
+            self.cells = self.cells[:-1]
+            self.rightColumn = self.rightColumn[:-1]
+
     def __addRow(self, rowData):
-        self.data.append(rowData)
-        rowNum = len(self.data) - 1
-        celContents = []
-
+        rowNum = len(self.cells)
+        newRow = []
         for cellNum in range(self.numColumns):
 
             # get a val ("" if no val)
@@ -11162,9 +11189,8 @@ class SimpleGrid(ScrollPane):
                 val = ""
             else:
                 val = rowData[cellNum]
-            celContents.append(val)
 
-            lab = Label(self.gridContainer)
+            lab = GridCell(self.gridContainer)
             if rowNum == 0: # adding title row
                 lab.configure(relief=RIDGE,
                     text=val, font=self.ghFont,
@@ -11180,11 +11206,12 @@ class SimpleGrid(ScrollPane):
                 lab.bind("<Button-1>", self.__gridCellClick)
                 
                 lab.gridPos = str(rowNum - 1) + "-" + str(cellNum)
-                self.selectedCells[lab.gridPos] = False
 
             lab.grid(row=rowNum, column=cellNum, sticky=N+E+S+W)
             Grid.columnconfigure(self.gridContainer, cellNum, weight=1)
             Grid.rowconfigure(self.gridContainer, rowNum, weight=1)
+            newRow.append(lab)
+        self.cells.append(newRow)
 
         # add some buttons for each row
         if self.action is not None:
@@ -11194,7 +11221,6 @@ class SimpleGrid(ScrollPane):
                 widg.configure(text=self.actionHeading,
                     font=self.ghFont, background=self.cellHeadingBg
                 )
-                self.rightColumn.append(widg)
             # add a button
             else:
                 but = Button(widg, font=self.buttonFont,
@@ -11202,8 +11228,8 @@ class SimpleGrid(ScrollPane):
                     command=gui.MAKE_FUNC(self.action, rowNum-1)
                 )
                 but.place(relx=0.5, rely=0.5, anchor=CENTER)
-                self.rightColumn.append(but)
-
+                widg.but = but
+            self.rightColumn.append(widg)
             widg.grid(row=rowNum, column=cellNum + 1, sticky=N+E+S+W)
 
     def __hideEntryBoxes(self):
@@ -11217,8 +11243,8 @@ class SimpleGrid(ScrollPane):
         if self.addRowEntries is None: return
         if len(self.entries) > 0:
             for pos in range(len(self.entries)):
-                self.entries[pos].lab.grid(row=len(self.data), column=pos, sticky=N+E+S+W)
-            self.ent_but.lab.grid(row=len(self.data), column=len(self.entries), sticky=N+E+S+W)
+                self.entries[pos].lab.grid(row=len(self.cells), column=pos, sticky=N+E+S+W)
+            self.ent_but.lab.grid(row=len(self.cells), column=len(self.entries), sticky=N+E+S+W)
         else:
             self.__createEntryBoxes()
 
@@ -11227,7 +11253,7 @@ class SimpleGrid(ScrollPane):
         for cellNum in range(self.numColumns):
             name = "GR" + str(cellNum)
             lab = Label(self.gridContainer, relief=RIDGE, width=6, height=2)
-            lab.grid(row=len(self.data), column=cellNum, sticky=N + E + S + W)
+            lab.grid(row=len(self.cells), column=cellNum, sticky=N + E + S + W)
 
             # self.__buildEntry(name, self.gridContainer)
             ent = Entry(lab, width=5)
@@ -11236,7 +11262,7 @@ class SimpleGrid(ScrollPane):
             ent.lab = lab
 
         lab = Label(self.gridContainer, relief=RIDGE, height=2)
-        lab.grid(row=len(self.data), column=self.numColumns, sticky=N+E+S+W)
+        lab.grid(row=len(self.cells), column=self.numColumns, sticky=N+E+S+W)
 
         self.ent_but = Button(
             lab, font=self.buttonFont,
@@ -11250,7 +11276,12 @@ class SimpleGrid(ScrollPane):
         return [e.get() for e in self.entries]
 
     def getSelectedCells(self):
-        return dict(self.selectedCells)
+        selectedCells = []
+        for row in self.cells:
+            for cell in row:
+                if cell.selected:
+                    selectedCells.append(cell.gridPos)
+        return selectedCells
 
     def __refreshGrids(self, event):
         '''Reset the scroll region to encompass the inner frame'''
@@ -11262,20 +11293,18 @@ class SimpleGrid(ScrollPane):
 
     def __gridCellLeave(self, event):
         cell = event.widget
-        gridPos = cell.gridPos
-        if self.selectedCells[gridPos]:
+        if cell.selected:
             cell.config(background=self.cellSelectedBg)
         else:
             cell.config(background=self.cellBg)
 
     def __gridCellClick(self, event):
         cell = event.widget
-        gridPos = cell.gridPos
-        if self.selectedCells[gridPos]:
-            self.selectedCells[gridPos] = False
+        if cell.selected:
+            cell.selected = False
             cell.config(background=self.cellBg)
         else:
-            self.selectedCells[gridPos] = True
+            cell.selected = True
             cell.config(background=self.cellSelectedBg)
 
 
