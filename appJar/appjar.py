@@ -3834,6 +3834,10 @@ class gui(object):
         grid = self.widgetManager.get(self.Widgets.Grid, title)
         grid.addRows(data)
 
+    def setGridHeaders(self, title, data):
+        grid = self.widgetManager.get(self.Widgets.Grid, title)
+        grid.setHeaders(data)
+
     def deleteGridRow(self, title, rowNum):
         grid = self.widgetManager.get(self.Widgets.Grid, title)
         grid.deleteRow(rowNum)
@@ -11061,6 +11065,24 @@ class GridCell(Label):
     def clear(self):
         self.config(text="")
 
+    def mouseEnter(self, overColour):
+        self.config(background=overColour)
+
+    def mouseLeave(self, colour, selectedColour):
+        if self.selected:
+            self.config(background=selectedColour)
+        else:
+            self.config(background=colour)
+
+    def mouseClick(self, colour, selectedColour):
+        if self.selected:
+            self.config(background=colour)
+        else:
+            self.config(background=selectedColour)
+
+        self.selected = not self.selected
+
+
 # first row is used as a header
 # SimpleGrid is a ScrollPane, where a Frame has been placed on the canvas - called GridContainer
 class SimpleGrid(ScrollPane):
@@ -11172,6 +11194,14 @@ class SimpleGrid(ScrollPane):
     # this will include the header row
     def getRowCount(self):
         return len(self.cells)-1
+
+    def setHeaders(self, data):
+        for count in range(len(self.cells[0])):
+            cell = self.cells[0][count]
+            if count < len(data):
+                cell.setText(data[count])
+            else:
+                cell.clear()
 
     def replaceRow(self, rowNum, data):
         if 0 > rowNum >= self.numRows:
@@ -11330,25 +11360,13 @@ class SimpleGrid(ScrollPane):
         self.canvas.configure(scrollregion=self.canvas.bbox("all"))
 
     def __gridCellEnter(self, event):
-        cell = event.widget
-        cell.config(background=self.cellOverBg)
+        event.widget.mouseEnter(self.cellOverBg)
 
     def __gridCellLeave(self, event):
-        cell = event.widget
-        if cell.selected:
-            cell.config(background=self.cellSelectedBg)
-        else:
-            cell.config(background=self.cellBg)
+        event.widget.mouseLeave(self.cellBg, self.cellSelectedBg)
 
     def __gridCellClick(self, event):
-        cell = event.widget
-        if cell.selected:
-            cell.selected = False
-            cell.config(background=self.cellBg)
-        else:
-            cell.selected = True
-            cell.config(background=self.cellSelectedBg)
-
+        event.widget.mouseClick(self.cellBg, self.cellSelectedBg)
 
 ##########################
 # MicroBit Simulator

@@ -267,6 +267,10 @@ To have the **Press** button on the entries row add a new row of data, try the f
 * `.replaceAllGridRows(title, rowNum, data)`  
     Removes all existing rows, before adding the new rows.  
 
+* `.setgridHeaders(title, data)`  
+    Replace the values in the header row.  
+    If the new data has fewer items, the remaining header cells will be emptied.  
+
 * `.deleteGridRow(title, rowNum)`  
     Delete the specified row from the specified grid.
 
