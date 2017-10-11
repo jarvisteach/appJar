@@ -11055,6 +11055,12 @@ class GridCell(Label):
         Label.__init__(self, parent, **opts)
         self.selected = False
 
+    def setText(self, text):
+        self.config(text=text)
+
+    def clear(self):
+        self.config(text="")
+
 # first row is used as a header
 # SimpleGrid is a ScrollPane, where a Frame has been placed on the canvas - called GridContainer
 class SimpleGrid(ScrollPane):
@@ -11174,9 +11180,9 @@ class SimpleGrid(ScrollPane):
             for count in range(len(self.cells[rowNum+1])):
                 cell = self.cells[rowNum+1][count]
                 if count < len(data):
-                    cell.config(text=data[count])
+                    cell.setText(data[count])
                 else:
-                    cell.config(text="")
+                    cell.clear()
 
     def deleteAllRows(self):
         for loop in range(len(self.cells)-2, -1, -1):
