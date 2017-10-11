@@ -3830,14 +3830,35 @@ class gui(object):
         grid = self.widgetManager.get(self.Widgets.Grid, title)
         grid.addRow(data)
 
+    def addGridRows(self, title, data):
+        grid = self.widgetManager.get(self.Widgets.Grid, title)
+        grid.addRows(data)
+
     def deleteGridRow(self, title, rowNum):
         grid = self.widgetManager.get(self.Widgets.Grid, title)
         grid.deleteRow(rowNum)
+
+    def deleteAllGridRows(self, title):
+        grid = self.widgetManager.get(self.Widgets.Grid, title)
+        grid.deleteAllRows()
+
+    def getGridRowCount(self, title):
+        grid = self.widgetManager.get(self.Widgets.Grid, title)
+        return grid.getRowCount()
 
     def confGrid(self, title, field, value):
         grid = self.widgetManager.get(self.Widgets.Grid, title)
         kw = {field:value}
         grid.config(**kw)
+
+    def replaceGridRow(self, title, rowNum, data):
+        grid = self.widgetManager.get(self.Widgets.Grid, title)
+        grid.replaceRow(rowNum, data)
+
+    def replaceAllGridRows(self, title, data):
+        grid = self.widgetManager.get(self.Widgets.Grid, title)
+        grid.deleteAllRows()
+        grid.addRows(data)
 
     ########################################
 
@@ -11038,9 +11059,6 @@ class GridCell(Label):
 # SimpleGrid is a ScrollPane, where a Frame has been placed on the canvas - called GridContainer
 class SimpleGrid(ScrollPane):
 
-    rows = []
-    addRow = False
-
     def __init__(self, parent, title, data, action=None, addRow=None,
                     actionHeading="Action", actionButton="Press",
                     addButton="Add", **opts):
@@ -11145,12 +11163,30 @@ class SimpleGrid(ScrollPane):
         if scroll:
             self.scrollBottom()
 
-    # not finished
+    # this will include the header row
+    def getRowCount(self):
+        return len(self.cells)-1
+
+    def replaceRow(self, rowNum, data):
+        if 0 > rowNum >= self.numRows:
+            raise Exception("Invalid row number.")
+        else:
+            for count in range(len(self.cells[rowNum+1])):
+                cell = self.cells[rowNum+1][count]
+                if count < len(data):
+                    cell.config(text=data[count])
+                else:
+                    cell.config(text="")
+
+    def deleteAllRows(self):
+        for loop in range(len(self.cells)-2, -1, -1):
+            self.deleteRow(loop)
+
     def deleteRow(self, position):
         if 0 > position >= self.numRows:
             raise Exception("Invalid row number.")
         else:
-            # forget the specified row & butotn
+            # forget the specified row & button
             for cell in self.cells[position+1]:
                 cell.grid_forget()
             if self.action is not None:

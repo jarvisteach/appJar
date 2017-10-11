@@ -240,6 +240,9 @@ app.go()
     True indicates the cell is selected, False indicates the cell is not selected.  
     The name of each entry on the dictionary will be in the format ROW-COLUMN, eg. 0-2  
 
+* `.getGridRowCount(title)`  
+    Returns a count of how many rows are in the grid (not including the header row).  
+
 ####Set Grids  
 
 * `.addGridRow(title, data)`  
@@ -253,6 +256,22 @@ To have the **Press** button on the entries row add a new row of data, try the f
             data = app.getGridEntries("g1")
             app.addGridRow("g1", data)
 ``` 
+
+* `.addGridRows(title, data)`  
+    Adds the new rows of data to the end of the existing grid.  
+
+* `.replaceGridRow(title, rowNum, data)`  
+    Replace the values in the specified row with the new data.  
+    If the new data has fewer items, the remaining cells will be emptied.  
+
+* `.replaceAllGridRows(title, rowNum, data)`  
+    Removes all existing rows, before adding the new rows.  
+
+* `.deleteGridRow(title, rowNum)`  
+    Delete the specified row from the specified grid.
+
+* `.deleteAllGridRows(title)`  
+    Delete all rows from the specified grid (except the header row).  
 
 ###MatPlotLib
 ---
