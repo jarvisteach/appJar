@@ -14,6 +14,7 @@ def press(btn):
     elif btn == "SHOW": app.showGrid("grid")
     elif btn == "HEADER": app.setGridHeaders("grid", app.getGridEntries("grid"))
     elif btn == "ALL": app.deleteAllGridRows("grid")
+    elif btn == "COL": app.addGridColumn("grid", 2, ["yyy", "zzz"])
     elif btn == "COUNT": print(app.getGridRowCount("grid"))
     else: app.deleteGridRow("grid", int(btn))
 app=gui("600x600", "600x600")
@@ -21,7 +22,7 @@ app=gui("600x600", "600x600")
 #app.setBg("red")
 app.addGrid("grid", [["A","B","C"], [3,4,5,6,7,8], [2,4,6,8]], action=press, addRow=press)
 app.addButtons(["FRENCH", "SHOW'EM", "UP", "DOWN"], press)
-app.addButtons(["HIDE", "SHOW", "DELETE", "ALL", "COUNT", "HEADER"], press)
+app.addButtons(["HIDE", "SHOW", "DELETE", "ALL", "COUNT", "HEADER", "COL"], press)
 
 #app.setGridHeight("grid", 300)
 

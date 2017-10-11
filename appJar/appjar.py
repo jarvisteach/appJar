@@ -3834,6 +3834,10 @@ class gui(object):
         grid = self.widgetManager.get(self.Widgets.Grid, title)
         grid.addRows(data)
 
+    def addGridColumn(self, title, columnNumber, data):
+        grid = self.widgetManager.get(self.Widgets.Grid, title)
+        grid.addColumn(columnNumber, data)
+
     def setGridHeaders(self, title, data):
         grid = self.widgetManager.get(self.Widgets.Grid, title)
         grid.setHeaders(data)
@@ -11261,27 +11265,8 @@ class SimpleGrid(ScrollPane):
                 val = ""
             else:
                 val = rowData[cellNum]
-
-            lab = GridCell(self.gridContainer)
-            if rowNum == 0: # adding title row
-                lab.configure(relief=RIDGE,
-                    text=val, font=self.ghFont,
-                    background=self.cellHeadingBg
-                )
-            else:
-                lab.configure( relief=RIDGE,
-                    text=val, font=self.gdFont,
-                    background=self.cellBg
-                )
-                lab.bind("<Enter>", self.__gridCellEnter)
-                lab.bind("<Leave>", self.__gridCellLeave)
-                lab.bind("<Button-1>", self.__gridCellClick)
-                
-                lab.gridPos = str(rowNum - 1) + "-" + str(cellNum)
-
-            lab.grid(row=rowNum, column=cellNum, sticky=N+E+S+W)
-            Grid.columnconfigure(self.gridContainer, cellNum, weight=1)
-            Grid.rowconfigure(self.gridContainer, rowNum, weight=1)
+            
+            lab = self.__createCell(rowNum, cellNum, val)
             newRow.append(lab)
         self.cells.append(newRow)
 
@@ -11304,6 +11289,66 @@ class SimpleGrid(ScrollPane):
             self.rightColumn.append(widg)
             widg.grid(row=rowNum, column=cellNum + 1, sticky=N+E+S+W)
 
+    def __createCell(self, rowNum, cellNum, val):
+        lab = GridCell(self.gridContainer)
+        if rowNum == 0: # adding title row
+            lab.configure(relief=RIDGE,
+                text=val, font=self.ghFont,
+                background=self.cellHeadingBg
+            )
+        else:
+            lab.configure( relief=RIDGE,
+                text=val, font=self.gdFont,
+            background=self.cellBg
+            )
+            lab.bind("<Enter>", self.__gridCellEnter)
+            lab.bind("<Leave>", self.__gridCellLeave)
+            lab.bind("<Button-1>", self.__gridCellClick)
+            
+            lab.gridPos = str(rowNum - 1) + "-" + str(cellNum)
+
+        lab.grid(row=rowNum, column=cellNum, sticky=N+E+S+W)
+        Grid.columnconfigure(self.gridContainer, cellNum, weight=1)
+        Grid.rowconfigure(self.gridContainer, rowNum, weight=1)
+        return lab
+
+    def addColumn(self, columnNumber, data):
+        self.__hideEntryBoxes()
+
+        # move the right column, if necessary
+        if self.action is not None:
+            for rowPos in range(len(self.cells)):
+                self.rightColumn[rowPos].grid_forget()
+                self.rightColumn[rowPos].grid(row=rowPos, column=self.numColumns+1, sticky=N+E+S+W)
+
+            # move the button
+            self.ent_but.lab.grid_forget()
+            self.ent_but.lab.grid(row=len(self.cells), column=self.numColumns+2, sticky=N+E+S+W)
+
+            # add another entry
+            ent = self.__createEntryBox(self.numColumns)
+            self.entries.append(ent)
+
+        # move all columns including this position right one
+        for colPos in range(self.numColumns-1, columnNumber-1, -1):
+            for rowPos in range(len(self.cells)):
+                cell = self.cells[rowPos][colPos]
+                cell.grid_forget()
+                cell.grid(row=rowPos, column=colPos+1, sticky=N+E+S+W)
+                cell.gridPos = str(rowPos - 1) + "-" + str(colPos+1)
+
+        # then add this column
+        for rowPos in range(len(self.cells)):
+            if rowPos < len(data):
+                val = data[rowPos]
+            else:
+                val = ""
+            lab = self.__createCell(rowPos, columnNumber, val)
+            self.cells[rowPos].insert(columnNumber, lab)
+
+        self.numColumns += 1
+        self.__showEntryBoxes()
+
     def __hideEntryBoxes(self):
         if self.addRowEntries is None or len(self.entries) == 0:
             return
@@ -11323,19 +11368,11 @@ class SimpleGrid(ScrollPane):
     def __createEntryBoxes(self):
         if self.addRowEntries is None: return
         for cellNum in range(self.numColumns):
-            name = "GR" + str(cellNum)
-            lab = Label(self.gridContainer, relief=RIDGE, width=6, height=2)
-            lab.grid(row=len(self.cells), column=cellNum, sticky=N + E + S + W)
-
-            # self.__buildEntry(name, self.gridContainer)
-            ent = Entry(lab, width=5)
-            ent.pack(expand=True, fill='both')
+            ent = self.__createEntryBox(cellNum)
             self.entries.append(ent)
-            ent.lab = lab
 
         lab = Label(self.gridContainer, relief=RIDGE, height=2)
         lab.grid(row=len(self.cells), column=self.numColumns, sticky=N+E+S+W)
-
         self.ent_but = Button(
             lab, font=self.buttonFont,
             text=self.addButton,
@@ -11343,6 +11380,17 @@ class SimpleGrid(ScrollPane):
         )
         self.ent_but.lab = lab
         self.ent_but.pack(expand=True, fill='both')
+
+    def __createEntryBox(self, cellNum):
+        name = "GR" + str(cellNum)
+        lab = Label(self.gridContainer, relief=RIDGE, width=6, height=2)
+        lab.grid(row=len(self.cells), column=cellNum, sticky=N + E + S + W)
+
+        # self.__buildEntry(name, self.gridContainer)
+        ent = Entry(lab, width=5)
+        ent.pack(expand=True, fill='both')
+        ent.lab = lab
+        return ent
 
     def getEntries(self):
         return [e.get() for e in self.entries]
