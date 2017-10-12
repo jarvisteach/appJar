@@ -5133,27 +5133,32 @@ class gui(object):
             column=0,
             colspan=0,
             rowspan=0):
-        self.widgetManager.verify(self.Widgets.Plot, title)
+        canvas, fig = self.__addPlotFig(title, row, column, colspan, rowspan)
+        axes = fig.add_subplot(111)
+        axes.plot(t,s)
+        canvas.axes = axes
+        return axes
 
+    def addPlotFig(self, title, row=None, column=0, colspan=0, rowspan=0):
+        canvas, fig = self.__addPlotFig(title, row, column, colspan, rowspan)
+        return fig
+
+    def __addPlotFig(self, title, row=None, column=0, colspan=0, rowspan=0):
+        self.widgetManager.verify(self.Widgets.Plot, title)
         self.__loadMatplotlib()
         if FigureCanvasTkAgg is False:
             raise Exception("Unable to load MatPlotLib - plots not available")
         else:
             fig = Figure()
-
-            axes = fig.add_subplot(111)
-            axes.plot(t,s)
-
             canvas = FigureCanvasTkAgg(fig, self.getContainer())
             canvas.fig = fig
-            canvas.axes = axes
             canvas.show()
     #        canvas.get_tk_widget().pack(side=TOP, fill=BOTH, expand=1)
             canvas._tkcanvas.pack(side=TOP, fill=BOTH, expand=1)
 
             self.__positionWidget(canvas.get_tk_widget(), row, column, colspan, rowspan)
             self.widgetManager.add(self.Widgets.Plot, title, canvas)
-            return axes
+            return canvas, fig
 
     def refreshPlot(self, title):
         canvas = self.widgetManager.get(self.Widgets.Plot, title)
@@ -11059,9 +11064,27 @@ class SubWindow(Toplevel):
 #####################################
 
 class GridCell(Label):
-    def __init__(self, parent, **opts):
+    def __init__(self, parent, isHeader=False, **opts):
         Label.__init__(self, parent, **opts)
         self.selected = False
+        self.config(relief=RIDGE)
+
+        # colours
+        self.cellHeadingBg = "#A9A9A9"      # HEADING BG
+        self.cellBg = "#E0FFFF"             # CELL BG
+        self.cellOverBg = "#C0C0C0"         # mouse over BG
+        self.cellSelectedBg = "#D3D3D3"     # selected cell BG
+
+        self.gdFont = font.Font(family="Helvetica", size=12)
+        self.ghFont = font.Font(family="Helvetica", size=14, weight="bold")
+
+        if isHeader:
+            self.config(font=self.ghFont, background=self.cellHeadingBg)
+        else:
+            self.config(font=self.gdFont, background=self.cellBg)
+            self.bind("<Enter>", self.mouseEnter)
+            self.bind("<Leave>", self.mouseLeave)
+            self.bind("<Button-1>", self.mouseClick)
 
     def setText(self, text):
         self.config(text=text)
@@ -11069,20 +11092,20 @@ class GridCell(Label):
     def clear(self):
         self.config(text="")
 
-    def mouseEnter(self, overColour):
-        self.config(background=overColour)
+    def mouseEnter(self, event):
+        self.config(background=self.cellOverBg)
 
-    def mouseLeave(self, colour, selectedColour):
+    def mouseLeave(self, event):
         if self.selected:
-            self.config(background=selectedColour)
+            self.config(background=self.cellSelectedBg)
         else:
-            self.config(background=colour)
+            self.config(background=self.cellBg)
 
-    def mouseClick(self, colour, selectedColour):
+    def mouseClick(self, event):
         if self.selected:
-            self.config(background=colour)
+            self.config(background=self.cellBg)
         else:
-            self.config(background=selectedColour)
+            self.config(background=self.cellSelectedBg)
 
         self.selected = not self.selected
 
@@ -11107,8 +11130,10 @@ class SimpleGrid(ScrollPane):
             self.ghFont = opts["font"]
             self.ghFont.configure(size=self.ghFont.actual("size") + 2, weight="bold")
         else:
-            self.gdFont = font.Font(family="Helvetica", size=12)
             self.ghFont = font.Font(family="Helvetica", size=14, weight="bold")
+            self.gdFont = font.Font(family="Helvetica", size=12)
+
+        self.cellHeadingBg = "#A9A9A9"      # HEADING BG
 
         # actions
         self.addRowEntries = addRow
@@ -11130,12 +11155,6 @@ class SimpleGrid(ScrollPane):
         self.actionHeading = actionHeading
         self.actionButton= actionButton
         self.addButton= addButton
-       
-        # colours
-        self.cellHeadingBg = "#A9A9A9"      # HEADING BG
-        self.cellBg = "#E0FFFF"             # CELL BG
-        self.cellOverBg = "#C0C0C0"         # mouse over BG
-        self.cellSelectedBg = "#D3D3D3"     # selected cell BG
 
         # add the grid container to the frame
         self.gridContainer = Frame(self.interior)
@@ -11179,6 +11198,11 @@ class SimpleGrid(ScrollPane):
         if "addbutton" in kw:
             self.addButton = kw.pop("addbutton")
             self.ent_but.config(text=self.addButton)
+
+    def _configCells(self, field, value):
+        for row in cells:
+            for cell in row:
+                cell.config(field=value)
 
     def addRow(self, rowData, scroll=True):
         self.__hideEntryBoxes()
@@ -11290,21 +11314,11 @@ class SimpleGrid(ScrollPane):
             widg.grid(row=rowNum, column=cellNum + 1, sticky=N+E+S+W)
 
     def __createCell(self, rowNum, cellNum, val):
-        lab = GridCell(self.gridContainer)
         if rowNum == 0: # adding title row
-            lab.configure(relief=RIDGE,
-                text=val, font=self.ghFont,
-                background=self.cellHeadingBg
-            )
+            lab = GridCell(self.gridContainer, isHeader=True, text=val)
         else:
-            lab.configure( relief=RIDGE,
-                text=val, font=self.gdFont,
-            background=self.cellBg
-            )
-            lab.bind("<Enter>", self.__gridCellEnter)
-            lab.bind("<Leave>", self.__gridCellLeave)
-            lab.bind("<Button-1>", self.__gridCellClick)
-            
+
+            lab = GridCell(self.gridContainer, text=val)
             lab.gridPos = str(rowNum - 1) + "-" + str(cellNum)
 
         lab.grid(row=rowNum, column=cellNum, sticky=N+E+S+W)
@@ -11406,15 +11420,6 @@ class SimpleGrid(ScrollPane):
     def __refreshGrids(self, event):
         '''Reset the scroll region to encompass the inner frame'''
         self.canvas.configure(scrollregion=self.canvas.bbox("all"))
-
-    def __gridCellEnter(self, event):
-        event.widget.mouseEnter(self.cellOverBg)
-
-    def __gridCellLeave(self, event):
-        event.widget.mouseLeave(self.cellBg, self.cellSelectedBg)
-
-    def __gridCellClick(self, event):
-        event.widget.mouseClick(self.cellBg, self.cellSelectedBg)
 
 ##########################
 # MicroBit Simulator
