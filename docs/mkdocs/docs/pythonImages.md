@@ -36,6 +36,16 @@ app.stopLabelFrame()
     Currently only supports base64 encoded GIF images.  
     Alternatively, you can pass in a ready made PhotoImage, simply set `fmt` to be 'PhotoImage'.  
 
+```python
+from appJar import gui 
+from PIL import Image, ImageTk
+
+app = gui()
+photo = ImageTk.PhotoImage(Image.open("images.jpg"))
+app.addImageData("pic", photo, fmt="PhotoImage")
+app.go()
+```
+
 * `.addIcon(title, iconName)`  
     This will create an image as above, but use one of appJar's inbuilt icons.  
     Simply pass the name of one of the icons.  

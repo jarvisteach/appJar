@@ -6761,8 +6761,7 @@ class gui(object):
         :param row/column/colspan/rowspan: the row/column to position the label in & how many rows/columns to strecth across
         :raises ItemLookupError: raised if the title is not unique
         """
-#        print(Widgets.Label, title)
-#        self.widgetManager.verify(Widgets.Label, title)
+        self.widgetManager.verify(Widgets.Label, title)
         if text is None:
             text = ""
 
@@ -11157,8 +11156,8 @@ class SimpleGrid(ScrollPane):
         self.addButton= addButton
 
         # add the grid container to the frame
-        self.gridContainer = Frame(self.interior)
-        self.gridContainer.pack(expand=True, fill='both')
+        self.gridContainer = self.interior
+#        self.gridContainer.pack(expand=True, fill='both')
         self.gridContainer.bind("<Configure>", self.__refreshGrids)
 
         self.addRows(data)
@@ -11278,6 +11277,7 @@ class SimpleGrid(ScrollPane):
             # lose last item from lists
             self.cells = self.cells[:-1]
             self.rightColumn = self.rightColumn[:-1]
+            self.__updateButtons(position)
 
     def __addRow(self, rowData):
         rowNum = len(self.cells)
@@ -11312,6 +11312,11 @@ class SimpleGrid(ScrollPane):
                 widg.but = but
             self.rightColumn.append(widg)
             widg.grid(row=rowNum, column=cellNum + 1, sticky=N+E+S+W)
+
+    def __updateButtons(self, position=0):
+        for pos in range(position+1, len(self.rightColumn)):
+            but = self.rightColumn[pos].but
+            but.config(command=gui.MAKE_FUNC(self.action, pos-1))
 
     def __createCell(self, rowNum, cellNum, val):
         if rowNum == 0: # adding title row
