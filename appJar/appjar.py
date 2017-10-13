@@ -3838,6 +3838,10 @@ class gui(object):
         grid = self.widgetManager.get(self.Widgets.Grid, title)
         grid.addColumn(columnNumber, data)
 
+    def deleteGridColumn(self, title, columnNumber):
+        grid = self.widgetManager.get(self.Widgets.Grid, title)
+        grid.deleteColumn(columnNumber)
+
     def setGridHeaders(self, title, data):
         grid = self.widgetManager.get(self.Widgets.Grid, title)
         grid.setHeaders(data)
@@ -11157,7 +11161,6 @@ class SimpleGrid(ScrollPane):
 
         # add the grid container to the frame
         self.gridContainer = self.interior
-#        self.gridContainer.pack(expand=True, fill='both')
         self.gridContainer.bind("<Configure>", self.__refreshGrids)
 
         self.addRows(data)
@@ -11367,6 +11370,45 @@ class SimpleGrid(ScrollPane):
 
         self.numColumns += 1
         self.__showEntryBoxes()
+
+    def deleteColumn(self, columnNumber):
+
+        if 0 > columnNumber >= len(self.cells):
+            raise Exception("Invalid column number.")
+        else:
+            # hide the entries
+            self.__hideEntryBoxes()
+
+            # delete the column
+            for row in self.cells:
+                row[columnNumber].grid_forget()
+                del row[columnNumber]
+
+            # update the entry boxes
+            if self.addRowEntries is not None and len(self.entries) >= columnNumber:
+                self.entries[columnNumber].grid_forget()
+                del self.entries[columnNumber]
+
+            # move the remaining columns
+            for rowCount in range(len(self.cells)):
+                row = self.cells[rowCount]
+                for colCount in range(columnNumber, len(row)):
+                    cell = row[colCount]
+                    cell.grid_forget()
+                    cell.grid(row=rowCount, column=colCount, sticky=N+E+S+W)
+                    # update the cells
+                    cell.gridPos = str(rowCount - 1) + "-" + str(colCount)
+
+
+            # move the buttons
+            if self.action is not None:
+                for rowPos in range(len(self.cells)):
+                    self.rightColumn[rowPos].grid_forget()
+                    self.rightColumn[rowPos].grid(row=rowPos, column=self.numColumns-1, sticky=N+E+S+W)
+
+            self.numColumns -= 1
+            # show the entry boxes
+            self.__showEntryBoxes()
 
     def __hideEntryBoxes(self):
         if self.addRowEntries is None or len(self.entries) == 0:

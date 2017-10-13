@@ -277,6 +277,12 @@ To have the **Press** button on the entries row add a new row of data, try the f
 * `.deleteAllGridRows(title)`  
     Delete all rows from the specified grid (except the header row).  
 
+* `.addGridColumn(title, columnNumber, data)`  
+    Add the column of data to the named grid, in the specified position.  
+
+* `.deleteGridColumn(title, columnNumber)`  
+    Delete the specified column from the named grid.  
+
 ###MatPlotLib
 ---
 
