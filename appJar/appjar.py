@@ -7470,12 +7470,14 @@ class gui(object):
         return entries
 
     def setEntry(self, name, text, callFunction=True):
+        ent = self.widgetManager.get(self.Widgets.Entry, name)
         var = self.widgetManager.get(self.Widgets.Entry, name, group=WidgetManager.VARS)
         self.__updateEntryDefault(name, mode="set")
 
         # now call function
         with PauseCallFunction(callFunction, var, False):
-            var.set(text)
+            if not ent.isNumeric or self.__validateNumericEntry("1", None, text, None, "1", None, None, None):
+                var.set(text)
 
     def setEntryMaxLength(self, name, length):
         var = self.widgetManager.get(self.Widgets.Entry, name, group=WidgetManager.VARS)

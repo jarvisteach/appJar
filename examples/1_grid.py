@@ -28,6 +28,10 @@ def press(btn):
             print(app.getGridRow("grid", int(btn)))
 
 app=gui()
+app.addLabel("title", "Grid Widget Test")
+app.setLabelFg("title", "blue")
+app.setLabelBg("title", "yellow")
+app.setLabelFont(20)
 app.addGrid("grid", [["A","B","C"], [3,4,5,6,7], [2,4,6,8]], action=press, addRow=press, showMenu=True)
 #app.setGridHeight("grid", 400)
 app.addCheckBox("Delete?")
