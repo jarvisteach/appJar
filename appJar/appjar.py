@@ -11014,6 +11014,7 @@ class SimpleEntryDialog(Dialog):
             self.e1.var = self.defaultVar
             self.e1.config(textvariable=self.e1.var)
             self.e1.var.auto_id = None
+            self.e1.icursor("end")
         self.l1 = Label(master, fg="#FF0000")
         self.e1.grid(row=1)
         self.l1.grid(row=2)
@@ -11375,6 +11376,9 @@ class SimpleGrid(ScrollPane):
 
     def __buildMenu(self):
         self.menu = Menu(self, tearoff=0)
+        self.menu.add_command(label="Edit", command=lambda: self.__menuHelper("edit"))
+        self.menu.add_command(label="Clear", command=lambda: self.__menuHelper("clear"))
+        self.menu.add_separator()
         self.menu.add_command(label="Copy", command=lambda: self.__menuHelper("copy"))
         self.menu.add_command(label="Paste", command=lambda: self.__menuHelper("paste"))
         self.menu.add_separator()
@@ -11387,13 +11391,13 @@ class SimpleGrid(ScrollPane):
         self.menu.add_command(label="Select", command=lambda: self.__menuHelper("select"))
         self.menu.add_command(label="Deselect", command=lambda: self.__menuHelper("deselect"))
 
-
     def __rightClick(self, event):
         self.lastSelected = event.widget
         self.menu.tk_popup(event.x_root - 10, event.y_root - 10)
         return "break"
 
     def __menuHelper(self, action):
+        self.update_idletasks()
         vals=self.lastSelected.gridPos.split("-")
 
         if action == "dc":
@@ -11415,6 +11419,15 @@ class SimpleGrid(ScrollPane):
         elif action == "paste":
             try: self.lastSelected.config(text=self.clipboard_get())
             except: pass
+        elif action == "clear":
+            self.lastSelected.config(text="")
+        elif action == "edit":
+            val=self.lastSelected.cget("text")
+            defaultVar = StringVar(self)
+            defaultVar.set(val)
+            newText =  TextDialog(self, "Edit", "Enter the new text", defaultVar=defaultVar).result
+            if newText is not None:
+                self.lastSelected.config(text=newText)
 
     def addColumn(self, columnNumber, data):
         if columnNumber < 0 or columnNumber > self.numColumns:
