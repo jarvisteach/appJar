@@ -5113,32 +5113,30 @@ class gui(object):
 #####################################
 # FUNCTION for matplotlib
 #####################################
-    def addPlot(
-            self,
-            title,
-            t, s,
-            row=None,
-            column=0,
-            colspan=0,
-            rowspan=0):
-        canvas, fig = self.__addPlotFig(title, row, column, colspan, rowspan)
+    def addPlot(self, title, t, s, row=None, column=0, colspan=0, rowspan=0, width=None, height=None):
+        canvas, fig = self.__addPlotFig(title, row, column, colspan, rowspan, width, height)
         axes = fig.add_subplot(111)
         axes.plot(t,s)
         canvas.axes = axes
         return axes
 
-    def addPlotFig(self, title, row=None, column=0, colspan=0, rowspan=0):
-        canvas, fig = self.__addPlotFig(title, row, column, colspan, rowspan)
+    def addPlotFig(self, title, row=None, column=0, colspan=0, rowspan=0, width=None, height=None):
+        canvas, fig = self.__addPlotFig(title, row, column, colspan, rowspan, width, height)
         return fig
 
-    def __addPlotFig(self, title, row=None, column=0, colspan=0, rowspan=0):
+    def __addPlotFig(self, title, row=None, column=0, colspan=0, rowspan=0, width=None, height=None):
         self.widgetManager.verify(self.Widgets.Plot, title)
         self.__loadMatplotlib()
         if FigureCanvasTkAgg is False:
             raise Exception("Unable to load MatPlotLib - plots not available")
         else:
-            fig = Figure()
+            fig = Figure(tight_layout=True)
+
+            if width is not None and height is not None:
+                fig.set_size_inches(width,height,forward=True)
+
             canvas = FigureCanvasTkAgg(fig, self.getContainer())
+            canvas._tkcanvas.config(background="#c0c0c0", borderwidth=0, highlightthickness=0) 
             canvas.fig = fig
             canvas.show()
     #        canvas.get_tk_widget().pack(side=TOP, fill=BOTH, expand=1)
@@ -7342,9 +7340,9 @@ class gui(object):
         if action == "1":
             if text in '0123456789.-+':
                 try:
-                    if len(value_if_allowed) == 1 and value_if_allowed in '.-':
+                    if len(str(value_if_allowed)) == 1 and value_if_allowed in '.-':
                         return True
-                    elif len(value_if_allowed) == 2 and value_if_allowed == '-.':
+                    elif len(str(value_if_allowed)) == 2 and value_if_allowed == '-.':
                         return True
                     else:
                         float(value_if_allowed)
