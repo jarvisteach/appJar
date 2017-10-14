@@ -3797,7 +3797,8 @@ class gui(object):
             addRow=None,
             actionHeading="Action",
             actionButton="Press",
-            addButton="Add"):
+            addButton="Add",
+            showMenu=False):
         self.widgetManager.verify(self.Widgets.Grid, title)
         grid = SimpleGrid(
             self.getContainer(),
@@ -3808,6 +3809,7 @@ class gui(object):
             actionHeading,
             actionButton,
             addButton,
+            showMenu,
             buttonFont=self.buttonFont)
         grid.config(font=self.gridFont, background=self.__getContainerBg())
         self.__positionWidget(
@@ -6765,7 +6767,7 @@ class gui(object):
         :param row/column/colspan/rowspan: the row/column to position the label in & how many rows/columns to strecth across
         :raises ItemLookupError: raised if the title is not unique
         """
-        self.widgetManager.verify(Widgets.Label, title)
+        self.widgetManager.verify(self.Widgets.Label, title)
         if text is None:
             text = ""
 
@@ -10656,9 +10658,10 @@ class SelectableLabel(Entry):
 
 
 class ScrollPane(Frame):
-    def __init__(self, parent, **opts):
+    def __init__(self, parent, resize=False, **opts):
         Frame.__init__(self, parent)
         self.config(padx=5, pady=5)
+        self.resize = resize
 
         # make the ScrollPane expandable
         self.grid_rowconfigure(0, weight=1)
@@ -10689,7 +10692,21 @@ class ScrollPane(Frame):
         self.interior_id = self.canvas.create_window(
             0, 0, window=self.interior, anchor=NW)
 
-        self.interior.bind('<Configure>', self.__configureInterior)
+        if self.resize:
+            self.canvas.bind('<Configure>', self.__updateWidth)
+        else:
+            self.interior.bind('<Configure>', self.__updateWidth)
+
+    def __updateWidth(self, event):
+        if self.resize:
+            canvas_width = event.width
+            interior_width = self.interior.winfo_reqwidth()
+            if canvas_width < interior_width: canvas_width = interior_width
+            self.canvas.itemconfig(self.interior_id, width=canvas_width)
+        else:
+            size = (self.interior.winfo_reqwidth(), self.interior.winfo_reqheight())
+            self.canvas.config(scrollregion="0 0 %s %s" % size)
+
 
     def config(self, **kw):
         self.configure(**kw)
@@ -10704,12 +10721,6 @@ class ScrollPane(Frame):
             Frame.config(self, **kw)
         else:
             super(__class__, self).config(**kw)
-
-    # track changes to the canvas and frame width and sync them,
-    # http://www.scriptscoop2.com/t/35d742299f35/python-tkinter-scrollbar-for-frame.html
-    def __configureInterior(self, event):
-        size = (self.interior.winfo_reqwidth(), self.interior.winfo_reqheight())
-        self.canvas.config(scrollregion="0 0 %s %s" % size)
 
     # unbind any saved bind ids
     def __unbindIds(self):
@@ -11104,7 +11115,7 @@ class GridCell(Label):
         else:
             self.config(background=self.cellBg)
 
-    def mouseClick(self, event):
+    def mouseClick(self, event=None):
         if self.selected:
             self.config(background=self.cellBg)
         else:
@@ -11119,14 +11130,14 @@ class SimpleGrid(ScrollPane):
 
     def __init__(self, parent, title, data, action=None, addRow=None,
                     actionHeading="Action", actionButton="Press",
-                    addButton="Add", **opts):
+                    addButton="Add", showMenu=False, **opts):
 
         if "buttonFont" in opts:
             self.buttonFont = opts.pop("buttonFont")
         else:
             self.buttonFont = font.Font(family="Helvetica", size=12)
 
-        ScrollPane.__init__(self, parent, **opts)
+        ScrollPane.__init__(self, parent, resize=True, **opts)
 
         if "font" in opts:
             self.gdFont = opts["font"]
@@ -11146,6 +11157,11 @@ class SimpleGrid(ScrollPane):
         self.cells = []
         self.entries = []
         self.rightColumn = []
+
+        # menu stuff
+        self.showMenu = showMenu
+        self.lastSelected = None
+        if self.showMenu: self.__buildMenu()
 
         # how many rows & columns
         self.numColumns = 0
@@ -11283,38 +11299,41 @@ class SimpleGrid(ScrollPane):
             self.__updateButtons(position)
 
     def __addRow(self, rowData):
-        rowNum = len(self.cells)
-        newRow = []
-        for cellNum in range(self.numColumns):
+        if self.numColumns == 0:
+            raise Exception("No columns to add to.")
+        else:
+            rowNum = len(self.cells)
+            newRow = []
+            for cellNum in range(self.numColumns):
 
-            # get a val ("" if no val)
-            if cellNum >= len(rowData):
-                val = ""
-            else:
-                val = rowData[cellNum]
-            
-            lab = self.__createCell(rowNum, cellNum, val)
-            newRow.append(lab)
-        self.cells.append(newRow)
+                # get a val ("" if no val)
+                if cellNum >= len(rowData):
+                    val = ""
+                else:
+                    val = rowData[cellNum]
+                
+                lab = self.__createCell(rowNum, cellNum, val)
+                newRow.append(lab)
+            self.cells.append(newRow)
 
-        # add some buttons for each row
-        if self.action is not None:
-            widg = Label(self.gridContainer, relief=RIDGE, height=2)
-            # add the title
-            if rowNum == 0:
-                widg.configure(text=self.actionHeading,
-                    font=self.ghFont, background=self.cellHeadingBg
-                )
-            # add a button
-            else:
-                but = Button(widg, font=self.buttonFont,
-                    text=self.actionButton,
-                    command=gui.MAKE_FUNC(self.action, rowNum-1)
-                )
-                but.place(relx=0.5, rely=0.5, anchor=CENTER)
-                widg.but = but
-            self.rightColumn.append(widg)
-            widg.grid(row=rowNum, column=cellNum + 1, sticky=N+E+S+W)
+            # add some buttons for each row
+            if self.action is not None:
+                widg = Label(self.gridContainer, relief=RIDGE, height=2)
+                # add the title
+                if rowNum == 0:
+                    widg.configure(text=self.actionHeading,
+                        font=self.ghFont, background=self.cellHeadingBg
+                    )
+                # add a button
+                else:
+                    but = Button(widg, font=self.buttonFont,
+                        text=self.actionButton,
+                        command=gui.MAKE_FUNC(self.action, rowNum-1)
+                    )
+                    but.place(relx=0.5, rely=0.5, anchor=CENTER)
+                    widg.but = but
+                self.rightColumn.append(widg)
+                widg.grid(row=rowNum, column=cellNum + 1, sticky=N+E+S+W)
 
     def __updateButtons(self, position=0):
         for pos in range(position+1, len(self.rightColumn)):
@@ -11324,56 +11343,110 @@ class SimpleGrid(ScrollPane):
     def __createCell(self, rowNum, cellNum, val):
         if rowNum == 0: # adding title row
             lab = GridCell(self.gridContainer, isHeader=True, text=val)
+            lab.gridPos = "h-" + str(cellNum)
         else:
 
             lab = GridCell(self.gridContainer, text=val)
             lab.gridPos = str(rowNum - 1) + "-" + str(cellNum)
+
+        if self.showMenu:
+            if gui.GET_PLATFORM() in [gui.WINDOWS, gui.LINUX]:
+                lab.bind('<Button-3>', self.__rightClick)
+            else:
+                lab.bind('<Button-2>', self.__rightClick)
 
         lab.grid(row=rowNum, column=cellNum, sticky=N+E+S+W)
         Grid.columnconfigure(self.gridContainer, cellNum, weight=1)
         Grid.rowconfigure(self.gridContainer, rowNum, weight=1)
         return lab
 
+    def __buildMenu(self):
+        self.menu = Menu(self, tearoff=0)
+        self.menu.add_command(label="Copy", command=lambda: self.__menuHelper("copy"))
+        self.menu.add_command(label="Paste", command=lambda: self.__menuHelper("paste"))
+        self.menu.add_separator()
+        self.menu.add_command(label="Delete Column", command=lambda: self.__menuHelper("dc"))
+        self.menu.add_command(label="Delete Row", command=lambda: self.__menuHelper("dr"))
+        self.menu.add_separator()
+        self.menu.add_command(label="Insert Before", command=lambda: self.__menuHelper("cb"))
+        self.menu.add_command(label="Insert After", command=lambda: self.__menuHelper("ca"))
+        self.menu.add_separator()
+        self.menu.add_command(label="Select", command=lambda: self.__menuHelper("select"))
+        self.menu.add_command(label="Deselect", command=lambda: self.__menuHelper("deselect"))
+
+
+    def __rightClick(self, event):
+        self.lastSelected = event.widget
+        self.menu.tk_popup(event.x_root - 10, event.y_root - 10)
+        return "break"
+
+    def __menuHelper(self, action):
+        vals=self.lastSelected.gridPos.split("-")
+
+        if action == "dc":
+            self.deleteColumn(int(vals[1]))
+        elif action == "dr" and vals[0] != "h":
+            self.deleteRow(int(vals[0]))
+        elif action == "cb":
+            self.addColumn(int(vals[1]), [])
+        elif action == "ca":
+            self.addColumn(int(vals[1])+1, [])
+        elif action == "select" and vals[0] != "h":
+            if not self.lastSelected.selected: self.lastSelected.mouseClick()
+        elif action == "deselect" and vals[0] != "h":
+            if self.lastSelected.selected: self.lastSelected.mouseClick()
+        elif action == "copy":
+            val=self.lastSelected.cget("text")
+            self.clipboard_clear()
+            self.clipboard_append(val)
+        elif action == "paste":
+            try: self.lastSelected.config(text=self.clipboard_get())
+            except: pass
+
     def addColumn(self, columnNumber, data):
-        self.__hideEntryBoxes()
+        if columnNumber < 0 or columnNumber > self.numColumns:
+            raise Exception("Invalid column number.")
+        else:
+            self.__hideEntryBoxes()
 
-        # move the right column, if necessary
-        if self.action is not None:
+            # move the right column, if necessary
+            if self.action is not None:
+                for rowPos in range(len(self.cells)):
+                    self.rightColumn[rowPos].grid_forget()
+                    self.rightColumn[rowPos].grid(row=rowPos, column=self.numColumns+1, sticky=N+E+S+W)
+
+                # move the button
+                self.ent_but.lab.grid_forget()
+                self.ent_but.lab.grid(row=len(self.cells), column=self.numColumns+2, sticky=N+E+S+W)
+
+                # add another entry
+                ent = self.__createEntryBox(self.numColumns)
+                self.entries.append(ent)
+
+            # move all columns including this position right one
+            for colPos in range(self.numColumns-1, columnNumber-1, -1):
+                for rowPos in range(len(self.cells)):
+                    cell = self.cells[rowPos][colPos]
+                    cell.grid_forget()
+                    cell.grid(row=rowPos, column=colPos+1, sticky=N+E+S+W)
+                    cell.gridPos = str(rowPos - 1) + "-" + str(colPos+1)
+
+            # then add this column
             for rowPos in range(len(self.cells)):
-                self.rightColumn[rowPos].grid_forget()
-                self.rightColumn[rowPos].grid(row=rowPos, column=self.numColumns+1, sticky=N+E+S+W)
+                if rowPos < len(data):
+                    val = data[rowPos]
+                else:
+                    val = ""
+                lab = self.__createCell(rowPos, columnNumber, val)
+                self.cells[rowPos].insert(columnNumber, lab)
 
-            # move the button
-            self.ent_but.lab.grid_forget()
-            self.ent_but.lab.grid(row=len(self.cells), column=self.numColumns+2, sticky=N+E+S+W)
-
-            # add another entry
-            ent = self.__createEntryBox(self.numColumns)
-            self.entries.append(ent)
-
-        # move all columns including this position right one
-        for colPos in range(self.numColumns-1, columnNumber-1, -1):
-            for rowPos in range(len(self.cells)):
-                cell = self.cells[rowPos][colPos]
-                cell.grid_forget()
-                cell.grid(row=rowPos, column=colPos+1, sticky=N+E+S+W)
-                cell.gridPos = str(rowPos - 1) + "-" + str(colPos+1)
-
-        # then add this column
-        for rowPos in range(len(self.cells)):
-            if rowPos < len(data):
-                val = data[rowPos]
-            else:
-                val = ""
-            lab = self.__createCell(rowPos, columnNumber, val)
-            self.cells[rowPos].insert(columnNumber, lab)
-
-        self.numColumns += 1
-        self.__showEntryBoxes()
+            self.numColumns += 1
+            self.__showEntryBoxes()
+            self.canvas.event_generate("<Configure>")
 
     def deleteColumn(self, columnNumber):
 
-        if 0 > columnNumber >= len(self.cells):
+        if columnNumber < 0 or columnNumber >= self.numColumns:
             raise Exception("Invalid column number.")
         else:
             # hide the entries
@@ -11409,6 +11482,7 @@ class SimpleGrid(ScrollPane):
             self.numColumns -= 1
             # show the entry boxes
             self.__showEntryBoxes()
+            self.canvas.event_generate("<Configure>")
 
     def __hideEntryBoxes(self):
         if self.addRowEntries is None or len(self.entries) == 0:
