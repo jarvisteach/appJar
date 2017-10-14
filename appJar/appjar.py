@@ -67,7 +67,7 @@ __author__ = "Richard Jarvis"
 __copyright__ = "Copyright 2016-2017, Richard Jarvis"
 __credits__ = ["Graham Turner", "Sarah Murch"]
 __license__ = "Apache 2.0"
-__version__ = "0.82.0"
+__version__ = "0.83.0"
 __maintainer__ = "Richard Jarvis"
 __email__ = "info@appJar.info"
 __status__ = "Development"
@@ -213,49 +213,6 @@ class gui(object):
 
     built = False
 
-    # used to identify widgets in component configurations
-    WINDOW = 0
-    LABEL = 1
-    ENTRY = 2
-    FILE_ENTRY = 24
-    DIRECTORY_ENTRY = 25
-    BUTTON = 3
-    CHECKBOX = 4
-    SCALE = 5
-    RADIOBUTTON = 6
-    LISTBOX = 7
-    MESSAGE = 8
-    SPIN = 9
-    SPINBOX = 9
-    OPTION = 10
-    OPTIONBOX = 10
-    TEXTAREA = 11
-    LINK = 12
-    METER = 13
-    IMAGE = 14
-    PIECHART = 15
-    PROPERTIES = 16
-    GRID = 17
-    PLOT = 18
-    MICROBIT = 19
-    WIDGET = 20
-    MAP = 21
-    TREE = 22
-    TOOLBAR = 23
-
-    RB = 60
-    CB = 40
-    LB = 70
-
-    LABELFRAME = 30
-    FRAME = 36
-    TABBEDFRAME = 31
-    NOTEBOOK = 37
-    PANEDFRAME = 32
-    SCROLLPANE = 33
-    PAGEDWINDOW = 34
-    TOGGLEFRAME = 35
-
     # positioning
     N = N
     NE = NE
@@ -275,71 +232,6 @@ class gui(object):
     GROOVE = GROOVE
     RIDGE = RIDGE
     FLAT = FLAT
-
-    # containers
-    C_ROOT = 'rootPage'
-    C_LABELFRAME = 'labelFrame'
-    C_FRAME = 'frame'
-    C_TOGGLEFRAME = 'toggleFrame'
-
-    # 2 containers for pagedWindow
-    C_PAGEDWINDOW = 'pagedWindow'
-    C_PAGE = 'page'
-    # 2 containers for tabbedFrame
-    C_TABBEDFRAME = 'tabbedFrame'
-    C_TAB = 'tab'
-    C_NOTEBOOK = 'notebook'
-    C_NOTE = 'note'
-    # 2 containers for panedFrame
-    C_PANEDFRAME = 'panedFrame'
-    C_PANE = 'pane'
-
-    C_SUBWINDOW = 'subWindow'
-    C_SCROLLPANE = 'scrollPane'
-
-    # names for each of the widgets defined above
-    # used for defining functions
-    WIDGETS = {
-#        WINDOW: "Window",
-        LABEL: "Label",
-        ENTRY: "Entry",
-        BUTTON: "Button",
-        CB: "Cb",
-        CHECKBOX: "CheckBox",
-        SCALE: "Scale",
-        RB: "Rb",
-        RADIOBUTTON: "RadioButton",
-        LB: "Lb",
-        LISTBOX: "ListBox",
-        MESSAGE: "Message",
-        SPIN: "SpinBox",
-        OPTION: "OptionBox",
-        TEXTAREA: "TextArea",
-        LINK: "Link",
-        METER: "Meter",
-        IMAGE: "Image",
-        MAP: "Map",
-        PIECHART: "PieChart",
-        PROPERTIES: "Properties",
-        GRID: "Grid",
-        PLOT: "Plot",
-        MICROBIT: "MicroBit",
-        LABELFRAME: "LabelFrame",
-        FRAME: "Frame",
-        TABBEDFRAME: "TabbedFrame",
-        NOTEBOOK: "Notebook",
-        FILE_ENTRY: "FileEntry",
-        DIRECTORY_ENTRY: "DirectoryEntry",
-#       TAB:"Tab",
-        PANEDFRAME: "PanedFrame",
-        WIDGET: "Widget",
-#       PANE:"Pane",
-#       SCROLLPANE: "ScrollPane",
-#       PAGEDWINDOW: "PagedWindow",
-#       PAGE:"Page",
-#       SUBWINDOW:"SubWindow",
-        TOGGLEFRAME: "ToggleFrame"}
-
 
     # music stuff
     BASIC_NOTES = {
@@ -495,6 +387,28 @@ class gui(object):
         # first out, verify the platform
         self.platform = gui.GET_PLATFORM()
 
+        # init the widget enum
+        self.Widgets = Enum(
+            widgets=["Label", "Message", "Entry", "TextArea", "Button",
+                "FileEntry", "DirectoryEntry", "Scale", "Link", "Meter", "Image",
+                "CheckBox", "RadioButton", "ListBox", "SpinBox", "OptionBox",
+                "TickOptionBox", "Accelerators",
+                "Map", "PieChart", "Properties", "Grid", "Plot", "MicroBit",
+                "DatePicker", "Separator",
+                "LabelFrame", "Frame", "TabbedFrame", "PanedFrame", "ToggleFrame",
+                "FrameBox", "FrameLabel", "ContainerLog", "FlashLabel",
+                "AnimationID", "ImageCache", "Menu", "RB_VALS",
+                "SubWindow", "ScrollPane", "PagedWindow", "Notebook", "Tree",
+                "Widget", "Window", "Toolbar", "RootPage",
+                "Note", "Tab", "Page", "Pane"],
+            deprecated=["Cb", "Rb", "Lb", "Spin", "Option"],
+            excluded=["DatePicker", "SubWindow", "Window", "Toolbar", "RB_VALS",
+                "Note", "Tab", "Page", "Pane", "RootPage", "FlashLabel",
+                "AnimationID", "ImageCache", "TickOptionBox", "Accelerators",
+                "FileEntry", "DirectoryEntry",
+                "FrameBox", "FrameLabel", "ContainerLog", "Menu"]
+        )
+
         if warn is not None or debug is not None:
             self.warn("Cannot set logging level in __init__. You should use .setLogLevel()")
 
@@ -516,20 +430,15 @@ class gui(object):
         # a stack to hold containers as being built
         # done here, as initArrays is called elsewhere - to reset the gubbins
         self.containerStack = []
-
         self.translations = {"POPUP":{}, "SOUND":{}, "EXTERNAL":{}}
-
         # first up, set up all the data stores
-        self.__initArrays()
-
+        self.__initVars()
         # dynamically create lots of functions for configuring stuff
         self.__buildConfigFuncs()
-
         # language parser
         self.config = None
 
         # set up some default path locations
-
         # this fails if in interactive mode....
         try:
             gui.exe_file = str(os.path.basename(theMain.__file__))
@@ -599,11 +508,7 @@ class gui(object):
         self.lbFont = font.Font(family="Helvetica", size=12)
         self.taFont = font.Font(family="Helvetica", size=12)
         self.meterFont = font.Font(family="Helvetica", size=12, weight='bold')
-        self.linkFont = font.Font(
-            family="Helvetica",
-            size=12,
-            weight='bold',
-            underline=1)
+        self.linkFont = font.Font(family="Helvetica", size=12, weight='bold', underline=1)
         self.labelFrameFont = font.Font(family="Helvetica", size=12)
         self.frameFont = font.Font(family="Helvetica", size=12)
         self.toggleFrameFont = font.Font(family="Helvetica", size=12)
@@ -637,7 +542,7 @@ class gui(object):
         if not self.ttkFlag:
             container.config(padx=2, pady=2, background=self.topLevel.cget("bg"))
         container.pack(fill=BOTH, expand=True)
-        self.__addContainer("root", self.C_ROOT, container, 0, 1)
+        self.__addContainer("root", self.Widgets.RootPage, container, 0, 1)
 
         # set up the main container to be able to host an image
         self.__configBg(container)
@@ -931,6 +836,24 @@ class gui(object):
                             self.bgHColour = self.parent.bgHColour
                             self.fgHColour = self.parent.fgHColour
                             self.editEvent = self.parent.editEvent
+                    # customised config setters
+                    def config(self, cnf=None, **kw):
+                        self.configure(cnf, **kw)
+
+                    def configure(self, cnf=None, **kw):
+                        # properties to propagate to CheckBoxes
+                        kw = gui.CLEAN_CONFIG_DICTIONARY(**kw)
+
+                        if "bg" in kw:
+                            self.setBgColour(kw.pop("bg"))
+                        if "fg" in kw:
+                            self.setFgColour(kw.pop("fg"))
+
+#                        # propagate anything left
+#                        if PYTHON2:
+#                            TreeNode.config(self, cnf, **kw)
+#                        else:
+#                            super(__class__, self).config(cnf, **kw)
 
                     def registerEditEvent(self, func):
                         self.editEvent = func
@@ -1136,7 +1059,7 @@ class gui(object):
         self.__loadInternalDnd()
 
         name = None
-        if kind == self.LABEL:
+        if kind == self.Widgets.Label:
             name = self.getLabel(title)
 
         if INTERNAL_DND is not False:
@@ -1242,7 +1165,7 @@ class gui(object):
                 event.widget.focus_set()
                 event.widget.see(END)
             elif widgType in ["Label"]:
-                for k, v in self.n_images.items():
+                for k, v in self.widgetManager.group(self.Widgets.Image).items():
                     if v == event.widget:
                         try:
                             imgTemp = self.userImages
@@ -1252,17 +1175,17 @@ class gui(object):
                         except:
                             self.errorBox("Error loading image", "Unable to load image: " + str(event.data))
                         return
-                for k, v in self.n_labels.items():
+                for k, v in self.widgetManager.group(self.Widgets.Label).items():
                     if v == event.widget:
                         self.setLabel(k, event.data)
                         return
             elif widgType in ["Listbox"]:
-                for k, v in self.n_lbs.items():
+                for k, v in self.widgetManager.group(self.Widgets.ListBox).items():
                     if v == event.widget:
                         self.addListItem(k, event.data)
                         return
             elif widgType in ["Message"]:
-                for k, v in self.n_messages.items():
+                for k, v in self.widgetManager.group(self.Widgets.Message).items():
                     if v == event.widget:
                         self.setMessage(k, event.data)
                         return
@@ -1272,94 +1195,23 @@ class gui(object):
 #####################################
 # set the arrays we use to store everything
 #####################################
-    def __initArrays(self):
-        # set up a row counter - used to auto add rows
-        # breaks once user sets own row
-
-        # set up a minimum label width for label combos
-        self.labWidth = 1
-
+    def __initVars(self):
         # validate function callbacks - used by numeric texts
         # created first time a widget is used
         self.validateNumeric = None
         self.validateSpinBox = None
 
-        # set up flash variable
-        self.doFlash = False
-
-        # used to hide/show title bar
-        self.hasTitleBar = True
-        # records if we're in fullscreen - stops hideTitle from breaking
-        self.isFullscreen = False
-
-        # splash screen?
-        self.splashConfig = None
-
-        # store the path to any icon
-        self.winIcon = None
+        self.labWidth = 1 # minimum label width for label combos
+        self.doFlash = False # set up flash variable
+        self.hasTitleBar = True # used to hide/show title bar
+        self.isFullscreen = False # records if we're in fullscreen - stops hideTitle from breaking
+        self.splashConfig = None # splash screen?
+        self.winIcon = None # store the path to any icon
+        self.dnd = None # the dnd manager
 
         # collections of widgets, widget name is key
-        self.n_frames = []  # un-named, so no direct access
-        self.n_labels = {}
-        self.n_buttons = {}
-        self.n_entries = {}
-        self.n_messages = {}
-        self.n_scales = {}
-        self.n_cbs = {}
-        self.n_rbs = {}
-        self.n_lbs = {}
-        self.n_tbButts = {}
-        self.n_spins = {}
-        self.n_props = {}
-        self.n_plots = {}
-        self.n_microbits = {}
-        self.n_options = {}
-        self.n_frameLabs = {}
-        self.n_textAreas = {}
-        self.n_links = {}
-        self.n_meters = {}
-        self.n_subWindows = {}
-        self.n_labelFrames = {}
-        self.n_ajFrame = {}
-        self.n_tabbedFrames = {}
-        self.n_notebooks = {}
-        self.n_panedFrames = {}
-        self.n_panes = {}
-        self.n_pagedWindows = {}
-        self.n_toggleFrames = {}
-        self.n_scrollPanes = {}
-        self.n_trees = {}
-        self.n_flashLabs = []
-        self.n_pieCharts = {}
-        self.n_separators = []
-        self.n_widgets = {}
-        self.n_dps = {}
+        self.widgetManager = WidgetManager()
 
-        # completed containers - in case we want to open them again
-        self.n_usedContainers = {}
-
-        # variables associated with widgets
-        self.n_entryVars = {}
-        self.n_optionVars = {}
-        self.n_optionTicks = {} # to store tick option items
-        self.n_boxVars = {}
-        self.n_rbVars = {}
-        self.n_rbVals = {}
-        self.n_images = {}        # image label widgets
-        self.n_maps = {}        # GoogleMap widgets
-        self.n_imageCache = {}    # image file objects
-        self.n_imageAnimationIds = {} # stores after ids
-
-        # for simple grids
-        self.n_grids = {}
-
-        # menu stuff
-        self.n_menus = {}
-        self.n_menuVars = {}
-        self.n_accelerators = []
-
-        # the dnd manager
-        self.dnd = None
 
     def translate(self, key, default=None):
         return self.__translate(key, "EXTERNAL", default)
@@ -1428,7 +1280,7 @@ class gui(object):
                 self.debug("\tSkipping CONFIG")
                 continue
             elif section == "TITLE":
-                kind = self.C_SUBWINDOW
+                kind = self.Widgets.SubWindow
             elif section.startswith("TOOLTIP-"):
                 kind = "TOOLTIP"
                 getWidgets = False
@@ -1462,15 +1314,15 @@ class gui(object):
 
             # if necessary, use the code to get the widget list
             if getWidgets:
-                widgets = self.__getItems(kind)
+                widgets = self.widgetManager.group(kind)
 
-            if kind in [self.SCALE]:
+            if kind in [self.Widgets.Scale]:
                 self.warn("No text is displayed in " + section + ". Maybe it has a Label?")
                 continue
-            elif kind in [self.TEXTAREA, self.METER, self.PIECHART, self.TREE]:
+            elif kind in [self.Widgets.TextArea, self.Widgets.Meter, self.Widgets.PieChart, self.Widgets.Tree]:
                 self.warn("No text is displayed in " + section)
                 continue
-            elif kind in [self.C_SUBWINDOW]:
+            elif kind in [self.Widgets.name(self.Widgets.SubWindow)]:
                 for (key, val) in self.config.items(section):
                     self.debug("\t\t" + key + ": " +  val)
 
@@ -1491,7 +1343,7 @@ class gui(object):
                         except KeyError:
                             self.warn("Invalid SUBWINDOW: " + str(key))
 
-            elif kind in [self.LISTBOX]:
+            elif kind in [self.Widgets.ListBox]:
                 for k in widgets.keys():
                     lb = widgets[k]
 
@@ -1506,7 +1358,7 @@ class gui(object):
                     data = [item.strip() for item in data if len(item.strip()) > 0]
                     self.updateListBox(k, data)
 
-            elif kind in [self.SPIN, self.SPINBOX]:
+            elif kind in [self.Widgets.SpinBox]:
                 for k in widgets.keys():
                     sb = widgets[k]
 
@@ -1521,7 +1373,7 @@ class gui(object):
                     data = [item.strip() for item in data if len(item.strip()) > 0]
                     self.changeSpinBox(k, data)
 
-            elif kind in [self.OPTION, self.OPTIONBOX]:
+            elif kind in [self.Widgets.OptionBox]:
                 for k in widgets.keys():
                     ob = widgets[k]
 
@@ -1536,7 +1388,7 @@ class gui(object):
                     data = [item.strip() for item in data if len(item.strip()) > 0]
                     self.changeOptionBox(k, data)
 
-            elif kind in [self.RADIOBUTTON]:
+            elif kind in [self.Widgets.RadioButton]:
                 for (key, val) in self.config.items(section):
                     self.debug("\t\t" + key + ": " +  val)
                     keys = key.split("-")
@@ -1544,7 +1396,7 @@ class gui(object):
                         self.warn("Invalid RADIOBUTTON key:" + key)
                     else:
                         try:
-                            rbs = self.n_rbs[keys[0]]
+                            rbs = self.widgetManager.get(self.Widgets.RadioButton, keys[0])
                         except KeyError:
                             self.warn("Invalid RADIOBUTTON key: " + keys[0])
                             continue
@@ -1553,7 +1405,7 @@ class gui(object):
                                 rb["text"] = val
                                 break
 
-            elif kind in [self.TABBEDFRAME]:
+            elif kind in [self.Widgets.TabbedFrame]:
                 for (key, val) in self.config.items(section):
                     self.debug("\t\t" + key + ": " +  val)
                     keys = key.split("-")
@@ -1565,7 +1417,7 @@ class gui(object):
                         except ItemLookupError:
                             self.warn("Invalid TABBEDFRAME: " + str(keys[0]) + " with TAB: " + str(keys[1]))
 
-            elif kind in [self.PROPERTIES]:
+            elif kind in [self.Widgets.Properties]:
                 for (key, val) in self.config.items(section):
                     self.debug("\t\t" + key + ": " +  val)
                     keys = key.split("-")
@@ -1579,7 +1431,7 @@ class gui(object):
                         except KeyError:
                             self.warn("Invalid PROPERTY: " + keys[1])
 
-            elif kind == self.GRID:
+            elif kind == self.Widgets.Tree:
                 for (key, val) in self.config.items(section):
                     self.debug("\t\t" + key + ": " +  val)
                     keys = key.split("-")
@@ -1609,7 +1461,7 @@ class gui(object):
                             except KeyError:
                                 self.warn("Invalid PAGEDWINDOW: " + str(keys[0]))
 
-            elif kind == self.ENTRY:
+            elif kind == self.Widgets.Entry:
                 for k in widgets.keys():
                     ent = widgets[k]
 
@@ -1621,7 +1473,7 @@ class gui(object):
                     self.debug("\t\t" + k + ": " +  str(data))
                     self.updateEntryDefault(k, data)
 
-            elif kind in [self.IMAGE]:
+            elif kind in [self.Widgets.Image]:
                 for k in widgets.keys():
                     if self.config.has_option(section, k):
                         data = str(self.config.get(section, k))
@@ -1634,14 +1486,14 @@ class gui(object):
                     else:
                         self.debug("No translation for: " + str(k))
 
-            elif kind in [self.LABEL, self.BUTTON, self.CHECKBOX, self.MESSAGE,
-                            self.LINK, self.LABELFRAME, self.TOGGLEFRAME]:
+            elif kind in [self.Widgets.Label, self.Widgets.Button, self.Widgets.CheckBox, self.Widgets.Message,
+                            self.Widgets.Link, self.Widgets.LabelFrame, self.TOGGLEFRAME]:
                 for k in widgets.keys():
                     widg = widgets[k]
 
                     # skip validation labels - we don't need to translate them
                     try:
-                        if kind == self.LABEL and widg.isValidation:
+                        if kind == self.Widgets.Label and widg.isValidation:
                             self.debug("\t\t" + k + ": skipping, validation label")
                             continue
                     except:
@@ -1655,7 +1507,7 @@ class gui(object):
                     self.debug("\t\t" + k + ": " +  data)
                     widg.config(text=data)
 
-            elif kind == self.TOOLBAR:
+            elif kind == self.Widgets.Toolbar:
                 for k in widgets.keys():
                     but = widgets[k]
                     if but.image is None:
@@ -1824,20 +1676,19 @@ class gui(object):
             self.warn("You didn't stop all containers")
             for i in range(len(self.containerStack) - 1, 0, -1):
                 kind = self.containerStack[i]['type']
-                if kind not in [self.C_PANE]:
-                    self.warn("STOP: " + kind)
+                if kind != self.Widgets.Pane:
+                    self.warn("STOP: " + self.Widgets.name(kind))
 
-        if len(self.n_trees) > 0:
-            for k in self.n_trees:
-                self.n_trees[k].update()
-                self.n_trees[k].expand()
+        for k, v in self.widgetManager.group(self.Widgets.Tree).items():
+            v.update()
+            v.expand()
 
         # create appJar menu, if no menuBar created
         if not self.hasMenu:
             self.addAppJarMenu()
 
         if self.platform == self.WINDOWS:
-            self.menuBar.add_cascade(menu=self.n_menus["WIN_SYS"])
+            self.menuBar.add_cascade(menu=self.widgetManager.get(self.Widgets.Menu, "WIN_SYS"))
         self.topLevel.config(menu=self.menuBar)
 
         # pack it all in & make sure it's drawn
@@ -1858,7 +1709,7 @@ class gui(object):
             self.topLevel.deiconify()
         else:
             self.hide()
-            sw = self.__verifyItem(self.n_subWindows, startWindow)
+            sw = self.widgetManager.get(self.Widgets.SubWindow, startWindow)
             if sw.blocking:
                 raise Exception("Unable to start appjar with a blocking subWindow")
 
@@ -1890,7 +1741,7 @@ class gui(object):
         tl.stopFunction = function
         # link to exit item in topMenu
         # only if in root
-        if self.containerStack[-1]['type'] != self.C_SUBWINDOW:
+        if self.containerStack[-1]['type'] != self.Widgets.SubWindow:
             tl.createcommand('exit', self.stop)
 
     def saveSettings(self):
@@ -1904,15 +1755,15 @@ class gui(object):
 
         # get container settings
         props["togs"] = {}
-        for k, v in self.n_toggleFrames.items():
+        for k, v in self.widgetManager.group(self.Widgets.ToggleFrame).items():
             props["togs"][k] = v.isShowing()
 
         props["tabs"] = {}
-        for k, v in self.n_tabbedFrames.items():
+        for k, v in self.widgetManager.group(self.Widgets.TabbedFrame).items():
             props["tabs"][k] = v.getSelectedTab()
 
         props["pages"] = {}
-        for k, v in self.n_pagedWindows.items():
+        for k, v in self.widgetManager.group(self.Widgets.PagedWindow).items():
             props["pages"][k] = v.getPageNumber()
 
         # pane positions?
@@ -1935,12 +1786,12 @@ class gui(object):
                 self.topLevel.after_cancel(self.processQueueId)
 
             # stop any animations
-            for key in self.n_imageAnimationIds:
-                self.topLevel.after_cancel(self.n_imageAnimationIds[key])
+            for key in self.widgetManager.group(self.Widgets.AnimationID):
+                self.topLevel.after_cancel(self.widgetManager.get(self.Widgets.AnimationID, key))
 
             # stop any maps
-            for key in self.n_maps:
-                self.n_maps[key].stopUpdates()
+            for key in self.widgetManager.group(self.Widgets.Map):
+                self.widgetManager.get(self.Widgets.Map, key).stopUpdates()
 
             # stop any sounds, ignore error when not on Windows
             try:
@@ -2334,9 +2185,9 @@ class gui(object):
         self.scrollPaneFont.config(family=font, size=size)
         self.gridFont.config(family=font, size=size)
 
-        # need tbetter way to register font change events on grids
-        for grid in self.n_grids:
-            self.n_grids[grid].config(font=self.gridFont)
+        # need better way to register font change events on grids
+        for k, v in self.widgetManager.group(self.Widgets.Grid).items():
+            v.config(font=self.gridFont)
 
     def increaseFont(self):
         self.increaseLabelFont()
@@ -2373,7 +2224,7 @@ class gui(object):
     # self.bglabel = Label, filling all of container
     def setBg(self, colour, override=False, tint=False):
         if not self.ttkFlag:
-            if self.containerStack[-1]['type'] == self.C_ROOT:
+            if self.containerStack[-1]['type'] == self.Widgets.RootPage:
                 self.appWindow.config(background=colour)
                 self.bgLabel.config(background=colour)
 
@@ -2387,7 +2238,7 @@ class gui(object):
                     # therefore can;t call some functions
                     # this gets the ScrolledText version
                     if child.__class__.__name__ == "Frame":
-                        for val in self.n_textAreas.values():
+                        for val in self.widgetManager.group(self.Widgets.TextArea).values():
                             if str(val) == str(child):
                                 child = val
                                 break
@@ -2447,7 +2298,7 @@ class gui(object):
             container.iconphoto(True, icon)
 
     def __getCanvas(self, param=-1):
-        if len(self.containerStack) > 1 and self.containerStack[param]['type'] == self.C_SUBWINDOW:
+        if len(self.containerStack) > 1 and self.containerStack[param]['type'] == self.Widgets.SubWindow:
             return self.containerStack[param]['container']
         elif len(self.containerStack) > 1:
             return self.__getCanvas(param-1)
@@ -2455,7 +2306,7 @@ class gui(object):
             return self.topLevel
 
     def __getTopLevel(self):
-        if len(self.containerStack) > 1 and self.containerStack[-1]['type'] == self.C_SUBWINDOW:
+        if len(self.containerStack) > 1 and self.containerStack[-1]['type'] == self.Widgets.SubWindow:
             return self.containerStack[-1]['container']
         else:
             return self.topLevel
@@ -2508,97 +2359,28 @@ class gui(object):
         event.widget.focus()
         if menu == "EDIT":
             if self.__checkCopyAndPaste(event):
-                self.n_menus[menu].tk_popup(event.x_root - 10, event.y_root - 10)
+                self.widgetManager.get(self.Widgets.Menu, menu).tk_popup(event.x_root - 10, event.y_root - 10)
         else:
-            self.n_menus[menu].tk_popup(event.x_root - 10, event.y_root - 10)
+            self.widgetManager.get(self.Widgets.Menu, menu).tk_popup(event.x_root - 10, event.y_root - 10)
         return "break"
 
 #####################################
 # FUNCTION to configure widgets
 #####################################
     def __getItems(self, kind):
-        if kind == self.LABEL:
-            return self.n_labels
-        elif kind == self.MESSAGE:
-            return self.n_messages
-        elif kind == self.BUTTON:
-            return self.n_buttons
-        elif kind in [self.ENTRY, self.FILE_ENTRY, self.DIRECTORY_ENTRY]:
-            return self.n_entries
-        elif kind == self.SCALE:
-            return self.n_scales
-        elif kind in [self.CB, self.CHECKBOX]:
-            return self.n_cbs
-        elif kind in [self.RB, self.RADIOBUTTON]:
-            return self.n_rbs
-        elif kind in [self.LB, self.LISTBOX]:
-            return self.n_lbs
-        elif kind in [self.SPIN, self.SPINBOX]:
-            return self.n_spins
-        elif kind in [self.OPTION, self.OPTIONBOX]:
-            return self.n_options
-        elif kind == self.TEXTAREA:
-            return self.n_textAreas
-        elif kind == self.LINK:
-            return self.n_links
-        elif kind == self.METER:
-            return self.n_meters
-        elif kind == self.IMAGE:
-            return self.n_images
-        elif kind == self.MAP:
-            return self.n_maps
-        elif kind == self.PIECHART:
-            return self.n_pieCharts
-        elif kind == self.PROPERTIES:
-            return self.n_props
-        elif kind == self.PLOT:
-            return self.n_plots
-        elif kind == self.MICROBIT:
-            return self.n_microbits
-        elif kind == self.GRID:
-            return self.n_grids
-        elif kind == self.WIDGET:
-            return self.n_widgets
-        elif kind == self.TREE:
-            return self.n_trees
-        elif kind == self.TOOLBAR:
-            return self.n_tbButts
-
-        elif kind in [ self.LABELFRAME, self.C_LABELFRAME ]:
-            return self.n_labelFrames
-        elif kind in [ self.FRAME, self.C_FRAME ]:
-            return self.n_ajFrame
-        elif kind in [ self.TOGGLEFRAME, self.C_TOGGLEFRAME ]:
-            return self.n_toggleFrames
-
-        elif kind in [ self.PAGEDWINDOW, self.C_PAGEDWINDOW ]:
-            return self.n_pagedWindows
-        elif kind in [ self.C_PAGE ]:
-            # no dict of pages - the container manages them...
-            return self.n_pagedWindows
-
-        elif kind in [ self.TABBEDFRAME, self.C_TABBEDFRAME ]:
-            return self.n_tabbedFrames
-        elif kind in [ self.C_TAB ]:
-            # no dict of tabs - the container manages them...
-            return self.n_tabbedFrames
-        elif kind in [ self.NOTEBOOK, self.C_NOTEBOOK, self.C_NOTE ]:
-            return self.n_notebooks
-
-        elif kind in [ self.PANEDFRAME ]:
-            return self.n_panedFrames
-        elif kind in [ self.C_PANE ]:
-            return self.n_panes
-
-        elif kind in [ self.C_SUBWINDOW ]:
-            return self.n_subWindows
-        elif kind in [ self.SCROLLPANE, self.C_SCROLLPANE ]:
-            return self.n_scrollPanes
+        if kind in [self.Widgets.FileEntry, self.Widgets.DirectoryEntry]:
+            return self.widgetManager.group(self.Widgets.Entry)
+        elif kind == self.Widgets.Page: # no dict of pages - the container manages them...
+            return self.widgetManager.group(self.Widgets.PagedWindow)
+        elif kind == self.Widgets.Tab: # no dict of tabs - the container manages them...
+            return self.widgetManager.group(self.Widgets.TabbedFrame)
+        elif kind == self.Widgets.Note:
+            return self.widgetManager.group(self.Widgets.Notebook)
         else:
-            raise Exception("Unknown widget type: " + str(kind))
+            return self.widgetManager.group(kind)
 
     def configureAllWidgets(self, kind, option, value):
-        items = list(self.__getItems(kind))
+        items = list(self.widgetManager.group(kind))
         self.configureWidgets(kind, items, option, value)
 
     def configureWidgets(self, kind, names, option, value):
@@ -2616,13 +2398,12 @@ class gui(object):
     def getWidget(self, kind, name):
         # get the list of items for this type, and validate the widget is in
         # the list
-        items = self.__getItems(kind)
-        return self.__verifyItem(items, name, False)
+        return self.widgetManager.get(kind, name)
 
     def addWidget(self, title, widg, row=None, column=0, colspan=0, rowspan=0):
-        self.__verifyItem(self.n_widgets, title, True)
+        self.widgetManager.verify(self.Widgets.Widget, title)
         self.__positionWidget(widg, row, column, colspan, rowspan)
-        self.n_widgets[title] = widg
+        self.widgetManager.add(self.Widgets.Widget, title, widg)
 
     def configureWidget(
             self,
@@ -2637,35 +2418,15 @@ class gui(object):
 
         # warn about deprecated functions
         if deprecated:
-            self.warn(
-                "Deprecated config function (" +
-                option +
-                ") used for: " +
-                self.WIDGETS[kind] +
-                "->" +
-                name +
-                " use " +
-                deprecated +
-                " instead")
-        if kind in [self.RB, self.LB, self.CB]:
-            self.warn(
-                "Deprecated config function (" +
-                option +
-                ") used for: " +
-                self.WIDGETS[kind] +
-                "->" +
-                name +
-                " use " +
-                self.WIDGETS[
-                    kind /
-                    10] +
-                " instead")
+            self.warn("Deprecated config function (" + option +
+                ") used for: " + self.Widgets.name(kind) +
+                "->" + name + " use " + deprecated + " instead")
         # get the list of items for this type, and validate the widgetis in the
         # list
-        items = self.__getItems(kind)
-        self.__verifyItem(items, name)
+        self.widgetManager.check(kind, name)
+        items = self.widgetManager.group(kind)
 
-        if kind in [self.RB, self.RADIOBUTTON] and option not in ["change"]:
+        if kind == self.Widgets.RadioButton and option not in ["change"]:
             items = items[name]
         else:
             items = [items[name]]
@@ -2687,13 +2448,13 @@ class gui(object):
                 elif option == 'activebackground':
                     item.config(activebackground=value)
                 elif option == 'inactiveforeground':
-                    if kind == self.TABBEDFRAME:
+                    if kind == self.Widgets.TabbedFrame:
                         item.config(inactiveforeground=value)
                     else:
                         self.warn("Error configuring " + name +
                                   ": can't set inactiveforeground")
                 elif option == 'inactivebackground':
-                    if kind == self.TABBEDFRAME:
+                    if kind in [self.Widgets.TabbedFrame, self.Widgets.Grid]:
                         item.config(inactivebackground=value)
                     else:
                         self.warn("Error configuring " + name +
@@ -2704,13 +2465,13 @@ class gui(object):
                     item.config(height=value)
                 elif option == 'state':
                     # make entries readonly - can still copy/paste
-                    if value == "disabled" and kind == self.ENTRY:
+                    if value == "disabled" and kind == self.Widgets.Entry:
                         value = "readonly"
                     item.config(state=value)
                 elif option == 'relief':
                     item.config(relief=value)
                 elif option == 'align':
-                    if kind == self.ENTRY:
+                    if kind == self.Widgets.Entry:
                         if value == W or value == LEFT:
                             value = LEFT
                         elif value == E or value == RIGHT:
@@ -2723,7 +2484,7 @@ class gui(object):
                             value = "e"
                         item.config(anchor=value)
                 elif option == 'anchor':
-                    if kind == self.LABELFRAME:
+                    if kind == self.Widgets.LabelFrame:
                         item.config(labelanchor=value)
                     else:
                         item.config(anchor=value)
@@ -2737,7 +2498,7 @@ class gui(object):
                     self.__enableTooltip(item)
                 elif option == "focus":
                     item.focus_set()
-                    if kind == self.ENTRY:
+                    if kind == self.Widgets.Entry:
                         item.icursor(END)
                         item.xview(END)
 
@@ -2784,19 +2545,9 @@ class gui(object):
                         item.config(ipadx=value[0], ipady=value[1])
                 elif option == 'rightClick':
                     if self.platform in [self.WINDOWS, self.LINUX]:
-                        item.bind(
-                            '<Button-3>',
-                            lambda e,
-                            menu=value: self.__rightClick(
-                                e,
-                                menu))
+                        item.bind('<Button-3>', lambda e, menu=value: self.__rightClick(e, menu))
                     else:
-                        item.bind(
-                            '<Button-2>',
-                            lambda e,
-                            menu=value: self.__rightClick(
-                                e,
-                                menu))
+                        item.bind('<Button-2>', lambda e, menu=value: self.__rightClick(e, menu))
                 elif option == 'internalDrop':
                     self.__registerInternalDropTarget(item, value)
 
@@ -2835,12 +2586,12 @@ class gui(object):
     def __bindDragEvent(self, kind, name, widget, functions, eventType, key=None):
         functions = self.__validateFunctionList(functions, "Drag")
 
-        if kind == self.LABEL:
+        if kind == self.Widgets.Label:
             widget.config(cursor="fleur")
 
             def getLabel(f):
                 # loop through all labels
-                items = self.__getItems(kind)
+                items = self.widgetManager.group(kind)
                 for key, value in items.items():
                     if self.__isMouseInWidget(value):
                         f(key)
@@ -2857,13 +2608,13 @@ class gui(object):
     def __bindEvent(self, kind, name, widget, function, eventType, key=None):
         # this will discard the scale value, as default function
         # can't handle it
-        if kind == self.SCALE:
+        if kind == self.Widgets.Scale:
             cmd = self.MAKE_FUNC(function, name, True)
             widget.cmd_id = widget.var.trace('w', cmd)
             widget.cmd = cmd
-        elif kind == self.OPTION:
+        elif kind == self.Widgets.OptionBox:
             if widget.kind == "ticks":
-                vals = self.__verifyItem(self.n_optionTicks, name)
+                vals = self.widgetManager.get(self.Widgets.TickOptionBox, name, group=WidgetManager.VARS)
                 for o in vals:
                     cmd = self.MAKE_FUNC(function, str(o), True)
                     vals[o].cmd_id = vals[o].trace('w', cmd)
@@ -2873,14 +2624,14 @@ class gui(object):
                 # need to trace the variable??
                 widget.cmd_id = widget.var.trace('w', cmd)
                 widget.cmd = cmd
-        elif kind in [self.ENTRY, self.FILE_ENTRY, self.DIRECTORY_ENTRY]:
+        elif kind in [self.Widgets.Entry, self.Widgets.FileEntry, self.Widgets.DirectoryEntry]:
             if eventType == "change":
                 # not populated by change/submit
                 if key is None:
                     key = name
                 cmd = self.MAKE_FUNC(function, key, True)
                 # get Entry variable
-                var = self.__verifyItem(self.n_entryVars, name)
+                var = self.widgetManager.get(self.Widgets.Entry, name, group=WidgetManager.VARS)
                 var.cmd_id = var.trace('w', cmd)
                 var.cmd = cmd
             else:
@@ -2890,12 +2641,12 @@ class gui(object):
                 sbm = self.MAKE_FUNC(function, key, True)
                 widget.sbm_id = widget.bind('<Return>', sbm)
                 widget.sbm = sbm
-        elif kind == self.TEXTAREA:
+        elif kind == self.Widgets.TextArea:
             if eventType == "change":
                 # get Entry variable
                 cmd = self.MAKE_FUNC(function, name, True)
                 widget.bindChangeEvent(cmd)
-        elif kind == self.BUTTON:
+        elif kind == self.Widgets.Button:
             if eventType == "change":
                 self.warn("Error configuring " + name +
                             ": can't set a change function")
@@ -2905,7 +2656,7 @@ class gui(object):
                     '<Return>', self.MAKE_FUNC(
                         function, name, True))
         # make labels clickable, add a cursor, and change the look
-        elif kind == self.LABEL or kind == self.IMAGE:
+        elif kind == self.Widgets.Label or kind == self.Widgets.Image:
             if eventType in ["command", "submit"]:
                 if self.platform == self.MAC:
                     widget.config(cursor="pointinghand")
@@ -2924,21 +2675,21 @@ class gui(object):
             elif eventType == "change":
                 self.warn("Error configuring " + name +
                             ": can't set a change function")
-        elif kind == self.LISTBOX:
+        elif kind == self.Widgets.ListBox:
             cmd = self.MAKE_FUNC(function, name, True)
             widget.bind('<<ListboxSelect>>', cmd)
             widget.cmd = cmd
-        elif kind in [self.RB, self.RADIOBUTTON]:
+        elif kind in [self.Widgets.RadioButton]:
             cmd = self.MAKE_FUNC(function, name, True)
             # get rb variable
-            var = self.__verifyItem(self.n_rbVars, name)
+            var = self.widgetManager.get(self.Widgets.RadioButton, name, group=WidgetManager.VARS)
             var.cmd_id = var.trace('w', cmd)
             var.cmd = cmd
-        elif kind == self.PROPERTIES:
+        elif kind == self.Widgets.Properties:
             cmd = self.MAKE_FUNC(function, name, True)
             widget.setChangeFunction(cmd)
         else:
-            if kind not in [self.SPIN, self.CHECKBOX, self.CB]:
+            if kind not in [self.Widgets.SpinBox, self.Widgets.CheckBox]:
                 self.warn("Unmanaged binding of " + str(eventType) + " to " + str(name))
             cmd = self.MAKE_FUNC(function, name)
             widget.config(command=cmd)
@@ -2948,7 +2699,8 @@ class gui(object):
     def __buildConfigFuncs(self):
         # loop through all the available widgets
         # and make all the below functons for each one
-        for k, v in self.WIDGETS.items():
+        for v in self.Widgets.funcs():
+            k = self.Widgets.get(v)
             exec( "def set" + v +
                 "Bg(self, name, val): self.configureWidgets(" +
                 str(k) + ", name, 'background', val)")
@@ -3171,25 +2923,23 @@ class gui(object):
 #####################################
     def __widgetHasContainer(self, kind, item):
         if kind in [
-                self.SCALE,
-                self.ENTRY,
-                self.SPIN,
-                self.OPTION,
-                self.LABEL] and item.inContainer:
+            self.Widgets.Scale,
+            self.Widgets.Entry,
+            self.Widgets.SpinBox,
+            self.Widgets.OptionBox,
+            self.Widgets.Label] and item.inContainer:
             return True
         else:
             return False
 
     def hideWidgetType(self, kind, name):
-        # get the dictionary of items, and find the item in it
-        items = self.__getItems(kind)
-        item = self.__verifyItem(items, name)
+        item = self.widgetManager.get(kind, name)
 
         if self.__widgetHasContainer(kind, item):
             widget = item.master
-            self.n_frameLabs[name].hidden = True
+            self.widgetManager.get(self.Widgets.FrameLabel, name).hidden = True
         else:
-            if kind in [self.RB, self.RADIOBUTTON]:
+            if kind in [self.Widgets.RadioButton]:
                 for rb in item:
                     if rb.text == name:
                         widget = rb
@@ -3200,13 +2950,11 @@ class gui(object):
 #                  self.__updateLabelBoxes(name)
 
     def showWidgetType(self, kind, name):
-        # get the dictionary of items, and find the item in it
-        items = self.__getItems(kind)
-        item = self.__verifyItem(items, name)
+        item = self.widgetManager.get(kind, name)
 
         if self.__widgetHasContainer(kind, item):
             widget = item.master
-            self.n_frameLabs[name].hidden = False
+            self.widgetManager.get(self.Widgets.FrameLabel, name).hidden = False
         else:
             widget = item
 
@@ -3216,14 +2964,12 @@ class gui(object):
 #                  self.__updateLabelBoxes(name)
 
     def removeWidgetType(self, kind, name):
-        # get the dictionary of items, and find the item in it
-        items = self.__getItems(kind)
-        item = self.__verifyItem(items, name)
+        item = self.widgetManager.get(kind, name)
 
         # if it's a flasher, remove it
-        if item in self.n_flashLabs:
-            self.n_flashLabs.remove(item)
-            if len(self.n_flashLabs) == 0:
+        if item in self.widgetManager.group(self.Widgets.FlashLabel):
+            self.widgetManager.remove(self.Widgets.FlashLabel, item)
+            if len(self.widgetManager.group(self.Widgets.FlashLabel)) == 0:
                 self.doFlash = False
 
         # animated images...
@@ -3234,21 +2980,21 @@ class gui(object):
             parent.grid_forget()
             parent.destroy()
             # remove frame, label & widget from lists
-            self.n_labels.pop(name)
-            self.n_frameLabs.pop(name)
-            self.n_frames.remove(parent)
+            self.widgetManager.remove(Widgets.Label, name)
+            self.widgetManager.remove(Widgets.FrameLabel, name)
+            self.widgetManager.remove(self.Widgets.FrameBox, parent)
         else:
             item.grid_forget()
             item.destroy()
 
         # finally remove it from the dictionary
-        items.pop(name)
+        item = self.widgetManager.remove(kind, name)
 
     def removeAllWidgets(self):
         for child in self.containerStack[0]['container'].winfo_children():
             child.destroy()
         self.__configBg(self.containerStack[0]['container'])
-        self.__initArrays()
+        self.__initVars()
         self.setGeom(None)
 
 #####################################
@@ -3280,16 +3026,6 @@ class gui(object):
 #####################################
 # FUNCTION to position a widget
 #####################################
-    # checks if the item already exists
-    def __verifyItem(self, items, item, newItem=False):
-        if not newItem and item not in items:
-            raise ItemLookupError("Invalid key: " + item + " does not exist")
-        elif not newItem and item in items:
-            return items[item]
-        elif newItem and item in items:
-            raise ItemLookupError(
-                "Duplicate key: '" + item + "' already exists")
-
     def getRow(self):
         return self.containerStack[-1]['emptyRow']
 
@@ -3532,7 +3268,7 @@ class gui(object):
             gui.SET_WIDGET_BG(widget, self.__getContainerBg())
 
         # alpha paned window placement
-        if self.containerStack[-1]['type'] == self.C_PANEDFRAME:
+        if self.containerStack[-1]['type'] == self.Widgets.PanedFrame:
             container.add(widget)
             self.containerStack[-1]['widgets'] = True
             return
@@ -3585,7 +3321,7 @@ class gui(object):
         widget.grid(**params)
         self.containerStack[-1]['widgets'] = True
         # if we're in a PANEDFRAME - we need to set parent...
-        if self.containerStack[-1]['type'] == self.C_PANE:
+        if self.containerStack[-1]['type'] == self.Widgets.Pane:
             self.containerStack[-2]['widgets'] = True
 
         # configure the row/column to expand equally
@@ -3624,54 +3360,55 @@ class gui(object):
         self.containerStack.append(containerData)
 
     def openRootPage(self, title):
-        self.__openContainer(self.C_ROOT, title)
+        self.__openContainer(self.Widgets.RootPage, title)
 
     def openLabelFrame(self, title):
-        self.__openContainer(self.C_LABELFRAME, title)
+        self.__openContainer(self.Widgets.LabelFrame, title)
 
     def openFrame(self, title):
-        self.__openContainer(self.C_FRAME, title)
+        self.__openContainer(self.Widgets.Frame, title)
 
     def openToggleFrame(self, title):
-        self.__openContainer(self.C_TOGGLEFRAME, title)
+        self.__openContainer(self.Widgets.ToggleFrame, title)
 
     def openPagedWindow(self, title):
-        self.__openContainer(self.C_PAGEDWINDOW, title)
+        self.__openContainer(self.Widgets.PagedWindow, title)
 
     def openPage(self, windowTitle, pageNumber):
-        self.__openContainer(self.C_PAGE, windowTitle+"__"+str(pageNumber))
+        self.__openContainer(self.Widgets.Page, windowTitle+"__"+str(pageNumber))
 
     def openTabbedFrame(self, title):
-        self.__openContainer(self.C_TABBEDFRAME, title)
+        self.__openContainer(self.Widgets.TabbedFrame, title)
 
     def openTab(self, frameTitle, tabTitle):
-        self.__openContainer(self.C_TAB, frameTitle+"__"+tabTitle)
+        self.__openContainer(self.Widgets.Tab, frameTitle+"__"+tabTitle)
 
     def openNotebook(self, title):
-        self.__openContainer(self.C_NOTEBOOK, title)
+        self.__openContainer(self.Widgets.Notebook, title)
 
     def openNote(self, frameTitle, tabTitle):
-        self.__openContainer(self.C_NOTEBOOK, frameTitle+"__"+tabTitle)
+        self.__openContainer(self.Widgets.Notebook, frameTitle+"__"+tabTitle)
 
     def openPanedFrame(self, title):
-        self.__openContainer(self.C_PANEDFRAME, title)
+        self.__openContainer(self.Widgets.PanedFrame, title)
 
     def openPane(self, title):
-        self.__openContainer(self.C_PANE, title)
+        self.__openContainer(self.Widgets.Pane, title)
 
     def openSubWindow(self, title):
-        self.__openContainer(self.C_SUBWINDOW, title)
+        self.__openContainer(self.Widgets.SubWindow, title)
 
     def openScrollPane(self, title):
-        self.__openContainer(self.C_SCROLLPANE, title)
+        self.__openContainer(self.Widgets.ScrollPane, title)
 
     # function to reload the specified container
     def __openContainer(self, kind, title):
 
         # get the cached container config for this container
+        kind = self.Widgets.name(kind)
         cName = kind + "__" + title
         try:
-            cConf = self.n_usedContainers[cName]
+            cConf = self.widgetManager.get(self.Widgets.ContainerLog, cName)
         except KeyError:
             raise Exception("Attempted to open invalid " + kind + ": " + str(title))
 
@@ -3684,13 +3421,13 @@ class gui(object):
 
     def getContainer(self):
         container = self.containerStack[-1]['container']
-        if self.containerStack[-1]['type'] == self.C_SCROLLPANE:
+        if self.containerStack[-1]['type'] == self.Widgets.ScrollPane:
             return container.interior
-        elif self.containerStack[-1]['type'] == self.C_PAGEDWINDOW:
+        elif self.containerStack[-1]['type'] == self.Widgets.PagedWindow:
             return container.getPage()
-        elif self.containerStack[-1]['type'] == self.C_TOGGLEFRAME:
+        elif self.containerStack[-1]['type'] == self.Widgets.ToggleFrame:
             return container.getContainer()
-        elif self.containerStack[-1]['type'] == self.C_SUBWINDOW:
+        elif self.containerStack[-1]['type'] == self.Widgets.SubWindow:
             return container.canvasPane
         else:
             return container
@@ -3706,8 +3443,11 @@ class gui(object):
 #                raise Exception("Put something in the container, before removing it.")
 
             # store the container so that it can be re-opened later
-            name = container["type"] + "__" + container["title"]
-            self.n_usedContainers[name] = container
+            name = self.Widgets.name(container["type"]) + "__" + container["title"]
+            try:
+                self.widgetManager.add(self.Widgets.ContainerLog, name, container)
+            except:
+                pass # we'll ignore, as that means we already added it...
             return container
 
     # functions to start the various containers
@@ -3720,9 +3460,9 @@ class gui(object):
             colspan=0,
             rowspan=0,
             sticky=None):
-        if fType == self.C_LABELFRAME:
+        if fType == self.Widgets.LabelFrame:
             # first, make a LabelFrame, and position it correctly
-            self.__verifyItem(self.n_labelFrames, title, True)
+            self.widgetManager.verify(self.Widgets.LabelFrame, title)
             if not self.ttkFlag:
                 container = LabelFrame(self.getContainer(), text=title, relief="groove")
                 container.config(background=self.__getContainerBg(), font=self.labelFrameFont)
@@ -3734,27 +3474,27 @@ class gui(object):
             self.setPadX(5)
             self.setPadY(5)
             self.__positionWidget(container, row, column, colspan, rowspan, "nsew")
-            self.n_labelFrames[title] = container
+            self.widgetManager.add(self.Widgets.LabelFrame, title, container)
 
             # now, add to top of stack
-            self.__addContainer(title, self.C_LABELFRAME, container, 0, 1, sticky)
+            self.__addContainer(title, self.Widgets.LabelFrame, container, 0, 1, sticky)
             return container
-        elif fType == self.C_FRAME:
+        elif fType == self.Widgets.Frame:
             # first, make a Frame, and position it correctly
-            self.__verifyItem(self.n_ajFrame, title, True)
+            self.widgetManager.verify(self.Widgets.Frame, title)
             container = ajFrame(self.getContainer())
             container.isContainer = True
 #            container.config(background=self.__getContainerBg(), font=self.frameFont, relief="groove")
             container.config(background=self.__getContainerBg())
             self.__positionWidget(
                 container, row, column, colspan, rowspan, "nsew")
-            self.n_ajFrame[title] = container
+            self.widgetManager.add(self.Widgets.Frame, title, container)
 
             # now, add to top of stack
-            self.__addContainer(title, self.C_FRAME, container, 0, 1, sticky)
+            self.__addContainer(title, self.Widgets.Frame, container, 0, 1, sticky)
             return container
-        elif fType == self.C_TABBEDFRAME:
-            self.__verifyItem(self.n_tabbedFrames, title, True)
+        elif fType == self.Widgets.TabbedFrame:
+            self.widgetManager.verify(self.Widgets.TabbedFrame, title)
             tabbedFrame = TabbedFrame(self.getContainer(), bg=self.__getContainerBg())
 #            tabbedFrame.isContainer = True
             self.__positionWidget(
@@ -3764,19 +3504,19 @@ class gui(object):
                 colspan,
                 rowspan,
                 sticky=sticky)
-            self.n_tabbedFrames[title] = tabbedFrame
+            self.widgetManager.add(self.Widgets.TabbedFrame, title, tabbedFrame)
 
             # now, add to top of stack
-            self.__addContainer(title, self.C_TABBEDFRAME, tabbedFrame, 0, 1, sticky)
+            self.__addContainer(title, self.Widgets.TabbedFrame, tabbedFrame, 0, 1, sticky)
             return tabbedFrame
-        elif fType == self.C_TAB:
+        elif fType == self.Widgets.Tab:
             # add to top of stack
             self.containerStack[-1]['widgets'] = True
             tabTitle = self.containerStack[-1]['title'] + "__" + title
             self.__addContainer(tabTitle,
-                self.C_TAB, self.containerStack[-1]['container'].addTab(title), 0, 1, sticky)
-        elif fType == self.C_NOTEBOOK:
-            self.__verifyItem(self.n_notebooks, title, True)
+                self.Widgets.Tab, self.containerStack[-1]['container'].addTab(title), 0, 1, sticky)
+        elif fType == self.Widgets.Notebook:
+            self.widgetManager.verify(self.Widgets.Notebook, title)
             notebook = ttk.Notebook(self.getContainer())
 #            tabbedFrame.isContainer = True
             self.__positionWidget(
@@ -3786,26 +3526,26 @@ class gui(object):
                 colspan,
                 rowspan,
                 sticky=sticky)
-            self.n_notebooks[title] = notebook
+            self.widgetManager.add(self.Widgets.Notebook, title, notebook)
 
             # now, add to top of stack
-            self.__addContainer(title, self.C_NOTEBOOK, notebook, 0, 1, sticky)
+            self.__addContainer(title, self.Widgets.Notebook, notebook, 0, 1, sticky)
             return notebook
-        elif fType == self.C_NOTE:
+        elif fType == self.Widgets.Note:
             # add to top of stack
             self.containerStack[-1]['widgets'] = True
             noteTitle = self.containerStack[-1]['title'] + "__" + title
             frame = ttk.Frame(self.containerStack[-1]['container'])
             self.containerStack[-1]['container'].add(frame, text=title)
-            self.__addContainer(noteTitle, self.C_NOTE, frame, 0, 1, sticky)
-        elif fType == self.C_PANEDFRAME:
+            self.__addContainer(noteTitle, self.Widgets.Note, frame, 0, 1, sticky)
+        elif fType == self.Widgets.PanedFrame:
             # if we previously put a frame for widgets
             # remove it
-            if self.containerStack[-1]['type'] == self.C_PANE:
+            if self.containerStack[-1]['type'] == self.Widgets.Pane:
                 self.stopContainer()
 
             # now, add the new pane
-            self.__verifyItem(self.n_panedFrames, title, True)
+            self.widgetManager.verify(self.Widgets.PanedFrame, title)
             pane = PanedWindow(
                 self.getContainer(),
                 showhandle=True,
@@ -3814,26 +3554,26 @@ class gui(object):
             pane.isContainer = True
             self.__positionWidget(
                 pane, row, column, colspan, rowspan, sticky=sticky)
-            self.n_panedFrames[title] = pane
+            self.widgetManager.add(self.Widgets.PanedFrame, title, pane)
 
             # now, add to top of stack
-            self.__addContainer(title, self.C_PANEDFRAME, pane, 0, 1, sticky)
+            self.__addContainer(title, self.Widgets.PanedFrame, pane, 0, 1, sticky)
 
             # now, add a frame to the pane
-            self.startContainer(self.C_PANE, title)
+            self.startContainer(self.Widgets.Pane, title)
             return pane
-        elif fType == self.C_PANE:
+        elif fType == self.Widgets.Pane:
             # create a frame, and add it to the pane
             pane = Pane(self.getContainer(), bg=self.__getContainerBg())
             pane.isContainer = True
             self.containerStack[-1]['container'].add(pane)
-            self.n_panes[title] = pane
+            self.widgetManager.add(self.Widgets.Pane, title, pane)
 
             # now, add to top of stack
-            self.__addContainer(title, self.C_PANE, pane, 0, 1, sticky)
+            self.__addContainer(title, self.Widgets.Pane, pane, 0, 1, sticky)
             return pane
-        elif fType == self.C_SCROLLPANE:
-            self.__verifyItem(self.n_scrollPanes, title, True)
+        elif fType == self.Widgets.ScrollPane:
+            self.widgetManager.verify(self.Widgets.ScrollPane, title)
             scrollPane = ScrollPane(self.getContainer(), bg=self.__getContainerBg())#, width=100, height=100)
             scrollPane.isContainer = True
 #                self.containerStack[-1]['container'].add(scrollPane)
@@ -3844,13 +3584,13 @@ class gui(object):
                 colspan,
                 rowspan,
                 sticky=sticky)
-            self.n_scrollPanes[title] = scrollPane
+            self.widgetManager.add(self.Widgets.ScrollPane, title, scrollPane)
 
             # now, add to top of stack
-            self.__addContainer(title, self.C_SCROLLPANE, scrollPane, 0, 1, sticky)
+            self.__addContainer(title, self.Widgets.ScrollPane, scrollPane, 0, 1, sticky)
             return scrollPane
-        elif fType == self.C_TOGGLEFRAME:
-            self.__verifyItem(self.n_toggleFrames, title, True)
+        elif fType == self.Widgets.ToggleFrame:
+            self.widgetManager.verify(self.Widgets.ToggleFrame, title)
             toggleFrame = ToggleFrame(self.getContainer(), title=title, bg=self.__getContainerBg())
             toggleFrame.configure(font=self.toggleFrameFont)
             toggleFrame.isContainer = True
@@ -3861,10 +3601,10 @@ class gui(object):
                 colspan,
                 rowspan,
                 sticky=sticky)
-            self.__addContainer(title, self.C_TOGGLEFRAME, toggleFrame, 0, 1, "nw")
-            self.n_toggleFrames[title] = toggleFrame
+            self.__addContainer(title, self.Widgets.ToggleFrame, toggleFrame, 0, 1, "nw")
+            self.widgetManager.add(self.Widgets.ToggleFrame, title, toggleFrame)
             return toggleFrame
-        elif fType == self.C_PAGEDWINDOW:
+        elif fType == self.Widgets.PagedWindow:
             # create the paged window
             pagedWindow = PagedWindow(
                 self.getContainer(),
@@ -3886,13 +3626,13 @@ class gui(object):
                 colspan,
                 rowspan,
                 sticky=sticky)
-            self.__addContainer(title, self.C_PAGEDWINDOW, pagedWindow, 0, 1, "nw")
-            self.n_pagedWindows[title] = pagedWindow
+            self.__addContainer(title, self.Widgets.PagedWindow, pagedWindow, 0, 1, "nw")
+            self.widgetManager.add(self.Widgets.PagedWindow, title, pagedWindow)
             return pagedWindow
-        elif fType == self.C_PAGE:
+        elif fType == self.Widgets.Page:
             page = self.containerStack[-1]['container'].addPage()
             page.isContainer = True
-            self.__addContainer(title, self.C_PAGE, page, 0, 1, sticky)
+            self.__addContainer(title, self.Widgets.Page, page, 0, 1, sticky)
             self.containerStack[-1]['expand'] = "None"
             return page
         else:
@@ -3907,7 +3647,7 @@ class gui(object):
             rowspan=0,
             sticky="NSEW"):
         return self.startContainer(
-            self.C_NOTEBOOK,
+            self.Widgets.Notebook,
             title,
             row,
             column,
@@ -3926,7 +3666,7 @@ class gui(object):
 
     def stopNotebook(self):
         # auto close the existing TAB - keep it?
-        if self.containerStack[-1]['type'] == self.C_NOTE:
+        if self.containerStack[-1]['type'] == self.Widgets.Note:
             self.warn("You didn't STOP the previous NOTE")
             self.stopContainer()
         self.stopContainer()
@@ -3942,16 +3682,16 @@ class gui(object):
 
     def startNote(self, title):
         # auto close the previous TAB - keep it?
-        if self.containerStack[-1]['type'] == self.C_NOTE:
+        if self.containerStack[-1]['type'] == self.Widgets.Note:
             self.warn("You didn't STOP the previous NOTE")
             self.stopContainer()
-        elif self.containerStack[-1]['type'] != self.C_NOTEBOOK:
+        elif self.containerStack[-1]['type'] != self.Widgets.Notebook:
             raise Exception(
                 "Can't add a Note to the current container: ", self.containerStack[-1]['type'])
-        self.startContainer(self.C_NOTE, title)
+        self.startContainer(self.Widgets.Note, title)
 
     def stopNote(self):
-        if self.containerStack[-1]['type'] != self.C_NOTE:
+        if self.containerStack[-1]['type'] != self.Widgets.Note:
             raise Exception("Can't stop a NOTE, currently in:",
                             self.containerStack[-1]['type'])
         self.stopContainer()
@@ -3977,7 +3717,7 @@ class gui(object):
             rowspan=0,
             sticky="NSEW"):
         return self.startContainer(
-            self.C_TABBEDFRAME,
+            self.Widgets.TabbedFrame,
             title,
             row,
             column,
@@ -3987,33 +3727,33 @@ class gui(object):
 
     def stopTabbedFrame(self):
         # auto close the existing TAB - keep it?
-        if self.containerStack[-1]['type'] == self.C_TAB:
+        if self.containerStack[-1]['type'] == self.Widgets.Tab:
             self.warn("You didn't STOP the previous TAB")
             self.stopContainer()
         self.stopContainer()
 
     def setTabbedFrameTabExpand(self, title, expand=True):
-        nb = self.__verifyItem(self.n_tabbedFrames, title)
+        nb = self.widgetManager.get(self.Widgets.TabbedFrame, title)
         nb.expandTabs(expand)
 
     def setTabbedFrameSelectedTab(self, title, tab):
-        nb = self.__verifyItem(self.n_tabbedFrames, title)
+        nb = self.widgetManager.get(self.Widgets.TabbedFrame, title)
         nb.changeTab(tab)
 
     def setTabbedFrameDisabledTab(self, title, tab, disabled=True):
-        nb = self.__verifyItem(self.n_tabbedFrames, title)
+        nb = self.widgetManager.get(self.Widgets.TabbedFrame, title)
         nb.disableTab(tab, disabled)
 
     def setTabbedFrameDisableAllTabs(self, title, disabled=True):
-        nb = self.__verifyItem(self.n_tabbedFrames, title)
+        nb = self.widgetManager.get(self.Widgets.TabbedFrame, title)
         nb.disableAllTabs(disabled)
 
     def setTabText(self, title, tab, newText=None):
-        nb = self.__verifyItem(self.n_tabbedFrames, title)
+        nb = self.widgetManager.get(self.Widgets.TabbedFrame, title)
         nb.renameTab(tab, newText)
 
     def setTabBg(self, title, tab, colour):
-        nb = self.__verifyItem(self.n_tabbedFrames, title)
+        nb = self.widgetManager.get(self.Widgets.TabbedFrame, title)
         tab = nb.getTab(tab)
         gui.SET_WIDGET_BG(tab, colour)
         # tab.config(bg=colour)
@@ -4032,20 +3772,20 @@ class gui(object):
 
     def startTab(self, title):
         # auto close the previous TAB - keep it?
-        if self.containerStack[-1]['type'] == self.C_TAB:
+        if self.containerStack[-1]['type'] == self.Widgets.Tab:
             self.warn("You didn't STOP the previous TAB")
             self.stopContainer()
-        elif self.containerStack[-1]['type'] != self.C_TABBEDFRAME:
+        elif self.containerStack[-1]['type'] != self.Widgets.TabbedFrame:
             raise Exception(
                 "Can't add a Tab to the current container: ", self.containerStack[-1]['type'])
-        self.startContainer(self.C_TAB, title)
+        self.startContainer(self.Widgets.Tab, title)
 
     def getTabbedFrameSelectedTab(self, title):
-        nb = self.__verifyItem(self.n_tabbedFrames, title)
+        nb = self.widgetManager.get(self.Widgets.TabbedFrame, title)
         return nb.getSelectedTab()
 
     def stopTab(self):
-        if self.containerStack[-1]['type'] != self.C_TAB:
+        if self.containerStack[-1]['type'] != self.Widgets.Tab:
             raise Exception("Can't stop a TAB, currently in:",
                             self.containerStack[-1]['type'])
         self.stopContainer()
@@ -4055,55 +3795,76 @@ class gui(object):
     #####################################
     # FUNCTION for simple grids
     #####################################
-    def addGrid(
-            self,
-            title,
-            data,
-            row=None,
-            column=0,
-            colspan=0,
-            rowspan=0,
-            action=None,
-            addRow=None,
-            actionHeading="Action",
-            actionButton="Press",
-            addButton="Add"):
-        self.__verifyItem(self.n_grids, title, True)
-        grid = SimpleGrid(
-            self.getContainer(),
-            title,
-            data,
-            action,
-            addRow,
-            actionHeading,
-            actionButton,
-            addButton,
-            buttonFont=self.buttonFont)
+    def addGrid(self, title, data,
+            row=None, column=0, colspan=0, rowspan=0,
+            action=None, addRow=None,
+            actionHeading="Action", actionButton="Press", addButton="Add",
+            showMenu=False):
+        self.widgetManager.verify(self.Widgets.Grid, title)
+        grid = SimpleGrid(self.getContainer(), title, data,
+            action, addRow,
+            actionHeading, actionButton, addButton,
+            showMenu, buttonFont=self.buttonFont)
         grid.config(font=self.gridFont, background=self.__getContainerBg())
-        self.__positionWidget(
-            grid,
-            row,
-            column,
-            colspan,
-            rowspan,
-            N + E + S + W)
-        self.n_grids[title] = grid
+        self.__positionWidget(grid, row, column, colspan, rowspan, N+E+S+W)
+        self.widgetManager.add(self.Widgets.Grid, title, grid)
         return grid
 
     def getGridEntries(self, title):
-        return self.__verifyItem(self.n_grids, title).getEntries()
+        return self.widgetManager.get(self.Widgets.Grid, title).getEntries()
 
     def getGridSelectedCells(self, title):
-        return self.__verifyItem(self.n_grids, title).getSelectedCells()
+        return self.widgetManager.get(self.Widgets.Grid, title).getSelectedCells()
 
     def addGridRow(self, title, data):
-        grid=self.__verifyItem(self.n_grids, title)
+        grid = self.widgetManager.get(self.Widgets.Grid, title)
         grid.addRow(data)
 
+    def addGridRows(self, title, data):
+        grid = self.widgetManager.get(self.Widgets.Grid, title)
+        grid.addRows(data)
+
+    def addGridColumn(self, title, columnNumber, data):
+        grid = self.widgetManager.get(self.Widgets.Grid, title)
+        grid.addColumn(columnNumber, data)
+
+    def deleteGridColumn(self, title, columnNumber):
+        grid = self.widgetManager.get(self.Widgets.Grid, title)
+        grid.deleteColumn(columnNumber)
+
+    def setGridHeaders(self, title, data):
+        grid = self.widgetManager.get(self.Widgets.Grid, title)
+        grid.setHeaders(data)
+
+    def deleteGridRow(self, title, rowNum):
+        grid = self.widgetManager.get(self.Widgets.Grid, title)
+        grid.deleteRow(rowNum)
+
+    def deleteAllGridRows(self, title):
+        grid = self.widgetManager.get(self.Widgets.Grid, title)
+        grid.deleteAllRows()
+
+    def getGridRowCount(self, title):
+        grid = self.widgetManager.get(self.Widgets.Grid, title)
+        return grid.getRowCount()
+
+    def getGridRow(self, title, rowNumber):
+        grid = self.widgetManager.get(self.Widgets.Grid, title)
+        return grid.getRow(rowNumber)
+
     def confGrid(self, title, field, value):
-        grid=self.__verifyItem(self.n_grids, title)
-        kw={field:value}
+        grid = self.widgetManager.get(self.Widgets.Grid, title)
+        kw = {field:value}
         grid.config(**kw)
+
+    def replaceGridRow(self, title, rowNum, data):
+        grid = self.widgetManager.get(self.Widgets.Grid, title)
+        grid.replaceRow(rowNum, data)
+
+    def replaceAllGridRows(self, title, data):
+        grid = self.widgetManager.get(self.Widgets.Grid, title)
+        grid.deleteAllRows()
+        grid.addRows(data)
 
     ########################################
 
@@ -4131,7 +3892,7 @@ class gui(object):
             rowspan=0,
             sticky="NSEW"):
         self.startContainer(
-            self.C_PANEDFRAME,
+            self.Widgets.PanedFrame,
             title,
             row,
             column,
@@ -4177,7 +3938,7 @@ class gui(object):
     # sticky is alignment inside frame
     # frame will be added as other widgets
     def startLabelFrame(self, title, row=None, column=0, colspan=0, rowspan=0, sticky=W, hideTitle=False):
-        lf = self.startContainer(self.C_LABELFRAME, title, row, column, colspan, rowspan, sticky)
+        lf = self.startContainer(self.Widgets.LabelFrame, title, row, column, colspan, rowspan, sticky)
         if hideTitle:
             self.setLabelFrameTitle(title, "")
 
@@ -4194,25 +3955,25 @@ class gui(object):
 
     ###### TOGGLE FRAMES #######
     def startToggleFrame(self, title, row=None, column=0, colspan=0, rowspan=0):
-        return self.startContainer(self.C_TOGGLEFRAME, title, row, column, colspan, rowspan, sticky="new")
+        return self.startContainer(self.Widgets.ToggleFrame, title, row, column, colspan, rowspan, sticky="new")
 
     def stopToggleFrame(self):
-        if self.containerStack[-1]['type'] != self.C_TOGGLEFRAME:
+        if self.containerStack[-1]['type'] != self.Widgets.ToggleFrame:
             raise Exception("Can't stop a TOGGLEFRAME, currently in:",
                             self.containerStack[-1]['type'])
         self.containerStack[-1]['container'].stop()
         self.stopContainer()
 
     def toggleToggleFrame(self, title):
-        toggle = self.__verifyItem(self.n_toggleFrames, title)
+        toggle = self.widgetManager.get(self.Widgets.ToggleFrame, title)
         toggle.toggle()
 
     def setToggleFrameText(self, title, newText):
-        toggle = self.__verifyItem(self.n_toggleFrames, title)
+        toggle = self.widgetManager.get(self.Widgets.ToggleFrame, title)
         toggle.config(text=newText)
 
     def getToggleFrameState(self, title):
-        toggle = self.__verifyItem(self.n_toggleFrames, title)
+        toggle = self.widgetManager.get(self.Widgets.ToggleFrame, title)
         return toggle.isShowing()
 
     @contextmanager
@@ -4233,7 +3994,7 @@ class gui(object):
             colspan=0,
             rowspan=0):
         self.startContainer(
-            self.C_PAGEDWINDOW,
+            self.Widgets.PagedWindow,
             title,
             row,
             column,
@@ -4242,15 +4003,15 @@ class gui(object):
             sticky="nsew")
 
     def setPagedWindowPage(self, title, page):
-        pager = self.__verifyItem(self.n_pagedWindows, title)
+        pager = self.widgetManager.get(self.Widgets.PagedWindow, title)
         pager.showPage(page)
 
     def setPagedWindowButtonsTop(self, title, top=True):
-        pager = self.__verifyItem(self.n_pagedWindows, title)
+        pager = self.widgetManager.get(self.Widgets.PagedWindow, title)
         pager.setNavPositionTop(top)
 
     def setPagedWindowButtons(self, title, buttons):
-        pager = self.__verifyItem(self.n_pagedWindows, title)
+        pager = self.widgetManager.get(self.Widgets.PagedWindow, title)
         if not isinstance(buttons, list) or len(buttons) != 2:
             raise Exception(
                 "You must provide a list of two strings fot setPagedWinowButtons()")
@@ -4258,24 +4019,24 @@ class gui(object):
         pager.setNextButton(buttons[1])
 
     def setPagedWindowFunction(self, title, func):
-        pager = self.__verifyItem(self.n_pagedWindows, title)
+        pager = self.widgetManager.get(self.Widgets.PagedWindow, title)
         command = self.MAKE_FUNC(func, title)
         pager.registerPageChangeEvent(command)
 
     def getPagedWindowPageNumber(self, title):
-        pager = self.__verifyItem(self.n_pagedWindows, title)
+        pager = self.widgetManager.get(self.Widgets.PagedWindow, title)
         return pager.getPageNumber()
 
     def showPagedWindowPageNumber(self, title, show=True):
-        pager = self.__verifyItem(self.n_pagedWindows, title)
+        pager = self.widgetManager.get(self.Widgets.PagedWindow, title)
         pager.showPageNumber(show)
 
     def showPagedWindowTitle(self, title, show=True):
-        pager = self.__verifyItem(self.n_pagedWindows, title)
+        pager = self.widgetManager.get(self.Widgets.PagedWindow, title)
         pager.showTitle(show)
 
     def setPagedWindowTitle(self, title, pageTitle):
-        pager = self.__verifyItem(self.n_pagedWindows, title)
+        pager = self.widgetManager.get(self.Widgets.PagedWindow, title)
         pager.setTitle(pageTitle)
 
     @contextmanager
@@ -4289,10 +4050,10 @@ class gui(object):
 
 
     def startPage(self, sticky="nw"):
-        if self.containerStack[-1]['type'] == self.C_PAGE:
+        if self.containerStack[-1]['type'] == self.Widgets.Page:
             self.warn("You didn't STOP the previous PAGE")
             self.stopPage()
-        elif self.containerStack[-1]['type'] != self.C_PAGEDWINDOW:
+        elif self.containerStack[-1]['type'] != self.Widgets.PagedWindow:
             raise Exception("Can't start a PAGE, currently in:",
                             self.containerStack[-1]['type'])
 
@@ -4303,7 +4064,7 @@ class gui(object):
         pageTitle = self.containerStack[-1]['title'] + "__" + str(pageNum)
 
         self.startContainer(
-            self.C_PAGE,
+            self.Widgets.Page,
             pageTitle,
             row=None,
             column=None,
@@ -4315,25 +4076,25 @@ class gui(object):
         # get a handle on the page object
         page = self.containerStack[-1]['container']
 
-        if self.containerStack[-1]['type'] == self.C_PAGE:
+        if self.containerStack[-1]['type'] == self.Widgets.Page:
             self.stopContainer()
         else:
             raise Exception("Can't stop PAGE, currently in:",
                             self.containerStack[-1]['type'])
 
         # call the stopPage function on the paged window
-        if self.containerStack[-1]['type'] == self.C_PAGEDWINDOW:
+        if self.containerStack[-1]['type'] == self.Widgets.PagedWindow:
             self.containerStack[-1]['container'].stopPage()
         else:
             # we need to find the container and call stopPage
             page.container.stopPage()
 
     def stopPagedWindow(self):
-        if self.containerStack[-1]['type'] == self.C_PAGE:
+        if self.containerStack[-1]['type'] == self.Widgets.Page:
             self.warn("You didn't STOP the previous PAGE")
             self.stopPage()
 
-        if self.containerStack[-1]['type'] != self.C_PAGEDWINDOW:
+        if self.containerStack[-1]['type'] != self.Widgets.PagedWindow:
             raise Exception("Can't stop a PAGEDWINDOW, currently in:",
                             self.containerStack[-1]['type'])
         self.stopContainer()
@@ -4358,7 +4119,7 @@ class gui(object):
             rowspan=0,
             sticky="NSEW"):
         self.startContainer(
-            self.C_SCROLLPANE,
+            self.Widgets.ScrollPane,
             title,
             row,
             column,
@@ -4370,27 +4131,27 @@ class gui(object):
     def stopContainer(self): self.__removeContainer()
 
     def stopFrame(self):
-        if self.containerStack[-1]['type'] != self.C_FRAME:
+        if self.containerStack[-1]['type'] != self.Widgets.Frame:
             raise Exception("Can't stop a FRAME, currently in:",
                             self.containerStack[-1]['type'])
         self.stopContainer()
 
     def stopLabelFrame(self):
-        if self.containerStack[-1]['type'] != self.C_LABELFRAME:
+        if self.containerStack[-1]['type'] != self.Widgets.LabelFrame:
             raise Exception("Can't stop a LABELFRAME, currently in:",
                             self.containerStack[-1]['type'])
         self.stopContainer()
 
     def stopPanedFrame(self):
-        if self.containerStack[-1]['type'] == self.C_PANE:
+        if self.containerStack[-1]['type'] == self.Widgets.Pane:
             self.stopContainer()
-        if self.containerStack[-1]['type'] != self.C_PANEDFRAME:
+        if self.containerStack[-1]['type'] != self.Widgets.PanedFrame:
             raise Exception("Can't stop a PANEDFRAME, currently in:",
                             self.containerStack[-1]['type'])
         self.stopContainer()
 
     def stopScrollPane(self):
-        if self.containerStack[-1]['type'] != self.C_SCROLLPANE:
+        if self.containerStack[-1]['type'] != self.Widgets.ScrollPane:
             raise Exception("Can't stop a SCROLLPANE, currently in:",
                             self.containerStack[-1]['type'])
         self.stopContainer()
@@ -4420,7 +4181,7 @@ class gui(object):
             rowspan=0,
             sticky="NSEW"):
         return self.startContainer(
-            self.C_FRAME,
+            self.Widgets.Frame,
             title,
             row,
             column,
@@ -4440,7 +4201,7 @@ class gui(object):
         finally: self.stopSubWindow()
 
     def startSubWindow(self, name, title=None, modal=False, blocking=False, transient=False, grouped=True):
-        self.__verifyItem(self.n_subWindows, name, True)
+        self.widgetManager.verify(self.Widgets.SubWindow, name)
         if title is None:
             title = name
         top = SubWindow()
@@ -4463,30 +4224,30 @@ class gui(object):
         if blocking:
             top.killLab = None
 
-        self.n_subWindows[name] = top
+        self.widgetManager.add(self.Widgets.SubWindow, name, top)
 
         # now, add to top of stack
-        self.__addContainer(name, self.C_SUBWINDOW, top, 0, 1, "")
+        self.__addContainer(name, self.Widgets.SubWindow, top, 0, 1, "")
         if self.winIcon is not None:
             self.setIcon(self.winIcon)
 
         return top
 
     def stopSubWindow(self):
-        if self.containerStack[-1]['type'] == self.C_SUBWINDOW:
+        if self.containerStack[-1]['type'] == self.Widgets.SubWindow:
             self.stopContainer()
         else:
             raise Exception("Can't stop a SUBWINDOW, currently in:",
                             self.containerStack[-1]['type'])
 
     def setSubWindowLocation(self, title, x, y):
-        tl = self.__verifyItem(self.n_subWindows, title)
+        tl = self.widgetManager.get(self.Widgets.SubWindow, title)
         tl.geometry("+%d+%d" % (x, y))
         tl.locationSet = True
 
     # functions to show/hide/destroy SubWindows
     def showSubWindow(self, title):
-        tl = self.__verifyItem(self.n_subWindows, title)
+        tl = self.widgetManager.get(self.Widgets.SubWindow, title)
         if not tl.locationSet:
             self.CENTER(tl)
             tl.locationSet = True
@@ -4508,7 +4269,7 @@ class gui(object):
         return tl
 
     def hideSubWindow(self, title):
-        tl = self.__verifyItem(self.n_subWindows, title)
+        tl = self.widgetManager.get(self.Widgets.SubWindow, title)
         theFunc = tl.stopFunction
         if theFunc is None or theFunc():
             tl.withdraw()
@@ -4520,7 +4281,7 @@ class gui(object):
                 self.topLevel.focus_set()
 
     def destroySubWindow(self, title):
-        tl = self.__verifyItem(self.n_subWindows, title)
+        tl = self.widgetManager.get(self.Widgets.SubWindow, title)
         theFunc = tl.stopFunction
         if theFunc is None or theFunc():
             if tl.blocking and tl.killLab is not None:
@@ -4539,9 +4300,11 @@ class gui(object):
         for child in widget.winfo_children():
             self.cleanseWidgets(child)
         widgType = widget.__class__.__name__
-        for k, v in self.WIDGETS.items():
+        for v in self.Widgets.funcs():
+            k = self.Widgets.get(v)
+#        for k, v in self.WIDGETS.items():
             if widgType == v:
-                widgets = self.__getItems(k)
+                widgets = self.widgetManager.group(k)
                 if self.destroyWidget(widget, widgets):
                     break
                 break
@@ -4549,11 +4312,12 @@ class gui(object):
             if widgType in ["Tab", "Page"]:
                 pass # managed by container
             elif widgType in ["Pane", "ScrollPane", "PagedWindow", "SubWindow", "WidgetBox", "LabelBox", "ButtonBox"]:
-                if widgType == "Pane": widgets = self.n_panes
-                elif widgType == "ScrollPane": widgets = self.n_scrollPanes
-                elif widgType == "PagedWindow": widgets = self.n_pagedWindows
-                elif widgType == "SubWindow": widgets = self.n_subWindows
-                elif widgType in ["WidgetBox", "LabelBox", "ButtonBox"]: widgets = self.n_frames
+                if widgType == "Pane": widgets = self.widgetManager.group(self.Widgets.Pane)
+                elif widgType == "ScrollPane": widgets = self.widgetManager.group(self.Widgets.ScrollPane)
+                elif widgType == "PagedWindow": widgets = self.widgetManager.group(self.Widgets.PagedWindow)
+                elif widgType == "SubWindow": widgets = self.widgetManager.group(self.Widgets.SubWindow)
+                elif widgType in ["WidgetBox", "LabelBox", "ButtonBox"]: widgets = self.widgetManager.group(self.Widgets.FrameBox)
+                elif widgType in ["Frame"]: widgets = self.widgetManager.group(self.Widgets.Frame)
 
                 if not self.destroyWidget(widget, widgets):
                     self.warn("Unable to destroy " + str(widgType) + ", during cleanse")
@@ -4580,12 +4344,12 @@ class gui(object):
 
     # make a PanedFrame align vertically
     def setPanedFrameVertical(self, window):
-        pane = self.__verifyItem(self.n_panedFrames, window)
+        pane = self.widgetManager.get(self.Widgets.PanedFrame, window)
         pane.config(orient=VERTICAL)
 
     # function to set position of title for label frame
     def setLabelFrameTitle(self, title, newTitle):
-        frame = self.__verifyItem(self.n_labelFrames, title)
+        frame = self.widgetManager.get(self.Widgets.LabelFrame, title)
         frame.config(text=newTitle)
 
     # functions to hide & show the main window
@@ -4621,20 +4385,20 @@ class gui(object):
 #####################################
     # this will build a frame, with a label on the left hand side
     def __getLabelBox(self, title):
-        self.__verifyItem(self.n_labels, title, True)
+        self.widgetManager.verify(self.Widgets.Label, title)
 
         # first, make a frame
         frame = LabelBox(self.getContainer())
         if not self.ttkFlag:
             frame.config(background=self.__getContainerBg())
-        self.n_frames.append(frame)
+        self.widgetManager.log(self.Widgets.FrameBox, frame)
 
         # if this is a big label, update the others to match...
         if len(title) > self.labWidth:
             self.labWidth = len(title)
             # loop through other labels and resize
-#            for na in self.n_frameLabs:
-#                self.n_frameLabs[na].config(width=self.labWidth)
+#            for na in self.widgetManager.group(self.Widgets.FrameLabel):
+#                self.widgetManager.get(self.Widgets.FrameLabel, na).config(width=self.labWidth)
 
         # next make the label
         if self.ttkFlag:
@@ -4650,11 +4414,13 @@ class gui(object):
             justify=LEFT,
             font=self.labelFont,
         )
-#            lab.config( width=self.labWidth)
+#            lab.config(width=self.labWidth)
+        if not self.ttkFlag:
+            lab.config(background=self.__getContainerBg())
         lab.DEFAULT_TEXT = title
 
-        self.n_labels[title] = lab
-        self.n_frameLabs[title] = lab
+        self.widgetManager.add(self.Widgets.Label, title, lab)
+        self.widgetManager.add(self.Widgets.FrameLabel, title, lab)
 
         # now put the label in the frame
         lab.pack(side=LEFT, fill=Y)
@@ -4678,18 +4444,18 @@ class gui(object):
         if len(title) >= self.labWidth:
             self.labWidth = 0
             # loop through other labels and resize
-            for na in self.n_frameLabs:
-                size = len(self.n_frameLabs[na].cget("text"))
-                if not self.n_frameLabs[na].hidden and size > self.labWidth:
+            for na in self.widgetManager.group(Widgets.FrameLabel):
+                size = len(self.widgetManager.get(Widgets.FrameLabel, na).cget("text"))
+                if not self.widgetManager.get(Widgets.FrameLabel, na).hidden and size > self.labWidth:
                     self.labWidth = size
-            for na in self.n_frameLabs:
-                self.n_frameLabs[na].config(width=self.labWidth)
+            for na in self.widgetManager.group(Widgets.FrameLabel):
+                self.widgetManager.get(Widgets.FrameLabel, na).config(width=self.labWidth)
 
 #####################################
 # FUNCTION for check boxes
 #####################################
     def addCheckBox(self, title, row=None, column=0, colspan=0, rowspan=0, name=None):
-        self.__verifyItem(self.n_cbs, title, True)
+        self.widgetManager.verify(self.Widgets.CheckBox, title)
         var = IntVar(self.topLevel)
         if name is None:
             name = title
@@ -4706,8 +4472,8 @@ class gui(object):
 
         cb.DEFAULT_TEXT = name
         cb.bind("<Button-1>", self.__grabFocus)
-        self.n_cbs[title] = cb
-        self.n_boxVars[title] = var
+        self.widgetManager.add(self.Widgets.CheckBox, title, cb)
+        self.widgetManager.add(self.Widgets.CheckBox, title, var, group=WidgetManager.VARS)
         self.__positionWidget(cb, row, column, colspan, rowspan, EW)
         return cb
 
@@ -4715,7 +4481,7 @@ class gui(object):
         return self.addCheckBox(title, row, column, colspan, rowspan, name)
 
     def getCheckBox(self, title):
-        bVar = self.__verifyItem(self.n_boxVars, title)
+        bVar = self.widgetManager.get(self.Widgets.CheckBox, title, group=WidgetManager.VARS)
         if bVar.get() == 1:
             return True
         else:
@@ -4723,12 +4489,12 @@ class gui(object):
 
     def getAllCheckBoxes(self):
         cbs = {}
-        for k in self.n_cbs:
+        for k in self.widgetManager.group(self.Widgets.CheckBox):
             cbs[k] = self.getCheckBox(k)
         return cbs
 
     def setCheckBox(self, title, ticked=True, callFunction=True):
-        cb = self.__verifyItem(self.n_cbs, title)
+        cb = self.widgetManager.get(self.Widgets.CheckBox, title)
         if ticked:
             cb.select()
         else:
@@ -4739,7 +4505,7 @@ class gui(object):
                 cb.cmd()
 
     def clearAllCheckBoxes(self, callFunction=False):
-        for cb in self.n_cbs:
+        for cb in self.widgetManager.group(self.Widgets.CheckBox):
             self.setCheckBox(cb, ticked=False, callFunction=callFunction)
 
 #####################################
@@ -4747,7 +4513,7 @@ class gui(object):
 #####################################
 
     def __buildScale(self, title, frame):
-        self.__verifyItem(self.n_scales, title, True)
+        self.widgetManager.verify(self.Widgets.Scale, title)
         var = DoubleVar(self.topLevel)
         if not self.ttkFlag:
             scale = ajScale(frame, increment=10, variable=var, repeatinterval=10, orient=HORIZONTAL)
@@ -4758,7 +4524,7 @@ class gui(object):
         scale.bind("<Button-1>", self.__grabFocus, "+")
         scale.var = var
         scale.inContainer = False
-        self.n_scales[title] = scale
+        self.widgetManager.add(self.Widgets.Scale, title, scale)
         return scale
 
     def addScale(self, title, row=None, column=0, colspan=0, rowspan=0):
@@ -4774,65 +4540,65 @@ class gui(object):
         return scale
 
     def getScale(self, title):
-        sc = self.__verifyItem(self.n_scales, title)
+        sc = self.widgetManager.get(self.Widgets.Scale, title)
         return sc.get()
 
     def getAllScales(self):
         scales = {}
-        for k in self.n_scales:
+        for k in self.widgetManager.group(self.Widgets.Scale):
             scales[k] = self.getScale(k)
         return scales
 
     def setScale(self, title, pos, callFunction=True):
-        sc = self.__verifyItem(self.n_scales, title)
+        sc = self.widgetManager.get(self.Widgets.Scale, title)
         with PauseCallFunction(callFunction, sc):
             sc.set(pos)
 
     def clearAllScales(self, callFunction=False):
-        for sc in self.n_scales:
-            self.setScale(sc, self.n_scales[sc].cget("from"), callFunction=callFunction)
+        for sc in self.widgetManager.group(self.Widgets.Scale):
+            self.setScale(sc, self.widgetManager.get(self.Widgets.Scale, sc).cget("from"), callFunction=callFunction)
 
     def setScaleIncrement(self, title, increment):
-        sc = self.__verifyItem(self.n_scales, title)
+        sc = self.widgetManager.get(self.Widgets.Scale, title)
         sc.increment = increment
 
     def setScaleLength(self, title, length):
-        sc = self.__verifyItem(self.n_scales, title)
+        sc = self.widgetManager.get(self.Widgets.Scale, title)
         sc.config(sliderlength=length)
 
     # this will make the scale show interval numbers
     # set to 0 to remove
     def showScaleIntervals(self, title, intervals):
-        sc = self.__verifyItem(self.n_scales, title)
+        sc = self.widgetManager.get(self.Widgets.Scale, title)
         sc.config(tickinterval=intervals)
 
     # this will make the scale show its value
     def showScaleValue(self, title, show=True):
-        sc = self.__verifyItem(self.n_scales, title)
+        sc = self.widgetManager.get(self.Widgets.Scale, title)
         sc.config(showvalue=show)
 
     # change the orientation (Hor or Vert)
     def orientScaleHor(self, title, hor=True):
         self.warn(
             ".orientScaleHor() is deprecated. Please use .setScaleHorizontal() or .setScaleVertical()")
-        sc = self.__verifyItem(self.n_scales, title)
+        sc = self.widgetManager.get(self.Widgets.Scale, title)
         if hor:
             sc.config(orient=HORIZONTAL)
         else:
             sc.config(orient=VERTICAL)
 
     def setScaleVertical(self, title):
-        sc = self.__verifyItem(self.n_scales, title)
+        sc = self.widgetManager.get(self.Widgets.Scale, title)
         sc.config(orient=VERTICAL)
 
     def setScaleHorizontal(self, title):
-        sc = self.__verifyItem(self.n_scales, title)
+        sc = self.widgetManager.get(self.Widgets.Scale, title)
         sc.config(orient=HORIZONTAL)
 
     def setScaleRange(self, title, start, end, curr=None):
         if curr is None:
             curr = start
-        sc = self.__verifyItem(self.n_scales, title)
+        sc = self.widgetManager.get(self.Widgets.Scale, title)
         sc.config(from_=start, to=end)
         self.setScale(title, curr)
 
@@ -4856,11 +4622,11 @@ class gui(object):
         :returns: the created OptionBox
         :raises ItemLookupError: if the title is already in use
         """
-        self.__verifyItem(self.n_options, title, True)
+        self.widgetManager.verify(self.Widgets.OptionBox, title)
 
         # create a string var to hold selected item
         var = StringVar(self.topLevel)
-        self.n_optionVars[title] = var
+        self.widgetManager.add(self.Widgets.OptionBox, title, var, group=WidgetManager.VARS)
 
         maxSize, options = self.__configOptionBoxList(title, options, kind)
 
@@ -4914,7 +4680,7 @@ class gui(object):
         self.__disableOptionBoxSeparators(option)
 
         # add to array list
-        self.n_options[title] = option
+        self.widgetManager.add(self.Widgets.OptionBox, title, option)
         return option
 
     def __buildTickOptionBox(self, title, option, options):
@@ -4930,14 +4696,14 @@ class gui(object):
         """
         # delete any items - either the initial one when created, or any existing ones if changing
         option['menu'].delete(0, 'end')
-        var = self.__verifyItem(self.n_optionVars, title, False)
+        var = self.widgetManager.get(self.Widgets.OptionBox, title, group=WidgetManager.VARS)
         var.set(title)
         vals = {}
         for o in options:
             vals[o] = BooleanVar()
             option['menu'].add_checkbutton(
                 label=o, onvalue=True, offvalue=False, variable=vals[o])
-        self.n_optionTicks[title] = vals
+        self.widgetManager.update(self.Widgets.TickOptionBox, title, vals, group=WidgetManager.VARS)
         option.kind = "ticks"
 
     def addOptionBox(self, title, options, row=None, column=0, colspan=0, rowspan=0):
@@ -5003,16 +4769,16 @@ class gui(object):
         :returns: the selected item in an OptionBox or a dictionary of all items and their status for a TickOptionBox
         :raises ItemLookupError: if the title can't be found
         """
-        box = self.__verifyItem(self.n_options, title)
+        box = self.widgetManager.get(self.Widgets.OptionBox, title)
 
         if box.kind == "ticks":
-            val = self.n_optionTicks[title]
+            val = self.widgetManager.get(self.Widgets.TickOptionBox, title, group=WidgetManager.VARS)
             retVal = {}
             for k, v in val.items():
                 retVal[k] = bool(v.get())
             return retVal
         else:
-            val = self.n_optionVars[title]
+            val = self.widgetManager.get(self.Widgets.OptionBox, title, group=WidgetManager.VARS)
             val = val.get().strip()
             # set to None if it's a divider
             if val.startswith("-") or len(val) == 0:
@@ -5025,7 +4791,7 @@ class gui(object):
         :returns: a dictionary containing the result of calling getOptionBox for every OptionBox/TickOptionBox in the GUI
         """
         boxes = {}
-        for k in self.n_options:
+        for k in self.widgetManager.group(self.Widgets.OptionBox):
             boxes[k] = self.getOptionBox(k)
         return boxes
 
@@ -5101,7 +4867,7 @@ class gui(object):
         :raises ItemLookupError: if the title can't be found
         """
         # get the optionBox & associated var
-        box = self.__verifyItem(self.n_options, title)
+        box = self.widgetManager.get(self.Widgets.OptionBox, title)
 
         # tidy up list and get max size
         maxSize, options = self.__configOptionBoxList(title, options, "normal")
@@ -5141,7 +4907,7 @@ class gui(object):
         :returns: None
         :raises ItemLookupError: if the title can't be found
         """
-        self.__verifyItem(self.n_optionVars, title)
+        self.widgetManager.check(self.Widgets.OptionBox, title, group=WidgetManager.VARS)
         self.setOptionBox(title, index, value=None, override=True)
 
     def renameOptionBoxItem(self, title, item, newName=None, callFunction=False):
@@ -5153,7 +4919,7 @@ class gui(object):
         :returns: None
         :raises ItemLookupError: if the title can't be found
         """
-        self.__verifyItem(self.n_optionVars, title)
+        self.widgetManager.check(self.Widgets.OptionBox, title, group=WidgetManager.VARS)
         self.setOptionBox(title, item, value=newName, callFunction=callFunction)
 
     def clearOptionBox(self, title, callFunction=True):
@@ -5165,10 +4931,10 @@ class gui(object):
         :returns: None
         :raises ItemLookupError: if the title can't be found
         """
-        box = self.__verifyItem(self.n_options, title)
+        box = self.widgetManager.get(self.Widgets.OptionBox, title)
         if box.kind == "ticks":
             # loop through each tick, set it to False
-            ticks = self.__verifyItem(self.n_optionTicks, title)
+            ticks = self.widgetManager.get(self.Widgets.TickOptionBox, title, group=WidgetManager.VARS)
             for k in ticks:
                 self.setOptionBox(title, k, False, callFunction=callFunction)
         else:
@@ -5181,7 +4947,7 @@ class gui(object):
         :param callFunction: whether to generate an event to notify that the widget has changed
         :returns: None
         """
-        for k in self.n_options:
+        for k in self.widgetManager.group(self.Widgets.OptionBox):
             self.clearOptionBox(k, callFunction)
 
     def setOptionBox(self, title, index, value=True, callFunction=True, override=False):
@@ -5196,11 +4962,11 @@ class gui(object):
         :returns: None
         :raises ItemLookupError: if the title can't be found
         """
-        box = self.__verifyItem(self.n_options, title)
+        box = self.widgetManager.get(self.Widgets.OptionBox, title)
 
         if box.kind == "ticks":
             gui.debug("Updating tickOptionBox")
-            ticks = self.__verifyItem(self.n_optionTicks, title)
+            ticks = self.widgetManager.get(self.Widgets.TickOptionBox, title, group=WidgetManager.VARS)
             if index is None:
                 gui.debug("Index empty - nothing to update")
                 return
@@ -5219,18 +4985,18 @@ class gui(object):
                         self.debug("Deleting tick: " + str(index) + " from OptionBox: " + str(title))
                         box['menu'].delete(index_num)
                         del(box.options[index_num])
-                        del self.n_optionTicks[title][index]
+                        self.widgetManager.remove(self.Widgets.TickOptionBox, title, index, group=WidgetManager.VARS)
                     elif isinstance(value, bool):
                         gui.debug("Updating tick: " + str(index) + " from OptionBox: " + str(title) + " to: " + str(value))
                         tick.set(value)
                     else:
                         gui.debug("Renaming tick: " + str(index) + " from OptionBox: " + str(title) + " to: " + str(value))
-                        ticks = self.n_optionTicks[title]
+                        ticks = self.widgetManager.get(self.Widgets.TickOptionBox, title, group=WidgetManager.VARS)
                         ticks[value] = ticks.pop(index)
                         box.options[index_num] = value
                         self.changeOptionBox(title, box.options)
                         for tick in ticks:
-                            self.n_optionTicks[title][tick].set(ticks[tick].get())
+                            self.widgetManager.get(self.Widgets.TickOptionBox, title, group=WidgetManager.VARS)[tick].set(ticks[tick].get())
             else:
                 if value is None:
                     self.warn("Unknown tick in deleteOptionBox: " + str(index) +
@@ -5268,7 +5034,7 @@ class gui(object):
                         del(box.options[index])
                         self.setOptionBox(title, 0, callFunction=False, override=override)
                     elif isinstance(value, bool):
-                        gui.debug("Updating: " + str(index) + " from OptionBox: " + str(title) + " to: " + str(index))
+                        gui.debug("Updating: OptionBox: " + str(title) + " to: " + str(index))
                         with PauseCallFunction(callFunction, box):
                             if not box['menu'].invoke(index):
                                 if override:
@@ -5284,12 +5050,12 @@ class gui(object):
                                 gui.debug("Invoked item: " + str(index))
                     else:
                         gui.debug("Renaming: " + str(index) + " from OptionBox: " + str(title) + "to: " + str(value))
-                        pos = box.options.index(self.n_optionVars[title].get())
+                        pos = box.options.index(self.widgetManager.get(self.Widgets.OptionBox, title, group=WidgetManager.VARS).get())
                         box.options[index] = value
                         self.changeOptionBox(title, box.options, pos)
 
             else:
-                self.__verifyItem(self.n_optionVars, title).set("")
+                self.widgetManager.get(self.Widgets.OptionBox, title, group=WidgetManager.VARS).set("")
                 self.warn("No items to select from: " + title)
 
 #####################################
@@ -5300,21 +5066,21 @@ class gui(object):
         self.__loadURL()
         if urlencode is False:
             raise Exception("Unable to load GoogleMaps - urlencode library not available")
-        self.__verifyItem(self.n_maps, title, True)
+        self.widgetManager.verify(self.Widgets.Map, title)
         gMap = GoogleMap(self.getContainer(), self)
         self.__positionWidget(gMap, row, column, colspan, rowspan)
-        self.n_maps[title] = gMap
+        self.widgetManager.add(self.Widgets.Map, title, gMap)
         return gMap
 
     def setGoogleMapLocation(self, title, location):
         self.searchGoogleMap(title, location)
 
     def searchGoogleMap(self, title, location):
-        gMap = self.__verifyItem(self.n_maps, title)
+        gMap = self.widgetManager.get(self.Widgets.Map, title)
         gMap.changeLocation(location)
 
     def setGoogleMapTerrain(self, title, terrain):
-        gMap = self.__verifyItem(self.n_maps, title)
+        gMap = self.widgetManager.get(self.Widgets.Map, title)
         if terrain not in gMap.TERRAINS:
             raise Exception("Invalid terrain. Must be one of " + str(gMap.TERRAINS))
         gMap.changeTerrain(terrain)
@@ -5323,79 +5089,82 @@ class gui(object):
         self. zoomGoogleMap(title, mod)
 
     def zoomGoogleMap(self, title, mod):
-        gMap = self.__verifyItem(self.n_maps, title)
+        gMap = self.widgetManager.get(self.Widgets.Map, title)
         if mod in ["+", "-"]:
             gMap.zoom(mod)
         elif isinstance(mod, int) and 0 <= mod <= 22:
             gMap.setZoom(mod)
 
     def setGoogleMapSize(self, title, size):
-        gMap = self.__verifyItem(self.n_maps, title)
+        gMap = self.widgetManager.get(self.Widgets.Map, title)
         gMap.setSize(size)
 
     def setGoogleMapMarker(self, title, location):
-        gMap = self.__verifyItem(self.n_maps, title)
+        gMap = self.widgetManager.get(self.Widgets.Map, title)
         if len(location) == 0:
             gMap.removeMarkers()
         else:
             gMap.addMarker(location)
 
     def getGoogleMapZoom(self, title):
-        return self.__verifyItem(self.n_maps, title).params["zoom"]
+        return self.widgetManager.get(self.Widgets.Map, title).params["zoom"]
 
     def getGoogleMapTerrain(self, title):
-        return self.__verifyItem(self.n_maps, title).params["maptype"].title()
+        return self.widgetManager.get(self.Widgets.Map, title).params["maptype"].title()
 
     def getGoogleMapLocation(self, title):
-        return self.__verifyItem(self.n_maps, title).params["center"]
+        return self.widgetManager.get(self.Widgets.Map, title).params["center"]
 
     def getGoogleMapSize(self, title):
-        return self.__verifyItem(self.n_maps, title).params["size"]
+        return self.widgetManager.get(self.Widgets.Map, title).params["size"]
 
     def saveGoogleMap(self, title, fileLocation):
-        gMap = self.__verifyItem(self.n_maps, title)
+        gMap = self.widgetManager.get(self.Widgets.Map, title)
         return gMap.saveTile(fileLocation)
         
 
 #####################################
 # FUNCTION for matplotlib
 #####################################
-    def addPlot(
-            self,
-            title,
-            t, s,
-            row=None,
-            column=0,
-            colspan=0,
-            rowspan=0):
-        self.__verifyItem(self.n_plots, title, True)
+    def addPlot(self, title, t, s, row=None, column=0, colspan=0, rowspan=0, width=None, height=None):
+        canvas, fig = self.__addPlotFig(title, row, column, colspan, rowspan, width, height)
+        axes = fig.add_subplot(111)
+        axes.plot(t,s)
+        canvas.axes = axes
+        return axes
 
+    def addPlotFig(self, title, row=None, column=0, colspan=0, rowspan=0, width=None, height=None):
+        canvas, fig = self.__addPlotFig(title, row, column, colspan, rowspan, width, height)
+        return fig
+
+    def __addPlotFig(self, title, row=None, column=0, colspan=0, rowspan=0, width=None, height=None):
+        self.widgetManager.verify(self.Widgets.Plot, title)
         self.__loadMatplotlib()
         if FigureCanvasTkAgg is False:
             raise Exception("Unable to load MatPlotLib - plots not available")
         else:
-            fig = Figure()
+            fig = Figure(tight_layout=True)
 
-            axes = fig.add_subplot(111)
-            axes.plot(t,s)
+            if width is not None and height is not None:
+                fig.set_size_inches(width,height,forward=True)
 
             canvas = FigureCanvasTkAgg(fig, self.getContainer())
+            canvas._tkcanvas.config(background="#c0c0c0", borderwidth=0, highlightthickness=0) 
             canvas.fig = fig
-            canvas.axes = axes
             canvas.show()
     #        canvas.get_tk_widget().pack(side=TOP, fill=BOTH, expand=1)
             canvas._tkcanvas.pack(side=TOP, fill=BOTH, expand=1)
 
             self.__positionWidget(canvas.get_tk_widget(), row, column, colspan, rowspan)
-            self.n_plots[title] = canvas
-            return axes
+            self.widgetManager.add(self.Widgets.Plot, title, canvas)
+            return canvas, fig
 
     def refreshPlot(self, title):
-        canvas = self.__verifyItem(self.n_plots, title)
+        canvas = self.widgetManager.get(self.Widgets.Plot, title)
         canvas.draw()
 
     def updatePlot(self, title, t, s, keepLabels=False):
-        axes = self.__verifyItem(self.n_plots, title).axes
+        axes = self.widgetManager.get(self.Widgets.Plot, title).axes
 
         if keepLabels:
             xLab = axes.get_xlabel()
@@ -5427,9 +5196,9 @@ class gui(object):
             column=0,
             colspan=0,
             rowspan=0):
-        self.__verifyItem(self.n_props, title, True)
+        self.widgetManager.verify(self.Widgets.Properties, title)
         haveTitle = True
-        if self.containerStack[-1]['type'] == self.C_TOGGLEFRAME:
+        if self.containerStack[-1]['type'] == self.Widgets.ToggleFrame:
             self.containerStack[-1]['sticky'] = "ew"
             haveTitle = False
 
@@ -5441,60 +5210,62 @@ class gui(object):
             font=self.propertiesFont,
             background=self.__getContainerBg())
         self.__positionWidget(props, row, column, colspan, rowspan)
-        self.n_props[title] = props
+        self.widgetManager.add(self.Widgets.Properties, title, props)
         return props
 
     def getProperties(self, title):
-        props = self.__verifyItem(self.n_props, title)
+        props = self.widgetManager.get(self.Widgets.Properties, title)
         return props.getProperties()
 
     def getAllProperties(self):
         props = {}
-        for k in self.n_props:
+        for k in self.widgetManager.group(self.Widgets.Properties):
             props[k] = self.getProperties(k)
         return props
 
     def getProperty(self, title, prop):
-        props = self.__verifyItem(self.n_props, title)
+        props = self.widgetManager.get(self.Widgets.Properties, title)
         return props.getProperty(prop)
 
     def setProperty(self, title, prop, value=False, callFunction=True):
-        props = self.__verifyItem(self.n_props, title)
+        props = self.widgetManager.get(self.Widgets.Properties, title)
         props.addProperty(prop, value, callFunction=callFunction)
 
     def setProperties(self, title, props, callFunction=True):
-        p = self.__verifyItem(self.n_props, title)
+        p = self.widgetManager.get(self.Widgets.Properties, title)
         p.addProperties(props, callFunction=callFunction)
 
     def deleteProperty(self, title, prop):
-        props = self.__verifyItem(self.n_props, title)
+        props = self.widgetManager.get(self.Widgets.Properties, title)
         props.addProperty(prop, None, callFunction=False)
 
     def setPropertyText(self, title, prop, newText=None):
-        props = self.__verifyItem(self.n_props, title)
+        props = self.widgetManager.get(self.Widgets.Properties, title)
         props.renameProperty(prop, newText)
 
     def clearProperties(self, title, callFunction=True):
-        self.__verifyItem(self.n_props, title).clearProperties(callFunction)
+        props = self.widgetManager.get(self.Widgets.Properties, title)
+        props.clearProperties(callFunction)
 
     def clearAllProperties(self, callFunction=False):
         props = {}
-        for k in self.n_props:
+        for k in self.widgetManager.group(self.Widgets.Properties):
             self.clearProperties(k, callFunction)
 
     def resetProperties(self, title, callFunction=True):
-        self.__verifyItem(self.n_props, title).resetProperties(callFunction)
+        props = self.widgetManager.get(self.Widgets.Properties, title)
+        props.resetProperties(callFunction)
 
     def resetAllProperties(self, callFunction=False):
         props = {}
-        for k in self.n_props:
+        for k in self.widgetManager.group(self.Widgets.Properties):
             self.resetProperties(k, callFunction)
 
 #####################################
 # FUNCTION to add spin boxes
 #####################################
     def __buildSpinBox(self, frame, title, vals):
-        self.__verifyItem(self.n_spins, title, True)
+        self.widgetManager.verify(self.Widgets.SpinBox, title)
         if type(vals) not in [list, tuple]:
             raise Exception(
                 "Can't create SpinBox " +
@@ -5534,7 +5305,7 @@ class gui(object):
 
         spin.config(validate='all', validatecommand=self.validateSpinBox)
 
-        self.n_spins[title] = spin
+        self.widgetManager.add(self.Widgets.SpinBox, title, spin)
         return spin
 
     def __addSpinBox(
@@ -5604,12 +5375,12 @@ class gui(object):
         return spin
 
     def getSpinBox(self, title):
-        spin = self.__verifyItem(self.n_spins, title)
+        spin = self.widgetManager.get(self.Widgets.SpinBox, title)
         return spin.get()
 
     def getAllSpinBoxes(self):
         boxes = {}
-        for k in self.n_spins:
+        for k in self.widgetManager.group(self.Widgets.SpinBox):
             boxes[k] = self.getSpinBox(k)
         return boxes
 
@@ -5648,7 +5419,7 @@ class gui(object):
         return vals
 
     def setSpinBox(self, title, value, callFunction=True):
-        spin = self.__verifyItem(self.n_spins, title)
+        spin = self.widgetManager.get(self.Widgets.SpinBox, title)
         vals = spin.cget("values")  # .split()
         vals = self.__getSpinBoxValsAsList(vals)
         val = str(value)
@@ -5658,11 +5429,11 @@ class gui(object):
         self.__setSpinBoxVal(spin, val, callFunction)
 
     def clearAllSpinBoxes(self, callFunction=False):
-        for sb in self.n_spins:
+        for sb in self.widgetManager.group(self.Widgets.SpinBox):
             self.setSpinBoxPos(sb, 0, callFunction=callFunction)
 
     def setSpinBoxPos(self, title, pos, callFunction=True):
-        spin = self.__verifyItem(self.n_spins, title)
+        spin = self.widgetManager.get(self.Widgets.SpinBox, title)
         vals = spin.cget("values")  # .split()
         vals = self.__getSpinBoxValsAsList(vals)
         pos = int(pos)
@@ -5674,7 +5445,7 @@ class gui(object):
         self.__setSpinBoxVal(spin, val, callFunction)
 
     def changeSpinBox(self, title, vals):
-        spin = self.__verifyItem(self.n_spins, title)
+        spin = self.widgetManager.get(self.Widgets.SpinBox, title)
         if spin.isRange:
             self.warn("Can't convert " + title + " RangeSpinBox to SpinBox")
         else:
@@ -5691,14 +5462,14 @@ class gui(object):
     def __animateImage(self, title, firstTime=False):
         if not self.alive: return
         try:
-            lab = self.__verifyItem(self.n_images, title)
+            lab = self.widgetManager.get(self.Widgets.Image, title)
         except ItemLookupError:
             # image destroyed...
-            try: del self.n_imageAnimationIds[title]
+            try: self.widgetManager.remove(self.Widgets.AnimationID, title)
             except: pass
             return
         if not lab.image.animating:
-            del self.n_imageAnimationIds[title]
+            self.widgetManager.remove(self.Widgets.AnimationID, title)
             return
         if firstTime and lab.image.alreadyAnimated:
             return
@@ -5717,7 +5488,7 @@ class gui(object):
                 lab.image.anim_speed,
                 self.__animateImage,
                 title)
-            self.n_imageAnimationIds[title] = anim_id
+            self.widgetManager.update(self.Widgets.AnimationID, title, anim_id)
         except Exception as e:
             # will be thrown when we reach end of anim images
             lab.image.anim_pos = 0
@@ -5761,22 +5532,22 @@ class gui(object):
         return False
 
     def setAnimationSpeed(self, name, speed):
-        img = self.__verifyItem(self.n_images, name).image
+        img = self.widgetManager.get(self.Widgets.Image, name).image
         if speed < 1:
             speed = 1
             self.warn("Setting " + str(name) + " speed to 1. Minimum animation speed is 1.")
         img.anim_speed = speed
 
     def stopAnimation(self, name):
-        img = self.__verifyItem(self.n_images, name).image
+        img = self.widgetManager.get(self.Widgets.Image, name).image
         img.animating = False
 
     def startAnimation(self, name):
-        img = self.__verifyItem(self.n_images, name).image
+        img = self.widgetManager.get(self.Widgets.Image, name).image
         if not img.animating:
             img.animating = True
             anim_id = self.topLevel.after(img.anim_speed, self.__animateImage, name)
-            self.n_imageAnimationIds[name] = anim_id
+            self.widgetManager.update(self.Widgets.AnimationID, name, anim_id)
 
     def addAnimatedImage(
             self,
@@ -5791,7 +5562,7 @@ class gui(object):
 
     # function to set an alternative image, when a mouse goes over
     def setImageMouseOver(self, title, overImg):
-        lab = self.__verifyItem(self.n_images, title)
+        lab = self.widgetManager.get(self.Widgets.Image, title)
 
         # first check over image & cache it
         fullPath = self.getImagePath(overImg)
@@ -5840,7 +5611,7 @@ class gui(object):
 
     # function to remove image objects form cache
     def clearImageCache(self):
-        self.n_imageCache = {}
+        self.widgetManager.clear(self.Widgets.ImageCache)
 
     # internal function to build an image function from a string
     def __getImageData(self, imageData, fmt="gif"):
@@ -5881,8 +5652,8 @@ class gui(object):
 
         # if we're caching, and we have a non-None entry in the cache - get it...
         photo = None
-        if checkCache and imagePath in self.n_imageCache and self.n_imageCache[imagePath] is not None:
-            photo = self.n_imageCache[imagePath]
+        if checkCache and imagePath in self.widgetManager.group(self.Widgets.ImageCache) and self.widgetManager.get(self.Widgets.ImageCache, imagePath) is not None:
+            photo = self.widgetManager.get(self.Widgets.ImageCache, imagePath)
 
         # if the image hasn't changed, use the cache
         if not self.hasImageChanged(photo, imagePath):
@@ -5945,17 +5716,17 @@ class gui(object):
             photo.isAnimated = False
             photo.animating = False
             if addToCache:
-                self.n_imageCache[imagePath] = photo
+                self.widgetManager.update(self.Widgets.ImageCache, imagePath, photo)
 
         return photo
 
     def getImageDimensions(self, name):
-        img = self.__verifyItem(self.n_images, name).image
+        img = self.widgetManager.get(self.Widgets.Image, name).image
         return img.width(), img.height()
 
     # force replace the current image, with a new one
     def reloadImage(self, name, imageFile):
-        label = self.__verifyItem(self.n_images, name)
+        label = self.widgetManager.get(self.Widgets.Image, name)
         image = self.__getImage(imageFile, False)
         self.__populateImage(name, image)
 
@@ -5963,13 +5734,13 @@ class gui(object):
         self.setImageData(name, imageData, fmt)
 
     def setImageData(self, name, imageData, fmt="gif"):
-        label = self.__verifyItem(self.n_images, name)
+        label = self.widgetManager.get(self.Widgets.Image, name)
         image = self.__getImageData(imageData, fmt=fmt)
         self.__populateImage(name, image)
 
     # replace the current image, with a new one
     def setImage(self, name, imageFile, internal=False):
-        label = self.__verifyItem(self.n_images, name)
+        label = self.widgetManager.get(self.Widgets.Image, name)
         imageFile = self.getImagePath(imageFile)
 
         # only set the image if it's different
@@ -5984,7 +5755,7 @@ class gui(object):
 
     # internal function to update the image in a label
     def __populateImage(self, name, image, internal=False):
-        label = self.__verifyItem(self.n_images, name)
+        label = self.widgetManager.get(self.Widgets.Image, name)
 
         label.image.animating = False
         label.config(image=image)
@@ -6000,7 +5771,7 @@ class gui(object):
                 self.__animateImage,
                 name,
                 True)
-            self.n_imageAnimationIds[name] = anim_id
+            self.widgetManager.update(self.Widgets.AnimationID, name, anim_id)
 
         if not internal and label.hasMouseOver:
             leaveImg = label.image.path
@@ -6014,7 +5785,7 @@ class gui(object):
 
     # function to configure an image map
     def setImageMap(self, name, func, coords):
-        img = self.__verifyItem(self.n_images, name)
+        img = self.widgetManager.get(self.Widgets.Image, name)
 
         rectangles = []
         if len(coords) > 0:
@@ -6028,7 +5799,7 @@ class gui(object):
 
     # function called when an image map is clicked
     def __imageMap(self, name, event):
-        img = self.__verifyItem(self.n_images, name)
+        img = self.widgetManager.get(self.Widgets.Image, name)
         for rect in img.MAP_COORDS:
             if rect.contains(Point(event.x, event.y)):
                 img.MAP_FUNC(rect.name)
@@ -6038,10 +5809,10 @@ class gui(object):
 
     # must be GIF or PNG
     def addImage(self, name, imageFile, row=None, column=0, colspan=0, rowspan=0):
-        self.__verifyItem(self.n_images, name, True)
+        self.widgetManager.verify(self.Widgets.Image, name)
         imgObj = self.__getImage(imageFile)
         self.__addImageObj(name, imgObj, row, column, colspan, rowspan)
-        self.n_images[name].hasMouseOver = False
+        self.widgetManager.get(self.Widgets.Image, name).hasMouseOver = False
         return imgObj
 
     # uses built-in icons to add an image
@@ -6053,10 +5824,10 @@ class gui(object):
     # load image from base-64 encoded GIF
     # use base64 module to convert binary data to base64
     def addImageData(self, name, imageData, row=None, column=0, colspan=0, rowspan=0, fmt="gif"):
-        self.__verifyItem(self.n_images, name, True)
+        self.widgetManager.verify(self.Widgets.Image, name)
         imgObj = self.__getImageData(imageData, fmt)
         self.__addImageObj(name, imgObj, row, column, colspan, rowspan)
-        self.n_images[name].hasMouseOver = False
+        self.widgetManager.get(self.Widgets.Image, name).hasMouseOver = False
         return imgObj
 
     def __addImageObj(self, name, img, row=None, column=0, colspan=0, rowspan=0):
@@ -6073,19 +5844,19 @@ class gui(object):
             w = img.width()
             label.config(height=h, width=w)
 
-        self.n_images[name] = label
+        self.widgetManager.add(self.Widgets.Image, name, label)
         self.__positionWidget(label, row, column, colspan, rowspan)
         if img.isAnimated:
             anim_id = self.topLevel.after(
                 img.anim_speed, self.__animateImage, name, True)
-            self.n_imageAnimationIds[name] = anim_id
+            self.widgetManager.update(self.Widgets.AnimationID, name, anim_id)
 
     def setImageSize(self, name, width, height):
-        img = self.__verifyItem(self.n_images, name)
+        img = self.widgetManager.get(self.Widgets.Image, name)
         img.config(height=height, width=width)
 
 #      def rotateImage(self, name, image):
-#            img = self.__verifyItem(self.n_images, name)
+#            img = self.widgetManager.get(self.Widgets.Image, name)
 
     # if +ve then grow, else shrink...
     def zoomImage(self, name, x, y=''):
@@ -6098,7 +5869,7 @@ class gui(object):
     # 0 will return an empty image, 1 will return the image, 2 will be 1/2 the
     # size ...
     def shrinkImage(self, name, x, y=''):
-        img = self.__verifyItem(self.n_images, name)
+        img = self.widgetManager.get(self.Widgets.Image, name)
         image = img.image.subsample(x, y)
 
         img.config(image=image)
@@ -6112,7 +5883,7 @@ class gui(object):
     # get every nth pixel (must be an integer)
     # 0 won't work, 1 will return the original size
     def growImage(self, name, x, y=''):
-        label = self.__verifyItem(self.n_images, name)
+        label = self.widgetManager.get(self.Widgets.Image, name)
         image = label.image.zoom(x, y)
 
         label.config(image=image)
@@ -6297,10 +6068,10 @@ class gui(object):
         newRb = False
         # title - is the grouper
         # so, if we already have an entry in n_rbVars - get it
-        if (title in self.n_rbVars):
-            var = self.n_rbVars[title]
+        if (title in self.widgetManager.group(self.Widgets.RadioButton, group=WidgetManager.VARS)):
+            var = self.widgetManager.get(self.Widgets.RadioButton, title, group=WidgetManager.VARS)
             # also get the list of rbVals
-            vals = self.n_rbVals[title]
+            vals = self.widgetManager.get(self.Widgets.RB_VALS, title)
             # and if we already have the new item in that list - reject it
             if name in vals:
                 raise Exception(
@@ -6314,8 +6085,8 @@ class gui(object):
             # if this is a new grouper - set it all up
             var = StringVar(self.topLevel)
             vals = [name]
-            self.n_rbVars[title] = var
-            self.n_rbVals[title] = vals
+            self.widgetManager.add(self.Widgets.RadioButton, title, var, group=WidgetManager.VARS)
+            self.widgetManager.add(self.Widgets.RB_VALS, title, vals)
             newRb = True
 
         # finally, create the actual RadioButton
@@ -6335,11 +6106,11 @@ class gui(object):
         rb.DEFAULT_TEXT = name
 
         # either append to existing widget list
-        if (title in self.n_rbs):
-            self.n_rbs[title].append(rb)
+        if title in self.widgetManager.group(self.Widgets.RadioButton):
+            self.widgetManager.get(self.Widgets.RadioButton, title).append(rb)
         # or create a new one
         else:
-            self.n_rbs[title] = [rb]
+            self.widgetManager.add(self.Widgets.RadioButton, title, [rb])
         #rb.bind("<Tab>", self.__focusNextWindow)
         #rb.bind("<Shift-Tab>", self.__focusLastWindow)
 
@@ -6351,31 +6122,31 @@ class gui(object):
         return rb
 
     def getRadioButton(self, title):
-        var = self.__verifyItem(self.n_rbVars, title)
+        var = self.widgetManager.get(self.Widgets.RadioButton, title, group=WidgetManager.VARS)
         return var.get()
 
     def getAllRadioButtons(self):
         rbs = {}
-        for k in self.n_rbs:
+        for k in self.widgetManager.group(self.Widgets.RadioButton):
             rbs[k] = self.getRadioButton(k)
         return rbs
 
     def setRadioButton(self, title, value, callFunction=True):
-        vals = self.__verifyItem(self.n_rbVals, title)
+        vals = self.widgetManager.get(self.Widgets.RB_VALS, title)
         if value not in vals:
             raise Exception("Invalid radio button: '" + value + "' doesn't exist") 
 
         # now call function
-        var = self.n_rbVars[title]
+        var = self.widgetManager.get(self.Widgets.RadioButton, title, group=WidgetManager.VARS)
         with PauseCallFunction(callFunction, var, False):
             var.set(value)
 
     def clearAllRadioButtons(self, callFunction=False):
-        for rb in self.n_rbs:
-            self.setRadioButton(rb, self.n_rbVars[rb].startVal, callFunction=callFunction)
+        for rb in self.widgetManager.group(self.Widgets.RadioButton):
+            self.setRadioButton(rb, self.widgetManager.get(self.Widgets.RadioButton, rb, group=WidgetManager.VARS).startVal, callFunction=callFunction)
 
     def setRadioTick(self, title, tick=True):
-        radios = self.__verifyItem(self.n_rbs, title)
+        radios = self.widgetManager.get(self.Widgets.RadioButton, title)
         for rb in radios:
             if tick:
                 rb.config(indicatoron=1)
@@ -6393,7 +6164,7 @@ class gui(object):
             column=0,
             colspan=0,
             rowspan=0):
-        self.__verifyItem(self.n_lbs, name, True)
+        self.widgetManager.verify(self.Widgets.ListBox, name)
         container = ListBoxContainer(self.getContainer())
         vscrollbar = AutoScrollbar(container)
         hscrollbar = AutoScrollbar(container, orient=HORIZONTAL)
@@ -6414,7 +6185,7 @@ class gui(object):
         hscrollbar.config(command=container.lb.xview)
 
         container.lb.config(font=self.lbFont)
-        self.n_lbs[name] = container.lb
+        self.widgetManager.add(self.Widgets.ListBox, name, container.lb)
 
         container.lb.DEFAULT_TEXT=""
         if values is not None:
@@ -6427,19 +6198,19 @@ class gui(object):
 
     # enable multiple listboxes to be selected at the same time
     def setListBoxGroup(self, name, group=True):
-        lb = self.__verifyItem(self.n_lbs, name)
+        lb = self.widgetManager.get(self.Widgets.ListBox, name)
         group = not group
         lb.config(exportselection=group)
 
     # set how many rows to display
     def setListBoxRows(self, name, rows):
-        lb = self.__verifyItem(self.n_lbs, name)
+        lb = self.widgetManager.get(self.Widgets.ListBox, name)
         lb.config(height=rows)
 
     # make the list single/multi select
     # default is single
     def setListBoxMulti(self, title, multi=True):
-        lb = self.__verifyItem(self.n_lbs, title)
+        lb = self.widgetManager.get(self.Widgets.ListBox, title)
         if multi:
             lb.config(selectmode=EXTENDED)
         else:
@@ -6466,7 +6237,7 @@ class gui(object):
         self.selectListItemAtPos(title, pos, callFunction)
 
     def selectListItemAtPos(self, title, pos, callFunction=False):
-        lb = self.__verifyItem(self.n_lbs, title)
+        lb = self.widgetManager.get(self.Widgets.ListBox, title)
 
         # clear previous selection if we're not multi
         if lb.cget("selectmode") != EXTENDED:
@@ -6498,7 +6269,7 @@ class gui(object):
 
     # add the item to the end of the list box
     def addListItem(self, title, item, pos=None, select=True):
-        lb = self.__verifyItem(self.n_lbs, title)
+        lb = self.widgetManager.get(self.Widgets.ListBox, title)
         # add it at the end
         if pos is None: pos = END
         lb.insert(pos, item)
@@ -6519,7 +6290,7 @@ class gui(object):
         return self.getListBox(title)
 
     def getListBox(self, title):
-        lb = self.__verifyItem(self.n_lbs, title)
+        lb = self.widgetManager.get(self.Widgets.ListBox, title)
         items = lb.curselection()
         values = []
         for loop in range(len(items)):
@@ -6528,12 +6299,12 @@ class gui(object):
 
     def getAllListBoxes(self):
         boxes = {}
-        for k in self.n_lbs:
+        for k in self.widgetManager.group(self.Widgets.ListBox):
             boxes[k] = self.getListBox(k)
         return boxes
 
     def getAllListItems(self, title):
-        lb = self.__verifyItem(self.n_lbs, title)
+        lb = self.widgetManager.get(self.Widgets.ListBox, title)
         items = lb.get(0, END)
         return list(items)
 
@@ -6542,14 +6313,14 @@ class gui(object):
         return self.getListBoxPos(title)
 
     def getListBoxPos(self, title):
-        lb = self.__verifyItem(self.n_lbs, title)
+        lb = self.widgetManager.get(self.Widgets.ListBox, title)
         # bug in tkinter 1.160 returns these as strings
         items = [int(i) for i in lb.curselection()]
 
         return items
 
     def removeListItemAtPos(self, title, pos):
-        lb = self.__verifyItem(self.n_lbs, title)
+        lb = self.widgetManager.get(self.Widgets.ListBox, title)
         items = lb.get(0, END)
         if pos >= len(items):
             raise Exception("Invalid position: " + str(pos))
@@ -6563,7 +6334,7 @@ class gui(object):
     # remove a specific item from the listBox
     # will only remove the first item that matches the String
     def removeListItem(self, title, item):
-        lb = self.__verifyItem(self.n_lbs, title)
+        lb = self.widgetManager.get(self.Widgets.ListBox, title)
         positions = self.__getListPositions(title, item)
         if len(positions) > 0:
             lb.delete(positions[0])
@@ -6574,7 +6345,7 @@ class gui(object):
         self.selectListItemAtPos(title, positions[0])
 
     def setListItemAtPos(self, title, pos, newVal):
-        lb = self.__verifyItem(self.n_lbs, title)
+        lb = self.widgetManager.get(self.Widgets.ListBox, title)
         lb.delete(pos)
         lb.insert(pos, newVal)
 
@@ -6586,15 +6357,15 @@ class gui(object):
 
     # functions to config
     def setListItemAtPosBg(self, title, pos, col):
-        lb = self.__verifyItem(self.n_lbs, title)
+        lb = self.widgetManager.get(self.Widgets.ListBox, title)
         lb.itemconfig(pos, bg=col)
 
     def setListItemAtPosFg(self, title, pos, col):
-        lb = self.__verifyItem(self.n_lbs, title)
+        lb = self.widgetManager.get(self.Widgets.ListBox, title)
         lb.itemconfig(pos, fg=col)
 
     def __getListPositions(self, title, item):
-        lb = self.__verifyItem(self.n_lbs, title)
+        lb = self.widgetManager.get(self.Widgets.ListBox, title)
         if not isinstance(item, list):
             item = [item]
         vals = lb.get(0, END)
@@ -6613,14 +6384,14 @@ class gui(object):
             self.setListItemAtPosFg(title, pos, col)
 
     def clearListBox(self, title, callFunction=True):
-        lb = self.__verifyItem(self.n_lbs, title)
+        lb = self.widgetManager.get(self.Widgets.ListBox, title)
         lb.selection_clear(0, END)
         lb.delete(0, END)  # clear
         if callFunction and hasattr(lb, 'cmd'):
             lb.cmd()
 
     def clearAllListBoxes(self, callFunction=False):
-        for lb in self.n_lbs:
+        for lb in self.widgetManager.group(self.Widgets.ListBox):
             self.clearListBox(lb, callFunction)
 
 #####################################
@@ -6631,7 +6402,7 @@ class gui(object):
             name = title
         if isinstance(title, list):
             raise Exception("Can't add a button using a list of names: " + str(title) + " - you should use .addButtons()")
-        self.__verifyItem(self.n_buttons, title, True)
+        self.widgetManager.verify(self.Widgets.Button, title)
         if not self.ttkFlag:
             but = Button(frame, text=name)
             but.config(font=self.buttonFont)
@@ -6652,7 +6423,7 @@ class gui(object):
 
         #but.bind("<Tab>", self.__focusNextWindow)
         #but.bind("<Shift-Tab>", self.__focusLastWindow)
-        self.n_buttons[title] = but
+        self.widgetManager.add(self.Widgets.Button, title, but)
 
         return but
 
@@ -6686,11 +6457,11 @@ class gui(object):
             return self.addImageButton(title, func, icon, row, column, colspan, rowspan)
 
     def setButton(self, name, text):
-        but = self.__verifyItem(self.n_buttons, name)
+        but = self.widgetManager.get(self.Widgets.Button, name)
         but.config(text=text)
 
     def setButtonImage(self, name, imgFile):
-        but = self.__verifyItem(self.n_buttons, name)
+        but = self.widgetManager.get(self.Widgets.Button, name)
         image = self.__getImage(imgFile)
         # works on Mac & Windows :)
         but.config(image=image, compound=TOP, text="", justify=LEFT)
@@ -6746,7 +6517,7 @@ class gui(object):
                 frame.theWidgets.append(but)
 
         self.__positionWidget(frame, row, column, colspan, rowspan)
-        self.n_frames.append(frame)
+        self.widgetManager.log(self.Widgets.FrameBox, frame)
 
 #####################################
 # FUNCTIONS for links
@@ -6758,7 +6529,7 @@ class gui(object):
             font=self.linkFont)
         if not self.ttk:
             link.config(background=self.__getContainerBg())
-        self.n_links[title] = link
+        self.widgetManager.add(self.Widgets.Link, title, link)
         return link
 
     # launches a browser to the specified page
@@ -6810,27 +6581,26 @@ class gui(object):
     # adds a simple microbit widget
     # used with permission from Ben Goodwin
     def addMicroBit(self, title, row=None, column=0, colspan=0, rowspan=0):
-        self.__verifyItem(self.n_microbits, title, True)
+        self.widgetManager.verify(self.Widgets.MicroBit, title)
         mb = MicroBitSimulator(self.getContainer())
         self.__positionWidget(mb, row, column, colspan, rowspan)
-        self.n_microbits[title] = mb
+        self.widgetManager.add(self.Widgets.MicroBit, title, mb)
         return mb
 
     def setMicroBitImage(self, title, image):
-        self.__verifyItem(self.n_microbits, title).show(image)
+        self.widgetManager.get(self.Widgets.MicroBit, title).show(image)
 
     def setMicroBitPixel(self, title, x, y, brightness):
-        self.__verifyItem(self.n_microbits, title).set_pixel(x, y, brightness)
+        self.widgetManager.get(self.Widgets.MicroBit, title).set_pixel(x, y, brightness)
 
     def clearMicroBit(self, title):
-        self.__verifyItem(self.n_microbits, title).clear()
+        self.widgetManager.get(self.Widgets.MicroBit, title).clear()
 
 #####################################
 # DatePicker Widget - using Form Container
 #####################################
     def addDatePicker(self, name, row=None, column=0, colspan=0, rowspan=0):
-        self.__verifyItem(self.n_dps, name, True)
-        self.n_dps[name] = name
+        self.widgetManager.verify(self.Widgets.DatePicker, name, array=True)
         # initial DatePicker has these dates
         days = range(1, 32)
         self.MONTH_NAMES = calendar.month_name[1:]
@@ -6856,21 +6626,22 @@ class gui(object):
             self.__updateDatePickerDays)
         self.stopFrame()
         frame.isContainer = False
+        self.widgetManager.log(self.Widgets.DatePicker, name)
 
     def setDatePickerFg(self, name, fg):
-        self.__verifyItem(self.n_dps, name)
+        self.widgetManager.check(self.Widgets.DatePicker, name)
         self.setLabelFg(name + "_DP_DayLabel", fg)
         self.setLabelFg(name + "_DP_MonthLabel", fg)
         self.setLabelFg(name + "_DP_YearLabel", fg)
 
     def setDatePickerChangeFunction(self, title, function):
-        self.__verifyItem(self.n_dps, title)
+        self.widgetManager.check(self.Widgets.DatePicker, title)
         cmd = self.MAKE_FUNC(self.__datePickerChangeFunction, title, True)
         self.setOptionBoxChangeFunction(title + "_DP_DayOptionBox", cmd)
-        self.__verifyItem(self.n_options, title + "_DP_DayOptionBox").function = function
+        self.widgetManager.get(self.Widgets.OptionBox, title + "_DP_DayOptionBox").function = function
 
     def __datePickerChangeFunction(self, title):
-        box = self.__verifyItem(self.n_options, title + "_DP_DayOptionBox")
+        box = self.widgetManager.get(self.Widgets.OptionBox, title + "_DP_DayOptionBox")
         if hasattr(box, 'function'):
             box.function(title)
 
@@ -6900,14 +6671,14 @@ class gui(object):
 
     # set a date for the named DatePicker
     def setDatePickerRange(self, title, startYear, endYear=None):
-        self.__verifyItem(self.n_dps, title)
+        self.widgetManager.check(self.Widgets.DatePicker, title)
         if endYear is None:
             endYear = datetime.date.today().year
         years = range(startYear, endYear + 1)
         self.changeOptionBox(title + "_DP_YearOptionBox", years)
 
     def setDatePicker(self, title, date=None):
-        self.__verifyItem(self.n_dps, title)
+        self.widgetManager.check(self.Widgets.DatePicker, title)
         if date is None:
             date = datetime.date.today()
         self.setOptionBox(title + "_DP_YearOptionBox", str(date.year))
@@ -6915,17 +6686,17 @@ class gui(object):
         self.setOptionBox(title + "_DP_DayOptionBox", date.day - 1)
 
     def clearDatePicker(self, title, callFunction=True):
-        self.__verifyItem(self.n_dps, title)
+        self.widgetManager.check(self.Widgets.DatePicker, title)
         self.setOptionBox(title + "_DP_YearOptionBox", 0, callFunction)
         self.setOptionBox(title + "_DP_MonthOptionBox", 0, callFunction)
         self.setOptionBox(title + "_DP_DayOptionBox", 0, callFunction)
 
     def clearAllDatePickers(self, callFunction=False):
-        for k in self.n_dps:
+        for k in self.widgetManager.group(self.Widgets.DatePicker):
             self.clearDatePicker(k, callFunction)
 
     def getDatePicker(self, title):
-        self.__verifyItem(self.n_dps, title)
+        self.widgetManager.check(self.Widgets.DatePicker, title)
         day = int(self.getOptionBox(title + "_DP_DayOptionBox"))
         month = self.MONTH_NAMES.index(
             self.getOptionBox(
@@ -6936,7 +6707,7 @@ class gui(object):
 
     def getAllDatePickers(self):
         dps = {}
-        for k in self.n_dps:
+        for k in self.widgetManager.group(self.Widgets.DatePicker):
             dps[k] = self.getDatePicker(k)
         return dps
 
@@ -6946,7 +6717,7 @@ class gui(object):
     def __flash(self):
         if not self.alive: return
         if self.doFlash:
-            for lab in self.n_flashLabs:
+            for lab in self.widgetManager.group(self.Widgets.FlashLabel):
                 bg = lab.cget("background")
                 fg = lab.cget("foreground")
                 lab.config(background=fg, foreground=bg)
@@ -6960,10 +6731,10 @@ class gui(object):
             column=0,
             colspan=0,
             rowspan=0):
-        self.addLabel(title, text, row, column, colspan, rowspan)
-        self.n_flashLabs.append(self.n_labels[title])
+        lab = self.addLabel(title, text, row, column, colspan, rowspan)
+        self.widgetManager.log(self.Widgets.FlashLabel, lab)
         self.doFlash = True
-        return self.n_labels[title]
+        return lab
 
     def addSelectableLabel(
             self,
@@ -6990,7 +6761,7 @@ class gui(object):
         :param row/column/colspan/rowspan: the row/column to position the label in & how many rows/columns to strecth across
         :raises ItemLookupError: raised if the title is not unique
         """
-        self.__verifyItem(self.n_labels, title, True)
+        self.widgetManager.verify(self.Widgets.Label, title)
         if text is None:
             text = ""
 
@@ -7009,7 +6780,7 @@ class gui(object):
         lab.inContainer = False
         lab.DEFAULT_TEXT = text
 
-        self.n_labels[title] = lab
+        self.widgetManager.add(self.Widgets.Label, title, lab)
         self.__positionWidget(lab, row, column, colspan, rowspan)
         return lab
 
@@ -7022,7 +6793,7 @@ class gui(object):
         if not self.ttkFlag:
             frame.config(background=self.__getContainerBg())
         for i in range(len(names)):
-            self.__verifyItem(self.n_labels, names[i], True)
+            self.widgetManager.verify(self.Widgets.Label, names[i])
             if not self.ttkFlag:
                 lab = Label(frame, text=names[i])
                 lab.config(font=self.labelFont, justify=LEFT, background=self.__getContainerBg())
@@ -7031,21 +6802,21 @@ class gui(object):
             lab.DEFAULT_TEXT = names[i]
             lab.inContainer = False
 
-            self.n_labels[names[i]] = lab
+            self.widgetManager.add(self.Widgets.Label, names[i], lab)
             lab.grid(row=0, column=i)
             Grid.columnconfigure(frame, i, weight=1)
             Grid.rowconfigure(frame, 0, weight=1)
             frame.theWidgets.append(lab)
 
         self.__positionWidget(frame, row, 0, colspan, rowspan)
-        self.n_frames.append(frame)
+        self.widgetManager.log(self.Widgets.FrameBox, frame)
 
     def setLabel(self, name, text):
-        lab = self.__verifyItem(self.n_labels, name)
+        lab = self.widgetManager.get(self.Widgets.Label, name)
         lab.config(text=text)
 
     def getLabel(self, name):
-        lab = self.__verifyItem(self.n_labels, name)
+        lab = self.widgetManager.get(self.Widgets.Label, name)
         return lab.cget("text")
 
     def clearLabel(self, name):
@@ -7063,7 +6834,7 @@ class gui(object):
         :returns: the created TextArea
         :raises ItemLookupError: if the title is already in use
         """
-        self.__verifyItem(self.n_textAreas, title, True)
+        self.widgetManager.verify(self.Widgets.TextArea, title)
         if scrollable:
             text = AjScrolledText(frame)
         else:
@@ -7080,7 +6851,7 @@ class gui(object):
         text.var = None
         self.__addRightClickMenu(text)
 
-        self.n_textAreas[title] = text
+        self.widgetManager.add(self.Widgets.TextArea, title, text)
         self.logTextArea(title)
 
         return text
@@ -7116,7 +6887,7 @@ class gui(object):
         :returns: the text in the specified TextArea
         :raises ItemLookupError: if the title can't be found
         """
-        return self.__verifyItem(self.n_textAreas, title).getText()
+        return self.widgetManager.get(self.Widgets.TextArea, title).getText()
 
     def getAllTextAreas(self):
         """ Convenience function to get the text for all TextAreas in the GUI.
@@ -7124,7 +6895,7 @@ class gui(object):
         :returns: a dictionary containing the result of calling getTextArea for every TextArea in the GUI
         """
         areas = {}
-        for k in self.n_textAreas:
+        for k in self.widgetManager.group(self.Widgets.TextArea):
             areas[k] = self.getTextArea(k)
         return areas
 
@@ -7138,7 +6909,7 @@ class gui(object):
         :returns: None
         :raises ItemLookupError: if the title can't be found
         """
-        ta = self.__verifyItem(self.n_textAreas, title)
+        ta = self.widgetManager.get(self.Widgets.TextArea, title)
 
         ta.pauseCallFunction(callFunction)
         if end:
@@ -7155,7 +6926,7 @@ class gui(object):
         :returns: None
         :raises ItemLookupError: if the title can't be found
         """
-        ta = self.__verifyItem(self.n_textAreas, title)
+        ta = self.widgetManager.get(self.Widgets.TextArea, title)
         ta.pauseCallFunction(callFunction)
         ta.delete('1.0', END)
         ta.resumeCallFunction()
@@ -7167,7 +6938,7 @@ class gui(object):
         :param callFunction: whether to generate an event to notify that the widget has changed
         :returns: None
         """
-        for ta in self.n_textAreas:
+        for ta in self.widgetManager.group(self.Widgets.TextArea):
             self.clearTextArea(ta, callFunction=callFunction)
 
     def logTextArea(self, title):
@@ -7182,7 +6953,7 @@ class gui(object):
         if hashlib is False:
             self.warn("Unable to log TextArea, hashlib library not available")
         else:
-            text = self.__verifyItem(self.n_textAreas, title)
+            text = self.widgetManager.get(self.Widgets.TextArea, title)
             text.__hash = text.getTextAreaHash()
 
     def textAreaChanged(self, title):
@@ -7197,14 +6968,14 @@ class gui(object):
         if hashlib is False:
             self.warn("Unable to log TextArea, hashlib library not available")
         else:
-            text = self.__verifyItem(self.n_textAreas, title)
+            text = self.widgetManager.get(self.Widgets.TextArea, title)
             return text.__hash != text.getTextAreaHash()
 
 #####################################
 # FUNCTIONS to add Tree Widgets
 #####################################
     def addTree(self, title, data, row=None, column=0, colspan=0, rowspan=0):
-        self.__verifyItem(self.n_trees, title, True)
+        self.widgetManager.verify(self.Widgets.Tree, title)
 
         self.__importAjtree()
         if parseString is False:
@@ -7224,59 +6995,59 @@ class gui(object):
 
         item = ajTreeData(xmlDoc.documentElement)
         node = ajTreeNode(frame.getPane(), None, item)
-        self.n_trees[title] = node
+        self.widgetManager.add(self.Widgets.Tree, title, node)
         # update() & expand() called in go() function
         return node
 
     def setTreeEditable(self, title, value=True):
-        tree = self.__verifyItem(self.n_trees, title)
+        tree = self.widgetManager.get(self.Widgets.Tree, title)
         tree.item.setCanEdit(value)
 
     def setTreeBg(self, title, colour):
-        tree = self.__verifyItem(self.n_trees, title)
+        tree = self.widgetManager.get(self.Widgets.Tree, title)
         tree.setBgColour(colour)
 
     def setTreeFg(self, title, colour):
-        tree = self.__verifyItem(self.n_trees, title)
+        tree = self.widgetManager.get(self.Widgets.Tree, title)
         tree.setFgColour(colour)
 
     def setTreeHighlightBg(self, title, colour):
-        tree = self.__verifyItem(self.n_trees, title)
+        tree = self.widgetManager.get(self.Widgets.Tree, title)
         tree.setBgHColour(colour)
 
     def setTreeHighlightFg(self, title, colour):
-        tree = self.__verifyItem(self.n_trees, title)
+        tree = self.widgetManager.get(self.Widgets.Tree, title)
         tree.setFgHColour(colour)
 
     def setTreeColours(self, title, fg, bg, fgH, bgH):
-        tree = self.__verifyItem(self.n_trees, title)
+        tree = self.widgetManager.get(self.Widgets.Tree, title)
         tree.setAllColours(bg, fg, bgH, fgH)
 
     def setTreeDoubleClickFunction(self, title, func):
         if func is not None:
-            tree = self.__verifyItem(self.n_trees, title)
+            tree = self.widgetManager.get(self.Widgets.Tree, title)
             command = self.MAKE_FUNC(func, title)
             tree.item.registerDblClick(command)
 
     def setTreeEditFunction(self, title, func):
         if func is not None:
-            tree = self.__verifyItem(self.n_trees, title)
+            tree = self.widgetManager.get(self.Widgets.Tree, title)
             command = self.MAKE_FUNC(func, title)
             tree.registerEditEvent(command)
 
     # get whole tree as XML
     def getTreeXML(self, title):
-        tree = self.__verifyItem(self.n_trees, title)
+        tree = self.widgetManager.get(self.Widgets.Tree, title)
         return tree.item.node.toxml()
 
     # get selected node as a string
     def getTreeSelected(self, title):
-        tree = self.__verifyItem(self.n_trees, title)
+        tree = self.widgetManager.get(self.Widgets.Tree, title)
         return tree.getSelectedText()
 
     # get selected node (and children) as XML
     def getTreeSelectedXML(self, title):
-        tree = self.__verifyItem(self.n_trees, title)
+        tree = self.widgetManager.get(self.Widgets.Tree, title)
         item = tree.getSelected()
         if item is not None:
             return item.node.toxml()
@@ -7295,7 +7066,7 @@ class gui(object):
             colspan=0,
             rowspan=0):
 
-        self.__verifyItem(self.n_messages, title, True)
+        self.widgetManager.verify(self.Widgets.Message, title)
         mess = Message(self.getContainer())
         mess.config(font=self.messageFont)
         mess.config(justify=LEFT, background=self.__getContainerBg())
@@ -7309,7 +7080,7 @@ class gui(object):
         if self.platform in [self.MAC, self.LINUX]:
             mess.config(highlightbackground=self.__getContainerBg())
 
-        self.n_messages[title] = mess
+        self.widgetManager.add(self.Widgets.Message, title, mess)
 
         self.__positionWidget(mess, row, column, colspan, rowspan)
 #            mess.bind("<Configure>", lambda e: mess.config(width=e.width-10))
@@ -7319,7 +7090,7 @@ class gui(object):
         return self.addMessage(title, None, row, column, colspan, rowspan)
 
     def setMessage(self, title, text):
-        mess = self.__verifyItem(self.n_messages, title)
+        mess = self.widgetManager.get(self.Widgets.Message, title)
         mess.config(text=text)
 
     def clearMessage(self, title):
@@ -7329,8 +7100,7 @@ class gui(object):
 # FUNCTIONS for entry boxes
 #####################################
     def __buildEntry(self, title, frame, secret=False, words=[]):
-        self.__verifyItem(self.n_entries, title, True)
-
+        self.widgetManager.verify(self.Widgets.Entry, title)
         # if we are an autocompleter
         if len(words) > 0:
             ent = AutoCompleteEntry(words, self.topLevel, frame)
@@ -7372,8 +7142,8 @@ class gui(object):
         # add a right click menu
         self.__addRightClickMenu(ent)
 
-        self.n_entries[title] = ent
-        self.n_entryVars[title] = ent.var
+        self.widgetManager.add(self.Widgets.Entry, title, ent)
+        self.widgetManager.add(self.Widgets.Entry, title, ent.var, group=WidgetManager.VARS)
         return ent
 
     def addEntry(
@@ -7480,8 +7250,8 @@ class gui(object):
         lab.isValidation = True
         ent.lab = lab
 
-        self.n_labels[title] = lab
-        self.n_frameLabs[title] = lab
+        self.widgetManager.add(self.Widgets.Label, title, lab)
+        self.widgetManager.add(self.Widgets.FrameLabel, title, lab)
 
         vFrame.theWidget = ent
         vFrame.theLabel = lab
@@ -7504,7 +7274,7 @@ class gui(object):
         return ent
 
     def setEntryValid(self, title):
-        entry = self.__verifyItem(self.n_entries, title)
+        entry = self.widgetManager.get(self.Widgets.Entry, title)
         if not entry.isValidation:
             self.warn("Entry " + str(title) + " is not a validation entry. Unable to set VALID.")
             return
@@ -7515,7 +7285,7 @@ class gui(object):
         entry.lab.DEFAULT_TEXT = entry.lab.cget("text")
 
     def setEntryInvalid(self, title):
-        entry = self.__verifyItem(self.n_entries, title)
+        entry = self.widgetManager.get(self.Widgets.Entry, title)
         if not entry.isValidation:
             self.warn("Entry " + str(title) + " is not a validation entry. Unable to set INVALID.")
             return
@@ -7526,7 +7296,7 @@ class gui(object):
         entry.lab.DEFAULT_TEXT = entry.lab.cget("text")
 
     def setEntryWaitingValidation(self, title):
-        entry = self.__verifyItem(self.n_entries, title)
+        entry = self.widgetManager.get(self.Widgets.Entry, title)
         if not entry.isValidation:
             self.warn("Entry " + str(title) + " is not a validation entry. Unable to set WAITING VALID.")
             return
@@ -7553,7 +7323,7 @@ class gui(object):
         return ent
 
     def setAutoEntryNumRows(self, title, rows):
-        entry = self.__verifyItem(self.n_entries, title)
+        entry = self.widgetManager.get(self.Widgets.Entry, title)
         entry.setNumRows(rows)
 
     def addLabelAutoEntry(
@@ -7584,9 +7354,9 @@ class gui(object):
         if action == "1":
             if text in '0123456789.-+':
                 try:
-                    if len(value_if_allowed) == 1 and value_if_allowed in '.-':
+                    if len(str(value_if_allowed)) == 1 and value_if_allowed in '.-':
                         return True
-                    elif len(value_if_allowed) == 2 and value_if_allowed == '-.':
+                    elif len(str(value_if_allowed)) == 2 and value_if_allowed == '-.':
                         return True
                     else:
                         float(value_if_allowed)
@@ -7689,18 +7459,17 @@ class gui(object):
         return self.addLabelEntry(title, row, column, colspan, rowspan, True)
 
     def getEntry(self, name):
-        self.__verifyItem(self.n_entryVars, name)
-        entry = self.__verifyItem(self.n_entries, name)
+        entry = self.widgetManager.get(self.Widgets.Entry, name)
         if entry.showingDefault:
             if entry.isNumeric:
-                return 0
+                return None
             else:
                 return ""
         else:
-            val = self.n_entryVars[name].get()
+            val = self.widgetManager.get(self.Widgets.Entry, name, group=WidgetManager.VARS).get()
             if entry.isNumeric:
                 if len(val) == 0 or (len(val) == 1 and val in '.-') or (len(val) == 2 and val == "-."):
-                    return 0
+                    return None
                 else:
                     return float(val)
             else:
@@ -7708,50 +7477,52 @@ class gui(object):
 
     def getAllEntries(self):
         entries = {}
-        for k in self.n_entries:
+        for k in self.widgetManager.group(self.Widgets.Entry):
             entries[k] = self.getEntry(k)
         return entries
 
     def setEntry(self, name, text, callFunction=True):
-        var = self.__verifyItem(self.n_entryVars, name)
+        ent = self.widgetManager.get(self.Widgets.Entry, name)
+        var = self.widgetManager.get(self.Widgets.Entry, name, group=WidgetManager.VARS)
         self.__updateEntryDefault(name, mode="set")
 
         # now call function
         with PauseCallFunction(callFunction, var, False):
-            var.set(text)
+            if not ent.isNumeric or self.__validateNumericEntry("1", None, text, None, "1", None, None, None):
+                var.set(text)
 
     def setEntryMaxLength(self, name, length):
-        var = self.__verifyItem(self.n_entryVars, name)
+        var = self.widgetManager.get(self.Widgets.Entry, name, group=WidgetManager.VARS)
         var.maxLength = length
         if var.ml_id is not None:
             var.trace_vdelete('w', var.ml_id)
         var.ml_id = var.trace('w', self.MAKE_FUNC(self.__limitEntry, name, True))
 
     def setEntryUpperCase(self, name):
-        var = self.__verifyItem(self.n_entryVars, name)
+        var = self.widgetManager.get(self.Widgets.Entry, name, group=WidgetManager.VARS)
         if var.uc_id is not None:
             var.trace_vdelete('w', var.uc_id)
         var.uc_id = var.trace('w', self.MAKE_FUNC(self.__upperEntry, name, True))
 
     def setEntryLowerCase(self, name):
-        var = self.__verifyItem(self.n_entryVars, name)
+        var = self.widgetManager.get(self.Widgets.Entry, name, group=WidgetManager.VARS)
         if var.lc_id is not None:
             var.trace_vdelete('w', var.lc_id)
         var.lc_id = var.trace('w', self.MAKE_FUNC(self.__lowerEntry, name, True))
 
     def __limitEntry(self, name):
-        var = self.__verifyItem(self.n_entryVars, name)
+        var = self.widgetManager.get(self.Widgets.Entry, name, group=WidgetManager.VARS)
         if len(var.get()) > var.maxLength:
             self.containerStack[0]['container'].bell()
             var.set(var.get()[0:var.maxLength])
 
     def __upperEntry(self, name):
-        var = self.__verifyItem(self.n_entryVars, name)
+        var = self.widgetManager.get(self.Widgets.Entry, name, group=WidgetManager.VARS)
         chars = var.get().upper()
         var.set(chars)
 
     def __lowerEntry(self, name):
-        var = self.__verifyItem(self.n_entryVars, name)
+        var = self.widgetManager.get(self.Widgets.Entry, name, group=WidgetManager.VARS)
         chars = var.get().lower()
         var.set(chars)
 
@@ -7762,8 +7533,8 @@ class gui(object):
         self.__updateEntryDefault(name, "out")
 
     def __updateEntryDefault(self, name, mode=None):
-        var = self.__verifyItem(self.n_entryVars, name)
-        entry = self.__verifyItem(self.n_entries, name)
+        var = self.widgetManager.get(self.Widgets.Entry, name, group=WidgetManager.VARS)
+        entry = self.widgetManager.get(self.Widgets.Entry, name)
 
         # ignore this if no default to apply
         if entry.default == "":
@@ -7781,7 +7552,7 @@ class gui(object):
         if var.auto_id is not None:
             var.trace_vdelete('w', var.auto_id)
 
-        current = self.n_entryVars[name].get()
+        current = self.widgetManager.get(self.Widgets.Entry, name, group=WidgetManager.VARS).get()
 
         # disable any change function
         with PauseCallFunction(False, var, False):
@@ -7815,15 +7586,15 @@ class gui(object):
         self.updateEntryDefault(name, text)
 
     def updateEntryDefault(self, name, text):
-        entry = self.__verifyItem(self.n_entries, name)
+        entry = self.widgetManager.get(self.Widgets.Entry, name)
 
         entry.default = text
         entry.DEFAULT_TEXT = text
         self.__updateEntryDefault(name, "update")
 
     def setEntryDefault(self, name, text="default"):
-        entry = self.__verifyItem(self.n_entries, name)
-        self.__verifyItem(self.n_entryVars, name)
+        entry = self.widgetManager.get(self.Widgets.Entry, name)
+        self.widgetManager.get(self.Widgets.Entry, name, group=WidgetManager.VARS)
 
         # remember current settings - to return to
         entry.oldJustify = entry.cget('justify')
@@ -7844,7 +7615,7 @@ class gui(object):
         entry.bind("<FocusOut>", out_command, add="+")
 
     def clearEntry(self, name, callFunction=True, setFocus=True):
-        var = self.__verifyItem(self.n_entryVars, name)
+        var = self.widgetManager.get(self.Widgets.Entry, name, group=WidgetManager.VARS)
 
         # now call function
         with PauseCallFunction(callFunction, var, False):
@@ -7854,12 +7625,12 @@ class gui(object):
         if setFocus: self.setFocus(name)
 
     def clearAllEntries(self, callFunction=False):
-        for entry in self.n_entryVars:
+        for entry in self.widgetManager.group(self.Widgets.Entry, group=WidgetManager.VARS):
             self.clearEntry(entry, callFunction=callFunction, setFocus=False)
 
     def setFocus(self, name):
-        self.__verifyItem(self.n_entries, name)
-        self.n_entries[name].focus_set()
+        entry = self.widgetManager.get(self.Widgets.Entry, name)
+        entry.focus_set()
 
     def __lookupValue(self, myDict, val):
         for name in myDict:
@@ -7877,28 +7648,28 @@ class gui(object):
         if name.lower() == "tk":
             return self.__getTopLevel().title()
         elif name == "Listbox":
-            return self.__lookupValue(self.n_lbs, widg)
+            return self.__lookupValue(self.widgetManager.group(self.Widgets.ListBox), widg)
         elif name == "Button":
             # merge together Buttons & Toolbar Buttons
-            z = self.n_buttons.copy()
-            z.update(self.n_tbButts)
+            z = self.widgetManager.group(self.Widgets.Button).copy()
+            z.update(self.widgetManager.group(self.Widgets.Toolbar))
             return self.__lookupValue(z, widg)
         elif name == "Entry":
-            return self.__lookupValue(self.n_entries, widg)
+            return self.__lookupValue(self.widgetManager.group(self.Widgets.Entry), widg)
         elif name == "Scale":
-            return self.__lookupValue(self.n_scales, widg)
+            return self.__lookupValue(self.widgetManager.group(self.Widgets.Scale), widg)
         elif name == "Checkbutton":
-            return self.__lookupValue(self.n_cbs, widg)
+            return self.__lookupValue(self.widgetManager.group(self.Widgets.CheckBox), widg)
         elif name == "Radiobutton":
-            return self.__lookupValue(self.n_rbs, widg)
+            return self.__lookupValue(self.widgetManager.group(self.Widgets.RadioButton), widg)
         elif name == "Spinbox":
-            return self.__lookupValue(self.n_spins, widg)
+            return self.__lookupValue(self.widgetManager.group(self.Widgets.SpinBox), widg)
         elif name == "OptionMenu":
-            return self.__lookupValue(self.n_options, widg)
+            return self.__lookupValue(self.widgetManager.group(self.Widgets.OptionBox), widg)
         elif name == "Text":
-            return self.__lookupValue(self.n_textAreas, widg)
+            return self.__lookupValue(self.widgetManager.group(self.Widgets.TextArea), widg)
         elif name == "Link":
-            return self.__lookupValue(self.n_links, widg)
+            return self.__lookupValue(self.widgetManager.group(self.Widgets.Link), widg)
         else:
             raise Exception("Unknown widget type: " + name)
 
@@ -7917,7 +7688,7 @@ class gui(object):
             column=0,
             colspan=0,
             rowspan=0):
-        self.__verifyItem(self.n_meters, name, True)
+        self.widgetManager.verify(self.Widgets.Meter, name)
 
         if type == "SPLIT":
             meter = SplitMeter(self.getContainer(), font=self.meterFont)
@@ -7926,7 +7697,7 @@ class gui(object):
         else:
             meter = Meter(self.getContainer(), font=self.meterFont)
 
-        self.n_meters[name] = meter
+        self.widgetManager.add(self.Widgets.Meter, name, meter)
         self.__positionWidget(meter, row, column, colspan, rowspan)
         return meter
 
@@ -7942,22 +7713,22 @@ class gui(object):
     # update the value of the specified meter
     # note: expects a value between 0 (-100 for split/dual) & 100
     def setMeter(self, name, value=0.0, text=None):
-        item = self.__verifyItem(self.n_meters, name)
+        item = self.widgetManager.get(self.Widgets.Meter, name)
         item.set(value, text)
 
     def getMeter(self, name):
-        item = self.__verifyItem(self.n_meters, name)
+        item = self.widgetManager.get(self.Widgets.Meter, name)
         return item.get()
 
     def getAllMeters(self):
         meters = {}
-        for k in self.n_meters:
+        for k in self.widgetManager.group(self.Widgets.Meter):
             meters[k] = self.getMeter(k)
         return meters
 
     # a single colour for meters, a list of 2 colours for splits & duals
     def setMeterFill(self, name, colour):
-        item = self.__verifyItem(self.n_meters, name)
+        item = self.widgetManager.get(self.Widgets.Meter, name)
         item.configure(fill=colour)
 
 #####################################
@@ -8009,7 +7780,7 @@ class gui(object):
         sep = Separator(self.getContainer(), orient)
         if colour is not None:
             sep.configure(fg=colour)
-        self.n_separators.append(sep)
+        self.widgetManager.log(self.Widgets.Separator, sep)
         self.__positionWidget(sep, row, column, colspan, rowspan)
         return sep
 
@@ -8024,15 +7795,15 @@ class gui(object):
             column=0,
             colspan=0,
             rowspan=0):
-        self.__verifyItem(self.n_pieCharts, name, True)
+        self.widgetManager.verify(self.Widgets.PieChart, name)
         self.__loadTooltip()
         pie = PieChart(self.getContainer(), fracs, self.__getContainerBg())
-        self.n_pieCharts[name] = pie
+        self.widgetManager.add(self.Widgets.PieChart, name, pie)
         self.__positionWidget(pie, row, column, colspan, rowspan, sticky=None)
         return pie
 
     def setPieChart(self, title, name, value):
-        pie = self.__verifyItem(self.n_pieCharts, title)
+        pie = self.widgetManager.get(self.Widgets.PieChart, title)
         pie.setValue(name, value)
 
 #####################################
@@ -8050,7 +7821,7 @@ class gui(object):
 
         for i in range(len(names)):
             t = names[i]
-            if (t in self.n_tbButts):
+            if (t in self.widgetManager.group(self.Widgets.Toolbar)):
                 raise Exception(
                     "Invalid toolbar button name: " +
                     t +
@@ -8066,7 +7837,7 @@ class gui(object):
                         image = None
 
             but = Button(self.tb)
-            self.n_tbButts[t] = but
+            self.widgetManager.add(self.Widgets.Toolbar, t, but)
 
             if singleFunc is not None:
                 u = self.MAKE_FUNC(singleFunc, t)
@@ -8145,40 +7916,40 @@ class gui(object):
             self.pinBut.config(image=self.pinBut.image)
 
     def setToolbarIcon(self, name, icon):
-        if (name not in self.n_tbButts):
+        if (name not in self.widgetManager.group(self.Widgets.Toolbar)):
             raise Exception("Unknown toolbar name: " + name)
         imgFile = os.path.join(self.icon_path, icon.lower() + ".png")
         with PauseLogger():
             self.setToolbarImage(name, imgFile)
-        self.n_tbButts[name].tt_var.set(icon)
+        self.widgetManager.get(self.Widgets.Toolbar, name).tt_var.set(icon)
 
     def setToolbarImage(self, name, imgFile):
-        if (name not in self.n_tbButts):
+        if (name not in self.widgetManager.group(self.Widgets.Toolbar)):
             raise Exception("Unknown toolbar name: " + name)
         image = self.__getImage(imgFile)
-        self.n_tbButts[name].config(image=image)
-        self.n_tbButts[name].image = image
+        self.widgetManager.get(self.Widgets.Toolbar, name).config(image=image)
+        self.widgetManager.get(self.Widgets.Toolbar, name).image = image
 
     def setToolbarButtonEnabled(self, name):
         self.setToolbarButtonDisabled(name, False)
 
     def setToolbarButtonDisabled(self, name, disabled=True):
-        if (name not in self.n_tbButts):
+        if (name not in self.widgetManager.group(self.Widgets.Toolbar)):
             raise Exception("Unknown toolbar name: " + name)
         if disabled:
-            self.n_tbButts[name].config(state=DISABLED)
+            self.widgetManager.get(self.Widgets.Toolbar, name).config(state=DISABLED)
         else:
-            self.n_tbButts[name].config(state=NORMAL)
+            self.widgetManager.get(self.Widgets.Toolbar, name).config(state=NORMAL)
 
     def setToolbarEnabled(self):
         self.setToolbarDisabled(False)
 
     def setToolbarDisabled(self, disabled=True):
-        for but in self.n_tbButts.keys():
+        for but in self.widgetManager.group(self.Widgets.Toolbar).keys():
             if disabled:
-                self.n_tbButts[but].config(state=DISABLED)
+                self.widgetManager.get(self.Widgets.Toolbar, but).config(state=DISABLED)
             else:
-                self.n_tbButts[but].config(state=NORMAL)
+                self.widgetManager.get(self.Widgets.Toolbar, but).config(state=NORMAL)
 
         if self.pinBut is not None:
             if disabled:
@@ -8235,15 +8006,15 @@ class gui(object):
             if self.platform == self.MAC:
                 appmenu = Menu(self.menuBar, name='apple')
                 self.menuBar.add_cascade(menu=appmenu)
-                self.n_menus["MAC_APP"] = appmenu
+                self.widgetManager.add(self.Widgets.Menu, "MAC_APP", appmenu)
             elif self.platform == self.WINDOWS:
                 # sysMenu must be added last, otherwise other menus vanish
                 sysMenu = Menu(self.menuBar, name='system', tearoff=False)
-                self.n_menus["WIN_SYS"] = sysMenu
+                self.widgetManager.add(self.Widgets.Menu, "WIN_SYS", sysMenu)
 
     # add a parent menu, for menu items
     def createMenu(self, title, tearable=False, showInBar=True):
-        self.__verifyItem(self.n_menus, title, True)
+        self.widgetManager.verify(self.Widgets.Menu, title)
         self.__initMenu()
 
         if title == "WIN_SYS" and self.platform != self.WINDOWS:
@@ -8256,7 +8027,7 @@ class gui(object):
         theMenu = Menu(self.menuBar, tearoff=tearable)
         if showInBar:
             self.menuBar.add_cascade(label=title, menu=theMenu)
-        self.n_menus[title] = theMenu
+        self.widgetManager.add(self.Widgets.Menu, title, theMenu)
         return theMenu
 
     def createRightClickMenu(self, title, showInBar=False):
@@ -8282,7 +8053,7 @@ class gui(object):
         # get or create an initial menu
         if title is not None:
             try:
-                theMenu = self.__verifyItem(self.n_menus, title, False)
+                theMenu = self.widgetManager.get(self.Widgets.Menu, title)
             except:
                 theMenu = self.createMenu(title)
                 if theMenu is None:
@@ -8324,8 +8095,8 @@ class gui(object):
             b = "<" + b + ">"
             a = a.title()
 
-            self.__verifyItem(self.n_accelerators, a, True)
-            self.n_accelerators.append(a)
+            self.widgetManager.verify(self.Widgets.Accelerators, a, array=True)
+            self.widgetManager.log(self.Widgets.Accelerators, a)
             if u is not None and createBinding:
                 self.topLevel.bind_all(b, u)
 
@@ -8341,12 +8112,12 @@ class gui(object):
         elif kind == "rb":
             varName = title + "rb" + item
             newRb = False
-            if (varName in self.n_menuVars):
-                var = self.n_menuVars[varName]
+            if (varName in self.widgetManager.group(self.Widgets.Menu, group=WidgetManager.VARS)):
+                var = self.widgetManager.get(self.Widgets.Menu, varName, group=WidgetManager.VARS)
             else:
                 newRb = True
                 var = StringVar(self.topLevel)
-                self.n_menuVars[varName] = var
+                self.widgetManager.add(self.Widgets.Menu, varName, var, group=WidgetManager.VARS)
             theMenu.add_radiobutton(
                 label=rb_id,
                 command=u,
@@ -8358,9 +8129,9 @@ class gui(object):
                 self.setMenuRadioButton(title, item, rb_id)
         elif kind == "cb":
             varName = title + "cb" + item
-            self.__verifyItem(self.n_menuVars, varName, True)
+            self.widgetManager.verify(self.Widgets.Menu, varName, group=WidgetManager.VARS)
             var = StringVar(self.topLevel)
-            self.n_menuVars[varName] = var
+            self.widgetManager.add(self.Widgets.Menu, varName, var, group=WidgetManager.VARS)
             theMenu.add_checkbutton(
                 label=item,
                 command=u,
@@ -8370,9 +8141,9 @@ class gui(object):
                 accelerator=a,
                 underline=underline)
         elif kind == "sub":
-            self.__verifyItem(self.n_menus, item, True)
+            self.widgetManager.verify(self.Widgets.Menu, item)
             subMenu = Menu(theMenu, tearoff=False)
-            self.n_menus[item] = subMenu
+            self.widgetManager.add(self.Widgets.Menu, item, subMenu)
             theMenu.add_cascade(menu=subMenu, label=item)
         else:
             theMenu.add_command(
@@ -8494,7 +8265,7 @@ class gui(object):
 
     def __setMenu(self, menu, title, value, kind):
         title = menu + kind + title
-        var = self.__verifyItem(self.n_menuVars, title)
+        var = self.widgetManager.get(self.Widgets.Menu, title, group=WidgetManager.VARS)
         if kind == "rb":
             var.set(value)
         elif kind == "cb":
@@ -8516,7 +8287,7 @@ class gui(object):
 
     # set align = "none" to remove text
     def setMenuImage(self, menu, title, image, align="left"):
-        theMenu = self.__verifyItem(self.n_menus, menu)
+        theMenu = self.widgetManager.get(self.Widgets.Menu, menu)
         imageObj = self.__getImage(image)
         if 16 != imageObj.width() or imageObj.width() != imageObj.height():
             self.warn("Invalid image resolution for menu item " +
@@ -8530,7 +8301,7 @@ class gui(object):
             self.setMenuImage(menu, title, image, align)
 
     def disableMenubar(self):
-        for theMenu in self.n_menus:
+        for theMenu in self.widgetManager.group(self.Widgets.Menu):
             self.disableMenu(theMenu)
 
         # loop through top level menus
@@ -8541,7 +8312,7 @@ class gui(object):
                 self.menuBar.entryconfig(item, state=DISABLED)
 
     def enableMenubar(self):
-        for theMenu in self.n_menus:
+        for theMenu in self.widgetManager.group(self.Widgets.Menu):
             self.enableMenu(theMenu)
 
         # loop through toplevel menus
@@ -8558,7 +8329,7 @@ class gui(object):
         self.__changeMenuState(title, NORMAL, limit)
 
     def __changeMenuState(self, title, state, limit=None):
-        theMenu = self.__verifyItem(self.n_menus, title)
+        theMenu = self.widgetManager.get(self.Widgets.Menu, title)
         numMenus = theMenu.index("end")
         if numMenus is not None:  # MAC_APP (and others?) returns None
             for item in range(numMenus + 1):
@@ -8576,19 +8347,19 @@ class gui(object):
             pass
 
     def disableMenuItem(self, title, item):
-        theMenu = self.__verifyItem(self.n_menus, title)
+        theMenu = self.widgetManager.get(self.Widgets.Menu, title)
         theMenu.entryconfigure(item, state=DISABLED)
 
     def enableMenuItem(self, title, item):
-        theMenu = self.__verifyItem(self.n_menus, title)
+        theMenu = self.widgetManager.get(self.Widgets.Menu, title)
         theMenu.entryconfigure(item, state=NORMAL)
 
     def renameMenu(self, title, newName):
-        theMenu = self.__verifyItem(self.n_menus, title)
+        theMenu = self.widgetManager.get(self.Widgets.Menu, title)
         self.menuBar.entryconfigure(title, label=newName)
 
     def renameMenuItem(self, title, item, newName):
-        theMenu = self.__verifyItem(self.n_menus, title)
+        theMenu = self.widgetManager.get(self.Widgets.Menu, title)
         theMenu.entryconfigure(item, label=newName)
 
     #################
@@ -8596,7 +8367,7 @@ class gui(object):
 
     def __getMenu(self, menu, title, kind):
         title = menu + kind + title
-        var = self.__verifyItem(self.n_menuVars, title)
+        var = self.widgetManager.get(self.Widgets.Menu, title, group=WidgetManager.VARS)
         if kind == "rb":
             return var.get()
         elif kind == "cb":
@@ -8631,7 +8402,7 @@ class gui(object):
             self.menuBar.add_cascade(menu=helpMenu, label='Help')
             u = self.MAKE_FUNC(func, "help")
             self.topLevel.createcommand('tk::mac::ShowHelp', u)
-            self.n_menus["MAC_HELP"] = helpMenu
+            self.widgetManager.add(self.Widgets.Menu, "MAC_HELP", helpMenu)
         else:
             self.warn("The Help Menu is specific to Mac OSX")
 
@@ -8641,7 +8412,7 @@ class gui(object):
             self.__initMenu()
             windowMenu = Menu(self.menuBar, name='window')
             self.menuBar.add_cascade(menu=windowMenu, label='Window')
-            self.n_menus["MAC_WIN"] = windowMenu
+            self.widgetManager.add(self.Widgets.Menu, "MAC_WIN", windowMenu)
         else:
             self.warn("The Window Menu is specific to Mac OSX")
 
@@ -8652,7 +8423,7 @@ class gui(object):
         editMenu = Menu(self.menuBar, tearoff=False)
         if inMenuBar:
             self.menuBar.add_cascade(menu=editMenu, label='Edit ')
-        self.n_menus["EDIT"] = editMenu
+        self.widgetManager.add(self.Widgets.Menu, "EDIT", editMenu)
         self.copyAndPaste.inUse = True
 
         if gui.GET_PLATFORM() == gui.LINUX:
@@ -8894,7 +8665,7 @@ class gui(object):
         if parent is None:
             MessageBox.showinfo(title, message)
         else:
-            opts = {"parent": self.n_subWindows[parent]}
+            opts = {"parent": self.widgetManager.get(self.Widgets.SubWindow, parent)}
             MessageBox.showinfo(title, message, **opts)
         self.__bringToFront()
 
@@ -8903,7 +8674,7 @@ class gui(object):
         if parent is None:
             MessageBox.showerror(title, message)
         else:
-            opts = {"parent": self.n_subWindows[parent]}
+            opts = {"parent": self.widgetManager.get(self.Widgets.SubWindow, parent)}
             MessageBox.showerror(title, message, **opts)
         self.__bringToFront()
 
@@ -8912,7 +8683,7 @@ class gui(object):
         if parent is None:
             MessageBox.showwarning(title, message)
         else:
-            opts = {"parent": self.n_subWindows[parent]}
+            opts = {"parent": self.widgetManager.get(self.Widgets.SubWindow, parent)}
             MessageBox.showwarning(title, message, **opts)
         self.__bringToFront()
 
@@ -8921,7 +8692,7 @@ class gui(object):
         if parent is None:
             return MessageBox.askyesno(title, message)
         else:
-            opts = {"parent": self.n_subWindows[parent]}
+            opts = {"parent": self.widgetManager.get(self.Widgets.SubWindow, parent)}
             return MessageBox.askyesno(title=title, message=message, **opts)
 
     def questionBox(self, title, message, parent=None):
@@ -8929,7 +8700,7 @@ class gui(object):
         if parent is None:
             return MessageBox.askquestion(title, message)
         else:
-            opts = {"parent": self.n_subWindows[parent]}
+            opts = {"parent": self.widgetManager.get(self.Widgets.SubWindow, parent)}
             return MessageBox.askquestion(title, message, **opts)
 
     def okBox(self, title, message, parent=None):
@@ -8938,7 +8709,7 @@ class gui(object):
         if parent is None:
             return MessageBox.askokcancel(title, message)
         else:
-            opts = {"parent": self.n_subWindows[parent]}
+            opts = {"parent": self.widgetManager.get(self.Widgets.SubWindow, parent)}
             return MessageBox.askokcancel(title, message, **opts)
 
     def retryBox(self, title, message, parent=None):
@@ -8946,7 +8717,7 @@ class gui(object):
         if parent is None:
             return MessageBox.askretrycancel(title, message)
         else:
-            opts = {"parent": self.n_subWindows[parent]}
+            opts = {"parent": self.widgetManager.get(self.Widgets.SubWindow, parent)}
             return MessageBox.askretrycancel(title, message, **opts)
 
     def openBox(self, title=None, dirName=None, fileTypes=None, asFile=False, parent=None):
@@ -8963,7 +8734,7 @@ class gui(object):
         if fileTypes is not None:
             options['filetypes'] = fileTypes
         if parent is not None:
-            options["parent"] = self.n_subWindows[parent]
+            options["parent"] = self.widgetManager.get(self.Widgets.SubWindow, parent)
 
         if asFile:
             return filedialog.askopenfile(mode="r", **options)
@@ -8984,7 +8755,7 @@ class gui(object):
         options['initialfile'] = fileName
         options['title'] = title
         if parent is not None:
-            options["parent"] = self.n_subWindows[parent]
+            options["parent"] = self.widgetManager.get(self.Widgets.SubWindow, parent)
 
         if asFile:
             return filedialog.asksaveasfile(mode='w', **options)
@@ -8999,7 +8770,7 @@ class gui(object):
         options['title'] = title
         options['mustexist'] = False
         if parent is not None:
-            options["parent"] = self.n_subWindows[parent]
+            options["parent"] = self.widgetManager.get(self.Widgets.SubWindow, parent)
 
         fileName = filedialog.askdirectory(**options)
 
@@ -9013,7 +8784,7 @@ class gui(object):
         if parent is None:
             col = askcolor(colour)
         else:
-            opts = {"parent": self.n_subWindows[parent]}
+            opts = {"parent": self.widgetManager.get(self.Widgets.SubWindow, parent)}
             col = askcolor(colour, **opts)
 
         if col[1] is None:
@@ -9031,7 +8802,7 @@ class gui(object):
         if parent is None:
             parent = self.topLevel
         else:
-            parent = self.n_subWindows[parent]
+            parent = self.widgetManager.get(self.Widgets.SubWindow, parent)
 
         return TextDialog(parent, title, question, defaultVar=defaultVar).result
 
@@ -9043,7 +8814,7 @@ class gui(object):
         if parent is None:
             parent = self.topLevel
         else:
-            parent = self.n_subWindows[parent]
+            parent = self.widgetManager.get(self.Widgets.SubWindow, parent)
 
         return NumDialog(parent, title, question).result
 
@@ -10882,9 +10653,10 @@ class SelectableLabel(Entry):
 
 
 class ScrollPane(Frame):
-    def __init__(self, parent, **opts):
+    def __init__(self, parent, resize=False, **opts):
         Frame.__init__(self, parent)
         self.config(padx=5, pady=5)
+        self.resize = resize
 
         # make the ScrollPane expandable
         self.grid_rowconfigure(0, weight=1)
@@ -10915,7 +10687,21 @@ class ScrollPane(Frame):
         self.interior_id = self.canvas.create_window(
             0, 0, window=self.interior, anchor=NW)
 
-        self.interior.bind('<Configure>', self.__configureInterior)
+        if self.resize:
+            self.canvas.bind('<Configure>', self.__updateWidth)
+        else:
+            self.interior.bind('<Configure>', self.__updateWidth)
+
+    def __updateWidth(self, event):
+        if self.resize:
+            canvas_width = event.width
+            interior_width = self.interior.winfo_reqwidth()
+            if canvas_width < interior_width: canvas_width = interior_width
+            self.canvas.itemconfig(self.interior_id, width=canvas_width)
+        else:
+            size = (self.interior.winfo_reqwidth(), self.interior.winfo_reqheight())
+            self.canvas.config(scrollregion="0 0 %s %s" % size)
+
 
     def config(self, **kw):
         self.configure(**kw)
@@ -10930,12 +10716,6 @@ class ScrollPane(Frame):
             Frame.config(self, **kw)
         else:
             super(__class__, self).config(**kw)
-
-    # track changes to the canvas and frame width and sync them,
-    # http://www.scriptscoop2.com/t/35d742299f35/python-tkinter-scrollbar-for-frame.html
-    def __configureInterior(self, event):
-        size = (self.interior.winfo_reqwidth(), self.interior.winfo_reqheight())
-        self.canvas.config(scrollregion="0 0 %s %s" % size)
 
     # unbind any saved bind ids
     def __unbindIds(self):
@@ -11225,6 +11005,7 @@ class SimpleEntryDialog(Dialog):
             self.e1.var = self.defaultVar
             self.e1.config(textvariable=self.e1.var)
             self.e1.var.auto_id = None
+            self.e1.icursor("end")
         self.l1 = Label(master, fg="#FF0000")
         self.e1.grid(row=1)
         self.l1.grid(row=2)
@@ -11292,43 +11073,86 @@ class SubWindow(Toplevel):
 # SimpleGrid Stuff
 #####################################
 
+class GridCell(Label):
+    def __init__(self, parent, fonts, isHeader=False, **opts):
+        Label.__init__(self, parent, **opts)
+        self.selected = False
+        self.isHeader = isHeader
+        self.config(relief=RIDGE)
+        self.updateFonts(fonts)
+
+        if not self.isHeader:
+            self.bind("<Enter>", self.mouseEnter)
+            self.bind("<Leave>", self.mouseLeave)
+            self.bind("<Button-1>", self.mouseClick)
+
+    def updateFonts(self, fonts):
+        self.fonts = fonts
+        if self.isHeader:
+            self.config(font=self.fonts["header"], background=self.fonts["headerBg"])
+        else:
+            if self.selected:
+                self.config(font=self.fonts["data"], background=self.fonts["selectedBg"])
+            else:
+                self.config(font=self.fonts["data"], background=self.fonts["dataBg"])
+
+    def setText(self, text):
+        self.config(text=text)
+
+    def clear(self):
+        self.config(text="")
+
+    def mouseEnter(self, event):
+        self.config(background=self.fonts["overBg"])
+
+    def mouseLeave(self, event):
+        if self.selected:
+            self.config(background=self.fonts["selectedBg"])
+        else:
+            self.config(background=self.fonts["dataBg"])
+
+    def mouseClick(self, event=None):
+        if self.selected:
+            self.config(background=self.fonts["dataBg"])
+        else:
+            self.config(background=self.fonts["selectedBg"])
+
+        self.selected = not self.selected
+
 # first row is used as a header
 # SimpleGrid is a ScrollPane, where a Frame has been placed on the canvas - called GridContainer
 class SimpleGrid(ScrollPane):
 
-    rows = []
-    addRow = False
-
     def __init__(self, parent, title, data, action=None, addRow=None,
                     actionHeading="Action", actionButton="Press",
-                    addButton="Add", **opts):
+                    addButton="Add", showMenu=False, **opts):
 
-        if "buttonFont" in opts:
-            self.buttonFont = opts.pop("buttonFont")
-        else:
-            self.buttonFont = font.Font(family="Helvetica", size=12)
+        self.fonts = {
+            "data": font.Font(family="Helvetica", size=12),
+            "header": font.Font(family="Helvetica", size=12),
+            "button": font.Font(family="Helvetica", size=12),
+            "headerBg": "#A9A9A9",
+            "dataBg": "#E0FFFF",
+            "overBg": "#C0C0C0",
+            "selectedBg": "#D3D3D3",
+        }
 
-        ScrollPane.__init__(self, parent, **opts)
-
-        if "font" in opts:
-            self.gdFont = opts["font"]
-            self.ghFont = opts["font"]
-            self.ghFont.configure(size=self.ghFont.actual("size") + 2, weight="bold")
-        else:
-            self.gdFont = font.Font(family="Helvetica", size=12)
-            self.ghFont = font.Font(family="Helvetica", size=14, weight="bold")
+        self.config(**opts)
+        ScrollPane.__init__(self, parent, resize=True, **{})
 
         # actions
         self.addRowEntries = addRow
         self.action = action
 
         # lists to store the data in
-        self.data = []
+        self.cells = []
         self.entries = []
         self.rightColumn = []
-        # a list of any selected cells
-        from collections import OrderedDict
-        self.selectedCells = OrderedDict()
+
+        # menu stuff
+        self.showMenu = showMenu
+        self.lastSelected = None
+        if self.showMenu: self.__buildMenu()
 
         # how many rows & columns
         self.numColumns = 0
@@ -11341,17 +11165,9 @@ class SimpleGrid(ScrollPane):
         self.actionHeading = actionHeading
         self.actionButton= actionButton
         self.addButton= addButton
-       
-        # colours
-        self.cellHeadingBg = "#A9A9A9"      # HEADING BG
-        self.cellBg = "#E0FFFF"             # CELL BG
-        self.cellOverBg = "#C0C0C0"         # mouse over BG
-        self.cellSelectedBg = "#D3D3D3"     # selected cell BG
 
         # add the grid container to the frame
-        self.gridContainer = Frame(self.interior)
-        self.gridContainer.pack(expand=True, fill='both')
-        self.gridContainer.bind("<Configure>", self.__refreshGrids)
+        self.interior.bind("<Configure>", self.__refreshGrids)
 
         self.addRows(data)
 
@@ -11360,22 +11176,29 @@ class SimpleGrid(ScrollPane):
 
     def configure(self, cnf=None, **kw):
         kw = gui.CLEAN_CONFIG_DICTIONARY(**kw)
+        updateCells = False
         if "bg" in kw:
             bg = kw.pop("bg")
-            self.gridContainer.config(bg=bg)
             self.canvas.config(bg=bg)
             self.interior.config(bg=bg)
         if "activebackground" in kw:
-            self.cellSelectedBg = kw.pop("activebackground")
+            self.fonts["selectedBg"] = kw.pop("activebackground")
+            updateCells = True
         if "inactivebackground" in kw:
-            self.cellBg = kw.pop("inactivebackground")
+            self.fonts["dataBg"] = kw.pop("inactivebackground")
+            updateCells = True
+
         if "font" in kw:
             font = kw.pop("font")
-            self.gdFont.configure(family=font.actual("family"), size=font.actual("size"))
-            self.ghFont.configure(family=font.actual("family"), size=font.actual("size") + 2, weight="bold")
+            self.fonts["data"].configure(family=font.actual("family"), size=font.actual("size"))
+            self.fonts["header"].configure(family=font.actual("family"), size=font.actual("size") + 2, weight="bold")
+            updateCells = True
         if "buttonFont" in kw:
             buttonFont = kw.pop("buttonFont")
-            self.buttonFont.configure(family=buttonFont.actual("family"), size=buttonFont.actual("size"))
+            self.fonts["button"].configure(family=buttonFont.actual("family"), size=buttonFont.actual("size"))
+            updateCells = True
+
+        if updateCells: self.__configCells()
 
         # allow labels to be updated
         if "actionheading" in kw:
@@ -11390,6 +11213,16 @@ class SimpleGrid(ScrollPane):
         if "addbutton" in kw:
             self.addButton = kw.pop("addbutton")
             self.ent_but.config(text=self.addButton)
+
+        if "height" in kw:
+            self.interior.config(height = kw.pop("height"))
+        if "width" in kw:
+            self.interior.config(width = kw.pop("width"))
+
+    def __configCells(self):
+        for row in self.cells:
+            for cell in row:
+                cell.updateFonts(self.fonts)
 
     def addRow(self, rowData, scroll=True):
         self.__hideEntryBoxes()
@@ -11406,72 +11239,269 @@ class SimpleGrid(ScrollPane):
         if scroll:
             self.scrollBottom()
 
-    # not finished
+    # this will include the header row
+    def getRowCount(self):
+        return len(self.cells)-1
+
+    def getRow(self, rowNumber):
+        if 0 > rowNumber >= self.numRows:
+            raise Exception("Invalid row number.")
+        else:
+            data = []
+            for cell in self.cells[rowNumber+1]:
+                data.append(cell.cget('text'))
+            return data
+
+    def setHeaders(self, data):
+        for count in range(len(self.cells[0])):
+            cell = self.cells[0][count]
+            if count < len(data):
+                cell.setText(data[count])
+            else:
+                cell.clear()
+
+    def replaceRow(self, rowNum, data):
+        if 0 > rowNum >= self.numRows:
+            raise Exception("Invalid row number.")
+        else:
+            for count in range(len(self.cells[rowNum+1])):
+                cell = self.cells[rowNum+1][count]
+                if count < len(data):
+                    cell.setText(data[count])
+                else:
+                    cell.clear()
+
+    def deleteAllRows(self):
+        for loop in range(len(self.cells)-2, -1, -1):
+            self.deleteRow(loop)
+
     def deleteRow(self, position):
         if 0 > position >= self.numRows:
             raise Exception("Invalid row number.")
         else:
-            for loop in range(position, self.numRows -2):
-                self.data[position] = self.data[position+1]
-            self.numRows -= 1
+            # forget the specified row & button
+            for cell in self.cells[position+1]:
+                cell.grid_forget()
+            if self.action is not None:
+                self.rightColumn[position+1].grid_forget()
 
-        #self.rightRow.delete(position)
-                
+            # loop through all rows after, forget them, move them, grid them
+            for loop in range(position+1, len(self.cells)-1):
+                # forget the next row
+                for cell in self.cells[loop+1]:
+                    cell.grid_forget()
+
+                # move data
+                self.cells[loop] = self.cells[loop+1]
+
+                # add its button
+                if self.action is not None:
+                    self.rightColumn[loop+1].grid_forget()
+                    self.rightColumn[loop] = self.rightColumn[loop+1]
+                    self.rightColumn[loop+1].grid(row=loop, column=self.numColumns, sticky=N+E+S+W)
+
+                # re-grid them
+                for cellNum in range(len(self.cells[loop])):
+                    self.cells[loop][cellNum].grid(row=loop, column=cellNum, sticky=N+E+S+W)
+
+            # lose last item from lists
+            self.cells = self.cells[:-1]
+            self.rightColumn = self.rightColumn[:-1]
+            self.__updateButtons(position)
+
     def __addRow(self, rowData):
-        self.data.append(rowData)
-        rowNum = len(self.data) - 1
-        celContents = []
+        if self.numColumns == 0:
+            raise Exception("No columns to add to.")
+        else:
+            rowNum = len(self.cells)
+            newRow = []
+            for cellNum in range(self.numColumns):
 
-        for cellNum in range(self.numColumns):
-
-            # get a val ("" if no val)
-            if cellNum >= len(rowData):
-                val = ""
-            else:
-                val = rowData[cellNum]
-            celContents.append(val)
-
-            lab = Label(self.gridContainer)
-            if rowNum == 0: # adding title row
-                lab.configure(relief=RIDGE,
-                    text=val, font=self.ghFont,
-                    background=self.cellHeadingBg
-                )
-            else:
-                lab.configure( relief=RIDGE,
-                    text=val, font=self.gdFont,
-                    background=self.cellBg
-                )
-                lab.bind("<Enter>", self.__gridCellEnter)
-                lab.bind("<Leave>", self.__gridCellLeave)
-                lab.bind("<Button-1>", self.__gridCellClick)
+                # get a val ("" if no val)
+                if cellNum >= len(rowData):
+                    val = ""
+                else:
+                    val = rowData[cellNum]
                 
-                lab.gridPos = str(rowNum - 1) + "-" + str(cellNum)
-                self.selectedCells[lab.gridPos] = False
+                lab = self.__createCell(rowNum, cellNum, val)
+                newRow.append(lab)
+            self.cells.append(newRow)
 
-            lab.grid(row=rowNum, column=cellNum, sticky=N+E+S+W)
-            Grid.columnconfigure(self.gridContainer, cellNum, weight=1)
-            Grid.rowconfigure(self.gridContainer, rowNum, weight=1)
-
-        # add some buttons for each row
-        if self.action is not None:
-            widg = Label(self.gridContainer, relief=RIDGE, height=2)
-            # add the title
-            if rowNum == 0:
-                widg.configure(text=self.actionHeading,
-                    font=self.ghFont, background=self.cellHeadingBg
-                )
+            # add some buttons for each row
+            if self.action is not None:
+                widg = GridCell(self.interior, self.fonts, isHeader=True)
+                # add the title
+                if rowNum == 0:
+                    widg.config(text=self.actionHeading)
+                # add a button
+                else:
+                    but = Button(widg, font=self.fonts["button"],
+                        text=self.actionButton,
+                        command=gui.MAKE_FUNC(self.action, rowNum-1)
+                    )
+                    but.place(relx=0.5, rely=0.5, anchor=CENTER)
+                    widg.but = but
                 self.rightColumn.append(widg)
-            # add a button
-            else:
-                but = Button(widg, font=self.buttonFont,
-                    text=self.actionButton,
-                    command=gui.MAKE_FUNC(self.action, rowNum-1)
-                )
-                but.place(relx=0.5, rely=0.5, anchor=CENTER)
-                self.rightColumn.append(but)
+                widg.grid(row=rowNum, column=cellNum + 1, sticky=N+E+S+W)
 
-            widg.grid(row=rowNum, column=cellNum + 1, sticky=N+E+S+W)
+    def __updateButtons(self, position=0):
+        for pos in range(position+1, len(self.rightColumn)):
+            but = self.rightColumn[pos].but
+            but.config(command=gui.MAKE_FUNC(self.action, pos-1))
+
+    def __createCell(self, rowNum, cellNum, val):
+        if rowNum == 0: # adding title row
+            lab = GridCell(self.interior, self.fonts, isHeader=True, text=val)
+            lab.gridPos = "h-" + str(cellNum)
+        else:
+            lab = GridCell(self.interior, self.fonts, text=val)
+            lab.gridPos = str(rowNum - 1) + "-" + str(cellNum)
+
+        if self.showMenu:
+            if gui.GET_PLATFORM() in [gui.WINDOWS, gui.LINUX]:
+                lab.bind('<Button-3>', self.__rightClick)
+            else:
+                lab.bind('<Button-2>', self.__rightClick)
+
+        lab.grid(row=rowNum, column=cellNum, sticky=N+E+S+W)
+        Grid.columnconfigure(self.interior, cellNum, weight=1)
+        Grid.rowconfigure(self.interior, rowNum, weight=1)
+        return lab
+
+    def __buildMenu(self):
+        self.menu = Menu(self, tearoff=0)
+        self.menu.add_command(label="Edit", command=lambda: self.__menuHelper("edit"))
+        self.menu.add_command(label="Clear", command=lambda: self.__menuHelper("clear"))
+        self.menu.add_separator()
+        self.menu.add_command(label="Copy", command=lambda: self.__menuHelper("copy"))
+        self.menu.add_command(label="Paste", command=lambda: self.__menuHelper("paste"))
+        self.menu.add_separator()
+        self.menu.add_command(label="Delete Column", command=lambda: self.__menuHelper("dc"))
+        self.menu.add_command(label="Delete Row", command=lambda: self.__menuHelper("dr"))
+        self.menu.add_separator()
+        self.menu.add_command(label="Insert Before", command=lambda: self.__menuHelper("cb"))
+        self.menu.add_command(label="Insert After", command=lambda: self.__menuHelper("ca"))
+        self.menu.add_separator()
+        self.menu.add_command(label="Select", command=lambda: self.__menuHelper("select"))
+        self.menu.add_command(label="Deselect", command=lambda: self.__menuHelper("deselect"))
+
+    def __rightClick(self, event):
+        self.lastSelected = event.widget
+        self.menu.tk_popup(event.x_root - 10, event.y_root - 10)
+        return "break"
+
+    def __menuHelper(self, action):
+        self.update_idletasks()
+        vals=self.lastSelected.gridPos.split("-")
+
+        if action == "dc":
+            self.deleteColumn(int(vals[1]))
+        elif action == "dr" and vals[0] != "h":
+            self.deleteRow(int(vals[0]))
+        elif action == "cb":
+            self.addColumn(int(vals[1]), [])
+        elif action == "ca":
+            self.addColumn(int(vals[1])+1, [])
+        elif action == "select" and vals[0] != "h":
+            if not self.lastSelected.selected: self.lastSelected.mouseClick()
+        elif action == "deselect" and vals[0] != "h":
+            if self.lastSelected.selected: self.lastSelected.mouseClick()
+        elif action == "copy":
+            val=self.lastSelected.cget("text")
+            self.clipboard_clear()
+            self.clipboard_append(val)
+        elif action == "paste":
+            try: self.lastSelected.config(text=self.clipboard_get())
+            except: pass
+        elif action == "clear":
+            self.lastSelected.config(text="")
+        elif action == "edit":
+            val=self.lastSelected.cget("text")
+            defaultVar = StringVar(self)
+            defaultVar.set(val)
+            newText =  TextDialog(self, "Edit", "Enter the new text", defaultVar=defaultVar).result
+            if newText is not None:
+                self.lastSelected.config(text=newText)
+
+    def addColumn(self, columnNumber, data):
+        if columnNumber < 0 or columnNumber > self.numColumns:
+            raise Exception("Invalid column number.")
+        else:
+            self.__hideEntryBoxes()
+
+            # move the right column, if necessary
+            if self.action is not None:
+                for rowPos in range(len(self.cells)):
+                    self.rightColumn[rowPos].grid_forget()
+                    self.rightColumn[rowPos].grid(row=rowPos, column=self.numColumns+1, sticky=N+E+S+W)
+
+                # move the button
+                self.ent_but.lab.grid_forget()
+                self.ent_but.lab.grid(row=len(self.cells), column=self.numColumns+2, sticky=N+E+S+W)
+
+                # add another entry
+                ent = self.__createEntryBox(self.numColumns)
+                self.entries.append(ent)
+
+            # move all columns including this position right one
+            for colPos in range(self.numColumns-1, columnNumber-1, -1):
+                for rowPos in range(len(self.cells)):
+                    cell = self.cells[rowPos][colPos]
+                    cell.grid_forget()
+                    cell.grid(row=rowPos, column=colPos+1, sticky=N+E+S+W)
+                    cell.gridPos = str(rowPos - 1) + "-" + str(colPos+1)
+
+            # then add this column
+            for rowPos in range(len(self.cells)):
+                if rowPos < len(data):
+                    val = data[rowPos]
+                else:
+                    val = ""
+                lab = self.__createCell(rowPos, columnNumber, val)
+                self.cells[rowPos].insert(columnNumber, lab)
+
+            self.numColumns += 1
+            self.__showEntryBoxes()
+            self.canvas.event_generate("<Configure>")
+
+    def deleteColumn(self, columnNumber):
+
+        if columnNumber < 0 or columnNumber >= self.numColumns:
+            raise Exception("Invalid column number.")
+        else:
+            # hide the entries
+            self.__hideEntryBoxes()
+
+            # delete the column
+            for row in self.cells:
+                row[columnNumber].grid_forget()
+                del row[columnNumber]
+
+            # update the entry boxes
+            if self.addRowEntries is not None and len(self.entries) >= columnNumber:
+                self.entries[columnNumber].grid_forget()
+                del self.entries[columnNumber]
+
+            # move the remaining columns
+            for rowCount in range(len(self.cells)):
+                row = self.cells[rowCount]
+                for colCount in range(columnNumber, len(row)):
+                    cell = row[colCount]
+                    cell.grid_forget()
+                    cell.grid(row=rowCount, column=colCount, sticky=N+E+S+W)
+                    # update the cells
+                    cell.gridPos = str(rowCount - 1) + "-" + str(colCount)
+
+            # move the buttons
+            if self.action is not None:
+                for rowPos in range(len(self.cells)):
+                    self.rightColumn[rowPos].grid_forget()
+                    self.rightColumn[rowPos].grid(row=rowPos, column=self.numColumns-1, sticky=N+E+S+W)
+
+            self.numColumns -= 1
+            # show the entry boxes
+            self.__showEntryBoxes()
+            self.canvas.event_generate("<Configure>")
 
     def __hideEntryBoxes(self):
         if self.addRowEntries is None or len(self.entries) == 0:
@@ -11484,67 +11514,49 @@ class SimpleGrid(ScrollPane):
         if self.addRowEntries is None: return
         if len(self.entries) > 0:
             for pos in range(len(self.entries)):
-                self.entries[pos].lab.grid(row=len(self.data), column=pos, sticky=N+E+S+W)
-            self.ent_but.lab.grid(row=len(self.data), column=len(self.entries), sticky=N+E+S+W)
+                self.entries[pos].lab.grid(row=len(self.cells), column=pos, sticky=N+E+S+W)
+            self.ent_but.lab.grid(row=len(self.cells), column=len(self.entries), sticky=N+E+S+W)
         else:
             self.__createEntryBoxes()
 
     def __createEntryBoxes(self):
         if self.addRowEntries is None: return
         for cellNum in range(self.numColumns):
-            name = "GR" + str(cellNum)
-            lab = Label(self.gridContainer, relief=RIDGE, width=6, height=2)
-            lab.grid(row=len(self.data), column=cellNum, sticky=N + E + S + W)
-
-            # self.__buildEntry(name, self.gridContainer)
-            ent = Entry(lab, width=5)
-            ent.pack(expand=True, fill='both')
+            ent = self.__createEntryBox(cellNum)
             self.entries.append(ent)
-            ent.lab = lab
 
-        lab = Label(self.gridContainer, relief=RIDGE, height=2)
-        lab.grid(row=len(self.data), column=self.numColumns, sticky=N+E+S+W)
-
+        lab = GridCell(self.interior, self.fonts, isHeader=True)
+        lab.grid(row=len(self.cells), column=self.numColumns, sticky=N+E+S+W)
         self.ent_but = Button(
-            lab, font=self.buttonFont,
+            lab, font=self.fonts["button"],
             text=self.addButton,
             command=gui.MAKE_FUNC(self.addRowEntries, "newRow")
         )
         self.ent_but.lab = lab
         self.ent_but.pack(expand=True, fill='both')
 
+    def __createEntryBox(self, cellNum):
+        lab = GridCell(self.interior, self.fonts, isHeader=True, width=6, height=2)
+        lab.grid(row=len(self.cells), column=cellNum, sticky=N + E + S + W)
+        ent = Entry(lab, width=5)
+        ent.pack(expand=True, fill='both')
+        ent.lab = lab
+        return ent
+
     def getEntries(self):
         return [e.get() for e in self.entries]
 
     def getSelectedCells(self):
-        return dict(self.selectedCells)
+        selectedCells = []
+        for row in self.cells:
+            for cell in row:
+                if cell.selected:
+                    selectedCells.append(cell.gridPos)
+        return selectedCells
 
     def __refreshGrids(self, event):
         '''Reset the scroll region to encompass the inner frame'''
         self.canvas.configure(scrollregion=self.canvas.bbox("all"))
-
-    def __gridCellEnter(self, event):
-        cell = event.widget
-        cell.config(background=self.cellOverBg)
-
-    def __gridCellLeave(self, event):
-        cell = event.widget
-        gridPos = cell.gridPos
-        if self.selectedCells[gridPos]:
-            cell.config(background=self.cellSelectedBg)
-        else:
-            cell.config(background=self.cellBg)
-
-    def __gridCellClick(self, event):
-        cell = event.widget
-        gridPos = cell.gridPos
-        if self.selectedCells[gridPos]:
-            self.selectedCells[gridPos] = False
-            cell.config(background=self.cellBg)
-        else:
-            self.selectedCells[gridPos] = True
-            cell.config(background=self.cellSelectedBg)
-
 
 ##########################
 # MicroBit Simulator
@@ -12344,6 +12356,116 @@ class DraggableWidget:
             self.Label.bind('<ButtonPress>', self.press)
         else:
             gui.debug("<<DRAGGABLE_WIDGET.restoreOldData>> unable to restore - NO OriginalID")
+
+
+class WidgetManager:
+    WIDGETS = "widgets"
+    VARS = "vars"
+    def __init__(self):
+
+        self.widgets = {}
+        self.vars = {}
+
+    def group(self, widgetType, group=None, array=False):
+
+        if group is None: container = self.widgets
+        elif group == WidgetManager.VARS: container = self.vars
+
+        try:
+            widgGroup = container[widgetType]
+        except KeyError:
+            if array: widgGroup = []
+            else: widgGroup = {}
+            container[widgetType] = widgGroup
+
+        return widgGroup
+
+    def add(self, widgetType, widgetName, widget, group=None):
+        widgGroup = self.group(widgetType, group)
+        if widgetName in widgGroup:
+            raise ItemLookupError("Duplicate key: '" + widgetName + "' already exists")
+        else:
+            widgGroup[widgetName] = widget
+
+    def log(self, widgetType, widget, group=None):
+        """ Used for adding items to an array """
+        widgGroup = self.group(widgetType, group, array=True)
+        widgGroup.append(widget)
+
+    def verify(self, widgetType, widgetName, group=None, array=False):
+        """ checks for duplicatres """
+        if widgetName in self.group(widgetType, group, array):
+            raise ItemLookupError("Duplicate widgetName: " + widgetName)
+
+    def get(self, widgetType, widgetName, group=None):
+        """ gets the specified item """
+        try:
+            return self.group(widgetType, group)[widgetName]
+        except KeyError:
+            raise ItemLookupError("Invalid widgetName: " + widgetName)
+
+    def update(self, widgetType, widgetName, widget, group=None):
+        """ gets the specified item """
+        try:
+            self.group(widgetType, group)[widgetName] = widget
+        except KeyError:
+            raise ItemLookupError("Invalid widgetName: '" + widgetName)
+
+    def check(self, widgetType, widgetName, group=None):
+        """ used for arrays - checks if the item is in the array """
+        try:
+            if widgetName in self.group(widgetType, group): return True
+            else: raise ItemLookupError("Invalid widgetName: '" + widgetName)
+        except KeyError:
+            raise ItemLookupError("Invalid widgetName: '" + widgetName)
+
+    def remove(self, widgetType, widgetName, group=None):
+        del self.group(widgetType, group)[widgetName]
+
+    def clear(self, widgetType, group=None):
+        if group is None: container = self.widgets
+        elif group == WidgetManager.VARS: container = self.vars
+
+        if isinstance(self.group(widgetType, group), dict):
+            container[widgetType] = {}
+        else:
+            container[widgetType] = []
+
+class Enum(object):
+    __initialized = False
+    def __init__(self, widgets, deprecated, excluded):
+        self.widgets = widgets
+        self.deprecated = deprecated
+        self.excluded = excluded
+        self.funcList = []
+        for w in self.widgets:
+            if w not in self.excluded:
+                self.funcList.append(w)
+        self.__initialized = True
+
+    def __getattr__(self, name):
+        return self.get(name)
+
+    def get(self, name):
+        if name in self.deprecated: raise Exception(name + " no longer supported")
+        else:
+            try: return self.widgets.index(name)
+            except: raise KeyError("Invalid key: " + str(name))
+
+    def __setattr__(self, name, value):
+        if self.__initialized: raise Exception("Unable to change Widget store")
+        else: super(Enum, self).__setattr__(name, value)
+
+    def __delattr__(self, name):
+        raise Exception("Unable to delete from Widget store")
+
+    def name(self, i):
+        """Get the real name of the widget"""
+        return self.widgets[i]
+
+    def funcs(self):
+        """ Get a list of names to use as functions """
+        return self.funcList
 
 
 #####################################

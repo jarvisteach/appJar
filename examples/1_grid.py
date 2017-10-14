@@ -10,12 +10,32 @@ def press(btn):
     elif btn=="DOWN": app.decreaseFont()
     elif btn=="FRENCH": app.setLanguage("FRENCH")
     elif btn=="newRow": app.addGridRow("grid", app.getGridEntries("grid"))
+    elif btn == "HIDE": app.hideGrid("grid")
+    elif btn == "SHOW": app.showGrid("grid")
+    elif btn == "HEADER": app.setGridHeaders("grid", app.getGridEntries("grid"))
+    elif btn == "ALL": app.deleteAllGridRows("grid")
+    elif btn == "COL": app.addGridColumn("grid", int(app.getSpinBox("spin")), ["yyy", "zzz"])
+    elif btn == "D_COL": app.deleteGridColumn("grid", int(app.getSpinBox("spin")))
+    elif btn == "COUNT": print(app.getGridRowCount("grid"))
+    elif btn == "FONTS":
+#        app.setGridBg("grid", "yellow")
+        app.setGridActiveBg("grid", "pink")
+        app.setGridInactiveBg("grid", "green")
+    else:
+        if app.getCheckBox("Delete?"):
+            app.deleteGridRow("grid", int(btn))
+        else:
+            print(app.getGridRow("grid", int(btn)))
+
 app=gui()
-#app.setFg("orange")
-#app.setBg("red")
-app.addGrid("grid", [["A","B","C"], [3,4,5,6,7,8], [2,4,6,8]], action=press, addRow=press)
-app.addButtons(["FRENCH", "SHOW'EM", "UP", "DOWN"], press)
-
-#app.setGridHeight("grid", 300)
-
+app.addLabel("title", "Grid Widget Test")
+app.setLabelFg("title", "blue")
+app.setLabelBg("title", "yellow")
+app.setLabelFont(20)
+app.addGrid("grid", [["A","B","C"], [3,4,5,6,7], [2,4,6,8]], action=press, addRow=press, showMenu=True)
+#app.setGridHeight("grid", 400)
+app.addCheckBox("Delete?")
+app.addButtons(["FRENCH", "SHOW'EM", "UP", "DOWN", "FONTS"], press)
+#app.addButtons(["D_COL", "HIDE", "SHOW", "DELETE", "ALL", "COUNT", "HEADER", "COL"], press)
+#app.addSpinBoxRange("spin", 0, 10)
 app.go()
