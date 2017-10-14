@@ -105,7 +105,7 @@ Entries are used to capture input from the user. They take a single parameter - 
 
 There are five special-case Entries:
 
-* NumericEntry - this only allows numbers to be typed in - always returns a float.
+* NumericEntry - this only allows numbers to be typed in - always returns a float (None if empty).
 * SecretEntry - this will show stars, instead of the letters typed - useful for capturing passwords.
 * AutoEntry - this takes a list of words to provide auto-completion.  
 * ValidationEntry - can be set to valid/invalid/waiting - will colour the border green/red/black and show a ✔/✖/★  

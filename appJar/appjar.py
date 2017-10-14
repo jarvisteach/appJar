@@ -7448,14 +7448,14 @@ class gui(object):
         entry = self.widgetManager.get(self.Widgets.Entry, name)
         if entry.showingDefault:
             if entry.isNumeric:
-                return 0
+                return None
             else:
                 return ""
         else:
             val = self.widgetManager.get(self.Widgets.Entry, name, group=WidgetManager.VARS).get()
             if entry.isNumeric:
                 if len(val) == 0 or (len(val) == 1 and val in '.-') or (len(val) == 2 and val == "-."):
-                    return 0
+                    return None
                 else:
                     return float(val)
             else:

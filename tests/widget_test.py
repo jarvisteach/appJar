@@ -177,22 +177,22 @@ def test_entries():
     assert isinstance(app.addLabelAutoEntry("lae1", ["a", "b", "c"]), AutoCompleteEntry)
 
     assert app.getEntry("le1") == EMPTY
-    assert app.getEntry("lne1") == 0
+    assert app.getEntry("lne1") == None
     assert app.getEntry("lse1") == EMPTY
     assert app.getEntry("lae1") == EMPTY
 
     assert app.getEntry("e1") == EMPTY
-    assert app.getEntry("ne1") == 0
+    assert app.getEntry("ne1") == None
     assert app.getEntry("se1") == EMPTY
     assert app.getEntry("ae1") == EMPTY
 
     entryVals = app.getAllEntries()
     assert entryVals["le1"] == EMPTY
-    assert entryVals["lne1"] == 0
+    assert entryVals["lne1"] == None
     assert entryVals["lse1"] == EMPTY
     assert entryVals["lae1"] == EMPTY
     assert entryVals["e1"] == EMPTY
-    assert entryVals["ne1"] == 0
+    assert entryVals["ne1"] == None
     assert entryVals["se1"] == EMPTY
     assert entryVals["ae1"] == EMPTY
 
@@ -208,40 +208,40 @@ def test_entries():
     app.setEntryDefault("lae1", TEXT_FOUR)
 
     assert app.getEntry("e1") == EMPTY
-    assert app.getEntry("ne1") == 0
+    assert app.getEntry("ne1") == None
     assert app.getEntry("se1") == EMPTY
     assert app.getEntry("ae1") == EMPTY
 
     assert app.getEntry("le1") == EMPTY
-    assert app.getEntry("lne1") == 0
+    assert app.getEntry("lne1") == None
     assert app.getEntry("lse1") == EMPTY
     assert app.getEntry("lae1") == EMPTY
 
     app.setEntry("ne1", "-")
-    assert app.getEntry("ne1") == 0
+    assert app.getEntry("ne1") == None
     app.setEntry("ne1", ".")
-    assert app.getEntry("ne1") == 0
+    assert app.getEntry("ne1") == None
     app.setEntry("ne1", "0.0")
     assert app.getEntry("ne1") == 0
     app.setEntry("ne1", "-0.0")
     assert app.getEntry("ne1") == 0
     app.setEntry("ne1", ".")
-    assert app.getEntry("ne1") == 0
+    assert app.getEntry("ne1") == None
 
 # should fail...
 #    with pytest.raises(Exception) :
     app.setEntry("ne1", TEXT_ONE)
 
     app.setEntry("lne1", "-")
-    assert app.getEntry("lne1") == 0
+    assert app.getEntry("lne1") == None
     app.setEntry("lne1", ".")
-    assert app.getEntry("lne1") == 0
+    assert app.getEntry("lne1") == None
     app.setEntry("lne1", "0.0")
     assert app.getEntry("lne1") == 0
     app.setEntry("lne1", "-0.0")
     assert app.getEntry("lne1") == 0
     app.setEntry("lne1", ".")
-    assert app.getEntry("lne1") == 0
+    assert app.getEntry("lne1") == None
 
     app.setEntry("ne1", NUM_ONE)
     app.setEntry("e1", TEXT_ONE)
@@ -284,12 +284,12 @@ def test_entries():
     app.clearEntry("lae1")
 
     assert app.getEntry("e1") == EMPTY
-    assert app.getEntry("ne1") == 0
+    assert app.getEntry("ne1") == None
     assert app.getEntry("se1") == EMPTY
     assert app.getEntry("ae1") == EMPTY
 
     assert app.getEntry("le1") == EMPTY
-    assert app.getEntry("lne1") == 0
+    assert app.getEntry("lne1") == None
     assert app.getEntry("lse1") == EMPTY
     assert app.getEntry("lae1") == EMPTY
 
@@ -316,12 +316,12 @@ def test_entries():
     app.clearAllEntries()
 
     assert app.getEntry("e1") == EMPTY
-    assert app.getEntry("ne1") == 0
+    assert app.getEntry("ne1") == None
     assert app.getEntry("se1") == EMPTY
     assert app.getEntry("ae1") == EMPTY
 
     assert app.getEntry("le1") == EMPTY
-    assert app.getEntry("lne1") == 0
+    assert app.getEntry("lne1") == None
     assert app.getEntry("lse1") == EMPTY
     assert app.getEntry("lae1") == EMPTY
 
