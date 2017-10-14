@@ -216,11 +216,12 @@ app.go()
 * `.addGrid(title, data, action=None, addRow=None)`  
     Receives a (jagged) 2D list of values. The first list should be the headers for the grid, the rest will contain each row of values.  
 
-    If `action` is set, a button will be created, at the end of each row, calling the specified function. It will pass a list of values, representing the selected row.   
+    If `action` is set, a button will be created, at the end of each row, calling the specified function. It will pass the row number (starting at 0).  
 
     ![Grid](img/dev/grid_2.png)   
 
     If `addRow` is set, then an additional row will appear at the end of the grid, with entry boxes and a button to call the specified function.  
+    The button will pass the string `newRow` to the specified function.  
 
     ![Grid](img/dev/grid_3.png)   
 
@@ -228,20 +229,28 @@ app.go()
 
     ![Grid](img/dev/grid_4.png)   
 
+    It's also possible to set the following parameters:  
+    * actionHeading - set the title of the right column  
+    * actionButton - set the button text for each row  
+    * addButton - set the button text for the Entry row  
+    * showMenu - boolean to show a right-click menu  
 
 ####Get Grids  
 
-* `.getGridEntries(title)`  
-    If `addRow` was set when the *Grid* was created, this function will get the contents of the entry boxes.  
-    They will be returned as a list, in the same order as the entry boxes.  
+* `.getGridRow(title, rowNumber)`  
+    Returns a list of values representing the specified row.  
+
+* `.getGridRowCount(title)`  
+    Returns a count of how many rows are in the grid (not including the header row).  
 
 * `.getGridSelectedCells(title)`  
     Gets a dictionary of booleans, indicating the status of each cell.  
     True indicates the cell is selected, False indicates the cell is not selected.  
     The name of each entry on the dictionary will be in the format ROW-COLUMN, eg. 0-2  
 
-* `.getGridRowCount(title)`  
-    Returns a count of how many rows are in the grid (not including the header row).  
+* `.getGridEntries(title)`  
+    If `addRow` was set when the *Grid* was created, this function will get the contents of the entry boxes.  
+    They will be returned as a list, in the same order as the entry boxes.  
 
 ####Set Grids  
 
@@ -252,7 +261,7 @@ app.go()
 To have the **Press** button on the entries row add a new row of data, try the following:  
 ```python
     def press(btn):
-        if btn == "Press":     # the button on the entries row
+        if btn == "addRow":     # the button on the entries row
             data = app.getGridEntries("g1")
             app.addGridRow("g1", data)
 ``` 
@@ -267,7 +276,7 @@ To have the **Press** button on the entries row add a new row of data, try the f
 * `.replaceAllGridRows(title, rowNum, data)`  
     Removes all existing rows, before adding the new rows.  
 
-* `.setgridHeaders(title, data)`  
+* `.setGridHeaders(title, data)`  
     Replace the values in the header row.  
     If the new data has fewer items, the remaining header cells will be emptied.  
 

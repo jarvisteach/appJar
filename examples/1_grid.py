@@ -17,9 +17,15 @@ def press(btn):
     elif btn == "COL": app.addGridColumn("grid", int(app.getSpinBox("spin")), ["yyy", "zzz"])
     elif btn == "D_COL": app.deleteGridColumn("grid", int(app.getSpinBox("spin")))
     elif btn == "COUNT": print(app.getGridRowCount("grid"))
-    else: app.deleteGridRow("grid", int(btn))
+    else:
+        if app.getCheckBox("Delete?"):
+            app.deleteGridRow("grid", int(btn))
+        else:
+            print(app.getGridRow("grid", int(btn)))
+
 app=gui()
 app.addGrid("grid", [["A","B","C"], [3,4,5,6,7], [2,4,6,8]], action=press, addRow=press, showMenu=True)
+app.addCheckBox("Delete?")
 app.addButtons(["FRENCH", "SHOW'EM", "UP", "DOWN"], press)
 app.addButtons(["D_COL", "HIDE", "SHOW", "DELETE", "ALL", "COUNT", "HEADER", "COL"], press)
 app.addSpinBoxRange("spin", 0, 10)

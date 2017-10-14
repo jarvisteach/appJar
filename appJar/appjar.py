@@ -3860,6 +3860,10 @@ class gui(object):
         grid = self.widgetManager.get(self.Widgets.Grid, title)
         return grid.getRowCount()
 
+    def getGridRow(self, title, rowNumber):
+        grid = self.widgetManager.get(self.Widgets.Grid, title)
+        return grid.getRow(rowNumber)
+
     def confGrid(self, title, field, value):
         grid = self.widgetManager.get(self.Widgets.Grid, title)
         kw = {field:value}
@@ -11240,6 +11244,15 @@ class SimpleGrid(ScrollPane):
     # this will include the header row
     def getRowCount(self):
         return len(self.cells)-1
+
+    def getRow(self, rowNumber):
+        if 0 > rowNumber >= self.numRows:
+            raise Exception("Invalid row number.")
+        else:
+            data = []
+            for cell in self.cells[rowNumber+1]:
+                data.append(cell.cget('text'))
+            return data
 
     def setHeaders(self, data):
         for count in range(len(self.cells[0])):
