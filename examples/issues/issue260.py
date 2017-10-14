@@ -1,10 +1,10 @@
 import sys
-sys.path.append("../")
+sys.path.append("../../")
 #!/usr/bin/python3 
 from appJar import gui
 
 # create the GUI & set a title 
-app = gui("Boat Log")
+app = gui("Boat Log", useTtk=True)
 
 def blExit(x):
     app.stop()

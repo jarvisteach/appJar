@@ -67,7 +67,7 @@ __author__ = "Richard Jarvis"
 __copyright__ = "Copyright 2016-2017, Richard Jarvis"
 __credits__ = ["Graham Turner", "Sarah Murch"]
 __license__ = "Apache 2.0"
-__version__ = "0.83.0"
+__version__ = "0.90.0"
 __maintainer__ = "Richard Jarvis"
 __email__ = "info@appJar.info"
 __status__ = "Development"
@@ -6491,7 +6491,8 @@ class gui(object):
         singleFunc = self.__checkFunc(names, funcs)
 
         frame = WidgetBox(self.getContainer())
-        frame.config(background=self.__getContainerBg())
+        if not self.ttk:
+            frame.config(background=self.__getContainerBg())
 
         # make them into a 2D array, if not already
         if not isinstance(names[0], list):
@@ -10393,10 +10394,10 @@ class AutoCompleteEntry(Entry):
 # Named classes for containing groups
 #####################################
 
-class ParentBox(frameBase):
+class ParentBox(frameBase, object):
 
     def __init__(self, parent, **opts):
-        frameBase.__init__(self, parent)
+        super(ParentBox, self).__init__(parent, **opts)
         self.setup()
 
     def setup(self):
