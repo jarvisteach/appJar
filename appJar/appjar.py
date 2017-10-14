@@ -2444,7 +2444,7 @@ class gui(object):
                         self.warn("Error configuring " + name +
                                   ": can't set inactiveforeground")
                 elif option == 'inactivebackground':
-                    if kind == self.Widgets.TabbedFrame:
+                    if kind in [self.Widgets.TabbedFrame, self.Widgets.Grid]:
                         item.config(inactivebackground=value)
                     else:
                         self.warn("Error configuring " + name +
@@ -3785,40 +3785,18 @@ class gui(object):
     #####################################
     # FUNCTION for simple grids
     #####################################
-    def addGrid(
-            self,
-            title,
-            data,
-            row=None,
-            column=0,
-            colspan=0,
-            rowspan=0,
-            action=None,
-            addRow=None,
-            actionHeading="Action",
-            actionButton="Press",
-            addButton="Add",
+    def addGrid(self, title, data,
+            row=None, column=0, colspan=0, rowspan=0,
+            action=None, addRow=None,
+            actionHeading="Action", actionButton="Press", addButton="Add",
             showMenu=False):
         self.widgetManager.verify(self.Widgets.Grid, title)
-        grid = SimpleGrid(
-            self.getContainer(),
-            title,
-            data,
-            action,
-            addRow,
-            actionHeading,
-            actionButton,
-            addButton,
-            showMenu,
-            buttonFont=self.buttonFont)
+        grid = SimpleGrid(self.getContainer(), title, data,
+            action, addRow,
+            actionHeading, actionButton, addButton,
+            showMenu, buttonFont=self.buttonFont)
         grid.config(font=self.gridFont, background=self.__getContainerBg())
-        self.__positionWidget(
-            grid,
-            row,
-            column,
-            colspan,
-            rowspan,
-            N + E + S + W)
+        self.__positionWidget(grid, row, column, colspan, rowspan, N+E+S+W)
         self.widgetManager.add(self.Widgets.Grid, title, grid)
         return grid
 
@@ -11083,27 +11061,27 @@ class SubWindow(Toplevel):
 #####################################
 
 class GridCell(Label):
-    def __init__(self, parent, isHeader=False, **opts):
+    def __init__(self, parent, fonts, isHeader=False, **opts):
         Label.__init__(self, parent, **opts)
         self.selected = False
+        self.isHeader = isHeader
         self.config(relief=RIDGE)
+        self.updateFonts(fonts)
 
-        # colours
-        self.cellHeadingBg = "#A9A9A9"      # HEADING BG
-        self.cellBg = "#E0FFFF"             # CELL BG
-        self.cellOverBg = "#C0C0C0"         # mouse over BG
-        self.cellSelectedBg = "#D3D3D3"     # selected cell BG
-
-        self.gdFont = font.Font(family="Helvetica", size=12)
-        self.ghFont = font.Font(family="Helvetica", size=14, weight="bold")
-
-        if isHeader:
-            self.config(font=self.ghFont, background=self.cellHeadingBg)
-        else:
-            self.config(font=self.gdFont, background=self.cellBg)
+        if not self.isHeader:
             self.bind("<Enter>", self.mouseEnter)
             self.bind("<Leave>", self.mouseLeave)
             self.bind("<Button-1>", self.mouseClick)
+
+    def updateFonts(self, fonts):
+        self.fonts = fonts
+        if self.isHeader:
+            self.config(font=self.fonts["header"], background=self.fonts["headerBg"])
+        else:
+            if self.selected:
+                self.config(font=self.fonts["data"], background=self.fonts["selectedBg"])
+            else:
+                self.config(font=self.fonts["data"], background=self.fonts["dataBg"])
 
     def setText(self, text):
         self.config(text=text)
@@ -11112,22 +11090,21 @@ class GridCell(Label):
         self.config(text="")
 
     def mouseEnter(self, event):
-        self.config(background=self.cellOverBg)
+        self.config(background=self.fonts["overBg"])
 
     def mouseLeave(self, event):
         if self.selected:
-            self.config(background=self.cellSelectedBg)
+            self.config(background=self.fonts["selectedBg"])
         else:
-            self.config(background=self.cellBg)
+            self.config(background=self.fonts["dataBg"])
 
     def mouseClick(self, event=None):
         if self.selected:
-            self.config(background=self.cellBg)
+            self.config(background=self.fonts["dataBg"])
         else:
-            self.config(background=self.cellSelectedBg)
+            self.config(background=self.fonts["selectedBg"])
 
         self.selected = not self.selected
-
 
 # first row is used as a header
 # SimpleGrid is a ScrollPane, where a Frame has been placed on the canvas - called GridContainer
@@ -11137,22 +11114,18 @@ class SimpleGrid(ScrollPane):
                     actionHeading="Action", actionButton="Press",
                     addButton="Add", showMenu=False, **opts):
 
-        if "buttonFont" in opts:
-            self.buttonFont = opts.pop("buttonFont")
-        else:
-            self.buttonFont = font.Font(family="Helvetica", size=12)
+        self.fonts = {
+            "data": font.Font(family="Helvetica", size=12),
+            "header": font.Font(family="Helvetica", size=12),
+            "button": font.Font(family="Helvetica", size=12),
+            "headerBg": "#A9A9A9",
+            "dataBg": "#E0FFFF",
+            "overBg": "#C0C0C0",
+            "selectedBg": "#D3D3D3",
+        }
 
-        ScrollPane.__init__(self, parent, resize=True, **opts)
-
-        if "font" in opts:
-            self.gdFont = opts["font"]
-            self.ghFont = opts["font"]
-            self.ghFont.configure(size=self.ghFont.actual("size") + 2, weight="bold")
-        else:
-            self.ghFont = font.Font(family="Helvetica", size=14, weight="bold")
-            self.gdFont = font.Font(family="Helvetica", size=12)
-
-        self.cellHeadingBg = "#A9A9A9"      # HEADING BG
+        self.config(**opts)
+        ScrollPane.__init__(self, parent, resize=True, **{})
 
         # actions
         self.addRowEntries = addRow
@@ -11181,8 +11154,7 @@ class SimpleGrid(ScrollPane):
         self.addButton= addButton
 
         # add the grid container to the frame
-        self.gridContainer = self.interior
-        self.gridContainer.bind("<Configure>", self.__refreshGrids)
+        self.interior.bind("<Configure>", self.__refreshGrids)
 
         self.addRows(data)
 
@@ -11191,22 +11163,29 @@ class SimpleGrid(ScrollPane):
 
     def configure(self, cnf=None, **kw):
         kw = gui.CLEAN_CONFIG_DICTIONARY(**kw)
+        updateCells = False
         if "bg" in kw:
             bg = kw.pop("bg")
-            self.gridContainer.config(bg=bg)
             self.canvas.config(bg=bg)
             self.interior.config(bg=bg)
         if "activebackground" in kw:
-            self.cellSelectedBg = kw.pop("activebackground")
+            self.fonts["selectedBg"] = kw.pop("activebackground")
+            updateCells = True
         if "inactivebackground" in kw:
-            self.cellBg = kw.pop("inactivebackground")
+            self.fonts["dataBg"] = kw.pop("inactivebackground")
+            updateCells = True
+
         if "font" in kw:
             font = kw.pop("font")
-            self.gdFont.configure(family=font.actual("family"), size=font.actual("size"))
-            self.ghFont.configure(family=font.actual("family"), size=font.actual("size") + 2, weight="bold")
+            self.fonts["data"].configure(family=font.actual("family"), size=font.actual("size"))
+            self.fonts["header"].configure(family=font.actual("family"), size=font.actual("size") + 2, weight="bold")
+            updateCells = True
         if "buttonFont" in kw:
             buttonFont = kw.pop("buttonFont")
-            self.buttonFont.configure(family=buttonFont.actual("family"), size=buttonFont.actual("size"))
+            self.fonts["button"].configure(family=buttonFont.actual("family"), size=buttonFont.actual("size"))
+            updateCells = True
+
+        if updateCells: self.__configCells()
 
         # allow labels to be updated
         if "actionheading" in kw:
@@ -11222,10 +11201,15 @@ class SimpleGrid(ScrollPane):
             self.addButton = kw.pop("addbutton")
             self.ent_but.config(text=self.addButton)
 
-    def _configCells(self, field, value):
-        for row in cells:
+        if "height" in kw:
+            self.interior.config(height = kw.pop("height"))
+        if "width" in kw:
+            self.interior.config(width = kw.pop("width"))
+
+    def __configCells(self):
+        for row in self.cells:
             for cell in row:
-                cell.config(field=value)
+                cell.updateFonts(self.fonts)
 
     def addRow(self, rowData, scroll=True):
         self.__hideEntryBoxes()
@@ -11332,15 +11316,13 @@ class SimpleGrid(ScrollPane):
 
             # add some buttons for each row
             if self.action is not None:
-                widg = Label(self.gridContainer, relief=RIDGE, height=2)
+                widg = GridCell(self.interior, self.fonts, isHeader=True)
                 # add the title
                 if rowNum == 0:
-                    widg.configure(text=self.actionHeading,
-                        font=self.ghFont, background=self.cellHeadingBg
-                    )
+                    widg.config(text=self.actionHeading)
                 # add a button
                 else:
-                    but = Button(widg, font=self.buttonFont,
+                    but = Button(widg, font=self.fonts["button"],
                         text=self.actionButton,
                         command=gui.MAKE_FUNC(self.action, rowNum-1)
                     )
@@ -11356,11 +11338,10 @@ class SimpleGrid(ScrollPane):
 
     def __createCell(self, rowNum, cellNum, val):
         if rowNum == 0: # adding title row
-            lab = GridCell(self.gridContainer, isHeader=True, text=val)
+            lab = GridCell(self.interior, self.fonts, isHeader=True, text=val)
             lab.gridPos = "h-" + str(cellNum)
         else:
-
-            lab = GridCell(self.gridContainer, text=val)
+            lab = GridCell(self.interior, self.fonts, text=val)
             lab.gridPos = str(rowNum - 1) + "-" + str(cellNum)
 
         if self.showMenu:
@@ -11370,8 +11351,8 @@ class SimpleGrid(ScrollPane):
                 lab.bind('<Button-2>', self.__rightClick)
 
         lab.grid(row=rowNum, column=cellNum, sticky=N+E+S+W)
-        Grid.columnconfigure(self.gridContainer, cellNum, weight=1)
-        Grid.rowconfigure(self.gridContainer, rowNum, weight=1)
+        Grid.columnconfigure(self.interior, cellNum, weight=1)
+        Grid.rowconfigure(self.interior, rowNum, weight=1)
         return lab
 
     def __buildMenu(self):
@@ -11498,7 +11479,6 @@ class SimpleGrid(ScrollPane):
                     # update the cells
                     cell.gridPos = str(rowCount - 1) + "-" + str(colCount)
 
-
             # move the buttons
             if self.action is not None:
                 for rowPos in range(len(self.cells)):
@@ -11532,10 +11512,10 @@ class SimpleGrid(ScrollPane):
             ent = self.__createEntryBox(cellNum)
             self.entries.append(ent)
 
-        lab = Label(self.gridContainer, relief=RIDGE, height=2)
+        lab = GridCell(self.interior, self.fonts, isHeader=True)
         lab.grid(row=len(self.cells), column=self.numColumns, sticky=N+E+S+W)
         self.ent_but = Button(
-            lab, font=self.buttonFont,
+            lab, font=self.fonts["button"],
             text=self.addButton,
             command=gui.MAKE_FUNC(self.addRowEntries, "newRow")
         )
@@ -11543,11 +11523,8 @@ class SimpleGrid(ScrollPane):
         self.ent_but.pack(expand=True, fill='both')
 
     def __createEntryBox(self, cellNum):
-        name = "GR" + str(cellNum)
-        lab = Label(self.gridContainer, relief=RIDGE, width=6, height=2)
+        lab = GridCell(self.interior, self.fonts, isHeader=True, width=6, height=2)
         lab.grid(row=len(self.cells), column=cellNum, sticky=N + E + S + W)
-
-        # self.__buildEntry(name, self.gridContainer)
         ent = Entry(lab, width=5)
         ent.pack(expand=True, fill='both')
         ent.lab = lab

@@ -17,6 +17,10 @@ def press(btn):
     elif btn == "COL": app.addGridColumn("grid", int(app.getSpinBox("spin")), ["yyy", "zzz"])
     elif btn == "D_COL": app.deleteGridColumn("grid", int(app.getSpinBox("spin")))
     elif btn == "COUNT": print(app.getGridRowCount("grid"))
+    elif btn == "FONTS":
+#        app.setGridBg("grid", "yellow")
+        app.setGridActiveBg("grid", "pink")
+        app.setGridInactiveBg("grid", "green")
     else:
         if app.getCheckBox("Delete?"):
             app.deleteGridRow("grid", int(btn))
@@ -25,8 +29,9 @@ def press(btn):
 
 app=gui()
 app.addGrid("grid", [["A","B","C"], [3,4,5,6,7], [2,4,6,8]], action=press, addRow=press, showMenu=True)
+#app.setGridHeight("grid", 400)
 app.addCheckBox("Delete?")
-app.addButtons(["FRENCH", "SHOW'EM", "UP", "DOWN"], press)
-app.addButtons(["D_COL", "HIDE", "SHOW", "DELETE", "ALL", "COUNT", "HEADER", "COL"], press)
-app.addSpinBoxRange("spin", 0, 10)
+app.addButtons(["FRENCH", "SHOW'EM", "UP", "DOWN", "FONTS"], press)
+#app.addButtons(["D_COL", "HIDE", "SHOW", "DELETE", "ALL", "COUNT", "HEADER", "COL"], press)
+#app.addSpinBoxRange("spin", 0, 10)
 app.go()
