@@ -3485,7 +3485,9 @@ class gui(object):
             return container
         elif fType == self.Widgets.TabbedFrame:
             self.widgetManager.verify(self.Widgets.TabbedFrame, title)
-            tabbedFrame = TabbedFrame(self.getContainer(), bg=self.__getContainerBg())
+            tabbedFrame = TabbedFrame(self.getContainer())
+            if not self.ttkFlag:
+                tabbedFrame.config(bg=self.__getContainerBg())
 #            tabbedFrame.isContainer = True
             self.__positionWidget(
                 tabbedFrame,
@@ -3564,7 +3566,9 @@ class gui(object):
             return pane
         elif fType == self.Widgets.ScrollPane:
             self.widgetManager.verify(self.Widgets.ScrollPane, title)
-            scrollPane = ScrollPane(self.getContainer(), bg=self.__getContainerBg())#, width=100, height=100)
+            scrollPane = ScrollPane(self.getContainer())
+            if not self.ttkFlag:
+                scrollPane.config(bg=self.__getContainerBg())
             scrollPane.isContainer = True
 #                self.containerStack[-1]['container'].add(scrollPane)
             self.__positionWidget(
@@ -9119,15 +9123,15 @@ class DualMeter(SplitMeter):
 #################################
 class TabbedFrame(Frame, object):
 
-    def __init__(self, master, bg, fill=False,
-            changeOnFocus=True, *args, **kwargs):
+    def __init__(self, master, fill=False,
+            changeOnFocus=True, **kwargs):
 
         # main frame & tabContainer inherit BG colour
-        super(TabbedFrame, self).__init__(master, bg=bg)
+        super(TabbedFrame, self).__init__(master, **kwargs)
 
         # create two containers
-        self.tabContainer = Frame(self, bg=bg)
-        self.paneContainer = Frame(self, relief=SUNKEN, bd=2, bg=bg, **kwargs)
+        self.tabContainer = Frame(self, **kwargs)
+        self.paneContainer = Frame(self, relief=SUNKEN, bd=2, **kwargs)
 
         # grid the containers
         Grid.columnconfigure(self, 0, weight=1)
@@ -10558,7 +10562,7 @@ class SelectableLabel(Entry, object):
 #######################
 
 
-class ScrollPane(Frame, object):
+class ScrollPane(frameBase, object):
     def __init__(self, parent, resize=False, **opts):
         super(ScrollPane, self).__init__(parent)
         self.config(padx=5, pady=5)
