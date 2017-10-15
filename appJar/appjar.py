@@ -1000,11 +1000,11 @@ class gui(object):
                         if spaces == 1:
                             gui.debug(str(self.node.tagName))
                         for c in self.node.childNodes:
-                            if c.__class__.__name__ == "Element":
+                            if gui.GET_WIDGET_TYPE(c) == "Element":
                                 gui.debug(str(" " * spaces) + " >> "+ str(c.tagName))
                                 node = ajTreeData(c)
                                 node.getSelected(spaces + 2)
-                            elif c.__class__.__name__ == "Text":
+                            elif gui.GET_WIDGET_TYPE(c) == "Text":
                                 val = c.data.strip()
                                 if len(val) > 0:
                                     gui.debug(str(" " * spaces) + " >>>> "+ str(val))
@@ -1131,11 +1131,11 @@ class gui(object):
 
     # function to receive DnD events
     def __startExternalDrag(self, event):
-        widgType = event.widget.__class__.__name__
+        widgType = gui.GET_WIDGET_TYPE(event.widget)
         self.warn("Unable to initiate drag events: " + str(widgType))
 
     def __receiveExternalDrop(self, event):
-        widgType = event.widget.__class__.__name__
+        widgType = gui.GET_WIDGET_TYPE(event.widget)
         event.widget.dropData = event.data
         if not hasattr(event.widget, 'dndFunction'):
             self.warn("Error - external drop target not correctly configured: " + str(widgType))
@@ -2227,7 +2227,7 @@ class gui(object):
                     # winfo_children returns ScrolledText as a Frame
                     # therefore can;t call some functions
                     # this gets the ScrolledText version
-                    if child.__class__.__name__ == "Frame":
+                    if gui.GET_WIDGET_TYPE(child) == "Frame":
                         for val in self.widgetManager.group(self.Widgets.TextArea).values():
                             if str(val) == str(child):
                                 child = val
@@ -3049,10 +3049,14 @@ class gui(object):
         #      colspan = self.containerStack[-1]['colCount']
 
         return row, column, colspan, rowspan
+        
+    @staticmethod
+    def GET_WIDGET_TYPE(widget):
+        return widget.__class__.__name__
 
     @staticmethod
     def SET_WIDGET_FG(widget, fg, external=False):
-        widgType = widget.__class__.__name__
+        widgType = gui.GET_WIDGET_TYPE(widget)
         gui.debug("SET_WIDGET_FG: " + str(widgType) + " - " + str(fg))
 
         # only configure these widgets if external
@@ -3141,7 +3145,7 @@ class gui(object):
         if bg is None: # ignore empty colours
             return  
 
-        widgType = widget.__class__.__name__
+        widgType = gui.GET_WIDGET_TYPE(widget)
         isDarwin = gui.GET_PLATFORM() == gui.MAC
         isLinux = gui.GET_PLATFORM() == gui.LINUX
 
@@ -4298,7 +4302,7 @@ class gui(object):
     def cleanseWidgets(self, widget):
         for child in widget.winfo_children():
             self.cleanseWidgets(child)
-        widgType = widget.__class__.__name__
+        widgType = gui.GET_WIDGET_TYPE(widget)
         for v in self.Widgets.funcs():
             k = self.Widgets.get(v)
 #        for k, v in self.WIDGETS.items():
@@ -7641,7 +7645,7 @@ class gui(object):
         return None
 
     def __getWidgetName(self, widg):
-        name = widg.__class__.__name__
+        name = gui.GET_WIDGET_TYPE(widg)
         if name.lower() == "tk":
             return self.__getTopLevel().title()
         elif name == "Listbox":
@@ -10624,6 +10628,12 @@ class ScrollPane(frameBase, object):
             self.canvas.config(bg=kw["bg"])
             self.interior.config(bg=kw["bg"])
 
+        if "width" in kw:
+            self.canvas.config(width=kw["width"])
+
+        if "height" in kw:
+            self.canvas.config(height=kw["height"])
+
         super(ScrollPane, self).configure(**kw)
 
     # unbind any saved bind ids
@@ -11583,7 +11593,7 @@ class CopyAndPaste():
         self.inUse = True
         # store globals
         self.widget = widget
-        self.widgetType = widget.__class__.__name__
+        self.widgetType = gui.GET_WIDGET_TYPE(widget)
 
         # query widget
         self.canCut = False
@@ -12107,7 +12117,7 @@ class TrashBin(CanvasDnd, object):
         if "height" not in kw:
             kw['height'] = 25    
 
-        super(CanvasDnd, self).__init__(master, kw)
+        super(TrashBin, self).__init__(master, kw)
         self.config(relief="sunken", bd=2)
         x = kw['width'] / 2
         y = kw['height'] / 2
