@@ -1,6 +1,8 @@
 #Change-Log
 ---
 
+## Version 0.9  
+
 ## Version 0.82  
 * [#189](https://github.com/jarvisteach/appJar/issues/189) - some tweaks to [ttk support](/pythonTtk)  
 * Fixes to documentation  

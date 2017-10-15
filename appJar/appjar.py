@@ -817,11 +817,11 @@ class gui(object):
                 # idlelib -> TreeWidget.py
                 # modify minidom - https://wiki.python.org/moin/MiniDom
                 #####################################
-                class ajTreeNode(TreeNode):
+                class ajTreeNode(TreeNode, object):
 
                     def __init__(self, canvas, parent, item):
 
-                        TreeNode.__init__(self, canvas, parent, item)
+                        super(ajTreeNode, self).__init__(canvas, parent, item)
 
                         self.bgColour = None
                         self.fgColour = None
@@ -850,10 +850,7 @@ class gui(object):
                             self.setFgColour(kw.pop("fg"))
 
 #                        # propagate anything left
-#                        if PYTHON2:
-#                            TreeNode.config(self, cnf, **kw)
-#                        else:
-#                            super(__class__, self).config(cnf, **kw)
+#                        super(ajTreeNode, self).config(cnf, **kw)
 
                     def registerEditEvent(self, func):
                         self.editEvent = func
@@ -904,20 +901,13 @@ class gui(object):
                     # override parent function, so that we can change the label's background
                     # colour
                     def drawtext(self):
-                        if PYTHON2:
-                            TreeNode.drawtext(self)
-                        else:
-                            super(__class__, self).drawtext()
-
+                        super(ajTreeNode, self).drawtext()
                         self.colourLabels()
 
                     # override parent function, so that we can generate an event on finish
                     # editing
                     def edit_finish(self, event=None):
-                        if PYTHON2:
-                            TreeNode.edit_finish(self, event)
-                        else:
-                            super(__class__, self).edit_finish(event)
+                        super(ajTreeNode, self).edit_finish(event)
                         if self.editEvent is not None:
                             self.editEvent()
 
@@ -949,7 +939,7 @@ class gui(object):
 
                 # implementation of container for XML data
                 # functions implemented as specified in skeleton
-                class ajTreeData(TreeItem):
+                class ajTreeData(TreeItem, object):
 
                     def __init__(self, node):
                         self.node = node
@@ -4375,10 +4365,7 @@ class gui(object):
         # would this create a new attribute?
         if self.built and not hasattr(self, name):
             raise AttributeError("Creating new attributes is not allowed!")
-        if PYTHON2:
-            object.__setattr__(self, name, value)
-        else:
-            super(__class__, self).__setattr__(name, value)
+        super(gui, self).__setattr__(name, value)
 
 #####################################
 # FUNCTION to add labels before a widget
@@ -8793,7 +8780,7 @@ class gui(object):
         else:
             return col[1]
 
-    def textBox(self, title, question, defaultValue=None, parent=None):
+    def textBox(self, title="Text Box", question="Enter text", defaultValue=None, parent=None):
         self.topLevel.update_idletasks()
         if defaultValue is not None:
             defaultVar = StringVar(self.topLevel)
@@ -8807,10 +8794,10 @@ class gui(object):
 
         return TextDialog(parent, title, question, defaultVar=defaultVar).result
 
-    def numberBox(self, title, question, parent=None):
+    def numberBox(self, title="Number Box", question="Enter a number", parent=None):
         return self.numBox(title, question, parent)
 
-    def numBox(self, title, question, parent=None):
+    def numBox(self, title="Number Box", question="Enter a number", parent=None):
         self.topLevel.update_idletasks()
         if parent is None:
             parent = self.topLevel
@@ -8824,7 +8811,7 @@ class gui(object):
 # from: http://tkinter.unpythonic.net/wiki/ProgressMeter
 # A gradient fill will be applied to the Meter
 #####################################
-class Meter(Frame):
+class Meter(Frame, object):
 
     def __init__(self, master, width=100, height=20,
             bg='#FFFFFF', fillColour='orchid1',
@@ -8832,7 +8819,7 @@ class Meter(Frame):
             fg='#000000', *args, **kw):
 
         # call the super constructor
-        Frame.__init__(self, master, bg=bg,
+        super(Meter, self).__init__(master, bg=bg,
             width=width, height=height, relief='ridge', bd=3, *args, **kw)
 
         # remember the starting value
@@ -8884,11 +8871,7 @@ class Meter(Frame):
         if "font" in kw:
             self._canv.itemconfigure(self._text, font=kw.pop("fillColour"))
 
-        # propagate anything left
-        if PYTHON2:
-            Frame.config(self, cnf, **kw)
-        else:
-            super(__class__, self).config(cnf, **kw)
+        super(Meter, self).config(cnf, **kw)
 
         self.makeBar()
 
@@ -9031,7 +9014,7 @@ class SplitMeter(Meter):
         self._leftFill = leftfillColour
         self._rightFill = rightfillColour
 
-        Meter.__init__(self, master, width=width, height=height,
+        super(SplitMeter, self).__init__(master, width=width, height=height,
                     bg=bg, value=value, text=text, font=font,
                     fg=fg, *args, **kw)
 
@@ -9048,10 +9031,7 @@ class SplitMeter(Meter):
                 self._rightFill = cols[1]
 
         # propagate any left over confs
-        if PYTHON2:
-            Meter.configure(self, cnf, **kw)
-        else:
-            super(SplitMeter, self).configure(cnf, **kw)
+        super(SplitMeter, self).configure(cnf, **kw)
 
     def set(self, value=0.0, text=None):
         # make the value failsafe:
@@ -9085,7 +9065,7 @@ class DualMeter(SplitMeter):
             value=None, text=None,
             font=None, fg='#000000', *args, **kw):
 
-        SplitMeter.__init__(self, master, width=width, height=height,
+        super(DualMeter, self).__init__(master, width=width, height=height,
                     bg=bg, leftfillColour=leftfillColour,
                     rightfillColour=rightfillColour,
                     value=value, text=text, font=font,
@@ -9132,19 +9112,13 @@ class DualMeter(SplitMeter):
 #################################
 # TabbedFrame Class
 #################################
-class TabbedFrame(Frame):
+class TabbedFrame(Frame, object):
 
-    def __init__(
-            self,
-            master,
-            bg,
-            fill=False,
-            changeOnFocus=True,
-            *args,
-            **kwargs):
+    def __init__(self, master, bg, fill=False,
+            changeOnFocus=True, *args, **kwargs):
 
         # main frame & tabContainer inherit BG colour
-        Frame.__init__(self, master, bg=bg)
+        super(TabbedFrame, self).__init__(master, bg=bg)
 
         # create two containers
         self.tabContainer = Frame(self, bg=bg)
@@ -9222,10 +9196,7 @@ class TabbedFrame(Frame):
             self.__colourTabs(False)
 
         # propagate any left over confs
-        if PYTHON2:
-            Frame.config(self, cnf, **kw)
-        else:
-            super(__class__, self).config(cnf, **kw)
+        super(TabbedFrame, self).config(cnf, **kw)
 
     def addTab(self, text, **kwargs):
         # check for duplicates
@@ -9400,10 +9371,10 @@ class TabbedFrame(Frame):
 #####################################
 
 
-class Grip(Label):
+class Grip(Label, object):
 
     def __init__(self, *args, **kwargs):
-        Label.__init__(self, bitmap="gray25", *args, **kwargs)
+        super(Grip, self).__init__(bitmap="gray25", *args, **kwargs)
         self.config(cursor="fleur")
         self.bind("<ButtonPress-1>", self.StartMove)
         self.bind("<ButtonRelease-1>", self.StopMove)
@@ -9431,10 +9402,10 @@ class Grip(Label):
 #####################################
 
 
-class Link(Label):
+class Link(Label, object):
 
     def __init__(self, *args, **kwargs):
-        Label.__init__(self, *args, **kwargs)
+        super(Link, self).__init__(*args, **kwargs)
         self.fg = "#0000ff"
         self.overFg="#3366ff"
         self.config(fg=self.fg, takefocus=1, highlightthickness=0)
@@ -9484,28 +9455,22 @@ class Link(Label):
         if "text" in kw:
             self.DEFAULT_TEXT = kw["text"]
 
-        if PYTHON2:
-            Label.config(self, **kw)
-        else:
-            super(__class__, self).config(**kw)
+        super(Link, self).config(**kw)
 
 #####################################
 # Properties Widget
 #####################################
-class Properties(LabelFrame):
+class Properties(LabelFrame, object):
 
-    def __init__(
-            self,
-            parent,
-            text,
-            props=None,
-            haveLabel=True,
-            *args,
-            **options):
-        if haveLabel:
-            LabelFrame.__init__(self, parent, text=text, *args, **options)
-        else:
-            LabelFrame.__init__(self, parent, text="", *args, **options)
+    def __init__(self, parent, text,
+            props=None, haveLabel=True,
+            *args, **options):
+
+        if haveLabel: theText=text
+        else: theText=""
+
+        super(Properties, self).__init__(parent, text=theText, *args, **options)
+
         self.parent = parent
         self.config(relief="groove")
         self.props = {}
@@ -9537,10 +9502,7 @@ class Properties(LabelFrame):
         kw.pop("disabledforeground", None)
         kw.pop("command", None)
 
-        if PYTHON2:
-            LabelFrame.config(self, cnf, **kw)
-        else:
-            super(__class__, self).config(cnf, **kw)
+        super(Properties, self).config(cnf, **kw)
 
     def addProperties(self, props, callFunction=True):
 
@@ -9639,20 +9601,20 @@ class Properties(LabelFrame):
 #####################################
 
 
-class ajFrame(Frame):
+class ajFrame(Frame, object):
 
     def __init__(self, parent, *args, **options):
-        Frame.__init__(self, parent, *args, **options)
+        super(ajFrame, self).__init__(parent, *args, **options)
 
 #####################################
 # Simple Separator
 #####################################
 
 
-class Separator(frameBase):
+class Separator(frameBase, object):
 
     def __init__(self, parent, orient="horizontal", *args, **options):
-        frameBase.__init__(self, parent, *args, **options)
+        super(Separator, self).__init__(parent, *args, **options)
         self.line = frameBase(self)
         if orient == "horizontal":
             self.line.config(
@@ -9676,46 +9638,27 @@ class Separator(frameBase):
         if "fg" in kw:
             self.line.config(bg=kw.pop("fg"))
 
-        if PYTHON2:
-            frameBase.config(self, cnf, **kw)
-        else:
-            super(__class__, self).config(cnf, **kw)
+        super(Separator, self).config(cnf, **kw)
 
 #####################################
 # Pie Chart Class
 #####################################
 
 
-class PieChart(Canvas):
+class PieChart(Canvas, object):
     # constant for available colours
     COLOURS = [
-        "#023fa5",
-        "#7d87b9",
-        "#bec1d4",
-        "#d6bcc0",
-        "#bb7784",
-        "#8e063b",
-        "#4a6fe3",
-        "#8595e1",
-        "#b5bbe3",
-        "#e6afb9",
-        "#e07b91",
-        "#d33f6a",
-        "#11c638",
-        "#8dd593",
-        "#c6dec7",
-        "#ead3c6",
-        "#f0b98d",
-        "#ef9708",
-        "#0fcfc0",
-        "#9cded6",
-        "#d5eae7",
-        "#f3e1eb",
-        "#f6c4e1",
-        "#f79cd4"]
+        "#023fa5", "#7d87b9", "#bec1d4",
+        "#d6bcc0", "#bb7784", "#8e063b",
+        "#4a6fe3", "#8595e1", "#b5bbe3",
+        "#e6afb9", "#e07b91", "#d33f6a",
+        "#11c638", "#8dd593", "#c6dec7",
+        "#ead3c6", "#f0b98d", "#ef9708",
+        "#0fcfc0", "#9cded6", "#d5eae7",
+        "#f3e1eb", "#f6c4e1", "#f79cd4"]
 
     def __init__(self, container, fracs, bg="#00FF00"):
-        Canvas.__init__(self, container, bd=0, highlightthickness=0, bg=bg)
+        super(PieChart, self).__init__(container, bd=0, highlightthickness=0, bg=bg)
         self.fracs = fracs
         self.arcs = []
         self.__drawPie()
@@ -9817,10 +9760,10 @@ class InvalidURLError(ValueError):
 #####################################
 
 
-class ToggleFrame(Frame):
+class ToggleFrame(Frame, object):
 
     def __init__(self, parent, title="", *args, **options):
-        Frame.__init__(self, parent, *args, **options)
+        super(ToggleFrame, self).__init__(parent, *args, **options)
 
         self.config(relief="raised", borderwidth=2, padx=5, pady=5)
         self.showing = True
@@ -9875,20 +9818,14 @@ class ToggleFrame(Frame):
         if "text" in kw:
             self.titleLabel.config(text=kw.pop("text"))
 
-        if PYTHON2:
-            Frame.config(self, cnf, **kw)
-        else:
-            super(__class__, self).config(cnf, **kw)
+        super(ToggleFrame, self).config(cnf, **kw)
 
 
     def cget(self, option):
         if option == "text":
             return self.titleLabel.cget(option)
 
-        if PYTHON2:
-            return Frame.cget(self, option)
-        else:
-            return super(__class__, self).cget(option)
+        return super(ToggleFrame, self).cget(option)
 
     def toggle(self):
         if not self.showing:
@@ -9917,11 +9854,11 @@ class ToggleFrame(Frame):
 #####################################
 
 
-class PagedWindow(Frame):
+class PagedWindow(Frame, object):
 
     def __init__(self, parent, title=None, **opts):
         # call the super constructor
-        Frame.__init__(self, parent, **opts)
+        super(PagedWindow, self).__init__(parent, **opts)
         self.config(width=300, height=400)
 
         # globals to hold list of frames(pages) and current page
@@ -9937,18 +9874,12 @@ class PagedWindow(Frame):
 
         # create the 3 components, including a default container frame
         self.titleLabel = Label(self)
-        self.prevButton = Button(
-            self,
-            text="PREVIOUS",
-            command=self.showPrev,
-            state="disabled",
-            width=10)
-        self.nextButton = Button(
-            self,
-            text="NEXT",
-            command=self.showNext,
-            state="disabled",
-            width=10)
+        self.prevButton = Button( self,
+            text="PREVIOUS", command=self.showPrev,
+            state="disabled", width=10)
+        self.nextButton = Button( self,
+            text="NEXT", command=self.showNext,
+            state="disabled", width=10)
         self.prevButton.bind("<Control-Button-1>", self.showFirst)
         self.nextButton.bind("<Control-Button-1>", self.showLast)
         self.posLabel = Label(self, width=8)
@@ -9962,29 +9893,17 @@ class PagedWindow(Frame):
 
         # grid the navigation components
         self.prevButton.grid(
-            row=self.navPos + 1,
-            column=0,
+            row=self.navPos + 1, column=0,
             sticky=N + S + W,
-            padx=5,
-            pady=(
-                0,
-                5))
+            padx=5, pady=(0, 5))
         self.posLabel.grid(
-            row=self.navPos + 1,
-            column=1,
+            row=self.navPos + 1, column=1,
             sticky=N + S + E + W,
-            padx=5,
-            pady=(
-                0,
-                5))
+            padx=5, pady=(0, 5))
         self.nextButton.grid(
-            row=self.navPos + 1,
-            column=2,
+            row=self.navPos + 1, column=2,
             sticky=N + S + E,
-            padx=5,
-            pady=(
-                0,
-                5))
+            padx=5, pady=(0, 5))
 
         # show the title
         if self.title is not None and self.shouldShowTitle:
@@ -10031,10 +9950,7 @@ class PagedWindow(Frame):
         if "command" in kw:
             self.pageChangeEvent = kw.pop("command")
 
-        if PYTHON2:
-            Frame.config(self, cnf, **kw)
-        else:
-            super(__class__, self).config(cnf, **kw)
+        super(PagedWindow, self).config(cnf, **kw)
 
 
     # functions to change the labels of the two buttons
@@ -10242,10 +10158,10 @@ class PagedWindow(Frame):
             self.bell()
 
 
-class Page(Frame):
+class Page(Frame, object):
 
     def __init__(self, parent, **opts):
-        Frame.__init__(self, parent)
+        super(Page, self).__init__(parent)
         self.config(relief=RIDGE, borderwidth=2)
         self.container = parent
 
@@ -10255,10 +10171,10 @@ class Page(Frame):
 #########################
 
 
-class AutoCompleteEntry(Entry):
+class AutoCompleteEntry(Entry, object):
 
     def __init__(self, words, tl, *args, **kwargs):
-        Entry.__init__(self, *args, **kwargs)
+        super(AutoCompleteEntry, self).__init__(*args, **kwargs)
         self.allWords = words
         self.allWords.sort()
         self.topLevel = tl
@@ -10418,10 +10334,7 @@ class ParentBox(frameBase, object):
         kw = self.processConfig(kw)
 
         # propagate anything left
-        if PYTHON2:
-            frameBase.config(self, cnf, **kw)
-        else:
-            super(__class__, self).config(cnf, **kw)
+        super(ParentBox, self).config(cnf, **kw)
 
     def processConfig(self, kw):
         return kw
@@ -10440,10 +10353,10 @@ class WidgetBox(ParentBox):
     def setup(self):
         self.theWidgets = []
 
-class ListBoxContainer(Frame):
+class ListBoxContainer(Frame, object):
 
     def __init__(self, parent, **opts):
-        Frame.__init__(self, parent)
+        super(ListBoxContainer, self).__init__(parent)
 
     # customised config setters
     def config(self, cnf=None, **kw):
@@ -10452,18 +10365,14 @@ class ListBoxContainer(Frame):
     def configure(self, cnf=None, **kw):
         # properties to propagate to CheckBoxes
         kw = gui.CLEAN_CONFIG_DICTIONARY(**kw)
-
         # propagate anything left
-        if PYTHON2:
-            Frame.config(self, cnf, **kw)
-        else:
-            super(__class__, self).config(cnf, **kw)
+        super(ListBoxContainer, self).config(cnf, **kw)
 
 
-class Pane(Frame):
+class Pane(Frame, object):
 
     def __init__(self, parent, **opts):
-        Frame.__init__(self, parent)
+        super(Pane, self).__init__(parent)
 
 #####################################
 # scrollable frame...
@@ -10471,10 +10380,10 @@ class Pane(Frame):
 #####################################
 
 
-class AutoScrollbar(Scrollbar):
+class AutoScrollbar(Scrollbar, object):
 
     def __init__(self, parent, **opts):
-        Scrollbar.__init__(self, parent, **opts)
+        super(AutoScrollbar, self).__init__(parent, **opts)
         self.hidden = None
 
     # a scrollbar that hides itself if it's not needed
@@ -10487,7 +10396,7 @@ class AutoScrollbar(Scrollbar):
         else:
             self.grid()
             self.hidden = False
-        Scrollbar.set(self, lo, hi)
+        super(AutoScrollbar, self).set(lo, hi)
 
     def pack(self, **kw):
         raise Exception("cannot use pack with this widget")
@@ -10507,20 +10416,17 @@ class AutoScrollbar(Scrollbar):
             kw.pop("fg")
 
         # propagate anything left
-        if PYTHON2:
-            Scrollbar.config(self, cnf, **kw)
-        else:
-            super(__class__, self).config(cnf, **kw)
+        super(AutoScrollbar, self).config(cnf, **kw)
 
 #######################
 # Upgraded scale - http://stackoverflow.com/questions/42843425/change-trough-increment-in-python-tkinter-scale-without-affecting-slider/
 #######################
 
-class ajScale(Scale):
+class ajScale(Scale, object):
     '''a scale where a trough click jumps by a specified increment instead of the resolution'''
     def __init__(self, master=None, **kwargs):
         self.increment = kwargs.pop('increment',1)
-        Scale.__init__(self, master, **kwargs)
+        super(ajScale, self).__init__(master, **kwargs)
         self.bind('<Button-1>', self.jump)
 
     def jump(self, event):
@@ -10542,7 +10448,7 @@ class ajScale(Scale):
 #######################
 
 
-class TextParent():
+class TextParent(object):
     def _init(self):
         self.clearModifiedFlag()
         self.bind('<<Modified>>', self._beenModified)
@@ -10594,15 +10500,15 @@ class TextParent():
         return md5
 
 # uses multiple inheritance
-class AjText(TextParent, Text):
+class AjText(Text, TextParent):
     def __init__(self, parent, **opts):
-        Text.__init__(self, parent, **opts)
+        super(AjText, self).__init__(parent, **opts)
         self._init()    # call TextParent initialiser
 
 
-class AjScrolledText(TextParent, scrolledtext.ScrolledText):
+class AjScrolledText(scrolledtext.ScrolledText, TextParent):
     def __init__(self, parent, **opts):
-        scrolledtext.ScrolledText.__init__(self, parent, **opts)
+        super(AjScrolledText, self).__init__(parent, **opts)
         self._init()    # call TextParent initialiser
 
 
@@ -10611,9 +10517,9 @@ class AjScrolledText(TextParent, scrolledtext.ScrolledText):
 #######################
 
 
-class SelectableLabel(Entry):
+class SelectableLabel(Entry, object):
     def __init__(self, parent, **opts):
-        Entry.__init__(self, parent)
+        super(SelectableLabel, self).__init__(parent)
         self.configure(relief=FLAT, state="readonly", readonlybackground='#FFFFFF', fg='#000000', highlightthickness=0)
         self.var = StringVar(parent)
         self.configure(textvariable=self.var)
@@ -10623,10 +10529,7 @@ class SelectableLabel(Entry):
         if kw == "text":
             return self.var.get()
         else:
-            if PYTHON2:
-                return Entry.cget(self, kw)
-            else:
-                return super(__class__, self).cget(kw)
+            return super(SelectableLabel, self).cget(kw)
 
     def config(self, cnf=None, **kw):
         self.configure(cnf, **kw)
@@ -10640,10 +10543,7 @@ class SelectableLabel(Entry):
             kw["readonlybackground"] = kw.pop("bg")
 
         # propagate anything left
-        if PYTHON2:
-            Entry.config(self, cnf, **kw)
-        else:
-            super(__class__, self).config(cnf, **kw)
+        super(SelectableLabel, self).config(cnf, **kw)
 
 
 #######################
@@ -10653,9 +10553,9 @@ class SelectableLabel(Entry):
 #######################
 
 
-class ScrollPane(Frame):
+class ScrollPane(Frame, object):
     def __init__(self, parent, resize=False, **opts):
-        Frame.__init__(self, parent)
+        super(ScrollPane, self).__init__(parent)
         self.config(padx=5, pady=5)
         self.resize = resize
 
@@ -10713,10 +10613,7 @@ class ScrollPane(Frame):
             self.canvas.config(bg=kw["bg"])
             self.interior.config(bg=kw["bg"])
 
-        if PYTHON2:
-            Frame.config(self, **kw)
-        else:
-            super(__class__, self).config(**kw)
+        super(ScrollPane, self).config(**kw)
 
     # unbind any saved bind ids
     def __unbindIds(self):
@@ -10893,10 +10790,10 @@ class ScrollPane(Frame):
 #################################
 # the main dialog class to be extended
 
-class Dialog(Toplevel):
+class Dialog(Toplevel, object):
 
     def __init__(self, parent, title=None):
-        Toplevel.__init__(self, parent)
+        super(Dialog, self).__init__(parent)
         gui.CENTER(self, up=150)
         self.transient(parent)
         self.withdraw()
@@ -10982,10 +10879,7 @@ class SimpleEntryDialog(Dialog):
         self.error = False
         self.question = question
         self.defaultVar=defaultvar
-        if PYTHON2:
-            Dialog.__init__(self, parent, title)
-        else:
-            super(__class__, self).__init__(parent, title)
+        super(SimpleEntryDialog, self).__init__(parent, title)
 
     def clearError(self, e):
         if self.error:
@@ -11019,10 +10913,7 @@ class SimpleEntryDialog(Dialog):
 class TextDialog(SimpleEntryDialog):
 
     def __init__(self, parent, title, question, defaultVar=None):
-        if PYTHON2:
-            SimpleEntryDialog.__init__(self, parent, title, question, defaultVar)
-        else:
-            super(__class__, self).__init__(parent, title, question, defaultVar)
+        super(TextDialog, self).__init__(parent, title, question, defaultVar)
 
     def validate(self):
         res = self.e1.get()
@@ -11039,10 +10930,7 @@ class TextDialog(SimpleEntryDialog):
 class NumDialog(SimpleEntryDialog):
 
     def __init__(self, parent, title, question):
-        if PYTHON2:
-            SimpleEntryDialog.__init__(self, parent, title, question)
-        else:
-            super(__class__, self).__init__(parent, title, question)
+        super(NumDialog, self).__init__(parent, title, question)
 
     def validate(self):
         res = self.e1.get()
@@ -11058,10 +10946,10 @@ class NumDialog(SimpleEntryDialog):
 #####################################
 
 
-class SubWindow(Toplevel):
+class SubWindow(Toplevel, object):
 
     def __init__(self):
-        Toplevel.__init__(self)
+        super(SubWindow, self).__init__()
         self.escapeBindId = None  # used to exit fullscreen
         self.stopFunction = None  # used to stop
         self.modal = False
@@ -11074,9 +10962,9 @@ class SubWindow(Toplevel):
 # SimpleGrid Stuff
 #####################################
 
-class GridCell(Label):
+class GridCell(Label, object):
     def __init__(self, parent, fonts, isHeader=False, **opts):
-        Label.__init__(self, parent, **opts)
+        super(GridCell, self).__init__(parent, **opts)
         self.selected = False
         self.isHeader = isHeader
         self.config(relief=RIDGE)
@@ -11139,7 +11027,7 @@ class SimpleGrid(ScrollPane):
         }
 
         self.config(**opts)
-        ScrollPane.__init__(self, parent, resize=True, **{})
+        super(SimpleGrid, self).__init__(parent, resize=True, **{})
 
         # actions
         self.addRowEntries = addRow
@@ -11564,14 +11452,14 @@ class SimpleGrid(ScrollPane):
 ##########################
 
 
-class MicroBitSimulator(Frame):
+class MicroBitSimulator(Frame, object):
 
     COLOURS = {0:'#000000',1:'#110000',2:'#220000',3:'#440000',4:'#660000',5:'#880000',6:'#aa0000',7:'#cc0000',8:'#ee0000',9:'#ff0000'}
     SIZE = 5
     HEART = "09090:90909:90009:09090:00900"
 
     def __init__(self, parent, **opts):
-        Frame.__init__(self, parent, **opts)
+        super(MicroBitSimulator, self).__init__(parent, **opts)
 
         self.matrix = []
         for i in range(self.SIZE):
@@ -11610,9 +11498,9 @@ class MicroBitSimulator(Frame):
 ##########################
 
 
-class SplashScreen(Toplevel):
+class SplashScreen(Toplevel, object):
     def __init__(self, parent, text="appJar", fill="#FF0000", stripe="#000000", fg="#FFFFFF", font=44):
-        Toplevel.__init__(self, parent)
+        super(SplashScreen, self).__init__(parent)
 
         lab = Label(self, bg=stripe, fg=fg, text=text, height=3, width=50)
         lab.config(font=("Courier", font))
@@ -11802,11 +11690,11 @@ class AJRectangle(object):
         return (self.corner.x <= point.x <= self.corner.x + self.width and
                     self.corner.y <= point.y <= self.corner.y + self.height)
 
-class GoogleMap(LabelFrame):
+class GoogleMap(LabelFrame, object):
     """ Class to wrap a GoogleMap tile download into a widget"""
 
     def __init__(self, parent, app, defaultLocation="Marlborough, UK"):
-        LabelFrame.__init__(self, parent, text="GoogleMaps")
+        super(GoogleMap, self).__init__(parent, text="GoogleMaps")
         self.alive = True
         self.API_KEY = ""
         self.parent = parent
@@ -11906,10 +11794,7 @@ class GoogleMap(LabelFrame):
 
     def destroy(self):
         self.stopUpdates()
-        if PYTHON2:
-            LabelFrame.destroy(self)
-        else:
-            super(__class__, self).destroy()
+        super(GoogleMap, self).destroy()
 
     def __removeControls(self):
         self.locationEntry.place_forget()
@@ -12112,7 +11997,7 @@ class GoogleMap(LabelFrame):
 
 
 #####################################
-class CanvasDnd(Canvas):
+class CanvasDnd(Canvas, object):
     """
     A canvas to which we have added those methods necessary so it can
         act as both a TargetWidget and a TargetObject. 
@@ -12123,7 +12008,7 @@ class CanvasDnd(Canvas):
     def __init__(self, Master, cnf={}, **kw):
         if cnf:
             kw.update(cnf)
-        Canvas.__init__(self, Master,  kw)
+        super(CanvasDnd, self).__init__(Master,  kw)
         self.config(bd=0, highlightthickness=0)
 
     #----- TargetWidget functionality -----
@@ -12164,14 +12049,14 @@ class CanvasDnd(Canvas):
         gui.debug("<<"+str(type(self))+".dnd_commit>> " + str(source))
 
 # A canvas specifically for deleting dragged objects.
-class TrashBin(CanvasDnd):
+class TrashBin(CanvasDnd, object):
     def __init__(self, master, **kw):
         if "width" not in kw:
             kw['width'] = 150
         if "height" not in kw:
             kw['height'] = 25    
 
-        CanvasDnd.__init__(self, master, kw)
+        super(CanvasDnd, self).__init__(master, kw)
         self.config(relief="sunken", bd=2)
         x = kw['width'] / 2
         y = kw['height'] / 2
@@ -12190,13 +12075,10 @@ class TrashBin(CanvasDnd):
             fg=kw.pop('fg')
             self.itemconfigure(self.textId, fill=fg)
 
-        if PYTHON2:
-            CanvasDnd.config(self, **kw)
-        else:
-            super(__class__, self).config(**kw)
+        super(TrashBin, self).config(**kw)
 
 # This is a prototype thing to be dragged and dropped.
-class DraggableWidget:
+class DraggableWidget(object):
     discardDragged = False
 
     def dnd_accept(self, source, event):
@@ -12359,7 +12241,7 @@ class DraggableWidget:
             gui.debug("<<DRAGGABLE_WIDGET.restoreOldData>> unable to restore - NO OriginalID")
 
 
-class WidgetManager:
+class WidgetManager(object):
     WIDGETS = "widgets"
     VARS = "vars"
     def __init__(self):

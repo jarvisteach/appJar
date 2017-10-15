@@ -14,7 +14,7 @@ def blExit(x):
 
 app.addLabelEntry("Daily Checks")
 
-app.addButtons( ["Exit"], blExit)   
+app.addButtons( ["Exit", "b"], blExit)   
 
 
 # start the GUI 
