@@ -10596,6 +10596,9 @@ class ScrollPane(Frame, object):
     def __updateWidth(self, event):
         if self.resize:
             canvas_width = event.width
+            if canvas_width == 0:
+                canvas_width = self.canvas.winfo_width()
+                
             interior_width = self.interior.winfo_reqwidth()
             if canvas_width < interior_width: canvas_width = interior_width
             self.canvas.itemconfig(self.interior_id, width=canvas_width)
