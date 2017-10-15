@@ -11263,11 +11263,10 @@ class SimpleGrid(ScrollPane):
 
     def __buildMenu(self):
         self.menu = Menu(self, tearoff=0)
-        self.menu.add_command(label="Edit", command=lambda: self.__menuHelper("edit"))
-        self.menu.add_command(label="Clear", command=lambda: self.__menuHelper("clear"))
-        self.menu.add_separator()
         self.menu.add_command(label="Copy", command=lambda: self.__menuHelper("copy"))
         self.menu.add_command(label="Paste", command=lambda: self.__menuHelper("paste"))
+        self.menu.add_command(label="Edit", command=lambda: self.__menuHelper("edit"))
+        self.menu.add_command(label="Clear", command=lambda: self.__menuHelper("clear"))
         self.menu.add_separator()
         self.menu.add_command(label="Delete Column", command=lambda: self.__menuHelper("dc"))
         self.menu.add_command(label="Delete Row", command=lambda: self.__menuHelper("dr"))
@@ -11281,7 +11280,19 @@ class SimpleGrid(ScrollPane):
         self.menu.add_command(label="Select", command=lambda: self.__menuHelper("select"))
         self.menu.add_command(label="Deselect", command=lambda: self.__menuHelper("deselect"))
 
+    def __configMenu(self, isHeader=False):
+        if isHeader:
+            self.menu.entryconfigure("Delete Row", state=DISABLED)
+            self.menu.entryconfigure("Select", state=DISABLED)
+            self.menu.entryconfigure("Deselect", state=DISABLED)
+        else:
+            self.menu.entryconfigure("Delete Row", state=NORMAL)
+            self.menu.entryconfigure("Select", state=NORMAL)
+            self.menu.entryconfigure("Deselect", state=NORMAL)
+
     def __rightClick(self, event):
+        if self.lastSelected is None or not self.lastSelected.isHeader == event.widget.isHeader:
+            self.__configMenu(event.widget.isHeader)
         self.lastSelected = event.widget
         self.menu.tk_popup(event.x_root - 10, event.y_root - 10)
         return "break"
