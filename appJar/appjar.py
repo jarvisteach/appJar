@@ -11122,6 +11122,7 @@ class SimpleGrid(ScrollPane):
         self.__hideEntryBoxes()
         self.__addRow(rowData)
         self.__showEntryBoxes()
+        self.canvas.event_generate("<Configure>")
         if scroll:
             self.scrollBottom()
 
@@ -11130,6 +11131,7 @@ class SimpleGrid(ScrollPane):
         for row in data:
             self.__addRow(row)
         self.__showEntryBoxes()
+        self.canvas.event_generate("<Configure>")
         if scroll:
             self.scrollBottom()
 
@@ -11164,12 +11166,14 @@ class SimpleGrid(ScrollPane):
                     cell.setText(data[count])
                 else:
                     cell.clear()
+            self.canvas.event_generate("<Configure>")
 
     def deleteAllRows(self):
         for loop in range(len(self.cells)-2, -1, -1):
-            self.deleteRow(loop)
+            self.deleteRow(loop, pauseUpdate=True)
+        self.canvas.event_generate("<Configure>")
 
-    def deleteRow(self, position):
+    def deleteRow(self, position, pauseUpdate=False):
         if 0 > position >= self.numRows:
             raise Exception("Invalid row number.")
         else:
@@ -11202,6 +11206,7 @@ class SimpleGrid(ScrollPane):
             self.cells = self.cells[:-1]
             self.rightColumn = self.rightColumn[:-1]
             self.__updateButtons(position)
+            if not pauseUpdate: self.canvas.event_generate("<Configure>")
 
     def __addRow(self, rowData):
         if self.numColumns == 0:
@@ -11223,16 +11228,18 @@ class SimpleGrid(ScrollPane):
 
             # add some buttons for each row
             if self.action is not None:
-                widg = GridCell(self.interior, self.fonts, isHeader=True)
                 # add the title
                 if rowNum == 0:
-                    widg.config(text=self.actionHeading)
+                    widg = GridCell(self.interior, self.fonts, isHeader=True, text=self.actionHeading)
                 # add a button
                 else:
+                    widg = GridCell(self.interior, self.fonts)
                     but = Button(widg, font=self.fonts["button"],
                         text=self.actionButton,
                         command=gui.MAKE_FUNC(self.action, rowNum-1)
                     )
+                    if gui.GET_PLATFORM() in [gui.MAC, gui.LINUX]:
+                        but.config(highlightbackground=widg.cget("bg"))
                     but.place(relx=0.5, rely=0.5, anchor=CENTER)
                     widg.but = but
                 self.rightColumn.append(widg)
@@ -11452,13 +11459,15 @@ class SimpleGrid(ScrollPane):
             ent = self.__createEntryBox(cellNum)
             self.entries.append(ent)
 
-        lab = GridCell(self.interior, self.fonts, isHeader=True)
+        lab = GridCell(self.interior, self.fonts)
         lab.grid(row=len(self.cells), column=self.numColumns, sticky=N+E+S+W)
         self.ent_but = Button(
             lab, font=self.fonts["button"],
             text=self.addButton,
             command=gui.MAKE_FUNC(self.addRowEntries, "newRow")
         )
+        if gui.GET_PLATFORM() in [gui.MAC, gui.LINUX]:
+            self.ent_but.config(highlightbackground=lab.cget("bg"))
         self.ent_but.lab = lab
         self.ent_but.pack(expand=True, fill='both')
 
