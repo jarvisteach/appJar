@@ -5808,29 +5808,29 @@ class gui(object):
         img.MAP_FUNC("UNKNOWN: " + str(event.x) + ", " + str(event.y))
 
     # must be GIF or PNG
-    def addImage(self, name, imageFile, row=None, column=0, colspan=0, rowspan=0):
+    def addImage(self, name, imageFile, row=None, column=0, colspan=0, rowspan=0, compound=None):
         self.widgetManager.verify(self.Widgets.Image, name)
         imgObj = self.__getImage(imageFile)
-        self.__addImageObj(name, imgObj, row, column, colspan, rowspan)
+        self.__addImageObj(name, imgObj, row, column, colspan, rowspan, compound=compound)
         self.widgetManager.get(self.Widgets.Image, name).hasMouseOver = False
         return imgObj
 
     # uses built-in icons to add an image
-    def addIcon(self, name, iconName, row=None, column=0, colspan=0, rowspan=0):
+    def addIcon(self, name, iconName, row=None, column=0, colspan=0, rowspan=0, compound=None):
         icon = os.path.join(self.icon_path, iconName.lower()+".png")
         with PauseLogger():
-            return self.addImage(name, icon, row, column, colspan, rowspan)
+            return self.addImage(name, icon, row, column, colspan, rowspan, compound=compound)
 
     # load image from base-64 encoded GIF
     # use base64 module to convert binary data to base64
-    def addImageData(self, name, imageData, row=None, column=0, colspan=0, rowspan=0, fmt="gif"):
+    def addImageData(self, name, imageData, row=None, column=0, colspan=0, rowspan=0, fmt="gif", compound=None):
         self.widgetManager.verify(self.Widgets.Image, name)
         imgObj = self.__getImageData(imageData, fmt)
-        self.__addImageObj(name, imgObj, row, column, colspan, rowspan)
+        self.__addImageObj(name, imgObj, row, column, colspan, rowspan, compound=compound)
         self.widgetManager.get(self.Widgets.Image, name).hasMouseOver = False
         return imgObj
 
-    def __addImageObj(self, name, img, row=None, column=0, colspan=0, rowspan=0):
+    def __addImageObj(self, name, img, row=None, column=0, colspan=0, rowspan=0, compound=None):
         label = Label(self.getContainer())
         label.config(
             anchor=CENTER,
@@ -5839,7 +5839,10 @@ class gui(object):
         label.config(image=img)
         label.image = img  # keep a reference!
 
-        if img is not None:
+        if compound is not None:
+            label.config(text=name, compound=compound)
+
+        if img is not None and compound is None:
             h = img.height()
             w = img.width()
             label.config(height=h, width=w)

@@ -19,11 +19,12 @@ Otherwise, concatenate `gui.icon_path` with the icon's name and `.png`
 
 ###Add Images
 
-* `.addImage(title, file)`  
+* `.addImage(title, file, compound=None)`  
     Adding an image is exactly the same as adding any other widget.  
     Simply give the image a title, and pass the filename.  
     appJar will confirm the file is valid, and will also check the file contains the type specified.  
     If an animated `.GIF` is found, then it will be animated within the GUI.  
+    `compound` can be set to one of *top*, *bottom*, *left*, *right*, *center* - this will show the image tite in that position.  
 
 ```python
 app.startLabelFrame("Simple", 0, 0)
@@ -31,10 +32,11 @@ app.addImage("simple", "balloons.gif")
 app.stopLabelFrame()
 ```
 
-* `.addImageData(title, imgData, fmt="gif")`  
+* `.addImageData(title, imgData, fmt="gif", compound=None)`  
     As above, but receives raw image data.  
     Currently only supports base64 encoded GIF images.  
     Alternatively, you can pass in a ready made PhotoImage, simply set `fmt` to be 'PhotoImage'.  
+    `compound` can be set to one of *top*, *bottom*, *left*, *right*, *center* - this will show the image tite in that position.  
 
 ```python
 from appJar import gui 
@@ -46,9 +48,10 @@ app.addImageData("pic", photo, fmt="PhotoImage")
 app.go()
 ```
 
-* `.addIcon(title, iconName)`  
+* `.addIcon(title, iconName, compound=None)`  
     This will create an image as above, but use one of appJar's inbuilt icons.  
     Simply pass the name of one of the icons.  
+    `compound` can be set to one of *top*, *bottom*, *left*, *right*, *center* - this will show the image tite in that position.  
 
 * `.setImageLocation(location)`  
     Set a folder for image files.  
