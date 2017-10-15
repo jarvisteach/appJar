@@ -3834,6 +3834,10 @@ class gui(object):
         grid = self.widgetManager.get(self.Widgets.Grid, title)
         grid.deleteAllRows()
 
+    def sortGrid(self, title, columnNumber, descending=False):
+        grid = self.widgetManager.get(self.Widgets.Grid, title)
+        grid.sort(columnNumber, descending)
+
     def getGridRowCount(self, title):
         grid = self.widgetManager.get(self.Widgets.Grid, title)
         return grid.getRowCount()
@@ -10993,10 +10997,10 @@ class GridCell(Label, object):
     def clear(self):
         self.config(text="")
 
-    def mouseEnter(self, event):
+    def mouseEnter(self, event=None):
         self.config(background=self.fonts["overBg"])
 
-    def mouseLeave(self, event):
+    def mouseLeave(self, event=None):
         if self.selected:
             self.config(background=self.fonts["selectedBg"])
         else:
@@ -11138,7 +11142,7 @@ class SimpleGrid(ScrollPane):
         else:
             data = []
             for cell in self.cells[rowNumber+1]:
-                data.append(cell.cget('text'))
+                data.append(str(cell.cget('text')))
             return data
 
     def setHeaders(self, data):
@@ -11268,6 +11272,9 @@ class SimpleGrid(ScrollPane):
         self.menu.add_command(label="Delete Column", command=lambda: self.__menuHelper("dc"))
         self.menu.add_command(label="Delete Row", command=lambda: self.__menuHelper("dr"))
         self.menu.add_separator()
+        self.menu.add_command(label="Sort Ascending", command=lambda: self.__menuHelper("sa"))
+        self.menu.add_command(label="Sort Descending", command=lambda: self.__menuHelper("sd"))
+        self.menu.add_separator()
         self.menu.add_command(label="Insert Before", command=lambda: self.__menuHelper("cb"))
         self.menu.add_command(label="Insert After", command=lambda: self.__menuHelper("ca"))
         self.menu.add_separator()
@@ -11295,6 +11302,10 @@ class SimpleGrid(ScrollPane):
             if not self.lastSelected.selected: self.lastSelected.mouseClick()
         elif action == "deselect" and vals[0] != "h":
             if self.lastSelected.selected: self.lastSelected.mouseClick()
+        if action == "sa":
+            self.sort(int(vals[1]))
+        if action == "sd":
+            self.sort(int(vals[1]), descending=True)
         elif action == "copy":
             val=self.lastSelected.cget("text")
             self.clipboard_clear()
@@ -11391,6 +11402,21 @@ class SimpleGrid(ScrollPane):
             # show the entry boxes
             self.__showEntryBoxes()
             self.canvas.event_generate("<Configure>")
+
+    def sort(self, columnNumber, descending=False):
+        order = self.__getSortedData(columnNumber, descending)
+        for k, val in enumerate(order):
+            for c, cell in enumerate(self.cells[k+1]):
+                cell.config(text=val[c])
+                cell.selected=False
+                cell.mouseLeave()
+
+    def __getSortedData(self, columnNumber, descending=False):
+        data = []
+        for pos in range(len(self.cells)-1):
+            row = self.getRow(pos)
+            data.append(row)
+        return  sorted(data,key=lambda l:l[columnNumber], reverse=descending)
 
     def __hideEntryBoxes(self):
         if self.addRowEntries is None or len(self.entries) == 0:
