@@ -10,8 +10,6 @@ with gui() as app:
     app.showSubWindow("s1")
     app.addGrip()
     app.addScale("sc1")
-    app.addTextArea("a")
-    app.addScrolledTextArea("a1")
     with app.tabbedFrame("tf"):
         with app.tab("t1"):
             with app.pagedWindow("p1"):
@@ -29,8 +27,8 @@ with gui() as app:
                 with app.page():
                     app.setSticky("NEWS")
                     app.addGrid("g1", [[1, 2, 3,4,5,6,7,8,9,10,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,11],[1,2,3]])
-                    app.setGridBg("g1", "orange")
-                    app.setGridHeight("g1", 300)
+                    app.setGridHeight("g1", 500)
+                    app.setGridWidth("g1", 500)
                 with app.page():
                     app.addListBox("lb", ["a", "b", "c"])
                 with app.page():
@@ -51,6 +49,9 @@ with gui() as app:
                         app.setMeterBg("m1", "yellow")
                         app.addSplitMeter("m2")
                         app.addDualMeter("m3")
+                with app.page():
+                    app.addTextArea("a")
+                    app.addScrolledTextArea("a1")
                 with app.page():
                     app.addPieChart("p1", {"a":10, "b":100})
 #                with app.page():

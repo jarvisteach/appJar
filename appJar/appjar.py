@@ -10603,7 +10603,6 @@ class ScrollPane(Frame, object):
             size = (self.interior.winfo_reqwidth(), self.interior.winfo_reqheight())
             self.canvas.config(scrollregion="0 0 %s %s" % size)
 
-
     def config(self, **kw):
         self.configure(**kw)
 
@@ -10613,7 +10612,7 @@ class ScrollPane(Frame, object):
             self.canvas.config(bg=kw["bg"])
             self.interior.config(bg=kw["bg"])
 
-        super(ScrollPane, self).config(**kw)
+        super(ScrollPane, self).configure(**kw)
 
     # unbind any saved bind ids
     def __unbindIds(self):
@@ -11026,7 +11025,6 @@ class SimpleGrid(ScrollPane):
             "selectedBg": "#D3D3D3",
         }
 
-        self.config(**opts)
         super(SimpleGrid, self).__init__(parent, resize=True, **{})
 
         # actions
@@ -11037,6 +11035,8 @@ class SimpleGrid(ScrollPane):
         self.cells = []
         self.entries = []
         self.rightColumn = []
+
+        self.config(**opts)
 
         # menu stuff
         self.showMenu = showMenu
@@ -11082,8 +11082,8 @@ class SimpleGrid(ScrollPane):
             self.fonts["data"].configure(family=font.actual("family"), size=font.actual("size"))
             self.fonts["header"].configure(family=font.actual("family"), size=font.actual("size") + 2, weight="bold")
             updateCells = True
-        if "buttonFont" in kw:
-            buttonFont = kw.pop("buttonFont")
+        if "buttonfont" in kw:
+            buttonFont = kw.pop("buttonfont")
             self.fonts["button"].configure(family=buttonFont.actual("family"), size=buttonFont.actual("size"))
             updateCells = True
 
@@ -11103,10 +11103,7 @@ class SimpleGrid(ScrollPane):
             self.addButton = kw.pop("addbutton")
             self.ent_but.config(text=self.addButton)
 
-        if "height" in kw:
-            self.interior.config(height = kw.pop("height"))
-        if "width" in kw:
-            self.interior.config(width = kw.pop("width"))
+        super(SimpleGrid, self).configure(**kw)
 
     def __configCells(self):
         for row in self.cells:
