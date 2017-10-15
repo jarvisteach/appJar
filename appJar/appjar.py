@@ -3795,7 +3795,8 @@ class gui(object):
             action, addRow,
             actionHeading, actionButton, addButton,
             showMenu, buttonFont=self.buttonFont)
-        grid.config(font=self.gridFont, background=self.__getContainerBg())
+        if not self.ttkFlag:
+            grid.config(font=self.gridFont, background=self.__getContainerBg())
         self.__positionWidget(grid, row, column, colspan, rowspan, N+E+S+W)
         self.widgetManager.add(self.Widgets.Grid, title, grid)
         return grid
@@ -10588,7 +10589,7 @@ class ScrollPane(Frame, object):
         self.b_ids = []
         self.canvas.focus_set()
 
-        self.interior = Frame(self.canvas)
+        self.interior = frameBase(self.canvas)
         self.interior_id = self.canvas.create_window(
             0, 0, window=self.interior, anchor=NW)
 
