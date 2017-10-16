@@ -1734,33 +1734,78 @@ class gui(object):
         if self.containerStack[-1]['type'] != self.Widgets.SubWindow:
             tl.createcommand('exit', self.stop)
 
-    def saveSettings(self):
-        props = {}
-        # get geometry: widthxheight+x+y
-        props["geom"] = self.topLevel.geometry()
-        props["fullscreen"] = self.topLevel.attributes('-fullscreen')
+    def saveSettings(self, fileName="appJar.ini"):
+        self.__loadConfigParser()
+        if not ConfigParser:
+            self.error("Unable to save config file - no configparser")
+            return
+
+        settings = ConfigParser()
+        settings.optionxform = str
+        settings.add_section('GEOM')
+        settings.set('GEOM', 'geometry', self.topLevel.geometry())
+        settings.set('GEOM', "fullscreen", str(self.topLevel.attributes('-fullscreen')))
 
         # get toolbar setting
-        props["tbPinned"] = self.tbPinned
+        settings.add_section("TOOLBAR")
+        settings.set("TOOLBAR", "pinned", str(self.tbPinned))
 
         # get container settings
-        props["togs"] = {}
+        settings.add_section("TOGGLES")
         for k, v in self.widgetManager.group(self.Widgets.ToggleFrame).items():
-            props["togs"][k] = v.isShowing()
+            settings.set("TOGGLES", k, str(v.isShowing()))
 
-        props["tabs"] = {}
+        settings.add_section("TABS")
         for k, v in self.widgetManager.group(self.Widgets.TabbedFrame).items():
-            props["tabs"][k] = v.getSelectedTab()
+            settings.set("TABS", k, str(v.getSelectedTab()))
 
-        props["pages"] = {}
+        settings.add_section("PAGES")
         for k, v in self.widgetManager.group(self.Widgets.PagedWindow).items():
-            props["pages"][k] = v.getPageNumber()
+            settings.set("PAGES", k, str(v.getPageNumber()))
 
         # pane positions?
         # sub windows geom & visibility
         # scrollpane x & y positions
+        # language
+        # ttk
+        # debug level
 
-        return props
+        with open(fileName, 'w') as settingsFile:
+            settings.write(settingsFile)
+
+    def loadSettings(self, fileName="appJar.ini"):
+        self.__loadConfigParser()
+        if not ConfigParser:
+            self.error("Unable to save config file - no configparser")
+            return
+
+        settings = ConfigParser()
+        settings.optionxform = str
+        settings.read(fileName)
+
+        if settings.has_option("GEOM", "geometry"):
+            self.setGeom(settings.get("GEOM", "geometry"))
+
+        # not finished
+        if settings.has_option("GEOM", "fullscreen"):
+            fs = settings.get('GEOM', "fullscreen")
+
+        # not finished
+        if settings.has_option("TOOLBAR", "pinned"):
+            tb = settings.get("TOOLBAR", "pinned")
+
+        if "TOGGLES" in settings.sections():
+            for k in settings.options("TOGGLES"):
+                if self.getToggleFrameState(k) != bool(settings.get("TOGGLES", k)):
+                    self.toggleToggleFrame(k)
+
+        if "TABS" in settings.sections():
+            for k in settings.options("TABS"):
+                self.setTabbedFrameSelectedTab(k, settings.get("TABS", k))
+
+        if "PAGES" in settings.sections():
+            for k in settings.options("PAGES"):
+                self.setPagedWindowPage(k, settings.get("PAGES", k))
 
     def stop(self, event=None):
         """ Closes the GUI. If a stop function is set, will only close the GUI if True """

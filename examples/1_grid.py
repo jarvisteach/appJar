@@ -18,6 +18,8 @@ def press(btn):
     elif btn == "D_COL": app.deleteGridColumn("grid", int(app.getSpinBox("spin")))
     elif btn == "COUNT": print(app.getGridRowCount("grid"))
     elif btn == "SORT": app.sortGrid("grid", 0)
+    elif btn == "L_SETTS": app.loadSettings()
+    elif btn == "S_SETTS": app.saveSettings()
     elif btn == "FONTS":
 #        app.setGridBg("grid", "yellow")
         app.setGridActiveBg("grid", "pink")
@@ -30,15 +32,22 @@ def press(btn):
 
 app=gui()
 app.addLabel("title", "Grid Widget Test")
-app.setLabelFg("title", "blue")
-app.setLabelBg("title", "yellow")
-app.setLabelFont(20)
-app.addGrid("grid", [["A","B","C"], [3,4,5,6,7], [2,4,6,8]], action=press, addRow=press, showMenu=True)
-app.setGridHeight("grid", 100)
-app.setGridWidth("grid", 400)
-with app.labelFrame("LabelFrame Text", hideTitle=True):
-    app.addCheckBox("Delete?")
-    app.addButtons(["FRENCH", "SHOW'EM", "UP", "DOWN", "FONTS", "SORT"], press)
+with app.tabbedFrame("tf"):
+    with app.tab("1"):
+        app.setLabelFg("title", "blue")
+        app.setLabelBg("title", "yellow")
+        app.setLabelFont(20)
+        app.addGrid("grid", [["A","B","C"], [3,4,5,6,7], [2,4,6,8]], action=press, addRow=press, showMenu=True)
+        app.setGridHeight("grid", 100)
+        app.setGridWidth("grid", 400)
 #app.addButtons(["D_COL", "HIDE", "SHOW", "DELETE", "ALL", "COUNT", "HEADER", "COL"], press)
 #app.addSpinBoxRange("spin", 0, 10)
+
+    with app.tab("2"):
+        with app.toggleFrame("toggleMe"):
+            app.addLabel("l2", "Two")
+
+with app.labelFrame("LabelFrame Text", hideTitle=True):
+    app.addCheckBox("Delete?")
+    app.addButtons(["L_SETTS", "S_SETTS", "FRENCH", "SHOW'EM", "UP", "DOWN", "FONTS", "SORT"], press)
 app.go()

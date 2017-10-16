@@ -2,10 +2,21 @@
 ---
 
 ## Version 0.9  
+* Big improvements to [grids](/pythonDevWidgets/#grid):
+    * Can add 1 or more rows
+    * Can add/remove columns
+    * can delete 1 or all rows
+    * can replace 1 or all rows
+    * can sort rows ascending or descending by a particular column
+    * supports a righ-click menu
 
+* Issues Resolved:
+    [#271](https://github.com/jarvisteach/appJar/issues/271), [#266](https://github.com/jarvisteach/appJar/issues/266), [#255](https://github.com/jarvisteach/appJar/issues/255) & [#232](https://github.com/jarvisteach/appJar/issues/232) - [Grid](/pythonDevWidgets/#grid) improvements  
 ## Version 0.82  
-* [#189](https://github.com/jarvisteach/appJar/issues/189) - some tweaks to [ttk support](/pythonTtk)  
-* Fixes to documentation  
+    * [#250](https://github.com/jarvisteach/appJar/issues/250) - Can now add [compound images](/python/Images/#add-images) - images with a built in label  
+    * [#233](https://github.com/jarvisteach/appJar/issues/233) - [NumericEntries](/pythonWidgets/#entry) return `None` when empty
+    * [#218](https://github.com/jarvisteach/appJar/issues/218) - Can no longer set [NumericEntries](/pythonWidgets/#entry) to Strings  
+    * [#189](https://github.com/jarvisteach/appJar/issues/189) - some tweaks to [ttk support](/pythonTtk)  
 
 ## Version 0.8  
 * Changed versioning - PyPi difficulties, combined with close to a 1.0 release...
