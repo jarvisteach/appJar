@@ -5135,6 +5135,10 @@ class gui(object):
         self.widgetManager.add(self.Widgets.Map, title, gMap)
         return gMap
 
+    def setGoogleMapProxy(self, title, proxyString):
+        gMap = self.widgetManager.get(self.Widgets.Map, title)
+        gMap.setProxyString(proxyString)
+
     def setGoogleMapLocation(self, title, location):
         self.searchGoogleMap(title, location)
 
@@ -11820,7 +11824,7 @@ class AJRectangle(object):
 class GoogleMap(LabelFrame, object):
     """ Class to wrap a GoogleMap tile download into a widget"""
 
-    def __init__(self, parent, app, defaultLocation="Marlborough, UK"):
+    def __init__(self, parent, app, defaultLocation="Marlborough, UK", proxyString=None):
         super(GoogleMap, self).__init__(parent, text="GoogleMaps")
         self.alive = True
         self.API_KEY = ""
@@ -11829,6 +11833,7 @@ class GoogleMap(LabelFrame, object):
         self.defaultLocation = defaultLocation
         self.currentLocation = None
         self.app = app
+        self.proxyString = proxyString
 
         self.TERRAINS = ("Roadmap", "Satellite", "Hybrid", "Terrain")
         self.MAP_URL =  "http://maps.google.com/maps/api/staticmap?"
@@ -11907,7 +11912,6 @@ class GoogleMap(LabelFrame, object):
         self.terrainOption = OptionMenu(self.canvas, self.terrainType, *self.TERRAINS, command=lambda e: self.changeTerrain(self.terrainType.get().lower()))
         self.terrainOption.config(highlightthickness=0)
 
-
         self.terrainOption.config(font=B_FONT)
 
         # an entry for searching locations
@@ -11918,6 +11922,9 @@ class GoogleMap(LabelFrame, object):
         self.locationEntry.config(highlightthickness=0)
 
         self.__placeControls()
+
+    def setProxyString(self, proxyString):
+        self.proxyString = proxyString
 
     def destroy(self):
         self.stopUpdates()
@@ -12080,6 +12087,9 @@ class GoogleMap(LabelFrame, object):
         gotMap = False
         while not gotMap:
             if self.request is not None:
+                if self.proxyString is not None:
+                    gui.error("Proxy set, but not enabled.")
+
                 try:
                     u = urlopen(self.request)
                     rawData = u.read()
