@@ -171,7 +171,7 @@ class gui(object):
             geom = win.geom.split("x")
             if len(geom) == 2:
                 width=int(geom[0])
-                height=int(geom[1])
+                height = int(geom[1].split("+")[-1])
 
         outer_frame_width = win.winfo_rootx() - win.winfo_x()
         titlebar_height = win.winfo_rooty() - win.winfo_y()
@@ -360,7 +360,7 @@ class gui(object):
 #####################################
 # CONSTRUCTOR - creates the GUI
 #####################################
-    def __init__(self, title=None, geom=None, warn=None, debug=None, handleArgs=True, language=None, startWindow=None, useTtk=False):
+    def __init__(self, title=None, geom=None, warn=None, debug=None, handleArgs=True, language=None, startWindow=None, useTtk=False, useSettings=False):
 
         if self.__class__.instantiated:
             raise Exception("You cannot have more than one instance of gui, try using a subWindow.")
@@ -374,6 +374,9 @@ class gui(object):
 
         # check any command line arguments
         self.language = language
+        self.useSettings = useSettings
+        self.settingsFile = "appJar.ini"
+
         self.startWindow = startWindow
         args = self.__handleArgs() if handleArgs else None
 
@@ -426,6 +429,11 @@ class gui(object):
                 self.useTtk()
                 if args.ttk is not True:
                     self.ttkStyle = args.ttk
+
+            if args.s:
+                self.useSettings = True
+                if args.s is not True:
+                    self.settingsFile = args.s
 
         # a stack to hold containers as being built
         # done here, as initArrays is called elsewhere - to reset the gubbins
@@ -582,6 +590,7 @@ class gui(object):
         parser.add_argument("-l", metavar="LANGUAGE.ini", help="set a language file to use")
         parser.add_argument("-f", metavar="file.log", help="set a log file to use")
         parser.add_argument("--ttk", metavar="THEME", const=True, nargs="?", help="enable ttk, with an optional theme")
+        parser.add_argument("--s", metavar="SETTINGS", const=True, nargs="?", help="load settings, from an optional file name")
         return parser.parse_args()
 
     # function to check on mode
@@ -1683,6 +1692,8 @@ class gui(object):
 
         # pack it all in & make sure it's drawn
         self.appWindow.pack(fill=BOTH)
+        if self.useSettings:
+            self.loadSettings(self.settingsFile)
         self.topLevel.update_idletasks()
 
         # check geom is set and set a minimum size, also positions the window
@@ -1743,7 +1754,9 @@ class gui(object):
         settings = ConfigParser()
         settings.optionxform = str
         settings.add_section('GEOM')
-        settings.set('GEOM', 'geometry', self.topLevel.geometry())
+        geom = self.topLevel.geometry()
+        settings.set('GEOM', 'geometry', geom)
+        self.debug("Set geom to: " + str(geom))
         settings.set('GEOM', "fullscreen", str(self.topLevel.attributes('-fullscreen')))
 
         # get toolbar setting
@@ -1770,21 +1783,25 @@ class gui(object):
         # ttk
         # debug level
 
-        with open(fileName, 'w') as settingsFile:
-            settings.write(settingsFile)
+        with open(fileName, 'w') as theFile:
+            settings.write(theFile)
 
-    def loadSettings(self, fileName="appJar.ini"):
+    def loadSettings(self, fileName="appJar.ini", useSettings=True):
         self.__loadConfigParser()
         if not ConfigParser:
             self.error("Unable to save config file - no configparser")
             return
+
+        self.useSettings = useSettings
 
         settings = ConfigParser()
         settings.optionxform = str
         settings.read(fileName)
 
         if settings.has_option("GEOM", "geometry"):
-            self.setGeom(settings.get("GEOM", "geometry"))
+            geom = settings.get("GEOM", "geometry")
+            self.setGeom(geom)
+            self.debug("Set geom to: " + str(geom))
 
         # not finished
         if settings.has_option("GEOM", "fullscreen"):
@@ -1811,6 +1828,10 @@ class gui(object):
         """ Closes the GUI. If a stop function is set, will only close the GUI if True """
         theFunc = self.__getTopLevel().stopFunction
         if theFunc is None or theFunc():
+
+            if self.useSettings:
+                self.saveSettings(self.settingsFile)
+
             # stop the after loops
             self.alive = False
             self.topLevel.after_cancel(self.pollId)
@@ -2008,18 +2029,14 @@ class gui(object):
                 self.__getTopLevel().geom = str(width) + "x" + str(height)
             else:
                 # now split the app's geom
-                width = int(self.__getTopLevel().geom.lower().split("x")[0])
-                height = int(self.__getTopLevel().geom.lower().split("x")[1])
+                geom = self.__getTopLevel().geom.lower().split("x")
+                width = int(geom[0])
+                height = int(geom[1].split("+")[0])
+
                 # warn the user that their geom is not big enough
                 if width < b_width or height < b_height:
-                    self.warn(
-                        "Specified dimensions (" +
-                        self.__getTopLevel().geom +
-                        "), less than requested dimensions (" +
-                        str(b_width) +
-                        "x" +
-                        str(b_height) +
-                        ")")
+                    self.warn("Specified dimensions (" + self.__getTopLevel().geom +
+                            "), less than requested dimensions (" + str(b_width) + "x" + str(b_height) + ")")
 
             # and set it as the minimum size
             self.__getTopLevel().minsize(width, height)
@@ -5109,6 +5126,7 @@ class gui(object):
 
     def addGoogleMap(self, title, row=None, column=0, colspan=0, rowspan=0):
         self.__loadURL()
+        self.__loadTooltip()
         if urlencode is False:
             raise Exception("Unable to load GoogleMaps - urlencode library not available")
         self.widgetManager.verify(self.Widgets.Map, title)
@@ -11295,7 +11313,7 @@ class SimpleGrid(ScrollPane):
                     widg = GridCell(self.interior, self.fonts, isHeader=True, text=self.actionHeading)
                 # add a button
                 else:
-                    widg = GridCell(self.interior, self.fonts)
+                    widg = GridCell(self.interior, self.fonts, isHeader=True)
                     but = Button(widg, font=self.fonts["button"],
                         text=self.actionButton,
                         command=gui.MAKE_FUNC(self.action, rowNum-1)
@@ -11521,7 +11539,7 @@ class SimpleGrid(ScrollPane):
             ent = self.__createEntryBox(cellNum)
             self.entries.append(ent)
 
-        lab = GridCell(self.interior, self.fonts)
+        lab = GridCell(self.interior, self.fonts, isHeader=True)
         lab.grid(row=len(self.cells), column=self.numColumns, sticky=N+E+S+W)
         self.ent_but = Button(
             lab, font=self.fonts["button"],
