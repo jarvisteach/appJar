@@ -26,6 +26,9 @@ These are values that can be set when appJar is initially run.
 * `-f [filename.log]`  
     This allows you to specify a [file](/pythonLogging/#logging-to-file) to log messages to.  
 
+* `-s [appJar.ini]`  
+    This allows you to specify a [settings file](/pythonSettings/) to load/save settings to.  
+
 * `--ttk`  
     This allows you to request appJar uses [ttk widgets](/pythonTtk/) where possible.  
     It can followed by an optional theme name, to declare which style to use for ttk widgets.  

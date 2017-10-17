@@ -9,11 +9,15 @@
     * can replace 1 or all rows
     * can sort rows ascending or descending by a particular column
     * supports a righ-click menu
+* Introduction of appJar [settings](/pythonSettings/):
+    * appJar can now save & load a gui settings file  
+    * this can also be specified from the command prompt  
 
 * Issues Resolved:
     [#271](https://github.com/jarvisteach/appJar/issues/271), [#266](https://github.com/jarvisteach/appJar/issues/266), [#255](https://github.com/jarvisteach/appJar/issues/255) & [#232](https://github.com/jarvisteach/appJar/issues/232) - [Grid](/pythonDevWidgets/#grid) improvements  
 ## Version 0.82  
     * [#250](https://github.com/jarvisteach/appJar/issues/250) - Can now add [compound images](/python/Images/#add-images) - images with a built in label  
+    * [#236](https://github.com/jarvisteach/appJar/issues/236) - appJar can now save GUI settings and load them again  
     * [#233](https://github.com/jarvisteach/appJar/issues/233) - [NumericEntries](/pythonWidgets/#entry) return `None` when empty
     * [#218](https://github.com/jarvisteach/appJar/issues/218) - Can no longer set [NumericEntries](/pythonWidgets/#entry) to Strings  
     * [#189](https://github.com/jarvisteach/appJar/issues/189) - some tweaks to [ttk support](/pythonTtk)  
