@@ -1757,8 +1757,11 @@ class gui(object):
         settings.optionxform = str
         settings.add_section('GEOM')
         geom = self.topLevel.geometry()
+        ms = self.topLevel.minsize()
+        ms = str(ms[0])+","+str(ms[1])
         settings.set('GEOM', 'geometry', geom)
         self.debug("Save geom as: " + str(geom))
+        settings.set('GEOM', 'minsize', ms)
         settings.set('GEOM', "fullscreen", str(self.topLevel.attributes('-fullscreen')))
 
         # get toolbar setting
@@ -1807,17 +1810,23 @@ class gui(object):
 
         # not finished
         if settings.has_option("GEOM", "fullscreen"):
-            fs = settings.get('GEOM', "fullscreen")
+            fs = settings.getboolean('GEOM', "fullscreen")
             self.debug("Set fullscreen to: " + str(fs))
 
-        # not finished
+        if settings.has_option("GEOM", "minsize"):
+
+            self.topLevel.ms = settings.get('GEOM', "minsize").split(",")
+            self.__getTopLevel().minsize(self.topLevel.ms[0], self.topLevel.ms[1])
+            self.debug("Set minsize to: " + str(self.topLevel.ms))
+
         if settings.has_option("TOOLBAR", "pinned"):
-            tb = settings.get("TOOLBAR", "pinned")
+            tb = settings.getboolean("TOOLBAR", "pinned")
+            self.setToolbarPinned(tb)
             self.debug("Set toolbar to: " + str(tb))
 
         if "TOGGLES" in settings.sections():
             for k in settings.options("TOGGLES"):
-                if self.getToggleFrameState(k) != bool(settings.get("TOGGLES", k)):
+                if self.getToggleFrameState(k) != settings.getboolean("TOGGLES", k):
                     self.toggleToggleFrame(k)
 
         if "TABS" in settings.sections():
@@ -2043,7 +2052,8 @@ class gui(object):
                             "), less than requested dimensions (" + str(b_width) + "x" + str(b_height) + ")")
 
             # and set it as the minimum size
-            self.__getTopLevel().minsize(width, height)
+            if not hasattr(self.topLevel, 'ms'):
+                self.__getTopLevel().minsize(width, height)
 
             # remove the tb again if needed
             if toggleTb:
