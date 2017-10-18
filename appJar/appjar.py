@@ -61,6 +61,7 @@ ConfigParser = codecs = ParsingError = None # used to parse language files
 Thread = Queue = None
 frameBase = Frame
 labelBase = Label
+scaleBase = Scale
 
 # details
 __author__ = "Richard Jarvis"
@@ -631,7 +632,7 @@ class gui(object):
 #####################################
 
     def useTtk(self):
-        global ttk, frameBase, labelBase
+        global ttk, frameBase, labelBase, scaleBase
         try:
             import ttk
         except:
@@ -643,6 +644,7 @@ class gui(object):
         self.ttkFlag = True
         frameBase = ttk.Frame
         labelBase = ttk.Label
+        scaleBase = ttk.Scale
         gui.debug("Mode switched to ttk")
 
     # only call this after the main tk has been created
@@ -6912,8 +6914,9 @@ class gui(object):
             text = AjText(frame)
         text.config(font=self.taFont, width=20, height=10, undo=True, wrap=WORD)
 
-        if self.platform in [self.MAC, self.LINUX]:
-            text.config(highlightbackground=self.__getContainerBg())
+        if not self.ttkFlag:
+            if self.platform in [self.MAC, self.LINUX]:
+                text.config(highlightbackground=self.__getContainerBg())
 
         text.bind("<Tab>", self.__focusNextWindow)
         text.bind("<Shift-Tab>", self.__focusLastWindow)
@@ -10505,7 +10508,7 @@ class AutoScrollbar(Scrollbar, object):
 # Upgraded scale - http://stackoverflow.com/questions/42843425/change-trough-increment-in-python-tkinter-scale-without-affecting-slider/
 #######################
 
-class ajScale(Scale, object):
+class ajScale(scaleBase, object):
     '''a scale where a trough click jumps by a specified increment instead of the resolution'''
     def __init__(self, master=None, **kwargs):
         self.increment = kwargs.pop('increment',1)
