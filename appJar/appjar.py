@@ -172,7 +172,7 @@ class gui(object):
             geom = win.geom.split("x")
             if len(geom) == 2:
                 width=int(geom[0])
-                height = int(geom[1].split("+")[-1])
+                height = int(geom[1].split("+")[0])
 
         outer_frame_width = win.winfo_rootx() - win.winfo_x()
         titlebar_height = win.winfo_rooty() - win.winfo_y()
@@ -1758,7 +1758,7 @@ class gui(object):
         settings.add_section('GEOM')
         geom = self.topLevel.geometry()
         settings.set('GEOM', 'geometry', geom)
-        self.debug("Set geom to: " + str(geom))
+        self.debug("Save geom as: " + str(geom))
         settings.set('GEOM', "fullscreen", str(self.topLevel.attributes('-fullscreen')))
 
         # get toolbar setting
@@ -1793,7 +1793,7 @@ class gui(object):
         if not ConfigParser:
             self.error("Unable to save config file - no configparser")
             return
-
+        
         self.useSettings = useSettings
 
         settings = ConfigParser()
@@ -1808,10 +1808,12 @@ class gui(object):
         # not finished
         if settings.has_option("GEOM", "fullscreen"):
             fs = settings.get('GEOM', "fullscreen")
+            self.debug("Set fullscreen to: " + str(fs))
 
         # not finished
         if settings.has_option("TOOLBAR", "pinned"):
             tb = settings.get("TOOLBAR", "pinned")
+            self.debug("Set toolbar to: " + str(tb))
 
         if "TOGGLES" in settings.sections():
             for k in settings.options("TOGGLES"):
@@ -2060,6 +2062,7 @@ class gui(object):
             geom = str(geom) + "x" + str(height)
         container = self.__getTopLevel()
         container.geom = geom
+        container.locationSet = True
         if container.geom == "fullscreen":
             self.setFullscreen()
         else:
