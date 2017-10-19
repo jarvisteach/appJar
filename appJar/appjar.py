@@ -189,7 +189,7 @@ class gui(object):
         else:
             y = 0
 
-        gui.debug("Setting location: " +str(x)+","+str(y) + " - " + str(width)+","+str(height))
+        gui.debug("Setting location: %s,%s - %s,%s", x, y, width, height)
         win.geometry("+%d+%d" % (x, y))
 
         if gui.GET_PLATFORM() != gui.LINUX:
@@ -209,7 +209,7 @@ class gui(object):
 
         x = event.x_root - master.winfo_rootx()
         y = event.y_root - master.winfo_rooty()
-        gui.debug("<<MOUSE_POS_IN_WIDGET>> " + str(widget) + str(x) + "," + str(y))
+        gui.debug("<<MOUSE_POS_IN_WIDGET>> %s %s,%s", widget, x, y)
         return (x, y)
 
     built = False
@@ -655,10 +655,10 @@ class gui(object):
             try:
                 self.ttkStyle.theme_use(theme)
             except:
-                self.error("ttk theme: " + str(theme) + " unavailable. Try one of: " + str(self.ttkStyle.theme_names()))
+                self.error("ttk theme: %s unavailable. Try one of: %s", theme, self.ttkStyle.theme_names())
                 return
 
-        gui.debug("ttk theme switched to: " + str(self.ttkStyle.theme_use()))
+        gui.debug("ttk theme switched to: %s", self.ttkStyle.theme_use())
 
     # internationalisation
     def __loadConfigParser(self):
@@ -1009,16 +1009,16 @@ class gui(object):
                     # not used - for DEBUG
                     def getSelected(self, spaces=1):
                         if spaces == 1:
-                            gui.debug(str(self.node.tagName))
+                            gui.debug("%s", self.node.tagName)
                         for c in self.node.childNodes:
                             if gui.GET_WIDGET_TYPE(c) == "Element":
-                                gui.debug(str(" " * spaces) + " >> "+ str(c.tagName))
+                                gui.debug("%s >> %s", " "*spaces, c.tagName)
                                 node = ajTreeData(c)
                                 node.getSelected(spaces + 2)
                             elif gui.GET_WIDGET_TYPE(c) == "Text":
                                 val = c.data.strip()
                                 if len(val) > 0:
-                                    gui.debug(str(" " * spaces) + " >>>> "+ str(val))
+                                    gui.debug("%s >>>> %s", " "*spaces, val)
 
 
 #####################################
@@ -1067,45 +1067,45 @@ class gui(object):
             try:
                 widget.bind('<ButtonPress>', lambda e: self.__startInternalDrag(e, title, name, widget))
                 widget.dnd_canvas = self.__getCanvas().canvasPane
-                self.debug("DND drag source created: " + str(widget) + " on canvas " + str(widget.dnd_canvas))
+                self.debug("DND drag source created: %s on canvas %s", widget, widget.dnd_canvas)
             except:
                 raise Exception("Failed to register internal Drag'n Drop for: " + str(title))
         else:
             raise Exception("Internal Drag'n Drop not available on this platform")
 
     def __registerInternalDropTarget(self, widget, function):
-        self.debug("<<WIDGET.__registerInternalDropTarget>> " + str(widget))
+        self.debug("<<WIDGET.__registerInternalDropTarget>> %s", widget)
         self.__loadInternalDnd()
         if not INTERNAL_DND:
             raise Exception("Internal Drag'n Drop not available on this platform")
 
         # called by DND class, when looking for a DND target
         def dnd_accept(self, source, event):
-            gui.debug("<<WIDGET.dnd_accept>> " + str(widget) + " - " + str(self.dnd_canvas))
+            gui.debug("<<WIDGET.dnd_accept>> %s - %s", widget, self.dnd_canvas)
             return self
 
         # This is called when the mouse pointer goes from outside the
         # Target Widget to inside the Target Widget.
         def dnd_enter(self, source, event):
-            gui.debug("<<WIDGET.dnd_enter>> " + str(widget))
+            gui.debug("<<WIDGET.dnd_enter>> %s", widget)
             XY = gui.MOUSE_POS_IN_WIDGET(self,event)
             source.appear(self, XY)
 
         # This is called when the mouse pointer goes from inside the
         # Target Widget to outside the Target Widget.
         def dnd_leave(self, source, event):
-            gui.debug("<<WIDGET.dnd_leave>> " + str(widget))
+            gui.debug("<<WIDGET.dnd_leave>> %s", widget)
             # hide the dragged object
             source.vanish()
 
         #This is called if the DraggableWidget is being dropped on us.
         def dnd_commit(self, source, event):
             source.vanish(all=True)
-            gui.debug("<<WIDGET.dnd_commit>> " + str(widget) + " Object received=" + str(source))
+            gui.debug("<<WIDGET.dnd_commit>> %s Object received=%s", widget, source)
 
         #This is called when the mouse pointer moves within the TargetWidget.
         def dnd_motion(self, source, event):
-            gui.debug("<<WIDGET.dnd_motion>> " + str(widget))
+            gui.debug("<<WIDGET.dnd_motion>> %s", widget)
             XY = gui.MOUSE_POS_IN_WIDGET(self,event)
             # move the dragged object
             source.move(self, XY)
@@ -1127,11 +1127,11 @@ class gui(object):
         widget.dnd_canvas = self.__getCanvas().canvasPane
         widget.drop_function = function
 
-        self.debug("DND target created: " + str(widget) + " on canvas " + str(widget.dnd_canvas))
+        self.debug("DND target created: %s on canvas %s", widget, widget.dnd_canvas)
 
     # called when the user initiates an internal drag event
     def __startInternalDrag(self, event, title, name, widget):
-        self.debug("Internal drag started for " + title + " on " + str(widget))
+        self.debug("Internal drag started for %s on %s", title, widget)
 
         x, y = gui.MOUSE_POS_IN_WIDGET(widget, event, False)
         width = x / widget.winfo_width()
@@ -1143,13 +1143,13 @@ class gui(object):
     # function to receive DnD events
     def __startExternalDrag(self, event):
         widgType = gui.GET_WIDGET_TYPE(event.widget)
-        self.warn("Unable to initiate drag events: " + str(widgType))
+        self.warn("Unable to initiate drag events: %s", widgType)
 
     def __receiveExternalDrop(self, event):
         widgType = gui.GET_WIDGET_TYPE(event.widget)
         event.widget.dropData = event.data
         if not hasattr(event.widget, 'dndFunction'):
-            self.warn("Error - external drop target not correctly configured: " + str(widgType))
+            self.warn("Error - external drop target not correctly configured: %s", widgType)
         elif event.widget.dndFunction is not None:
             event.widget.dndFunction(event.data)
         else:
@@ -1191,7 +1191,7 @@ class gui(object):
                         self.setMessage(k, event.data)
                         return
             else:
-                self.warn("Unable to receive drop events: " + str(widgType))
+                self.warn("Unable to receive drop events: %s", widgType)
 
 #####################################
 # set the arrays we use to store everything
@@ -1249,7 +1249,7 @@ class gui(object):
                 with codecs.open(language, "r", "utf8") as langFile:
                     self.config.read_file(langFile)
             except FileNotFoundError:
-                self.error("Invalid language, file not found: " + language)
+                self.error("Invalid language, file not found: %s", language)
                 return
         else:
             try:
@@ -1260,20 +1260,20 @@ class gui(object):
                     with codecs.open(language, "r", "utf8") as langFile:
                         self.config.readfp(langFile)
             except IOError:
-                self.error("Invalid language, file not found: " + language)
+                self.error("Invalid language, file not found: %s", language)
                 return
             except ParsingError:
                 self.error("Translation failed - language file contains errors, ensure there is no whitespace at the beginning of any lines.")
                 return
 
-        self.debug("Switching to: " + language)
+        self.debug("Switching to: %s", language)
         self.translations = {"POPUP":{}, "SOUND":{}, "EXTERNAL":{}}
         # loop through each section, get the relative set of widgets
         # change the text
         for section in self.config.sections():
             getWidgets = True
             section = section.upper()
-            self.debug("\tSection: " + section)
+            self.debug("\tSection: %s", section)
 
             # convert the section title to its code
             if section == "CONFIG":
@@ -1289,12 +1289,12 @@ class gui(object):
                 for (key, val) in self.config.items(section):
                     if section == "POPUP": val = val.strip().split("\n")
                     self.translations[section][key] = val
-                    self.debug("\t\t" + str(key) + ": " + str(val))
+                    self.debug("\t\t%s: %s", key, val)
                 continue
             elif section == "MENUBAR":
                 for (key, val) in self.config.items(section):
                     key = key.strip().split("-")
-                    self.debug("\t\t" + str(key) + ": " + str(val))
+                    self.debug("\t\t%s: %s", key, val)
                     if len(key) == 1:
                         try:
                             self.renameMenu(key[0], val)
@@ -1310,7 +1310,7 @@ class gui(object):
                 try:
                     kind = vars(gui)[section]
                 except KeyError:
-                    self.warn("Invalid config section: " + section)
+                    self.warn("Invalid config section: %s", section)
                     continue
 
             # if necessary, use the code to get the widget list
@@ -1318,31 +1318,31 @@ class gui(object):
                 widgets = self.widgetManager.group(kind)
 
             if kind in [self.Widgets.Scale]:
-                self.warn("No text is displayed in " + section + ". Maybe it has a Label?")
+                self.warn("No text is displayed in %s. Maybe it has a Label?", section)
                 continue
             elif kind in [self.Widgets.TextArea, self.Widgets.Meter, self.Widgets.PieChart, self.Widgets.Tree]:
-                self.warn("No text is displayed in " + section)
+                self.warn("No text is displayed in %s", section)
                 continue
             elif kind in [self.Widgets.name(self.Widgets.SubWindow)]:
                 for (key, val) in self.config.items(section):
-                    self.debug("\t\t" + key + ": " +  val)
+                    self.debug("\t\t%s: %s", key, val)
 
                     if key.lower() == "appjar":
                         self.setTitle(val)
                     elif key.lower() == "splash":
                         if self.splashConfig is not None:
-                            self.debug("\t\t Updated SPLASH to: " + str(val))
+                            self.debug("\t\t Updated SPLASH to: %s", val)
                             self.splashConfig['text'] = val
                         else:
                             self.debug("\t\t No SPLASH to update")
                     elif key.lower() == "statusbar":
-                        self.debug("\tSetting STATUSBAR: " + str(val))
+                        self.debug("\tSetting STATUSBAR: %s", val)
                         self.setStatusbarHeader(val)
                     else:
                         try:
                             widgets[key].title(val)
                         except KeyError:
-                            self.warn("Invalid SUBWINDOW: " + str(key))
+                            self.warn("Invalid SUBWINDOW: %s", key)
 
             elif kind in [self.Widgets.ListBox]:
                 for k in widgets.keys():
@@ -1391,15 +1391,15 @@ class gui(object):
 
             elif kind in [self.Widgets.RadioButton]:
                 for (key, val) in self.config.items(section):
-                    self.debug("\t\t" + key + ": " +  val)
+                    self.debug("\t\t%s: %s", key, val)
                     keys = key.split("-")
                     if len(keys) != 2:
-                        self.warn("Invalid RADIOBUTTON key:" + key)
+                        self.warn("Invalid RADIOBUTTON key: %s", key)
                     else:
                         try:
                             rbs = self.widgetManager.get(self.Widgets.RadioButton, keys[0])
                         except KeyError:
-                            self.warn("Invalid RADIOBUTTON key: " + keys[0])
+                            self.warn("Invalid RADIOBUTTON key: %s", keys[0])
                             continue
                         for rb in rbs:
                             if rb.DEFAULT_TEXT == keys[1]:
@@ -1408,59 +1408,59 @@ class gui(object):
 
             elif kind in [self.Widgets.TabbedFrame]:
                 for (key, val) in self.config.items(section):
-                    self.debug("\t\t" + key + ": " +  val)
+                    self.debug("\t\t%s: %s", key, val)
                     keys = key.split("-")
                     if len(keys) != 2:
-                        self.warn("Invalid TABBEDFRAME key: " + key)
+                        self.warn("Invalid TABBEDFRAME key: %s", key)
                     else:
                         try:
                             self.setTabText(keys[0], keys[1], val)
                         except ItemLookupError:
-                            self.warn("Invalid TABBEDFRAME: " + str(keys[0]) + " with TAB: " + str(keys[1]))
+                            self.warn("Invalid TABBEDFRAME: %s with TAB: %s" , keys[0], keys[1])
 
             elif kind in [self.Widgets.Properties]:
                 for (key, val) in self.config.items(section):
-                    self.debug("\t\t" + key + ": " +  val)
+                    self.debug("\t\t%s: %s", key, val)
                     keys = key.split("-")
                     if len(keys) != 2:
-                        self.warn("Invalid PROPERTIES key: " + key)
+                        self.warn("Invalid PROPERTIES key: %s", key)
                     else:
                         try:
                             self.setPropertyText(keys[0], keys[1], val)
                         except ItemLookupError:
-                            self.warn("Invalid PROPERTIES: " + keys[0])
+                            self.warn("Invalid PROPERTIES: %s", keys[0])
                         except KeyError:
-                            self.warn("Invalid PROPERTY: " + keys[1])
+                            self.warn("Invalid PROPERTY: %s", keys[1])
 
             elif kind == self.Widgets.Tree:
                 for (key, val) in self.config.items(section):
-                    self.debug("\t\t" + key + ": " +  val)
+                    self.debug("\t\t%s: %s", key, val)
                     keys = key.split("-")
                     if len(keys) != 2:
-                        self.warn("Invalid GRID key: " + key)
+                        self.warn("Invalid GRID key: %s", key)
                     else:
                         if keys[1] not in ["actionHeading", "actionButton", "addButton"]:
-                            self.warn("Invalid GRID label: " + str(keys[1]) + " for GRID: " + str(keys[0]))
+                            self.warn("Invalid GRID label: %s for GRID: %s", keys[1], keys[0])
                         else:
                             try:
                                 self.confGrid(keys[0], keys[1], val)
                             except ItemLookupError:
-                                self.warn("Invalid GRID: " + str(keys[0]))
+                                self.warn("Invalid GRID: %s", keys[0])
 
             elif kind == self.PAGEDWINDOW:
                 for (key, val) in self.config.items(section):
-                    self.debug("\t\t" + key + ": " +  val)
+                    self.debug("\t\t%s: %s", key, val)
                     keys = key.split("-")
                     if len(keys) != 2:
-                        self.warn("Invalid PAGEDWINDOW key: " + key)
+                        self.warn("Invalid PAGEDWINDOW key: %s", key)
                     else:
                         if keys[1] not in ["prevButton", "nextButton", "title"]:
-                            self.warn("Invalid PAGEDWINDOW label: " + str(keys[1]) + " for PAGEDWINDOW: " + str(keys[0]))
+                            self.warn("Invalid PAGEDWINDOW label: %s for PAGEDWINDOW: %s", keys[1], keys[0])
                         else:
                             try:
                                 widgets[keys[0]].config(**{keys[1]:val})
                             except KeyError:
-                                self.warn("Invalid PAGEDWINDOW: " + str(keys[0]))
+                                self.warn("Invalid PAGEDWINDOW: %s", keys[0])
 
             elif kind == self.Widgets.Entry:
                 for k in widgets.keys():
@@ -1471,7 +1471,7 @@ class gui(object):
                     else:
                         data = ent.DEFAULT_TEXT
 
-                    self.debug("\t\t" + k + ": " +  str(data))
+                    self.debug("\t\t%s: %s", k, data)
                     self.updateEntryDefault(k, data)
 
             elif kind in [self.Widgets.Image]:
@@ -1481,11 +1481,11 @@ class gui(object):
 
                         try:
                             self.setImage(k, data)
-                            self.debug("\t\t" + k + ": " +  data)
+                            self.debug("\t\t%s: %s", k, data)
                         except:
-                            self.error("Failed to update image: " + str(k) + " to: " + str(data))
+                            self.error("Failed to update image: %s to: %s", k, data)
                     else:
-                        self.debug("No translation for: " + str(k))
+                        self.debug("No translation for: %s", k)
 
             elif kind in [self.Widgets.Label, self.Widgets.Button, self.Widgets.CheckBox, self.Widgets.Message,
                             self.Widgets.Link, self.Widgets.LabelFrame, self.TOGGLEFRAME]:
@@ -1495,7 +1495,7 @@ class gui(object):
                     # skip validation labels - we don't need to translate them
                     try:
                         if kind == self.Widgets.Label and widg.isValidation:
-                            self.debug("\t\t" + k + ": skipping, validation label")
+                            self.debug("\t\t%s: skipping, validation label", k)
                             continue
                     except:
                         pass
@@ -1505,7 +1505,7 @@ class gui(object):
                     else:
                         data = widg.DEFAULT_TEXT
 
-                    self.debug("\t\t" + k + ": " +  data)
+                    self.debug("\t\t%s: %s", k, data)
                     widg.config(text=data)
 
             elif kind == self.Widgets.Toolbar:
@@ -1517,7 +1517,7 @@ class gui(object):
                         else:
                             data = but.DEFAULT_TEXT
 
-                        self.debug("\t\t" + k + ": " +  data)
+                        self.debug("\t\t%s: %s", k, data)
                         but.config(text = data)
 
             elif kind == "TOOLTIP":
@@ -1525,18 +1525,18 @@ class gui(object):
                     kind = self.WIDGETS[vars(gui)[section.split("-")[1]]]
                     func = getattr(self, "set"+kind+"Tooltip")
                 except KeyError:
-                    self.warn("Invalid config section: TOOLTIP-" + section)
+                    self.warn("Invalid config section: TOOLTIP-%s", section)
                     return
-                self.debug("Parsing TOOLTIPs for: " + str(kind))
+                self.debug("Parsing TOOLTIPs for: %s", kind)
 
                 for (key, val) in self.config.items(section):
                     try:
                         func(key, val)
                     except ItemLookupError:
-                        self.warn("Invalid TOOLTIP for: " + kind + ", with key: " + key)
+                        self.warn("Invalid TOOLTIP for: %s, with key: %s", kind, key)
                         continue
             else:
-                self.warn("Unsupported widget: " + section)
+                self.warn("Unsupported widget: %s", section)
                 continue
 
     # function to turn on the splash screen
@@ -1553,7 +1553,7 @@ class gui(object):
         for handler in logging.root.handlers[:]:
             logging.root.removeHandler(handler)
         logging.basicConfig(level=logging.INFO, filename=fileName, format='%(asctime)s %(name)s:%(levelname)s: %(message)s')
-        gui.info("Switched to logFile: " + str(fileName))
+        gui.info("Switched to logFile: %s", fileName)
 
     # function to turn off warning messages
     def disableWarnings(self):
@@ -1576,23 +1576,23 @@ class gui(object):
     @staticmethod
     def setLogLevel(level):
         logging.getLogger("appJar").setLevel(getattr(logging, level.upper()))
-        gui.info("Log level changed to: " + str(level))
+        gui.info("Log level changed to: %s", level)
 
     @staticmethod
-    def exception(message): gui.logMessage(message, "EXCEPTION")
+    def exception(message, *args): gui.logMessage(message, "EXCEPTION", *args)
     @staticmethod
-    def critical(message): gui.logMessage(message, "CRITICAL")
+    def critical(message, *args): gui.logMessage(message, "CRITICAL", *args)
     @staticmethod
-    def error(message): gui.logMessage(message, "ERROR")
+    def error(message, *args): gui.logMessage(message, "ERROR", *args)
     @staticmethod
-    def warn(message): gui.logMessage(message, "WARNING")
+    def warn(message, *args): gui.logMessage(message, "WARNING", *args)
     @staticmethod
-    def debug(message): gui.logMessage(message, "DEBUG")
+    def debug(message, *args): gui.logMessage(message, "DEBUG", *args)
     @staticmethod
-    def info(message): gui.logMessage(message, "INFO")
+    def info(message, *args): gui.logMessage(message, "INFO", *args)
 
     @staticmethod
-    def logMessage(msg, level):
+    def logMessage(msg, level, *args):
         frames = inspect.stack()
         # try to ensure we only log extras if we're called from above functions
         if frames[1][3] in ("exception", "critical", "error", "warn", "debug", "info"):
@@ -1624,12 +1624,12 @@ class gui(object):
         logger = logging.getLogger("appJar")
         level = level.upper()
 
-        if level == "EXCEPTION": logger.exception(msg)
-        elif level == "CRITICAL": logger.critical(msg)
-        elif level == "ERROR": logger.error(msg)
-        elif level == "WARNING": logger.warning(msg)
-        elif level == "INFO": logger.info(msg)
-        elif level == "DEBUG": logger.debug(msg)
+        if level == "EXCEPTION": logger.exception(msg, *args)
+        elif level == "CRITICAL": logger.critical(msg, *args)
+        elif level == "ERROR": logger.error(msg, *args)
+        elif level == "WARNING": logger.warning(msg, *args)
+        elif level == "INFO": logger.info(msg, *args)
+        elif level == "DEBUG": logger.debug(msg, *args)
 
 #####################################
 # Event Loop - must always be called at end
@@ -1660,7 +1660,7 @@ class gui(object):
             self.changeLanguage(language)
 
         if self.splashConfig is not None:
-            self.debug("SPLASH:" + str(self.splashConfig))
+            self.debug("SPLASH: %s", self.splashConfig)
             splash = SplashScreen(
                             self.topLevel,
                             self.splashConfig['text'],
@@ -1678,7 +1678,7 @@ class gui(object):
             for i in range(len(self.containerStack) - 1, 0, -1):
                 kind = self.containerStack[i]['type']
                 if kind != self.Widgets.Pane:
-                    self.warn("STOP: " + self.Widgets.name(kind))
+                    self.warn("STOP: %s", self.Widgets.name(kind))
 
         for k, v in self.widgetManager.group(self.Widgets.Tree).items():
             v.update()
@@ -1760,7 +1760,7 @@ class gui(object):
         ms = self.topLevel.minsize()
         ms = str(ms[0])+","+str(ms[1])
         settings.set('GEOM', 'geometry', geom)
-        self.debug("Save geom as: " + str(geom))
+        self.debug("Save geom as: %s", geom)
         settings.set('GEOM', 'minsize', ms)
         settings.set('GEOM', "fullscreen", str(self.topLevel.attributes('-fullscreen')))
 
@@ -1806,23 +1806,23 @@ class gui(object):
         if settings.has_option("GEOM", "geometry"):
             geom = settings.get("GEOM", "geometry")
             self.setGeom(geom)
-            self.debug("Set geom to: " + str(geom))
+            self.debug("Set geom to: %s", geom)
 
         # not finished
         if settings.has_option("GEOM", "fullscreen"):
             fs = settings.getboolean('GEOM', "fullscreen")
-            self.debug("Set fullscreen to: " + str(fs))
+            self.debug("Set fullscreen to: %s", fs)
 
         if settings.has_option("GEOM", "minsize"):
 
             self.topLevel.ms = settings.get('GEOM', "minsize").split(",")
             self.__getTopLevel().minsize(self.topLevel.ms[0], self.topLevel.ms[1])
-            self.debug("Set minsize to: " + str(self.topLevel.ms))
+            self.debug("Set minsize to: %s", self.topLevel.ms)
 
         if settings.has_option("TOOLBAR", "pinned"):
             tb = settings.getboolean("TOOLBAR", "pinned")
             self.setToolbarPinned(tb)
-            self.debug("Set toolbar to: " + str(tb))
+            self.debug("Set toolbar to: %s", tb)
 
         if "TOGGLES" in settings.sections():
             for k in settings.options("TOGGLES"):
@@ -1927,7 +1927,7 @@ class gui(object):
         if not self.alive: return
         if not self.eventQueue.empty():
             priority, func, args, kwargs = self.eventQueue.get()
-            gui.debug("FUNCTION: " + str(func) + "(" + str(args) + ")")
+            gui.debug("FUNCTION: %s(%s)", func, args)
             func(*args, **kwargs)
 
         self.processQueueId = self.after(self.EVENT_SPEED, self.__processEventQueue)
@@ -1959,7 +1959,7 @@ class gui(object):
     def __windowEvent(self, event):
         new_width = self.topLevel.winfo_width()
         new_height = self.topLevel.winfo_height()
-        #self.debug("Window resized: " + str(new_width) + "x" + str(new_height))
+#        self.debug("Window resized: %sx%s", new_width, new_height)
 
     # will call the specified function when enter key is pressed
     def enableEnter(self, func):
@@ -2048,8 +2048,7 @@ class gui(object):
 
                 # warn the user that their geom is not big enough
                 if width < b_width or height < b_height:
-                    self.warn("Specified dimensions (" + self.__getTopLevel().geom +
-                            "), less than requested dimensions (" + str(b_width) + "x" + str(b_height) + ")")
+                    self.warn("Specified dimensions (%s) less than requested dimensions (%s, %s)", self.__getTopLevel().geom, b_width, b_height)
 
             # and set it as the minimum size
             if not hasattr(self.topLevel, 'ms'):
@@ -2092,10 +2091,10 @@ class gui(object):
             m_height = self.topLevel.winfo_screenheight()
 
             if x < 0 or x > m_width or y < 0 or y > m_height:
-                self.warn( "Invalid location: " + str(x) + ", " + str(y) + " - ignoring")
+                self.warn( "Invalid location: %s, %s - ignoring", x, y)
                 return
 
-            self.debug("Setting location to: " + str(x) + "," + str(y))
+            self.debug("Setting location to: %s, %s", x, y)
             self.__getTopLevel().geometry("+%d+%d" % (x, y))
         self.__getTopLevel().locationSet = True
 
@@ -2282,7 +2281,7 @@ class gui(object):
                 if not self.__isWidgetContainer(child):
                     gui.SET_WIDGET_FG(child, colour, override)
         else:
-            gui.warn("In ttk mode - can't set FG to " + str(colour))
+            gui.warn("In ttk mode - can't set FG to %s", colour)
 
     # self.topLevel = Tk()
     # self.appWindow = CanvasDnd, fills all of self.topLevel
@@ -2312,7 +2311,7 @@ class gui(object):
 
                     gui.SET_WIDGET_BG(child, colour, override, tint)
         else:
-            gui.warn("In ttk mode - can't set BG to " + str(colour))
+            gui.warn("In ttk mode - can't set BG to %s", colour)
 
     @staticmethod
     def __isWidgetContainer(widget):
@@ -2335,11 +2334,9 @@ class gui(object):
 
     def __doTitleBar(self):
         if self.platform == self.MAC:
-            self.warn(
-                "Title bar hiding doesn't work on MAC - app may become unresponsive.")
+            self.warn("Title bar hiding doesn't work on MAC - app may become unresponsive.")
         elif self.platform == self.LINUX:
-            self.warn(
-                "Title bar hiding doesn't work on LINUX - app may become unresponsive.")
+            self.warn("Title bar hiding doesn't work on LINUX - app may become unresponsive.")
         self.__getTopLevel().overrideredirect(not self.hasTitleBar)
 
     def hideTitleBar(self):
@@ -2481,13 +2478,11 @@ class gui(object):
             key=None,
             deprecated=False):
 
-        self.debug("Configuring: " + str(name) + " of " + str(kind) + " with: " + str(option))
+        self.debug("Configuring: %s of %s with %s", name, kind, option)
 
         # warn about deprecated functions
         if deprecated:
-            self.warn("Deprecated config function (" + option +
-                ") used for: " + self.Widgets.name(kind) +
-                "->" + name + " use " + deprecated + " instead")
+            self.warn("Deprecated config function (%s) used for %s -> %s use %s deprecated", option, self.Widgets.name(kind), name, deprecated)
         # get the list of items for this type, and validate the widgetis in the
         # list
         self.widgetManager.check(kind, name)
@@ -2518,14 +2513,12 @@ class gui(object):
                     if kind == self.Widgets.TabbedFrame:
                         item.config(inactiveforeground=value)
                     else:
-                        self.warn("Error configuring " + name +
-                                  ": can't set inactiveforeground")
+                        self.warn("Error configuring %s: can't set inactiveforeground", name )
                 elif option == 'inactivebackground':
                     if kind in [self.Widgets.TabbedFrame, self.Widgets.Grid]:
                         item.config(inactivebackground=value)
                     else:
-                        self.warn("Error configuring " + name +
-                                  ": can't set inactivebackground")
+                        self.warn("Error configuring %s: can't set inactivebackground", name)
                 elif option == 'width':
                     item.config(width=value)
                 elif option == 'height':
@@ -2628,7 +2621,7 @@ class gui(object):
                     self.__registerExternalDragSource(name, item, value)
 
             except TclError as e:
-                self.warn("Error configuring " + name + ": " + str(e))
+                self.warn("Error configuring %s: %s", name, str(e))
 
     # generic function for over events
     def __validateFunctionList(self, functions, mode):
@@ -2637,7 +2630,7 @@ class gui(object):
         if len(functions) == 1:
             functions.append(None)
         if len(functions) != 2:
-            raise Exception("Invalid arguments, set<widget>" + mode + "Function requires 1 or 2 functions to be passed in.")
+            raise Exception("Invalid arguments, set<widget> %s Function requires 1 or 2 functions to be passed in.", mode)
 
         return functions
 
@@ -2715,8 +2708,7 @@ class gui(object):
                 widget.bindChangeEvent(cmd)
         elif kind == self.Widgets.Button:
             if eventType == "change":
-                self.warn("Error configuring " + name +
-                            ": can't set a change function")
+                self.warn("Error configuring %s : can't set a change function", name)
             else:
                 widget.config(command=self.MAKE_FUNC(function, name))
                 widget.bind(
@@ -2740,8 +2732,7 @@ class gui(object):
                 #widget.bind("<Button-1>",lambda e: widget.config(relief=down), add="+")
                 #widget.bind("<ButtonRelease-1>",lambda e: widget.config(relief=up))
             elif eventType == "change":
-                self.warn("Error configuring " + name +
-                            ": can't set a change function")
+                self.warn("Error configuring %s : can't set a change function", name)
         elif kind == self.Widgets.ListBox:
             cmd = self.MAKE_FUNC(function, name, True)
             widget.bind('<<ListboxSelect>>', cmd)
@@ -2757,7 +2748,7 @@ class gui(object):
             widget.setChangeFunction(cmd)
         else:
             if kind not in [self.Widgets.SpinBox, self.Widgets.CheckBox]:
-                self.warn("Unmanaged binding of " + str(eventType) + " to " + str(name))
+                self.warn("Unmanaged binding of %s to %s", eventType, name)
             cmd = self.MAKE_FUNC(function, name)
             widget.config(command=cmd)
             widget.cmd = cmd
@@ -3109,9 +3100,7 @@ class gui(object):
             pinfo.update(params)
             widget.pack(pinfo)
         else:
-            raise Exception(
-                "Unknown geometry manager: " +
-                widget.winfo_manager())
+            raise Exception("Unknown geometry manager: " + widget.winfo_manager())
 
     # convenience function to set RCS, referencing the current container's
     # settings
@@ -3134,7 +3123,7 @@ class gui(object):
     @staticmethod
     def SET_WIDGET_FG(widget, fg, external=False):
         widgType = gui.GET_WIDGET_TYPE(widget)
-        gui.debug("SET_WIDGET_FG: " + str(widgType) + " - " + str(fg))
+        gui.debug("SET_WIDGET_FG: %s - %s", widgType, fg)
 
         # only configure these widgets if external
         if widgType == "Link":
@@ -3226,7 +3215,7 @@ class gui(object):
         isDarwin = gui.GET_PLATFORM() == gui.MAC
         isLinux = gui.GET_PLATFORM() == gui.LINUX
 
-        gui.debug("Config " + str(widgType) + " BG to " + str(bg))
+        gui.debug("Config %s BG to %s", widgType, bg)
 
         # these have a highlight border to remove
         hideBorders = [ "Text", "AjText",
@@ -3510,7 +3499,7 @@ class gui(object):
         else:
             container = self.containerStack.pop()
             if not container['widgets']:
-                self.warn("Closing empty container: " + container['title'])
+                self.warn("Closing empty container: %s", container['title'])
 #                raise Exception("Put something in the container, before removing it.")
 
             # store the container so that it can be re-opened later
@@ -4400,9 +4389,9 @@ class gui(object):
                 elif widgType in ["Frame"]: widgets = self.widgetManager.group(self.Widgets.Frame)
 
                 if not self.destroyWidget(widget, widgets):
-                    self.warn("Unable to destroy " + str(widgType) + ", during cleanse")
+                    self.warn("Unable to destroy %s, during cleanse", widgType)
             else:
-                self.warn("Unable to destroy " + str(widgType) + ", during cleanse")
+                self.warn("Unable to destroy %s, during cleanse", widgType)
 
     # function to loop through a config dict/list and remove matching object
     def destroyWidget(self, widget, widgets):
@@ -4445,10 +4434,7 @@ class gui(object):
 #####################################
     def __getattr__(self, name):
         def handlerFunction(*args, **kwargs):
-            self.warn(
-                "Unknown function: <" + name +
-                "> Check your spelling, do you need more camelCase?"
-            )
+            self.warn("Unknown function: <%s> Check your spelling, do you need more camelCase?", name)
         return handlerFunction
 
     def __setattr__(self, name, value):
@@ -4656,8 +4642,7 @@ class gui(object):
 
     # change the orientation (Hor or Vert)
     def orientScaleHor(self, title, hor=True):
-        self.warn(
-            ".orientScaleHor() is deprecated. Please use .setScaleHorizontal() or .setScaleVertical()")
+        self.warn(".orientScaleHor() is deprecated. Please use .setScaleHorizontal() or .setScaleVertical()")
         sc = self.widgetManager.get(self.Widgets.Scale, title)
         if hor:
             sc.config(orient=HORIZONTAL)
@@ -4951,8 +4936,7 @@ class gui(object):
 
         # warn if new options bigger
         if maxSize > box.maxSize:
-            self.warn("The new options are wider then the old ones. " +
-                      str(maxSize) + ">" + str(box.maxSize))
+            self.warn("The new options are wider then the old ones: %s > %s", maxSize, box.maxSize)
 
         if box.kind == "ticks":
             self.__buildTickOptionBox(title, box, options)
@@ -5048,26 +5032,26 @@ class gui(object):
                 gui.debug("Index empty - nothing to update")
                 return
             elif index in ticks:
-                gui.debug("Updating: " + str(index))
+                gui.debug("Updating: %s", index)
 
                 tick = ticks[index]
                 try:
                     index_num = box.options.index(index)
                 except:
-                    self.warn("Unknown tick: " + str(index) + " in OptionBox: " + str(title))
+                    self.warn("Unknown tick: %s in OptionBox: %s", index, title)
                     return
 
                 with PauseCallFunction(callFunction, tick, useVar=False):
                     if value is None: # then we need to delete it
-                        self.debug("Deleting tick: " + str(index) + " from OptionBox: " + str(title))
+                        self.debug("Deleting tick: %s from OptionBox %s", index, title)
                         box['menu'].delete(index_num)
                         del(box.options[index_num])
                         self.widgetManager.remove(self.Widgets.TickOptionBox, title, index, group=WidgetManager.VARS)
                     elif isinstance(value, bool):
-                        gui.debug("Updating tick: " + str(index) + " from OptionBox: " + str(title) + " to: " + str(value))
+                        gui.debug("Updating tick: %s from OptionBox: %s to: %s", index, title, value)
                         tick.set(value)
                     else:
-                        gui.debug("Renaming tick: " + str(index) + " from OptionBox: " + str(title) + " to: " + str(value))
+                        gui.debug("Renaming tick: %s from OptionBox: %s to: %s", index, title, value)
                         ticks = self.widgetManager.get(self.Widgets.TickOptionBox, title, group=WidgetManager.VARS)
                         ticks[value] = ticks.pop(index)
                         box.options[index_num] = value
@@ -5076,13 +5060,11 @@ class gui(object):
                             self.widgetManager.get(self.Widgets.TickOptionBox, title, group=WidgetManager.VARS)[tick].set(ticks[tick].get())
             else:
                 if value is None:
-                    self.warn("Unknown tick in deleteOptionBox: " + str(index) +
-                            " in OptionBox: " + str(title))
+                    self.warn("Unknown tick in deleteOptionBox: %s in OptionBox: %s" , index, title)
                 else:
-                    self.warn("Unknown tick in setOptionBox: " + str(index) +
-                            " in OptionBox: " + str(title))
+                    self.warn("Unknown tick in setOptionBox: %s in OptionBox: %s", index, title)
         else:
-            gui.debug("Updating regular optionBox: " + str(title) + " at: " + str(index) + " to: " + str(value))
+            gui.debug("Updating regular optionBox: %s at: %s to: %s", title, index, value)
             count = len(box.options)
             if count > 0:
                 if index is None:
@@ -5092,48 +5074,43 @@ class gui(object):
                         index = box.options.index(index)
                     except:
                         if value is None:
-                            self.warn("Unknown option in deleteOptionBox: " + str(index) +
-                                    " in OptionBox: " + str(title))
+                            self.warn("Unknown option in deleteOptionBox: %s in OptionBox: %s", index, title)
                         else:
-                            self.warn("Unknown option in setOptionBox: " + str(index) +
-                                    " in OptionBox: " + str(title))
+                            self.warn("Unknown option in setOptionBox: %s in OptionBox: %s", index, title)
                         return
 
-                gui.debug("--> index now: " + str(index))
+                gui.debug("--> index now: %s", index)
 
                 if index < 0 or index > count - 1:
-                    self.warn("Invalid option: " + str(index) + ". Should be between 0 and " +
-                            str(count - 1) + ".")
+                    self.warn("Invalid option: %s. Should be between 0 and %s." , count-1, index)
                 else:
                     if value is None: # then we can delete it...
-                        self.debug("Deleting option: " + str(index) + " from OptionBox: " + str(title))
+                        self.debug("Deleting option: %s from OptionBox: %s", index, title)
                         box['menu'].delete(index)
                         del(box.options[index])
                         self.setOptionBox(title, 0, callFunction=False, override=override)
                     elif isinstance(value, bool):
-                        gui.debug("Updating: OptionBox: " + str(title) + " to: " + str(index))
+                        gui.debug("Updating: OptionBox: %s to: %s", title, index)
                         with PauseCallFunction(callFunction, box):
                             if not box['menu'].invoke(index):
                                 if override:
-                                    self.debug("Setting OptionBox: " + str(title) +
-                                            " to disabled option: " + str(index))
+                                    self.debug("Setting OptionBox: %s to disabled option: %s", title, index)
                                     box["menu"].entryconfigure(index, state="normal")
                                     box['menu'].invoke(index)
                                     box["menu"].entryconfigure(index, state="disabled")
                                 else:
-                                    self.warn("Unable to set disabled option: " + str(index) +
-                                            " in OptionBox: " + str(title) + ". Try setting 'override=True'")
+                                    self.warn("Unable to set disabled option: %s in OptionBox %s. Try setting 'override=True'", index, title)
                             else:
-                                gui.debug("Invoked item: " + str(index))
+                                gui.debug("Invoked item: %s", index)
                     else:
-                        gui.debug("Renaming: " + str(index) + " from OptionBox: " + str(title) + "to: " + str(value))
+                        gui.debug("Renaming: %s from OptionBox: %s to: %s", index, title, value)
                         pos = box.options.index(self.widgetManager.get(self.Widgets.OptionBox, title, group=WidgetManager.VARS).get())
                         box.options[index] = value
                         self.changeOptionBox(title, box.options, pos)
 
             else:
                 self.widgetManager.get(self.Widgets.OptionBox, title, group=WidgetManager.VARS).set("")
-                self.warn("No items to select from: " + title)
+                self.warn("No items to select from: %s", title)
 
 #####################################
 # FUNCTION for GoogleMaps
@@ -5349,11 +5326,7 @@ class gui(object):
     def __buildSpinBox(self, frame, title, vals):
         self.widgetManager.verify(self.Widgets.SpinBox, title)
         if type(vals) not in [list, tuple]:
-            raise Exception(
-                "Can't create SpinBox " +
-                title +
-                ". Invalid values: " +
-                str(vals))
+            raise Exception("Can't create SpinBox " + title + ". Invalid values: " + str(vals))
 
         spin = Spinbox(frame)
         spin.inContainer = False
@@ -5529,7 +5502,7 @@ class gui(object):
     def changeSpinBox(self, title, vals):
         spin = self.widgetManager.get(self.Widgets.SpinBox, title)
         if spin.isRange:
-            self.warn("Can't convert " + title + " RangeSpinBox to SpinBox")
+            self.warn("Can't convert %s RangeSpinBox to SpinBox", title)
         else:
             vals = list(vals)
             vals.reverse()
@@ -5617,7 +5590,7 @@ class gui(object):
         img = self.widgetManager.get(self.Widgets.Image, name).image
         if speed < 1:
             speed = 1
-            self.warn("Setting " + str(name) + " speed to 1. Minimum animation speed is 1.")
+            self.warn("Setting %s speed to 1. Minimum animation speed is 1.", name)
         img.anim_speed = speed
 
     def stopAnimation(self, name):
@@ -5702,8 +5675,7 @@ class gui(object):
             if PngImageTk is False:
                 raise Exception("TKINTERPNG library not found, PNG files not supported: imageData")
             if sys.version_info >= (2, 7):
-                self.warn(
-                    "Image processing for .PNGs is slow. .GIF is the recommended format")
+                self.warn("Image processing for .PNGs is slow. .GIF is the recommended format")
 #                png = PngImageTk(imagePath)
 #                png.convert()
 #                photo = png.image
@@ -5759,8 +5731,7 @@ class gui(object):
                 elif imagePath.lower().endswith('.ppm') or imagePath.lower().endswith('.pgm'):
                     photo = PhotoImage(file=imagePath)
                 elif imagePath.lower().endswith('jpg') or imagePath.lower().endswith('jpeg'):
-                    self.warn(
-                        "Image processing for .JPGs is slow. .GIF is the recommended format")
+                    self.warn("Image processing for .JPGs is slow. .GIF is the recommended format")
                     photo = self.convertJpgToBmp(imagePath)
                 elif imagePath.lower().endswith('.png'):
                     # known issue here, some PNGs lack IDAT chunks
@@ -5771,8 +5742,7 @@ class gui(object):
                         raise Exception(
                             "TKINTERPNG library not found, PNG files not supported: " + imagePath)
                     if sys.version_info >= (2, 7):
-                        self.warn(
-                            "Image processing for .PNGs is slow. .GIF is the recommended format")
+                        self.warn("Image processing for .PNGs is slow. .GIF is the recommended format")
                         png = PngImageTk(imagePath)
                         png.convert()
                         photo = png.image
@@ -5827,7 +5797,7 @@ class gui(object):
 
         # only set the image if it's different
         if label.image.path == imageFile:
-            self.warn("Not updating " + str(name) + ", " + str(imageFile) + " hasn't changed." )
+            self.warn("Not updating %s, %s hasn't changed." , name, imageFile)
             return
         elif imageFile is None:
             return
@@ -6738,7 +6708,7 @@ class gui(object):
         elif title.find("_DP_YearOptionBox") > -1:
             title = title.split("_DP_YearOptionBox")[0]
         else:
-            self.warn("Can't update days in DatePicker: " + title)
+            self.warn("Can't update days in DatePicker:%s", title)
             return
 
         day = self.getOptionBox(title + "_DP_DayOptionBox")
@@ -7363,7 +7333,7 @@ class gui(object):
     def setEntryValid(self, title):
         entry = self.widgetManager.get(self.Widgets.Entry, title)
         if not entry.isValidation:
-            self.warn("Entry " + str(title) + " is not a validation entry. Unable to set VALID.")
+            self.warn("Entry %s is not a validation entry. Unable to set VALID.", title)
             return
 
         entry.config(highlightbackground="#4CC417", highlightcolor="#4CC417", fg="#4CC417")
@@ -7374,7 +7344,7 @@ class gui(object):
     def setEntryInvalid(self, title):
         entry = self.widgetManager.get(self.Widgets.Entry, title)
         if not entry.isValidation:
-            self.warn("Entry " + str(title) + " is not a validation entry. Unable to set INVALID.")
+            self.warn("Entry %s is not a validation entry. Unable to set INVALID.", title)
             return
 
         entry.config(highlightbackground="#FF0000", highlightcolor="#FF0000", fg="#FF0000")
@@ -7385,7 +7355,7 @@ class gui(object):
     def setEntryWaitingValidation(self, title):
         entry = self.widgetManager.get(self.Widgets.Entry, title)
         if not entry.isValidation:
-            self.warn("Entry " + str(title) + " is not a validation entry. Unable to set WAITING VALID.")
+            self.warn("Entry %s is not a validation entry. Unable to set WAITING VALID.", title)
             return
 
         entry.config(highlightbackground="#000000", highlightcolor="#000000", fg="#000000")
@@ -7828,8 +7798,7 @@ class gui(object):
             colspan=0,
             rowspan=0,
             colour=None):
-        self.warn(
-            ".addSeparator() is deprecated. You should be using .addHorizontalSeparator() or .addVerticalSeparator()")
+        self.warn(".addSeparator() is deprecated. You should be using .addHorizontalSeparator() or .addVerticalSeparator()")
         return self.addHorizontalSeparator(row, column, colspan, rowspan, colour)
 
     def addHorizontalSeparator(
@@ -8109,7 +8078,7 @@ class gui(object):
             return None
 
         if self.platform == self.MAC and tearable:
-            self.warn("Tearable menus (" + title + ") not supported on MAC")
+            self.warn("Tearable menus (%s) not supported on MAC", title)
             tearable = False
         theMenu = Menu(self.menuBar, tearoff=tearable)
         if showInBar:
@@ -8191,8 +8160,7 @@ class gui(object):
             theMenu.add_separator()
         elif kind == "topLevel" or title is None:
             if self.platform == self.MAC:
-                self.warn(
-                    "Unable to make topLevel menus (" + item + ") on Mac")
+                self.warn("Unable to make topLevel menus (%s) on Mac", item)
             else:
                 self.menuBar.add_command(
                     label=item, command=u, accelerator=a, underline=underline)
@@ -8377,8 +8345,7 @@ class gui(object):
         theMenu = self.widgetManager.get(self.Widgets.Menu, menu)
         imageObj = self.__getImage(image)
         if 16 != imageObj.width() or imageObj.width() != imageObj.height():
-            self.warn("Invalid image resolution for menu item " +
-                      title + " (" + image + ") - should be 16x16")
+            self.warn("Invalid image resolution for menu item %s (%s) - should be 16x16", title, image)
             #imageObj = imageObj.subsample(2,2)
         theMenu.entryconfigure(title, image=imageObj, compound=align)
 
@@ -9618,7 +9585,7 @@ class Properties(LabelFrame, object):
         if prop in self.cbs:
             self.cbs[prop].config(text=newName)
         else:
-            gui.warn("Unknown property: " + str(prop))
+            gui.warn("Unknown property: %s", prop)
 
     def addProperty(self, prop, value=False, callFunction=True):
         self.changingProps = True
@@ -11799,8 +11766,7 @@ class PauseCallFunction():
             self.tracer = self.widg.var
         else:
             self.tracer = self.widg
-        gui.debug("PauseCallFunction: callFunction=" +
-                str(callFunction) + ", useVar=" + str(useVar))
+        gui.debug("PauseCallFunction: callFunction=%s, useVar=%s", callFunction, useVar)
 
     def __enter__(self):
         if not self.callFunction and hasattr(self.widg, 'cmd'):
@@ -12009,7 +11975,7 @@ class GoogleMap(LabelFrame, object):
             try:
                 with open(location, "wb") as fh:
                     fh.write(self.rawData)
-                gui.info("Map data written to file: " + str(location))
+                gui.info("Map data written to file: %s", location)
                 return True
             except  Exception as e:
                 gui.exception(e)
@@ -12084,7 +12050,7 @@ class GoogleMap(LabelFrame, object):
             m = quote_plus(m)
             self.request += "&markers=" + m
             
-        gui.debug("GoogleMap search URL: " + self.request)
+        gui.debug("GoogleMap search URL: %s", self.request)
 
     def __buildGeoURL(self, location):
         """ for future use - gets the location
@@ -12131,18 +12097,18 @@ class GoogleMap(LabelFrame, object):
             return None
 
     def setCurrentLocation(self):
-        gui.debug("Location request URL: " + self.LOCATION_URL)
+        gui.debug("Location request URL: %s", self.LOCATION_URL)
         try:
             self.currentLocation = self.__locationLookup()
         except Exception as e:
-            gui.error("Unable to contact location server, using default: " + self.defaultLocation)
+            gui.error("Unable to contact location server, using default: %s", self.defaultLocation)
             self.currentLocation = self.defaultLocation
 
     def __locationLookup(self):
         u =  urlopen(self.LOCATION_URL)
         data = u.read().decode("utf-8")
         u.close()
-        gui.debug("Location data: " + data)
+        gui.debug("Location data: %s", data)
         data = json.loads(data)
 #        location = data["loc"]
         location = str(data["latitude"]) + "," + str(data["longitude"])
@@ -12170,7 +12136,7 @@ class CanvasDnd(Canvas, object):
         #Tkdnd is asking us (the TargetWidget) if we want to tell it about a
         #    TargetObject. Since CanvasDnd is also acting as TargetObject we
         #    return 'self', saying that we are willing to be the TargetObject.
-        gui.debug("<<"+str(type(self))+".dnd_accept>> " + str(source))
+        gui.debug("<<%s .dnd_accept>> %s", type(self), source)
         return self
 
     #----- TargetObject functionality -----
@@ -12178,7 +12144,7 @@ class CanvasDnd(Canvas, object):
     # This is called when the mouse pointer goes from outside the
     # Target Widget to inside the Target Widget.
     def dnd_enter(self, source, event):
-        gui.debug("<<"+str(type(self))+".dnd_enter>> " + str(source))
+        gui.debug("<<%s .dnd_enter>> %s", type(self), source)
         XY = gui.MOUSE_POS_IN_WIDGET(self, event)
         # show the dragged object
         source.appear(self ,XY)
@@ -12186,20 +12152,20 @@ class CanvasDnd(Canvas, object):
     # This is called when the mouse pointer goes from inside the
     # Target Widget to outside the Target Widget.
     def dnd_leave(self, source, event):
-        gui.debug("<<"+str(type(self))+".dnd_leave>> " + str(source))
+        gui.debug("<<%s .dnd_leave>> %s", type(self), source)
         # hide the dragged object
         source.vanish()
         
     #This is called when the mouse pointer moves withing the TargetWidget.
     def dnd_motion(self, source, event):
-        gui.debug("<<"+str(type(self))+".dnd_motion>> " + str(source))
+        gui.debug("<<%s .dnd_motion>> %s", type(self), source)
         XY = gui.MOUSE_POS_IN_WIDGET(self,event)
         # move the dragged object
         source.move(self, XY)
         
     #This is called if the DraggableWidget is being dropped on us.
     def dnd_commit(self, source, event):
-        gui.debug("<<"+str(type(self))+".dnd_commit>> " + str(source))
+        gui.debug("<<%s .dnd_commit>> %s", type(self), source)
 
 # A canvas specifically for deleting dragged objects.
 class TrashBin(CanvasDnd, object):
@@ -12260,7 +12226,7 @@ class DraggableWidget(object):
         
     # this gets called when we are dropped
     def dnd_end(self, target, event):
-        gui.debug("<<DRAGGABLE_WIDGET.dnd_end>> " + str(self.Name) + " target=" + str(target))
+        gui.debug("<<DRAGGABLE_WIDGET.dnd_end>> %s target=%s", self.Name, target)
 
         # from somewhere, dropped nowhere - self destruct, or put back
         if self.Canvas is None:
@@ -12277,7 +12243,7 @@ class DraggableWidget(object):
 
         # have been dropped somewhere
         else:
-            gui.debug("<<DRAGGABLE_WIDGET.dnd_end>> dropped with Canvas("+str(self.Canvas)+") Target=" + str(self.dropTarget))
+            gui.debug("<<DRAGGABLE_WIDGET.dnd_end>> dropped with Canvas(%s) Target=%s", self.Canvas, self.dropTarget)
             if not self.dropTarget:
                 # make the dragged object re-draggable
                 self.Label.bind('<ButtonPress>', self.press)
@@ -12304,10 +12270,10 @@ class DraggableWidget(object):
 #            self.dropTarget = None
 
         if self.Canvas:
-            gui.debug("<<DRAGGABLE_WIDGET.appear> - ignoring, as we already exist?: " + str(canvas) + str(XY))
+            gui.debug("<<DRAGGABLE_WIDGET.appear> - ignoring, as we already exist?: %s %s", canvas, XY)
             return
         else:
-            gui.debug("<<DRAGGABLE_WIDGET.appear> - appearing: " + str(canvas) + str(XY))
+            gui.debug("<<DRAGGABLE_WIDGET.appear> - appearing: %s %s", canvas, XY)
 
             self.Canvas = canvas
             self.X, self.Y = XY    
@@ -12321,7 +12287,7 @@ class DraggableWidget(object):
                 self.OffsetCalculated = True
 
             self.ID = self.Canvas.create_window(self.X-self.OffsetX, self.Y-self.OffsetY, window=self.Label, anchor="nw")
-            gui.debug("<<DRAGGABLE_WIDGET.appear> - created: " + str(self.Label) + str(self.Canvas))
+            gui.debug("<<DRAGGABLE_WIDGET.appear> - created: %s %s", self.Label, self.Canvas)
 
     # if there is a label representing us on a canvas, make it go away.
     def vanish(self, all=False):
@@ -12345,7 +12311,7 @@ class DraggableWidget(object):
 
     # if we have a label on a canvas, then move it to the specified location. 
     def move(self, widget, XY):
-        gui.debug("<<DRAGGABLE_WIDGET.move>> " + str(self.Canvas) + str(XY))
+        gui.debug("<<DRAGGABLE_WIDGET.move>> %s %s", self.Canvas, XY)
         if self.Canvas:
             self.X, self.Y = XY
             self.Canvas.coords(self.ID, self.X-self.OffsetX, self.Y-self.OffsetY)
