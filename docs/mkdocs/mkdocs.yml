@@ -36,6 +36,7 @@ pages:
         - Threads: pythonThreads.md
         - Drag'n Drop: pythonDnD.md
     - Internationalisation: pythonInternationalisation.md
+    - Settings: pythonSettings.md
     - Logging: pythonLogging.md
     - Command Line Arguments: pythonCommandLine.md
     - ttk (BETA): pythonTtk.md

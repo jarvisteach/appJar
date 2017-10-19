@@ -591,8 +591,8 @@ class gui(object):
         logGroup.add_argument("-d", action="store_const", const=True, help="log DEBUG messages and above")
         parser.add_argument("-l", metavar="LANGUAGE.ini", help="set a language file to use")
         parser.add_argument("-f", metavar="file.log", help="set a log file to use")
+        parser.add_argument("-s", metavar="SETTINGS", const=True, nargs="?", help="load settings, from an optional file name")
         parser.add_argument("--ttk", metavar="THEME", const=True, nargs="?", help="enable ttk, with an optional theme")
-        parser.add_argument("--s", metavar="SETTINGS", const=True, nargs="?", help="load settings, from an optional file name")
         return parser.parse_args()
 
     # function to check on mode
