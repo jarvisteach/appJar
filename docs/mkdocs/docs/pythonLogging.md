@@ -17,17 +17,27 @@ By default, **appJar** will only log messages of importance `WARNING` or above. 
 
 **appJar** provides some useful functions for logging:
 
-* `.logMessage(msg, level)` - log a message, of the specified importance
+* `.logMessage(msg, level, *args)` - log a message, of the specified importance, with any specified arguments (see below)  
 * `.setLogLevel(level)` - set the logging level, all messages of less importance than this will be ignored  
 * `.setLogFile(fileName)` - write all log messages to the named file, instead of the console  
 
 You can also use the following convenience functions for logging messages:
 
-* `.critical(msg)`
-* `.error(msg)`
-* `.warn(msg)`
-* `.info(msg)`
-* `.debug(msg)`
+* `.critical(msg, *args)`
+* `.error(msg, *args)`
+* `.warn(msg, *args)`
+* `.info(msg, *args)`
+* `.debug(msg, *args)`
+
+Optional Arguments:
+* `*args` allows you to use a **string formatter** with your message.  
+This can speed things up slightly, as it avoids unnecessary string concatenations, as well as automatically casting all variables to Strings:  
+
+```
+name = app.getEntry("name")
+location = app.getEntry("location")
+app.debug("User %s, has accessed the app from %s", name, location)
+```
 
 ## Logging to file
 ---

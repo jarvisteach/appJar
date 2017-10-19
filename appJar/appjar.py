@@ -377,6 +377,7 @@ class gui(object):
         self.language = language
         self.useSettings = useSettings
         self.settingsFile = "appJar.ini"
+        self.externalSettings = {}
 
         self.startWindow = startWindow
         args = self.__handleArgs() if handleArgs else None
@@ -1747,6 +1748,14 @@ class gui(object):
         if self.containerStack[-1]['type'] != self.Widgets.SubWindow:
             tl.createcommand('exit', self.stop)
 
+
+    def setSetting(self, name, value):
+        self.externalSettings[name] = value
+
+    def getSetting(self, name, default=None):
+        try: return self.externalSettings[name]
+        except: return default
+
     def saveSettings(self, fileName="appJar.ini"):
         self.__loadConfigParser()
         if not ConfigParser:
@@ -1780,6 +1789,10 @@ class gui(object):
         settings.add_section("PAGES")
         for k, v in self.widgetManager.group(self.Widgets.PagedWindow).items():
             settings.set("PAGES", k, str(v.getPageNumber()))
+
+        settings.add_section("EXTERNAL")
+        for k, v in self.externalSettings.items():
+            settings.set("EXTERNAL", k, str(v))
 
         # pane positions?
         # sub windows geom & visibility
@@ -1819,7 +1832,7 @@ class gui(object):
             self.__getTopLevel().minsize(self.topLevel.ms[0], self.topLevel.ms[1])
             self.debug("Set minsize to: %s", self.topLevel.ms)
 
-        if settings.has_option("TOOLBAR", "pinned"):
+        if settings.has_option("TOOLBAR", "pinned") and self.hasTb:
             tb = settings.getboolean("TOOLBAR", "pinned")
             self.setToolbarPinned(tb)
             self.debug("Set toolbar to: %s", tb)
@@ -1836,6 +1849,12 @@ class gui(object):
         if "PAGES" in settings.sections():
             for k in settings.options("PAGES"):
                 self.setPagedWindowPage(k, settings.get("PAGES", k))
+
+        if "EXTERNAL" in settings.sections():
+            print("le")
+            for k in settings.options("EXTERNAL"):
+                print(k)
+                self.externalSettings[k] = settings.get("EXTERNAL", k)
 
     def stop(self, event=None):
         """ Closes the GUI. If a stop function is set, will only close the GUI if True """
