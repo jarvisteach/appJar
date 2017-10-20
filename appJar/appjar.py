@@ -1681,6 +1681,7 @@ class gui(object):
                 if kind != self.Widgets.Pane:
                     self.warn("STOP: %s", self.Widgets.name(kind))
 
+        # update any trees
         for k, v in self.widgetManager.group(self.Widgets.Tree).items():
             v.update()
             v.expand()
@@ -1707,6 +1708,12 @@ class gui(object):
             time.sleep(3)
             splash.destroy()
 
+        # override the user set parameter
+        # this overrides go with init
+        # init may be overriden by loadSettings
+        if self.startWindow != startWindow:
+            startWindow = self.startWindow
+
         # bring to front
         if startWindow is None:
             self.__bringToFront()
@@ -1723,7 +1730,8 @@ class gui(object):
         if self.GET_PLATFORM() == self.MAC:
             self.topLevel.createcommand(
                 'tk::mac::ReopenApplication',
-                self.topLevel.deiconify)
+                self.__macReveal)
+
 
         # start the call back & flash loops
         self.__poll()
@@ -1738,6 +1746,13 @@ class gui(object):
         except Exception as e:
             self.exception(e)
             self.stop()
+
+    def __macReveal(self):
+        if self.topLevel.state() != "withdrawn":
+            self.topLevel.deiconify()
+        for k, v in self.widgetManager.group(self.Widgets.SubWindow).items():
+            if v.state() == "normal":
+                self.showSubWindow(k)
 
     def setStopFunction(self, function):
         """ Set a function to call when the GUI is quit. Must return True or False """
@@ -1772,26 +1787,37 @@ class gui(object):
         self.debug("Save geom as: %s", geom)
         settings.set('GEOM', 'minsize', ms)
         settings.set('GEOM', "fullscreen", str(self.topLevel.attributes('-fullscreen')))
+        settings.set('GEOM', "state", str(self.topLevel.state()))
 
         # get toolbar setting
-        settings.add_section("TOOLBAR")
-        settings.set("TOOLBAR", "pinned", str(self.tbPinned))
+        if self.hasTb:
+            settings.add_section("TOOLBAR")
+            settings.set("TOOLBAR", "pinned", str(self.tbPinned))
 
         # get container settings
-        settings.add_section("TOGGLES")
         for k, v in self.widgetManager.group(self.Widgets.ToggleFrame).items():
+            if "TOGGLES" not in settings.sections(): settings.add_section("TOGGLES")
             settings.set("TOGGLES", k, str(v.isShowing()))
 
-        settings.add_section("TABS")
         for k, v in self.widgetManager.group(self.Widgets.TabbedFrame).items():
+            if "TABS" not in settings.sections(): settings.add_section("TABS")
             settings.set("TABS", k, str(v.getSelectedTab()))
 
-        settings.add_section("PAGES")
         for k, v in self.widgetManager.group(self.Widgets.PagedWindow).items():
+            if "PAGES" not in settings.sections(): settings.add_section("PAGES")
             settings.set("PAGES", k, str(v.getPageNumber()))
 
-        settings.add_section("EXTERNAL")
+        for k, v in self.widgetManager.group(self.Widgets.SubWindow).items():
+            if "SUBWINDOWS" not in settings.sections(): settings.add_section("SUBWINDOWS")
+            settings.add_section(k)
+            settings.set("SUBWINDOWS", k, "True")
+
+        for k, v in self.widgetManager.group(self.Widgets.SubWindow).items():
+            settings.set(k, "geometry", v.geometry())
+            settings.set(k, "state", v.state())
+
         for k, v in self.externalSettings.items():
+            if "EXTERNAL" not in settings.sections(): settings.add_section("EXTERNAL")
             settings.set("EXTERNAL", k, str(v))
 
         # pane positions?
@@ -1827,10 +1853,14 @@ class gui(object):
             self.debug("Set fullscreen to: %s", fs)
 
         if settings.has_option("GEOM", "minsize"):
-
             self.topLevel.ms = settings.get('GEOM', "minsize").split(",")
             self.__getTopLevel().minsize(self.topLevel.ms[0], self.topLevel.ms[1])
             self.debug("Set minsize to: %s", self.topLevel.ms)
+
+        hideMain = False
+        if settings.has_option("GEOM", "state"):
+            if settings.get('GEOM', "state") == "withdrawn":
+                hideMain = True
 
         if settings.has_option("TOOLBAR", "pinned") and self.hasTb:
             tb = settings.getboolean("TOOLBAR", "pinned")
@@ -1850,10 +1880,17 @@ class gui(object):
             for k in settings.options("PAGES"):
                 self.setPagedWindowPage(k, settings.get("PAGES", k))
 
+        if "SUBWINDOWS" in settings.sections():
+            for k in settings.options("SUBWINDOWS"):
+                tl = self.widgetManager.get(self.Widgets.SubWindow, k)
+                tl.geometry(settings.get(k, "geometry"))
+                tl.state(settings.get(k, "state"))
+                if hideMain and tl.state() == "normal":
+                    self.startWindow = k
+                tl.locationSet = True
+
         if "EXTERNAL" in settings.sections():
-            print("le")
             for k in settings.options("EXTERNAL"):
-                print(k)
                 self.externalSettings[k] = settings.get("EXTERNAL", k)
 
     def stop(self, event=None):

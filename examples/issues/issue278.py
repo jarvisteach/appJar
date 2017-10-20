@@ -35,6 +35,14 @@ app.addNamedButton("EXIT", "e", press)
 app.setStopFunction(subStop)
 app.stopSubWindow()
 
+with app.subWindow("subber"):
+    app.addLabel("subber", "In subber")
+app.showSubWindow("subber")
+
+with app.subWindow("subber2"):
+    app.addLabel("subber2", "In subber")
+app.showSubWindow("subber2")
+
 
 
 app.go()
