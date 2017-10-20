@@ -21,7 +21,8 @@ def subStop(btn=None):
     return True
 
 
-app=gui("Main Window")
+app=gui("Main Window", useSettings=True)
+app.setLogLevel("debug")
 
 app.addLabel("title", "Main Window")
 app.addButton("SUB", press)

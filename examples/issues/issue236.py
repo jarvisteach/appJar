@@ -12,11 +12,11 @@ def setts(btn):
     if btn == "LOAD":
         print(app.getSetting("aa"))
     elif btn == "SAVE":
-        app.addSetting("aa", app.textBox())
+        app.setSetting("aa", app.textBox())
 
 
 from appJar import gui
-with gui() as app:
+with gui(useSettings=True) as app:
     app.addButton("Press", press)
     app.topLevel.bind('<Configure>', show)
     app.addButtons(["LOAD", "SAVE"], setts)
