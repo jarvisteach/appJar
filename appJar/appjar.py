@@ -168,7 +168,7 @@ class gui(object):
         width = win.winfo_reqwidth()
         height = win.winfo_reqheight()
 
-        if hasattr(win, 'geom'):
+        if hasattr(win, 'geom') and win.geom is not None:
             geom = win.geom.split("x")
             if len(geom) == 2:
                 width=int(geom[0])
