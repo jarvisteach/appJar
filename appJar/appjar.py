@@ -189,7 +189,7 @@ class gui(object):
         else:
             y = 0
 
-        gui.debug("Setting location: %s,%s - %s,%s", x, y, width, height)
+        gui.debug("Screen: %sx%s. Requested: %sx%s. Location: %s, %s", scr_width, scr_height, width, height, x, y)
         win.geometry("+%d+%d" % (x, y))
 
         if gui.GET_PLATFORM() != gui.LINUX:
@@ -1844,8 +1844,7 @@ class gui(object):
 
         if settings.has_option("GEOM", "geometry"):
             geom = settings.get("GEOM", "geometry")
-            self.setGeom(geom)
-            self.debug("Set geom to: %s", geom)
+            self.setGeom(geom, move=False)
 
         # not finished
         if settings.has_option("GEOM", "fullscreen"):
@@ -2119,15 +2118,20 @@ class gui(object):
                 self.CENTER(self.__getTopLevel())
 
     # called to update screen geometry
-    def setGeometry(self, geom, height=None):
-        self.setGeom(geom, height)
+    def setGeometry(self, geom, height=None, move=True):
+        self.setGeom(geom, height, move)
 
-    def setGeom(self, geom, height=None):
+    def setGeom(self, geom, height=None, move=True):
         if height is not None:
             geom = str(geom) + "x" + str(height)
         container = self.__getTopLevel()
         container.geom = geom
-        container.locationSet = True
+
+        if not move: 
+            container.locationSet = True
+
+        gui.debug("Setting geom: %s", container.geom)
+
         if container.geom == "fullscreen":
             self.setFullscreen()
         else:
@@ -3110,6 +3114,7 @@ class gui(object):
         self.__configBg(self.containerStack[0]['container'])
         self.__initVars()
         self.setGeom(None)
+        self.containerStack[0]['emptyRow'] = 0
 
 #####################################
 # FUNCTION for managing commands
