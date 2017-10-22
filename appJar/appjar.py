@@ -1987,7 +1987,7 @@ class gui(object):
 
         self.processQueueId = self.after(self.EVENT_SPEED, self.__processEventQueue)
 
-    def thread(self, func, *args):
+    def thread(self, func, *args, **kwargs):
         """ will run the supplied function in a separate thread
 
         param func: the function to run
@@ -1996,7 +1996,7 @@ class gui(object):
         if Queue is False:
             gui.warn("Unable to queueFunction - threading not possible.")
         else:
-            t = Thread(target=func, args=args)
+            t = Thread(target=func, *args, **kwargs)
             t.daemon = True
             t.start()
 
