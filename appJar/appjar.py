@@ -402,12 +402,12 @@ class gui(object):
                 "DatePicker", "Separator",
                 "LabelFrame", "Frame", "TabbedFrame", "PanedFrame", "ToggleFrame",
                 "FrameBox", "FrameLabel", "ContainerLog", "FlashLabel",
-                "AnimationID", "ImageCache", "Menu", "RB_VALS",
+                "AnimationID", "ImageCache", "Menu",
                 "SubWindow", "ScrollPane", "PagedWindow", "Notebook", "Tree",
                 "Widget", "Window", "Toolbar", "RootPage",
                 "Note", "Tab", "Page", "Pane"],
             deprecated=["Cb", "Rb", "Lb", "Spin", "Option"],
-            excluded=["DatePicker", "SubWindow", "Window", "Toolbar", "RB_VALS",
+            excluded=["DatePicker", "SubWindow", "Window", "Toolbar",
                 "Note", "Tab", "Page", "Pane", "RootPage", "FlashLabel",
                 "AnimationID", "ImageCache", "TickOptionBox", "Accelerators",
                 "FileEntry", "DirectoryEntry",
@@ -2519,9 +2519,9 @@ class gui(object):
                 else:
                     self.configureWidget(kind, widg, option, value)
 
-    def getWidget(self, kind, name):
-        # get the list of items for this type, and validate the widget is in
-        # the list
+    def getWidget(self, kind, name, val=None):
+        # if val is set (RadioButtons) - append it
+        if val is not None: name+= "-" + val
         return self.widgetManager.get(kind, name)
 
     def addWidget(self, title, widg, row=None, column=0, colspan=0, rowspan=0):
@@ -2543,14 +2543,24 @@ class gui(object):
         # warn about deprecated functions
         if deprecated:
             self.warn("Deprecated config function (%s) used for %s -> %s use %s deprecated", option, self.Widgets.name(kind), name, deprecated)
-        # get the list of items for this type, and validate the widgetis in the
-        # list
-        self.widgetManager.check(kind, name)
-        items = self.widgetManager.group(kind)
 
-        if kind == self.Widgets.RadioButton and option not in ["change"]:
-            items = items[name]
+        if kind == self.Widgets.RadioButton:
+            items = self.widgetManager.group(kind)
+            new_items = []
+            for k, v in items.items():
+                if k.startswith(name+"-"):
+                    new_items.append(v)
+            if len(new_items) > 0:
+                items = new_items
+                # stops multipl events...
+                if option in ['change', 'command']:
+                    items = [items[0]]
+            else:
+                raise Excpetion("ERROR")
         else:
+            # get the list of items for this type, and validate the widgetis in the  list
+            self.widgetManager.check(kind, name)
+            items = self.widgetManager.group(kind)
             items = [items[name]]
 
         # loop through each item, and try to reconfigure it
@@ -3032,8 +3042,8 @@ class gui(object):
             exec("gui.setAll" + v + "Heights=setAll" + v + "Heights")
 
             exec( "def get" + v +
-                "Widget(self, name): return self.getWidget(" +
-                str(k) + ", name)")
+                "Widget(self, name, val=None): return self.getWidget(" +
+                str(k) + ", name, val)")
             exec("gui.get" + v + "Widget=get" + v + "Widget")
 
 #####################################
@@ -4427,48 +4437,23 @@ class gui(object):
     # function to destroy widget & all children
     # will also attempt to remove all trace from config dictionaries
     def cleanseWidgets(self, widget):
+        # make sure we've cleansed any children first
         for child in widget.winfo_children():
             self.cleanseWidgets(child)
-        widgType = gui.GET_WIDGET_TYPE(widget)
-        for v in self.Widgets.funcs():
-            k = self.Widgets.get(v)
-#        for k, v in self.WIDGETS.items():
-            if widgType == v:
-                widgets = self.widgetManager.group(k)
-                if self.destroyWidget(widget, widgets):
-                    break
-                break
-        else:
-            if widgType in ["Tab", "Page"]:
-                pass # managed by container
-            elif widgType in ["Pane", "ScrollPane", "PagedWindow", "SubWindow", "WidgetBox", "LabelBox", "ButtonBox"]:
-                if widgType == "Pane": widgets = self.widgetManager.group(self.Widgets.Pane)
-                elif widgType == "ScrollPane": widgets = self.widgetManager.group(self.Widgets.ScrollPane)
-                elif widgType == "PagedWindow": widgets = self.widgetManager.group(self.Widgets.PagedWindow)
-                elif widgType == "SubWindow": widgets = self.widgetManager.group(self.Widgets.SubWindow)
-                elif widgType in ["WidgetBox", "LabelBox", "ButtonBox"]: widgets = self.widgetManager.group(self.Widgets.FrameBox)
-                elif widgType in ["Frame"]: widgets = self.widgetManager.group(self.Widgets.Frame)
 
-                if not self.destroyWidget(widget, widgets):
-                    self.warn("Unable to destroy %s, during cleanse", widgType)
+
+        if hasattr(widget, 'APPJAR_TYPE'):
+            widgType = widget.APPJAR_TYPE
+            gui.debug("Cleansing: %s", self.Widgets.name(widgType))
+
+            if widgType not in [self.Widgets.Tab, self.Widgets.Page]:
+                if not self.widgetManager.destroyWidget(widgType, widget):
+                    self.warn("Unable to destroy %s, during cleanse - destroy returned False", widgType)
             else:
-                self.warn("Unable to destroy %s, during cleanse", widgType)
-
-    # function to loop through a config dict/list and remove matching object
-    def destroyWidget(self, widget, widgets):
-        if type(widgets) in [list, tuple]:
-            for obj in widgets:
-                if widget == obj:
-                    obj.destroy()
-                    widgets.remove(obj)
-                    return True
+                self.warn("Skipped %s, cleansed by parent", widgType)
         else:
-            for name, obj in widgets.items():
-                if widget == obj:
-                    obj.destroy()
-                    del widgets[name]
-                    return True
-        return False
+            self.warn("Unable to destroy %s, during cleanse - no match", gui.GET_WIDGET_TYPE(widget))
+
 
     #### END SUB WINDOWS ####
 
@@ -6172,48 +6157,28 @@ class gui(object):
 #####################################
 # FUNCTION for radio buttons
 #####################################
-    def addRadioButton(
-            self,
-            title,
-            name,
-            row=None,
-            column=0,
-            colspan=0,
-            rowspan=0):
+    def addRadioButton(self, title, name, row=None, column=0, colspan=0, rowspan=0):
+
+        ident = title + "-" + name
+        self.widgetManager.verify(self.Widgets.RadioButton, ident)
+
         var = None
         newRb = False
         # title - is the grouper
         # so, if we already have an entry in n_rbVars - get it
         if (title in self.widgetManager.group(self.Widgets.RadioButton, group=WidgetManager.VARS)):
             var = self.widgetManager.get(self.Widgets.RadioButton, title, group=WidgetManager.VARS)
-            # also get the list of rbVals
-            vals = self.widgetManager.get(self.Widgets.RB_VALS, title)
-            # and if we already have the new item in that list - reject it
-            if name in vals:
-                raise Exception(
-                    "Invalid radio button: " +
-                    name +
-                    " already exists")
-            # otherwise - append it to the list of vals
-            else:
-                vals.append(name)
         else:
             # if this is a new grouper - set it all up
             var = StringVar(self.topLevel)
-            vals = [name]
             self.widgetManager.add(self.Widgets.RadioButton, title, var, group=WidgetManager.VARS)
-            self.widgetManager.add(self.Widgets.RB_VALS, title, vals)
             newRb = True
 
         # finally, create the actual RadioButton
         if not self.ttkFlag:
             rb = Radiobutton(self.getContainer(), text=name, variable=var, value=name)
-            rb.config(
-                anchor=W,
-                background=self.__getContainerBg(),
-                activebackground=self.__getContainerBg(),
-                font=self.rbFont,
-                indicatoron=1
+            rb.config(anchor=W, background=self.__getContainerBg(), indicatoron=1,
+                activebackground=self.__getContainerBg(), font=self.rbFont
             )
         else:
             rb = ttk.Radiobutton(self.getContainer(), text=name, variable=var, value=name)
@@ -6221,12 +6186,7 @@ class gui(object):
         rb.bind("<Button-1>", self.__grabFocus)
         rb.DEFAULT_TEXT = name
 
-        # either append to existing widget list
-        if title in self.widgetManager.group(self.Widgets.RadioButton):
-            self.widgetManager.get(self.Widgets.RadioButton, title).append(rb)
-        # or create a new one
-        else:
-            self.widgetManager.add(self.Widgets.RadioButton, title, [rb])
+        self.widgetManager.add(self.Widgets.RadioButton, ident, rb)
         #rb.bind("<Tab>", self.__focusNextWindow)
         #rb.bind("<Shift-Tab>", self.__focusLastWindow)
 
@@ -6243,14 +6203,13 @@ class gui(object):
 
     def getAllRadioButtons(self):
         rbs = {}
-        for k in self.widgetManager.group(self.Widgets.RadioButton):
+        for k in self.widgetManager.group(self.Widgets.RadioButton, group=WidgetManager.VARS):
             rbs[k] = self.getRadioButton(k)
         return rbs
 
     def setRadioButton(self, title, value, callFunction=True):
-        vals = self.widgetManager.get(self.Widgets.RB_VALS, title)
-        if value not in vals:
-            raise Exception("Invalid radio button: '" + value + "' doesn't exist") 
+        ident = title + "-" + value
+        self.widgetManager.get(self.Widgets.RadioButton, ident)
 
         # now call function
         var = self.widgetManager.get(self.Widgets.RadioButton, title, group=WidgetManager.VARS)
@@ -6258,16 +6217,16 @@ class gui(object):
             var.set(value)
 
     def clearAllRadioButtons(self, callFunction=False):
-        for rb in self.widgetManager.group(self.Widgets.RadioButton):
+        for rb in self.widgetManager.group(self.Widgets.RadioButton, group=WidgetManager.VARS):
             self.setRadioButton(rb, self.widgetManager.get(self.Widgets.RadioButton, rb, group=WidgetManager.VARS).startVal, callFunction=callFunction)
 
     def setRadioTick(self, title, tick=True):
-        radios = self.widgetManager.get(self.Widgets.RadioButton, title)
-        for rb in radios:
-            if tick:
-                rb.config(indicatoron=1)
-            else:
-                rb.config(indicatoron=0)
+        for k, v in self.widgetManager.group(self.Widgets.RadioButton).items():
+            if k.startswith(title+"-"):
+                if tick:
+                    v.config(indicatoron=1)
+                else:
+                    v.config(indicatoron=0)
 
 #####################################
 # FUNCTION for list box
@@ -6717,7 +6676,7 @@ class gui(object):
 # DatePicker Widget - using Form Container
 #####################################
     def addDatePicker(self, name, row=None, column=0, colspan=0, rowspan=0):
-        self.widgetManager.verify(self.Widgets.DatePicker, name, array=True)
+        self.widgetManager.verify(self.Widgets.DatePicker, name)
         # initial DatePicker has these dates
         days = range(1, 32)
         self.MONTH_NAMES = calendar.month_name[1:]
@@ -6743,16 +6702,16 @@ class gui(object):
             self.__updateDatePickerDays)
         self.stopFrame()
         frame.isContainer = False
-        self.widgetManager.log(self.Widgets.DatePicker, name)
+        self.widgetManager.add(self.Widgets.DatePicker, name, frame)
 
     def setDatePickerFg(self, name, fg):
-        self.widgetManager.check(self.Widgets.DatePicker, name)
+        self.widgetManager.get(self.Widgets.DatePicker, name)
         self.setLabelFg(name + "_DP_DayLabel", fg)
         self.setLabelFg(name + "_DP_MonthLabel", fg)
         self.setLabelFg(name + "_DP_YearLabel", fg)
 
     def setDatePickerChangeFunction(self, title, function):
-        self.widgetManager.check(self.Widgets.DatePicker, title)
+        self.widgetManager.get(self.Widgets.DatePicker, title)
         cmd = self.MAKE_FUNC(self.__datePickerChangeFunction, title, True)
         self.setOptionBoxChangeFunction(title + "_DP_DayOptionBox", cmd)
         self.widgetManager.get(self.Widgets.OptionBox, title + "_DP_DayOptionBox").function = function
@@ -6788,14 +6747,14 @@ class gui(object):
 
     # set a date for the named DatePicker
     def setDatePickerRange(self, title, startYear, endYear=None):
-        self.widgetManager.check(self.Widgets.DatePicker, title)
+        self.widgetManager.get(self.Widgets.DatePicker, title)
         if endYear is None:
             endYear = datetime.date.today().year
         years = range(startYear, endYear + 1)
         self.changeOptionBox(title + "_DP_YearOptionBox", years)
 
     def setDatePicker(self, title, date=None):
-        self.widgetManager.check(self.Widgets.DatePicker, title)
+        self.widgetManager.get(self.Widgets.DatePicker, title)
         if date is None:
             date = datetime.date.today()
         self.setOptionBox(title + "_DP_YearOptionBox", str(date.year))
@@ -6803,7 +6762,7 @@ class gui(object):
         self.setOptionBox(title + "_DP_DayOptionBox", date.day - 1)
 
     def clearDatePicker(self, title, callFunction=True):
-        self.widgetManager.check(self.Widgets.DatePicker, title)
+        self.widgetManager.get(self.Widgets.DatePicker, title)
         self.setOptionBox(title + "_DP_YearOptionBox", 0, callFunction)
         self.setOptionBox(title + "_DP_MonthOptionBox", 0, callFunction)
         self.setOptionBox(title + "_DP_DayOptionBox", 0, callFunction)
@@ -6813,7 +6772,7 @@ class gui(object):
             self.clearDatePicker(k, callFunction)
 
     def getDatePicker(self, title):
-        self.widgetManager.check(self.Widgets.DatePicker, title)
+        self.widgetManager.get(self.Widgets.DatePicker, title)
         day = int(self.getOptionBox(title + "_DP_DayOptionBox"))
         month = self.MONTH_NAMES.index(
             self.getOptionBox(
@@ -12424,13 +12383,16 @@ class DraggableWidget(object):
 class WidgetManager(object):
     WIDGETS = "widgets"
     VARS = "vars"
-    def __init__(self):
 
+    def __init__(self):
         self.widgets = {}
         self.vars = {}
 
     def group(self, widgetType, group=None, array=False):
-
+        """
+        returns the list/dictionary containing the specified widget type
+        will create a new group if none exists
+        """
         if group is None: container = self.widgets
         elif group == WidgetManager.VARS: container = self.vars
 
@@ -12444,16 +12406,22 @@ class WidgetManager(object):
         return widgGroup
 
     def add(self, widgetType, widgetName, widget, group=None):
+        """ adds items to the specified dictionary """
         widgGroup = self.group(widgetType, group)
         if widgetName in widgGroup:
             raise ItemLookupError("Duplicate key: '" + widgetName + "' already exists")
         else:
             widgGroup[widgetName] = widget
 
+        widget.APPJAR_TYPE = widgetType
+
     def log(self, widgetType, widget, group=None):
         """ Used for adding items to an array """
         widgGroup = self.group(widgetType, group, array=True)
         widgGroup.append(widget)
+
+        try: widget.APPJAR_TYPE = widgetType
+        except AttributeError: pass # not available on some classes
 
     def verify(self, widgetType, widgetName, group=None, array=False):
         """ checks for duplicatres """
@@ -12493,6 +12461,36 @@ class WidgetManager(object):
             container[widgetType] = {}
         else:
             container[widgetType] = []
+
+    # function to loop through a config dict/list and remove matching object
+    def destroyWidget(self, widgType, widget):
+        widgets = self.widgets[widgType]
+        # just a list, remove matching obj - no vars
+        if type(widgets) in (list, tuple):
+            for obj in widgets:
+                if widget == obj:
+                    obj.destroy()
+                    widgets.remove(obj)
+                    gui.debug("Matched and removed")
+                    return True
+        else:
+            for name, obj in widgets.items():
+                if type(obj) in (list, tuple):
+                    if self.destroyWidget(widget, obj):
+                        if len(obj) == 0:
+                            del widgets[name]
+                            try: del self.vars[widgType][name]
+                            except: pass # no var
+                        return True
+                elif widget == obj:
+                    obj.destroy()
+                    del widgets[name]
+                    try: del self.vars[widgType][name]
+                    except: pass # no var
+                    gui.debug("Matched and destroyed")
+                    return True
+        gui.debug("Failed to destory widget")
+        return False
 
 class Enum(object):
     __initialized = False

@@ -144,6 +144,7 @@ The following are convenience functions, for modifying a group of widgets:
 ----
 It's also possible to request a widget, and modify it directly:  
 
-* `.get XXX Widget(name)`  
+* `.get XXX Widget(name, value=None)`  
     This will get the named widget of the specified type.  
     Any standard tkinter options can then be changed.  
+    If it's a RadioButton, you also need to specify a `value` - the text displayed in the widget.  

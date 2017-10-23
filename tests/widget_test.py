@@ -455,7 +455,7 @@ def test_radios():
     assert rbs["rb2"] == TEXT_THREE
 
     # call generic setter functions
-    test_setters("RadioButton", "rb")
+    test_setters("RadioButton", "rb", TEXT_TWO)
     test_setters("Rb", "rb")
 
     app.clearAllRadioButtons()
@@ -1924,7 +1924,7 @@ def test_hideShow():
     #print("\t >> all tests complete")
 
 
-def test_setters(widg_type, widg_id):
+def test_setters(widg_type, widg_id, widg_val=None):
     print("\tTesting setters")
     exec("app.set" + widg_type + "Bg(\""+widg_id +"\", \"red\")")
     exec("app.set" + widg_type + "Fg(\""+widg_id +"\", \"red\")")
@@ -1987,7 +1987,10 @@ def test_setters(widg_type, widg_id):
     exec("app.set" + widg_type + "SubmitFunction(\""+widg_id +"\", tester_function)")
     exec("app.set" + widg_type + "RightClick('" + widg_id + "', 'RCLICK')")
 
-    exec("app.get"+widg_type+"Widget(\""+widg_id+"\")")
+    if widg_val is not None:
+        exec('app.get'+widg_type+'Widget("'+widg_id+'", "'+widg_val+'")')
+    else:
+        exec('app.get'+widg_type+'Widget("'+widg_id+'")')
 
 #    exec("app.show" + widg_type+ "(\""+widg_id +"\")")
 #    exec("app.hide" + widg_type+ "(\""+widg_id +"\")")
