@@ -56,6 +56,23 @@ A number of pop-ups (aka dialogs) are available, to add a different user experie
     If this dialog is being launched from a [subWindow](/pythonWidgetGrouping/#sub-window) set `parent` to be the name of the subWindow.  
     ![RetryBox](img/dialogs/retry.gif)
 
+* `.stringBox(title, message, parent=None)`  
+    Shows a question requesting a text response. Returns a String, or None if Cancel pressed.  
+    If this dialog is being launched from a [subWindow](/pythonWidgetGrouping/#sub-window) set `parent` to be the name of the subWindow.  
+    ![TextBox](img/dialogs/text.gif)
+
+* `.integerBox(title, message, parent=None)`  
+    Shows a question requesting an integer response. Returns an integer, or None if Cancel pressed.  
+    If this dialog is being launched from a [subWindow](/pythonWidgetGrouping/#sub-window) set `parent` to be the name of the subWindow.  
+    ![NumberBox](img/dialogs/num.gif)
+
+* `.floatBox(title, message, parent=None)`  
+    Shows a question requesting a float response. Returns a float, or None if Cancel pressed.  
+    If this dialog is being launched from a [subWindow](/pythonWidgetGrouping/#sub-window) set `parent` to be the name of the subWindow.  
+    ![NumberBox](img/dialogs/num.gif)
+
+---
+
 * `.textBox(title, message, parent=None)`  
     Shows a question requesting a text response. Returns a String, or None if Cancel pressed.  
     If this dialog is being launched from a [subWindow](/pythonWidgetGrouping/#sub-window) set `parent` to be the name of the subWindow.  

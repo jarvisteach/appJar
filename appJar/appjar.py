@@ -12,6 +12,7 @@ try:
     # for Python2
     from Tkinter import *
     import tkMessageBox as MessageBox
+    import tkSimpleDialog as SimpleDialog
     from tkColorChooser import askcolor
     import tkFileDialog as filedialog
     import ScrolledText as scrolledtext
@@ -22,6 +23,7 @@ except ImportError:
     # for Python3
     from tkinter import *
     from tkinter import messagebox as MessageBox
+    from tkinter import simpledialog as SimpleDialog
     from tkinter.colorchooser import askcolor
     from tkinter import filedialog
     from tkinter import scrolledtext
@@ -8807,6 +8809,30 @@ class gui(object):
         else:
             opts = {"parent": self.widgetManager.get(self.Widgets.SubWindow, parent)}
             return MessageBox.askyesno(title=title, message=message, **opts)
+
+    def stringBox(self, title, message, parent=None):
+        self.topLevel.update_idletasks()
+        if parent is None:
+            return SimpleDialog.askstring(title, message)
+        else:
+            opts = {"parent": self.widgetManager.get(self.Widgets.SubWindow, parent)}
+            return SimpleDialog.askstring(title=title, message=message, **opts)
+
+    def integerBox(self, title, message, parent=None):
+        self.topLevel.update_idletasks()
+        if parent is None:
+            return SimpleDialog.askinteger(title, message)
+        else:
+            opts = {"parent": self.widgetManager.get(self.Widgets.SubWindow, parent)}
+            return SimpleDialog.askinteger(title=title, message=message, **opts)
+
+    def floatBox(self, title, message, parent=None):
+        self.topLevel.update_idletasks()
+        if parent is None:
+            return SimpleDialog.askfloat(title, message)
+        else:
+            opts = {"parent": self.widgetManager.get(self.Widgets.SubWindow, parent)}
+            return SimpleDialog.askfloat(title=title, message=message, **opts)
 
     def questionBox(self, title, message, parent=None):
         self.topLevel.update_idletasks()
