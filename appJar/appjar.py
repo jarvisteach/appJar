@@ -8811,10 +8811,10 @@ class gui(object):
     def questionBox(self, title, message, parent=None):
         self.topLevel.update_idletasks()
         if parent is None:
-            return MessageBox.askquestion(title, message)
+            return True if MessageBox.askquestion(title, message).lower() == "yes" else False
         else:
             opts = {"parent": self.widgetManager.get(self.Widgets.SubWindow, parent)}
-            return MessageBox.askquestion(title, message, **opts)
+            return True if MessageBox.askquestion(title, message, **opts).lower() == "yes" else False
 
     def okBox(self, title, message, parent=None):
         self.topLevel.update_idletasks()
