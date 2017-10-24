@@ -1791,30 +1791,39 @@ class gui(object):
 
         # get toolbar setting
         if self.hasTb:
+            gui.debug("Saving toolbar settings")
             settings.add_section("TOOLBAR")
             settings.set("TOOLBAR", "pinned", str(self.tbPinned))
 
         # get container settings
         for k, v in self.widgetManager.group(self.Widgets.ToggleFrame).items():
+            gui.debug("Saving toggle %s", k)
             if "TOGGLES" not in settings.sections(): settings.add_section("TOGGLES")
             settings.set("TOGGLES", k, str(v.isShowing()))
 
         for k, v in self.widgetManager.group(self.Widgets.TabbedFrame).items():
+            gui.debug("Saving tab %s", k)
             if "TABS" not in settings.sections(): settings.add_section("TABS")
             settings.set("TABS", k, str(v.getSelectedTab()))
 
         for k, v in self.widgetManager.group(self.Widgets.PagedWindow).items():
+            gui.debug("Saving page %s", k)
             if "PAGES" not in settings.sections(): settings.add_section("PAGES")
             settings.set("PAGES", k, str(v.getPageNumber()))
 
         for k, v in self.widgetManager.group(self.Widgets.SubWindow).items():
             if "SUBWINDOWS" not in settings.sections(): settings.add_section("SUBWINDOWS")
-            settings.add_section(k)
-            settings.set("SUBWINDOWS", k, "True")
+            if v.shown:
+                settings.add_section(k)
+                settings.set("SUBWINDOWS", k, "True")
+            else:
+                settings.set("SUBWINDOWS", k, "False")
 
         for k, v in self.widgetManager.group(self.Widgets.SubWindow).items():
-            settings.set(k, "geometry", v.geometry())
-            settings.set(k, "state", v.state())
+            if v.shown:
+                settings.set(k, "geometry", v.geometry())
+                settings.set(k, "state", v.state())
+                gui.debug("Saving subWindow %s: geom=%s, state=%s", k, v.geometry(), v.state())
 
         for k, v in self.externalSettings.items():
             if "EXTERNAL" not in settings.sections(): settings.add_section("EXTERNAL")
@@ -1881,12 +1890,22 @@ class gui(object):
 
         if "SUBWINDOWS" in settings.sections():
             for k in settings.options("SUBWINDOWS"):
-                tl = self.widgetManager.get(self.Widgets.SubWindow, k)
-                tl.geometry(settings.get(k, "geometry"))
-                tl.state(settings.get(k, "state"))
-                if hideMain and tl.state() == "normal":
-                    self.startWindow = k
-                tl.locationSet = True
+                if settings.getboolean("SUBWINDOWS", k):
+                    gui.debug("Loading settings for %s", k)
+                    tl = self.widgetManager.get(self.Widgets.SubWindow, k)
+                    try:
+                        tl.geometry(settings.get(k, "geometry"))
+                        gui.debug("Set geom=%s", tl.geometry())
+                    except: pass # no geom found
+                    try:
+                        tl.state(settings.get(k, "state"))
+                        gui.debug("Set state=%s", tl.state())
+                        if hideMain and tl.state() == "normal":
+                            self.startWindow = k
+                        tl.locationSet = True
+                    except: pass # no state found
+                else:
+                    gui.debug("Skipping settings for %s", k)
 
         if "EXTERNAL" in settings.sections():
             for k in settings.options("EXTERNAL"):
@@ -4350,10 +4369,12 @@ class gui(object):
 
     def startSubWindow(self, name, title=None, modal=False, blocking=False, transient=False, grouped=True):
         self.widgetManager.verify(self.Widgets.SubWindow, name)
+        gui.debug("Starting subWindow %s", name)
         if title is None:
             title = name
         top = SubWindow()
         top.withdraw()
+        top.shown = False
         top.locationSet = False
         top.modal = modal
         top.blocking = blocking
@@ -4396,21 +4417,27 @@ class gui(object):
     # functions to show/hide/destroy SubWindows
     def showSubWindow(self, title):
         tl = self.widgetManager.get(self.Widgets.SubWindow, title)
+        gui.debug("Showing subWindow %s", title)
+        tl.shown = True
         if not tl.locationSet:
             self.CENTER(tl)
             tl.locationSet = True
+        else:
+            gui.debug("Using previous position")
         tl.deiconify()
         tl.config(takefocus=True)
 
         # stop other windows receiving events
         if tl.modal:
             tl.grab_set()
+            gui.debug("%s set to MODAL", title)
 
         tl.focus_set()
         self.__bringToFront(tl)
 
         # block here - wait for the subwindow to close
         if tl.blocking and tl.killLab is None:
+            gui.debug("%s set to BLOCK", title)
             tl.killLab = Label(tl)
             self.topLevel.wait_window(tl.killLab)
 
