@@ -3119,9 +3119,17 @@ class gui(object):
         item = self.widgetManager.remove(kind, name)
 
     def removeAllWidgets(self):
-        for child in self.containerStack[0]['container'].winfo_children():
+        container = self.containerStack[0]['container']
+        for child in container.winfo_children():
             child.destroy()
-        self.__configBg(self.containerStack[0]['container'])
+        self.__configBg(container)
+
+        # reset the grid measurements
+        for i in range(Grid.grid_size(container)[0]):
+            container.columnconfigure(i, minsize=0, weight=0, pad=0)
+        for i in range(Grid.grid_size(container)[1]):
+            container.rowconfigure(i, minsize=0, weight=0, pad=0)
+
         self.__initVars()
         self.setGeom(None)
         self.containerStack[0]['emptyRow'] = 0
