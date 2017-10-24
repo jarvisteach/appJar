@@ -28,6 +28,9 @@ app.addButtons(["one", "two"], launch)
 app.go()
 ```
 
+Definition of SubWindows happens in the same part of the code as the rest of the GUI, but they default to being hidden.  
+Both SubWindows and the main window can be *shown* and *hidden* - this is usually done through button presses.  
+
 #### Start/Stop Sub Windows  
 * `.startSubwindow(name, title=None, modal=False, transient=False, blocking=False)` & `.stopSubwindow()`  
     Used to start and stop defining a *SubWindow*  
@@ -46,13 +49,28 @@ app.go()
     If you set a *SubWindow* as the ```startWindow``` *appJar* will start-up showing the named *SubWindow*.  
     The main window will be minimized.  
 
+```
+def login(btn):
+    app.hideSubWindow("Login")
+    app.show()
+
+app.startSubWindow("Login")
+app.addLabel("l2", "Login Window")
+app.addButton("SUBMIT", login)
+app.stopSubWindow()
+
+app.go(startWindow="Login")
+```
+
 * `.showSubWindow(title)`  
     Will cause the specified *SubWindow* to be shown.  
     If it is set as *modal* the parent window will become uninteractive until the *SubWindow* is closed.  
 
-* `.hideSubWindow(title)`  
+* `.hideSubWindow(title, useStopFunction=False)` & `.confirmHideSubWindow(title)`  
     Used to hide the specified *SubWindow*.  
     This will not destroy the *SubWindow*, so it can be shown again later.  
+    By default it bypasses any `stopFunction`.  
+    Set `useStopFucntion` to be True or call `.confirmHideSubWindow()` to use the `stopFunction`.  
 
 * `.destroySubWindow(title)`  
     This will hide and permanently destroy the specified *SubWindow*.  

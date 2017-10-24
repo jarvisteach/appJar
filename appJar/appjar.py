@@ -1694,6 +1694,10 @@ class gui(object):
             self.menuBar.add_cascade(menu=self.widgetManager.get(self.Widgets.Menu, "WIN_SYS"))
         self.topLevel.config(menu=self.menuBar)
 
+        if startWindow is not None:
+            self.startWindow = startWindow
+            gui.debug("startWindow parameter: %s", startWindow)
+
         # pack it all in & make sure it's drawn
         self.appWindow.pack(fill=BOTH)
         if self.useSettings:
@@ -1708,17 +1712,14 @@ class gui(object):
             time.sleep(3)
             splash.destroy()
 
-        # override the user set parameter
-        # this overrides go with init
-        # init may be overriden by loadSettings
-        if self.startWindow != startWindow:
-            startWindow = self.startWindow
 
-        # bring to front
-        if startWindow is None:
+        # user hasn't specified anything
+        if self.startWindow is None:
+            gui.debug("Showing main window")
             self.__bringToFront()
             self.topLevel.deiconify()
         else:
+            gui.debug("hiding main window")
             self.hide()
             sw = self.widgetManager.get(self.Widgets.SubWindow, startWindow)
             if sw.blocking:
@@ -1727,11 +1728,7 @@ class gui(object):
             self.showSubWindow(startWindow)
 
         # required to make the gui reopen after minimising
-        if self.GET_PLATFORM() == self.MAC:
-            self.topLevel.createcommand(
-                'tk::mac::ReopenApplication',
-                self.__macReveal)
-
+        if self.GET_PLATFORM() == self.MAC:self.topLevel.createcommand('tk::mac::ReopenApplication', self.__macReveal)
 
         # start the call back & flash loops
         self.__poll()
@@ -1865,10 +1862,11 @@ class gui(object):
             self.__getTopLevel().minsize(self.topLevel.ms[0], self.topLevel.ms[1])
             self.debug("Set minsize to: %s", self.topLevel.ms)
 
-        hideMain = False
         if settings.has_option("GEOM", "state"):
             if settings.get('GEOM', "state") == "withdrawn":
-                hideMain = True
+                self.debug("Need to withdraw main window")
+                # already withdrawn - in case someone calls loadSettings
+                self.__getTopLevel().state("withdrawn")
 
         if settings.has_option("TOOLBAR", "pinned") and self.hasTb:
             tb = settings.getboolean("TOOLBAR", "pinned")
@@ -1895,15 +1893,14 @@ class gui(object):
                     tl = self.widgetManager.get(self.Widgets.SubWindow, k)
                     try:
                         tl.geometry(settings.get(k, "geometry"))
+                        tl.locationSet = True
                         gui.debug("Set geom=%s", tl.geometry())
                     except: pass # no geom found
-                    try:
-                        tl.state(settings.get(k, "state"))
-                        gui.debug("Set state=%s", tl.state())
-                        if hideMain and tl.state() == "normal":
-                            self.startWindow = k
-                        tl.locationSet = True
-                    except: pass # no state found
+                    if self.startWindow is None:
+                        try:
+                            tl.state(settings.get(k, "state"))
+                            gui.debug("Set state=%s", tl.state())
+                        except: pass # no state found
                 else:
                     gui.debug("Skipping settings for %s", k)
 
@@ -2380,7 +2377,7 @@ class gui(object):
 
                     # horrible hack to deal with weird ScrolledText
                     # winfo_children returns ScrolledText as a Frame
-                    # therefore can;t call some functions
+                    # therefore can't call some functions
                     # this gets the ScrolledText version
                     if gui.GET_WIDGET_TYPE(child) == "Frame":
                         for val in self.widgetManager.group(self.Widgets.TextArea).values():
@@ -4379,7 +4376,7 @@ class gui(object):
         top.modal = modal
         top.blocking = blocking
         top.title(title)
-        top.protocol("WM_DELETE_WINDOW", self.MAKE_FUNC(self.hideSubWindow, name))
+        top.protocol("WM_DELETE_WINDOW", self.MAKE_FUNC(self.confirmHideSubWindow, name))
         top.win = self
 
         # have this respond to topLevel window style events
@@ -4443,17 +4440,24 @@ class gui(object):
 
         return tl
 
-    def hideSubWindow(self, title):
+    def hideSubWindow(self, title, useStopFunction=False):
         tl = self.widgetManager.get(self.Widgets.SubWindow, title)
         theFunc = tl.stopFunction
-        if theFunc is None or theFunc():
-            tl.withdraw()
-            if tl.blocking and tl.killLab is not None:
-                tl.killLab.destroy()
-                tl.killLab = None
-            if tl.modal:
-                tl.grab_release()
-                self.topLevel.focus_set()
+
+        if useStopFunction:
+            if theFunc is not None and not theFunc():
+                return
+
+        tl.withdraw()
+        if tl.blocking and tl.killLab is not None:
+            tl.killLab.destroy()
+            tl.killLab = None
+        if tl.modal:
+            tl.grab_release()
+            self.topLevel.focus_set()
+
+    def confirmHideSubWindow(self, title):
+        self.hideSubWindow(title, True)
 
     def destroySubWindow(self, title):
         tl = self.widgetManager.get(self.Widgets.SubWindow, title)
