@@ -10,8 +10,12 @@ def press(btn):
         val = app.integerBox("a", "a")
     elif btn == "FLOAT":
         val = app.floatBox("a", "a")
+    elif btn == "TEXT":
+        val = app.textBox("a", "a")
+    elif btn == "NUM":
+        val = app.numBox("a", "a")
     print(type(val), val)
 
 app = gui()
-app.addButtons(["STRING", "INTEGER", "FLOAT"], press)
+app.addButtons(["STRING", "INTEGER", "FLOAT", "TEXT", "NUM"], press)
 app.go()

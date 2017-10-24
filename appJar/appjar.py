@@ -8932,6 +8932,7 @@ class gui(object):
             return col[1]
 
     def textBox(self, title="Text Box", question="Enter text", defaultValue=None, parent=None):
+#        self.warn("Deprecated dialog - textBox. Please use stringBox instead.")
         self.topLevel.update_idletasks()
         if defaultValue is not None:
             defaultVar = StringVar(self.topLevel)
@@ -8949,6 +8950,7 @@ class gui(object):
         return self.numBox(title, question, parent)
 
     def numBox(self, title="Number Box", question="Enter a number", parent=None):
+#        self.warn("Deprecated dialog - numBox. Please use integerBox or floatBox instead.")
         self.topLevel.update_idletasks()
         if parent is None:
             parent = self.topLevel
