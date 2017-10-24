@@ -1996,7 +1996,7 @@ class gui(object):
         if Queue is False:
             gui.warn("Unable to queueFunction - threading not possible.")
         else:
-            t = Thread(target=func, *args, **kwargs)
+            t = Thread(group=None, target=func, name=None, args=args, kwargs=kwargs)
             t.daemon = True
             t.start()
 

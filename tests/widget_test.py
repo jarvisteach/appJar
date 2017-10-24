@@ -1538,7 +1538,7 @@ def test_events():
     print(" >> not implemented...")
     #print("\t >> all tests complete")
 
-def run_events():
+def run_events(param1, bbb):
 
     time.sleep(1)
     assert app.getLabel("test_threads") == "full"
@@ -2596,7 +2596,7 @@ def test_gui(btn=None):
     global doStop
     if doStop == 0:
         test_pop_ups()
-        app.thread(run_events)
+        app.thread(run_events, "a", bbb="bbb")
         app.setEntryFocus("e1")
         app.thread(dismissEditMenu)
         app.thread(test_rightClick)
