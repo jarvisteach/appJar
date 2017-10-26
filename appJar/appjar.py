@@ -154,44 +154,79 @@ class gui(object):
         return pathString
 
     @staticmethod
+    def GET_DIMS(container):
+        dims = {}
+        # get the apps requested width & height
+        dims["r_width"] = container.winfo_reqwidth()
+        dims["r_height"] = container.winfo_reqheight()
+
+        # get the current width & height
+        dims["w_width"] = container.winfo_width()
+        dims["w_height"] = container.winfo_height()
+
+        # get the window's width & height
+        dims["s_width"] = container.winfo_screenwidth()
+        dims["s_height"] = container.winfo_screenheight()
+
+        # determine best geom for OS
+        # on MAC & LINUX, w_width/w_height always 1
+        # on WIN, w_height is bigger then r_height - leaving empty space
+        if gui.GET_PLATFORM() in [gui.MAC, gui.LINUX]:
+            dims["b_width"] = dims["r_width"]
+            dims["b_height"] = dims["r_height"]
+        else:
+            dims["b_height"] = min(dims["r_height"], dims["w_height"])
+            dims["b_width"] = min(dims["r_width"], dims["w_width"])
+            dims["h_height"] = max(dims["r_height"], dims["w_height"])
+            dims["h_width"] = max(dims["r_width"], dims["w_width"])
+
+        return dims
+
+    @staticmethod
+    def SPLIT_GEOM(geom):
+        geom = geom.lower().split("x")
+        width = int(geom[0])
+        height = int(geom[1].split("+")[0])
+        try:
+            x = int(geom[1].split("+")[1])
+            y = int(geom[1].split("+")[2])
+        except IndexError:
+            x = y = -1
+
+        return (width, height), (x, y)
+
+    @staticmethod
     def CENTER(win, up=0):
         """ Centers a tkinter window
         http://stackoverflow.com/questions/3352918/
         :param win: the root or Toplevel window to center
         """
-        scr_width = win.winfo_screenwidth()
-        scr_height = win.winfo_screenheight()
+        dims = gui.GET_DIMS(win)
 
         if gui.GET_PLATFORM() != gui.LINUX:
             trans = win.attributes('-alpha')
             win.attributes('-alpha', 0.0)
 
         win.update_idletasks()
-        width = win.winfo_reqwidth()
-        height = win.winfo_reqheight()
 
         if hasattr(win, 'geom') and win.geom is not None:
-            geom = win.geom.split("x")
-            if len(geom) == 2:
-                width=int(geom[0])
-                height = int(geom[1].split("+")[0])
+            size, loc = gui.SPLIT_GEOM(win.geom)
+        else:
+            size = (dims["r_width"], dims["r_height"])
 
         outer_frame_width = win.winfo_rootx() - win.winfo_x()
         titlebar_height = win.winfo_rooty() - win.winfo_y()
 
-        actual_width = width + (outer_frame_width * 2)
-        actual_height = height + titlebar_height + outer_frame_width
+        actual_width = size[0] + (outer_frame_width * 2)
+        actual_height = size[1] + titlebar_height + outer_frame_width
 
-        x = (scr_width // 2) - (actual_width // 2)
-        y = (scr_height // 2) - (actual_height // 2)
+        x = (dims["s_width"] // 2) - (actual_width // 2)
+        y = (dims["s_height"] // 2) - (actual_height // 2)
 
         # move the window up a bit if requested
-        if up < y:
-            y = y - up
-        else:
-            y = 0
+        y = y - up if up < y else 0
 
-        gui.debug("Screen: %sx%s. Requested: %sx%s. Location: %s, %s", scr_width, scr_height, width, height, x, y)
+        gui.debug("Screen: %sx%s. Requested: %sx%s. Location: %s, %s", dims["s_width"], dims["s_height"], size[0], size[1], x, y)
         win.geometry("+%d+%d" % (x, y))
 
         if gui.GET_PLATFORM() != gui.LINUX:
@@ -478,7 +513,6 @@ class gui(object):
         self.topLevel.protocol("WM_DELETE_WINDOW", self.stop)
         # temporarily hide it
         self.topLevel.withdraw()
-        self.topLevel.locationSet = False
 
         # used to keep a handle on the last pop-up dialog
         # allows the dialog to be closed remotely
@@ -500,9 +534,11 @@ class gui(object):
         # configure the geometry of the window
         self.topLevel.escapeBindId = None  # used to exit fullscreen
         self.topLevel.stopFunction = None  # used to exit fullscreen
-        self.setGeom(geom)
 
         # set the resize status - default to True
+        self.topLevel.locationSet = False
+        self.topLevel.ignoreSettings = False
+        self.setSize(geom)
         self.setResizable(True)
 
         # set up fonts
@@ -1813,16 +1849,14 @@ class gui(object):
         for k, v in self.widgetManager.group(self.Widgets.SubWindow).items():
             if "SUBWINDOWS" not in settings.sections(): settings.add_section("SUBWINDOWS")
             if v.shown:
-                settings.add_section(k)
                 settings.set("SUBWINDOWS", k, "True")
-            else:
-                settings.set("SUBWINDOWS", k, "False")
-
-        for k, v in self.widgetManager.group(self.Widgets.SubWindow).items():
-            if v.shown:
+                settings.add_section(k)
                 settings.set(k, "geometry", v.geometry())
                 settings.set(k, "state", v.state())
                 gui.debug("Saving subWindow %s: geom=%s, state=%s", k, v.geometry(), v.state())
+            else:
+                settings.set("SUBWINDOWS", k, "False")
+                gui.debug("Skipping subwindow: %s", k)
 
         for k, v in self.externalSettings.items():
             if "EXTERNAL" not in settings.sections(): settings.add_section("EXTERNAL")
@@ -1852,7 +1886,14 @@ class gui(object):
 
         if settings.has_option("GEOM", "geometry"):
             geom = settings.get("GEOM", "geometry")
-            self.setGeom(geom, move=False)
+            if not self.topLevel.ignoreSettings:
+                size, loc = gui.SPLIT_GEOM(geom)
+                self.debug("Setting topLevel geom: %s as size: %s, loc: %s", geom, size, loc)
+                self.setSize(*size)
+                if loc[0] != -1:
+                    self.setLocation(*loc)
+            else:
+                self.debug("Ignoring topLevel geom: %s", geom)
 
         # not finished
         if settings.has_option("GEOM", "fullscreen"):
@@ -1865,10 +1906,9 @@ class gui(object):
             self.debug("Set minsize to: %s", self.topLevel.ms)
 
         if settings.has_option("GEOM", "state"):
-            if settings.get('GEOM', "state") == "withdrawn":
-                self.debug("Need to withdraw main window")
-                # already withdrawn - in case someone calls loadSettings
-                self.__getTopLevel().state("withdrawn")
+            state = settings.get('GEOM', "state")
+            if state in ["withdrawn", "zoomed"]:
+                self.__getTopLevel().state(state)
 
         if settings.has_option("TOOLBAR", "pinned") and self.hasTb:
             tb = settings.getboolean("TOOLBAR", "pinned")
@@ -1896,6 +1936,7 @@ class gui(object):
                     try:
                         tl.geometry(settings.get(k, "geometry"))
                         tl.locationSet = True
+                        tl.shown = True
                         gui.debug("Set geom=%s", tl.geometry())
                     except: pass # no geom found
                     if self.startWindow is None:
@@ -2068,87 +2109,76 @@ class gui(object):
     def __grabFocus(self, e):
         e.widget.focus_set()
 
+
 #####################################
 # FUNCTIONS for configuring GUI settings
 #####################################
     # set a minimum size
     def __dimensionWindow(self):
         self.topLevel.update_idletasks()
-        if self.__getTopLevel().geom != "fullscreen":
-            # ISSUES HERE:
-            # on MAC & LINUX, w_width/w_height always 1
-            # on WIN, w_height is bigger then r_height - leaving empty space
+        container = self.__getTopLevel()
 
+        if container.geom != "fullscreen":
             # show the tb if needed
             toggleTb = False
             if self.hasTb and not self.tbPinned:
                 self.__toggletb()
                 toggleTb = True
 
-            # get the apps requested width & height
-            r_width = self.__getTopLevel().winfo_reqwidth()
-            r_height = self.__getTopLevel().winfo_reqheight()
-
-            # get the current width & height
-            w_width = self.__getTopLevel().winfo_width()
-            w_height = self.__getTopLevel().winfo_height()
-
-            # get the window's width & height
-            m_width = self.topLevel.winfo_screenwidth()
-            m_height = self.topLevel.winfo_screenheight()
-
-            # determine best geom for OS
-            if self.platform in [self.MAC, self.LINUX]:
-                b_width = r_width
-                b_height = r_height
-            elif self.platform == self.WINDOWS:
-                b_height = min(r_height, w_height)
-                b_width = min(r_width, w_width)
-                h_height = max(r_height, w_height)
-                h_width = max(r_width, w_width)
+            dims = gui.GET_DIMS(container)
 
             # if a geom has not ben set
-            if self.__getTopLevel().geom is None:
-                width = b_width
-                height = b_height
+            if container.geom is None:
+                width = dims["b_width"]
+                height = dims["b_height"]
                 # store it in the app's geom
-                self.__getTopLevel().geom = str(width) + "x" + str(height)
+                container.geom = str(width) + "x" + str(height)
             else:
                 # now split the app's geom
-                geom = self.__getTopLevel().geom.lower().split("x")
+                geom = container.geom.lower().split("x")
                 width = int(geom[0])
                 height = int(geom[1].split("+")[0])
 
-                # warn the user that their geom is not big enough
-                if width < b_width or height < b_height:
-                    self.warn("Specified dimensions (%s) less than requested dimensions (%s, %s)", self.__getTopLevel().geom, b_width, b_height)
+            # warn the user that their geom is not big enough
+            if width < dims["b_width"] or height < dims["b_height"]:
+                self.warn("Specified dimensions (%s) less than requested dimensions (%s, %s)", container.geom, dims["b_width"], dims["b_height"])
 
             # and set it as the minimum size
             if not hasattr(self.topLevel, 'ms'):
-                self.__getTopLevel().minsize(width, height)
+                container.minsize(width, height)
 
             # remove the tb again if needed
             if toggleTb:
                 self.__toggletb()
 
             # if window hasn't been positioned by the user, put in the middle
-            if not self.__getTopLevel().locationSet:
-                self.CENTER(self.__getTopLevel())
+            if not container.locationSet:
+                self.CENTER(container)
 
     # called to update screen geometry
-    def setGeometry(self, geom, height=None, move=True):
-        self.setGeom(geom, height, move)
+    def setGeometry(self, geom, height=None):
+        gui.warn("Deprecared function: setGeometry(). Please use setSize()")
+        self.setSize(geom, height, move)
 
-    def setGeom(self, geom, height=None, move=True):
+    def setGeom(self, geom, height=None):
+        gui.warn("Deprecared function: setGeometry(). Please use setSize()")
+        self.setSize(geom, height)
+
+    def setSize(self, geom, height=None, ignoreSettings=None):
         if height is not None:
-            geom = str(geom) + "x" + str(height)
+            size = str(geom) + "x" + str(height)
+        elif geom is not None:
+            size, loc = gui.SPLIT_GEOM(geom)
+            size = str(size[0]) + "x" + str(size[1])
+        else:
+            size = None
+
         container = self.__getTopLevel()
-        container.geom = geom
+        container.geom = size
+        if ignoreSettings is not None:
+            container.ignoreSettings = ignoreSettings
 
-        if not move: 
-            container.locationSet = True
-
-        gui.debug("Setting geom: %s", container.geom)
+        gui.debug("Setting size: %s", container.geom)
 
         if container.geom == "fullscreen":
             self.setFullscreen()
@@ -2158,11 +2188,13 @@ class gui(object):
                 container.geometry(container.geom)
 
     # called to set screen position
-    def setLocation(self, x, y=None):
-
+    def setLocation(self, x, y=None, ignoreSettings=None):
+        container = self.__getTopLevel()
+        if ignoreSettings is not None:
+            container.ignoreSettings = ignoreSettings
         if y is None:
             self.debug("Set location called with no params - CENTERING")
-            self.CENTER(self.__getTopLevel())
+            self.CENTER(container)
         else:
             # get the window's width & height
             m_width = self.topLevel.winfo_screenwidth()
@@ -2173,8 +2205,8 @@ class gui(object):
                 return
 
             self.debug("Setting location to: %s, %s", x, y)
-            self.__getTopLevel().geometry("+%d+%d" % (x, y))
-        self.__getTopLevel().locationSet = True
+            container.geometry("+%d+%d" % (x, y))
+        container.locationSet = True
 
     # called to make sure this window is on top
     def __bringToFront(self, win=None):
@@ -3149,7 +3181,7 @@ class gui(object):
             container.rowconfigure(i, minsize=0, weight=0, pad=0)
 
         self.__initVars()
-        self.setGeom(None)
+        self.setSize(None)
         self.containerStack[0]['emptyRow'] = 0
 
 #####################################
@@ -4414,7 +4446,7 @@ class gui(object):
         tl.locationSet = True
 
     # functions to show/hide/destroy SubWindows
-    def showSubWindow(self, title):
+    def showSubWindow(self, title, follow=False):
         tl = self.widgetManager.get(self.Widgets.SubWindow, title)
         gui.debug("Showing subWindow %s", title)
         tl.shown = True
