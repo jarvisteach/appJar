@@ -155,6 +155,7 @@ class gui(object):
 
     @staticmethod
     def GET_DIMS(container):
+        container.update()
         dims = {}
         # get the apps requested width & height
         dims["r_width"] = container.winfo_reqwidth()
@@ -201,24 +202,18 @@ class gui(object):
         http://stackoverflow.com/questions/3352918/
         :param win: the root or Toplevel window to center
         """
-        dims = gui.GET_DIMS(win)
-
         if gui.GET_PLATFORM() != gui.LINUX:
             trans = win.attributes('-alpha')
             win.attributes('-alpha', 0.0)
 
         win.update_idletasks()
 
-        if hasattr(win, 'geom') and win.geom is not None:
-            size, loc = gui.SPLIT_GEOM(win.geom)
-        else:
-            size = (dims["r_width"], dims["r_height"])
-
         outer_frame_width = win.winfo_rootx() - win.winfo_x()
         titlebar_height = win.winfo_rooty() - win.winfo_y()
 
-        actual_width = size[0] + (outer_frame_width * 2)
-        actual_height = size[1] + titlebar_height + outer_frame_width
+        dims = gui.GET_DIMS(win)
+        actual_width = dims["r_width"] + (outer_frame_width * 2)
+        actual_height = dims["r_height"] + titlebar_height + outer_frame_width
 
         x = (dims["s_width"] // 2) - (actual_width // 2)
         y = (dims["s_height"] // 2) - (actual_height // 2)
@@ -226,7 +221,7 @@ class gui(object):
         # move the window up a bit if requested
         y = y - up if up < y else 0
 
-        gui.debug("Screen: %sx%s. Requested: %sx%s. Location: %s, %s", dims["s_width"], dims["s_height"], size[0], size[1], x, y)
+        gui.debug("Screen: %sx%s. Requested: %sx%s. Location: %s, %s", dims["s_width"], dims["s_height"], dims["r_width"], dims["r_height"], x, y)
         win.geometry("+%d+%d" % (x, y))
 
         if gui.GET_PLATFORM() != gui.LINUX:
@@ -538,7 +533,8 @@ class gui(object):
         # set the resize status - default to True
         self.topLevel.locationSet = False
         self.topLevel.ignoreSettings = False
-        self.setSize(geom)
+        self.topLevel.isFullscreen = False # records if we're in fullscreen - stops hideTitle from breaking
+        if geom is not None: self.setSize(geom)
         self.setResizable(True)
 
         # set up fonts
@@ -1244,7 +1240,6 @@ class gui(object):
         self.labWidth = 1 # minimum label width for label combos
         self.doFlash = False # set up flash variable
         self.hasTitleBar = True # used to hide/show title bar
-        self.isFullscreen = False # records if we're in fullscreen - stops hideTitle from breaking
         self.splashConfig = None # splash screen?
         self.winIcon = None # store the path to any icon
         self.dnd = None # the dnd manager
@@ -1742,14 +1737,16 @@ class gui(object):
             self.loadSettings(self.settingsFile)
         self.topLevel.update_idletasks()
 
-        # check geom is set and set a minimum size, also positions the window
-        # if necessary
-        self.__dimensionWindow()
+        # check geom is set and set a minimum size, also positions the window if necessary
+        if not self.topLevel.locationSet:
+            self.CENTER(self.topLevel)
+
+        if not hasattr(self.topLevel, 'ms'):
+            self.setMinSize()
 
         if self.splashConfig is not None:
             time.sleep(3)
             splash.destroy()
-
 
         # user hasn't specified anything
         if self.startWindow is None:
@@ -1817,7 +1814,7 @@ class gui(object):
         settings.add_section('GEOM')
         geom = self.topLevel.geometry()
         ms = self.topLevel.minsize()
-        ms = str(ms[0])+","+str(ms[1])
+        ms = "%s,%s" % (ms[0], ms[1])
         settings.set('GEOM', 'geometry', geom)
         self.debug("Save geom as: %s", geom)
         settings.set('GEOM', 'minsize', ms)
@@ -1849,6 +1846,7 @@ class gui(object):
         for k, v in self.widgetManager.group(self.Widgets.SubWindow).items():
             if "SUBWINDOWS" not in settings.sections(): settings.add_section("SUBWINDOWS")
             if v.shown:
+                v.update()
                 settings.set("SUBWINDOWS", k, "True")
                 settings.add_section(k)
                 settings.set(k, "geometry", v.geometry())
@@ -1889,7 +1887,8 @@ class gui(object):
             if not self.topLevel.ignoreSettings:
                 size, loc = gui.SPLIT_GEOM(geom)
                 self.debug("Setting topLevel geom: %s as size: %s, loc: %s", geom, size, loc)
-                self.setSize(*size)
+                if size[0] > 1:
+                    self.setSize(*size)
                 if loc[0] != -1:
                     self.setLocation(*loc)
             else:
@@ -1899,6 +1898,8 @@ class gui(object):
         if settings.has_option("GEOM", "fullscreen"):
             fs = settings.getboolean('GEOM', "fullscreen")
             self.debug("Set fullscreen to: %s", fs)
+            if fs: self.setFullscreen()
+            else: self.exitFullscreen()
 
         if settings.has_option("GEOM", "minsize"):
             self.topLevel.ms = settings.get('GEOM', "minsize").split(",")
@@ -1926,19 +1927,31 @@ class gui(object):
 
         if "PAGES" in settings.sections():
             for k in settings.options("PAGES"):
-                self.setPagedWindowPage(k, settings.get("PAGES", k))
+                self.setPagedWindowPage(k, settings.getint("PAGES", k))
 
         if "SUBWINDOWS" in settings.sections():
             for k in settings.options("SUBWINDOWS"):
                 if settings.getboolean("SUBWINDOWS", k):
                     gui.debug("Loading settings for %s", k)
                     tl = self.widgetManager.get(self.Widgets.SubWindow, k)
+                    # process the geom settings
                     try:
-                        tl.geometry(settings.get(k, "geometry"))
-                        tl.locationSet = True
-                        tl.shown = True
-                        gui.debug("Set geom=%s", tl.geometry())
+                        geom = settings.get(k, "geometry")
+                        size, loc = gui.SPLIT_GEOM(geom)
+                        if size[0] > 1:
+                            gui.debug("Setting size: %s", size)
+                            tl.geometry("%sx%s" % (size[0], size[1]))
+                            tl.shown = True
+                        else:
+                            gui.debug("Skipping size: %s", size)
+                        if loc[0] > -1:
+                            gui.debug("Setting location: %s", loc)
+                            self.setSubWindowLocation(k, *loc)
+                        else:
+                            gui.debug("Skipping location: %s", loc)
                     except: pass # no geom found
+
+                    # set the state - if there' no startWindow
                     if self.startWindow is None:
                         try:
                             tl.state(settings.get(k, "state"))
@@ -2113,79 +2126,54 @@ class gui(object):
 #####################################
 # FUNCTIONS for configuring GUI settings
 #####################################
-    # set a minimum size
-    def __dimensionWindow(self):
-        self.topLevel.update_idletasks()
-        container = self.__getTopLevel()
-
-        if container.geom != "fullscreen":
-            # show the tb if needed
-            toggleTb = False
-            if self.hasTb and not self.tbPinned:
-                self.__toggletb()
-                toggleTb = True
-
-            dims = gui.GET_DIMS(container)
-
-            # if a geom has not ben set
-            if container.geom is None:
-                width = dims["b_width"]
-                height = dims["b_height"]
-                # store it in the app's geom
-                container.geom = str(width) + "x" + str(height)
-            else:
-                # now split the app's geom
-                geom = container.geom.lower().split("x")
-                width = int(geom[0])
-                height = int(geom[1].split("+")[0])
-
-            # warn the user that their geom is not big enough
-            if width < dims["b_width"] or height < dims["b_height"]:
-                self.warn("Specified dimensions (%s) less than requested dimensions (%s, %s)", container.geom, dims["b_width"], dims["b_height"])
-
-            # and set it as the minimum size
-            if not hasattr(self.topLevel, 'ms'):
-                container.minsize(width, height)
-
-            # remove the tb again if needed
-            if toggleTb:
-                self.__toggletb()
-
-            # if window hasn't been positioned by the user, put in the middle
-            if not container.locationSet:
-                self.CENTER(container)
 
     # called to update screen geometry
     def setGeometry(self, geom, height=None):
         gui.warn("Deprecared function: setGeometry(). Please use setSize()")
-        self.setSize(geom, height, move)
+        self.setSize(geom, height)
 
     def setGeom(self, geom, height=None):
         gui.warn("Deprecared function: setGeometry(). Please use setSize()")
         self.setSize(geom, height)
 
     def setSize(self, geom, height=None, ignoreSettings=None):
-        if height is not None:
-            size = str(geom) + "x" + str(height)
-        elif geom is not None:
-            size, loc = gui.SPLIT_GEOM(geom)
-            size = str(size[0]) + "x" + str(size[1])
-        else:
-            size = None
-
         container = self.__getTopLevel()
-        container.geom = size
         if ignoreSettings is not None:
             container.ignoreSettings = ignoreSettings
 
-        gui.debug("Setting size: %s", container.geom)
-
-        if container.geom == "fullscreen":
+        if geom == "fullscreen":
             self.setFullscreen()
         else:
+            if geom is None:
+                size = None
+            else:
+                if height is not None:
+                    geom = "%sx%s" % (geom, height)
+
+                dims = gui.GET_DIMS(container)
+                geom, loc = gui.SPLIT_GEOM(geom)
+                size = str(geom[0]) + "x" + str(geom[1])
+
+                gui.debug("Setting size: %s", size)
+                # warn the user that their geom is not big enough
+                if geom[0] < dims["b_width"] or geom[1] < dims["b_height"]:
+                    self.warn("Specified dimensions (%s, %s) less than requested dimensions (%s, %s)",
+                            geom[0], geom[1], dims["b_width"], dims["b_height"])
+
+                # and set it as the minimum size
+                if not hasattr(container, 'ms'):
+                    self.setMinSize(container, geom)
+
             self.exitFullscreen()
-            if container.geom is not None:
-                container.geometry(container.geom)
+            if size is not None:
+                container.geometry(size)
+
+    def setMinSize(self, container=None, size=None):
+        if container is None: container = self.topLevel
+        if size is None: size = (gui.GET_DIMS(container)["r_width"], gui.GET_DIMS(container)["r_height"])
+        container.ms = size
+        gui.debug("Minsize set to: %s", size)
+        container.minsize(size[0], size[1])
 
     # called to set screen position
     def setLocation(self, x, y=None, ignoreSettings=None):
@@ -2225,8 +2213,8 @@ class gui(object):
             win.lift()
 
     def setFullscreen(self, container=None):
-        if not self.isFullscreen:
-            self.isFullscreen = True
+        if not self.topLevel.isFullscreen:
+            self.topLevel.isFullscreen = True
             if container is None:
                 container = self.__getTopLevel()
             container.attributes('-fullscreen', True)
@@ -2236,8 +2224,8 @@ class gui(object):
 
     # function to turn off fullscreen mode
     def exitFullscreen(self, container=None):
-        if self.isFullscreen:
-            self.isFullscreen = False
+        if self.topLevel.isFullscreen:
+            self.topLevel.isFullscreen = False
             if container is None:
                 container = self.__getTopLevel()
             container.attributes('-fullscreen', False)
@@ -9259,7 +9247,7 @@ class DualMeter(SplitMeter):
     def set(self, value=[0,0], text=None):
         if value is None:
             value=[0,0]
-        if not isinstance(value, list):
+        if not hasattr(value, "__iter__"):
             raise Exception("DualMeter.set() requires a list of two arguments")
 
         # make copy, and reduce to decimal
@@ -11741,7 +11729,7 @@ class SplashScreen(Toplevel, object):
 
         width = str(self.winfo_screenwidth())
         height = str(self.winfo_screenheight())
-        self.geometry(width+"x"+height)
+        self.geometry("%sx%s" % (width, height))
         self.config(bg=fill)
 
         self.attributes("-alpha", 0.95)

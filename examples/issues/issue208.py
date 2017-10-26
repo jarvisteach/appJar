@@ -11,8 +11,8 @@ def press(btn):
         app.setLocation(90,90)
 
 with gui("Main Window") as app:
-    app.setLocation(300,300)#, ignoreSettings=True)
-    app.setSize(150,150)
+#    app.setLocation(300,300)#, ignoreSettings=True)
+ #   app.setSize(150,150)
     app.addGrip()
 
     app.addLabel("title", "Main Window")
