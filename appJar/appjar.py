@@ -671,7 +671,7 @@ class gui(object):
         try:
             import ttk
         except:
-            try: 
+            try:
                 from tkinter import ttk
             except:
                 gui.error("ttk not available")
@@ -1580,7 +1580,7 @@ class gui(object):
     #########################
     ### Stuff for logging
     #########################
-                
+
     @staticmethod
     def setLogFile(fileName):
         # Remove all handlers associated with the root logger object.
@@ -1875,7 +1875,7 @@ class gui(object):
         if not ConfigParser:
             self.error("Unable to save config file - no configparser")
             return
-        
+
         self.useSettings = useSettings
 
         settings = ConfigParser()
@@ -2071,6 +2071,37 @@ class gui(object):
             t = Thread(group=None, target=func, name=None, args=args, kwargs=kwargs)
             t.daemon = True
             t.start()
+
+    def threadCallback(self, func, callback, *args, **kwargs):
+        """Run a given method in a new thread with passed arguments.
+           When func completes call the callback with the result.
+
+           This is the foreground method!
+
+           :param func: Method to receive result from.
+           :param callback: Method that recevices the data.
+           :param args: Positional arguments for func.
+           :param kwargs: Keyword args for func.
+        """
+        if not callable(func) or not callable(callback):
+            gui.error("Function or callback method isn't callable!")
+            return
+        self.thread(self.__threadCallback, func, callback, *args, **kwargs)
+
+    def __threadCallback(self, func, callback, *args, **kwargs):
+        """Run a given method in a new thread with passed arguments.
+           When func completes call the callback with the result.
+
+           This is the background method (to be threaded)!
+
+           :param func: Method to receive result from.
+           :param callback: Method that receives the data.
+           :param args: Positional arguments for func.
+           :param kwargs: Keyword args for func.
+        """
+        result = func(**args, **kwargs)
+        return callback(result)
+
 
     # internal function, called by 'after' function, after sleeping
     def __poll(self):
@@ -3182,7 +3213,7 @@ class gui(object):
         # make sure we get a function
         if not callable(funcName) and not hasattr(funcName, '__call__'):
             raise Exception("Invalid function: " + str(funcName))
-        
+
         if discard:
             return lambda *args: funcName(param)
         else:
@@ -3232,7 +3263,7 @@ class gui(object):
         #      colspan = self.containerStack[-1]['colCount']
 
         return row, column, colspan, rowspan
-        
+
     @staticmethod
     def GET_WIDGET_TYPE(widget):
         return widget.__class__.__name__
@@ -3326,7 +3357,7 @@ class gui(object):
     def SET_WIDGET_BG(widget, bg, external=False, tint=False):
 
         if bg is None: # ignore empty colours
-            return  
+            return
 
         widgType = gui.GET_WIDGET_TYPE(widget)
         isDarwin = gui.GET_PLATFORM() == gui.MAC
@@ -5287,7 +5318,7 @@ class gui(object):
     def saveGoogleMap(self, title, fileLocation):
         gMap = self.widgetManager.get(self.Widgets.Map, title)
         return gMap.saveTile(fileLocation)
-        
+
 
 #####################################
 # FUNCTION for matplotlib
@@ -5315,7 +5346,7 @@ class gui(object):
                 fig.set_size_inches(width,height,forward=True)
 
             canvas = FigureCanvasTkAgg(fig, self.getContainer())
-            canvas._tkcanvas.config(background="#c0c0c0", borderwidth=0, highlightthickness=0) 
+            canvas._tkcanvas.config(background="#c0c0c0", borderwidth=0, highlightthickness=0)
             canvas.fig = fig
             canvas.show()
     #        canvas.get_tk_widget().pack(side=TOP, fill=BOTH, expand=1)
@@ -6510,7 +6541,7 @@ class gui(object):
             if val in item:
                 positions.append(pos)
         return positions
- 
+
     def setListItemBg(self, title, item, col):
         for pos in self.__getListPositions(title, item):
             self.setListItemAtPosBg(title, pos, col)
@@ -8006,7 +8037,7 @@ class gui(object):
             self.pinBut = Label(self.tb)
         except:
             return
-            
+
         # if image found, then set up the label
         if self.pinBut is not None:
             self.pinBut.config(image=imgObj)#, compound=TOP, text="", justify=LEFT)
@@ -10771,7 +10802,7 @@ class ScrollPane(frameBase, object):
             canvas_width = event.width
             if canvas_width == 0:
                 canvas_width = self.canvas.winfo_width()
-                
+
             interior_width = self.interior.winfo_reqwidth()
             if canvas_width < interior_width: canvas_width = interior_width
             self.canvas.itemconfig(self.interior_id, width=canvas_width)
@@ -11231,7 +11262,7 @@ class SimpleGrid(ScrollPane):
         for row in data:
             if len(row) > self.numColumns:
                 self.numColumns = len(row)
-        
+
         # headings
         self.actionHeading = actionHeading
         self.actionButton= actionButton
@@ -11395,7 +11426,7 @@ class SimpleGrid(ScrollPane):
                     val = ""
                 else:
                     val = rowData[cellNum]
-                
+
                 lab = self.__createCell(rowNum, cellNum, val)
                 newRow.append(lab)
             self.cells.append(newRow)
@@ -12065,7 +12096,7 @@ class GoogleMap(LabelFrame, object):
             self.params["maptype"] = self.TERRAINS[0]
 
 #        self.params["mobile"] = "true" # optional: mobile=true will assume the image is shown on a small screen (mobile device)
-        self.params["sensor"] = "false"  # must be given, deals with getting loction from mobile device 
+        self.params["sensor"] = "false"  # must be given, deals with getting loction from mobile device
 
         self.markers = []
 
@@ -12156,7 +12187,7 @@ class GoogleMap(LabelFrame, object):
             m = "|".join(self.markers)
             m = quote_plus(m)
             self.request += "&markers=" + m
-            
+
         gui.debug("GoogleMap search URL: %s", self.request)
 
     def __buildGeoURL(self, location):
@@ -12226,11 +12257,11 @@ class GoogleMap(LabelFrame, object):
 class CanvasDnd(Canvas, object):
     """
     A canvas to which we have added those methods necessary so it can
-        act as both a TargetWidget and a TargetObject. 
-        
+        act as both a TargetWidget and a TargetObject.
+
     Use (or derive from) this drag-and-drop enabled canvas to create anything
-        that needs to be able to receive a dragged object.    
-    """    
+        that needs to be able to receive a dragged object.
+    """
     def __init__(self, Master, cnf={}, **kw):
         if cnf:
             kw.update(cnf)
@@ -12238,7 +12269,7 @@ class CanvasDnd(Canvas, object):
         self.config(bd=0, highlightthickness=0)
 
     #----- TargetWidget functionality -----
-    
+
     def dnd_accept(self, source, event):
         #Tkdnd is asking us (the TargetWidget) if we want to tell it about a
         #    TargetObject. Since CanvasDnd is also acting as TargetObject we
@@ -12255,21 +12286,21 @@ class CanvasDnd(Canvas, object):
         XY = gui.MOUSE_POS_IN_WIDGET(self, event)
         # show the dragged object
         source.appear(self ,XY)
-        
+
     # This is called when the mouse pointer goes from inside the
     # Target Widget to outside the Target Widget.
     def dnd_leave(self, source, event):
         gui.debug("<<%s .dnd_leave>> %s", type(self), source)
         # hide the dragged object
         source.vanish()
-        
+
     #This is called when the mouse pointer moves withing the TargetWidget.
     def dnd_motion(self, source, event):
         gui.debug("<<%s .dnd_motion>> %s", type(self), source)
         XY = gui.MOUSE_POS_IN_WIDGET(self,event)
         # move the dragged object
         source.move(self, XY)
-        
+
     #This is called if the DraggableWidget is being dropped on us.
     def dnd_commit(self, source, event):
         gui.debug("<<%s .dnd_commit>> %s", type(self), source)
@@ -12280,7 +12311,7 @@ class TrashBin(CanvasDnd, object):
         if "width" not in kw:
             kw['width'] = 150
         if "height" not in kw:
-            kw['height'] = 25    
+            kw['height'] = 25
 
         super(TrashBin, self).__init__(master, kw)
         self.config(relief="sunken", bd=2)
@@ -12309,7 +12340,7 @@ class DraggableWidget(object):
 
     def dnd_accept(self, source, event):
         return None
-    
+
     def __init__(self, parent, title, name, XY, widg=None):
         self.parent = parent
         gui.debug("<<DRAGGABLE_WIDGET.__init__>>")
@@ -12330,7 +12361,7 @@ class DraggableWidget(object):
 
         self.OriginalID = None
         self.dropTarget = None
-        
+
     # this gets called when we are dropped
     def dnd_end(self, target, event):
         gui.debug("<<DRAGGABLE_WIDGET.dnd_end>> %s target=%s", self.Name, target)
@@ -12369,7 +12400,7 @@ class DraggableWidget(object):
 
     # put a label representing this DraggableWidget instance on Canvas.
     def appear(self, canvas, XY):
-    
+
         if not isinstance(canvas, CanvasDnd):
             self.dropTarget = canvas
             canvas = canvas.dnd_canvas
@@ -12383,7 +12414,7 @@ class DraggableWidget(object):
             gui.debug("<<DRAGGABLE_WIDGET.appear> - appearing: %s %s", canvas, XY)
 
             self.Canvas = canvas
-            self.X, self.Y = XY    
+            self.X, self.Y = XY
             self.Label = Label(self.Canvas, text=self.Name, borderwidth=2, relief=RAISED)
 
             # Offsets are received as percentages from initial button press
@@ -12416,14 +12447,14 @@ class DraggableWidget(object):
             del self.OriginalID
             del self.OriginalLabel
 
-    # if we have a label on a canvas, then move it to the specified location. 
+    # if we have a label on a canvas, then move it to the specified location.
     def move(self, widget, XY):
         gui.debug("<<DRAGGABLE_WIDGET.move>> %s %s", self.Canvas, XY)
         if self.Canvas:
             self.X, self.Y = XY
             self.Canvas.coords(self.ID, self.X-self.OffsetX, self.Y-self.OffsetY)
         else:
-            gui.error("<<DRAGGABLE_WIDGET.move>> unable to move - NO CANVAS!") 
+            gui.error("<<DRAGGABLE_WIDGET.move>> unable to move - NO CANVAS!")
 
     def press(self, event):
         gui.debug("<<DRAGGABLE_WIDGET.press>>")
@@ -12452,7 +12483,7 @@ class DraggableWidget(object):
         else:
             gui.debug("<<DRAGGABLE_WIDGET.storeOldData>> hiding phantom")
             self.OriginalCanvas.delete(self.OriginalID)
-        
+
     def restoreOldData(self):
         if self.OriginalID:
             gui.debug("<<DRAGGABLE_WIDGET.restoreOldData>>")
