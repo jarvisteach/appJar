@@ -9,6 +9,8 @@ def press(btn):
         app.showSubWindow("subber", follow="Sub Window")
     if btn == "LOCATION":
         app.setLocation(90,90)
+    if btn == "FULL":
+        app.setFullscreen()
 
 with gui("Main Window") as app:
 #    app.setLocation(300,300)#, ignoreSettings=True)
@@ -19,9 +21,11 @@ with gui("Main Window") as app:
     app.addButton("SUB", press)
     app.addButton("EXIT", press)
     app.addButton("LOCATION", press)
+    app.addButton("FULL", press)
 
     with app.subWindow("Sub Window"):
         app.addLabel("sub_title", "Sub Window")
+        app.setFullscreen()
         app.addButton("SUBBER", press)
         app.setStopFunction(app.stop)
 

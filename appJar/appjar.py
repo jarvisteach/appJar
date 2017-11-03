@@ -1708,11 +1708,10 @@ class gui(object):
 
         # check the containers have all been stopped
         if len(self.containerStack) > 1:
-            self.warn("You didn't stop all containers")
             for i in range(len(self.containerStack) - 1, 0, -1):
                 kind = self.containerStack[i]['type']
                 if kind != self.Widgets.Pane:
-                    self.warn("STOP: %s", self.Widgets.name(kind))
+                    self.warn("No stopContainer called on: %s", self.Widgets.name(kind))
 
         # update any trees
         for k, v in self.widgetManager.group(self.Widgets.Tree).items():
@@ -1850,8 +1849,10 @@ class gui(object):
                 settings.set("SUBWINDOWS", k, "True")
                 settings.add_section(k)
                 settings.set(k, "geometry", v.geometry())
+                ms = v.minsize()
+                settings.set(k, 'minsize', "%s,%s" % (ms[0], ms[1]))
                 settings.set(k, "state", v.state())
-                gui.debug("Saving subWindow %s: geom=%s, state=%s", k, v.geometry(), v.state())
+                gui.debug("Saving subWindow %s: geom=%s, state=%s, minsize=%s", k, v.geometry(), v.state(), ms)
             else:
                 settings.set("SUBWINDOWS", k, "False")
                 gui.debug("Skipping subwindow: %s", k)
@@ -1935,7 +1936,7 @@ class gui(object):
                     gui.debug("Loading settings for %s", k)
                     tl = self.widgetManager.get(self.Widgets.SubWindow, k)
                     # process the geom settings
-                    try:
+                    if settings.has_option(k, "geometry"):
                         geom = settings.get(k, "geometry")
                         size, loc = gui.SPLIT_GEOM(geom)
                         if size[0] > 1:
@@ -1949,7 +1950,12 @@ class gui(object):
                             self.setSubWindowLocation(k, *loc)
                         else:
                             gui.debug("Skipping location: %s", loc)
-                    except: pass # no geom found
+                    else:
+                        gui.debug("No location found")
+
+                    if settings.has_option(k, "minsize"):
+                        ms = settings.get(k, "minsize").split(",")
+                        self.setMinSize(tl, ms)
 
                     # set the state - if there' no startWindow
                     if self.startWindow is None:
@@ -2172,8 +2178,8 @@ class gui(object):
         if container is None: container = self.topLevel
         if size is None: size = (gui.GET_DIMS(container)["r_width"], gui.GET_DIMS(container)["r_height"])
         container.ms = size
-        gui.debug("Minsize set to: %s", size)
         container.minsize(size[0], size[1])
+        gui.debug("Minsize set to: %s", size)
 
     # called to set screen position
     def setLocation(self, x, y=None, ignoreSettings=None):
@@ -2212,11 +2218,14 @@ class gui(object):
         elif self.platform == self.LINUX:
             win.lift()
 
-    def setFullscreen(self, container=None):
-        if not self.topLevel.isFullscreen:
-            self.topLevel.isFullscreen = True
-            if container is None:
-                container = self.__getTopLevel()
+    def setFullscreen(self, title=None):
+        if title is None:
+            container = self.__getTopLevel()
+        else:
+            container = self.widgetManager.get(self.Widgets.SubWindow, title)
+
+        if not container.isFullscreen:
+            container.isFullscreen = True
             container.attributes('-fullscreen', True)
             container.escapeBindId = container.bind(
                 '<Escape>', self.MAKE_FUNC(
@@ -2224,10 +2233,11 @@ class gui(object):
 
     # function to turn off fullscreen mode
     def exitFullscreen(self, container=None):
-        if self.topLevel.isFullscreen:
-            self.topLevel.isFullscreen = False
-            if container is None:
-                container = self.__getTopLevel()
+        if container is None:
+            container = self.__getTopLevel()
+
+        if container.isFullscreen:
+            container.isFullscreen = False
             container.attributes('-fullscreen', False)
             if container.escapeBindId is not None:
                 container.unbind('<Escape>', container.escapeBindId)
@@ -4397,6 +4407,7 @@ class gui(object):
         top.locationSet = False
         top.modal = modal
         top.blocking = blocking
+        top.isFullscreen = False
         top.title(title)
         top.protocol("WM_DELETE_WINDOW", self.MAKE_FUNC(self.confirmHideSubWindow, name))
         top.win = self
@@ -4422,7 +4433,10 @@ class gui(object):
         return top
 
     def stopSubWindow(self):
-        if self.containerStack[-1]['type'] == self.Widgets.SubWindow:
+        container = self.containerStack[-1]
+        if container['type'] == self.Widgets.SubWindow:
+            if not hasattr(container["container"], 'ms'):
+                self.setMinSize(container["container"])
             self.stopContainer()
         else:
             raise Exception("Can't stop a SUBWINDOW, currently in:",
