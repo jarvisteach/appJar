@@ -2076,32 +2076,20 @@ class gui(object):
         """Run a given method in a new thread with passed arguments.
            When func completes call the callback with the result.
 
-           This is the foreground method!
-
            :param func: Method to receive result from.
            :param callback: Method that recevices the data.
            :param args: Positional arguments for func.
            :param kwargs: Keyword args for func.
         """
-        if not callable(func) or not callable(callback):
-            gui.error("Function or callback method isn't callable!")
+        def innerThread(func, callback, *args, **kwargs):
+            result = func(*args, **kwargs)
+            self.queueFunction(callback, result)
             return
-        self.thread(self.__threadCallback, func, callback, *args, **kwargs)
 
-    def __threadCallback(self, func, callback, *args, **kwargs):
-        """Run a given method in a new thread with passed arguments.
-           When func completes call the callback with the result.
-
-           This is the background method (to be threaded)!
-
-           :param func: Method to receive result from.
-           :param callback: Method that receives the data.
-           :param args: Positional arguments for func.
-           :param kwargs: Keyword args for func.
-        """
-        result = func(**args, **kwargs)
-        return callback(result)
-
+        if not callable(func) or not callable(callback):
+            gui.error("Function (or callback) method isn't callable!")
+            return
+        self.thread(innerThread, func, callback, *args, **kwargs)
 
     # internal function, called by 'after' function, after sleeping
     def __poll(self):
