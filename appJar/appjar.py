@@ -1660,7 +1660,7 @@ class gui(object):
         """ allows gui to be used as a ContextManager
             - calls the go() function """
         if eType is not None:
-            self.error("ContextManager: failed")
+            self.error("ContextManager failed: %s", eValue)
             return False
         else:
             self.debug("ContextManager: starting")
@@ -4549,6 +4549,21 @@ class gui(object):
 # FUNCTION for check boxes
 #####################################
 
+    def check(self, title, value=None, *args, **kwargs):
+        """ shortner for checkBox() """
+        return self.checkBox(title, value, *args, **kwargs)
+
+    def checkBox(self, title, value=None, *args, **kwargs):
+        """ adds, sets & gets checkBoxes all in one go """
+        try: self.widgetManager.verify(self.Widgets.CheckBox, title)
+        except:
+            if value is None: return self.getCheckBox(title)
+            else: self.setCheckBox(title, value, *args, **kwargs)
+        else:
+            check = self.addCheckBox(title, *args, **kwargs)
+            if value is not None: self.setCheckBox(title, value)
+            return check
+
     def addCheckBox(self, title, row=None, column=0, colspan=0, rowspan=0, name=None):
         self.widgetManager.verify(self.Widgets.CheckBox, title)
         var = IntVar(self.topLevel)
@@ -4606,6 +4621,33 @@ class gui(object):
 #####################################
 # FUNCTION for scales
 #####################################
+
+    def slider(self, title, value=None, *args, **kwargs):
+        """ alternative for scale() """
+        return self.scale(title, value, *args, **kwargs)
+
+    def scale(self, title, value=None, *args, **kwargs):
+        """ adds, sets & gets scales all in one go """
+        try: self.widgetManager.verify(self.Widgets.Scale, title)
+        except:
+            if value is None: return self.getScale(title)
+            else: self.setScale(title, value, *args, **kwargs)
+        else:
+            vert = False if "direction" not in kwargs else kwargs.pop("direction").lower() == "vertical"
+            increment = None if "increment" not in kwargs else kwargs.pop("increment")
+            interval = None if "interval" not in kwargs else kwargs.pop("interval")
+            show = False if "show" not in kwargs else kwargs.pop("show")
+            change = None if "change" not in kwargs else kwargs.pop("change")
+
+            scale = self.addScale(title, *args, **kwargs)
+
+            if value is not None: self.setScale(title, value)
+            if vert: self.setScaleVertical(title)
+            if increment is not None: self.setScaleIncrement(title, increment)
+            if interval is not None: self.showScaleIntervals(title, interval)
+            if show: self.showScaleValue(title)
+            if change is not None: self.setScaleChangeFunction(title, change)
+            return scale
 
     def __buildScale(self, title, frame):
         self.widgetManager.verify(self.Widgets.Scale, title)
@@ -4704,6 +4746,22 @@ class gui(object):
 #####################################
 # FUNCTION for optionMenus
 #####################################
+
+    def option(self, title, value=None, *args, **kwargs):
+        """ shortner for optionBox() """
+        return self.optionBox(title, value, *args, **kwargs)
+
+    def optionBox(self, title, value=None, *args, **kwargs):
+        """ adds, sets & gets optionBoxes all in one go """
+        try: self.widgetManager.verify(self.Widgets.OptionBox, title)
+        except:
+            if value is None: return self.getOptionBox(title)
+            else: self.setOptionBox(title, value, *args, **kwargs)
+        else:
+            type = "standard" if "type" not in kwargs else kwargs.pop("type").lower().strip()
+
+            if type == "ticks": return self.addTickOptionBox(title, value, *args, **kwargs)
+            else: return self.addOptionBox(title, value, *args, **kwargs)
 
     def __buildOptionBox(self, frame, title, options, kind="normal"):
         """ Internal wrapper, used for building OptionBoxes.
@@ -5281,6 +5339,18 @@ class gui(object):
 # FUNCTION to manage Properties Widgets
 #####################################
 
+    def properties(self, title, value=None, *args, **kwargs):
+        """ adds, sets & gets properties all in one go """
+        if value is None: return self.getProperties(title)
+        else:
+            try: self.widgetManager.verify(self.Widgets.Properties, title)
+            except:
+# need to work out args...
+#                self.setProperty(title, prop=value)
+                pass
+            else:
+                self.addProperties(title, value, *args, **kwargs)
+
     def addProperties(self, title, values=None, row=None, column=0, colspan=0, rowspan=0):
         self.widgetManager.verify(self.Widgets.Properties, title)
         haveTitle = True
@@ -5345,6 +5415,29 @@ class gui(object):
 #####################################
 # FUNCTION to add spin boxes
 #####################################
+
+    def spin(self, title, value=None, *args, **kwargs):
+        """ shortner for spinBox() """
+        return self.spinBox(title, value, *args, **kwargs)
+
+    def spinBox(self, title, value=None, *args, **kwargs):
+        """ adds, sets & gets spinBoxes all in one go """
+        try: self.widgetManager.verify(self.Widgets.SpinBox, title)
+        except:
+            if value is None: return self.getSpinBox(title)
+            else: self.setSpinBoxPos(title, value, *args, **kwargs)
+        else:
+            endValue = None if "endValue" not in kwargs else kwargs.pop("endValue")
+            pos = None if "pos" not in kwargs else kwargs.pop("pos")
+            item = None if "item" not in kwargs else kwargs.pop("item").strip()
+
+            if endValue is not None: spinBox = self.addSpinBoxRange(title, fromVal=value, toVal=endValue, *args, **kwargs)
+            else: spinBox = self.addSpinBox(title, value, *args, **kwargs)
+
+            if pos is not None: self.setSpinBoxPos(title, pos)
+            if item is not None: self.setSpinBox(title, item)
+
+            return spinBox
 
     def __buildSpinBox(self, frame, title, vals):
         self.widgetManager.verify(self.Widgets.SpinBox, title)
@@ -5500,6 +5593,34 @@ class gui(object):
 # FUNCTION to add images
 #####################################
 
+    def image(self, title, value=None, *args, **kwargs):
+        """ adds, sets & gets images all in one go """
+        if value is None: return self.getImage(title)
+        else:
+            try: self.widgetManager.verify(self.Widgets.Image, title)
+            except:
+                type = "standard" if "type" not in kwargs else kwargs.pop("type").lower().strip()
+                if type == "data": self.setImageData(title, value, **kwargs)
+                else: self.setImage(title, value)
+            else:
+                type = "standard" if "type" not in kwargs else kwargs.pop("type").lower().strip()
+                speed = None if "speed" not in kwargs else kwargs.pop("speed")
+                over = None if "over" not in kwargs else kwargs.pop("over")
+                submit = None if "submit" not in kwargs else kwargs.pop("submit")
+                map = None if "map" not in kwargs else kwargs.pop("map")
+
+                if type == "icon": image = self.addIcon(title, value, *args, **kwargs)
+                elif type == "data": image = self.addImageData(title, value, *args, **kwargs)
+                else: image = self.addImage(title, value, *args, **kwargs)
+
+                if speed is not None: self.setAnimationSpeed(title, speed)
+                if over is not None: self.setImageMouseOver(title, over)
+                if submit is not None:
+                    if map is not None: self.setImageMap(title, submit, map)
+                    else: self.setImageSubmitFunction(title, submit)
+
+                return image
+
     # looks up label containing image
     def __animateImage(self, title, firstTime=False):
         if not self.alive: return
@@ -5591,14 +5712,7 @@ class gui(object):
             anim_id = self.topLevel.after(img.anim_speed, self.__animateImage, name)
             self.widgetManager.update(self.Widgets.AnimationID, name, anim_id)
 
-    def addAnimatedImage(
-            self,
-            name,
-            imageFile,
-            row=None,
-            column=0,
-            colspan=0,
-            rowspan=0):
+    def addAnimatedImage(self, name, imageFile, row=None, column=0, colspan=0, rowspan=0):
         self.warn("addAnimatedImage() is now deprecated - use addImage()")
         return self.addImage(name, imageFile, row, column, colspan, rowspan)
 
@@ -5778,6 +5892,10 @@ class gui(object):
         self.__populateImage(name, image)
 
     # replace the current image, with a new one
+    def getImage(self, name):
+        label = self.widgetManager.get(self.Widgets.Image, name)
+        return label.image.path
+
     def setImage(self, name, imageFile, internal=False):
         label = self.widgetManager.get(self.Widgets.Image, name)
         imageFile = self.getImagePath(imageFile)
@@ -6100,6 +6218,23 @@ class gui(object):
 # FUNCTION for radio buttons
 #####################################
 
+    def radio(self, title, value=None, *args, **kwargs):
+        """ shortner for radioButton() """
+        return self.radioButton(title, value, *args, **kwargs)
+
+    def radioButton(self, title, value=None, *args, **kwargs):
+        """ adds, sets & gets radioButtons all in one go """
+        if value is None: return self.getRadioButton(title)
+        else:
+            ident = title + "-" + value
+            try: self.widgetManager.verify(self.Widgets.RadioButton, ident)
+            except: self.setRadioButton(title, value, *args, **kwargs)
+            else:
+                selected = False if "selected" not in kwargs else kwargs.pop("selected")
+                rb = self.addRadioButton(title, value, *args, **kwargs)
+                if selected: self.setRadioButton(title, value)
+                return rb
+
     def addRadioButton(self, title, name, row=None, column=0, colspan=0, rowspan=0):
 
         ident = title + "-" + name
@@ -6174,6 +6309,29 @@ class gui(object):
 #####################################
 # FUNCTION for list box
 #####################################
+
+    def list(self, title, value=None, *args, **kwargs):
+        """ shortner for listBox() """
+        return self.listBox(title, value, *args, **kwargs)
+
+    def listBox(self, title, value=None, *args, **kwargs):
+        """ adds, sets & gets listBoxes all in one go """
+        try: self.widgetManager.verify(self.Widgets.ListBox, title)
+        except:
+            if value is None: return self.getListBox(title)
+            else: self.selectListItem(title, value, *args, **kwargs)
+        else:
+            rows = None if "rows" not in kwargs else kwargs.pop("rows")
+            multi = False if "multi" not in kwargs else kwargs.pop("multi")
+            group = False if "group" not in kwargs else kwargs.pop("group")
+
+            listBox = self.addListBox(title, value, *args, **kwargs)
+            
+            if rows is not None: self.setListBoxRows(title, rows)
+            if multi: self.setListBoxMulti(title)
+            if group: self.setListBoxGroup(title)
+
+            return listBox
 
     def addListBox(self, name, values=None, row=None, column=0, colspan=0, rowspan=0):
         self.widgetManager.verify(self.Widgets.ListBox, name)
@@ -6410,6 +6568,22 @@ class gui(object):
 # FUNCTION for buttons
 #####################################
 
+    def button(self, title, value=None, *args, **kwargs):
+        """ adds, sets & gets buttons all in one go """
+        if value is None: return self.getButton(title)
+        else:
+            try: self.widgetManager.verify(self.Widgets.Button, title)
+            except: self.setButton(title, value)
+            else:
+                image = None if "image" not in kwargs else kwargs.pop("image")
+                icon = None if "icon" not in kwargs else kwargs.pop("icon")
+
+                if image is not None: button = self.addImageButton(title, value, image, *args, **kwargs)
+                elif icon is not None: button = self.addIconButton(title, value, icon, *args, **kwargs)
+                else: button = self.addButton(title, value, *args, **kwargs)
+
+                return button
+
     def __buildButton(self, title, func, frame, name=None):
         if name is None:
             name = title
@@ -6464,6 +6638,10 @@ class gui(object):
     def setButton(self, name, text):
         but = self.widgetManager.get(self.Widgets.Button, name)
         but.config(text=text)
+
+    def getButton(self, name):
+        but = self.widgetManager.get(self.Widgets.Button, name)
+        return but.cget("text")
 
     def setButtonImage(self, name, imgFile):
         but = self.widgetManager.get(self.Widgets.Button, name)
@@ -6522,11 +6700,21 @@ class gui(object):
 # FUNCTIONS for links
 #####################################
 
+    def link(self, title, value=None, *args, **kwargs):
+        """ adds, sets & gets links all in one go """
+        try: self.widgetManager.verify(self.Widgets.Link, title)
+        except:
+            if value is None: return self.getLink(title)
+            else: self.setLink(title, value, *args, **kwargs)
+        else:
+            if not callable(value) and not hasattr(value, '__call__'):
+                return self.addWebLink(title, value, *args, **kwargs)
+            else:
+                return self.addLink(title, value, *args, **kwargs)
+
     def __buildLink(self, title):
         link = Link(self.getContainer())
-        link.config(
-            text=title,
-            font=self.linkFont)
+        link.config(text=title, font=self.linkFont)
         if not self.ttk:
             link.config(background=self.__getContainerBg())
         self.widgetManager.add(self.Widgets.Link, title, link)
@@ -6548,9 +6736,25 @@ class gui(object):
         self.__positionWidget(link, row, column, colspan, rowspan)
         return link
 
+    def getLink(self, title):
+        link = self.widgetManager.get(self.Widgets.Link, title)
+        return link.cget("text")
+
+    def setLink(self, title, func):
+        link = self.widgetManager.get(self.Widgets.Link, title)
+        if not callable(func) and not hasattr(func, '__call__'):
+            link.registerWebpage(page)
+        else:
+            myF = self.MAKE_FUNC(func, title, True)
+            link.registerCallback(myF)
+
 #####################################
 # FUNCTIONS for grips
 #####################################
+
+    def grip(self, *args, **kwargs):
+        """ adds grip """
+        return self.addGrip(*args, **kwargs)
 
     # adds a simple grip, used to drag the window around
     def addGrip(self, row=None, column=0, colspan=0, rowspan=0):
@@ -6595,6 +6799,26 @@ class gui(object):
 #####################################
 # DatePicker Widget - using Form Container
 #####################################
+
+    def date(self, title, value=None, *args, **kwargs):
+        """ shortner for datePicker() """
+        return self.datePicker(title, value, *args, **kwargs)
+
+    def datePicker(self, title, value=None, *args, **kwargs):
+        """ adds, sets & gets datePickers all in one go """
+        try: self.widgetManager.verify(self.Widgets.DatePicker, title)
+        except:
+            if value is None: return self.getDatePicker(title)
+            else:
+                toValue = None if "toValue" not in kwargs else kwargs.pop("toValue")
+                if toValue is None: self.setDatePicker(title, value)
+                else: self.setDatePickerRange(title, startYear=value, endYear=toValue)
+        else:
+            self.addDatePicker(title, *args, **kwargs)
+            toValue = None if "toValue" not in kwargs else kwargs.pop("toValue")
+            if value is not None:
+                if toValue is None: self.setDatePicker(title, value)
+                else: self.setDatePickerRange(title, startYear=value, endYear=toValue)
 
     def addDatePicker(self, name, row=None, column=0, colspan=0, rowspan=0):
         self.widgetManager.verify(self.Widgets.DatePicker, name)
@@ -6712,6 +6936,22 @@ class gui(object):
 # FUNCTIONS for labels
 #####################################
 
+    def label(self, title, value=None, *args, **kwargs):
+        """ adds, sets & gets labels all in one go """
+        if value is None: return self.getLabel(title)
+        else:
+            try: self.widgetManager.verify(self.Widgets.Label, title)
+            except: self.setLabel(title, value)
+            else:
+                flash = False if "flash" not in kwargs else kwargs.pop("flash")
+                selectable = False if "selectable" not in kwargs else kwargs.pop("selectable")
+
+                if flash: label = self.addFlashLabel(title, value, *args, **kwargs)
+                elif selectable: label = self.addSelectableLabel(title, value, *args, **kwargs)
+                else: label = self.addLabel(title, value, *args, **kwargs)
+
+                return label
+
     def __flash(self):
         if not self.alive: return
         if self.doFlash:
@@ -6730,7 +6970,7 @@ class gui(object):
     def addSelectableLabel(self, title, text=None, row=None, column=0, colspan=0, rowspan=0):
         return self.addLabel(title, text, row, column, colspan, rowspan, selectable=True)
 
-    def addLabel(self, title, text=None, row=None, column=0, colspan=0, rowspan=0, selectable = False):
+    def addLabel(self, title, text=None, row=None, column=0, colspan=0, rowspan=0, selectable=False):
         """Add a label to the GUI.
         :param title: a unique identifier for the Label
         :param text: optional text for the Label
@@ -6801,6 +7041,25 @@ class gui(object):
 #####################################
 # FUNCTIONS to add Text Area
 #####################################
+
+    def text(self, title, value=None, *args, **kwargs):
+        """ shortner for textArea() """
+        return self.textArea(title, value, *args, **kwargs)
+
+    def textArea(self, title, value=None, *args, **kwargs):
+        """ adds, sets & gets textAreas all in one go """
+        try: self.widgetManager.verify(self.Widgets.TextArea, title)
+        except:
+            if value is None: return self.getTextArea(title)
+            else: self.setTextArea(title, value, *args, **kwargs)
+        else:
+            scroll = False if "scroll" not in kwargs else kwargs.pop("scroll")
+
+            if scroll: text = self.addScrolledTextArea(title, *args, **kwargs)
+            else: text = self.addTextArea(title, *args, **kwargs)
+
+            if value is not None: self.setTextArea(title, value)
+            return text
 
     def __buildTextArea(self, title, frame, scrollable=False):
         """ Internal wrapper, used for building TextAreas.
@@ -7037,6 +7296,14 @@ class gui(object):
 # FUNCTIONS to add Message Box
 #####################################
 
+    def message(self, title, value=None, *args, **kwargs):
+        """ adds, sets & gets messages all in one go """
+        try: self.widgetManager.verify(self.Widgets.Message, title)
+        except:
+            if value is None: return self.getMessage(title)
+            else: self.setMessage(title, value, *args, **kwargs)
+        else: return self.addMessage(title, value, *args, **kwargs)
+
     def addMessage(self, title, text, row=None, column=0, colspan=0, rowspan=0):
 
         self.widgetManager.verify(self.Widgets.Message, title)
@@ -7069,9 +7336,49 @@ class gui(object):
     def clearMessage(self, title):
         self.setMessage(title, "")
 
+    def getMessage(self, title):
+        mess = self.widgetManager.get(self.Widgets.Message, title)
+        return mess.cget("text")
+
 #####################################
 # FUNCTIONS for entry boxes
 #####################################
+
+    def entry(self, title, value=None, *args, **kwargs):
+        """ adds, sets & gets entries all in one go """
+        try: self.widgetManager.verify(self.Widgets.Entry, title)
+        except:
+            if value is None: return self.getEntry(title)
+            else: self.setEntry(title, value, *args, **kwargs)
+        else:
+            default = None if "default" not in kwargs else kwargs.pop("default")
+            type = "standard" if "type" not in kwargs else kwargs.pop("type").lower().strip()
+            limit = None if "limit" not in kwargs else kwargs.pop("limit")
+            focus = False if "focus" not in kwargs else kwargs.pop("focus")
+            case = None if "case" not in kwargs else kwargs.pop("case").lower().strip()
+            autoRows = None if "autoRows" not in kwargs else kwargs.pop("autoRows")
+
+            print(type)
+
+            if type == "file": entry = self.addFileEntry(title, *args, **kwargs)
+            elif type == "directory": entry = self.addDirectoryEntry(title, *args, **kwargs)
+            elif type == "validation": entry = self.addValidationEntry(title, *args, **kwargs)
+            elif type == "numeric": entry = self.addNumericEntry(title, *args, **kwargs)
+            elif type == "auto": entry = self.addAutoEntry(title, words=value, *args, **kwargs)
+            else: entry = self.addEntry(title, *args, **kwargs)
+
+            if limit is not None: self.setEntryMaxLength(title, limit)
+            if case == "upper": self.setEntryUpperCase(title)
+            elif case == "lower": self.setEntryLowerCase(title)
+
+            if default is not None: self.setEntryDefault(title, default)
+            if type != "auto":
+                if value is not None: self.setEntry(title, value)
+            else:
+                if autoRows is not None: self.setAutoEntryNumRows(title, autoRows)
+            if focus: self.setEntryFocus(title)
+
+            return entry
 
     def __buildEntry(self, title, frame, secret=False, words=[]):
         self.widgetManager.verify(self.Widgets.Entry, title)
@@ -7567,6 +7874,24 @@ class gui(object):
 # FUNCTIONS for progress bars (meters)
 #####################################
 
+    def meter(self, title, value=None, *args, **kwargs):
+        """ adds, sets & gets meters all in one go """
+        try: self.widgetManager.verify(self.Widgets.Meter, title)
+        except:
+            if value is None: return self.getMeter(title)
+            else: self.setMeter(title, value, *args, **kwargs)
+        else:
+            fill = None if "fill" not in kwargs else kwargs.pop("fill")
+            type = "meter" if "type" not in kwargs else kwargs.pop("type")
+
+            if type == "split": meter = self.addSplitMeter(title, *args, **kwargs)
+            elif type == "dual": meter = self.addDualMeter(title, *args, **kwargs)
+            else: meter = self.addMeter(title, *args, **kwargs)
+
+            if value is not None: self.setMeter(title, value)
+            if fill is not None: self.setMeterFill(title, fill)
+            return meter
+
     def __addMeter(self, name, type="METER", row=None, column=0, colspan=0, rowspan=0):
         self.widgetManager.verify(self.Widgets.Meter, name)
 
@@ -7614,6 +7939,16 @@ class gui(object):
 #####################################
 # FUNCTIONS for seperators
 #####################################
+
+    def separator(self, *args, **kwargs):
+        """ adds horizontal separators
+            unless a direction="vertical" kwargs is set
+        """
+        if "direction" in kwargs and kwargs.pop("direction").lower() == "vertical":
+            return self.addVerticalSeparator(*args, **kwargs)
+        else:
+            return self.addHorizontalSeparator(*args, **kwargs)
+
     def addSeparator(self, row=None, column=0, colspan=0, rowspan=0, colour=None):
         self.warn(".addSeparator() is deprecated. You should be using .addHorizontalSeparator() or .addVerticalSeparator()")
         return self.addHorizontalSeparator(row, column, colspan, rowspan, colour)
@@ -9221,7 +9556,6 @@ class Link(Label, object):
         self.fg = "#0000ff"
         self.overFg="#3366ff"
         self.config(fg=self.fg, takefocus=1, highlightthickness=0)
-        self.page = ""
         self.DEFAULT_TEXT = ""
 
         if gui.GET_PLATFORM() == gui.MAC:
@@ -9265,6 +9599,12 @@ class Link(Label, object):
             self.DEFAULT_TEXT = kw["text"]
 
         super(Link, self).config(**kw)
+
+    def cget(self, option):
+        if option == "text" and hasattr(self, 'page'):
+            return self.page
+
+        return super(Link, self).cget(option)
 
 #####################################
 # Properties Widget
