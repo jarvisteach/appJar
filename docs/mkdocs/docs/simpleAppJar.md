@@ -6,8 +6,7 @@ You can now use the same function for all three tasks.
 
 *** Need to change all widgets - to take a label flag, to show the label ***
 
-## Label
----
+## Label  
 A widget for displaying text in a GUI.  
 
 * `.label(title, value=None)`  
@@ -23,18 +22,13 @@ A widget for displaying text in a GUI.
 | rowspan | integer | 1 | No | The number of grid rows to stretch the widget across. |
 | colspan | integer | 1 | No | The number of grid columns to stretch the widget across. |
 
----
 
-## Message
----
+## Message 
 A widget for displaying mukti-line text in a GUI.  
 
 * `.message(title, value=None)`  
 
----
-
-## Entry
----
+## Entry  
 An interactive widget, for capturing user input in a GUI.  
 
 * `.entry(title, value=None)`  
@@ -55,9 +49,9 @@ An interactive widget, for capturing user input in a GUI.
 | rowspan | integer | 1 | No | The number of grid rows to stretch the widget across. |
 | colspan | integer | 1 | No | The number of grid columns to stretch the widget across. |
 
----
+## Text  
 
-## `.text(title, value=None)`  
+* `.text(title, value=None)`  
     * scroll
 
 ## `.button(title, value=None)`  
