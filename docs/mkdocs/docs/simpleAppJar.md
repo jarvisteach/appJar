@@ -7,8 +7,12 @@ You can now use the same function for all three tasks.
 *** Need to change all widgets - to take a label flag, to show the label ***
 
 ## `.label(title, value=None)`  
-    * flash
-    * selectable
+
+| Parameter | Data type | Default | Compulsory | Description |
+| --------- | --------- | ------- | ---------- | -------------------------|
+| selectable    | boolean    | - | No       | Create a flashing label. |
+| flash    | boolean    | - | No       | Create a selectable label. |
+
 ## `.message(title, value=None)`  
 
 ## `.entry(title, value=None)`  
