@@ -30,7 +30,7 @@ def press(btn):
     app.meter("CryingMorerr", (app.slider("happiness again"),app.scale("happiness again")))
 
 with gui("Simple Demo") as app:
-    app.label("title", "Simple Props Demo", colspan=3, flash=True)
+    app.label("title", "Simple Props Demo", colspan=3, type="flash")
     app.setLabelBg("title", "green")
 
     app.radio("happy", "Very Happy", row=1, column=0)

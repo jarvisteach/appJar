@@ -6943,11 +6943,10 @@ class gui(object):
             try: self.widgetManager.verify(self.Widgets.Label, title)
             except: self.setLabel(title, value)
             else:
-                flash = False if "flash" not in kwargs else kwargs.pop("flash")
-                selectable = False if "selectable" not in kwargs else kwargs.pop("selectable")
+                type = "standard" if "type" not in kwargs else kwargs.pop("type").lower().strip()
 
-                if flash: label = self.addFlashLabel(title, value, *args, **kwargs)
-                elif selectable: label = self.addSelectableLabel(title, value, *args, **kwargs)
+                if type == "flash": label = self.addFlashLabel(title, value, *args, **kwargs)
+                elif type == "selectable": label = self.addSelectableLabel(title, value, *args, **kwargs)
                 else: label = self.addLabel(title, value, *args, **kwargs)
 
                 return label
