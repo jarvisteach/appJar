@@ -6743,7 +6743,7 @@ class gui(object):
     def setLink(self, title, func):
         link = self.widgetManager.get(self.Widgets.Link, title)
         if not callable(func) and not hasattr(func, '__call__'):
-            link.registerWebpage(page)
+            link.registerWebpage(func)
         else:
             myF = self.MAKE_FUNC(func, title, True)
             link.registerCallback(myF)

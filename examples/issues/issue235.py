@@ -10,6 +10,7 @@ def press(btn):
         app.entry("data"),
         app.button("Clap"),
         app.radio("happy"),
+        app.date("date"),
         app.check("Clap"),
         app.option("feelings"),
         app.spin("feelings"),
@@ -30,6 +31,30 @@ def press(btn):
     app.meter("CryingMore", app.slider("happiness again"))
     app.meter("CryingMorer", app.scale("happiness again"), text="alphabet")
     app.meter("CryingMorerr", (app.slider("happiness again"),app.scale("happiness again")))
+
+    updateApp4()
+
+def updateApp4(btn=None):
+    app.label("title", "aaa")
+    app.label("title2", "aaa")
+    app.meter("Cry", 50)
+    app.entry("data", "aaa")
+    #    app.date("date")
+    app.button("Clap", updateApp4)
+    app.radio("happy", "Miserable")
+    app.check("Clap", True)
+    app.option("feelings", 1)
+    app.spin("feelings", 2)
+    app.list("feelings", 3)
+    app.scale("happiness", 50)
+    app.message("mess", "aaa")
+    app.text("mess2", "aaa")
+    app.meter("Cry", 50)
+    app.link("Cry", "http://www.oggle.com")
+    app.link("Shout", updateApp4)
+#    app.image("img")
+#    app.image("img2")
+    app.properties("Toppings", {"a":False, "b":True})
 
 with gui("Simple Demo") as app:
     app.label("title", "Simple Props Demo", colspan=3, type="flash")

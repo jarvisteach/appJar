@@ -2666,6 +2666,150 @@ with gui(debug=True) as app3:
 
 print("<<<Widget Test Suite Complete on app3 >>>")
 
+print("<<<Starting app4>>>")
+
+def press(btn):
+    print(
+        app4.label("title"),
+        app4.label("title2"),
+        app4.meter("Cry"),
+        app4.entry("data"),
+        app4.date("date"),
+        app4.button("Clap"),
+        app4.radio("happy"),
+        app4.check("Clap"),
+        app4.option("feelings"),
+        app4.spin("feelings"),
+        app4.list("feelings"),
+        app4.scale("happiness"),
+        app4.message("mess"),
+        app4.text("mess2"),
+        app4.meter("Cry"),
+        app4.link("Cry"),
+        app4.link("Shout"),
+        app4.image("img"),
+        app4.image("img2"),
+        app4.properties("Toppings"),
+    )
+
+    app4.label("title2", "not empty")
+    app4.meter("Cry", app4.scale("happiness"), text="fred")
+    app4.meter("CryingMore", app4.slider("happiness again"))
+    app4.meter("CryingMorer", app4.scale("happiness again"), text="alphabet")
+    app4.meter("CryingMorerr", (app4.slider("happiness again"),app4.scale("happiness again")))
+
+def updateApp4(btn=None):
+    app4.label("title", "aaa")
+    app4.label("title2", "aaa")
+    app4.meter("Cry", 50)
+    app4.entry("data", "aaa")
+#    app4.date("date")
+    app4.button("Clap", test_gui4)
+    app4.radio("happy", "Miserable")
+    app4.check("Clap", True)
+    app4.option("feelings", 1)
+    app4.spin("feelings", 2)
+    app4.list("feelings", 3)
+    app4.scale("happiness", 50)
+    app4.message("mess", "aaa")
+    app4.text("mess2", "aaa")
+    app4.meter("Cry", 50)
+    app4.link("Cry", "http://www.google.com")
+    app4.link("Shout", updateApp4)
+    app4.image("img", "1_flash.gif")
+#    app4.image("img2")
+    app4.properties("Toppings", {"a":False, "b": True})
+
+doStopAgain = 0
+def test_gui4(btn=None):
+    print("Testing GUI4")
+    global doStopAgain
+    if doStopAgain == 2:
+        press(None)
+    elif doStopAgain == 3:
+        updateApp4(None)
+    elif doStopAgain == 5:
+        print("Show app4")
+        app4.show()
+    elif doStopAgain == 6:
+        print("Hide app4")
+        app4.hide()
+    elif doStopAgain == 8:
+        print("Stopping app4")
+        app4.stop()
+    doStopAgain += 1
+
+
+with gui("Simple Demo") as app4:
+    app4.label("title", "Simple Props Demo", colspan=3, type="flash")
+    app4.label("title2", row=0, column=3)
+    app4.setLabelBg("title", "green")
+
+    app4.radio("happy", "Very Happy", row=1, column=0)
+    app4.radio("happy", "Ambivalent", row=1, column=1)
+    app4.radio("happy", "Miserable", row=1, column=2, selected=True)
+
+    app4.message("mess", "Simple Sadness", row=2, rowspan=3)
+    app4.setMessageBg("mess", "pink")
+
+    app4.text("mess2", "Simple Happiness", row=2, column=2, rowspan=3, scroll=False)
+    app4.setTextAreaBg("mess2", "pink")
+
+    app4.image("img", "1_entries.gif", over="1_flash.gif", row=2, column=3, rowspan=7)
+    app4.image("img2", "OPEN", row=2, column=4, rowspan=3, type="icon")
+
+    app4.check("Clap", row=2, column=1)
+    app4.check("Cheer", True, row=3, column=1)
+    app4.check("Cry", row=4, column=1)
+
+    app4.entry("data", colspan=3, type="directory")
+    app4.entry("data2", value="lots of data", colspan=3, focus=True, case="upper", limit=15)
+    app4.entry("data3", colspan=3, default="france", type="validation")
+    app4.entry("data4", value=["a", "aa", "aba", "abc", "abd"], colspan=3, type="auto", autoRows=4)
+
+    row=app4.gr()
+
+    app4.button("Clap", press, icon="OPEN", row=row, column=0)
+    app4.button("Cheer", press, row=row, column=1)
+    app4.button("Cheer", "")
+    app4.button("Cry", press, row=row, column=2)
+
+    app4.date("date", row=row, column=3, rowspan=4)
+
+    app4.scale("happiness", colspan=3, increment=1, show=True, change=press)
+
+
+    row=app4.gr()
+    app4.option("feelings", ["happy", "bored", "angry"], column=0, row=row)
+    app4.spin("feelings", ["happy", "bored", "angry"], column=1, row=row, item="angry")
+    app4.list("feelings", ["happy", "bored", "angry"], column=2, row=row, rows=4, multi=True, group=True)
+
+    app4.separator(colspan=3)
+    app4.spin("vals", 4, endValue=10, colspan=3, pos=3)
+    app4.separator(colspan=3, direction="horizontal")
+
+    row=app4.gr()
+    app4.meter("Cry", row=row, column=0, fill="orange")
+    with app4.labelFrame("Links", row=row, column=1):
+        app4.link("Cry", "http://www.google.com")
+        app4.link("Shout", press)
+        app4.separator(row=0, column=1, rowspan=2, direction="vertical")
+        app4.slider("happiness again", 45, row=0, rowspan=2, direction="vertical", column=2, interval=25, change=press)
+
+    #    app4.grip(row=row, column=2)
+    toppings={"Cheese":False, "Tomato":False, "Bacon":False, "Corn":False, "Mushroom":False}
+
+    app4.properties("Toppings", toppings, row=row, column=2)
+    app4.meter("CryingMore", 50, colspan=3, type="other")
+    app4.meter("CryingMorer", 50, colspan=3, type="split")
+    app4.meter("CryingMorerr", (50,70), colspan=3, type="dual")
+
+    app4.registerEvent(test_gui4)
+    app4.setPollTime(1000)
+
+print("<<<Widget Test Suite Complete on app4 >>>")
+
+
 doStopAgain = 0
 def test_gui2(btn=None):
     print("Testing GUI2")
