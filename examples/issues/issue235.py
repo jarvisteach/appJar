@@ -6,6 +6,7 @@ from appJar import gui
 def press(btn):
     print(
         app.label("title"),
+        app.label("title2"),
         app.entry("data"),
         app.button("Clap"),
         app.radio("happy"),
@@ -24,13 +25,15 @@ def press(btn):
         app.properties("Toppings"),
     )
 
-    app.meter("Cry", app.scale("happiness"))
+    app.label("title2", "not empty")
+    app.meter("Cry", app.scale("happiness"), text="fred")
     app.meter("CryingMore", app.slider("happiness again"))
-    app.meter("CryingMorer", app.scale("happiness again"))
+    app.meter("CryingMorer", app.scale("happiness again"), text="alphabet")
     app.meter("CryingMorerr", (app.slider("happiness again"),app.scale("happiness again")))
 
 with gui("Simple Demo") as app:
     app.label("title", "Simple Props Demo", colspan=3, type="flash")
+    app.label("title2", row=0, column=3)
     app.setLabelBg("title", "green")
 
     app.radio("happy", "Very Happy", row=1, column=0)
@@ -43,7 +46,7 @@ with gui("Simple Demo") as app:
     app.text("mess2", "Simple Happiness", row=2, column=2, rowspan=3, scroll=False)
     app.setTextAreaBg("mess2", "pink")
 
-    app.image("img", "../images/balloons.gif", over="../images/balloons2.gif", row=2, column=3, rowspan=3)
+    app.image("img", "../images/balloons.gif", over="../images/balloons2.gif", row=2, column=3, rowspan=7)
     app.image("img2", "OPEN", row=2, column=4, rowspan=3, type="icon")
 
     app.check("Clap", row=2, column=1)
@@ -59,6 +62,7 @@ with gui("Simple Demo") as app:
 
     app.button("Clap", press, icon="OPEN", row=row, column=0)
     app.button("Cheer", press, row=row, column=1)
+    app.button("Cheer", "")
     app.button("Cry", press, row=row, column=2)
 
     app.date("date", row=row, column=3, rowspan=4)

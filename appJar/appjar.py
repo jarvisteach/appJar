@@ -6938,18 +6938,18 @@ class gui(object):
 
     def label(self, title, value=None, *args, **kwargs):
         """ adds, sets & gets labels all in one go """
-        if value is None: return self.getLabel(title)
+        try: self.widgetManager.verify(self.Widgets.Label, title)
+        except: # widget exists
+            if value is None: return self.getLabel(title)
+            else: self.setLabel(title, value)
         else:
-            try: self.widgetManager.verify(self.Widgets.Label, title)
-            except: self.setLabel(title, value)
-            else:
-                type = "standard" if "type" not in kwargs else kwargs.pop("type").lower().strip()
+            type = "standard" if "type" not in kwargs else kwargs.pop("type").lower().strip()
 
-                if type == "flash": label = self.addFlashLabel(title, value, *args, **kwargs)
-                elif type == "selectable": label = self.addSelectableLabel(title, value, *args, **kwargs)
-                else: label = self.addLabel(title, value, *args, **kwargs)
+            if type == "flash": label = self.addFlashLabel(title, value, *args, **kwargs)
+            elif type == "selectable": label = self.addSelectableLabel(title, value, *args, **kwargs)
+            else: label = self.addLabel(title, value, *args, **kwargs)
 
-                return label
+            return label
 
     def __flash(self):
         if not self.alive: return
@@ -7357,8 +7357,6 @@ class gui(object):
             case = None if "case" not in kwargs else kwargs.pop("case").lower().strip()
             autoRows = None if "autoRows" not in kwargs else kwargs.pop("autoRows")
 
-            print(type)
-
             if type == "file": entry = self.addFileEntry(title, *args, **kwargs)
             elif type == "directory": entry = self.addDirectoryEntry(title, *args, **kwargs)
             elif type == "validation": entry = self.addValidationEntry(title, *args, **kwargs)
@@ -7383,7 +7381,7 @@ class gui(object):
         self.widgetManager.verify(self.Widgets.Entry, title)
         # if we are an autocompleter
         if len(words) > 0:
-            ent = AutoCompleteEntry(words, self.topLevel, frame)
+            ent = AutoCompleteEntry(words, self.__getTopLevel(), frame)
         else:
             var = StringVar(self.topLevel)
             if not self.ttkFlag:
@@ -7569,6 +7567,10 @@ class gui(object):
         ent = self.__buildEntry(title, self.getContainer(), secret=False, words=words)
         self.__positionWidget(ent, row, column, colspan, rowspan)
         return ent
+
+    def appendAutoEntry(self, title, value):
+        entry = self.widgetManager.get(self.Widgets.Entry, title)
+        entry.addWord(value)
 
     def setAutoEntryNumRows(self, title, rows):
         entry = self.widgetManager.get(self.Widgets.Entry, title)
@@ -10271,6 +10273,11 @@ class Page(Frame, object):
 #########################
 
 class AutoCompleteEntry(Entry, object):
+
+    def addWord(self, word):
+        if word not in self.allWords:
+            self.allWords.append(word)
+            self.allWords.sort()
 
     def __init__(self, words, tl, *args, **kwargs):
         super(AutoCompleteEntry, self).__init__(*args, **kwargs)

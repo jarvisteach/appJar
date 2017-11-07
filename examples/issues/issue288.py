@@ -10,7 +10,7 @@ def press(btn):
 
 from appJar import gui
 
-with gui("Main Window", startWindow="Sub") as app:
+with gui("Main Window") as app:
     app.label("title", "Main Window")
     app.button("SUB", press)
 
@@ -18,3 +18,5 @@ with gui("Main Window", startWindow="Sub") as app:
         app.label("sub", "SubWindow")
         app.button("POPUP", press)
 
+    app.hide()
+    app.showSubWindow("Sub")

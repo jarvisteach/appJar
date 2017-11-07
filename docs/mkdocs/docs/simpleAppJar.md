@@ -1,7 +1,7 @@
 # appJar 2.0  
 
 We are trialling a new approach for adding, setting & getting widgets.  
-Each wudget now has a single function that supports all of these actions.  
+Each widget now has a single function that supports all of these actions.  
 
 ## Operation  
 
@@ -153,19 +153,23 @@ A draggable widget, where the user can select a number from a range.
 | Parameter | Data type | Default | Description |
 | --------- | --------- | ------- | ------------|
 | vert | boolean | False | Sets the slider to be vertically oriented. |
-| increment | integer | False | |
-| interval | integer | False | |
 | show | boolean | False | Show the slider's value above the slider. |
+| increment | integer | 10 | Configures how much the slider jumps, when the torugh is clicked. |
+| interval | integer | - | Configyres the scale to show interval values, along its length. In steps of the value specified. |
 | change | function | - | Set a function to call when the slider is changed. |
 
 ## Meter  
+Various styles of progress meter.  
+For `standard` and `split` meters `value` should be between 0 and 100.  
+For `dual` meters, `value` should be alist of two values, each between 0 and 100.  
 
-* `.meter(title, value=None)`  
+* `.meter(title, value=None, text=None)`  
 
 | Parameter | Data type | Default | Description |
 | --------- | --------- | ------- | ------------|
+| text | string | None | Set text to show on the meter. |
 | type | string | `standard` | Choose the type of meter: `standard`, `split` or `dual`. |
-| fill | boolean | False | Set the fill colour(s) for the slider. |
+| fill | boolean | False | Set the fill colour(s) for the slider (a list of two colours for `split` & `dual`). |
 
 ## Grip  
 Displays a draggable icon, which allows the GUI to be moved.  
