@@ -173,6 +173,15 @@ app.go()
     NB. this is limited to the depth of the GUI - if there is no space, then no rows will be displayed. 
     ![AutoEntry](img/1_autoEntry.png)  
 
+* `.appendAutoEntry(title, value)`  
+    This will add the value/list of values to the specified AutoEntry.  
+
+* `.removeAutoEntry(title, value)`  
+    This will remove the value from the specified AutoEntry.  
+
+* `.changeAutoEntry(title, value)`  
+    This will replace all items in the specified AutoEntry with a new list of values.  
+
 * `.clearEntry(title, callFunction=True)`  
     This will clear the contents of the specified Entry.
     Set ```callFunction``` to be False, if you don't want to call any associated functions.  

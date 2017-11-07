@@ -127,6 +127,10 @@ def test_entries():
     app.addDirectoryEntry("de1")
     assert isinstance(app.addAutoEntry("ae1", ["a", "b", "c"]), AutoCompleteEntry)
     app.setAutoEntryNumRows("ae1", 5)
+    app.appendAutoEntry("ae1", "newOne")
+    app.appendAutoEntry("ae1", ["newTwo", "newThree"])
+    app.removeAutoEntry("ae1", "newOne")
+    app.changeAutoEntry("ae1", ["a", "b", "c"])
 
     # quick validation check
     app.addEntry("focusEnt")

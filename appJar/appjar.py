@@ -7570,7 +7570,15 @@ class gui(object):
 
     def appendAutoEntry(self, title, value):
         entry = self.widgetManager.get(self.Widgets.Entry, title)
-        entry.addWord(value)
+        entry.addWords(value)
+
+    def removeAutoEntry(self, title, value):
+        entry = self.widgetManager.get(self.Widgets.Entry, title)
+        entry.removeWord(value)
+
+    def changeAutoEntry(self, title, value):
+        entry = self.widgetManager.get(self.Widgets.Entry, title)
+        entry.changeWords(value)
 
     def setAutoEntryNumRows(self, title, rows):
         entry = self.widgetManager.get(self.Widgets.Entry, title)
@@ -10296,20 +10304,17 @@ class AutoCompleteEntry(Entry, object):
         self.listBoxShowing = False
         self.rows = 10
 
-    def addWord(self, word):
-        if word not in self.allWords:
-            self.allWords.append(word)
-            self.allWords.sort()
-
     def removeWord(self, word):
         if word in self.allWords:
             self.allWords.remove(word)
 
     def addWords(self, words):
+        if not hasattr(words, "__iter__"):
+            words = [words]
         for word in words:
             if word not in self.allWords:
                 self.allWords.append(word)
-                self.allWords.sort()
+        self.allWords.sort()
 
     def changeWords(self, words):
         self.allWords = words
