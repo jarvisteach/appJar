@@ -18,9 +18,9 @@ There are two parameters being used here:
 | title | string | A unique identifier for the widget. |
 | value | string | The relevant information for the widget. |
 
-If no `value` is specified, then the `value` is returned from the widget.  
-If no idget with that `title` exists, it is created.  
-Otherwise, the existing widget is updated.  
+If `title` already exists and `value` is specified - SET the widget.
+If `title` already exists and `value` is not specified - GET the widget.
+If `title` doesn't exist - ADD the widget.
 
 When adding a widget, it's also possible to set its position.  
 
@@ -32,7 +32,7 @@ The following parameters are available when adding widgets:
 
 | Parameter | Data type | Default | Description |
 | --------- | --------- | ------- | ------------|
-| row | integer | next row | The grid row to place the widget in. |
+| row | integer | &lt;next row&gt; | The grid row to place the widget in. |
 | column | integer | 0 | The grid column to place the widget in. |
 | rowspan | integer | 1 | The number of grid rows to stretch the widget across. |
 | colspan | integer | 1 | The number of grid columns to stretch the widget across. |
@@ -66,7 +66,7 @@ An interactive widget, for capturing user input in the GUI.
 | --------- | --------- | ------- | ------------|
 | default | string | None | Sets default text to display in an empty entry. |
 | secret | boolean | False | Configures the entry box to show stars instead of characters. |
-| type | string | `standard` | Sets the type of the entry box. |
+| type | string | `standard` | One of: `standard`, `file`, `direcory`, `numeric`, `auto` or `validation`. |
 | focus | boolean | False | Should the entry box be given focus? |
 | limit | integer | - | Sets a maximum limit on the number of characters taht can be entered. |
 | case | string | None | Set to `upper` to force upercase or `lower` to force lowercase. |
@@ -155,7 +155,7 @@ A draggable widget, where the user can select a number from a range.
 | vert | boolean | False | Sets the slider to be vertically oriented. |
 | show | boolean | False | Show the slider's value above the slider. |
 | increment | integer | 10 | Configures how much the slider jumps, when the torugh is clicked. |
-| interval | integer | - | Configyres the scale to show interval values, along its length. In steps of the value specified. |
+| interval | integer | - | Configures the scale to show interval values, along its length. In steps of the value specified. |
 | change | function | - | Set a function to call when the slider is changed. |
 
 ## Meter  

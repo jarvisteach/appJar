@@ -10274,11 +10274,6 @@ class Page(Frame, object):
 
 class AutoCompleteEntry(Entry, object):
 
-    def addWord(self, word):
-        if word not in self.allWords:
-            self.allWords.append(word)
-            self.allWords.sort()
-
     def __init__(self, words, tl, *args, **kwargs):
         super(AutoCompleteEntry, self).__init__(*args, **kwargs)
         self.allWords = words
@@ -10300,6 +10295,25 @@ class AutoCompleteEntry(Entry, object):
         # no list box - yet
         self.listBoxShowing = False
         self.rows = 10
+
+    def addWord(self, word):
+        if word not in self.allWords:
+            self.allWords.append(word)
+            self.allWords.sort()
+
+    def removeWord(self, word):
+        if word in self.allWords:
+            self.allWords.remove(word)
+
+    def addWords(self, words):
+        for word in words:
+            if word not in self.allWords:
+                self.allWords.append(word)
+                self.allWords.sort()
+
+    def changeWords(self, words):
+        self.allWords = words
+        self.allWords.sort()
 
     def setNumRows(self, rows):
         self.rows = rows
@@ -10335,7 +10349,7 @@ class AutoCompleteEntry(Entry, object):
 
     # function to create & show an empty list box
     def makeListBox(self):
-        self.listbox = Listbox(self.topLevel, width=self["width"], height=8)
+        self.listbox = Listbox(self.topLevel, width=self["width"]-8, height=8)
         self.listbox.config(height=self.rows, bg=self.cget("bg"), selectbackground=self.cget("selectbackground"))
         self.listbox.config(fg=self.cget("fg"))
         self.listbox.bind("<Button-1>", self.mouseClickBox)
