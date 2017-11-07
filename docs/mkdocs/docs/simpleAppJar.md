@@ -1,20 +1,26 @@
 # appJar 2.0  
 
-We are moving away from adding, setting & getting widgets.  
-You can now use the same function for all three tasks.  
+We are trialling a new approach for adding, setting & getting widgets.  
+Each wudget now has a single function that supports all of these actions.  
 
 ## Operation  
 
 ```
-app.label("title", "text")      # ADD a label
-app.label("title", "text_2")    # SET a label
+app.label("title", "text")      # ADD a label if title is new
+app.label("title", "text_2")    # SET a label if title exists
 print(app.label("title"))       # GET a label
 ```  
+
+There are two parameters being used here:  
 
 | Parameter | Data type | Description |
 | --------- | --------- | ------------|
 | title | string | A unique identifier for the widget. |
 | value | string | The relevant information for the widget. |
+
+If no `value` is specified, then the `value` is returned from the widget.  
+If no idget with that `title` exists, it is created.  
+Otherwise, the existing widget is updated.  
 
 When adding a widget, it's also possible to set its position.  
 
@@ -22,7 +28,7 @@ When adding a widget, it's also possible to set its position.
 app.label("title", "text", row=2, column=4, rowspan=3)      # ADD a label
 ```
 
-The following parameters are supported:  
+The following parameters are available when adding widgets:  
 
 | Parameter | Data type | Default | Description |
 | --------- | --------- | ------- | ------------|
@@ -31,25 +37,28 @@ The following parameters are supported:
 | rowspan | integer | 1 | The number of grid rows to stretch the widget across. |
 | colspan | integer | 1 | The number of grid columns to stretch the widget across. |
 
-Each widget also supports its own optional parameters.  
+Each widget also supports its own optional parameters when adding (see below).  
 
-## Label  
-A widget for displaying text in a GUI.  
+## Label  
+A widget for displaying text in the GUI.  
+`value` will be the text to show in the label.  
 
 * `.label(title, value=None)`  
 
 | Parameter | Data type | Default | Description |
 | --------- | --------- | ------- | ------------|
-| type | string | "standard" | Set to "selectable" or "flash" to create different labels. |
+| type | string | `standard` | Set to `selectable` or `flash` to create different labels. |
 
 
 ## Message 
-A widget for displaying multi-line text in a GUI.  
+A widget for displaying multi-line text in the GUI.  
+`value` will be the text to show in the message.  
 
 * `.message(title, value=None)`  
 
 ## Entry  
-An interactive widget, for capturing user input in a GUI.  
+An interactive widget, for capturing user input in the GUI.  
+`value` is not required when adding an entry.  
 
 * `.entry(title, value=None)`  
 
@@ -57,14 +66,15 @@ An interactive widget, for capturing user input in a GUI.
 | --------- | --------- | ------- | ------------|
 | default | string | None | Sets default text to display in an empty entry. |
 | secret | boolean | False | Configures the entry box to show stars instead of characters. |
-| type | string | standard | Sets the type of the entry box. |
+| type | string | `standard` | Sets the type of the entry box. |
 | focus | boolean | False | Should the entry box be given focus? |
 | limit | integer | - | Sets a maximum limit on the number of characters taht can be entered. |
 | case | string | None | Set to `upper` to force upercase or `lower` to force lowercase. |
 | autorows | integer | 10 | If the type is `auto` this will set the number of rows to show. |
 
 ## Text  
-An editable box for entering text.  
+An interactive widget, for capturing multi-line user input in the GUI.  
+`value` is not required when adding an entry.  
 
 * `.text(title, value=None)`  
 
@@ -74,6 +84,7 @@ An editable box for entering text.
 
 ## Button  
 A clickable button for triggering events.  
+`value` will be the function to call.  
 
 * `.button(title, value=None)`  
 
@@ -90,6 +101,7 @@ If the `value` is set to a function, the function will be called, otherwise a br
 
 ## Check  
 A checkbox style widget, that can be checked/unchecked.  
+`value` should be True or False, indicating if the check starts selected or not.  
 
 * `.check(title, value=None)`  
 
@@ -109,7 +121,7 @@ When clicked, displays a drop-down of items, one of which can be selected.
 
 | Parameter | Data type | Default | Description |
 | --------- | --------- | ------- | ------------|
-| type | string | standard | Set this to `ticks` if you want tickable options. |
+| type | string | `standard` | Set this to `ticks` if you want tickable options. |
 
 ## Spin  
 Shows a single value, with arrows to scroll up or down, allowing the user to change the value.  
@@ -152,7 +164,7 @@ A draggable widget, where the user can select a number from a range.
 
 | Parameter | Data type | Default | Description |
 | --------- | --------- | ------- | ------------|
-| type | string | standard | Choose the type of meter: `standard`, `split` or `dual`. |
+| type | string | `standard` | Choose the type of meter: `standard`, `split` or `dual`. |
 | fill | boolean | False | Set the fill colour(s) for the slider. |
 
 ## Grip  
@@ -176,7 +188,7 @@ Displays a picture.
 
 | Parameter | Data type | Default | Description |
 | --------- | --------- | ------- | ------------|
-| type | string | standard | The type of image, one of: `icon`, `data` or `standard`. |
+| type | string | `standard` | The type of image, one of: `icon`, `data` or `standard`. |
 | fmt | string | - | If the `type` is `data` this will be used to determine the file type. |
 | compound | boolean | False | If set to `True` will show the title of the image as well.  
 | speed | integer | - | If this is an animated image, the FPS to animate the image at. |
