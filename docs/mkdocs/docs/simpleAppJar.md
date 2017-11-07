@@ -106,7 +106,9 @@ A checkbox style widget, that can be checked/unchecked.
 * `.check(title, value=None)`  
 
 ## Radio  
-A combination widget, where only one of the adio buttons can be clicked.  
+A combination widget, where only one of the radio buttons can be clicked.  
+`title` is the radio button's group, `value` will be the text displayed for this option.  
+By default, the first button added to a group will be selected.
 
 * `.radio(title, value=None)`  
 
@@ -116,6 +118,7 @@ A combination widget, where only one of the adio buttons can be clicked.
 
 ## Option  
 When clicked, displays a drop-down of items, one of which can be selected.  
+`value` should contain a list of items to display in the drop-down.  
 
 * `.option(title, value=None)`  
 
@@ -125,28 +128,31 @@ When clicked, displays a drop-down of items, one of which can be selected.
 
 ## Spin  
 Shows a single value, with arrows to scroll up or down, allowing the user to change the value.  
+If only `value` is set, it should be a list of values to display in the spin box. If `endValue` is also set, then both parameters hsould be integers, and appJar eill generate a range of numbers between the two values.  
 
 * `.spin(title, value=None, endValue=None)`  
 
 | Parameter | Data type | Default | Description |
 | --------- | --------- | ------- | ------------|
-| endValue | integer | - | If specified, value & endValue will be used to generate a range. |
+| endValue | integer | - | If specified, value & endValue should be integers, and will be used to generate a range. |
 | pos | integer | 0 | The position of an item to select. |
 | item | string | None | The name of an item to select. |
 
 ## List
 Displays a list of items, one (or more than one) of which can be selected.  
+`value` should contain a list of items to display in the list.  
 
 * `.list(title, value=None)`  
 
 | Parameter | Data type | Default | Description |
 | --------- | --------- | ------- | ------------|
-| rows | integer | - | If specified, value & endValue will be used to generate a range. |
+| rows | integer | - | Specifies how many rows to display in the list. |
 | multi | boolean | False | Set the list to be multi-selectable. |
 | group | boolean | False | Set the list to be part of a group. |
 
 ## Slider  
 A draggable widget, where the user can select a number from a range.  
+`value` is optional - it will set the starting position of the scale.  
 
 * `.slider(title, value=None)`  
 
@@ -201,10 +207,14 @@ Displays a picture.
 | map | dictionary| - | A dictionary of name:coordinates to use as an image map. `submit` must also be set. |
 
 ## Properties  
+Displays a list of checkboxes, stored in a dictionary .  
+`value` should contain a dictionary of names and booleans.  
 
 * `.properties(title, value=None)`
 
 ## Date  
+Displays a simple date picker widget.  
+`value` should contain a date object.  
 
 * `.date(title, value=None)`
 
