@@ -144,6 +144,8 @@ app.go()
 
 Once you've laid out your widgets, the next most important thing is how they line up in their rows and columns.  
 
+**NB.** These only take affect from the point they are added, so include them before adding the widgets.  
+
 There are two things you can configure:    
 
 * How columns and rows stretch to fill the GUI - **stretchiness**  
