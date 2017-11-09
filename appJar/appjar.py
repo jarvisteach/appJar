@@ -463,6 +463,7 @@ class gui(object):
         self.topLevel.locationSet = False
         self.topLevel.ignoreSettings = False
         self.topLevel.isFullscreen = False # records if we're in fullscreen - stops hideTitle from breaking
+        self.topLevel.displayed = True
         if geom is not None: self.setSize(geom)
         self.setResizable(True)
 
@@ -1735,9 +1736,12 @@ class gui(object):
 
         # user hasn't specified anything
         if self.startWindow is None:
-            gui.debug("Showing main window")
-            self.__bringToFront()
-            self.topLevel.deiconify()
+            if not self.topLevel.displayed:
+                gui.debug("topLevel has been manually hidden - not showing in go()")
+            else:
+                gui.debug("Showing topLevel")
+                self.__bringToFront()
+                self.topLevel.deiconify()
         else:
             gui.debug("hiding main window")
             self.hide()
@@ -4453,9 +4457,11 @@ class gui(object):
 
     # functions to hide & show the main window
     def hide(self, btn=None):
+        self.topLevel.displayed = False
         self.topLevel.withdraw()
 
     def show(self, btn=None):
+        self.topLevel.displayed = True
         self.topLevel.deiconify()
 
 
@@ -7356,6 +7362,7 @@ class gui(object):
             focus = False if "focus" not in kwargs else kwargs.pop("focus")
             case = None if "case" not in kwargs else kwargs.pop("case").lower().strip()
             autoRows = None if "autoRows" not in kwargs else kwargs.pop("autoRows")
+            change = None if "change" not in kwargs else kwargs.pop("change")
 
             if type == "file": entry = self.addFileEntry(title, *args, **kwargs)
             elif type == "directory": entry = self.addDirectoryEntry(title, *args, **kwargs)
@@ -7367,6 +7374,8 @@ class gui(object):
             if limit is not None: self.setEntryMaxLength(title, limit)
             if case == "upper": self.setEntryUpperCase(title)
             elif case == "lower": self.setEntryLowerCase(title)
+
+            if change is not None: self.setEntryChangeFunction(title, change)
 
             if default is not None: self.setEntryDefault(title, default)
             if type != "auto":
@@ -8780,28 +8789,35 @@ class gui(object):
         self.topLevel.update_idletasks()
         if parent is None:
             MessageBox.showinfo(title, message)
+            if self.topLevel.displayed:
+                self.__bringToFront()
         else:
             opts = {"parent": self.widgetManager.get(self.Widgets.SubWindow, parent)}
             MessageBox.showinfo(title, message, **opts)
-        self.__bringToFront()
+            self.__bringToFront(parent)
+
 
     def errorBox(self, title, message, parent=None):
         self.topLevel.update_idletasks()
         if parent is None:
             MessageBox.showerror(title, message)
+            if self.topLevel.displayed:
+                self.__bringToFront()
         else:
             opts = {"parent": self.widgetManager.get(self.Widgets.SubWindow, parent)}
             MessageBox.showerror(title, message, **opts)
-        self.__bringToFront()
+            self.__bringToFront(parent)
 
     def warningBox(self, title, message, parent=None):
         self.topLevel.update_idletasks()
         if parent is None:
             MessageBox.showwarning(title, message)
+            if self.topLevel.displayed:
+                self.__bringToFront()
         else:
             opts = {"parent": self.widgetManager.get(self.Widgets.SubWindow, parent)}
             MessageBox.showwarning(title, message, **opts)
-        self.__bringToFront()
+            self.__bringToFront(parent)
 
     def yesNoBox(self, title, message, parent=None):
         self.topLevel.update_idletasks()
@@ -8827,7 +8843,7 @@ class gui(object):
             opts = {"parent": self.widgetManager.get(self.Widgets.SubWindow, parent)}
             return SimpleDialog.askinteger(title=title, message=message, **opts)
 
-    def floatBox(self, title, message, parent=None):
+        def floatBox(self, title, message, parent=None):
         self.topLevel.update_idletasks()
         if parent is None:
             return SimpleDialog.askfloat(title, message)

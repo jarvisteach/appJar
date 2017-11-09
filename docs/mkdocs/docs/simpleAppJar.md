@@ -71,6 +71,7 @@ An interactive widget, for capturing user input in the GUI.
 | limit | integer | - | Sets a maximum limit on the number of characters taht can be entered. |
 | case | string | None | Set to `upper` to force upercase or `lower` to force lowercase. |
 | autorows | integer | 10 | If the type is `auto` this will set the number of rows to show. |
+| change | function | None | Set a function to call every time the widget is changed. |
 
 ## Text  
 An interactive widget, for capturing multi-line user input in the GUI.  
