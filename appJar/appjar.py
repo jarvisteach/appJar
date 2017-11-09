@@ -8843,7 +8843,7 @@ class gui(object):
             opts = {"parent": self.widgetManager.get(self.Widgets.SubWindow, parent)}
             return SimpleDialog.askinteger(title=title, message=message, **opts)
 
-        def floatBox(self, title, message, parent=None):
+    def floatBox(self, title, message, parent=None):
         self.topLevel.update_idletasks()
         if parent is None:
             return SimpleDialog.askfloat(title, message)
