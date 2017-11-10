@@ -1461,7 +1461,7 @@ class gui(object):
                         data = ent.DEFAULT_TEXT
 
                     self.debug("\t\t%s: %s", k, data)
-                    self.updateEntryDefault(k, data)
+                    self.setEntryDefault(k, data)
 
             elif kind in [self.Widgets.Image]:
                 for k in widgets.keys():
@@ -4765,9 +4765,14 @@ class gui(object):
             else: self.setOptionBox(title, value, *args, **kwargs)
         else:
             type = "standard" if "type" not in kwargs else kwargs.pop("type").lower().strip()
+            change = False if "change" not in kwargs else kwargs.pop("change")
 
-            if type == "ticks": return self.addTickOptionBox(title, value, *args, **kwargs)
-            else: return self.addOptionBox(title, value, *args, **kwargs)
+            if type == "ticks": opt = self.addTickOptionBox(title, value, *args, **kwargs)
+            else: opt = self.addOptionBox(title, value, *args, **kwargs)
+
+            self.setOptionBoxChangeFunction(title, change)
+
+            return opt
 
     def __buildOptionBox(self, frame, title, options, kind="normal"):
         """ Internal wrapper, used for building OptionBoxes.
@@ -5255,12 +5260,12 @@ class gui(object):
         gMap = self.widgetManager.get(self.Widgets.Map, title)
         gMap.setSize(size)
 
-    def setGoogleMapMarker(self, title, location):
+    def setGoogleMapMarker(self, title, location, size=None, colour=None, label=None, replace=False):
         gMap = self.widgetManager.get(self.Widgets.Map, title)
         if len(location) == 0:
             gMap.removeMarkers()
         else:
-            gMap.addMarker(location)
+            gMap.addMarker(location, size, colour, label, replace)
 
     def getGoogleMapZoom(self, title):
         return self.widgetManager.get(self.Widgets.Map, title).params["zoom"]
@@ -6330,12 +6335,14 @@ class gui(object):
             rows = None if "rows" not in kwargs else kwargs.pop("rows")
             multi = False if "multi" not in kwargs else kwargs.pop("multi")
             group = False if "group" not in kwargs else kwargs.pop("group")
+            change = False if "change" not in kwargs else kwargs.pop("change")
 
             listBox = self.addListBox(title, value, *args, **kwargs)
             
             if rows is not None: self.setListBoxRows(title, rows)
             if multi: self.setListBoxMulti(title)
             if group: self.setListBoxGroup(title)
+            if change is not None: self.setListBoxChangeFunction(title, change)
 
             return listBox
 
@@ -12053,8 +12060,27 @@ class GoogleMap(LabelFrame, object):
         self.markers = []
         self.app.thread(self.getMapData)
 
-    def addMarker(self, location):
-        self.markers.append(location)
+    def addMarker(self, location, size=None, colour=None, label=None, replace=False):
+        """ function to add markers, format:
+            &markers=color:blue|label:Z|size:tiny|location_string
+        """
+        if size is not None:
+            size = size.lower().strip()
+            if size not in ["tiny", "mid", "small"]:
+                gui.warn("Invalid size: %s, for marker %s, ignoring", size, location)
+                size = None
+
+        if label is not None:
+            label = label.upper().strip()
+            if label not in "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789":
+                gui.warn("Invalid label: %s, for marker %s, must be a single character.", label, location)
+                label = None
+
+        if len(self.markers) == 0 or not replace:
+            self.markers.append( {"location":location, "size":size, "colour":colour, "label":label} )
+        else:
+            self.markers[-1] = {"location":location, "size":size, "colour":colour, "label":label}
+
         self.app.thread(self.getMapData)
 
     def saveTile(self, location):
@@ -12133,9 +12159,14 @@ class GoogleMap(LabelFrame, object):
     def __buildQueryURL(self):
         self.request = self.MAP_URL + urlencode(self.params)
         if len(self.markers) > 0:
-            m = "|".join(self.markers)
-            m = quote_plus(m)
-            self.request += "&markers=" + m
+            m = ""
+            for mark in self.markers:
+                if mark["colour"] is not None: m += "color:" + str(mark["colour"])
+                if mark["size"] is not None: m += "|size:" + str(mark["size"])
+                if mark["label"] is not None: m += "|label:" + str(mark["label"])
+                m += "|" + str(mark["location"])
+                m = quote_plus(m)
+                self.request += "&markers=" + m
             
         gui.debug("GoogleMap search URL: %s", self.request)
 

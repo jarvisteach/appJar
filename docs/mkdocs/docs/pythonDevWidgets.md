@@ -87,10 +87,14 @@ app.go()
     Set the size of the GoogleMap. Should be in the format `"300x300"`.  
     Note, if you set it too small, the control widgets won't look good...  
 
-* `.setGoogleMapMarker(title, location)`  
+* `.setGoogleMapMarker(title, location, size=None, colour=None, label=None, replace=False)`  
     Will drop a marker on the specified location.  
     The marker will only be visible if the current `location` & `zoom level` permit.  
     If an empty `location` is provided, all markers will be removed.  
+    `colour` can be set to any of (black, brown, green, purple, yellow, blue, gray, orange, red, white) or a hex value (starting '0x').  
+    `size` can be set to any of (tiny, mid, small).  
+    `label` can be set to a single letter or digit.  
+    If `replace` is `True` this marker will replace the last one added.  
 
 #### Get GoogleMaps  
 
