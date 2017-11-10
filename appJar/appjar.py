@@ -4765,12 +4765,12 @@ class gui(object):
             else: self.setOptionBox(title, value, *args, **kwargs)
         else:
             type = "standard" if "type" not in kwargs else kwargs.pop("type").lower().strip()
-            change = False if "change" not in kwargs else kwargs.pop("change")
+            change = None if "change" not in kwargs else kwargs.pop("change")
 
             if type == "ticks": opt = self.addTickOptionBox(title, value, *args, **kwargs)
             else: opt = self.addOptionBox(title, value, *args, **kwargs)
 
-            self.setOptionBoxChangeFunction(title, change)
+            if change is not None: self.setOptionBoxChangeFunction(title, change)
 
             return opt
 
@@ -5266,6 +5266,13 @@ class gui(object):
             gMap.removeMarkers()
         else:
             gMap.addMarker(location, size, colour, label, replace)
+
+    def removeGoogleMapMarker(self, title, label):
+        gMap = self.widgetManager.get(self.Widgets.Map, title)
+        if len(label) == 0:
+            gMap.removeMarkers()
+        else:
+            gMap.removeMarker(label)
 
     def getGoogleMapZoom(self, title):
         return self.widgetManager.get(self.Widgets.Map, title).params["zoom"]
@@ -12059,6 +12066,13 @@ class GoogleMap(LabelFrame, object):
     def removeMarkers(self):
         self.markers = []
         self.app.thread(self.getMapData)
+
+    def removeMarker(self, label):
+        for p, v in enumerate(self.markers):
+            if v.get("label") == label:
+                del self.markers[p]
+                self.app.thread(self.getMapData)
+                return
 
     def addMarker(self, location, size=None, colour=None, label=None, replace=False):
         """ function to add markers, format:

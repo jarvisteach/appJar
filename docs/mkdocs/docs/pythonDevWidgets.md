@@ -96,6 +96,9 @@ app.go()
     `label` can be set to a single letter or digit.  
     If `replace` is `True` this marker will replace the last one added.  
 
+* `.removeGoogleMapMarker(title, label)`  
+    Will remove the specified marker, if found.  
+
 #### Get GoogleMaps  
 
 * `.getGoogleMapLocation(title)`  

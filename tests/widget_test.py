@@ -2401,7 +2401,8 @@ def test_googlemap():
     assert app.getGoogleMapSize("gm2") == "350x450"
 
     app.setGoogleMapMarker("gm2", "france")
-    app.setGoogleMapMarker("gm2", "paris")
+    app.setGoogleMapMarker("gm2", "paris", label="A")
+    app.removeGoogleMapMarker("gm2", label="A")
     app.setGoogleMapMarker("gm2", "leon")
 
     app.setGoogleMapMarker("gm2", "")
@@ -2802,9 +2803,9 @@ with gui("Simple Demo") as app4:
 
 
     row=app4.gr()
-    app4.option("feelings", ["happy", "bored", "angry"], column=0, row=row)
+    app4.option("feelings", ["happy", "bored", "angry"], column=0, row=row, change=press)
     app4.spin("feelings", ["happy", "bored", "angry"], column=1, row=row, item="angry")
-    app4.list("feelings", ["happy", "bored", "angry"], column=2, row=row, rows=4, multi=True, group=True)
+    app4.list("feelings", ["happy", "bored", "angry"], column=2, row=row, rows=4, multi=True, group=True, change=press)
 
     app4.separator(colspan=3)
     app4.spin("vals", 4, endValue=10, colspan=3, pos=3)
