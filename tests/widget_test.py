@@ -2739,6 +2739,8 @@ def test_gui4(btn=None):
         app4.stop()
     doStopAgain += 1
 
+def changer(btn=None):
+    print(btn)
 
 with gui("Simple Demo") as app4:
     app4.label("title", "Simple Props Demo", colspan=3, type="flash")
@@ -2765,7 +2767,24 @@ with gui("Simple Demo") as app4:
     app4.entry("data", colspan=3, type="directory")
     app4.entry("data2", value="lots of data", colspan=3, focus=True, case="upper", limit=15)
     app4.entry("data3", colspan=3, default="france", type="validation")
-    app4.entry("data4", value=["a", "aa", "aba", "abc", "abd"], colspan=3, type="auto", autoRows=4)
+    app4.entry("data4", value=["a", "aa", "aba", "abc", "abd"], colspan=3, type="auto", rows=4)
+
+    app4.entry("se1", row=0, column=1, default="standard", submit=changer, change=changer, limit=5, case="upper", rows=3)
+    app4.entry("sv1", row=1, column=1, type="validation", default="validation", submit=changer, change=changer, limit=5, case="upper", rows=3)
+    app4.entry("sf1", row=2, column=1, type="file", default="file", submit=changer, change=changer, limit=5, case="upper", rows=3)
+    app4.entry("sd1", row=3, column=1, type="directory", default="directory", submit=changer, change=changer, limit=5, case="upper", rows=3)
+    app4.entry("sn1", row=4, column=1, type="numeric", default="numeric", submit=changer, change=changer, limit=5, case="upper", rows=3)
+    app4.entry("sa1", ["a", "b", "bb", "bbb"], row=5, column=1, type="auto", default="auto", submit=changer, change=changer, limit=5, case="upper", rows=3)
+    app4.entry("ss1", row=6, column=1, secret=True, default="secret", submit=changer, change=changer, limit=5, case="upper", rows=3)
+
+    app4.entry("lse1", row=7, column=1,label=True)
+    #app4.entry("lsv1", row=8, column=1, type="validation",label=True)
+    app4.entry("lsf1", row=8, column=1, type="file",label=True)
+    app4.entry("lsd1", row=9, column=1, type="directory",label=True)
+    app4.entry("lsn1", row=10, column=1, type="numeric",label=True)
+    app4.entry("lsa1", ["a", "b", "bb", "bbb"], row=11, column=1, type="auto",label=True)
+    app4.entry("lss1", row=12, column=1, secret=True,label=True)
+
 
     row=app4.gr()
 

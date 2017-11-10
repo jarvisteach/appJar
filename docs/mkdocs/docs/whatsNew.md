@@ -2,7 +2,7 @@
 ---
 
 ## Version 0.9  
-* Implementation of new [widget access functions](/simpleAppJar)  
+* Implementation of alternative [widget access functions](/simpleAppJar)  
     * now possible to ADD a widget, by using its name  
     * now possible to SET a widget, by using its name  
     * now possible to GET a widget, by using its name  

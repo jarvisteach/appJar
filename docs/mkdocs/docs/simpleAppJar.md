@@ -64,14 +64,16 @@ An interactive widget, for capturing user input in the GUI.
 
 | Parameter | Data type | Default | Description |
 | --------- | --------- | ------- | ------------|
+| type | string | `standard` | One of: `standard`, `file`, `direcory`, `numeric`, `auto` or `validation`. |
+| label | boolean | False | Adds a Label before the widget. |
 | default | string | None | Sets default text to display in an empty entry. |
 | secret | boolean | False | Configures the entry box to show stars instead of characters. |
-| type | string | `standard` | One of: `standard`, `file`, `direcory`, `numeric`, `auto` or `validation`. |
 | focus | boolean | False | Should the entry box be given focus? |
 | limit | integer | - | Sets a maximum limit on the number of characters taht can be entered. |
 | case | string | None | Set to `upper` to force upercase or `lower` to force lowercase. |
-| autorows | integer | 10 | If the type is `auto` this will set the number of rows to show. |
+| rows | integer | 10 | If the type is `auto` this will set the number of rows to show. |
 | change | function | None | Set a function to call every time the widget is changed. |
+| submit | function | None | Set a function to call every time the widget is submitted - when ENTER is pressed. |
 
 ## Text  
 An interactive widget, for capturing multi-line user input in the GUI.  

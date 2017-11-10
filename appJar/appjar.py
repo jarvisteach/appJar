@@ -7356,35 +7356,81 @@ class gui(object):
             if value is None: return self.getEntry(title)
             else: self.setEntry(title, value, *args, **kwargs)
         else:
-            default = None if "default" not in kwargs else kwargs.pop("default")
             type = "standard" if "type" not in kwargs else kwargs.pop("type").lower().strip()
-            limit = None if "limit" not in kwargs else kwargs.pop("limit")
+
+            # remove setter values from kwargs
+            default = None if "default" not in kwargs else kwargs.pop("default")
             focus = False if "focus" not in kwargs else kwargs.pop("focus")
+            limit = None if "limit" not in kwargs else kwargs.pop("limit")
             case = None if "case" not in kwargs else kwargs.pop("case").lower().strip()
-            autoRows = None if "autoRows" not in kwargs else kwargs.pop("autoRows")
+            rows = None if "rows" not in kwargs else kwargs.pop("rows")
             change = None if "change" not in kwargs else kwargs.pop("change")
+            submit = None if "submit" not in kwargs else kwargs.pop("submit")
 
-            if type == "file": entry = self.addFileEntry(title, *args, **kwargs)
-            elif type == "directory": entry = self.addDirectoryEntry(title, *args, **kwargs)
-            elif type == "validation": entry = self.addValidationEntry(title, *args, **kwargs)
-            elif type == "numeric": entry = self.addNumericEntry(title, *args, **kwargs)
-            elif type == "auto": entry = self.addAutoEntry(title, words=value, *args, **kwargs)
-            else: entry = self.addEntry(title, *args, **kwargs)
+            # create the entry widget
+            if type == "auto": 
+                ent = self.__entryMaker(title, *args, type=type, words=value, **kwargs)
+            else:
+                ent = self.__entryMaker(title, *args, type=type, **kwargs)
 
+            # apply any setter values
             if limit is not None: self.setEntryMaxLength(title, limit)
             if case == "upper": self.setEntryUpperCase(title)
             elif case == "lower": self.setEntryLowerCase(title)
 
             if change is not None: self.setEntryChangeFunction(title, change)
+            if submit is not None: self.setEntrySubmitFunction(title, submit)
 
-            if default is not None: self.setEntryDefault(title, default)
+            if default is not None:
+                if ent.default != "":
+                    self.updateEntryDefault(title, default)
+                else:
+                    self.setEntryDefault(title, default)
             if type != "auto":
                 if value is not None: self.setEntry(title, value)
             else:
-                if autoRows is not None: self.setAutoEntryNumRows(title, autoRows)
+                if rows is not None: self.setAutoEntryNumRows(title, rows)
             if focus: self.setEntryFocus(title)
 
-            return entry
+            return ent
+
+    def __entryMaker(self, title, row=None, column=0, colspan=0, rowspan=0, secret=False, label=False, type="standard", words=None):
+        if label:
+            if type == "validation":
+                self.warn("Unable to create labelValidationEntries: %s", title)
+                return
+            frame = self.__getLabelBox(title)
+        else:
+            frame = self.getContainer()
+
+        if type == "standard":
+            ent = self.__buildEntry(title, frame, secret)
+        elif type == "numeric":
+            ent = self.__buildEntry(title, frame, secret)
+            if self.validateNumeric is None:
+                self.validateNumeric = (self.containerStack[0]['container'].register(
+                    self.__validateNumericEntry), '%d', '%i', '%P', '%s', '%S', '%v', '%V', '%W')
+
+            ent.isNumeric = True
+            ent.config(validate='key', validatecommand=self.validateNumeric)
+            self.setEntryTooltip(title, "Numeric data only.")
+        elif type == "auto":
+            ent = self.__buildEntry(title, frame, secret=False, words=words)
+        elif type == "file":
+            ent = self.__buildFileEntry(title, frame)
+        elif type == "directory":
+            ent = self.__buildFileEntry(title, frame, selectFile=False)
+        elif type == "validation":
+            ent = self.__buildValidationEntry(title, frame, secret)
+        else:
+            raise Exception("Invalid entry type: %s", type)
+
+        if label:
+            self.__packLabelBox(frame, ent)
+            self.__positionWidget(frame, row, column, colspan, rowspan)
+        else:
+            self.__positionWidget(ent, row, column, colspan, rowspan)
+        return ent
 
     def __buildEntry(self, title, frame, secret=False, words=[]):
         self.widgetManager.verify(self.Widgets.Entry, title)
@@ -7418,10 +7464,12 @@ class gui(object):
         ent.myTitle = title  # the title of the entry
         ent.isNumeric = False  # if the entry is numeric
         ent.isValidation = False  # if the entry is validation
+        ent.isSecret = False  # if the entry is secret
 
         # configure it to be secret
         if secret:
             ent.config(show="*")
+            ent.isSecret = True
 
         ent.bind("<Tab>", self.__focusNextWindow)
         ent.bind("<Shift-Tab>", self.__focusLastWindow)
@@ -7434,19 +7482,52 @@ class gui(object):
         return ent
 
     def addEntry(self, title, row=None, column=0, colspan=0, rowspan=0, secret=False):
-        ent = self.__buildEntry(title, self.getContainer(), secret)
-        self.__positionWidget(ent, row, column, colspan, rowspan)
-        return ent
+        return self.__entryMaker(title, row, column, colspan, rowspan, secret=secret, label=False, type="standard")
+
+    def addLabelEntry(self, title, row=None, column=0, colspan=0, rowspan=0, secret=False):
+        return self.__entryMaker(title, row, column, colspan, rowspan, secret, label=True)
+
+    def addSecretEntry(self, title, row=None, column=0, colspan=0, rowspan=0):
+        return self.__entryMaker(title, row, column, colspan, rowspan, True)
+
+    def addLabelSecretEntry(self, title, row=None, column=0, colspan=0, rowspan=0):
+        return self.__entryMaker(title, row, column, colspan, rowspan, secret=True, label=True)
+
+    def addSecretLabelEntry(self, title, row=None, column=0, colspan=0, rowspan=0):
+        return self.__entryMaker(title, row, column, colspan, rowspan, secret=True, label=True)
 
     def addFileEntry(self, title, row=None, column=0, colspan=0, rowspan=0):
-        ent = self.__buildFileEntry(title, self.getContainer())
-        self.__positionWidget(ent, row, column, colspan, rowspan)
-        return ent
+        return self.__entryMaker(title, row, column, colspan, rowspan, secret=False, label=False, type="file")
+
+    def addLabelFileEntry(self, title, row=None, column=0, colspan=0, rowspan=0):
+        return self.__entryMaker(title, row, column, colspan, rowspan, secret=False, label=True, type="file")
 
     def addDirectoryEntry(self, title, row=None, column=0, colspan=0, rowspan=0):
-        ent = self.__buildFileEntry(title, self.getContainer(), selectFile=False)
-        self.__positionWidget(ent, row, column, colspan, rowspan)
-        return ent
+        return self.__entryMaker(title, row, column, colspan, rowspan, secret=False, label=False, type="directory")
+
+    def addLabelDirectoryEntry(self, title, row=None, column=0, colspan=0, rowspan=0):
+        return self.__entryMaker(title, row, column, colspan, rowspan, secret=False, label=True, type="directory")
+
+    def addValidationEntry(self, title, row=None, column=0, colspan=0, rowspan=0, secret=False):
+        return self.__entryMaker(title, row, column, colspan, rowspan, secret=False, label=False, type="validation")
+
+    def addLabelValidationEntry(self, title, row=None, column=0, colspan=0, rowspan=0, secret=False):
+        return self.__entryMaker(title, row, column, colspan, rowspan, secret=False, label=True, type="validation")
+
+    def addAutoEntry(self, title, words, row=None, column=0, colspan=0, rowspan=0):
+        return self.__entryMaker(title, row, column, colspan, rowspan, secret=False, label=False, type="auto", words=words)
+
+    def addLabelAutoEntry(self, title, words, row=None, column=0, colspan=0, rowspan=0, secret=False):
+        return self.__entryMaker(title, row, column, colspan, rowspan, secret=False, label=True, type="auto", words=words)
+
+    def addNumericEntry(self, title, row=None, column=0, colspan=0, rowspan=0, secret=False):
+        return self.__entryMaker(title, row, column, colspan, rowspan, secret=secret, label=False, type="numeric")
+
+    def addLabelNumericEntry(self, title, row=None, column=0, colspan=0, rowspan=0, secret=False):
+        return self.__entryMaker(title, row, column, colspan, rowspan, secret=secret, label=True, type="numeric")
+
+    def addNumericLabelEntry(self, title, row=None, column=0, colspan=0, rowspan=0, secret=False):
+        return self.__entryMaker(title, row, column, colspan, rowspan, secret=secret, label=True, type="numeric")
 
     def __getDirName(self, title):
         self.__getFileName(title, selectFile=False)
@@ -7500,12 +7581,6 @@ class gui(object):
 
         return vFrame
 
-    def addValidationEntry(self, title, row=None, column=0, colspan=0, rowspan=0, secret=False):
-
-        ent = self.__buildValidationEntry(title, self.getContainer(), secret)
-        self.__positionWidget(ent, row, column, colspan, rowspan)
-        return ent
-
     def __buildValidationEntry(self, title, frame, secret):
         vFrame = LabelBox(frame)
         vFrame.config(background=self.__getContainerBg())
@@ -7531,13 +7606,6 @@ class gui(object):
         self.setEntryWaitingValidation(title)
 
         return vFrame
-
-    def addLabelValidationEntry(self, title, row=None, column=0, colspan=0, rowspan=0, secret=False):
-        frame = self.__getLabelBox(title)
-        ent = self.__buildValidationEntry(title, frame, secret)
-        self.__packLabelBox(frame, ent)
-        self.__positionWidget(frame, row, column, colspan, rowspan)
-        return ent
 
     def setEntryValid(self, title):
         entry = self.widgetManager.get(self.Widgets.Entry, title)
@@ -7572,11 +7640,6 @@ class gui(object):
         entry.lab.config(text='\u2731', fg="#000000")
         entry.lab.DEFAULT_TEXT = entry.lab.cget("text")
 
-    def addAutoEntry(self, title, words, row=None, column=0, colspan=0, rowspan=0):
-        ent = self.__buildEntry(title, self.getContainer(), secret=False, words=words)
-        self.__positionWidget(ent, row, column, colspan, rowspan)
-        return ent
-
     def appendAutoEntry(self, title, value):
         entry = self.widgetManager.get(self.Widgets.Entry, title)
         entry.addWords(value)
@@ -7592,13 +7655,6 @@ class gui(object):
     def setAutoEntryNumRows(self, title, rows):
         entry = self.widgetManager.get(self.Widgets.Entry, title)
         entry.setNumRows(rows)
-
-    def addLabelAutoEntry(self, title, words, row=None, column=0, colspan=0, rowspan=0, secret=False):
-        frame = self.__getLabelBox(title)
-        ent = self.__buildEntry(title, frame, secret, words=words)
-        self.__packLabelBox(frame, ent)
-        self.__positionWidget(frame, row, column, colspan, rowspan)
-        return ent
 
     def __validateNumericEntry(self, action, index, value_if_allowed, prior_value, text, validation_type, trigger_type, widget_name):
         if action == "1":
@@ -7619,54 +7675,6 @@ class gui(object):
                 return False
         else:
             return True
-
-    def addNumericEntry(self, title, row=None, column=0, colspan=0, rowspan=0, secret=False):
-        ent = self.__buildEntry(title, self.getContainer(), secret)
-        self.__positionWidget(ent, row, column, colspan, rowspan)
-
-        if self.validateNumeric is None:
-            self.validateNumeric = (self.containerStack[0]['container'].register(
-                self.__validateNumericEntry), '%d', '%i', '%P', '%s', '%S', '%v', '%V', '%W')
-
-        ent.isNumeric = True
-        ent.config(validate='key', validatecommand=self.validateNumeric)
-        self.setEntryTooltip(title, "Numeric data only.")
-        return ent
-
-    def addLabelNumericEntry(self, title, row=None, column=0, colspan=0, rowspan=0, secret=False):
-        return self.addNumericLabelEntry(
-            title, row, column, colspan, rowspan, secret)
-
-    def addNumericLabelEntry(self, title, row=None, column=0, colspan=0, rowspan=0, secret=False):
-        frame = self.__getLabelBox(title)
-        ent = self.__buildEntry(title, frame, secret)
-        self.__packLabelBox(frame, ent)
-        self.__positionWidget(frame, row, column, colspan, rowspan)
-
-        if self.validateNumeric is None:
-            self.validateNumeric = (self.containerStack[0]['container'].register(
-                self.__validateNumericEntry), '%d', '%i', '%P', '%s', '%S', '%v', '%V', '%W')
-
-        ent.isNumeric = True
-        ent.config(validate='key', validatecommand=self.validateNumeric)
-        self.setEntryTooltip(title, "Numeric data only.")
-        return ent
-
-    def addSecretEntry(self, title, row=None, column=0, colspan=0, rowspan=0):
-        return self.addEntry(title, row, column, colspan, rowspan, True)
-
-    def addLabelEntry(self, title, row=None, column=0, colspan=0, rowspan=0, secret=False):
-        frame = self.__getLabelBox(title)
-        ent = self.__buildEntry(title, frame, secret)
-        self.__packLabelBox(frame, ent)
-        self.__positionWidget(frame, row, column, colspan, rowspan)
-        return ent
-
-    def addLabelSecretEntry(self, title, row=None, column=0, colspan=0, rowspan=0):
-        return self.addSecretLabelEntry(title, row, column, colspan, rowspan)
-
-    def addSecretLabelEntry(self, title, row=None, column=0, colspan=0, rowspan=0):
-        return self.addLabelEntry(title, row, column, colspan, rowspan, True)
 
     def getEntry(self, name):
         entry = self.widgetManager.get(self.Widgets.Entry, name)
@@ -7772,11 +7780,17 @@ class gui(object):
                 var.set("")
                 entry.showingDefault = False
                 entry.config(justify=entry.oldJustify, foreground=entry.oldFg)
-            elif mode == "out" and current == "":
+                if entry.isSecret:
+                    entry.config(show="*")
+            elif mode == "out" and (current == "" or entry.showingDefault):
+                if entry.isSecret:
+                    entry.config(show="")
                 var.set(entry.default)
                 entry.config(justify='center', foreground='grey')
                 entry.showingDefault = True
             elif mode == "update" and entry.showingDefault:
+                if entry.isSecret:
+                    entry.config(show="")
                 var.set(entry.default)
 
         # re-enable any limits
@@ -7807,11 +7821,12 @@ class gui(object):
         self.widgetManager.get(self.Widgets.Entry, name, group=WidgetManager.VARS)
 
         # remember current settings - to return to
-        entry.oldJustify = entry.cget('justify')
-        entry.oldFg = entry.cget('foreground')
+        if not hasattr(entry, "oldJustify"):
+            entry.oldJustify = entry.cget('justify')
+        if not hasattr(entry, "oldFg"):
+            entry.oldFg = entry.cget('foreground')
 
         # configure default stuff
-        entry.showingDefault = False
         entry.default = text
         entry.DEFAULT_TEXT = text
 
@@ -7846,6 +7861,9 @@ class gui(object):
         widg = self.topLevel.focus_get()
         return self.__getWidgetName(widg)
 
+####################################
+## Functions to get widget details
+####################################
 
     def __lookupValue(self, myDict, val):
         for name in myDict:
