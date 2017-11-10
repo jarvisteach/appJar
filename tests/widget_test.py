@@ -157,6 +157,9 @@ def test_entries():
     app._gui__entryIn("tester")
     app._gui__entryOut("tester")
 
+    app.setEntryDefault("tester3", TEXT_ONE)
+    app.setEntryDefault("tester3", TEXT_TWO)
+    app.setEntryDefault("tester3", TEXT_THREE)
     app.updateDefaultText("tester3", TEXT_ONE)
     app.updateEntryDefault("tester3", TEXT_ONE)
 
