@@ -153,9 +153,6 @@ app.go()
     Once the user starts typing, it will disappear.  
     The text is centered, shown in a light gray font, and will not be returned by `.getEntry(title)`  
 
-* `.updateEntryDefault(title, text)`  
-    This will update the default value for the specified Entry.  
-
 * `.setEntryUpperCase(title)` & `.setEntryLowerCase(title)`   
     This will force all text typed into the Entry to be uppercase/lowercase.  
 

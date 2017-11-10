@@ -7380,12 +7380,8 @@ class gui(object):
 
             if change is not None: self.setEntryChangeFunction(title, change)
             if submit is not None: self.setEntrySubmitFunction(title, submit)
+            if default is not None: self.setEntryDefault(title, default)
 
-            if default is not None:
-                if ent.default != "":
-                    self.updateEntryDefault(title, default)
-                else:
-                    self.setEntryDefault(title, default)
             if type != "auto":
                 if value is not None: self.setEntry(title, value)
             else:
@@ -7806,15 +7802,12 @@ class gui(object):
             var.auto_id = var.trace('w', entry.textChanged)
 
     def updateDefaultText(self, name, text):
-        self.warn(".updateDefaultText() is deprecated. You should be using .updateEntryDefault()")
-        self.updateEntryDefault(name, text)
+        self.warn(".updateDefaultText() is deprecated. You should be using .setEntryDefault()")
+        self.setEntryDefault(name, text)
 
     def updateEntryDefault(self, name, text):
-        entry = self.widgetManager.get(self.Widgets.Entry, name)
-
-        entry.default = text
-        entry.DEFAULT_TEXT = text
-        self.__updateEntryDefault(name, "update")
+        self.warn(".updateEntryDefault() is deprecated. You should be using .setEntryDefault()")
+        self.setEntryDefault(name, text)
 
     def setEntryDefault(self, name, text="default"):
         entry = self.widgetManager.get(self.Widgets.Entry, name)
@@ -7834,10 +7827,14 @@ class gui(object):
         self.__updateEntryDefault(name, "out")
 
         # bind commands to show/remove the default
+        if hasattr(entry, "defaultInEvent"):
+            entry.unbind(entry.defaultInEvent)
+            entry.unbind(entry.defaultOutEvent)
+
         in_command = self.MAKE_FUNC(self.__entryIn, name, True)
         out_command = self.MAKE_FUNC(self.__entryOut, name, True)
-        entry.bind("<FocusIn>", in_command, add="+")
-        entry.bind("<FocusOut>", out_command, add="+")
+        entry.defaultInEvent = entry.bind("<FocusIn>", in_command, add="+")
+        entry.defaultOutEvent = entry.bind("<FocusOut>", out_command, add="+")
 
     def clearEntry(self, name, callFunction=True, setFocus=True):
         var = self.widgetManager.get(self.Widgets.Entry, name, group=WidgetManager.VARS)
