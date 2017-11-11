@@ -9187,11 +9187,21 @@ class gui(object):
     #####################################
 
     def makeGrip(self):
-        class Grip(Label, object):
+        class Grip(labelBase, object):
+            gray25 = BitmapImage(data="""
+            #define im_width 16
+            #define im_height 16
+            static char im_bits[] = {
+                0x88, 0x88, 0x22, 0x22, 0x88, 0x88, 0x22, 0x22,
+                0x88, 0x88, 0x22, 0x22, 0x88, 0x88, 0x22, 0x22,
+                0x88, 0x88, 0x22, 0x22, 0x88, 0x88, 0x22, 0x22,
+                0x88, 0x88, 0x22, 0x22, 0x88, 0x88, 0x22, 0x22,
+            };
+            """)
 
             def __init__(self, *args, **kwargs):
-                super(Grip, self).__init__(bitmap="gray25", *args, **kwargs)
-                self.config(cursor="fleur")
+                super(Grip, self).__init__(image=self.gray25, *args, **kwargs)
+                self.config(cursor="fleur", anchor=CENTER)
                 self.bind("<ButtonPress-1>", self.StartMove)
                 self.bind("<ButtonRelease-1>", self.StopMove)
                 self.bind("<B1-Motion>", self.OnMotion)

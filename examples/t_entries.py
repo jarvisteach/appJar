@@ -15,7 +15,7 @@ def validater(btn):
 
 app=gui()
 app.addButtons(["A", "B", "C", "D", "E"], validater, colspan=2)
-#app.setBg("green")
+app.setBg("green")
 app.setLabelFont(20)
 
 app.addEntry("e1")
