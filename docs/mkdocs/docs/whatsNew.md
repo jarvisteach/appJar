@@ -16,8 +16,12 @@
 * Introduction of appJar [settings](/pythonSettings/):
     * appJar can now save & load a gui settings file  
     * this can also be specified from the command prompt  
+* More [ttk](/pythonTtk) improvements:  
+    * grouped widgets now work
+    * separators, labels, all entries
 
 * Issues Resolved:
+    * [#294](https://github.com/jarvisteach/appJar/issues/294) & [#292](https://github.com/jarvisteach/appJar/issues/294) - fixes on [entries](/pythonWidgets/#entry): better handle arrow key presses on mac, defaults work better on secret entries & file/directory entries  
     * [#290](https://github.com/jarvisteach/appJar/issues/290) - fixed issue showing [AutoEntries](/pythonWidgets/#entry) in [subWindows](/pythonSubWindows)  
     * [#289](https://github.com/jarvisteach/appJar/issues/289) - new functions to change list in [AutoEntries](/pythonWidgets/#entry) 
     * [#288](https://github.com/jarvisteach/appJar/issues/288) - fixed issue showing [dialogs](/pythonDialogs) in [subWindows](/pythonSubWindows)  
@@ -32,7 +36,15 @@
     * [#235](https://github.com/jarvisteach/appJar/issues/235) - New naming convention for [accessing widgets](/simpleAppJar)
     * [#233](https://github.com/jarvisteach/appJar/issues/233) - [NumericEntries](/pythonWidgets/#entry) return `None` when empty
     * [#218](https://github.com/jarvisteach/appJar/issues/218) - Can no longer set [NumericEntries](/pythonWidgets/#entry) to Strings  
+
+## Version 0.82.1
+* Issues Resolved:
+    * [#275](https://github.com/jarvisteach/appJar/issues/275) - maps fix  
+
+## Version 0.82
+* Issues Resolved:
     * [#189](https://github.com/jarvisteach/appJar/issues/189) - some tweaks to [ttk support](/pythonTtk)  
+    * Fixes to documentation
 
 ## Version 0.8  
 * Changed versioning - PyPi difficulties, combined with close to a 1.0 release...
