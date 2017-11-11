@@ -6808,7 +6808,7 @@ class gui(object):
 
     # adds a simple grip, used to drag the window around
     def addGrip(self, row=None, column=0, colspan=0, rowspan=0):
-        grip = Grip(self.getContainer())
+        grip = self.makeGrip()(self.getContainer())
         self.__positionWidget(grip, row, column, colspan, rowspan)
         self.__addTooltip(grip, "Drag here to move", True)
         return grip
@@ -7665,50 +7665,47 @@ class gui(object):
         return vFrame
 
     def setEntryValid(self, title):
-        entry = self.widgetManager.get(self.Widgets.Entry, title)
-        if not entry.isValidation:
-            self.warn("Entry %s is not a validation entry. Unable to set VALID.", title)
-            return
-
-        if not self.ttkFlag:
-            entry.config(highlightbackground="#4CC417", highlightcolor="#4CC417", fg="#4CC417")
-            entry.config(highlightthickness=2)
-            entry.lab.config(text='\u2714', fg="#4CC417")
-        else:
-            entry.configure(style="ValidationEntryValid.TEntry")
-            entry.lab.config(text='\u2714', style="ValidationEntryValid.TLabel")
-
-        entry.lab.DEFAULT_TEXT = entry.lab.cget("text")
+        self.setValidationEntry(title, "valid")
 
     def setEntryInvalid(self, title):
-        entry = self.widgetManager.get(self.Widgets.Entry, title)
-        if not entry.isValidation:
-            self.warn("Entry %s is not a validation entry. Unable to set INVALID.", title)
-            return
-
-        if not self.ttkFlag:
-            entry.config(highlightbackground="#FF0000", highlightcolor="#FF0000", fg="#FF0000")
-            entry.config(highlightthickness=2)
-            entry.lab.config(text='\u2716', fg="#FF0000")
-        else:
-            entry.configure(style="ValidationEntryInvalid.TEntry")
-            entry.lab.config(text='\u2716', style="ValidationEntryInvalid.TLabel")
-
-        entry.lab.DEFAULT_TEXT = entry.lab.cget("text")
+        self.setValidationEntry(title, "invalid")
 
     def setEntryWaitingValidation(self, title):
+        self.setValidationEntry(title, "wait")
+
+    def setValidationEntry(self, title, state="valid"):
+
         entry = self.widgetManager.get(self.Widgets.Entry, title)
         if not entry.isValidation:
             self.warn("Entry %s is not a validation entry. Unable to set WAITING VALID.", title)
             return
 
-        if not self.ttkFlag:
-            entry.config(highlightbackground="#000000", highlightcolor="#000000", fg="#000000")
-            entry.config(highlightthickness=1)
-            entry.lab.config(text='\u2731', fg="#000000")
+        if state == "wait":
+            col = "#000000"
+            text = '\u2731'
+            eStyle="ValidationEntryWaiting.TEntry"
+            lStyle="ValidationEntryWaiting.TLabel"
+        elif state == "invalid":
+            col = "#FF0000"
+            text = '\u2716'
+            eStyle="ValidationEntryInvalid.TEntry"
+            lStyle="ValidationEntryInvalid.TLabel"
+        elif state == "valid":
+            col = "#4CC417"
+            text = '\u2714'
+            eStyle="ValidationEntryValid.TEntry"
+            lStyle="ValidationEntryValid.TLabel"
         else:
-            entry.configure(style="ValidationEntryWaiting.TEntry")
-            entry.lab.config(text='\u2731', style="ValidationEntryWaiting.TLabel")
+            self.warn("Invalid validation state: %s", state)
+            return
+
+        if not self.ttkFlag:
+            entry.config(highlightbackground=col, highlightcolor=col, fg=col)
+            entry.config(highlightthickness=1)
+            entry.lab.config(text=text, fg=col)
+        else:
+            entry.configure(style=eStyle)
+            entry.lab.config(text=text, style=lStyle)
 
         entry.lab.DEFAULT_TEXT = entry.lab.cget("text")
 
@@ -9185,6 +9182,38 @@ class gui(object):
 
         return Separator
 
+    #####################################
+    # Drag Grip Label Class
+    #####################################
+
+    def makeGrip(self):
+        class Grip(Label, object):
+
+            def __init__(self, *args, **kwargs):
+                super(Grip, self).__init__(bitmap="gray25", *args, **kwargs)
+                self.config(cursor="fleur")
+                self.bind("<ButtonPress-1>", self.StartMove)
+                self.bind("<ButtonRelease-1>", self.StopMove)
+                self.bind("<B1-Motion>", self.OnMotion)
+
+            def StartMove(self, event):
+                self.x = event.x
+                self.y = event.y
+
+            def StopMove(self, event):
+                self.x = None
+                self.y = None
+
+            def OnMotion(self, event):
+                parent = self.winfo_toplevel()
+                deltax = event.x - self.x
+                deltay = event.y - self.y
+                x = parent.winfo_x() + deltax
+                y = parent.winfo_y() + deltay
+
+                parent.geometry("+%s+%s" % (x, y))
+        return Grip
+
     #######################
     # Upgraded scale - http://stackoverflow.com/questions/42843425/change-trough-increment-in-python-tkinter-scale-without-affecting-slider/
     #######################
@@ -9950,36 +9979,6 @@ class TabbedFrame(Frame, object):
             # and grid it if necessary
             if swap:
                 self.widgetStore[self.selectedTab][1].grid()
-
-#####################################
-# Drag Grip Label Class
-#####################################
-
-class Grip(Label, object):
-
-    def __init__(self, *args, **kwargs):
-        super(Grip, self).__init__(bitmap="gray25", *args, **kwargs)
-        self.config(cursor="fleur")
-        self.bind("<ButtonPress-1>", self.StartMove)
-        self.bind("<ButtonRelease-1>", self.StopMove)
-        self.bind("<B1-Motion>", self.OnMotion)
-
-    def StartMove(self, event):
-        self.x = event.x
-        self.y = event.y
-
-    def StopMove(self, event):
-        self.x = None
-        self.y = None
-
-    def OnMotion(self, event):
-        parent = self.winfo_toplevel()
-        deltax = event.x - self.x
-        deltay = event.y - self.y
-        x = parent.winfo_x() + deltax
-        y = parent.winfo_y() + deltay
-
-        parent.geometry("+%s+%s" % (x, y))
 
 #####################################
 # Hyperlink Class

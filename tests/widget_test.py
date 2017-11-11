@@ -11,7 +11,7 @@ photo="R0lGODlhPQBEAPeoAJosM//AwO/AwHVYZ/z595kzAP/s7P+goOXMv8+fhw/v739/f+8PD98fH
 
 
 sys.path.append("../")
-from appJar import gui, SelectableLabel, AjText, AjScrolledText, Meter, Properties, Link, Grip, PieChart, DraggableWidget
+from appJar import gui, SelectableLabel, AjText, AjScrolledText, Meter, Properties, Link, PieChart, DraggableWidget
 
 PY_VER = str(sys.version_info[0]) + "." + str(sys.version_info[1])
 
@@ -1262,7 +1262,7 @@ def test_links():
 
 def test_grips():
     print("\tTesting grips")
-    assert isinstance(app.addGrip(), Grip)
+    assert isinstance(app.addGrip(), Label)
     grip = app.addGrip()
     event = Event()
     event.widget = grip
