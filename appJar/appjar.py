@@ -1196,7 +1196,7 @@ class gui(object):
         self.validateNumeric = None
         self.validateSpinBox = None
 
-        self.labWidth = 1 # minimum label width for label combos
+        self.labWidth = {} # minimum label width for label combos
         self.doFlash = False # set up flash variable
         self.hasTitleBar = True # used to hide/show title bar
         self.splashConfig = None # splash screen?
@@ -3126,12 +3126,12 @@ class gui(object):
 #  FUNCTION to hide/show/remove widgets
 #####################################
     def __widgetHasContainer(self, kind, item):
-        if kind in [
+        if kind in (
             self.Widgets.Scale,
             self.Widgets.Entry,
             self.Widgets.SpinBox,
             self.Widgets.OptionBox,
-            self.Widgets.Label] and item.inContainer:
+            self.Widgets.Label) and item.inContainer:
             return True
         else:
             return False
@@ -3140,9 +3140,15 @@ class gui(object):
         item = self.widgetManager.get(kind, name)
 
         if self.__widgetHasContainer(kind, item):
+            gui.debug("Hiding widget in container: %s", name)
             widget = item.master
-            self.widgetManager.get(self.Widgets.FrameLabel, name).hidden = True
+            if hasattr(widget, "inContainer") and widget.inContainer:
+                gui.debug("Have container in container")
+                widget = widget.master
+            try: self.widgetManager.get(self.Widgets.FrameLabel, name).hidden = True
+            except: pass
         else:
+            gui.debug("Hiding widget: %s", name)
             if kind in [self.Widgets.RadioButton]:
                 for rb in item:
                     if rb.text == name:
@@ -3150,28 +3156,40 @@ class gui(object):
             widget = item
 
         if "in" in widget.grid_info():
+            gui.debug("Widget hidden: %s", name)
             widget.grid_remove()
-#                  self.__updateLabelBoxes(name)
+        else:
+            gui.debug("Hiding failed - %s not showing", name)
 
     def showWidgetType(self, kind, name):
         item = self.widgetManager.get(kind, name)
 
         if self.__widgetHasContainer(kind, item):
+            gui.debug("Showing widget in container: %s", name)
             widget = item.master
-            self.widgetManager.get(self.Widgets.FrameLabel, name).hidden = False
+            if hasattr(widget, "inContainer") and widget.inContainer:
+                gui.debug("Have container in container")
+                widget = widget.master
+            try: self.widgetManager.get(self.Widgets.FrameLabel, name).hidden = False
+            except: pass
         else:
+            msg = "Showing widget"
             widget = item
 
         # only show the widget, if it's not already showing
         if "in" not in widget.grid_info():
+            gui.debug("Widget shown: %s", name)
             widget.grid()
-#                  self.__updateLabelBoxes(name)
+#            self.__updateLabelBoxes(name, widget.grid_info()['column'])
+        else:
+            gui.debug("Showing failed - %s already showing", name)
 
     def removeWidgetType(self, kind, name):
         item = self.widgetManager.get(kind, name)
 
         # if it's a flasher, remove it
         if item in self.widgetManager.group(self.Widgets.FlashLabel):
+            gui.debug("Remove flash label: %s", name)
             self.widgetManager.remove(self.Widgets.FlashLabel, item)
             if len(self.widgetManager.group(self.Widgets.FlashLabel)) == 0:
                 self.doFlash = False
@@ -3179,20 +3197,37 @@ class gui(object):
         # animated images...
 
         if self.__widgetHasContainer(kind, item):
-            # destroy the parent
+            gui.debug("Remove widget (%s) in container: %s", kind, name)
             parent = item.master
-            parent.grid_forget()
-            parent.destroy()
-            # remove frame, label & widget from lists
-            self.widgetManager.remove(Widgets.Label, name)
-            self.widgetManager.remove(Widgets.FrameLabel, name)
+
+            # is it a container in a labelBox?
+            # if so - remove & destroy the labelBox
+            if hasattr(parent, "inContainer") and parent.inContainer:
+                gui.debug("Container in container")
+                labParent = parent.master
+
+                self.widgetManager.remove(self.Widgets.FrameBox, labParent)
+                self.widgetManager.remove(self.Widgets.Label, name)
+                self.widgetManager.remove(self.Widgets.FrameLabel, name)
+                labParent.grid_forget()
+                labParent.destroy()
+            # oteherwise destroy this container & a label if we have one
+            else:
+                parent.grid_forget()
+                parent.destroy()
+                try:
+                    self.widgetManager.remove(self.Widgets.Label, name)
+                    self.widgetManager.remove(self.Widgets.FrameLabel, name)
+                except: pass
+
             self.widgetManager.remove(self.Widgets.FrameBox, parent)
         else:
+            gui.debug("Remove widget: %s", name)
             item.grid_forget()
             item.destroy()
 
-        # finally remove it from the dictionary
-        item = self.widgetManager.remove(kind, name)
+        # finally remove the widget - this will also remove the variable
+        self.widgetManager.remove(kind, name)
 
     def removeAllWidgets(self):
         container = self.containerStack[0]['container']
@@ -4502,7 +4537,7 @@ class gui(object):
 #####################################
 
     # this will build a frame, with a label on the left hand side
-    def __getLabelBox(self, title):
+    def __getLabelBox(self, title, column):
         self.widgetManager.verify(self.Widgets.Label, title)
 
         # first, make a frame
@@ -4510,13 +4545,6 @@ class gui(object):
         if not self.ttkFlag:
             frame.config(background=self.__getContainerBg())
         self.widgetManager.log(self.Widgets.FrameBox, frame)
-
-        # if this is a big label, update the others to match...
-        if len(title) > self.labWidth:
-            self.labWidth = len(title)
-            # loop through other labels and resize
-#            for na in self.widgetManager.group(self.Widgets.FrameLabel):
-#                self.widgetManager.get(self.Widgets.FrameLabel, na).config(width=self.labWidth)
 
         # next make the label
         if self.ttkFlag:
@@ -4532,13 +4560,17 @@ class gui(object):
             justify=LEFT,
             font=self.labelFont,
         )
-#            lab.config(width=self.labWidth)
+
         if not self.ttkFlag:
             lab.config(background=self.__getContainerBg())
         lab.DEFAULT_TEXT = title
 
         self.widgetManager.add(self.Widgets.Label, title, lab)
         self.widgetManager.add(self.Widgets.FrameLabel, title, lab)
+
+#        # if this is a big label, update the others to match...
+#        self.__updateLabelBoxes(title, column)
+#        lab.config(width=self.labWidth[column])
 
         # now put the label in the frame
         lab.pack(side=LEFT, fill=Y)
@@ -4558,16 +4590,17 @@ class gui(object):
         #Grid.rowconfigure(frame, 0, weight=1)
 
     # function to resize labels, if they are hidden or shown
-    def __updateLabelBoxes(self, title):
-        if len(title) >= self.labWidth:
-            self.labWidth = 0
+    # not using this for two reasons:
+    # - doesn't really work when font size changes
+    # - breaks when things in containers
+    def __updateLabelBoxes(self, title, column):
+        if len(title) >= self.labWidth.get(column, -1):
+            self.labWidth[column] = len(title)
             # loop through other labels and resize
-            for na in self.widgetManager.group(Widgets.FrameLabel):
-                size = len(self.widgetManager.get(Widgets.FrameLabel, na).cget("text"))
-                if not self.widgetManager.get(Widgets.FrameLabel, na).hidden and size > self.labWidth:
-                    self.labWidth = size
-            for na in self.widgetManager.group(Widgets.FrameLabel):
-                self.widgetManager.get(Widgets.FrameLabel, na).config(width=self.labWidth)
+            for na, wi in self.widgetManager.group(self.Widgets.FrameLabel).items():
+                col = wi.master.grid_info().get("column", wi.master.master.grid_info().get("column", -1))
+                if int(col) == column:
+                    wi.config(width=self.labWidth[column])
 
 #####################################
 # FUNCTION for check boxes
@@ -4694,7 +4727,7 @@ class gui(object):
         return scale
 
     def addLabelScale(self, title, row=None, column=0, colspan=0, rowspan=0):
-        frame = self.__getLabelBox(title)
+        frame = self.__getLabelBox(title, column)
         scale = self.__buildScale(title, frame)
         self.__packLabelBox(frame, scale)
         self.__positionWidget(frame, row, column, colspan, rowspan)
@@ -4922,7 +4955,7 @@ class gui(object):
         :returns: the created OptionBox (not the LabelBox)
         :raises ItemLookupError: if the title is already in use
         """
-        frame = self.__getLabelBox(title)
+        frame = self.__getLabelBox(title, column)
         option = self.__buildOptionBox(frame, title, options)
         self.__packLabelBox(frame, option)
         self.__positionWidget(frame, row, column, colspan, rowspan)
@@ -4950,7 +4983,7 @@ class gui(object):
         :returns: the created TickOptionBox (not the LabelBox)
         :raises ItemLookupError: if the title is already in use
         """
-        frame = self.__getLabelBox(title)
+        frame = self.__getLabelBox(title, column)
         tick = self.__buildOptionBox(frame, title, options, "ticks")
         self.__packLabelBox(frame, tick)
         self.__positionWidget(frame, row, column, colspan, rowspan)
@@ -5537,7 +5570,7 @@ class gui(object):
         return self.__addSpinBox(title, values, row, column, colspan, rowspan)
 
     def addLabelSpinBox(self, title, values, row=None, column=0, colspan=0, rowspan=0):
-        frame = self.__getLabelBox(title)
+        frame = self.__getLabelBox(title, column)
         spin = self.__buildSpinBox(frame, title, values)
         self.__packLabelBox(frame, spin)
         self.__positionWidget(frame, row, column, colspan, rowspan)
@@ -7437,10 +7470,7 @@ class gui(object):
 
     def __entryMaker(self, title, row=None, column=0, colspan=0, rowspan=0, secret=False, label=False, type="standard", words=None):
         if label:
-            if type == "validation":
-                self.warn("LabelValidationEntries not currently supported: %s", title)
-                return
-            frame = self.__getLabelBox(title)
+            frame = self.__getLabelBox(title, column)
         else:
             frame = self.getContainer()
 
@@ -7598,11 +7628,13 @@ class gui(object):
 
     def __buildFileEntry(self, title, frame, selectFile=True):
         vFrame = self.makeButtonBox()(frame)
+        self.widgetManager.log(self.Widgets.FrameBox, vFrame)
 
         if not self.ttkFlag:
             vFrame.config(background=self.__getContainerBg())
 
         vFrame.theWidget = self.__buildEntry(title, vFrame)
+        vFrame.theWidget.inContainer = True
         vFrame.theWidget.pack(expand=True, fill=X, side=LEFT)
 
         if selectFile:
@@ -7637,6 +7669,7 @@ class gui(object):
 
     def __buildValidationEntry(self, title, frame, secret):
         vFrame = self.makeLabelBox()(frame)
+        self.widgetManager.log(self.Widgets.FrameBox, vFrame)
         vFrame.isValidation = True
 
         ent = self.__buildEntry(title, vFrame, secret)
@@ -7645,6 +7678,7 @@ class gui(object):
             ent.config(highlightthickness=2)
         ent.pack(expand=True, fill=X, side=LEFT)
         ent.isValidation = True
+        ent.inContainer = True
 
         lab = labelBase(vFrame)
         lab.pack(side=RIGHT, fill=Y)
@@ -7654,9 +7688,6 @@ class gui(object):
         lab.inContainer = True
         lab.isValidation = True
         ent.lab = lab
-
-        self.widgetManager.add(self.Widgets.Label, title, lab)
-        self.widgetManager.add(self.Widgets.FrameLabel, title, lab)
 
         vFrame.theWidget = ent
         vFrame.theLabel = lab
@@ -12693,7 +12724,15 @@ class WidgetManager(object):
             raise ItemLookupError("Invalid widgetName: '" + widgetName)
 
     def remove(self, widgetType, widgetName, group=None):
-        del self.group(widgetType, group)[widgetName]
+        widgGroup = self.group(widgetType, group)
+        if type(widgGroup) == list:
+            widgGroup.remove(widgetName)
+        else:
+            del widgGroup[widgetName]
+            # delete a linked var
+            if group != self.VARS:
+                try: del self.group(widgetType, self.VARS)[widgetName]
+                except: pass
 
     def clear(self, widgetType, group=None):
         if group is None: container = self.widgets
