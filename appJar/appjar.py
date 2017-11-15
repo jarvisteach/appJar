@@ -639,8 +639,14 @@ class gui(object):
             try:
                 self.ttkStyle.theme_use(theme)
             except:
-                self.error("ttk theme: %s unavailable. Try one of: %s", theme, self.ttkStyle.theme_names())
-                return
+                gui.debug("no basic ttk theme named %s found, searching for additional themes", theme)
+                try:
+                    from ttkthemes import ThemedStyle
+                    self.ttkStyle = ThemedStyle(self.topLevel)
+                    self.ttkStyle.set_theme(theme)
+                except:
+                    self.error("ttk theme: %s unavailable. Try one of: %s", theme, self.ttkStyle.theme_names())
+                    return
 
         gui.debug("ttk theme switched to: %s", self.ttkStyle.theme_use())
 
@@ -2438,9 +2444,9 @@ class gui(object):
                 if option in ['change', 'command']:
                     items = [items[0]]
             else:
-                raise Excpetion("ERROR")
+                raise Exception("No RadioButtons found with that name " + name)
         else:
-            # get the list of items for this type, and validate the widgetis in the  list
+            # get the list of items for this type, and validate the widget is in the  list
             self.widgetManager.check(kind, name)
             items = self.widgetManager.group(kind)
             items = [items[name]]
@@ -7393,7 +7399,13 @@ class gui(object):
             # for now - suppress UP/DOWN arrows
             if self.platform in [self.MAC]:
                 def suppress(event): 
-                    if event.keycode in {111, 116, 8255233, 8320768}: 
+                    if event.keysym == "Up":
+                        # move home
+                        event.widget.icursor(0)
+                        return "break" 
+                    elif event.keysym == "Down":
+                        # move end
+                        event.widget.icursor(END)
                         return "break" 
 
                 ent.bind("<Key>", suppress) 
