@@ -7512,9 +7512,6 @@ class gui(object):
 
     def setValidationEntry(self, title, state="valid"):
 
-        #entry.showingDefault = False
-        #entry.oldFg = entry.cget('foreground')
-
         entry = self.widgetManager.get(self.Widgets.Entry, title)
         if not entry.isValidation:
             self.warn("Entry %s is not a validation entry. Unable to set WAITING VALID.", title)
@@ -7540,12 +7537,17 @@ class gui(object):
             return
 
         if not self.ttkFlag:
-            entry.config(highlightbackground=col, highlightcolor=col, fg=col)
+            if not entry.showingDefault:
+                entry.config(fg=col)
+            entry.config(highlightbackground=col, highlightcolor=col)
             entry.config(highlightthickness=1)
             entry.lab.config(text=text, fg=col)
+            entry.oldFg = col
         else:
-            entry.configure(style=eStyle)
+            if not entry.showingDefault:
+                entry.configure(style=eStyle)
             entry.lab.config(text=text, style=lStyle)
+            entry.oldFg = eStyle
 
         entry.lab.DEFAULT_TEXT = entry.lab.cget("text")
 
