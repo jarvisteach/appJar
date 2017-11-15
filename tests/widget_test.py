@@ -11,7 +11,7 @@ photo="R0lGODlhPQBEAPeoAJosM//AwO/AwHVYZ/z595kzAP/s7P+goOXMv8+fhw/v739/f+8PD98fH
 
 
 sys.path.append("../")
-from appJar import gui, SelectableLabel, AjText, AjScrolledText, Meter, Properties, Link, PieChart, DraggableWidget
+from appJar import gui, SelectableLabel, AjText, AjScrolledText, Meter, Properties, PieChart, DraggableWidget
 
 PY_VER = str(sys.version_info[0]) + "." + str(sys.version_info[1])
 
@@ -1241,11 +1241,11 @@ def linkPressed(link=None):
 
 def test_links():
     print("\tTesting links")
-    assert isinstance(app.addLink("l1", None), Link)
+    assert isinstance(app.addLink("l1", None), Label)
 #    with pytest.raises(Exception) :
 #        app.addLink("l1", None)
-    assert isinstance(app.addLink("l2", linkPressed), Link)
-    assert isinstance(app.addWebLink("l3", "http://appJar.info"), Link)
+    assert isinstance(app.addLink("l2", linkPressed), Label)
+    assert isinstance(app.addWebLink("l3", "http://appJar.info"), Label)
     with pytest.raises(Exception) :
         app.addWebLink("l4", "appJar.info")
 

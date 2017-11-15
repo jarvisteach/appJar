@@ -505,6 +505,9 @@ class gui(object):
             style.configure("ValidationEntryInvalid.TLabel", foreground="#FF0000")
             style.configure("ValidationEntryWait.TLabel", foreground="#000000")
 
+            style.configure("Link.TLabel", foreground="#0000ff")
+            style.configure("LinkOver.TLabel", foreground="#3366ff")
+
 #        self.fgColour = self.topLevel.cget("foreground")
 #        self.buttonFgColour = self.topLevel.cget("foreground")
 #        self.labelFgColour = self.topLevel.cget("foreground")
@@ -5090,7 +5093,7 @@ class gui(object):
         if urlencode is False:
             raise Exception("Unable to load GoogleMaps - urlencode library not available")
         self.widgetManager.verify(self.Widgets.Map, title)
-        gMap = GoogleMap(self.getContainer(), self)
+        gMap = GoogleMap(self.getContainer(), self, useTtk = self.ttkFlag)
         self.__positionWidget(gMap, row, column, colspan, rowspan)
         self.widgetManager.add(self.Widgets.Map, title, gMap)
         return gMap
@@ -6599,7 +6602,7 @@ class gui(object):
                 return self.addLink(title, value, *args, **kwargs)
 
     def __buildLink(self, title):
-        link = Link(self.getContainer())
+        link = self.makeLink()(self.getContainer(), useTtk=self.ttkFlag)
         link.config(text=title, font=self.linkFont)
         if not self.ttk:
             link.config(background=self.__getContainerBg())
@@ -7508,6 +7511,9 @@ class gui(object):
         self.setValidationEntry(title, "wait")
 
     def setValidationEntry(self, title, state="valid"):
+
+        #entry.showingDefault = False
+        #entry.oldFg = entry.cget('foreground')
 
         entry = self.widgetManager.get(self.Widgets.Entry, title)
         if not entry.isValidation:
@@ -9058,6 +9064,83 @@ class gui(object):
                 parent.geometry("+%s+%s" % (x, y))
         return Grip
 
+    #####################################
+    # Hyperlink Class
+    #####################################
+    @staticmethod
+    def makeLink():
+        class Link(labelBase, object):
+
+            def __init__(self, *args, **kwargs):
+                self.useTtk = kwargs.pop('useTtk',False)
+                super(Link, self).__init__(*args, **kwargs)
+                self.fg = "#0000ff"
+                self.overFg="#3366ff"
+
+                if not self.useTtk:
+                    self.config(fg=self.fg, takefocus=1)#, highlightthickness=0)
+                else:
+                    self.config(style="Link.TLabel")
+
+                self.DEFAULT_TEXT = ""
+
+                if gui.GET_PLATFORM() == gui.MAC:
+                    self.config(cursor="pointinghand")
+                elif gui.GET_PLATFORM() in [gui.WINDOWS, gui.LINUX]:
+                    self.config(cursor="hand2")
+
+                self.bind("<Enter>", self.enter)
+                self.bind("<Leave>", self.leave)
+
+            def enter(self, e):
+                if self.useTtk:
+                    self.config(style="LinkOver.TLabel")
+                else:
+                    self.config(fg=self.overFg)
+
+            def leave(self, e):
+                if self.useTtk:
+                    self.config(style="Over.TLabel")
+                else:
+                    self.config(fg=self.fg)
+
+            def registerCallback(self, callback):
+                self.bind("<Button-1>", callback)
+                self.bind("<Return>", callback)
+                self.bind("<space>", callback)
+
+            def launchBrowser(self, event):
+                webbrowser.open_new(r"" + self.page)
+                # webbrowser.open_new_tab(self.page)
+
+            def registerWebpage(self, page):
+                if not page.startswith("http"):
+                    raise InvalidURLError("Invalid URL: " + page + " (it should begin as http://)")
+
+                self.page = page
+                self.bind("<Button-1>", self.launchBrowser)
+                self.bind("<Return>", self.launchBrowser)
+                self.bind("<space>", self.launchBrowser)
+
+            def config(self, **kw):
+                self.configure(**kw)
+
+            def configure(self, **kw):
+                kw = gui.CLEAN_CONFIG_DICTIONARY(**kw)
+                if "text" in kw:
+                    self.DEFAULT_TEXT = kw["text"]
+
+                super(Link, self).config(**kw)
+
+            def cget(self, option):
+                if option == "text" and hasattr(self, 'page'):
+                    return self.page
+
+                return super(Link, self).cget(option)
+
+        return Link
+
+
     #######################
     # Upgraded scale - http://stackoverflow.com/questions/42843425/change-trough-increment-in-python-tkinter-scale-without-affecting-slider/
     #######################
@@ -10020,67 +10103,6 @@ class TabbedFrame(Frame, object):
             # and grid it if necessary
             if swap:
                 self.widgetStore[self.selectedTab][1].grid()
-
-#####################################
-# Hyperlink Class
-#####################################
-
-class Link(Label, object):
-
-    def __init__(self, *args, **kwargs):
-        super(Link, self).__init__(*args, **kwargs)
-        self.fg = "#0000ff"
-        self.overFg="#3366ff"
-        self.config(fg=self.fg, takefocus=1, highlightthickness=0)
-        self.DEFAULT_TEXT = ""
-
-        if gui.GET_PLATFORM() == gui.MAC:
-            self.config(cursor="pointinghand")
-        elif gui.GET_PLATFORM() in [gui.WINDOWS, gui.LINUX]:
-            self.config(cursor="hand2")
-
-        self.bind("<Enter>", self.enter)
-        self.bind("<Leave>", self.leave)
-
-    def enter(self, e):
-        self.config(fg=self.overFg)
-
-    def leave(self, e):
-        self.config(fg=self.fg)
-
-    def registerCallback(self, callback):
-        self.bind("<Button-1>", callback)
-        self.bind("<Return>", callback)
-        self.bind("<space>", callback)
-
-    def launchBrowser(self, event):
-        webbrowser.open_new(r"" + self.page)
-        # webbrowser.open_new_tab(self.page)
-
-    def registerWebpage(self, page):
-        if not page.startswith("http"):
-            raise InvalidURLError("Invalid URL: " + page + " (it should begin as http://)")
-
-        self.page = page
-        self.bind("<Button-1>", self.launchBrowser)
-        self.bind("<Return>", self.launchBrowser)
-        self.bind("<space>", self.launchBrowser)
-
-    def config(self, **kw):
-        self.configure(**kw)
-
-    def configure(self, **kw):
-        kw = gui.CLEAN_CONFIG_DICTIONARY(**kw)
-        if "text" in kw:
-            self.DEFAULT_TEXT = kw["text"]
-
-        super(Link, self).config(**kw)
-
-    def cget(self, option):
-        if option == "text" and hasattr(self, 'page'):
-            return self.page
-
-        return super(Link, self).cget(option)
 
 #####################################
 # Properties Widget
@@ -12061,7 +12083,7 @@ class AJRectangle(object):
 class GoogleMap(LabelFrame, object):
     """ Class to wrap a GoogleMap tile download into a widget"""
 
-    def __init__(self, parent, app, defaultLocation="Marlborough, UK", proxyString=None):
+    def __init__(self, parent, app, defaultLocation="Marlborough, UK", proxyString=None, useTtk=False):
         super(GoogleMap, self).__init__(parent, text="GoogleMaps")
         self.alive = True
         self.API_KEY = ""
@@ -12118,12 +12140,14 @@ class GoogleMap(LabelFrame, object):
                     Label(self.canvas, text="-"),
                     Label(self.canvas, text="+"),
                     Label(self.canvas, text="H"),
-                    Link(self.canvas, text="@")
+                    gui.makeLink()(self.canvas, text="@", useTtk=useTtk)
                         ]
         B_FONT = font.Font(family='Helvetica', size=10)
 
         for b in self.buttons:
-            b.configure(width=3, activebackground="#D2D2D2", relief=GROOVE, font=B_FONT)
+            b.configure(width=3, relief=GROOVE, font=B_FONT)
+            if not useTtk:
+                b.configure(width=3, activebackground="#D2D2D2", relief=GROOVE, font=B_FONT)
 
             if gui.GET_PLATFORM() == gui.MAC:
                 b.configure(cursor="pointinghand")
