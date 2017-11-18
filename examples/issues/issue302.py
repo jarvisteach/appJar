@@ -1,5 +1,5 @@
-#import sys
-#sys.path.append("../../")
+import sys
+sys.path.append("../../")
 
 def press(btn):
     if btn == "ADD":

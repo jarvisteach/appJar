@@ -35,7 +35,9 @@ with gui(useSettings=True) as app:
     app.addToolbar(["FULL-SCREEN"], press, findIcon=True)
 #    app.setToolbarPinned(False)
     app.setLogLevel("debug")
+    app.setStretch("column")
     app.addLabel("title", "Grid Widget Test")
+    app.setStretch("both")
     with app.tabbedFrame("tf"):
         with app.tab("1"):
             app.setLabelFg("title", "blue")
@@ -50,6 +52,7 @@ with gui(useSettings=True) as app:
         with app.tab("2"):
             with app.toggleFrame("toggleMe"):
                 app.addLabel("l2", "Two")
+    app.setStretch("column")
 
     with app.labelFrame("LabelFrame Text", hideTitle=True):
         app.addCheckBox("Delete?")
