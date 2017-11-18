@@ -22,7 +22,9 @@ pages:
     - Multiple Windows: pythonSubWindows.md
     - Splashscreen: splash.md
     - Special Characters: specialCharacters.md
-    - Beta Widgets...: pythonDevWidgets.md
+    - Beta:
+        - Widgets: pythonDevWidgets.md
+        - Simple Naming: simpleAppJar.md
 - Configuration:
     - GUI Options: pythonGuiOptions.md
     - Widgets:
