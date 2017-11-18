@@ -265,7 +265,7 @@ Displays a picture.
 | --------- | --------- | ------- | ------------|
 | kind | string | `standard` | The kind of image, one of: `icon`, `data` or `standard`. |
 | fmt | string | None | If the `kind` is `data` this will be used to determine the file type. |
-| compound | boolean | False | If set to `True` will show the title of the image over the picture. |
+| compound | string | None | Can be set to a position to show the title as well (`top`, `bottom`, `left`, `right` or `center`). |
 | speed | integer | None | If this is an animated image, the FPS to animate the image at. |
 | over | string | None | The path to an alternative image to show, when the mouse goes over the image. |
 | map | dictionary| None | A dictionary of name:coordinates to use as an image map. `submit` must also be set. |

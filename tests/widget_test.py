@@ -184,6 +184,7 @@ def test_entries():
     assert isinstance(app.addLabelAutoEntry("lae1", ["a", "b", "c"]), Entry)
 
     assert app.getEntry("le1") == EMPTY
+    print( app.getEntry("lne1") )
     assert app.getEntry("lne1") == None
     assert app.getEntry("lse1") == EMPTY
     assert app.getEntry("lae1") == EMPTY
@@ -1559,7 +1560,7 @@ def checkPriority():
 def test_images():
     print("\tTesting images")
 
-    assert isinstance(app.addImage("im1", "1_flash.gif"), PhotoImage)
+    assert isinstance(app.addImage("im1", "1_flash.gif", compound="left"), PhotoImage)
     with pytest.raises(Exception) :
         app.addImage("im1", "1_flash.gif")
     app.addAnimatedImage("anim1", "1_flash.gif")
@@ -2747,46 +2748,51 @@ def changer(btn=None):
     print(btn)
 
 with gui("Simple Demo") as app4:
-    app4.label("title", "Simple Props Demo", colspan=3, type="flash")
+    app4.label("title", "Simple Props Demo", colspan=3, kind="flash")
     app4.label("title2", row=0, column=3)
     app4.setLabelBg("title", "green")
 
     app4.radio("happy", "Very Happy", row=1, column=0)
-    app4.radio("happy", "Ambivalent", row=1, column=1)
+    app4.radio("happy", "Ambivalent", row=1, column=1, change=changer)
     app4.radio("happy", "Miserable", row=1, column=2, selected=True)
 
     app4.message("mess", "Simple Sadness", row=2, rowspan=3)
     app4.setMessageBg("mess", "pink")
 
     app4.text("mess2", "Simple Happiness", row=2, column=2, rowspan=3, scroll=False)
+    app4.text("mess3", "Simple Happiness", row=2, column=2, rowspan=3, scroll=True, change=changer)
     app4.setTextAreaBg("mess2", "pink")
 
     app4.image("img", "1_entries.gif", over="1_flash.gif", row=2, column=3, rowspan=7)
-    app4.image("img2", "OPEN", row=2, column=4, rowspan=3, type="icon")
+    app4.image("img5", "1_entries.gif", over="1_flash.gif", submit=changer, row=2, column=3, rowspan=7)
+    app4.image("img2", "1_entries.gif", over="1_flash.gif", row=2, column=3, rowspan=7, map={"A":[1,1,5,5]}, submit=changer)
+    app4.image("img3", "1_entries.gif", over="1_flash.gif", row=2, submit=changer, column=3, rowspan=7)
+    app4.image("img4", "1_entries.gif", over="1_flash.gif", row=2, column=3, rowspan=7, compound="top")
+    app4.image("img2", "OPEN", row=2, column=4, rowspan=3, kind="icon")
 
     app4.check("Clap", row=2, column=1)
     app4.check("Cheer", True, row=3, column=1)
-    app4.check("Cry", row=4, column=1)
+    app4.check("Cry", row=4, column=1, change=changer)
 
-    app4.entry("data", colspan=3, type="directory")
+    app4.entry("data", colspan=3, kind="directory")
     app4.entry("data2", value="lots of data", colspan=3, focus=True, case="upper", limit=15)
-    app4.entry("data3", colspan=3, default="france", type="validation")
-    app4.entry("data4", value=["a", "aa", "aba", "abc", "abd"], colspan=3, type="auto", rows=4)
+    app4.entry("data3", colspan=3, default="france", kind="validation")
+    app4.entry("data4", value=["a", "aa", "aba", "abc", "abd"], colspan=3, kind="auto", rows=4)
 
-    app4.entry("se1", row=0, column=1, default="standard", submit=changer, change=changer, limit=5, case="upper", rows=3)
-    app4.entry("sv1", row=1, column=1, type="validation", default="validation", submit=changer, change=changer, limit=5, case="upper", rows=3)
-    app4.entry("sf1", row=2, column=1, type="file", default="file", submit=changer, change=changer, limit=5, case="upper", rows=3)
-    app4.entry("sd1", row=3, column=1, type="directory", default="directory", submit=changer, change=changer, limit=5, case="upper", rows=3)
-    app4.entry("sn1", row=4, column=1, type="numeric", default="numeric", submit=changer, change=changer, limit=5, case="upper", rows=3)
-    app4.entry("sa1", ["a", "b", "bb", "bbb"], row=5, column=1, type="auto", default="auto", submit=changer, change=changer, limit=5, case="upper", rows=3)
+    app4.entry("se1", row=0, column=1, default="standard", submit=changer, change=changer, limit=5, case="lower", rows=3)
+    app4.entry("sv1", row=1, column=1, kind="validation", default="validation", submit=changer, change=changer, limit=5, case="upper", rows=3)
+    app4.entry("sf1", row=2, column=1, kind="file", default="file", submit=changer, change=changer, limit=5, case="upper", rows=3)
+    app4.entry("sd1", row=3, column=1, kind="directory", default="directory", submit=changer, change=changer, limit=5, case="upper", rows=3)
+    app4.entry("sn1", row=4, column=1, kind="numeric", default="numeric", submit=changer, change=changer, limit=5, case="upper", rows=3)
+    app4.entry("sa1", ["a", "b", "bb", "bbb"], row=5, column=1, kind="auto", default="auto", submit=changer, change=changer, limit=5, case="upper", rows=3)
     app4.entry("ss1", row=6, column=1, secret=True, default="secret", submit=changer, change=changer, limit=5, case="upper", rows=3)
 
     app4.entry("lse1", row=7, column=1,label=True)
-    #app4.entry("lsv1", row=8, column=1, type="validation",label=True)
-    app4.entry("lsf1", row=8, column=1, type="file",label=True)
-    app4.entry("lsd1", row=9, column=1, type="directory",label=True)
-    app4.entry("lsn1", row=10, column=1, type="numeric",label=True)
-    app4.entry("lsa1", ["a", "b", "bb", "bbb"], row=11, column=1, type="auto",label=True)
+    #app4.entry("lsv1", row=8, column=1, kind="validation",label=True)
+    app4.entry("lsf1", row=8, column=1, kind="file",label=True)
+    app4.entry("lsd1", row=9, column=1, kind="directory",label=True)
+    app4.entry("lsn1", row=10, column=1, kind="numeric",label=True)
+    app4.entry("lsa1", ["a", "b", "bb", "bbb"], row=11, column=1, kind="auto",label=True)
     app4.entry("lss1", row=12, column=1, secret=True,label=True)
 
 
@@ -2795,16 +2801,19 @@ with gui("Simple Demo") as app4:
     app4.button("Clap", press, icon="OPEN", row=row, column=0)
     app4.button("Cheer", press, row=row, column=1)
     app4.button("Cheer", "")
+    app4.button("Cheery", press, image="1_entries.gif")
     app4.button("Cry", press, row=row, column=2)
 
-    app4.date("date", row=row, column=3, rowspan=4)
+    app4.date("date", row=row, column=3, rowspan=4, change=changer)
 
     app4.scale("happiness", colspan=3, increment=1, show=True, change=press)
 
 
     row=app4.gr()
     app4.option("feelings", ["happy", "bored", "angry"], column=0, row=row, change=press)
-    app4.spin("feelings", ["happy", "bored", "angry"], column=1, row=row, item="angry")
+    app4.option("feelings2", ["happy", "bored", "angry"], kind="ticks", column=0, row=row, change=press)
+    app4.option("feelings3", ["happy", "bored", "angry"], column=0, row=row, change=press)
+    app4.spin("feelings", ["happy", "bored", "angry"], change=changer, column=1, row=row, item="angry")
     app4.list("feelings", ["happy", "bored", "angry"], column=2, row=row, rows=4, multi=True, group=True, change=press)
 
     app4.separator(colspan=3)
@@ -2817,15 +2826,17 @@ with gui("Simple Demo") as app4:
         app4.link("Cry", "http://www.google.com")
         app4.link("Shout", press)
         app4.separator(row=0, column=1, rowspan=2, direction="vertical")
-        app4.slider("happiness again", 45, row=0, rowspan=2, direction="vertical", column=2, interval=25, change=press)
+        app4.slider("happiness again", 45, row=0, rowspan=2, direction="horizontal", show=True, column=2, interval=5, change=press)
+        app4.scale("Hhappiness again", 45, row=0, rowspan=2, direction="vertical", column=2, interval=25, change=press)
 
     #    app4.grip(row=row, column=2)
     toppings={"Cheese":False, "Tomato":False, "Bacon":False, "Corn":False, "Mushroom":False}
 
-    app4.properties("Toppings", toppings, row=row, column=2)
-    app4.meter("CryingMore", 50, colspan=3, type="other")
-    app4.meter("CryingMorer", 50, colspan=3, type="split")
-    app4.meter("CryingMorerr", (50,70), colspan=3, type="dual")
+    app4.properties("Toppings", toppings, row=row, column=2, change=changer)
+    app4.meter("CryingMor", fill="yellow")
+    app4.meter("CryingMore", 50, colspan=3, kind="other")
+    app4.meter("CryingMorer", 50, colspan=3, kind="split", fill=["green", "blue"])
+    app4.meter("CryingMorerr", (50,70), colspan=3, kind="dual", fill=["green", "blue"])
 
     app4.registerEvent(test_gui4)
     app4.setPollTime(1000)

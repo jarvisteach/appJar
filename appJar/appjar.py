@@ -4429,8 +4429,10 @@ class gui(object):
             if value is None: return self.getCheckBox(title)
             else: self.setCheckBox(title, value, *args, **kwargs)
         else:
+            change = None if "change" not in kwargs else kwargs.pop("change")
             check = self.addCheckBox(title, *args, **kwargs)
             if value is not None: self.setCheckBox(title, value)
+            if change is not None: self.setCheckBoxChangeFunction(title, change)
             return check
 
     def addCheckBox(self, title, row=None, column=0, colspan=0, rowspan=0, name=None):
@@ -4639,10 +4641,10 @@ class gui(object):
             if value is None: return self.getOptionBox(title)
             else: self.setOptionBox(title, value, *args, **kwargs)
         else:
-            type = "standard" if "type" not in kwargs else kwargs.pop("type").lower().strip()
+            kind = "standard" if "kind" not in kwargs else kwargs.pop("kind").lower().strip()
             change = None if "change" not in kwargs else kwargs.pop("change")
 
-            if type == "ticks": opt = self.addTickOptionBox(title, value, *args, **kwargs)
+            if kind == "ticks": opt = self.addTickOptionBox(title, value, *args, **kwargs)
             else: opt = self.addOptionBox(title, value, *args, **kwargs)
 
             if change is not None: self.setOptionBoxChangeFunction(title, change)
@@ -4851,7 +4853,7 @@ class gui(object):
 
         :param title: the title for the OptionBox - only used by TickOptionBox to calculate max size
         :param options: the list to tidy
-        :param kind: The type of option box (normal or ticks)
+        :param kind: The kind of option box (normal or ticks)
         :returns: a tuple containing the maxSize (width) and tidied list of items
         """
 
@@ -5242,7 +5244,11 @@ class gui(object):
 #                self.setProperty(title, prop=value)
                 pass
             else:
-                self.addProperties(title, value, *args, **kwargs)
+                change = None if "change" not in kwargs else kwargs.pop("change")
+                props = self.addProperties(title, value, *args, **kwargs)
+
+                if change is not None: self.setPropertiesChangeFunction(title, change)
+                return props
 
     def addProperties(self, title, values=None, row=None, column=0, colspan=0, rowspan=0):
         self.widgetManager.verify(self.Widgets.Properties, title)
@@ -5323,12 +5329,14 @@ class gui(object):
             endValue = None if "endValue" not in kwargs else kwargs.pop("endValue")
             pos = None if "pos" not in kwargs else kwargs.pop("pos")
             item = None if "item" not in kwargs else kwargs.pop("item").strip()
+            change = None if "change" not in kwargs else kwargs.pop("change")
 
             if endValue is not None: spinBox = self.addSpinBoxRange(title, fromVal=value, toVal=endValue, *args, **kwargs)
             else: spinBox = self.addSpinBox(title, value, *args, **kwargs)
 
             if pos is not None: self.setSpinBoxPos(title, pos)
             if item is not None: self.setSpinBox(title, item)
+            if change is not None: self.setSpinBoxChangeFunction(title, change)
 
             return spinBox
 
@@ -5492,18 +5500,19 @@ class gui(object):
         else:
             try: self.widgetManager.verify(self.Widgets.Image, title)
             except:
-                type = "standard" if "type" not in kwargs else kwargs.pop("type").lower().strip()
-                if type == "data": self.setImageData(title, value, **kwargs)
+                kind = "standard" if "kind" not in kwargs else kwargs.pop("kind").lower().strip()
+                if kind == "data": self.setImageData(title, value, **kwargs)
+                elif kind == "icon": gui.warn("Changing image icons not yet supported: %s.", title)
                 else: self.setImage(title, value)
             else:
-                type = "standard" if "type" not in kwargs else kwargs.pop("type").lower().strip()
+                kind = "standard" if "kind" not in kwargs else kwargs.pop("kind").lower().strip()
                 speed = None if "speed" not in kwargs else kwargs.pop("speed")
                 over = None if "over" not in kwargs else kwargs.pop("over")
                 submit = None if "submit" not in kwargs else kwargs.pop("submit")
                 map = None if "map" not in kwargs else kwargs.pop("map")
 
-                if type == "icon": image = self.addIcon(title, value, *args, **kwargs)
-                elif type == "data": image = self.addImageData(title, value, *args, **kwargs)
+                if kind == "icon": image = self.addIcon(title, value, *args, **kwargs)
+                elif kind == "data": image = self.addImageData(title, value, *args, **kwargs)
                 else: image = self.addImage(title, value, *args, **kwargs)
 
                 if speed is not None: self.setAnimationSpeed(title, speed)
@@ -6124,8 +6133,12 @@ class gui(object):
             except: self.setRadioButton(title, value, *args, **kwargs)
             else:
                 selected = False if "selected" not in kwargs else kwargs.pop("selected")
+                change = None if "change" not in kwargs else kwargs.pop("change")
                 rb = self.addRadioButton(title, value, *args, **kwargs)
+
                 if selected: self.setRadioButton(title, value)
+                if change is not None: self.setRadioButtonChangeFunction(title, change)
+
                 return rb
 
     def addRadioButton(self, title, name, row=None, column=0, colspan=0, rowspan=0):
@@ -6709,11 +6722,13 @@ class gui(object):
                 if toValue is None: self.setDatePicker(title, value)
                 else: self.setDatePickerRange(title, startYear=value, endYear=toValue)
         else:
+            change = None if "change" not in kwargs else kwargs.pop("change")
             self.addDatePicker(title, *args, **kwargs)
             toValue = None if "toValue" not in kwargs else kwargs.pop("toValue")
             if value is not None:
                 if toValue is None: self.setDatePicker(title, value)
                 else: self.setDatePickerRange(title, startYear=value, endYear=toValue)
+            if change is not None: self.setDatePickerChangeFunction(title, change)
 
     def addDatePicker(self, name, row=None, column=0, colspan=0, rowspan=0):
         self.widgetManager.verify(self.Widgets.DatePicker, name)
@@ -6838,11 +6853,15 @@ class gui(object):
             if value is None: return self.getLabel(title)
             else: self.setLabel(title, value)
         else:
-            type = "standard" if "type" not in kwargs else kwargs.pop("type").lower().strip()
+            kind = "standard" if "kind" not in kwargs else kwargs.pop("kind").lower().strip()
+            submit = None if "submit" not in kwargs else kwargs.pop("submit")
 
-            if type == "flash": label = self.addFlashLabel(title, value, *args, **kwargs)
-            elif type == "selectable": label = self.addSelectableLabel(title, value, *args, **kwargs)
+            if kind == "flash": label = self.addFlashLabel(title, value, *args, **kwargs)
+            elif kind == "selectable": label = self.addSelectableLabel(title, value, *args, **kwargs)
             else: label = self.addLabel(title, value, *args, **kwargs)
+
+            if submit is not None:
+                self.setLabelSubmitFunction(title, submit)
 
             return label
 
@@ -6948,10 +6967,12 @@ class gui(object):
             else: self.setTextArea(title, value, *args, **kwargs)
         else:
             scroll = False if "scroll" not in kwargs else kwargs.pop("scroll")
+            change = None if "change" not in kwargs else kwargs.pop("change")
 
             if scroll: text = self.addScrolledTextArea(title, *args, **kwargs)
             else: text = self.addTextArea(title, *args, **kwargs)
 
+            if change is not None: self.setTextAreaChangeFunction(title, change)
             if value is not None: self.setTextArea(title, value)
             return text
 
@@ -7245,7 +7266,7 @@ class gui(object):
             if value is None: return self.getEntry(title)
             else: self.setEntry(title, value, *args, **kwargs)
         else:
-            type = "standard" if "type" not in kwargs else kwargs.pop("type").lower().strip()
+            kind = "standard" if "kind" not in kwargs else kwargs.pop("kind").lower().strip()
 
             # remove setter values from kwargs
             default = None if "default" not in kwargs else kwargs.pop("default")
@@ -7257,10 +7278,10 @@ class gui(object):
             submit = None if "submit" not in kwargs else kwargs.pop("submit")
 
             # create the entry widget
-            if type == "auto": 
-                ent = self.__entryMaker(title, *args, type=type, words=value, **kwargs)
+            if kind == "auto": 
+                ent = self.__entryMaker(title, *args, kind=kind, words=value, **kwargs)
             else:
-                ent = self.__entryMaker(title, *args, type=type, **kwargs)
+                ent = self.__entryMaker(title, *args, kind=kind, **kwargs)
                 if not ent: return
 
             # apply any setter values
@@ -7272,7 +7293,7 @@ class gui(object):
             if submit is not None: self.setEntrySubmitFunction(title, submit)
             if default is not None: self.setEntryDefault(title, default)
 
-            if type != "auto":
+            if kind != "auto":
                 if value is not None: self.setEntry(title, value)
             else:
                 if rows is not None: self.setAutoEntryNumRows(title, rows)
@@ -7280,15 +7301,15 @@ class gui(object):
 
             return ent
 
-    def __entryMaker(self, title, row=None, column=0, colspan=0, rowspan=0, secret=False, label=False, type="standard", words=None):
+    def __entryMaker(self, title, row=None, column=0, colspan=0, rowspan=0, secret=False, label=False, kind="standard", words=None):
         if label:
             frame = self.__getLabelBox(title, column)
         else:
             frame = self.getContainer()
 
-        if type == "standard":
+        if kind == "standard":
             ent = self.__buildEntry(title, frame, secret)
-        elif type == "numeric":
+        elif kind == "numeric":
             ent = self.__buildEntry(title, frame, secret)
             if self.validateNumeric is None:
                 self.validateNumeric = (self.containerStack[0]['container'].register(
@@ -7297,16 +7318,16 @@ class gui(object):
             ent.isNumeric = True
             ent.config(validate='key', validatecommand=self.validateNumeric)
             self.setEntryTooltip(title, "Numeric data only.")
-        elif type == "auto":
+        elif kind == "auto":
             ent = self.__buildEntry(title, frame, secret=False, words=words)
-        elif type == "file":
+        elif kind == "file":
             ent = self.__buildFileEntry(title, frame)
-        elif type == "directory":
+        elif kind == "directory":
             ent = self.__buildFileEntry(title, frame, selectFile=False)
-        elif type == "validation":
+        elif kind == "validation":
             ent = self.__buildValidationEntry(title, frame, secret)
         else:
-            raise Exception("Invalid entry type: %s", type)
+            raise Exception("Invalid entry kind: %s", kind)
 
         if label:
             self.__packLabelBox(frame, ent)
@@ -7316,7 +7337,7 @@ class gui(object):
         return ent
 
     def addEntry(self, title, row=None, column=0, colspan=0, rowspan=0, secret=False):
-        return self.__entryMaker(title, row, column, colspan, rowspan, secret=secret, label=False, type="standard")
+        return self.__entryMaker(title, row, column, colspan, rowspan, secret=secret, label=False, kind="standard")
 
     def addLabelEntry(self, title, row=None, column=0, colspan=0, rowspan=0, secret=False):
         return self.__entryMaker(title, row, column, colspan, rowspan, secret, label=True)
@@ -7331,37 +7352,37 @@ class gui(object):
         return self.__entryMaker(title, row, column, colspan, rowspan, secret=True, label=True)
 
     def addFileEntry(self, title, row=None, column=0, colspan=0, rowspan=0):
-        return self.__entryMaker(title, row, column, colspan, rowspan, secret=False, label=False, type="file")
+        return self.__entryMaker(title, row, column, colspan, rowspan, secret=False, label=False, kind="file")
 
     def addLabelFileEntry(self, title, row=None, column=0, colspan=0, rowspan=0):
-        return self.__entryMaker(title, row, column, colspan, rowspan, secret=False, label=True, type="file")
+        return self.__entryMaker(title, row, column, colspan, rowspan, secret=False, label=True, kind="file")
 
     def addDirectoryEntry(self, title, row=None, column=0, colspan=0, rowspan=0):
-        return self.__entryMaker(title, row, column, colspan, rowspan, secret=False, label=False, type="directory")
+        return self.__entryMaker(title, row, column, colspan, rowspan, secret=False, label=False, kind="directory")
 
     def addLabelDirectoryEntry(self, title, row=None, column=0, colspan=0, rowspan=0):
-        return self.__entryMaker(title, row, column, colspan, rowspan, secret=False, label=True, type="directory")
+        return self.__entryMaker(title, row, column, colspan, rowspan, secret=False, label=True, kind="directory")
 
     def addValidationEntry(self, title, row=None, column=0, colspan=0, rowspan=0, secret=False):
-        return self.__entryMaker(title, row, column, colspan, rowspan, secret=False, label=False, type="validation")
+        return self.__entryMaker(title, row, column, colspan, rowspan, secret=False, label=False, kind="validation")
 
     def addLabelValidationEntry(self, title, row=None, column=0, colspan=0, rowspan=0, secret=False):
-        return self.__entryMaker(title, row, column, colspan, rowspan, secret=False, label=True, type="validation")
+        return self.__entryMaker(title, row, column, colspan, rowspan, secret=False, label=True, kind="validation")
 
     def addAutoEntry(self, title, words, row=None, column=0, colspan=0, rowspan=0):
-        return self.__entryMaker(title, row, column, colspan, rowspan, secret=False, label=False, type="auto", words=words)
+        return self.__entryMaker(title, row, column, colspan, rowspan, secret=False, label=False, kind="auto", words=words)
 
     def addLabelAutoEntry(self, title, words, row=None, column=0, colspan=0, rowspan=0, secret=False):
-        return self.__entryMaker(title, row, column, colspan, rowspan, secret=False, label=True, type="auto", words=words)
+        return self.__entryMaker(title, row, column, colspan, rowspan, secret=False, label=True, kind="auto", words=words)
 
     def addNumericEntry(self, title, row=None, column=0, colspan=0, rowspan=0, secret=False):
-        return self.__entryMaker(title, row, column, colspan, rowspan, secret=secret, label=False, type="numeric")
+        return self.__entryMaker(title, row, column, colspan, rowspan, secret=secret, label=False, kind="numeric")
 
     def addLabelNumericEntry(self, title, row=None, column=0, colspan=0, rowspan=0, secret=False):
-        return self.__entryMaker(title, row, column, colspan, rowspan, secret=secret, label=True, type="numeric")
+        return self.__entryMaker(title, row, column, colspan, rowspan, secret=secret, label=True, kind="numeric")
 
     def addNumericLabelEntry(self, title, row=None, column=0, colspan=0, rowspan=0, secret=False):
-        return self.__entryMaker(title, row, column, colspan, rowspan, secret=secret, label=True, type="numeric")
+        return self.__entryMaker(title, row, column, colspan, rowspan, secret=secret, label=True, kind="numeric")
 
     def __getDirName(self, title):
         self.__getFileName(title, selectFile=False)
@@ -7854,22 +7875,22 @@ class gui(object):
             else: self.setMeter(title, value, *args, **kwargs)
         else:
             fill = None if "fill" not in kwargs else kwargs.pop("fill")
-            type = "meter" if "type" not in kwargs else kwargs.pop("type")
+            kind = "meter" if "kind" not in kwargs else kwargs.pop("kind")
 
-            if type == "split": meter = self.addSplitMeter(title, *args, **kwargs)
-            elif type == "dual": meter = self.addDualMeter(title, *args, **kwargs)
+            if kind == "split": meter = self.addSplitMeter(title, *args, **kwargs)
+            elif kind == "dual": meter = self.addDualMeter(title, *args, **kwargs)
             else: meter = self.addMeter(title, *args, **kwargs)
 
             if value is not None: self.setMeter(title, value)
             if fill is not None: self.setMeterFill(title, fill)
             return meter
 
-    def __addMeter(self, name, type="METER", row=None, column=0, colspan=0, rowspan=0):
+    def __addMeter(self, name, kind="METER", row=None, column=0, colspan=0, rowspan=0):
         self.widgetManager.verify(self.Widgets.Meter, name)
 
-        if type == "SPLIT":
+        if kind == "SPLIT":
             meter = SplitMeter(self.getContainer(), font=self.meterFont)
-        elif type == "DUAL":
+        elif kind == "DUAL":
             meter = DualMeter(self.getContainer(), font=self.meterFont)
         else:
             meter = Meter(self.getContainer(), font=self.meterFont)
