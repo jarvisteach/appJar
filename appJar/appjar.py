@@ -6217,7 +6217,7 @@ class gui(object):
             rows = None if "rows" not in kwargs else kwargs.pop("rows")
             multi = False if "multi" not in kwargs else kwargs.pop("multi")
             group = False if "group" not in kwargs else kwargs.pop("group")
-            change = False if "change" not in kwargs else kwargs.pop("change")
+            change = None if "change" not in kwargs else kwargs.pop("change")
 
             listBox = self.addListBox(title, value, *args, **kwargs)
             
