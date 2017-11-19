@@ -524,8 +524,8 @@ class gui(object):
                 self.debug("Error setting Windows default icon")
 
         # set the ttk theme
-        self.setTtkTheme(ttkTheme)
-
+        if self.ttkFlag:
+            self.setTtkTheme(ttkTheme)
 
         # for configuting event processing
         self.EVENT_SIZE = 1000
