@@ -348,7 +348,6 @@ class gui(object):
         self.ttkFlag = False
         if useTtk:
             self.useTtk()
-        self.ttkStyle = None
 
         # first out, verify the platform
         self.platform = gui.GET_PLATFORM()
@@ -379,6 +378,7 @@ class gui(object):
             self.warn("Cannot set logging level in __init__. You should use .setLogLevel()")
 
         # process any command line arguments
+        ttkTheme = None
         if handleArgs:
             if args.c: gui.setLogLevel("CRITICAL")
             elif args.e: gui.setLogLevel("ERROR")
@@ -391,7 +391,7 @@ class gui(object):
             if args.ttk:
                 self.useTtk()
                 if args.ttk is not True:
-                    self.ttkStyle = args.ttk
+                    ttkTheme = args.ttk
 
             if args.s:
                 self.useSettings = True
@@ -492,26 +492,6 @@ class gui(object):
         self.propertiesFont = font.Font(family="Helvetica", size=12)
         self.gridFont = font.Font(family="Helvetica", size=12)
 
-        if self.ttkFlag:
-            # set up our ttk styles
-            style = ttk.Style()
-
-            style.configure("DefaultText.TEntry", foreground="grey")
-            style.configure("ValidationEntryValid.TEntry", foreground="#4CC417", highlightbackground="#4CC417", highlightcolor="#4CC417", highlightthickness='20')
-            style.configure("ValidationEntryInvalid.TEntry", foreground="#FF0000", highlightbackground="#FF0000", highlightcolor="#FF0000", highlightthickness='20')
-            style.configure("ValidationEntryWait.TEntry", foreground="#000000", highlightbackground="#000000", highlightcolor="#000000", highlightthickness='20')
-
-            style.configure("ValidationEntryValid.TLabel", foreground="#4CC417")
-            style.configure("ValidationEntryInvalid.TLabel", foreground="#FF0000")
-            style.configure("ValidationEntryWait.TLabel", foreground="#000000")
-
-            style.configure("Link.TLabel", foreground="#0000ff")
-            style.configure("LinkOver.TLabel", foreground="#3366ff")
-
-#        self.fgColour = self.topLevel.cget("foreground")
-#        self.buttonFgColour = self.topLevel.cget("foreground")
-#        self.labelFgColour = self.topLevel.cget("foreground")
-
         # create a menu bar - only shows if populated
         # now created in menu functions, as it generated a blank line...
         self.hasMenu = False
@@ -543,8 +523,9 @@ class gui(object):
             except: # file not found
                 self.debug("Error setting Windows default icon")
 
-        if self.ttkStyle is not None:
-            self.setTtkTheme(self.ttkStyle)
+        # set the ttk theme
+        self.setTtkTheme(ttkTheme)
+
 
         # for configuting event processing
         self.EVENT_SIZE = 1000
@@ -603,7 +584,7 @@ class gui(object):
         if not self.ttkFlag:
             self.bgLabel = Label(container, anchor=CENTER, font=self.labelFont, background=self.__getContainerBg())
         else:
-            self.bgLabel = ttk.LabelFrame(container)
+            self.bgLabel = ttk.Label(container)
         self.bgLabel.place(x=0, y=0, relwidth=1, relheight=1)
         container.image = None
 
@@ -635,6 +616,8 @@ class gui(object):
     def setTtkTheme(self, theme=None):
         """ sets the ttk theme to use """
         self.ttkStyle = ttk.Style()
+
+        gui.debug("Switching ttk theme to: %s", theme)
         if theme is not None:
             try:
                 self.ttkStyle.theme_use(theme)
@@ -646,9 +629,23 @@ class gui(object):
                     self.ttkStyle.set_theme(theme)
                 except:
                     self.error("ttk theme: %s unavailable. Try one of: %s", theme, self.ttkStyle.theme_names())
-                    return
 
-        gui.debug("ttk theme switched to: %s", self.ttkStyle.theme_use())
+        # set up our ttk styles
+        self.ttkStyle.configure("DefaultText.TEntry", foreground="grey")
+        self.ttkStyle.configure("ValidationEntryValid.TEntry", foreground="#4CC417", highlightbackground="#4CC417", highlightcolor="#4CC417", highlightthickness='20')
+        self.ttkStyle.configure("ValidationEntryInvalid.TEntry", foreground="#FF0000", highlightbackground="#FF0000", highlightcolor="#FF0000", highlightthickness='20')
+        self.ttkStyle.configure("ValidationEntryWait.TEntry", foreground="#000000", highlightbackground="#000000", highlightcolor="#000000", highlightthickness='20')
+
+        self.ttkStyle.configure("ValidationEntryValid.TLabel", foreground="#4CC417")
+        self.ttkStyle.configure("ValidationEntryInvalid.TLabel", foreground="#FF0000")
+        self.ttkStyle.configure("ValidationEntryWait.TLabel", foreground="#000000")
+
+        self.ttkStyle.configure("Link.TLabel", foreground="#0000ff")
+        self.ttkStyle.configure("LinkOver.TLabel", foreground="#3366ff")
+
+#        self.fgColour = self.topLevel.cget("foreground")
+#        self.buttonFgColour = self.topLevel.cget("foreground")
+#        self.labelFgColour = self.topLevel.cget("foreground")
 
 ###############################################################
 # library loaders - on demand loading of different classes
@@ -2236,7 +2233,9 @@ class gui(object):
                 if not self.__isWidgetContainer(child):
                     gui.SET_WIDGET_FG(child, colour, override)
         else:
-            gui.warn("In ttk mode - can't set FG to %s", colour)
+            gui.debug("In ttk mode - trying to set FG to %s", colour)
+            self.ttkStyle.configure("TLabel", foreground=colour)
+            self.ttkStyle.configure("TFrame", foreground=colour)
 
     # self.topLevel = Tk()
     # self.appWindow = CanvasDnd, fills all of self.topLevel
@@ -2266,7 +2265,9 @@ class gui(object):
 
                     gui.SET_WIDGET_BG(child, colour, override, tint)
         else:
-            gui.warn("In ttk mode - can't set BG to %s", colour)
+            gui.debug("In ttk mode - trying to set BG to %s", colour)
+            self.ttkStyle.configure("TLabel", background=colour)
+            self.ttkStyle.configure("TFrame", background=colour)
 
     @staticmethod
     def __isWidgetContainer(widget):
@@ -2488,6 +2489,13 @@ class gui(object):
                     item.config(state=value)
                 elif option == 'relief':
                     item.config(relief=value)
+                elif option == 'style':
+                    if self.ttkFlag:
+                        gui.debug("%s configured with ttk styl %s", name, value)
+                        item.config(style=value)
+                        print(item.cget("style"))
+                    else:
+                        self.warn("Error configuring %s: can't set ttk style, not in ttk mode.", name)
                 elif option == 'align':
                     if kind == self.Widgets.Entry:
                         if value == W or value == LEFT:
@@ -2800,6 +2808,11 @@ class gui(object):
                 "Droppable(self, name, function=None): self.configureWidgets(" +
                 str(k) + ", name, 'internalDrop', function)")
             exec("gui.register" + v + "Droppable=register" + v + "Droppable")
+
+            exec( "def set" + v +
+                "Style(self, name, val): self.configureWidget(" +
+                str(k) + ", name, 'style', val)")
+            exec("gui.set" + v + "Style=set" + v + "Style")
 
             # might not all be necessary, could make exclusion list
             exec( "def set" + v +
