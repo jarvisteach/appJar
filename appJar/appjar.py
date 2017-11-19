@@ -5562,12 +5562,9 @@ class gui(object):
                 lab.image.pics.append(pic)
             lab.image.anim_pos += 1
             lab.config(image=pic)
-            anim_id = self.topLevel.after(
-                lab.image.anim_speed,
-                self.__animateImage,
-                title)
+            anim_id = self.topLevel.after(int(lab.image.anim_speed), self.__animateImage, title)
             self.widgetManager.update(self.Widgets.AnimationID, title, anim_id)
-        except Exception as e:
+        except IndexError:
             # will be thrown when we reach end of anim images
             lab.image.anim_pos = 0
             lab.image.cached = True
@@ -5614,7 +5611,7 @@ class gui(object):
         if speed < 1:
             speed = 1
             self.warn("Setting %s speed to 1. Minimum animation speed is 1.", name)
-        img.anim_speed = speed
+        img.anim_speed = int(speed)
 
     def stopAnimation(self, name):
         img = self.widgetManager.get(self.Widgets.Image, name).image
@@ -5831,10 +5828,9 @@ class gui(object):
 
         label.image.animating = False
         label.config(image=image)
-        label.config(
-            anchor=CENTER,
-            font=self.labelFont,
-            background=self.__getContainerBg())
+        label.config(anchor=CENTER, font=self.labelFont)
+        if not self.useTtk:
+            label.config(background=self.__getContainerBg())
         label.image = image  # keep a reference!
 
         if image.isAnimated:
@@ -5903,18 +5899,19 @@ class gui(object):
         return imgObj
 
     def __addImageObj(self, name, img, row=None, column=0, colspan=0, rowspan=0, compound=None):
-        label = Label(self.getContainer())
-        label.config(
-            anchor=CENTER,
-            font=self.labelFont,
-            background=self.__getContainerBg())
-        label.config(image=img)
+        if not self.useTtk:
+            label = Label(self.getContainer())
+            label.config(background=self.__getContainerBg())
+        else:
+            label = ttk.Label(self.getContainer())
+
+        label.config(anchor=CENTER, font=self.labelFont,image=img)
         label.image = img  # keep a reference!
 
         if compound is not None:
             label.config(text=name, compound=compound)
 
-        if img is not None and compound is None:
+        if img is not None and compound is None and not self.useTtk:
             h = img.height()
             w = img.width()
             label.config(height=h, width=w)
