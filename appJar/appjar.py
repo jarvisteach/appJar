@@ -857,6 +857,8 @@ class gui(object):
             try:
                 self.dnd.bindtarget(widget, self.__receiveExternalDrop, 'text/uri-list')
                 self.dnd.bindtarget(widget, self.__receiveExternalDrop, 'text/plain')
+                # cater for new drop parameter in new setters
+                if function == True: function = None
                 widget.dndFunction = function
                 widget.dropData = None
                 widget.dropReplace = replace
@@ -5530,6 +5532,7 @@ class gui(object):
             else:
                 kind = "standard" if "kind" not in kwargs else kwargs.pop("kind").lower().strip()
                 speed = None if "speed" not in kwargs else kwargs.pop("speed")
+                drop = None if "drop" not in kwargs else kwargs.pop("drop")
                 over = None if "over" not in kwargs else kwargs.pop("over")
                 submit = None if "submit" not in kwargs else kwargs.pop("submit")
                 map = None if "map" not in kwargs else kwargs.pop("map")
@@ -5543,6 +5546,7 @@ class gui(object):
                 if submit is not None:
                     if map is not None: self.setImageMap(title, submit, map)
                     else: self.setImageSubmitFunction(title, submit)
+                if drop is not None: self.setImageDropTarget(title, drop)
 
                 return image
 
@@ -6251,6 +6255,7 @@ class gui(object):
             multi = False if "multi" not in kwargs else kwargs.pop("multi")
             group = False if "group" not in kwargs else kwargs.pop("group")
             change = None if "change" not in kwargs else kwargs.pop("change")
+            drop = None if "drop" not in kwargs else kwargs.pop("drop")
 
             listBox = self.addListBox(title, value, *args, **kwargs)
             
@@ -6258,6 +6263,7 @@ class gui(object):
             if multi: self.setListBoxMulti(title)
             if group: self.setListBoxGroup(title)
             if change is not None: self.setListBoxChangeFunction(title, change)
+            if drop is not None: self.setListBoxDropTarget(title, drop)
 
             return listBox
 
@@ -6907,13 +6913,14 @@ class gui(object):
         else:
             kind = "standard" if "kind" not in kwargs else kwargs.pop("kind").lower().strip()
             submit = None if "submit" not in kwargs else kwargs.pop("submit")
+            drop = None if "drop" not in kwargs else kwargs.pop("drop")
 
             if kind == "flash": label = self.addFlashLabel(title, value, *args, **kwargs)
             elif kind == "selectable": label = self.addSelectableLabel(title, value, *args, **kwargs)
             else: label = self.addLabel(title, value, *args, **kwargs)
 
-            if submit is not None:
-                self.setLabelSubmitFunction(title, submit)
+            if submit is not None: self.setLabelSubmitFunction(title, submit)
+            if drop is not None: self.setLabelDropTarget(title, drop)
 
             return label
 
@@ -7020,12 +7027,14 @@ class gui(object):
         else:
             scroll = False if "scroll" not in kwargs else kwargs.pop("scroll")
             change = None if "change" not in kwargs else kwargs.pop("change")
+            drop = None if "drop" not in kwargs else kwargs.pop("drop")
 
             if scroll: text = self.addScrolledTextArea(title, *args, **kwargs)
             else: text = self.addTextArea(title, *args, **kwargs)
 
             if change is not None: self.setTextAreaChangeFunction(title, change)
             if value is not None: self.setTextArea(title, value)
+            if drop is not None: self.setTextAreaDropTarget(title, drop)
             return text
 
     def __buildTextArea(self, title, frame, scrollable=False):
@@ -7269,7 +7278,11 @@ class gui(object):
         except:
             if value is None: return self.getMessage(title)
             else: self.setMessage(title, value, *args, **kwargs)
-        else: return self.addMessage(title, value, *args, **kwargs)
+        else:
+            drop = None if "drop" not in kwargs else kwargs.pop("drop")
+            msg = self.addMessage(title, value, *args, **kwargs)
+            if drop is not None: self.setMessageDropTarget(title, drop)
+            return msg
 
     def addMessage(self, title, text, row=None, column=0, colspan=0, rowspan=0):
 
@@ -7328,6 +7341,7 @@ class gui(object):
             rows = None if "rows" not in kwargs else kwargs.pop("rows")
             change = None if "change" not in kwargs else kwargs.pop("change")
             submit = None if "submit" not in kwargs else kwargs.pop("submit")
+            drop = None if "drop" not in kwargs else kwargs.pop("drop")
 
             # create the entry widget
             if kind == "auto": 
@@ -7344,6 +7358,7 @@ class gui(object):
             if change is not None: self.setEntryChangeFunction(title, change)
             if submit is not None: self.setEntrySubmitFunction(title, submit)
             if default is not None: self.setEntryDefault(title, default)
+            if drop is not None: self.setEntryDropTarget(title, drop)
 
             if kind != "auto":
                 if value is not None: self.setEntry(title, value)

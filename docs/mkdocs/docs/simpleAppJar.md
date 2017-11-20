@@ -48,14 +48,15 @@ The following positional parameters are available when adding widgets:
 ----
 
 Most of the widgets also have some support for events (see the [events page](/pythonEvents/#types-of-event) for more information).  
-**NB.** the parameter is only the name of the funciton, don't include any brackets.  
+**NB.** the parameter is only the name of the function, don't include any brackets.  
 
 | Parameter | Data type | Default | Description |
 | --------- | --------- | ------- | ------------|
 | submit | function | None | A function to call when the widget is *submitted*. |
 | change | function | None | A function to call when the widget is *changed*. |
+| drop | boolean/function | None | Update the widget with *dropped* data if True, otherwise call the function. |
 
-Both functions will pass the name of the widget to the function:  
+`submit` & `change` will pass the name of the widget to the function, `drop` will pass the data to the function:  
 
 ```python
 def update(name):
@@ -66,6 +67,7 @@ def update(name):
 
 app.list("size", ["small", "medium", "large"], change=update)
 app.list("toppings", ["corn", "cheese", "peppers"], change=update)
+app.image("img1", "placeholder.gif", drop=True)
 ```
 
 ## Label  
@@ -76,6 +78,7 @@ A widget for displaying text in the GUI.
 * `.label(title, value=None)`  
     The `value` will be the text to show in the label.  
     Labels can receive a `submit` parameter, making them clickable.  
+    Labels can receive `drop` data.  
 
 | Parameter | Data type | Default | Description |
 | --------- | --------- | ------- | ------------|
@@ -87,6 +90,7 @@ A widget for displaying multi-line text in the GUI.
 
 * `.message(title, value=None)`  
     The `value` will be the text to show in the message.  
+    Messages can receive `drop` data.  
 
 ## Entry  
 ---
@@ -95,6 +99,7 @@ An interactive widget, for capturing user input in the GUI.
 * `.entry(title, value=None)`  
     A `value` is not required, but if provided will populate the entry.  
     Entries can receive a `change` parameter, and can link a `submit` parameter to pressing <ENTER>.  
+    Entries can receive `drop` data.  
 
 | Parameter | Data type | Default | Description |
 | --------- | --------- | ------- | ------------|
@@ -119,6 +124,7 @@ An interactive widget, for capturing multi-line user input in the GUI.
 * `.text(title, value=None)`  
     A `value` is not required, but if provided will populate the text.  
     Text boxes can receive a `change` parameter.  
+    Text boxes can receive `drop` data.  
 
 | Parameter | Data type | Default | Description |
 | --------- | --------- | ------- | ------------|
@@ -199,6 +205,7 @@ Displays a list of items, one (or more than one) of which can be selected.
 * `.list(title, value=None)`  
     The `value` should contain a list of items to display in the list.  
     List boxes can receive a `change` parameter.  
+    List boxes can receive `drop` data.  
 
 | Parameter | Data type | Default | Description |
 | --------- | --------- | ------- | ------------|
@@ -260,6 +267,7 @@ Displays a picture.
 * `.image(title, value=None)`
     The `value` should be the image file, icon or data to show.  
     Images can receive a `submit` parameter, making them clickable.  
+    Images can receive `drop` data.  
 
 | Parameter | Data type | Default | Description |
 | --------- | --------- | ------- | ------------|
