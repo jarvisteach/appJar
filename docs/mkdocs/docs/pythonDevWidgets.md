@@ -360,3 +360,17 @@ with gui() as app:
 
 * `.refreshPlot(title)`  
     Call this any time you modify the axes.  
+
+### Turtle
+---
+This lets you embed a turtle widget in appJar.  
+
+* `.addTurtle(title)`  
+    Creates a turtle widget.  
+
+* `.getTurtle(title)`  
+    Gets the turtle widget.  
+
+* `.getTurtleScreen(title)`  
+    Gets the screen behind the turtle widget.  
+

@@ -63,6 +63,7 @@ parseString = TreeItem = TreeNode = None # AjTree
 base64 = urlencode = urlopen = urlretrieve = quote_plus = json = None # GoogleMap
 ConfigParser = codecs = ParsingError = None # used to parse language files
 Thread = Queue = None
+turtle = None
 frameBase = Frame
 labelBase = Label
 scaleBase = Scale
@@ -359,7 +360,7 @@ class gui(object):
                 "CheckBox", "RadioButton", "ListBox", "SpinBox", "OptionBox",
                 "TickOptionBox", "Accelerators",
                 "Map", "PieChart", "Properties", "Grid", "Plot", "MicroBit",
-                "DatePicker", "Separator",
+                "DatePicker", "Separator", "Turtle",
                 "LabelFrame", "Frame", "TabbedFrame", "PanedFrame", "ToggleFrame",
                 "FrameBox", "FrameLabel", "ContainerLog", "FlashLabel",
                 "AnimationID", "ImageCache", "Menu",
@@ -650,6 +651,15 @@ class gui(object):
 ###############################################################
 # library loaders - on demand loading of different classes
 ###############################################################
+
+    def __loadTurtle(self):
+        """ loasd turtle libraries """
+        global turtle
+        try:
+            import turtle
+        except:
+            turtle = False
+            self.error("Turtle not available")
 
     def __loadConfigParser(self):
         """ loads the ConfigParser, used by internationalisation & settings """
@@ -5829,7 +5839,7 @@ class gui(object):
         label.image.animating = False
         label.config(image=image)
         label.config(anchor=CENTER, font=self.labelFont)
-        if not self.useTtk:
+        if not self.ttkFlag:
             label.config(background=self.__getContainerBg())
         label.image = image  # keep a reference!
 
@@ -5899,7 +5909,7 @@ class gui(object):
         return imgObj
 
     def __addImageObj(self, name, img, row=None, column=0, colspan=0, rowspan=0, compound=None):
-        if not self.useTtk:
+        if not self.ttkFlag:
             label = Label(self.getContainer())
             label.config(background=self.__getContainerBg())
         else:
@@ -5911,7 +5921,7 @@ class gui(object):
         if compound is not None:
             label.config(text=name, compound=compound)
 
-        if img is not None and compound is None and not self.useTtk:
+        if img is not None and compound is None and not self.ttkFlag:
             h = img.height()
             w = img.width()
             label.config(height=h, width=w)
@@ -6691,6 +6701,27 @@ class gui(object):
         self.__positionWidget(trash, row, column, colspan, rowspan)
         return trash
 
+#####################################
+# FUNCTIONS for turtle
+#####################################
+
+    def addTurtle(self, title, row=None, column=0, colspan=0, rowspan=0):
+        self.__loadTurtle()
+        if turtle is False:
+            raise Exception("Unable to load turtle")
+        self.widgetManager.verify(self.Widgets.Turtle, title)
+        canvas = Canvas(self.getContainer())
+        canvas.screen = turtle.TurtleScreen(canvas)
+        self.__positionWidget(canvas, row, column, colspan, rowspan)
+        self.widgetManager.add(self.Widgets.Turtle, title, canvas)
+        canvas.turtle = turtle.RawTurtle(canvas.screen)
+        return canvas.turtle
+
+    def getTurtleScreen(self, title):
+        return self.widgetManager.get(self.Widgets.Turtle, title).screen
+
+    def getTurtle(self, title):
+        return self.widgetManager.get(self.Widgets.Turtle, title).turtle
 
 #####################################
 # FUNCTIONS for Microbits
