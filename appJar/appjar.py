@@ -360,7 +360,7 @@ class gui(object):
                 "CheckBox", "RadioButton", "ListBox", "SpinBox", "OptionBox",
                 "TickOptionBox", "Accelerators",
                 "Map", "PieChart", "Properties", "Grid", "Plot", "MicroBit",
-                "DatePicker", "Separator", "Turtle",
+                "DatePicker", "Separator", "Turtle", "Canvas",
                 "LabelFrame", "Frame", "TabbedFrame", "PanedFrame", "ToggleFrame",
                 "FrameBox", "FrameLabel", "ContainerLog", "FlashLabel",
                 "AnimationID", "ImageCache", "Menu",
@@ -6722,6 +6722,17 @@ class gui(object):
 
     def getTurtle(self, title):
         return self.widgetManager.get(self.Widgets.Turtle, title).turtle
+
+#####################################
+# FUNCTIONS for turtle
+#####################################
+
+    def addCanvas(self, title, row=None, column=0, colspan=0, rowspan=0):
+        self.widgetManager.verify(self.Widgets.Canvas, title)
+        canvas = Canvas(self.getContainer())
+        self.__positionWidget(canvas, row, column, colspan, rowspan)
+        self.widgetManager.add(self.Widgets.Canvas, title, canvas)
+        return canvas
 
 #####################################
 # FUNCTIONS for Microbits

@@ -361,6 +361,13 @@ with gui() as app:
 * `.refreshPlot(title)`  
     Call this any time you modify the axes.  
 
+### Canvas
+---
+This lets you embed a canvas in appJar
+
+* `.addCanvas(title)`  
+    Creates a canvas widget.  
+
 ### Turtle
 ---
 This lets you embed a turtle widget in appJar.  
