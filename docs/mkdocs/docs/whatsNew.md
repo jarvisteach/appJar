@@ -8,6 +8,8 @@
 * More [ttk](/pythonTtk) improvements - grouped widgets now work, introduced eternal themes.  
 
 * Issues Resolved:
+    * [#298](https://github.com/jarvisteach/appJar/issues/298) - fixed issue in [menubar shortcuts](/pythonBars/#extra-features/) where numeric shortcuts didn't work.  
+    * [#296](https://github.com/jarvisteach/appJar/issues/296) - two new widgets introduced [turtle](/pythonDevWidgets/#turtle) and [canvas](/pythonDevWidgets/#canvas)  
     * [#294](https://github.com/jarvisteach/appJar/issues/294) & [#292](https://github.com/jarvisteach/appJar/issues/294) - fixes on [entries](/pythonWidgets/#entry): better handle arrow key presses on mac, defaults work better on secret entries & file/directory entries  
     * [#290](https://github.com/jarvisteach/appJar/issues/290) - fixed issue showing [AutoEntries](/pythonWidgets/#entry) in [subWindows](/pythonSubWindows)  
     * [#289](https://github.com/jarvisteach/appJar/issues/289) - new functions to change list in [AutoEntries](/pythonWidgets/#entry) 

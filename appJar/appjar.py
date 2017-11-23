@@ -8304,6 +8304,7 @@ class gui(object):
             a = a.replace("control", "ctrl")
             a = a.replace("command", "cmd")
             a = a.replace("option", "opt")
+            a = a.replace("key-", "")
 
             b = b.replace("ctrl", "Control")
             b = b.replace("control", "Control")
@@ -8314,17 +8315,24 @@ class gui(object):
             b = b.replace("alt", "Alt")
             b = b.replace("shift", "Shift")
             b = b.replace("meta", "Meta")
+            b = b.replace("key", "Key")
 
             if gui.GET_PLATFORM() != gui.MAC:
                 a = a.replace("cmd", "ctrl")
                 b = b.replace("Command", "Control")
 
+            # try to fix numerics
+            if b[-1] in "0123456789" and "Key" not in b:
+                b = b[:-1] + "Key-" + b[-1]
+
             b = "<" + b + ">"
             a = a.title()
 
+            gui.debug("Adding accelerator: %s", a)
             self.widgetManager.verify(self.Widgets.Accelerators, a, array=True)
             self.widgetManager.log(self.Widgets.Accelerators, a)
             if u is not None and createBinding:
+                gui.debug("Binding: %s to %s", b, u)
                 self.topLevel.bind_all(b, u)
 
         if item == "-" or kind == "separator":

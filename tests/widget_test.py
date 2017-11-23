@@ -1673,15 +1673,15 @@ def test_menus():
 
     app.addMenuList("a", LIST_ONE, tester_function)
     app.createMenu("MEN2")
-    app.addMenuItem("MEN2", "MM2", tester_function, shortcut="k", underline=2)
+    app.addMenuItem("MEN2", "MM2", tester_function, shortcut="Control-k", underline=2)
     app.addMenuSeparator("MEN2")
-    app.addMenuCheckBox("MEN2", "CB2", tester_function, shortcut="c", underline=2)
-    app.addMenuRadioButton("MEN2", "a", "BB2", tester_function, shortcut="r", underline=2)
+    app.addMenuCheckBox("MEN2", "CB2", tester_function, shortcut="Control-Shift-c", underline=2)
+    app.addMenuRadioButton("MEN2", "a", "BB2", tester_function, shortcut="Control-2", underline=2)
     app.addMenuRadioButton("MEN2", "a", "BB3", tester_function)
     app.addSubMenu("MEN2", "sub1")
-    app.addMenuItem("sub1", "MMM2", tester_function, shortcut="w", underline=2)
+    app.addMenuItem("sub1", "MMM2", tester_function, shortcut="Alt-w", underline=2)
     app.addMenuSeparator("sub1")
-    app.addMenuCheckBox("sub1", "CB23", tester_function, shortcut="x", underline=2)
+    app.addMenuCheckBox("sub1", "CB23", tester_function, shortcut="Alt-Shift-x", underline=2)
     app.addMenuRadioButton("sub1", "b", "BB23", tester_function, shortcut="y", underline=2)
     app.addMenuRadioButton("sub1", "b", "BB33", tester_function, underline=0)
     app.addMenu("PRESS", tester_function, "P", 4)
@@ -2748,22 +2748,23 @@ def changer(btn=None):
     print(btn)
 
 with gui("Simple Demo") as app4:
+    app4.EXTERNAL_DND = None
     app4.label("title", "Simple Props Demo", colspan=3, kind="flash")
-    app4.label("title2", row=0, column=3, drop=changer)
+    app4.label("title2", row=0, column=3)
     app4.setLabelBg("title", "green")
 
     app4.radio("happy", "Very Happy", row=1, column=0)
     app4.radio("happy", "Ambivalent", row=1, column=1, change=changer)
     app4.radio("happy", "Miserable", row=1, column=2, selected=True)
 
-    app4.message("mess", "Simple Sadness", drop=changer, row=2, rowspan=3)
+    app4.message("mess", "Simple Sadness", row=2, rowspan=3)
     app4.setMessageBg("mess", "pink")
 
-    app4.text("mess2", "Simple Happiness", row=2, column=2, rowspan=3, scroll=False, drop=changer)
+    app4.text("mess2", "Simple Happiness", row=2, column=2, rowspan=3, scroll=False)
     app4.text("mess3", "Simple Happiness", row=2, column=2, rowspan=3, scroll=True, change=changer)
     app4.setTextAreaBg("mess2", "pink")
 
-    app4.image("img", "1_entries.gif", over="1_flash.gif", drop=changer, row=2, column=3, rowspan=7)
+    app4.image("img", "1_entries.gif", over="1_flash.gif", row=2, column=3, rowspan=7)
     app4.image("img5", "1_entries.gif", over="1_flash.gif", submit=changer, row=2, column=3, rowspan=7)
     app4.image("img2", "1_entries.gif", over="1_flash.gif", row=2, column=3, rowspan=7, map={"A":[1,1,5,5]}, submit=changer)
     app4.image("img3", "1_entries.gif", over="1_flash.gif", row=2, submit=changer, column=3, rowspan=7)
@@ -2774,7 +2775,7 @@ with gui("Simple Demo") as app4:
     app4.check("Cheer", True, row=3, column=1)
     app4.check("Cry", row=4, column=1, change=changer)
 
-    app4.entry("data", colspan=3, kind="directory", drop=changer)
+    app4.entry("data", colspan=3, kind="directory")
     app4.entry("data2", value="lots of data", colspan=3, focus=True, case="upper", limit=15)
     app4.entry("data3", colspan=3, default="france", kind="validation")
     app4.entry("data4", value=["a", "aa", "aba", "abc", "abd"], colspan=3, kind="auto", rows=4)
@@ -2814,7 +2815,7 @@ with gui("Simple Demo") as app4:
     app4.option("feelings2", ["happy", "bored", "angry"], kind="ticks", column=0, row=row, change=press)
     app4.option("feelings3", ["happy", "bored", "angry"], column=0, row=row, change=press)
     app4.spin("feelings", ["happy", "bored", "angry"], change=changer, column=1, row=row, item="angry")
-    app4.list("feelings", ["happy", "bored", "angry"], drop=changer, column=2, row=row, rows=4, multi=True, group=True, change=press)
+    app4.list("feelings", ["happy", "bored", "angry"], column=2, row=row, rows=4, multi=True, group=True, change=press)
 
     app4.separator(colspan=3)
     app4.spin("vals", 4, endValue=10, colspan=3, pos=3)
