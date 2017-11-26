@@ -116,11 +116,14 @@ def keyPress(key):
         app.increaseFont()
     elif key == "<Down>":
         app.decreaseFont()
+    elif key == "<F1>":
+        app.setFont(12)
 
 app = gui("Button Demo")
 app.addLabel("title", "Press the arrow keys to change the font")
 app.bindKey("<Up>", keyPress)
 app.bindKey("<Down>", keyPress)
+app.bindKey("<F1>", keyPress)
 app.go()
 ```
 
