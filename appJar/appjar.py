@@ -6753,6 +6753,9 @@ class gui(object):
         self.widgetManager.add(self.Widgets.Canvas, title, canvas)
         return canvas
 
+    def getCanvas(self, title):
+        return self.widgetManager.get(self.Widgets.Canvas, title)
+
 #####################################
 # FUNCTIONS for Microbits
 #####################################

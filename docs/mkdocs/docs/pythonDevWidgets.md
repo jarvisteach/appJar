@@ -351,6 +351,17 @@ with gui() as app:
 ---
 This lets you embed a canvas in appJar
 
+![Canvas](img/1_canvas.png)  
+```python
+from appJar import gui
+app=gui()
+canvas = app.addCanvas("c1")
+canvas.create_oval(10, 10, 100, 100, fill="red", outline="blue", width=3)
+canvas.create_line(0, 0, 255, 255, width=5)
+canvas.create_line(0, 255, 255, 0, dash=123)
+app.go()
+```
+
 * `.addCanvas(title)`  
     Creates a canvas widget.  
 
@@ -359,7 +370,25 @@ This lets you embed a canvas in appJar
 
 ### Turtle
 ---
-This lets you embed a turtle widget in appJar.  
+This lets you embed a [turtle](https://docs.python.org/3.6/library/turtle.html) widget in appJar.  
+
+![Turtle](img/1_turtle.png)  
+```
+def press(b):
+    s = app.getTurtleScreen("t1")
+    t = app.getTurtle("t1")
+    s.bgcolor("blue")
+    t.pencolor("white")
+    for i in range(20):
+        t.forward(i * 10) 
+        t.right(144)
+
+from appJar import gui 
+app=gui()
+app.addTurtle("t1")
+app.addButton("DRAW", press)
+app.go()
+```
 
 * `.addTurtle(title)`  
     Creates a turtle widget.  
