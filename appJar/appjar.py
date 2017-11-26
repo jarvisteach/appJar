@@ -3434,9 +3434,8 @@ class gui(object):
 #####################################
 # FUNCTION to manage containers
 #####################################
-    # adds the container to the container stack - makes this the current
-    # working container
-    def __addContainer(self, cTitle, cType, container, row, col, sticky=None):
+    # prepares a new empty container dict
+    def __prepContainer(self, cTitle, cType, container, row, col, sticky=None):
         containerData = {'type': cType,
                     'title': cTitle,
                     'container': container,
@@ -3450,6 +3449,11 @@ class gui(object):
                     'expand': "ALL",
                     'widgets': False,
                     "fg": self.__getContainerFg()}
+        return containerData
+
+    # adds the container to the container stack - makes this the current working container
+    def __addContainer(self, cTitle, cType, container, row, col, sticky=None):
+        containerData = self.__prepContainer(cTitle, cType, container, row, col, sticky)
         self.containerStack.append(containerData)
 
     def openRootPage(self, title):

@@ -63,6 +63,18 @@ def test_grid_layout():
 
     print("\t >> all tests complete")
 
+def test_remover():
+    app.addLabel("removeMe", TEXT_ONE)
+    app.startLabelFrame("RemoveFrame")
+    app.startPagedWindow("RemovePage")
+    app.startPage()
+    app.addLabel("removeMe2", TEXT_ONE)
+    app.addLabel("removeMe3", TEXT_ONE)
+    app.stopPage()
+    app.stopPagedWindow()
+    app.stopLabelFrame()
+    app.removeAllWidgets()
+
 def test_labels():
     print("\tTesting labels")
     assert isinstance(app.addEmptyLabel("el1"), Label)
@@ -2568,6 +2580,7 @@ app.showSplash()
 print("NEXT...")
 
 print("<<<Starting Widget Test Suite>>>")
+test_remover()
 test_gui_options()
 test_widget_arranging()
 test_grid_layout()
