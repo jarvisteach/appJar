@@ -4518,10 +4518,18 @@ class gui(object):
 
     def setCheckBox(self, title, ticked=True, callFunction=True):
         cb = self.widgetManager.get(self.Widgets.CheckBox, title)
+        bVar = self.widgetManager.get(self.Widgets.CheckBox, title, group=WidgetManager.VARS)
+        bVar.set(ticked)
         if ticked:
-            cb.select()
+            if not self.ttkFlag:
+                cb.select()
+            else:
+                cb.state(['selected'])
         else:
-            cb.deselect()
+            if not self.ttkFlag:
+                cb.deselect()
+            else:
+                cb.state(['!selected'])
         # now call function
         if callFunction:
             if hasattr(cb, 'cmd'):
@@ -5976,12 +5984,12 @@ class gui(object):
         image = img.image.subsample(x, y)
 
         img.config(image=image)
-        img.config(
-            anchor=CENTER,
-            font=self.labelFont,
-            background=self.__getContainerBg())
+        img.config(anchor=CENTER, font=self.labelFont)
+
+        if not self.ttkFlag:
+            img.config(background=self.__getContainerBg())
+            img.config(width=image.width(), height=image.height())
         img.modImage = image  # keep a reference!
-        img.config(width=image.width(), height=image.height())
 
     # get every nth pixel (must be an integer)
     # 0 won't work, 1 will return the original size
@@ -5990,12 +5998,12 @@ class gui(object):
         image = label.image.zoom(x, y)
 
         label.config(image=image)
-        label.config(
-            anchor=CENTER,
-            font=self.labelFont,
-            background=self.__getContainerBg())
+        label.config(anchor=CENTER, font=self.labelFont)
+
+        if not self.ttkFlag:
+            lab.config(background=self.__getContainerBg())
+            label.config(width=image.width(), height=image.height())
         label.modImage = image  # keep a reference!
-        label.config(width=image.width(), height=image.height())
 
     def convertJpgToBmp(self, image):
         self.__loadNanojpeg()
