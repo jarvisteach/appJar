@@ -6,8 +6,10 @@ def press(btn):
     print(btn)
     if btn == "<Up>":
         app.increaseFont()
-    else:
+    elif btn == "<Down>":
         app.decreaseFont()
+    elif btn == "<F1>":
+        app.setFont(12)
 
 app=gui()
 app.addLabel("title", "Red")
@@ -17,5 +19,7 @@ app.bindKeys(["<Up>", "<Down>", "<Left>", "<Right>"], press)
 
 app.bindKey("<F1>", press)
 app.bindKey("<F2>", press)
+app.bindKey("<F1>", press)
+
 
 app.go()

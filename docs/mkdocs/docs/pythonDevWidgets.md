@@ -354,6 +354,9 @@ This lets you embed a canvas in appJar
 * `.addCanvas(title)`  
     Creates a canvas widget.  
 
+* `.getCanvas(title)`  
+    Gets the specified canvas widget.  
+
 ### Turtle
 ---
 This lets you embed a turtle widget in appJar.  
@@ -362,7 +365,7 @@ This lets you embed a turtle widget in appJar.
     Creates a turtle widget.  
 
 * `.getTurtle(title)`  
-    Gets the turtle widget.  
+    Gets the specified turtle widget.  
 
 * `.getTurtleScreen(title)`  
     Gets the screen behind the turtle widget.  
