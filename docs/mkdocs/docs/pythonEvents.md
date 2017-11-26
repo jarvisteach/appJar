@@ -107,6 +107,22 @@ Link a function to the ```<Enter>``` key
 Unlink a function from the ```<Enter>```  key
 
 You may also want to bind other keys to events.  
+See [here](http://effbot.org/tkinterbook/tkinter-events-and-bindings.htm) for a detailed list of the *Event Formats*.  
+
+```python
+from appJar import gui
+def keyPress(key):
+    if key == "<Up>":
+        app.increaseFont()
+    elif key == "<Down>":
+        app.decreaseFont()
+
+app = gui("Button Demo")
+app.addLabel("title", "Press the arrow keys to change the font")
+app.bindKey("<Up>", keyPress)
+app.bindKey("<Down>", keyPress)
+app.go()
+```
 
 * `.bindKey(key, function)`  
 Link the specified key to the specified function.
