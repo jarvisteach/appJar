@@ -3077,7 +3077,9 @@ class gui(object):
         self.widgetManager.remove(kind, name)
 
     def removeAllWidgets(self):
-        container = self.containerStack[0]['container']
+        containerData = self.containerStack[0]
+        container = containerData['container']
+
         for child in container.winfo_children():
             child.destroy()
         self.__configBg(container)
@@ -3088,9 +3090,11 @@ class gui(object):
         for i in range(Grid.grid_size(container)[1]):
             container.rowconfigure(i, minsize=0, weight=0, pad=0)
 
+        containerData = self.__prepContainer(containerData["title"], containerData["type"], containerData["container"], 0, 1)
+        self.containerStack[0] = containerData
+
         self.__initVars()
         self.setSize(None)
-        self.containerStack[0]['emptyRow'] = 0
 
 #####################################
 # FUNCTION for managing commands
@@ -3364,8 +3368,7 @@ class gui(object):
             return
 
         # else, add to grid
-        row, column, colspan, rowspan = self.__getRCS(
-            row, column, colspan, rowspan)
+        row, column, colspan, rowspan = self.__getRCS(row, column, colspan, rowspan)
 
         # build a dictionary for the named params
         iX = self.containerStack[-1]['ipadx']
