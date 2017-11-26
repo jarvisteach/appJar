@@ -1,5 +1,5 @@
-import sys
-sys.path.append("../../")
+#import sys
+#sys.path.append("../../")
 
 def press(btn):
     if btn == "ADD":
@@ -9,7 +9,8 @@ def press(btn):
 
 from appJar import gui
 
-with gui() as app:
-    app.entry("file", kind="file")
-    app.button("REMOVE", press)
-    app.button("ADD", press)
+app = gui()
+app.addFileEntry("file")
+app.addButton("REMOVE", press)
+app.addButton("ADD", press)
+app.go()
