@@ -1528,6 +1528,9 @@ def test_events():
     app.bindKey("b", tester_function)
     app.unbindKey("b")
 
+    app.bindKeys(["c", "d", "<Up>", "<F1>"], tester_function)
+    app.unbindKeys(["c", "<Up>", "<F1>"])
+
     app.registerEvent(tester_function)
     app.setPollTime(2)
     app.setPollTime(0.5)

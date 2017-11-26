@@ -13,11 +13,8 @@ app=gui()
 app.addLabel("title", "Red")
 app.setBg("red")
 
-app.bindKey("<Up>", press)
-app.bindKey("<Down>", press)
-app.bindKey("<Left>", press)
-app.bindKey("<Right>", press)
-app.bindKey("<Right>", press)
+app.bindKeys(["<Up>", "<Down>", "<Left>", "<Right>"], press)
+
 app.bindKey("<F1>", press)
 app.bindKey("<F2>", press)
 

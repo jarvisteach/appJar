@@ -127,8 +127,14 @@ app.go()
 * `.bindKey(key, function)`  
 Link the specified key to the specified function.
 
+* `.bindKeys(keys, function)`  
+Link the specified keys to the specified function.
+
 * `.unbindKey(key)`  
 Unlink the specified key from any functions bound to it.
+
+* `.unbindKeys(keys)`  
+Unlink the specified keys from any functions bound to them.
 
 ## Stopping the GUI
 ---

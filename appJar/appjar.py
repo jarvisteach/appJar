@@ -1949,11 +1949,21 @@ class gui(object):
         """ unbinds <Return> from all widgets """
         self.unbindKey("<Return>")
 
+    def bindKeys(self, keys, func):
+        """ bind the specified keys, to the specified function, for all widgets """
+        for key in keys:
+            self.bindKey(key, func)
+
     def bindKey(self, key, func):
         """ bind the specified key, to the specified function, for all widgets """
         # for now discard the Event...
         myF = self.MAKE_FUNC(func, key, True)
         self.__getTopLevel().bind(key, myF)
+
+    def unbindKeys(self, keys):
+        """ unbinds the specified keys from whatever functions they are bound to """
+        for key in keys:
+            self.unbindKey(key)
 
     def unbindKey(self, key):
         """ unbinds the specified key from whatever functions it is bound to """
