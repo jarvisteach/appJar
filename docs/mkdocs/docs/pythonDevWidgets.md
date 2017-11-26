@@ -352,6 +352,7 @@ with gui() as app:
 This lets you embed a canvas in appJar
 
 ![Canvas](img/1_canvas.png)  
+
 ```python
 from appJar import gui
 app=gui()
@@ -373,7 +374,10 @@ app.go()
 This lets you embed a [turtle](https://docs.python.org/3.6/library/turtle.html) widget in appJar.  
 
 ![Turtle](img/1_turtle.png)  
-```
+
+```python
+from appJar import gui 
+
 def press(b):
     s = app.getTurtleScreen("t1")
     t = app.getTurtle("t1")
@@ -383,7 +387,6 @@ def press(b):
         t.forward(i * 10) 
         t.right(144)
 
-from appJar import gui 
 app=gui()
 app.addTurtle("t1")
 app.addButton("DRAW", press)
