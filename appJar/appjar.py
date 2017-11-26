@@ -11272,9 +11272,9 @@ class Dialog(Toplevel, object):
 
     def __init__(self, parent, title=None):
         super(Dialog, self).__init__(parent)
-        gui.CENTER(self, up=150)
         self.transient(parent)
         self.withdraw()
+        gui.CENTER(self, up=150)
         parent.POP_UP = self
 
         if title:
