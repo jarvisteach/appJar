@@ -1134,7 +1134,7 @@ class gui(object):
                 continue
             else:
                 try:
-                    kind = vars(gui)[section]
+                    kind = self.Widgets.getIgnoreCase(section)
                 except KeyError:
                     self.warn("Invalid config section: %s", section)
                     continue
@@ -1348,7 +1348,7 @@ class gui(object):
 
             elif kind == "TOOLTIP":
                 try:
-                    kind = self.WIDGETS[vars(gui)[section.split("-")[1]]]
+                    kind = self.Widgets.name(self.Widgets.getIgnoreCase(section.split("-")[1]))
                     func = getattr(self, "set"+kind+"Tooltip")
                 except KeyError:
                     self.warn("Invalid config section: TOOLTIP-%s", section)
@@ -12961,6 +12961,18 @@ class Enum(object):
         else:
             try: return self.widgets.index(name)
             except: raise KeyError("Invalid key: " + str(name))
+
+    def getIgnoreCase(self, name):
+        name = name.upper()
+        for w in self.deprecated:
+            if w.upper() == name:
+                raise Exception(name + " no longer supported")
+        else:
+            for w in self.widgets:
+                if w.upper() == name:
+                    return self.widgets.index(w)
+            else:
+                raise KeyError("Invalid key: " + str(name))
 
     def __setattr__(self, name, value):
         if self.__initialized: raise Exception("Unable to change Widget store")
