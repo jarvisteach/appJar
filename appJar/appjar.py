@@ -3343,7 +3343,10 @@ class gui(object):
                 gui.SET_WIDGET_BG(widg, bg, external, tint)
 
     def __getContainerBg(self):
-        return self.getContainer()["bg"]
+        if not self.ttkFlag:
+            return self.getContainer()["bg"]
+        else:
+            return None
 
     def __getContainerFg(self):
         try:
