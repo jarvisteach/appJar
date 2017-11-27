@@ -1135,7 +1135,7 @@ class gui(object):
             else:
                 try:
                     kind = self.Widgets.getIgnoreCase(section)
-                except KeyError:
+                except Exception:
                     self.warn("Invalid config section: %s", section)
                     continue
 
