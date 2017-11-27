@@ -5980,16 +5980,16 @@ class gui(object):
     # 0 will return an empty image, 1 will return the image, 2 will be 1/2 the
     # size ...
     def shrinkImage(self, name, x, y=''):
-        img = self.widgetManager.get(self.Widgets.Image, name)
-        image = img.image.subsample(x, y)
+        label = self.widgetManager.get(self.Widgets.Image, name)
+        image = label.image.subsample(x, y)
 
-        img.config(image=image)
-        img.config(anchor=CENTER, font=self.labelFont)
+        label.config(image=image)
+        label.config(anchor=CENTER, font=self.labelFont)
 
         if not self.ttkFlag:
-            img.config(background=self.__getContainerBg())
-            img.config(width=image.width(), height=image.height())
-        img.modImage = image  # keep a reference!
+            label.config(background=self.__getContainerBg())
+            label.config(width=image.width(), height=image.height())
+        label.modImage = image  # keep a reference!
 
     # get every nth pixel (must be an integer)
     # 0 won't work, 1 will return the original size
@@ -6001,7 +6001,7 @@ class gui(object):
         label.config(anchor=CENTER, font=self.labelFont)
 
         if not self.ttkFlag:
-            lab.config(background=self.__getContainerBg())
+            label.config(background=self.__getContainerBg())
             label.config(width=image.width(), height=image.height())
         label.modImage = image  # keep a reference!
 
