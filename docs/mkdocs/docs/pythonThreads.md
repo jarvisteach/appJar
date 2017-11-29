@@ -37,3 +37,4 @@ def downloader():
 # put the downloader function in its own thread
 app.thread(downloader)
 ```
+* `.threadCallback(func, callback, *atgs, **kwargs)`  
