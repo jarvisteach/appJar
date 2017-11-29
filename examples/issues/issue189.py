@@ -1,6 +1,10 @@
 import sys
 sys.path.append("../../")
 
+def press(btn):
+    val = app.getCheckBox("Tick me")
+    app.setCheckBox("Tick me", not val)
+
 from appJar import gui
 app = gui("ttk demo")
 with app.labelFrame("LabelFrame"):
@@ -16,6 +20,7 @@ with app.labelFrame("LabelFrame"):
             app.addButtons(["a", "b", "c"], None)
             app.addLabelEntry("fill me")
             app.addLabels(["a", "b", "c"])
+            app.button("TICK", press)
         with app.note("note2"):
             pass
 app.go()

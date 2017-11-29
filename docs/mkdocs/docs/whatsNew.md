@@ -2,28 +2,38 @@
 ---
 
 ## Version 0.9  
-* Big improvements to [grids](/pythonDevWidgets/#grid):
-    * Can add 1 or more rows
-    * Can add/remove columns
-    * can delete 1 or all rows
-    * can replace 1 or all rows
-    * can sort rows ascending or descending by a particular column
-    * supports a righ-click menu
-* Introduction of appJar [settings](/pythonSettings/):
-    * appJar can now save & load a gui settings file  
-    * this can also be specified from the command prompt  
+* Introduciton of alternative [widget access functions](/simpleAppJar) ([#235](https://github.com/jarvisteach/appJar/issues/235))  - now possible to **ADD**, **SET** & **GET** widgets by just using their name.  
+* Big improvements to [grids](/pythonDevWidgets/#grid) - can add/remove/replace rows/columns, can sort data, can access a right-click menu.  
+* Introduction of appJar [settings](/pythonSettings/) - can now save/load GUI state to/from file.  
+* More [ttk](/pythonTtk) improvements - grouped widgets now work, introduced eternal themes.  
 
 * Issues Resolved:
+    * [#303](https://github.com/jarvisteach/appJar/issues/303) - added functions to [bind/unbind mutiple keys](/pythonEvents/#binding-keys) to a function  
+    * [#298](https://github.com/jarvisteach/appJar/issues/298) - fixed issue in [menubar shortcuts](/pythonBars/#extra-features/) where numeric shortcuts didn't work.  
+    * [#296](https://github.com/jarvisteach/appJar/issues/296) - two new widgets introduced [turtle](/pythonDevWidgets/#turtle) and [canvas](/pythonDevWidgets/#canvas)  
+    * [#294](https://github.com/jarvisteach/appJar/issues/294) & [#292](https://github.com/jarvisteach/appJar/issues/292) - fixes on [entries](/pythonWidgets/#entry): better handle arrow key presses on mac, defaults work better on secret entries & file/directory entries  
+    * [#290](https://github.com/jarvisteach/appJar/issues/290) - fixed issue showing [AutoEntries](/pythonWidgets/#entry) in [subWindows](/pythonSubWindows)  
+    * [#289](https://github.com/jarvisteach/appJar/issues/289) - new functions to change list in [AutoEntries](/pythonWidgets/#entry) 
+    * [#288](https://github.com/jarvisteach/appJar/issues/288) - fixed issue showing [dialogs](/pythonDialogs) in [subWindows](/pythonSubWindows)  
     * [#284](https://github.com/jarvisteach/appJar/issues/284) - new [dialogs](/pythonDialogs/) for strings, integers & floats  
     * [#283](https://github.com/jarvisteach/appJar/issues/283) - [questionBox](/pythonDialogs/#question-boxes) now returns Booleans instead of yes/no  
-    * [#279](https://github.com/jarvisteach/appJar/issues/279) - tidied up [remove all widgerts](/pythonWidgetOptions/#widget-manipulation) - now leaes GUI looking better  
+    * [#281](https://github.com/jarvisteach/appJar/issues/281) - resolved issues with [threads](/pythonThreads)  
+    * [#279](https://github.com/jarvisteach/appJar/issues/279) - tidied up [remove all widgets](/pythonWidgetOptions/#widget-manipulation) - now leaves GUI looking better  
     * [#271](https://github.com/jarvisteach/appJar/issues/271), [#266](https://github.com/jarvisteach/appJar/issues/266), [#255](https://github.com/jarvisteach/appJar/issues/255) & [#232](https://github.com/jarvisteach/appJar/issues/232) - [Grid](/pythonDevWidgets/#grid) improvements  
     * [#242](https://github.com/jarvisteach/appJar/issues/242), [#259](https://github.com/jarvisteach/appJar/issues/259), [#267](https://github.com/jarvisteach/appJar/issues/267) - work on [MatPLotLib](/pythonDevWidgets/#matplotlib) now support multiple plot types, and retaining some settings  
     * [#250](https://github.com/jarvisteach/appJar/issues/250) - Can now add [compound images](/python/Images/#add-images) - images with a built in label  
     * [#236](https://github.com/jarvisteach/appJar/issues/236) - appJar can now save GUI [settings](/pythonSettings) and load them again  
     * [#233](https://github.com/jarvisteach/appJar/issues/233) - [NumericEntries](/pythonWidgets/#entry) return `None` when empty
     * [#218](https://github.com/jarvisteach/appJar/issues/218) - Can no longer set [NumericEntries](/pythonWidgets/#entry) to Strings  
+
+## Version 0.82.1
+* Issues Resolved:
+    * [#275](https://github.com/jarvisteach/appJar/issues/275) - maps fix  
+
+## Version 0.82
+* Issues Resolved:
     * [#189](https://github.com/jarvisteach/appJar/issues/189) - some tweaks to [ttk support](/pythonTtk)  
+    * Fixes to documentation
 
 ## Version 0.8  
 * Changed versioning - PyPi difficulties, combined with close to a 1.0 release...

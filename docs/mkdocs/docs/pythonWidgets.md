@@ -153,9 +153,6 @@ app.go()
     Once the user starts typing, it will disappear.  
     The text is centered, shown in a light gray font, and will not be returned by `.getEntry(title)`  
 
-* `.updateEntryDefault(title, text)`  
-    This will update the default value for the specified Entry.  
-
 * `.setEntryUpperCase(title)` & `.setEntryLowerCase(title)`   
     This will force all text typed into the Entry to be uppercase/lowercase.  
 
@@ -168,10 +165,22 @@ app.go()
     (Have a look [here](/specialCharacters) for help displaying special characters)  
     ![EntryValidation](img/entValidation.png)
 
+* `.setValidationEntry(title, state="valid")`  
+    Same as above, set flag to one of `valid`, `invalid` or `wait`.  
+
 * `.setAutoEntryNumRows(title, rows)`  
     This will set the number of rows to display in an AutoEntry.  
     NB. this is limited to the depth of the GUI - if there is no space, then no rows will be displayed. 
     ![AutoEntry](img/1_autoEntry.png)  
+
+* `.appendAutoEntry(title, value)`  
+    This will add the value/list of values to the specified AutoEntry.  
+
+* `.removeAutoEntry(title, value)`  
+    This will remove the value from the specified AutoEntry.  
+
+* `.changeAutoEntry(title, value)`  
+    This will replace all items in the specified AutoEntry with a new list of values.  
 
 * `.clearEntry(title, callFunction=True)`  
     This will clear the contents of the specified Entry.
@@ -851,19 +860,19 @@ app.go()
 * `.deleteProperty(title, prop)`  
     Deletes the named property from the widget.  
 
-* `.resetProperties(title, callFunction=True):  
+* `.resetProperties(title, callFunction=True)`  
     This will reset the specified Properties back to its original values.  
     Set ```callFunction``` to be False, if you don't want to call any associated functions.  
 
-* `.clearProperties(title, callFunction=True):  
+* `.clearProperties(title, callFunction=True)`  
     This will set all values in the specified Properties to False.  
     Set ```callFunction``` to be False, if you don't want to call any associated functions.  
 
-* `.resetAllProperties(callFunction=False):  
+* `.resetAllProperties(callFunction=False)`  
     This will reset all Properties in the app back to their original values.  
     Set ```callFunction``` to be True, if you want to call any associated functions.  
 
-* `.clearAllProperties(callFunction=False):  
+* `.clearAllProperties(callFunction=False)`  
     This will set all values in all Properties in the app to False.  
     Set ```callFunction``` to be True, if you want to call any associated functions.  
 

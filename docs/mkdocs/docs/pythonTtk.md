@@ -14,6 +14,43 @@ appJar includes experimental support for *ttk*,  a [tk themed widget set](https:
 * `.setTtkTheme(theme)`  
     This allows you to choose which theme to use.  
 
+* `.set XXX Style(style)`  
+    This lets you specify the name of a style for a widget.  
+
+## Additional Themes  
+---
+Additional themes can be installed using [ttk extensions](github.com/RedFantom/ttkthemes).  
+
+These can be installed via pip: `pip install ttkthemes`  
+And then used the same as any other theme: `app.setTtkTheme("black")`.  
+
+## Modifying ttk Styles  
+---
+appJar stores the ttk style as `app.ttkStyle` this can be modified or changed directly as required.  
+
+To modify individual widgets, create a new style and apply it to the widget:  
+```python
+app.ttkStyle.configure("BW.TEntry", foreground="green")
+app.setEntryStyle("Name", "BW.TEntry")
+```
+
+To modify all widgets of a particular type:  
+```python
+app.ttkStyle.configure("TLabel", foreground="green", backgroun="blue")
+```
+
+To change the BG of the GUI & all labels:  
+```python
+app.ttkStyle.configure("TLabel", backgroun="blue")
+app.ttkStyle.configure("TFrame", backgroun="blue")
+```
+
+Or, you can call the `.setFg()` and `.setBg()` functions:  
+```python
+app.setBg("blue")
+app.setFg("yellow")
+```
+
 ## Command Line Arguments
 ---
 

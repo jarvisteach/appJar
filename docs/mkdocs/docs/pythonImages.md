@@ -24,7 +24,7 @@ Otherwise, concatenate `gui.icon_path` with the icon's name and `.png`
     Simply give the image a title, and pass the filename.  
     appJar will confirm the file is valid, and will also check the file contains the type specified.  
     If an animated `.GIF` is found, then it will be animated within the GUI.  
-    `compound` can be set to one of *top*, *bottom*, *left*, *right*, *center* - this will show the image tite in that position.  
+    `compound` can be set to one of *top*, *bottom*, *left*, *right*, *center* - this will show the image title in that position.  
 
 ```python
 app.startLabelFrame("Simple", 0, 0)

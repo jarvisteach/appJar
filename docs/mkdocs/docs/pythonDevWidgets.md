@@ -1,20 +1,6 @@
 #Beta Widgets  
 ----
-The following widgets are in [beta](https://en.wikipedia.org/wiki/Software_release_life_cycle#BETA).  
-They're available and in use, they're just not quite complete, and not fully tested...  
-
-### ttk
----
-If you want access to the [Tk themed widget set](https://docs.python.org/3/library/tkinter.ttk.html) then you'll need to tell appJar to use it:
-```python
-from appJar import gui
-app = gui("ttk Demo")
-app.useTtk()
-app.addButton("Press Me", None)
-app.go()
-```
-
-At the moment, this simply imports ttk, so the standard widget set will be replaced with a ttk widget set.  
+The following widgets are in [beta](https://en.wikipedia.org/wiki/Software_release_life_cycle#BETA) - they're available and being used, they're just not quite finished...  
 
 ###MicroBit Emulator  
 ---  
@@ -87,10 +73,17 @@ app.go()
     Set the size of the GoogleMap. Should be in the format `"300x300"`.  
     Note, if you set it too small, the control widgets won't look good...  
 
-* `.setGoogleMapMarker(title, location)`  
+* `.setGoogleMapMarker(title, location, size=None, colour=None, label=None, replace=False)`  
     Will drop a marker on the specified location.  
     The marker will only be visible if the current `location` & `zoom level` permit.  
     If an empty `location` is provided, all markers will be removed.  
+    `colour` can be set to any of (black, brown, green, purple, yellow, blue, gray, orange, red, white) or a hex value (starting '0x').  
+    `size` can be set to any of (tiny, mid, small).  
+    `label` can be set to a single letter or digit.  
+    If `replace` is `True` this marker will replace the last one added.  
+
+* `.removeGoogleMapMarker(title, label)`  
+    Will remove the specified marker, if found.  
 
 #### Get GoogleMaps  
 
@@ -353,3 +346,59 @@ with gui() as app:
 
 * `.refreshPlot(title)`  
     Call this any time you modify the axes.  
+
+### Canvas
+---
+This lets you embed a canvas in appJar
+
+![Canvas](img/1_canvas.png)  
+
+```python
+from appJar import gui
+app=gui()
+canvas = app.addCanvas("c1")
+canvas.create_oval(10, 10, 100, 100, fill="red", outline="blue", width=3)
+canvas.create_line(0, 0, 255, 255, width=5)
+canvas.create_line(0, 255, 255, 0, dash=123)
+app.go()
+```
+
+* `.addCanvas(title)`  
+    Creates a canvas widget.  
+
+* `.getCanvas(title)`  
+    Gets the specified canvas widget.  
+
+### Turtle
+---
+This lets you embed a [turtle](https://docs.python.org/3.6/library/turtle.html) widget in appJar.  
+
+![Turtle](img/1_turtle.png)  
+
+```python
+from appJar import gui 
+
+def press(b):
+    s = app.getTurtleScreen("t1")
+    t = app.getTurtle("t1")
+    s.bgcolor("blue")
+    t.pencolor("white")
+    for i in range(20):
+        t.forward(i * 10) 
+        t.right(144)
+
+app=gui()
+app.addTurtle("t1")
+app.addButton("DRAW", press)
+app.go()
+```
+
+* `.addTurtle(title)`  
+    Creates a turtle widget.  
+
+* `.getTurtle(title)`  
+    Gets the specified turtle widget.  
+
+* `.getTurtleScreen(title)`  
+    Gets the screen behind the turtle widget.  
+
