@@ -63,6 +63,7 @@ parseString = TreeItem = TreeNode = None # AjTree
 base64 = urlencode = urlopen = urlretrieve = quote_plus = json = None # GoogleMap
 ConfigParser = codecs = ParsingError = None # used to parse language files
 Thread = Queue = None
+sqlite3 = None
 turtle = None
 frameBase = Frame
 labelBase = Label
@@ -828,6 +829,15 @@ class gui(object):
                     gui.warning("no parse string")
                     TreeItem = TreeNode = parseString = False
                     return
+
+    def __importSqlite3(self):
+        """ loads sqlite3 """
+        global sqlite3
+        if sqlite3 is None:
+            try:
+                import sqlite3
+            except:
+                sqlite3 = False
 
 #####################################
 # FUNCTIONS FOR UNIVERSAL DND
@@ -3878,6 +3888,41 @@ class gui(object):
 #####################################
 # Simple Grids
 #####################################
+
+    def _getDbData(self, db, table):
+        self.__importSqlite3()
+        if not sqlite3:
+            self.error("Can't load sqlite3")
+            return
+
+        data = []
+
+        with sqlite3.connect(db) as conn:
+            cursor = conn.cursor()
+
+            # discover a PK
+            pk = None
+            cursor.execute("PRAGMA table_info(" + table + ")")
+            for r in cursor:
+                if r[5]: pk = r[1]
+
+            # select all data
+            cursor.execute('SELECT * from ' + table)
+            data.append([description[0] for description in cursor.description])
+            for r in cursor:
+                data.append(r)
+
+        return pk, data
+
+    def addDbGrid(self, title, db, table, row=None, column=0, colspan=0, rowspan=0, action=None, addRow=None,
+                actionHeading="Action", actionButton="Press", addButton="Add", showMenu=False):
+
+        pk, data = self._getDbData(db, table)
+        grid = self.addGrid(title, data, row, column, colspan, rowspan, action, addRow, actionHeading, actionButton, addButton, showMenu)
+        grid.db = db
+        grid.dbTable = table
+        grid.dbPK = data[0].index(pk)
+        self.replaceAllGridRows(title, data[1:])
 
     def addGrid(self, title, data, row=None, column=0, colspan=0, rowspan=0, action=None, addRow=None,
                 actionHeading="Action", actionButton="Press", addButton="Add", showMenu=False):
@@ -11549,6 +11594,11 @@ class SimpleGrid(ScrollPane):
         self.entries = []
         self.rightColumn = []
 
+        # database stuff
+        self.db = None
+        self.dbTable = None
+        self.dbPK = None
+
         self.config(**opts)
 
         # menu stuff
@@ -11739,9 +11789,13 @@ class SimpleGrid(ScrollPane):
                 # add a button
                 else:
                     widg = GridCell(self.interior, self.fonts, isHeader=True)
+
+                    if self.dbPK is not None: val = rowData[self.dbPK]
+                    else: val = rowNum - 1
+
                     but = Button(widg, font=self.fonts["button"],
                         text=self.actionButton,
-                        command=gui.MAKE_FUNC(self.action, rowNum-1)
+                        command=gui.MAKE_FUNC(self.action, val)
                     )
                     if gui.GET_PLATFORM() in [gui.MAC, gui.LINUX]:
                         but.config(highlightbackground=widg.cget("bg"))
