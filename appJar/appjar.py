@@ -503,7 +503,11 @@ class gui(object):
         self.copyAndPaste = CopyAndPaste(self.topLevel)
 
         # won't pack, if don't pack it here
-        self.tb = Frame(self.appWindow, bd=1, relief=RAISED)
+        self.tb = frameBase(self.appWindow)
+        if not self.ttkFlag:
+            self.tb.config(bd=1, relief=RAISED)
+        else:
+            self.tb.config(style="Toolbar.TFrame")
         self.tb.pack(side=TOP, fill=X)
         self.tbMinMade = False
 
@@ -644,6 +648,10 @@ class gui(object):
 
         self.ttkStyle.configure("Link.TLabel", foreground="#0000ff")
         self.ttkStyle.configure("LinkOver.TLabel", foreground="#3366ff")
+
+        #toolbars
+        self.ttkStyle.configure("Toolbar.TFrame")
+        self.ttkStyle.configure("Toolbar.TButton", padding=0, expand=0)
 
 #        self.fgColour = self.topLevel.cget("foreground")
 #        self.buttonFgColour = self.topLevel.cget("foreground")
@@ -8169,7 +8177,11 @@ class gui(object):
                     except Exception as e:
                         image = None
 
-            but = Button(self.tb)
+            if not self.ttkFlag:
+                but = Button(self.tb)
+                but.config(relief=FLAT, font=self.tbFont)
+            else:
+                but = ttk.Button(self.tb)
             self.widgetManager.add(self.Widgets.Toolbar, t, but)
 
             if singleFunc is not None:
@@ -8177,11 +8189,17 @@ class gui(object):
             else:
                 u = self.MAKE_FUNC(funcs[i], t)
 
-            but.config(text=t, command=u, relief=FLAT, font=self.tbFont)
-            but.image = image
+            but.config(command=u)
             if image is not None:
                 # works on Mac & Windows :)
-                but.config(image=image, compound=TOP, text="", justify=LEFT)
+                but.config(image=image)
+                but.image = image
+                if not self.ttkFlag:
+                    but.config(justify=LEFT, compound=TOP)
+                else:
+                    but.config(style="Toolbar.TButton")
+            else:
+                but.config(text=t)
             but.pack(side=LEFT, padx=2, pady=2)
             but.tt_var = self.__addTooltip(but, t.title(), True)
             but.DEFAULT_TEXT=t
