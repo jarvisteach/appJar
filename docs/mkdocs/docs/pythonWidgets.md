@@ -160,7 +160,7 @@ app.go()
     This will set a maximum length for the specified Entry.  
     Any additional characters typed will be discarded.  
 
-* `.setEntryValid(title)` & `.setEntryInvalid(title)` & `.setEntryWaitingValidaiton(title)`  
+* `.setEntryValid(title)` & `.setEntryInvalid(title)` & `.setEntryWaitingValidation(title)`  
     These will set the relevant status of a validation Entry.  
     (Have a look [here](/specialCharacters) for help displaying special characters)  
     ![EntryValidation](img/entValidation.png)
