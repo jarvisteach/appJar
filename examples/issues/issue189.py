@@ -17,6 +17,7 @@ with app.labelFrame("LabelFrame"):
     app.addRadioButton("tb", "Tick me")
     app.addTextArea("t1")
     app.addButton("Press Me", None)
+    app.addSpinBoxRange("spinner", 1, 10)
     app.addScale("Scale")
     app.addEntry("Entry")
     app.setEntryTooltip("Entry", "help me")
