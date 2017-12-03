@@ -2552,7 +2552,7 @@ class gui(object):
                     item.config(relief=value)
                 elif option == 'style':
                     if self.ttkFlag:
-                        gui.debug("%s configured with ttk styl %s", name, value)
+                        gui.debug("%s configured with ttk style %s", name, value)
                         item.config(style=value)
                         print(item.cget("style"))
                     else:
@@ -3922,6 +3922,15 @@ class gui(object):
 
         return pk, data
 
+    def replaceDbGrid(self, title, db, table):
+        pk, data = self._getDbData(db, table)
+        grid = self.widgetManager.get(self.Widgets.Grid, title)
+        grid.db = db
+        grid.dbTable = table
+        grid.dbPK = data[0].index(pk)
+        self.setGridHeaders(title, data[0])
+        self.replaceAllGridRows(title, data[1:])
+
     def addDbGrid(self, title, db, table, row=None, column=0, colspan=0, rowspan=0, action=None, addRow=None,
                 actionHeading="Action", actionButton="Press", addButton="Add", showMenu=False):
 
@@ -3930,6 +3939,7 @@ class gui(object):
         grid.db = db
         grid.dbTable = table
         grid.dbPK = data[0].index(pk)
+        self.setGridHeaders(title, data[0])
         self.replaceAllGridRows(title, data[1:])
 
     def addGrid(self, title, data, row=None, column=0, colspan=0, rowspan=0, action=None, addRow=None,
@@ -11722,6 +11732,11 @@ class SimpleGrid(ScrollPane):
             return data
 
     def setHeaders(self, data):
+        newRows = len(data) - len(self.cells[0])
+        if newRows > 0:
+            for pos in range(len(self.cells[0]), len(self.cells[0]) + newRows):
+                self.addColumn(pos, [])
+                
         for count in range(len(self.cells[0])):
             cell = self.cells[0][count]
             if count < len(data):

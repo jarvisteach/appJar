@@ -4,6 +4,13 @@ sys.path.append("../../")
 def delRow(val):
     print(val)
 
+def addRow(val):
+    print(val)
+
+def changeDb(val):
+    print(val)
+    app.replaceDbGrid("projects", "issue266.db", app.list("table")[0])
+
 from appJar import gui
 
 def setup():
@@ -38,7 +45,10 @@ def setup():
         c.execute(task, ('Analyze the requirements of the app', 1, 1, project_id, '2015-01-01', '2015-01-02'))
         c.execute(task, ('Confirm with user about the top requirements', 1, 1, project_id, '2015-01-03', '2015-01-05'))
 
-with gui() as app:
+with gui("800x800") as app:
+    app.setStretch("column")
     app.label("title", "DB tester")
-    app.addDbGrid("projects", "issue266.db", "projects", action=delRow)
+    app.list("table", ["projects", "tasks"], change=changeDb, rows=2)
+    app.setStretch("both")
+    app.addDbGrid("projects", "issue266.db", "projects", action=delRow, addRow=addRow)
 
