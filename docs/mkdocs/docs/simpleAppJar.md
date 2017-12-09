@@ -132,6 +132,15 @@ An interactive widget, for capturing multi-line user input in the GUI.
 
 ## Button  
 ---
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+    style="display:block"
+    data-ad-format="fluid"
+    data-ad-layout-key="-gw-13-4l+6+pt"
+    data-ad-client="ca-pub-6185596049817878"
+    data-ad-slot="5627392164"></ins>
+<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+---
 A clickable button for triggering events.  
 
 * `.button(title, value=None)`  
@@ -200,6 +209,15 @@ Shows a single value, with arrows to scroll up or down, allowing the user to cha
 
 ## List
 ---
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+    style="display:block"
+    data-ad-format="fluid"
+    data-ad-layout-key="-gw-13-4l+6+pt"
+    data-ad-client="ca-pub-6185596049817878"
+    data-ad-slot="5627392164"></ins>
+<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+---
 Displays a list of items, one (or more than one) of which can be selected.  
 
 * `.list(title, value=None)`  
@@ -261,6 +279,15 @@ Displays a line, giving visual separation in the GUI.
 | direction | string | horizontal | Set the orientation of the separator: `horizontal` or `vertical`. |
 
 ## Image  
+---
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+    style="display:block"
+    data-ad-format="fluid"
+    data-ad-layout-key="-gw-13-4l+6+pt"
+    data-ad-client="ca-pub-6185596049817878"
+    data-ad-slot="5627392164"></ins>
+<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
 ---
 Displays a picture.  
 

@@ -36,6 +36,16 @@ app.go()
 
 ###GoogleMaps
 ---
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+    style="display:block"
+    data-ad-format="fluid"
+    data-ad-layout-key="-gw-13-4l+6+pt"
+    data-ad-client="ca-pub-6185596049817878"
+    data-ad-slot="5627392164"></ins>
+<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+---
+
 A self-contained GoogleMaps widget.  
 It provides useful functionality for finding somewhere on Earth.  
 All requests for map data are performed in the background, so the UI shouldn't become unresponsive.  
@@ -181,8 +191,16 @@ app.go()
 * `.getTreeSelectedXML(title)`  
     Return the selected node (and any children) as XML
 
-
 ###Grid
+---
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+    style="display:block"
+    data-ad-format="fluid"
+    data-ad-layout-key="-gw-13-4l+6+pt"
+    data-ad-client="ca-pub-6185596049817878"
+    data-ad-slot="5627392164"></ins>
+<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
 ---
 Used to create a spreadsheet like interface.  
 The grid has mouse interactivity, with mouse-over highlighting, and mouse-click highlighting.  
@@ -223,12 +241,21 @@ app.go()
     ![Grid](img/dev/grid_4.png)   
 
     It's also possible to set the following parameters:  
-    * actionHeading - set the title of the right column  
-    * actionButton - set the button text for each row  
-    * addButton - set the button text for the Entry row  
-    * showMenu - boolean to show a right-click menu  
+        * `actionHeading` - set the title of the right column  
+        * `actionButton` - set the button text for each row  
+        * `addButton` - set the button text for the Entry row  
+        * `showMenu` - boolean to show a right-click menu  
 
-####Get Grids  
+#### Connecting to Databases
+
+* `.addDbGrid(title, db, table)`  
+    Will connect to the specified database, ans shw all rows in the specified table.  
+    appJar will query the table to detect the PrimaryKey, and use this as the key when selecting the row.
+
+* `.replaceDBGrid(title, db, table)`  
+    Will replace the currently shown data in the grid, with the data found in the specified database/table.  
+
+#### Get Grids  
 
 * `.getGridRow(title, rowNumber)`  
     Returns a list of values representing the specified row.  
@@ -349,6 +376,16 @@ with gui() as app:
 
 ### Canvas
 ---
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+    style="display:block"
+    data-ad-format="fluid"
+    data-ad-layout-key="-gw-13-4l+6+pt"
+    data-ad-client="ca-pub-6185596049817878"
+    data-ad-slot="5627392164"></ins>
+<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+---
+
 This lets you embed a canvas in appJar
 
 ![Canvas](img/1_canvas.png)  

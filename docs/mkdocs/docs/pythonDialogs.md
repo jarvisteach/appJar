@@ -19,6 +19,15 @@ A number of pop-ups (aka dialogs) are available, to add a different user experie
 
 ### Message Boxes
 ---
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+    style="display:block"
+    data-ad-format="fluid"
+    data-ad-layout-key="-gw-13-4l+6+pt"
+    data-ad-client="ca-pub-6185596049817878"
+    data-ad-slot="5627392164"></ins>
+<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+---
 * `.infoBox(title, message, parent=None)`  
     Shows a simple information message, with an OK button.  
     If this dialog is being launched from a [subWindow](/pythonWidgetGrouping/#sub-window) set `parent` to be the name of the subWindow.  
@@ -84,6 +93,15 @@ A number of pop-ups (aka dialogs) are available, to add a different user experie
     ![NumberBox](img/dialogs/num.gif)
 
 ### File Boxes
+---
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+    style="display:block"
+    data-ad-format="fluid"
+    data-ad-layout-key="-gw-13-4l+6+pt"
+    data-ad-client="ca-pub-6185596049817878"
+    data-ad-slot="5627392164"></ins>
+<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
 ---
 * `.openBox(title=None, dirName=None, fileTypes=None, asFile=False, parent=None)`  
     Shows an open file dialog.  

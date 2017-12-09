@@ -118,7 +118,17 @@ app.setFocus("Username")
     (**NB.** We also set some other colours on the label - see [below](#full-code-listing)) 
 
 ###  Make your own  
+---
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+    style="display:block"
+    data-ad-format="fluid"
+    data-ad-layout-key="-gw-13-4l+6+pt"
+    data-ad-client="ca-pub-6185596049817878"
+    data-ad-slot="5627392164"></ins>
+<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
 ---  
+
 And, that's all you need to know. Check out:  
 
 * All the different [widgets](/pythonWidgets) available.  

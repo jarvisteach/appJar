@@ -31,7 +31,18 @@ app.go()
 Definition of SubWindows happens in the same part of the code as the rest of the GUI, but they default to being hidden.  
 Both SubWindows and the main window can be *shown* and *hidden* - this is usually done through button presses.  
 
-#### Start/Stop Sub Windows  
+### Start/Stop Sub Windows  
+---
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+    style="display:block"
+    data-ad-format="fluid"
+    data-ad-layout-key="-gw-13-4l+6+pt"
+    data-ad-client="ca-pub-6185596049817878"
+    data-ad-slot="5627392164"></ins>
+<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+---
+
 * `.startSubwindow(name, title=None, modal=False, transient=False, blocking=False)` & `.stopSubwindow()`  
     Used to start and stop defining a *SubWindow*  
     Setting a `title` will override the `name` as a title for the *SubWindow*.  
@@ -43,7 +54,8 @@ Both SubWindows and the main window can be *shown* and *hidden* - this is usuall
     Used to reopen the named *SubWindow*.  
     This lets you modify SubWindows in a different part of the code, for example in a function call.  
 
-#### Show/Hide Sub Windows  
+### Show/Hide Sub Windows  
+---
 
 * `.go(startWindow=None)`  
     If you set a *SubWindow* as the ```startWindow``` *appJar* will start-up showing the named *SubWindow*.  
@@ -87,7 +99,17 @@ app.addNamedButton("CLOSE", "Demo", app.hideSubWindow)
 app.stopSubWindow()
 ```
 
-#### Set Sub Windows  
+### Set Sub Windows  
+---
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+    style="display:block"
+    data-ad-format="fluid"
+    data-ad-layout-key="-gw-13-4l+6+pt"
+    data-ad-client="ca-pub-6185596049817878"
+    data-ad-slot="5627392164"></ins>
+<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+---
 Note, all functions available on the main window are also available on *SubWindows*.  
 Simply call those functions after starting a *SubWindow*.  
 
