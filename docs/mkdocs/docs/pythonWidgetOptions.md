@@ -66,6 +66,14 @@ app.getLabelWidget("l6").config(font="Courier 20")
 ```
 
 ###Advanced Looks  
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+    style="display:block"
+    data-ad-format="fluid"
+    data-ad-layout-key="-gw-13-4l+6+pt"
+    data-ad-client="ca-pub-6185596049817878"
+    data-ad-slot="5627392164"></ins>
+<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
 ----
 The following are supported by most widgets:
 
@@ -109,6 +117,14 @@ The following are supported by most widgets:
     Gives focus to the specified widget. This is the widget where the user will be able to start typing.
 
 ###Widget Manipulation
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+    style="display:block"
+    data-ad-format="fluid"
+    data-ad-layout-key="-gw-13-4l+6+pt"
+    data-ad-client="ca-pub-6185596049817878"
+    data-ad-slot="5627392164"></ins>
+<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
 ----
 The following allow widgets to be manipulated on screen:
 

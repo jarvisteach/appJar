@@ -53,6 +53,15 @@ app.go()
 ```
 
 ### Over Functions
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+    style="display:block"
+    data-ad-format="fluid"
+    data-ad-layout-key="-gw-13-4l+6+pt"
+    data-ad-client="ca-pub-6185596049817878"
+    data-ad-slot="5627392164"></ins>
+<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+---
 Set functions to call whenever the mouse enters (goes over) or leaves the specified widget.  
 
 * `.set XXX OverFunction(name, [inFunction, outFunction])`  
@@ -96,6 +105,14 @@ app.getEntryWidget("widget_name").bind("<FocusOut>", function_name, add="+")
 ```
 
 ## Binding Keys
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+    style="display:block"
+    data-ad-format="fluid"
+    data-ad-layout-key="-gw-13-4l+6+pt"
+    data-ad-client="ca-pub-6185596049817878"
+    data-ad-slot="5627392164"></ins>
+<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
 ---
 As well as changing widgets, we sometimes want keys to trigger events.  
 The classic example is the ```<Enter>``` key, we often want to be able to hit the ```<Enter>``` key to submit a form...

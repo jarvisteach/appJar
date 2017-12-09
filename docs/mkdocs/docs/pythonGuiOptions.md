@@ -64,6 +64,14 @@ app.setLocation("CENTER")
     Note, if the title bar is removed, it's not possible to move or resize the GUI.  
 
 ##GUI Design
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+    style="display:block"
+    data-ad-format="fluid"
+    data-ad-layout-key="-gw-13-4l+6+pt"
+    data-ad-client="ca-pub-6185596049817878"
+    data-ad-slot="5627392164"></ins>
+<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
 ----
 It's possible to change the default colours and fonts for widgets in the GUI.
 

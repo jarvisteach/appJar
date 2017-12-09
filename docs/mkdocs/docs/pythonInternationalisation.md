@@ -60,6 +60,15 @@ It is possible to set the starting language as a command line argument:
 This will override any language set in the call to `.go()`, and removes the need to set one at all.  
 
 ### Widget Support
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+    style="display:block"
+    data-ad-format="fluid"
+    data-ad-layout-key="-gw-13-4l+6+pt"
+    data-ad-client="ca-pub-6185596049817878"
+    data-ad-slot="5627392164"></ins>
+<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+---
 
 **NB.** changing the text of a widget through `setXXX()` method's will work, but will not be remembered if the language is changed.  
 
@@ -200,6 +209,15 @@ e1: Some more tooltip text
 ```
 
 ### External Translations
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+    style="display:block"
+    data-ad-format="fluid"
+    data-ad-layout-key="-gw-13-4l+6+pt"
+    data-ad-client="ca-pub-6185596049817878"
+    data-ad-slot="5627392164"></ins>
+<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+---
 
 It's also possible to store additional translations to use on the fly. These are extra pieces of text you might want to translate during the running of the application, which aren't linked directly to a widget.  
 

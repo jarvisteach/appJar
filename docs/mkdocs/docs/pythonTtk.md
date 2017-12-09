@@ -25,6 +25,14 @@ These can be installed via pip: `pip install ttkthemes`
 And then used the same as any other theme: `app.setTtkTheme("black")`.  
 
 ## Modifying ttk Styles  
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+    style="display:block"
+    data-ad-format="fluid"
+    data-ad-layout-key="-gw-13-4l+6+pt"
+    data-ad-client="ca-pub-6185596049817878"
+    data-ad-slot="5627392164"></ins>
+<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
 ---
 appJar stores the ttk style as `app.ttkStyle` this can be modified or changed directly as required.  
 

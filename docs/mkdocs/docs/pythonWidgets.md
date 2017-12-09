@@ -203,6 +203,14 @@ app.go()
     NB. *numericEntries* always return a float.  
 
 ##Button
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+    style="display:block"
+    data-ad-format="fluid"
+    data-ad-layout-key="-gw-13-4l+6+pt"
+    data-ad-client="ca-pub-6185596049817878"
+    data-ad-slot="5627392164"></ins>
+<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
 ____
 A clickable button, that will call a function.  
 These are the key to starting an interactive application.  
@@ -514,7 +522,15 @@ app.go()
     This will return the contents of all SpinBoxes in the app, as a dictionary.  
 
 ##ListBox
-____
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+    style="display:block"
+    data-ad-format="fluid"
+    data-ad-layout-key="-gw-13-4l+6+pt"
+    data-ad-client="ca-pub-6185596049817878"
+    data-ad-slot="5627392164"></ins>
+<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+---
 A box containing a list of items, single or multi-select
 
 ![ListBox](img/1_listBox.png)  
@@ -752,7 +768,15 @@ app.go()
     This will return the contents of all TextAreas in the app, as a dictionary.  
 
 ##Meter  
-____
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+    style="display:block"
+    data-ad-format="fluid"
+    data-ad-layout-key="-gw-13-4l+6+pt"
+    data-ad-client="ca-pub-6185596049817878"
+    data-ad-slot="5627392164"></ins>
+<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+---
 Various styles of progress meter:  
 
 * #### Meter  
