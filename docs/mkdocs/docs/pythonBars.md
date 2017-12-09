@@ -57,7 +57,6 @@ The toolbar will also gain an extra button (a pin) allowing the user to configur
     Will show/hide the toolbar.  
 
 ##Menubar
----
 <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
 <ins class="adsbygoogle"
     style="display:block"

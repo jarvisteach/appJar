@@ -18,7 +18,6 @@ A number of pop-ups (aka dialogs) are available, to add a different user experie
     When disabled, it will not show-up.  
 
 ### Message Boxes
----
 <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
 <ins class="adsbygoogle"
     style="display:block"
@@ -93,7 +92,6 @@ A number of pop-ups (aka dialogs) are available, to add a different user experie
     ![NumberBox](img/dialogs/num.gif)
 
 ### File Boxes
----
 <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
 <ins class="adsbygoogle"
     style="display:block"

@@ -118,7 +118,6 @@ app.setFocus("Username")
     (**NB.** We also set some other colours on the label - see [below](#full-code-listing)) 
 
 ###  Make your own  
----
 <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
 <ins class="adsbygoogle"
     style="display:block"

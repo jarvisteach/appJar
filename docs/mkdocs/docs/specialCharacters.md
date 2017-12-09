@@ -39,7 +39,6 @@ By also putting a `u` before the string, you tell Python to expect a unicode cha
 (In fact, it calls the Unicode function, converting the string data into Unicode.)
 
 ### Example
----
 <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
 <ins class="adsbygoogle"
     style="display:block"

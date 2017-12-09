@@ -131,7 +131,6 @@ An interactive widget, for capturing multi-line user input in the GUI.
 | scroll | boolean | False | Will configure this as a scrollable text area. |
 
 ## Button  
----
 <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
 <ins class="adsbygoogle"
     style="display:block"
@@ -208,7 +207,6 @@ Shows a single value, with arrows to scroll up or down, allowing the user to cha
 | item | string | None | The name of an item to select. |
 
 ## List
----
 <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
 <ins class="adsbygoogle"
     style="display:block"
@@ -279,7 +277,6 @@ Displays a line, giving visual separation in the GUI.
 | direction | string | horizontal | Set the orientation of the separator: `horizontal` or `vertical`. |
 
 ## Image  
----
 <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
 <ins class="adsbygoogle"
     style="display:block"

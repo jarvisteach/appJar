@@ -60,7 +60,6 @@ app.go()
 
 
 ### Change Images
----
 <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
 <ins class="adsbygoogle"
     style="display:block"

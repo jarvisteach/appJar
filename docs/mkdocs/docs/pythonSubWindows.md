@@ -32,7 +32,6 @@ Definition of SubWindows happens in the same part of the code as the rest of the
 Both SubWindows and the main window can be *shown* and *hidden* - this is usually done through button presses.  
 
 ### Start/Stop Sub Windows  
----
 <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
 <ins class="adsbygoogle"
     style="display:block"
@@ -100,7 +99,6 @@ app.stopSubWindow()
 ```
 
 ### Set Sub Windows  
----
 <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
 <ins class="adsbygoogle"
     style="display:block"

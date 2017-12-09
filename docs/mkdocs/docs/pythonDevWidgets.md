@@ -35,7 +35,6 @@ app.go()
     Will turn off all of the pixels - setting their brightness to 0.  
 
 ###GoogleMaps
----
 <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
 <ins class="adsbygoogle"
     style="display:block"
@@ -192,7 +191,6 @@ app.go()
     Return the selected node (and any children) as XML
 
 ###Grid
----
 <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
 <ins class="adsbygoogle"
     style="display:block"
@@ -375,7 +373,6 @@ with gui() as app:
     Call this any time you modify the axes.  
 
 ### Canvas
----
 <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
 <ins class="adsbygoogle"
     style="display:block"
