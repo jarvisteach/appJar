@@ -244,6 +244,8 @@ app.go()
         * `addButton` - set the button text for the Entry row  
         * `showMenu` - boolean to show a right-click menu  
 
+    ![Grid](img/dev/1_gridMenu.png)   
+
 #### Connecting to Databases
 
 * `.addDbGrid(title, db, table)`  
