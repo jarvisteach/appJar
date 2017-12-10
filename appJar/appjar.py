@@ -2306,7 +2306,8 @@ class gui(object):
     def setBg(self, colour, override=False, tint=False):
         if not self.ttkFlag:
             if self.containerStack[-1]['type'] == self.Widgets.RootPage:
-                self.appWindow.config(background=colour)
+# removed this - it makes the screen do funny stuff
+#                self.appWindow.config(background=colour)
                 self.bgLabel.config(background=colour)
 
             self.containerStack[-1]['container'].config(background=colour)
