@@ -45,10 +45,9 @@ def setup():
         c.execute(task, ('Analyze the requirements of the app', 1, 1, project_id, '2015-01-01', '2015-01-02'))
         c.execute(task, ('Confirm with user about the top requirements', 1, 1, project_id, '2015-01-03', '2015-01-05'))
 
-with gui("DB Demo", "800x800") as app:
+with gui("DB Demo", "800x400") as app:
     app.setStretch("column")
     app.label("title", "DB tester")
     app.list("table", ["projects", "tasks"], change=changeDb, rows=2)
     app.setStretch("both")
     app.addDbGrid("projects", "issue266.db", "projects", action=delRow, addRow=addRow, showMenu=True)
-
