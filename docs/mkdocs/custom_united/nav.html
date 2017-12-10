@@ -42,8 +42,13 @@
             <!-- Search, Navigation and Repo links -->
             <ul class="nav navbar-nav navbar-right">
                 <li>
-                    <a href="/pythonLessons">
-                    <i class="fa fa-mortar-board"></i> Lessons
+                    <a href="/pythonLessons" target="_blank">
+                    <i class="fa fa-mortar-board"></i> Learn
+                    </a>
+                </li>
+                <li>
+                    <a href="https://www.youtube.com/channel/UCe_fC78lGgA-EHyK9nZXNVA" target="_blank">
+                    <i class="fa fa-youtube"></i> Watch
                     </a>
                 </li>
 <!--
@@ -58,11 +63,6 @@
                     </a>
                 </li>
 -->
-                <li>
-                    <a href="#" data-toggle="modal" data-target="#mkdocs_search_modal">
-                        <i class="fa fa-search"></i> Search
-                    </a>
-                </li>
                 {% if repo_url %}
                 <li>
                     <a href="{{ repo_url }}">
@@ -75,6 +75,11 @@
                     </a>
                 </li>
                 {% endif %}
+                <li>
+                    <a href="#" data-toggle="modal" data-target="#mkdocs_search_modal">
+                        <i class="fa fa-search"></i> Search
+                    </a>
+                </li>
             </ul>
         </div>
     </div>
