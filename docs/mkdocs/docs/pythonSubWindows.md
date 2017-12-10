@@ -81,7 +81,7 @@ app.go(startWindow="Login")
     Used to hide the specified *SubWindow*.  
     This will not destroy the *SubWindow*, so it can be shown again later.  
     By default it bypasses any `stopFunction`.  
-    Set `useStopFucntion` to be True or call `.confirmHideSubWindow()` to use the `stopFunction`.  
+    Set `useStopFunction` to be True or call `.confirmHideSubWindow()` to use the `stopFunction`.  
 
 * `.destroySubWindow(title)`  
     This will hide and permanently destroy the specified *SubWindow*.  

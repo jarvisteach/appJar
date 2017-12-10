@@ -3,7 +3,7 @@
 
 ## Version 0.9  
 * Introduciton of alternative [widget access functions](/simpleAppJar) ([#235](https://github.com/jarvisteach/appJar/issues/235))  - now possible to **ADD**, **SET** & **GET** widgets by just using their name.  
-* Big improvements to [grids](/pythonDevWidgets/#grid) - can add/remove/replace rows/columns, can sort data, can access a right-click menu.  
+* Big improvements to [grids](/pythonDevWidgets/#grid) - can add/remove/replace rows/columns, can sort data, can access a right-click menu, can connect to an sqlite database.  
 * Introduction of appJar [settings](/pythonSettings/) - can now save/load GUI state to/from file.  
 * More [ttk](/pythonTtk) improvements - grouped widgets now work, introduced external themes.  
 
