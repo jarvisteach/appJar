@@ -17,25 +17,29 @@
             <a class="navbar-brand" href="{{ homepage_url }}">{{ site_name }}</a>
         </div>
 
+        {% set hidden_titles = ["Welcome"] %}
+
         <!-- Expanded navigation -->
         <div class="navbar-collapse collapse">
             <!-- Main navigation -->
             <ul class="nav navbar-nav">
             {% for nav_item in nav %}
-            {% if nav_item.children %}
-                <li class="dropdown{% if nav_item.active %} active{% endif %}">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">{{ nav_item.title }} <b class="caret"></b></a>
-                    <ul class="dropdown-menu">
-                    {% for nav_item in nav_item.children %}
-                        {% include "nav-sub.html" %}
-                    {% endfor %}
-                    </ul>
-                </li>
-            {% else %}
-                <li {% if nav_item.active %}class="active"{% endif %}>
-                    <a href="{{ nav_item.url }}">{{ nav_item.title }}</a>
-                </li>
-            {% endif %}
+                {% if nav_item.title not in hidden_titles %}
+                    {% if nav_item.children %}
+                        <li class="dropdown{% if nav_item.active %} active{% endif %}">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">{{ nav_item.title }} <b class="caret"></b></a>
+                            <ul class="dropdown-menu">
+                            {% for nav_item in nav_item.children %}
+                                {% include "nav-sub.html" %}
+                            {% endfor %}
+                            </ul>
+                        </li>
+                    {% else %}
+                        <li {% if nav_item.active %}class="active"{% endif %}>
+                            <a href="{{ nav_item.url }}">{{ nav_item.title }}</a>
+                        </li>
+                    {% endif %}
+                {% endif %}
             {% endfor %}
             </ul>
 
