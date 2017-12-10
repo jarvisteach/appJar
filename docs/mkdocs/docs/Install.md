@@ -1,7 +1,7 @@
 #Set-up Instructions
 ---
 appJar was designed for use in schools - it therefore doesn't require any kind of special  *installation*.  
-Instead, just [DOWNLOAD](https://github.com/RWBA/appJar/blob/appJar/releases/appJar.zip?raw=true) the ZIP file, unzip, and go - just put the folder in the [right place](#single-user-set-up).  
+Instead, just [DOWNLOAD](https://github.com/jarvisteach/appJar/blob/appJar/releases/appJar.zip?raw=true) the ZIP file, unzip, and go - just put the folder in the [right place](#single-user-set-up).  
 
 ##Pip Installation  
 However, if you can install python packages - we support that too!  
