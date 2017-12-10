@@ -15,6 +15,7 @@
     * [#290](https://github.com/jarvisteach/appJar/issues/290) - fixed issue showing [AutoEntries](/pythonWidgets/#entry) in [subWindows](/pythonSubWindows)  
     * [#289](https://github.com/jarvisteach/appJar/issues/289) - new functions to change list in [AutoEntries](/pythonWidgets/#entry) 
     * [#288](https://github.com/jarvisteach/appJar/issues/288) - fixed issue showing [dialogs](/pythonDialogs/#message-boxes) in [subWindows](/pythonSubWindows)  
+    * [#286](https://github.com/jarvisteach/appJar/issues/286) - added new [threaded callback](/pythonThreads), contributed by [@mpmc](https://github.com/mpmc)
     * [#284](https://github.com/jarvisteach/appJar/issues/284) - new [dialogs](/pythonDialogs/#message-boxes) for strings, integers & floats  
     * [#283](https://github.com/jarvisteach/appJar/issues/283) - [questionBox](/pythonDialogs/#question-boxes) now returns Booleans instead of yes/no  
     * [#281](https://github.com/jarvisteach/appJar/issues/281) - resolved issues with [threads](/pythonThreads)  
