@@ -79,6 +79,7 @@ A number of pop-ups (aka dialogs) are available, to add a different user experie
     If this dialog is being launched from a [subWindow](/pythonWidgetGrouping/#sub-window) set `parent` to be the name of the subWindow.  
     ![NumberBox](img/dialogs/num.gif)
 
+### appJar Question Boxes
 ---
 
 * `.textBox(title, message, parent=None)`  
@@ -115,6 +116,7 @@ A number of pop-ups (aka dialogs) are available, to add a different user experie
     This will set the allowed file extensions, it should be a list of tuples. They will be grouped by the name.  
     * `asFile` this will determine whether a path or actual Python file object is returned, defaults to filename   
 
+<br>
 
 * `.saveBox(title=None, fileName=none, dirName=None, fileExt=".txt", fileTypes=None, asFile=None, parent=None)`  
     Shows a save file dialog.  
@@ -123,6 +125,7 @@ A number of pop-ups (aka dialogs) are available, to add a different user experie
     ![SaveBox](img/dialogs/save.png)  
 
     Various parameters can be provided (although they don't work on all platforms):  
+
     * ```title``` this will set a title for the dialog  
     * `fileName` this will set a starting file name to save as  
     * `dirName` this will set a starting directory, defaults to the current working directory  
@@ -130,6 +133,8 @@ A number of pop-ups (aka dialogs) are available, to add a different user experie
     * `fileTypes=[('images', '*.png'), ('images', '*.jpg')]`  
     This will set the allowed file extensions, it should be a list of tuples. They will be grouped by the name.  
     * `asFile` this will determine whether a path or actual Python file object is returned, defaults to filename   
+
+<br>
 
 * `.directoryBox(title=None, dirName=None, parent=None)`
     Shows a choose directory dialog.  

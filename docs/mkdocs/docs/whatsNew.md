@@ -14,8 +14,8 @@
     * [#294](https://github.com/jarvisteach/appJar/issues/294) & [#292](https://github.com/jarvisteach/appJar/issues/292) - fixes on [entries](/pythonWidgets/#entry): better handle arrow key presses on mac, defaults work better on secret entries & file/directory entries  
     * [#290](https://github.com/jarvisteach/appJar/issues/290) - fixed issue showing [AutoEntries](/pythonWidgets/#entry) in [subWindows](/pythonSubWindows)  
     * [#289](https://github.com/jarvisteach/appJar/issues/289) - new functions to change list in [AutoEntries](/pythonWidgets/#entry) 
-    * [#288](https://github.com/jarvisteach/appJar/issues/288) - fixed issue showing [dialogs](/pythonDialogs) in [subWindows](/pythonSubWindows)  
-    * [#284](https://github.com/jarvisteach/appJar/issues/284) - new [dialogs](/pythonDialogs/) for strings, integers & floats  
+    * [#288](https://github.com/jarvisteach/appJar/issues/288) - fixed issue showing [dialogs](/pythonDialogs/#message-boxes) in [subWindows](/pythonSubWindows)  
+    * [#284](https://github.com/jarvisteach/appJar/issues/284) - new [dialogs](/pythonDialogs/#message-boxes) for strings, integers & floats  
     * [#283](https://github.com/jarvisteach/appJar/issues/283) - [questionBox](/pythonDialogs/#question-boxes) now returns Booleans instead of yes/no  
     * [#281](https://github.com/jarvisteach/appJar/issues/281) - resolved issues with [threads](/pythonThreads)  
     * [#279](https://github.com/jarvisteach/appJar/issues/279) - tidied up [remove all widgets](/pythonWidgetOptions/#widget-manipulation) - now leaves GUI looking better  
