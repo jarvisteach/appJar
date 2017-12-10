@@ -1391,7 +1391,7 @@ class gui(object):
 ##################################################
 ### Stuff for logging
 ##################################################
-                
+
     @staticmethod
     def setLogFile(fileName):
         """ sets the filename for logging messages """
@@ -1949,15 +1949,14 @@ class gui(object):
         """Run a given method in a new thread with passed arguments.
            When func completes call the callback with the result.
 
-           :param func: Method to receive result from.
-           :param callback: Method that recevices the data.
+           :param func: Method that returns the result.
+           :param callback: Method that receives the result.
            :param args: Positional arguments for func.
            :param kwargs: Keyword args for func.
         """
         def innerThread(func, callback, *args, **kwargs):
             result = func(*args, **kwargs)
             self.queueFunction(callback, result)
-            return
 
         if not callable(func) or not callable(callback):
             gui.error("Function (or callback) method isn't callable!")
@@ -6371,7 +6370,7 @@ class gui(object):
             drop = None if "drop" not in kwargs else kwargs.pop("drop")
 
             listBox = self.addListBox(title, value, *args, **kwargs)
-            
+
             if rows is not None: self.setListBoxRows(title, rows)
             if multi: self.setListBoxMulti(title)
             if group: self.setListBoxGroup(title)
@@ -7460,7 +7459,7 @@ class gui(object):
             drop = None if "drop" not in kwargs else kwargs.pop("drop")
 
             # create the entry widget
-            if kind == "auto": 
+            if kind == "auto":
                 ent = self.__entryMaker(title, *args, kind=kind, words=value, **kwargs)
             else:
                 ent = self.__entryMaker(title, *args, kind=kind, **kwargs)
@@ -7602,17 +7601,17 @@ class gui(object):
 
             # for now - suppress UP/DOWN arrows
             if self.platform in [self.MAC]:
-                def suppress(event): 
+                def suppress(event):
                     if event.keysym == "Up":
                         # move home
                         event.widget.icursor(0)
-                        return "break" 
+                        return "break"
                     elif event.keysym == "Down":
                         # move end
                         event.widget.icursor(END)
-                        return "break" 
+                        return "break"
 
-                ent.bind("<Key>", suppress) 
+                ent.bind("<Key>", suppress)
 
         if not self.ttkFlag:
             ent.config(font=self.entryFont)
@@ -12609,7 +12608,7 @@ class GoogleMap(LabelFrame, object):
                 m += "|" + str(mark["location"])
                 m = quote_plus(m)
                 self.request += "&markers=" + m
-            
+
         gui.debug("GoogleMap search URL: %s", self.request)
 
     def __buildGeoURL(self, location):
