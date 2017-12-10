@@ -84,7 +84,7 @@ def toolbar(btn):
         if app.exitFullscreen():
             app.setToolbarIcon("FULL-SCREEN", "FULL-SCREEN")
         else:
-            app.setGeometry("fullscreen")
+            app.setSize("fullscreen")
             app.setToolbarIcon("FULL-SCREEN", "FULL-SCREEN-EXIT")
     elif btn == "CALENDAR": app.showSubWindow("DatePicker")
     elif btn == "ADDRESS-BOOK": app.showSubWindow("AddressBook")
@@ -355,7 +355,7 @@ with gui("ShowCase") as app:
     with app.subWindow("Statistics", transient=True):
         app.setBg("yellow")
         app.setSticky("news")
-        app.setGeometry("300x330")
+        app.setSize("300x330")
         values={"German":20, "French":10, "English":60, "Dutch": 5, "Belgium":3, "Danish":2}
         app.addPieChart("Nationality", values)
         app.addLabelOptionBox("Nationality", values.keys())
