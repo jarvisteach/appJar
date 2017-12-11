@@ -7577,7 +7577,7 @@ class gui(object):
         else:
             fileName = self.directoryBox()
 
-        if fileName is not None:
+        if fileName is not None and fileName != "":
             self.setEntry(title, fileName)
 
         self.topLevel.after(250, self.setEntryFocus, title)
