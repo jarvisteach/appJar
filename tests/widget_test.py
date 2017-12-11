@@ -421,9 +421,14 @@ def test_buttons():
     app.setButtonImage("bb1", "1_entries.gif")
     but1 = app.getButtonWidget("bb1")
     assert but1.cget("text") == ""
+    app.setButtonImage("bb1", "1_entries.gif", align="top")
 
     assert isinstance(app.addImageButton("ib1", None, "1_entries.gif"), Button)
     assert isinstance(app.addIconButton("ib2", None, "map"), Button)
+
+    assert isinstance(app.addImageButton("ib1a", None, "1_entries.gif", align="left"), Button)
+    assert isinstance(app.addIconButton("ib2a", None, "map", align="right"), Button)
+
     but1 = app.getButtonWidget("ib1")
     assert but1.cget("text") == ""
 

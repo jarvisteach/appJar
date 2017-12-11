@@ -249,11 +249,13 @@ That way, multiple widgets can use the same function, but different actions can 
     A single function can be passed, to use for all buttons.  
     Or a list of functions can be passed, which MUST correspond to the buttons.  
 
-* `.addImageButton(title, function, imgFile)`  
+* `.addImageButton(title, function, imgFile, align=None)`  
     This creates the named button, as above, using the specified image.  
+    If align is set, the image will be aligned relative to the text, otherwise the image will replace the text.  
 
-* `.addIconButton(title, function, iconName)`  
+* `.addIconButton(title, function, iconName, align=None)`  
     This creates the named button, as above, using the specified icon.  
+    If align is set, the image will be aligned relative to the text, otherwise the image will replace the text.  
 
 * `.addNamedButton(name, title, function)`  
     By default, it's not possible to have two buttons with the same text.  
@@ -265,8 +267,9 @@ That way, multiple widgets can use the same function, but different actions can 
 * `.setButton(name, text)`  
     This will change the text displayed on a button, but **NOT** the value passed as a parameter to the function.  
 
-* `.setButtonImage(title, image)`  
+* `.setButtonImage(title, image, align=None)`  
     This allows an image to be placed on a button, instead of the usual text.  
+    If align is set, the image will be aligned relative to the text, otherwise the image will replace the text.  
 
 ##RadioButton
 ____

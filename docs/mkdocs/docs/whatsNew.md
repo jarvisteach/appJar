@@ -8,6 +8,7 @@
 * More [ttk](/pythonTtk) improvements - grouped widgets now work, introduced external themes.  
 
 * Issues Resolved:
+    * [#316](https://github.com/jarvisteach/appJar/issues/316) - can now display compound images and text in [buttons](/pythonWidgets/#button)  
     * [#303](https://github.com/jarvisteach/appJar/issues/303) - added functions to [bind/unbind mutiple keys](/pythonEvents/#binding-keys) to a function  
     * [#298](https://github.com/jarvisteach/appJar/issues/298) - fixed issue in [menubar shortcuts](/pythonBars/#extra-features/) where numeric shortcuts didn't work.  
     * [#296](https://github.com/jarvisteach/appJar/issues/296) - two new widgets introduced [turtle](/pythonDevWidgets/#turtle) and [canvas](/pythonDevWidgets/#canvas)  
