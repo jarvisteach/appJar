@@ -65,8 +65,8 @@ def update(name):
     elif name == "toppings":
         updateToppings()
 
-app.list("size", ["small", "medium", "large"], change=update)
-app.list("toppings", ["corn", "cheese", "peppers"], change=update)
+app.listbox("size", ["small", "medium", "large"], change=update)
+app.listbox("toppings", ["corn", "cheese", "peppers"], change=update)
 app.image("img1", "placeholder.gif", drop=True)
 ```
 
@@ -206,7 +206,7 @@ Shows a single value, with arrows to scroll up or down, allowing the user to cha
 | pos | integer | 0 | The position of an item to select. |
 | item | string | None | The name of an item to select. |
 
-## List
+## Listbox
 <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
 <ins class="adsbygoogle"
     style="display:block"
@@ -218,16 +218,16 @@ Shows a single value, with arrows to scroll up or down, allowing the user to cha
 ---
 Displays a list of items, one (or more than one) of which can be selected.  
 
-* `.list(title, value=None)`  
-    The `value` should contain a list of items to display in the list.  
-    List boxes can receive a `change` parameter.  
-    List boxes can receive `drop` data.  
+* `.listbox(title, value=None)`  
+    The `value` should contain a list of items to display in the listbox.  
+    Listboxes can receive a `change` parameter.  
+    Listboxes can receive `drop` data.  
 
 | Parameter | Data type | Default | Description |
 | --------- | --------- | ------- | ------------|
-| rows | integer | None | Specifies how many rows to display in the list. |
-| multi | boolean | False | Set the list to be multi-selectable. |
-| group | boolean | False | Set the list to be part of a group. |
+| rows | integer | None | Specifies how many rows to display in the listbox. |
+| multi | boolean | False | Set the listbox to be multi-selectable. |
+| group | boolean | False | Set the listbox to be part of a group. |
 
 ## Slider  
 ---

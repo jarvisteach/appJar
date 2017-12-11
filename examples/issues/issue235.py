@@ -57,7 +57,7 @@ def updateApp4(btn=None):
     app.properties("Toppings", {"a":False, "b":True})
 
 with gui("Simple Demo") as app:
-    app.label("title", "Simple Props Demo", colspan=3, type="flash")
+    app.label("title", "Simple Props Demo", colspan=3, kind="flash")
     app.label("title2", row=0, column=3)
     app.setLabelBg("title", "green")
 
@@ -72,20 +72,20 @@ with gui("Simple Demo") as app:
     app.setTextAreaBg("mess2", "pink")
 
     app.image("img", "../images/balloons.gif", over="../images/balloons2.gif", row=2, column=3, rowspan=7)
-    app.image("img2", "OPEN", row=2, column=4, rowspan=3, type="icon")
+    app.image("img2", "OPEN", row=2, column=4, rowspan=3, kind="icon")
 
     app.check("Clap", row=2, column=1)
     app.check("Cheer", True, row=3, column=1)
     app.check("Cry", row=4, column=1)
 
-    app.entry("data", colspan=3, type="directory")
+    app.entry("data", colspan=3, kind="directory")
     app.entry("data2", value="lots of data", colspan=3, focus=True, case="upper", limit=15)
-    app.entry("data3", colspan=3, default="france", type="validation")
-    app.entry("data4", value=["a", "aa", "aba", "abc", "abd"], colspan=3, type="auto", autoRows=4)
+    app.entry("data3", colspan=3, default="france", kind="validation")
+    app.entry("data4", value=["a", "aa", "aba", "abc", "abd"], colspan=3, kind="auto", rows=4)
 
     row=app.gr()
 
-    app.button("Clap", press, icon="OPEN", row=row, column=0)
+    app.button("Clap", press, icon="OPEN", row=row, column=0, align="top")
     app.button("Cheer", press, row=row, column=1)
     app.button("Cheer", "")
     app.button("Cry", press, row=row, column=2)
@@ -118,6 +118,6 @@ with gui("Simple Demo") as app:
 
     app.properties("Toppings", toppings, row=row, column=2)
 
-    app.meter("CryingMore", 50, colspan=3, type="other")
-    app.meter("CryingMorer", 50, colspan=3, type="split")
-    app.meter("CryingMorerr", (50,70), colspan=3, type="dual")
+    app.meter("CryingMore", 50, colspan=3, kind="other")
+    app.meter("CryingMorer", 50, colspan=3, kind="split")
+    app.meter("CryingMorerr", (50,70), colspan=3, kind="dual")
