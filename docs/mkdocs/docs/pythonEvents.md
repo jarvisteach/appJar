@@ -22,6 +22,7 @@ These do similar things, so probably shouldn't both exist, but have evolved from
     * Scales, OptionBoxes, SpinBoxes, ListBoxes, RadioButtons & CheckBoxes, Entries & TextAreas, and Properties - the function will be called each time the widget is changed.  
     * Buttons, Labels & Images - it is not available.  
     * Other widgets - it will set the *command* property for the underlying tkinter widget; this may or may not do anything...  
+<br>
 
 * `.set XXX SubmitFunction(title, function)`  
     Creates a *submit* option for some widgets:  

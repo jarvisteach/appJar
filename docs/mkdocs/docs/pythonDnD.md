@@ -91,4 +91,4 @@ There is currently no support for registering *Drag* events.
 
 ##Beta
 ---
-Note, this is all in beta - long term, the plan is to combine all of this into one set of functions, and provide a unified drag and drop model, that will work across all widgets both within the application and between applications.  
+**NB.** This is all in beta - long term, the plan is to combine all of this into one set of functions, and provide a unified drag and drop model, that will work across all widgets both within the application and between applications.  

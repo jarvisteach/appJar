@@ -29,7 +29,8 @@ You can also use the following convenience functions for logging messages:
 * `.info(msg, *args)`
 * `.debug(msg, *args)`
 
-Optional Arguments:
+#### Optional Arguments:  
+
 * `*args` allows you to use a **string formatter** with your message.  
 This can speed things up slightly, as it avoids unnecessary string concatenations, as well as automatically casting all variables to Strings:  
 
@@ -40,6 +41,7 @@ app.debug("User %s, has accessed the app from %s", name, location)
 ```
 
 ## Logging to file
+
 <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
 <ins class="adsbygoogle"
     style="display:block"

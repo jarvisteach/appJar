@@ -94,7 +94,7 @@ def acceleratingCountdown():
         counter -= 1
         app.after(100*counter, myLoop)
 
-app.after(0, accelratingCountdown)
+app.after(0, acceleratingCountdown)
 ```
 
 This will simulate a countdown, but each time there is a smaller delay between counts.  

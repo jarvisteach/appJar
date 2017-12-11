@@ -7,12 +7,12 @@
 
 Running your functions in threads allows the main GUI loop to keep running, so that the GUI won't hang.  
 
-Threads don't always work nicely with GUIs, so your thread **mustn't** try to change the GUI, instead you will need to put any GUI updates in a Queue ([see below](/pythonThreads/#queueing)).  
+**NB.** Threads don't always work nicely with GUIs, so your thread **mustn't** try to change the GUI, instead you will need to put any GUI updates in a Queue ([see below](/pythonThreads/#queueing)).  
 
 ## Threading  
 ---
 
-* `.thread(function, *args, *kwargs)`  
+* `.thread(func, *args, **kwargs)`  
     This allows you to run your own functions in a separate thread, so they doesn't cause the GUI to hang.  
     Pass the name of your function (with no brackets) and any arguments that it requires.  
     For example: `app.thread(myFunction, param1, param2)`  
@@ -51,10 +51,11 @@ app.addButton("UPLOAD", uploader)
 ## Queueing  
 ---
 
-* `.queueFunction(function, *args, **kwargs)`  
-    You mustn't try to update the GUI directly from your threads.  
-    Instead, use this function to queue any updates.  
-    Pass the name of the GUI function (with no brackets) and any arguments that it requires.  
+You **mustn't** try to update the GUI directly from a thread.  
+Instead, you should add all your updates to appJar's *update queue*, and let appJar update the GUI.   
+
+* `.queueFunction(func, *args, **kwargs)`  
+    Pass the name of the GUI function (with no brackets) you want to call, along with any arguments it requires.  
     For example: `app.queueFunction(app.setLabel, "l1", "new label text")`   
 
 ``` python
