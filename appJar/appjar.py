@@ -6670,16 +6670,16 @@ class gui(object):
         self.__positionWidget(but, row, column, colspan, rowspan, None)
         return but
 
-    def addImageButton(self, title, func, imgFile, row=None, column=0, colspan=0, rowspan=0):
+    def addImageButton(self, title, func, imgFile, row=None, column=0, colspan=0, rowspan=0, align=None):
         but = self.__buildButton(title, func, self.getContainer())
         self.__positionWidget(but, row, column, colspan, rowspan, None)
-        self.setButtonImage(title, imgFile)
+        self.setButtonImage(title, imgFile, align)
         return but
 
-    def addIconButton(self, title, func, iconName, row=None, column=0, colspan=0, rowspan=0):
+    def addIconButton(self, title, func, iconName, row=None, column=0, colspan=0, rowspan=0, align=None):
         icon = os.path.join(self.icon_path, iconName.lower()+".png")
         with PauseLogger():
-            return self.addImageButton(title, func, icon, row, column, colspan, rowspan)
+            return self.addImageButton(title, func, icon, row, column, colspan, rowspan, align)
 
     def setButton(self, name, text):
         but = self.widgetManager.get(self.Widgets.Button, name)
@@ -6689,13 +6689,15 @@ class gui(object):
         but = self.widgetManager.get(self.Widgets.Button, name)
         return but.cget("text")
 
-    def setButtonImage(self, name, imgFile):
+    def setButtonImage(self, name, imgFile, align=None):
         but = self.widgetManager.get(self.Widgets.Button, name)
         image = self.__getImage(imgFile)
         # works on Mac & Windows :)
-        but.config(image=image, compound=TOP, text="", justify=LEFT)
-        # but.config(image=image, compound=None, text="") # works on Windows,
-        # not Mac
+        if align == None:
+            but.config(image=image, compound=TOP, text="", justify=LEFT)
+        else:
+            but.config(image=image, compound=align)
+        # but.config(image=image, compound=None, text="") # works on Windows, not Mac
 
         but.image = image
 
