@@ -1772,50 +1772,62 @@ class gui(object):
 
         if "TOGGLES" in settings.sections():
             for k in settings.options("TOGGLES"):
-                if self.getToggleFrameState(k) != settings.getboolean("TOGGLES", k):
-                    self.toggleToggleFrame(k)
+                try:
+                    if self.getToggleFrameState(k) != settings.getboolean("TOGGLES", k):
+                        self.toggleToggleFrame(k)
+                except ItemLookupError:
+                    gui.error("Settings error, invalid TOGGLES name: %s - discarding", k)
 
         if "TABS" in settings.sections():
             for k in settings.options("TABS"):
-                self.setTabbedFrameSelectedTab(k, settings.get("TABS", k))
+                try:
+                    self.setTabbedFrameSelectedTab(k, settings.get("TABS", k))
+                except ItemLookupError:
+                    gui.error("Settings error, invalid TABS name: %s - discarding", k)
 
         if "PAGES" in settings.sections():
             for k in settings.options("PAGES"):
-                self.setPagedWindowPage(k, settings.getint("PAGES", k))
+                try:
+                    self.setPagedWindowPage(k, settings.getint("PAGES", k))
+                except ItemLookupError:
+                    gui.error("Settings error, invalid PAGES name: %s - discarding", k)
 
         if "SUBWINDOWS" in settings.sections():
             for k in settings.options("SUBWINDOWS"):
                 if settings.getboolean("SUBWINDOWS", k):
                     gui.debug("Loading settings for %s", k)
-                    tl = self.widgetManager.get(self.Widgets.SubWindow, k)
-                    # process the geom settings
-                    if settings.has_option(k, "geometry"):
-                        geom = settings.get(k, "geometry")
-                        size, loc = gui.SPLIT_GEOM(geom)
-                        if size[0] > 1:
-                            gui.debug("Setting size: %s", size)
-                            tl.geometry("%sx%s" % (size[0], size[1]))
-                            tl.shown = True
+                    try:
+                        tl = self.widgetManager.get(self.Widgets.SubWindow, k)
+                        # process the geom settings
+                        if settings.has_option(k, "geometry"):
+                            geom = settings.get(k, "geometry")
+                            size, loc = gui.SPLIT_GEOM(geom)
+                            if size[0] > 1:
+                                gui.debug("Setting size: %s", size)
+                                tl.geometry("%sx%s" % (size[0], size[1]))
+                                tl.shown = True
+                            else:
+                                gui.debug("Skipping size: %s", size)
+                            if loc[0] > -1:
+                                gui.debug("Setting location: %s", loc)
+                                self.setSubWindowLocation(k, *loc)
+                            else:
+                                gui.debug("Skipping location: %s", loc)
                         else:
-                            gui.debug("Skipping size: %s", size)
-                        if loc[0] > -1:
-                            gui.debug("Setting location: %s", loc)
-                            self.setSubWindowLocation(k, *loc)
-                        else:
-                            gui.debug("Skipping location: %s", loc)
-                    else:
-                        gui.debug("No location found")
+                            gui.debug("No location found")
 
-                    if settings.has_option(k, "minsize"):
-                        ms = settings.get(k, "minsize").split(",")
-                        self.setMinSize(tl, ms)
+                        if settings.has_option(k, "minsize"):
+                            ms = settings.get(k, "minsize").split(",")
+                            self.setMinSize(tl, ms)
 
-                    # set the state - if there' no startWindow
-                    if self.startWindow is None:
-                        try:
-                            tl.state(settings.get(k, "state"))
-                            gui.debug("Set state=%s", tl.state())
-                        except: pass # no state found
+                        # set the state - if there' no startWindow
+                        if self.startWindow is None:
+                            try:
+                                tl.state(settings.get(k, "state"))
+                                gui.debug("Set state=%s", tl.state())
+                            except: pass # no state found
+                    except ItemLookupError:
+                        gui.error("Settings error, invalid SUBWINDOWS name: %s - discarding.", k)
                 else:
                     gui.debug("Skipping settings for %s", k)
 
