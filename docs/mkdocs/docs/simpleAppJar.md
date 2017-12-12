@@ -130,7 +130,9 @@ An interactive widget, for capturing multi-line user input in the GUI.
 | --------- | --------- | ------- | ------------|
 | scroll | boolean | False | Will configure this as a scrollable text area. |
 
-## Button  
+---
+<div style='text-align: center;'>
+*Advertisement*  
 <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
 <ins class="adsbygoogle"
     style="display:block"
@@ -139,7 +141,12 @@ An interactive widget, for capturing multi-line user input in the GUI.
     data-ad-client="ca-pub-6185596049817878"
     data-ad-slot="5627392164"></ins>
 <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
 ---
+
+## Button  
+---
+
 A clickable button for triggering events.  
 
 * `.button(title, value=None)`  
@@ -206,7 +213,9 @@ Shows a single value, with arrows to scroll up or down, allowing the user to cha
 | pos | integer | 0 | The position of an item to select. |
 | item | string | None | The name of an item to select. |
 
-## Listbox
+---
+<div style='text-align: center;'>
+*Advertisement*  
 <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
 <ins class="adsbygoogle"
     style="display:block"
@@ -215,7 +224,12 @@ Shows a single value, with arrows to scroll up or down, allowing the user to cha
     data-ad-client="ca-pub-6185596049817878"
     data-ad-slot="5627392164"></ins>
 <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
 ---
+
+## Listbox
+---
+
 Displays a list of items, one (or more than one) of which can be selected.  
 
 * `.listbox(title, value=None)`  
@@ -276,7 +290,9 @@ Displays a line, giving visual separation in the GUI.
 | --------- | --------- | ------- | ------------|
 | direction | string | horizontal | Set the orientation of the separator: `horizontal` or `vertical`. |
 
-## Image  
+---
+<div style='text-align: center;'>
+*Advertisement*  
 <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
 <ins class="adsbygoogle"
     style="display:block"
@@ -285,7 +301,12 @@ Displays a line, giving visual separation in the GUI.
     data-ad-client="ca-pub-6185596049817878"
     data-ad-slot="5627392164"></ins>
 <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
 ---
+
+## Image  
+---
+
 Displays a picture.  
 
 * `.image(title, value=None)`

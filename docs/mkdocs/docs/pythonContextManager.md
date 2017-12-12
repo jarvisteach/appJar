@@ -40,7 +40,9 @@ The old start/stop functions all still exist, so there is no need to use the `wi
 
 An added bonus, is that the same syntax works for starting a container or opening a container!
 
-## Available Containers
+---
+<div style='text-align: center;'>
+*Advertisment*  
 <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
 <ins class="adsbygoogle"
     style="display:block"
@@ -49,6 +51,10 @@ An added bonus, is that the same syntax works for starting a container or openin
     data-ad-client="ca-pub-6185596049817878"
     data-ad-slot="5627392164"></ins>
 <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
+---
+
+## Available Containers
 ---
 
 ```python

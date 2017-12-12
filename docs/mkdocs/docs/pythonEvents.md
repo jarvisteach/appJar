@@ -53,7 +53,9 @@ app.addButton("Reset", reset)
 app.go()
 ```
 
-### Over Functions
+---
+<div style='text-align: center;'>
+*Advertisement*  
 <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
 <ins class="adsbygoogle"
     style="display:block"
@@ -62,6 +64,10 @@ app.go()
     data-ad-client="ca-pub-6185596049817878"
     data-ad-slot="5627392164"></ins>
 <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
+---
+
+### Over Functions
 ---
 Set functions to call whenever the mouse enters (goes over) or leaves the specified widget.  
 
@@ -105,7 +111,9 @@ It's possible to register any of the standard event types with appJar widgets
 app.getEntryWidget("widget_name").bind("<FocusOut>", function_name, add="+")
 ```
 
-## Binding Keys
+---
+<div style='text-align: center;'>
+*Advertisement*  
 <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
 <ins class="adsbygoogle"
     style="display:block"
@@ -114,6 +122,10 @@ app.getEntryWidget("widget_name").bind("<FocusOut>", function_name, add="+")
     data-ad-client="ca-pub-6185596049817878"
     data-ad-slot="5627392164"></ins>
 <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
+---
+
+## Binding Keys
 ---
 As well as changing widgets, we sometimes want keys to trigger events.  
 The classic example is the ```<Enter>``` key, we often want to be able to hit the ```<Enter>``` key to submit a form...

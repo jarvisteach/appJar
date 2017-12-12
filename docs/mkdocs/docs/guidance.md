@@ -27,7 +27,9 @@ These are things you can add to the GUI:
 * **Special Characters** - guidance on how to include special characters  
 * **Beta widgets** - some other available widgets, just not quite finished  
 
-###Configuration  
+---
+<div style='text-align: center;'>
+*Advertisement*  
 <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
 <ins class="adsbygoogle"
     style="display:block"
@@ -36,6 +38,10 @@ These are things you can add to the GUI:
     data-ad-client="ca-pub-6185596049817878"
     data-ad-slot="5627392164"></ins>
 <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
+---
+
+###Configuration  
 These are ways of changing how the GUI looks or operates:  
 
 * **GUI Options** - options for configuring general GUI settings  

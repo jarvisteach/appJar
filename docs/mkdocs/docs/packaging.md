@@ -13,7 +13,9 @@ If not, then you may need to specify the path of certain libraries:
 
 ```pyinstaller -F -w -p <path_to_appJar> demo.py```
 
-###Setting an app Icon
+---
+<div style='text-align: center;'>
+*Advertisement*  
 <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
 <ins class="adsbygoogle"
     style="display:block"
@@ -22,6 +24,10 @@ If not, then you may need to specify the path of certain libraries:
     data-ad-client="ca-pub-6185596049817878"
     data-ad-slot="5627392164"></ins>
 <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
+---
+
+###Setting an app Icon
 ---
 To set an icon for the app, include the following option:
 

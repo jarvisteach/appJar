@@ -38,7 +38,9 @@ app.setLabelDragFunction("dragLab", [drag, drop])
 app.go()
 ```
 
-##Drag'n Drop Between Applications
+---
+<div style='text-align: center;'>
+*Advertisement*  
 <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
 <ins class="adsbygoogle"
     style="display:block"
@@ -47,6 +49,10 @@ app.go()
     data-ad-client="ca-pub-6185596049817878"
     data-ad-slot="5627392164"></ins>
 <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
+---
+
+##Drag'n Drop Between Applications
 ---
 There is also a beta version of drag and drop between applications - at the moment, this has been seen to work on Mac OSX 10.11, Raspberry Pi, and Windows 7 & 10 - let us know of success on other distributions!  
 

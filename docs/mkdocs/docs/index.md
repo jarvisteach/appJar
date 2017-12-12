@@ -117,7 +117,9 @@ app.setFocus("Username")
 
     (**NB.** We also set some other colours on the label - see [below](#full-code-listing)) 
 
-###  Make your own  
+---
+<div style='text-align: center;'>
+*Advertisement*  
 <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
 <ins class="adsbygoogle"
     style="display:block"
@@ -126,6 +128,10 @@ app.setFocus("Username")
     data-ad-client="ca-pub-6185596049817878"
     data-ad-slot="5627392164"></ins>
 <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
+---
+
+###  Make your own  
 ---  
 
 And, that's all you need to know. Check out:  

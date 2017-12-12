@@ -22,7 +22,9 @@ app.addEmptyLabel("l2")
 app.go()
 ```
 
-###Grid Layout
+---
+<div style='text-align: center;'>
+*Advertisement*  
 <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
 <ins class="adsbygoogle"
     style="display:block"
@@ -31,7 +33,12 @@ app.go()
     data-ad-client="ca-pub-6185596049817878"
     data-ad-slot="5627392164"></ins>
 <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
 ---
+
+###Grid Layout
+---
+
 If, however, you want a bit more control, then you can treat your GUI like a **GRID**.  
 Think of it just like a spreadsheet, and position your widgets in whichever cell you want.  
 
@@ -147,8 +154,9 @@ for loop in range(3, 6):
 app.go()
 ```
 
-
-## Widget Positioning
+---
+<div style='text-align: center;'>
+*Advertisement*  
 <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
 <ins class="adsbygoogle"
     style="display:block"
@@ -156,7 +164,12 @@ app.go()
     data-ad-layout-key="-gw-13-4l+6+pt"
     data-ad-client="ca-pub-6185596049817878"
     data-ad-slot="5627392164"></ins>
-----
+<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
+---
+
+## Widget Positioning
+---
 
 Once you've laid out your widgets, the next most important thing is how they line up in their rows and columns.  
 

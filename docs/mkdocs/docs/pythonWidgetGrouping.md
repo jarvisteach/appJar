@@ -26,7 +26,9 @@ def addRows(btn):
     app.stopTab()
 ```
 
-### Label Frame
+---
+<div style='text-align: center;'>
+*Advertisement*  
 <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
 <ins class="adsbygoogle"
     style="display:block"
@@ -35,7 +37,12 @@ def addRows(btn):
     data-ad-client="ca-pub-6185596049817878"
     data-ad-slot="5627392164"></ins>
 <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-----
+</div>
+---
+
+### Label Frame
+---
+
 A way of grouping widgets into a box, with a label at the top of the box.  
 Position the *LabelFrame* within the grid, then position widgets inside the *LabelFrame*  
 
@@ -128,7 +135,9 @@ app.go()
 * `.getToggleFrameState(title)`  
     Will return True if the *ToggleFrame* is open, else will return False.  
 
-### Tabbed Frame
+---
+<div style='text-align: center;'>
+*Advertisement*  
 <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
 <ins class="adsbygoogle"
     style="display:block"
@@ -137,7 +146,12 @@ app.go()
     data-ad-client="ca-pub-6185596049817878"
     data-ad-slot="5627392164"></ins>
 <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
 ---
+
+### Tabbed Frame
+---
+
 A way to create a (basic) tabbed-style interface.  
 Position the *TabbedFrame* within the grid, start a *Tab*, then position widgets inside the *Tab*  
 ![TabbedFrame](img/layouts/tabbedFrame.png)  
@@ -426,7 +440,9 @@ app.go()
 * `.getPagedWindowPageNumber(title)`  
     Used to get the page number currently being shown.  
 
-### Sub Window
+---
+<div style='text-align: center;'>
+*Advertisement*  
 <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
 <ins class="adsbygoogle"
     style="display:block"
@@ -435,7 +451,12 @@ app.go()
     data-ad-client="ca-pub-6185596049817878"
     data-ad-slot="5627392164"></ins>
 <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
 ---
+
+### Sub Window
+---
+
 A way to add additional windows, which can be hidden and shown.  
 ![SubWindow](img/layouts/subWin.png)
 

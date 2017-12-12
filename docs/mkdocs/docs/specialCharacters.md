@@ -38,7 +38,9 @@ app.addLabel("cross", CROSS)
 By also putting a `u` before the string, you tell Python to expect a unicode character.
 (In fact, it calls the Unicode function, converting the string data into Unicode.)
 
-### Example
+---
+<div style='text-align: center;'>
+*Advertisement*  
 <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
 <ins class="adsbygoogle"
     style="display:block"
@@ -47,7 +49,12 @@ By also putting a `u` before the string, you tell Python to expect a unicode cha
     data-ad-client="ca-pub-6185596049817878"
     data-ad-slot="5627392164"></ins>
 <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
 ---
+
+### Example
+---
+
 As demonstrated above, it's best to define any Unicode characters you want to use as constants, then you can use them in your code just like any other string.  
 
 ![MusicPlayer](img/1_unicode.png)

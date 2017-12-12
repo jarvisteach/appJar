@@ -33,7 +33,9 @@ These are values that can be set when appJar is initially run.
     This allows you to request appJar uses [ttk widgets](/pythonTtk/) where possible.  
     It can followed by an optional theme name, to declare which style to use for ttk widgets.  
 
-### Example  
+---
+<div style='text-align: center;'>
+*Advertisement*  
 <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
 <ins class="adsbygoogle"
     style="display:block"
@@ -42,8 +44,11 @@ These are values that can be set when appJar is initially run.
     data-ad-client="ca-pub-6185596049817878"
     data-ad-slot="5627392164"></ins>
 <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
 ---
 
+### Example  
+---
 The following example will start the app logging DEBUG messages, and using an ENGLISH language file:  
 
 ```sh

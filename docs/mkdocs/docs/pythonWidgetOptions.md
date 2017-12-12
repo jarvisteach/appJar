@@ -65,7 +65,9 @@ app.getLabelWidget("l5").config(font="Verdana 20 overstrike")
 app.getLabelWidget("l6").config(font="Courier 20")
 ```
 
-###Advanced Looks  
+---
+<div style='text-align: center;'>
+*Advertisement*  
 <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
 <ins class="adsbygoogle"
     style="display:block"
@@ -74,7 +76,12 @@ app.getLabelWidget("l6").config(font="Courier 20")
     data-ad-client="ca-pub-6185596049817878"
     data-ad-slot="5627392164"></ins>
 <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
 ----
+
+###Advanced Looks  
+---
+
 The following are supported by most widgets:
 
 * `.set XXX Align(name, value)`  
@@ -116,7 +123,9 @@ The following are supported by most widgets:
 * `.set XXX Focus(name)`  
     Gives focus to the specified widget. This is the widget where the user will be able to start typing.
 
-###Widget Manipulation
+---
+<div style='text-align: center;'>
+*Advertisement*  
 <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
 <ins class="adsbygoogle"
     style="display:block"
@@ -125,7 +134,12 @@ The following are supported by most widgets:
     data-ad-client="ca-pub-6185596049817878"
     data-ad-slot="5627392164"></ins>
 <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
 ----
+
+###Widget Manipulation
+---
+
 The following allow widgets to be manipulated on screen:
 
 * `.disable XXX (name)`  

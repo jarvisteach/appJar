@@ -31,7 +31,9 @@ app.go()
 Definition of SubWindows happens in the same part of the code as the rest of the GUI, but they default to being hidden.  
 Both SubWindows and the main window can be *shown* and *hidden* - this is usually done through button presses.  
 
-### Start/Stop Sub Windows  
+---
+<div style='text-align: center;'>
+*Advertisement*  
 <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
 <ins class="adsbygoogle"
     style="display:block"
@@ -40,6 +42,10 @@ Both SubWindows and the main window can be *shown* and *hidden* - this is usuall
     data-ad-client="ca-pub-6185596049817878"
     data-ad-slot="5627392164"></ins>
 <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
+---
+
+### Start/Stop Sub Windows  
 ---
 
 * `.startSubwindow(name, title=None, modal=False, transient=False, blocking=False)` & `.stopSubwindow()`  
@@ -98,7 +104,9 @@ app.addNamedButton("CLOSE", "Demo", app.hideSubWindow)
 app.stopSubWindow()
 ```
 
-### Set Sub Windows  
+---
+<div style='text-align: center;'>
+*Advertisement*  
 <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
 <ins class="adsbygoogle"
     style="display:block"
@@ -107,7 +115,12 @@ app.stopSubWindow()
     data-ad-client="ca-pub-6185596049817878"
     data-ad-slot="5627392164"></ins>
 <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
 ---
+
+### Set Sub Windows  
+---
+
 Note, all functions available on the main window are also available on *SubWindows*.  
 Simply call those functions after starting a *SubWindow*.  
 

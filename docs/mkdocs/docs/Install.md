@@ -30,7 +30,9 @@ If you're on Linux you might be able to make this even simpler.
 You might have a `site-packages` folder, that is already in your path.  
 In this case, put the `appJar` folder in `~/.local/lib/python3.x/site-packages/` where 3.x is the version of python that you use.  
 
-##Multi-user Set-up  
+---
+<div style='text-align: center;'>
+*Advertisement*  
 <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
 <ins class="adsbygoogle"
     style="display:block"
@@ -39,6 +41,10 @@ In this case, put the `appJar` folder in `~/.local/lib/python3.x/site-packages/`
     data-ad-client="ca-pub-6185596049817878"
     data-ad-slot="5627392164"></ins>
 <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
+---
+
+##Multi-user Set-up  
 ---
 If you're trying to install appJar in a school, everyone can download their own copy ([see above](#single-user-set-up)), or:  
 
@@ -72,7 +78,9 @@ Create an environment variable, which will mean `E:\PYLIB` is always in your **p
 ![System](img/w_install_4.png)
 * Press **OK**, and you're done!    
 
-###Linux (Raspberry Pi) /MacOS 
+---
+<div style='text-align: center;'>
+*Advertisement*  
 <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
 <ins class="adsbygoogle"
     style="display:block"
@@ -81,7 +89,12 @@ Create an environment variable, which will mean `E:\PYLIB` is always in your **p
     data-ad-client="ca-pub-6185596049817878"
     data-ad-slot="5627392164"></ins>
 <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-----
+</div>
+---
+
+###Linux (Raspberry Pi) /MacOS 
+---
+
 If you're running python from a terminal:  
 
 * Type the following:  

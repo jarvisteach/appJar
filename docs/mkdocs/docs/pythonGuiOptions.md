@@ -63,7 +63,9 @@ app.setLocation("CENTER")
     Hides/shows the GUI's title bar.  
     Note, if the title bar is removed, it's not possible to move or resize the GUI.  
 
-##GUI Design
+---
+<div style='text-align: center;'>
+*Advertisement*  
 <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
 <ins class="adsbygoogle"
     style="display:block"
@@ -72,7 +74,11 @@ app.setLocation("CENTER")
     data-ad-client="ca-pub-6185596049817878"
     data-ad-slot="5627392164"></ins>
 <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
 ----
+
+##GUI Design
+---
 It's possible to change the default colours and fonts for widgets in the GUI.
 
 ###Colour

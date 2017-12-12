@@ -202,7 +202,9 @@ app.go()
     This will return the contents of all Entries in the app, as a dictionary.  
     NB. *numericEntries* always return a float.  
 
-##Button
+---
+<div style='text-align: center;'>
+*Advertisement*  
 <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
 <ins class="adsbygoogle"
     style="display:block"
@@ -211,7 +213,12 @@ app.go()
     data-ad-client="ca-pub-6185596049817878"
     data-ad-slot="5627392164"></ins>
 <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-____
+</div>
+---
+
+##Button
+---
+
 A clickable button, that will call a function.  
 These are the key to starting an interactive application.  
 The GUI is looping, waiting for something to happen.  
@@ -524,7 +531,9 @@ app.go()
 * `.getAllSpinBoxes()`  
     This will return the contents of all SpinBoxes in the app, as a dictionary.  
 
-##ListBox
+---
+<div style='text-align: center;'>
+*Advertisement*  
 <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
 <ins class="adsbygoogle"
     style="display:block"
@@ -533,7 +542,12 @@ app.go()
     data-ad-client="ca-pub-6185596049817878"
     data-ad-slot="5627392164"></ins>
 <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
 ---
+
+##ListBox
+---
+
 A box containing a list of items, single or multi-select
 
 ![ListBox](img/1_listBox.png)  
@@ -770,7 +784,9 @@ app.go()
 * `.getAllTextAreas()`  
     This will return the contents of all TextAreas in the app, as a dictionary.  
 
-##Meter  
+---
+<div style='text-align: center;'>
+*Advertisement*  
 <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
 <ins class="adsbygoogle"
     style="display:block"
@@ -779,7 +795,12 @@ app.go()
     data-ad-client="ca-pub-6185596049817878"
     data-ad-slot="5627392164"></ins>
 <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
 ---
+
+##Meter  
+---
+
 Various styles of progress meter:  
 
 * #### Meter  

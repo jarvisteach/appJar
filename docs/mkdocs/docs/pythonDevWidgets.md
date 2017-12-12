@@ -34,7 +34,9 @@ app.go()
 * ```.clearMicroBit(title)```  
     Will turn off all of the pixels - setting their brightness to 0.  
 
-###GoogleMaps
+---
+<div style='text-align: center;'>
+*Advertisement*  
 <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
 <ins class="adsbygoogle"
     style="display:block"
@@ -43,8 +45,11 @@ app.go()
     data-ad-client="ca-pub-6185596049817878"
     data-ad-slot="5627392164"></ins>
 <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
 ---
 
+###GoogleMaps
+---
 A self-contained GoogleMaps widget.  
 It provides useful functionality for finding somewhere on Earth.  
 All requests for map data are performed in the background, so the UI shouldn't become unresponsive.  
@@ -190,7 +195,9 @@ app.go()
 * `.getTreeSelectedXML(title)`  
     Return the selected node (and any children) as XML
 
-###Grid
+---
+<div style='text-align: center;'>
+*Advertisement*  
 <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
 <ins class="adsbygoogle"
     style="display:block"
@@ -199,6 +206,10 @@ app.go()
     data-ad-client="ca-pub-6185596049817878"
     data-ad-slot="5627392164"></ins>
 <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
+---
+
+###Grid
 ---
 Used to create a spreadsheet like interface.  
 The grid has mouse interactivity, with mouse-over highlighting, and mouse-click highlighting.  
@@ -374,7 +385,9 @@ with gui() as app:
 * `.refreshPlot(title)`  
     Call this any time you modify the axes.  
 
-### Canvas
+---
+<div style='text-align: center;'>
+*Advertisement*  
 <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
 <ins class="adsbygoogle"
     style="display:block"
@@ -383,8 +396,11 @@ with gui() as app:
     data-ad-client="ca-pub-6185596049817878"
     data-ad-slot="5627392164"></ins>
 <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
 ---
 
+### Canvas
+---
 This lets you embed a canvas in appJar
 
 ![Canvas](img/1_canvas.png)  

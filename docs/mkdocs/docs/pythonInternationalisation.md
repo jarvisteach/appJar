@@ -59,7 +59,9 @@ It is possible to set the starting language as a command line argument:
 
 This will override any language set in the call to `.go()`, and removes the need to set one at all.  
 
-### Widget Support
+---
+<div style='text-align: center;'>
+*Advertisement*  
 <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
 <ins class="adsbygoogle"
     style="display:block"
@@ -68,8 +70,11 @@ This will override any language set in the call to `.go()`, and removes the need
     data-ad-client="ca-pub-6185596049817878"
     data-ad-slot="5627392164"></ins>
 <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
 ---
 
+### Widget Support
+---
 **NB.** changing the text of a widget through `setXXX()` method's will work, but will not be remembered if the language is changed.  
 
 * `[LABEL]`, `[BUTTON]`, `[ENTRY]`, `[CHECKBOX]`, `[MESSAGE]`, `[LINK]`, `[LABELFRAME]`, `[TOGGLEFRAME]`  
@@ -208,7 +213,9 @@ l2: Another new tooltip text
 e1: Some more tooltip text
 ```
 
-### External Translations
+---
+<div style='text-align: center;'>
+*Advertisement*  
 <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
 <ins class="adsbygoogle"
     style="display:block"
@@ -217,6 +224,10 @@ e1: Some more tooltip text
     data-ad-client="ca-pub-6185596049817878"
     data-ad-slot="5627392164"></ins>
 <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
+---
+
+### External Translations
 ---
 
 It's also possible to store additional translations to use on the fly. These are extra pieces of text you might want to translate during the running of the application, which aren't linked directly to a widget.  

@@ -56,7 +56,9 @@ The toolbar will also gain an extra button (a pin) allowing the user to configur
 * `.showToolbar()` & `.hideToolbar()`  
     Will show/hide the toolbar.  
 
-##Menubar
+---
+<div style='text-align: center;'>
+*Advertisement*  
 <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
 <ins class="adsbygoogle"
     style="display:block"
@@ -65,8 +67,11 @@ The toolbar will also gain an extra button (a pin) allowing the user to configur
     data-ad-client="ca-pub-6185596049817878"
     data-ad-slot="5627392164"></ins>
 <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
 ---
 
+##Menubar
+---
 Adds a standard Menubar along the top of the GUI.  
 On Windows/Linux a menubar will only be shown, once the first menu has been added.  
 On Mac, a menubar is always present.  

@@ -40,8 +40,9 @@ location = app.getEntry("location")
 app.debug("User %s, has accessed the app from %s", name, location)
 ```
 
-## Logging to file
-
+---
+<div style='text-align: center;'>
+*Advertisement*  
 <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
 <ins class="adsbygoogle"
     style="display:block"
@@ -50,6 +51,10 @@ app.debug("User %s, has accessed the app from %s", name, location)
     data-ad-client="ca-pub-6185596049817878"
     data-ad-slot="5627392164"></ins>
 <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
+---
+
+## Logging to file
 ---
 
 One of the benefits of using Python's logging capabilities, is the ability to have them logged to a file.  

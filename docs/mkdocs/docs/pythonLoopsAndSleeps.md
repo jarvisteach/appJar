@@ -22,7 +22,9 @@ It will return an ID, which can be used to cancel the function, if it hasn't alr
 * `.afterCancel(afterId)`  
 This will cancel the specified function, if it hasn't already started.  
 
-## Infinite Loops  
+---
+<div style='text-align: center;'>
+*Advertisement*  
 <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
 <ins class="adsbygoogle"
     style="display:block"
@@ -31,6 +33,10 @@ This will cancel the specified function, if it hasn't already started.
     data-ad-client="ca-pub-6185596049817878"
     data-ad-slot="5627392164"></ins>
 <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
+---
+
+## Infinite Loops  
 ---
 
 If you just want something to keep happening forever - maybe updating a statusbar or showing a clock, you can use appJar's built in loop.  
