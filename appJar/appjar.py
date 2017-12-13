@@ -4779,6 +4779,10 @@ class gui(object):
 # FUNCTION for optionMenus
 #####################################
 
+    def combo(self, title, value=None, *args, **kwargs):
+        """ shortner for optionBox() """
+        return self.optionBox(title, value, *args, **kwargs)
+        
     def option(self, title, value=None, *args, **kwargs):
         """ shortner for optionBox() """
         return self.optionBox(title, value, *args, **kwargs)
@@ -8981,6 +8985,26 @@ class gui(object):
 #####################################
 # FUNCTIONS to show pop-up dialogs
 #####################################
+
+    def popUp(self, title, message, kind="info", parent=None):
+        """ shortener for the various popUps """
+        if kind == "info": return self.infoBox(title, message, parent)
+        elif kind == "error": return self.errorBox(title, message, parent)
+        elif kind == "warning": return self.warningBox(title, message, parent)
+        elif kind == "yesno": return self.yesNoBox(title, message, parent)
+        elif kind == "question": return self.questionBox(title, message, parent)
+        elif kind == "ok": return self.okBox(title, message, parent)
+        elif kind == "retry": return self.retryBox(title, message, parent)
+        elif kind == "string": return self.stringBox(title, message, parent)
+        elif kind == "integer": return self.integerBox(title, message, parent)
+        elif kind == "float": return self.floatBox(title, message, parent)
+        elif kind == "text": return self.textBox(title, message, parent)
+        elif kind == "number": return self.numberBox(title, message, parent)
+        else: gui.error("Invalid popUp kind: %s, with title: %s", kind, title)
+
+    def prompt(self, title, message, kind="string", parent=None):
+        return self.popUp(title, message, kind, parent)
+
     # function to access the last made pop_up
     def getPopUp(self):
         return self.topLevel.POP_UP
