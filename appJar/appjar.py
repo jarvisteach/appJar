@@ -7051,7 +7051,18 @@ class gui(object):
             if submit is not None: self.setLabelSubmitFunction(title, submit)
             if drop is not None: self.setLabelDropTarget(title, drop)
 
+            self._configWidget(title, label, **kwargs)
+
             return label
+
+    def _configWidget(self, title, widget, **kwargs):
+        # remove any unwanted keys
+        for key in ["row", "column", "colspan", "rowspan"]:
+            kwargs.pop(key, None)
+
+        # now pass the kwargs to the config function
+        try: widget.config(**kwargs)
+        except: gui.error("Unexpected **kwarg for widget %s: %s", title, kwargs)
 
     def __flash(self):
         if not self.alive: return
@@ -7071,7 +7082,7 @@ class gui(object):
     def addSelectableLabel(self, title, text=None, row=None, column=0, colspan=0, rowspan=0):
         return self.addLabel(title, text, row, column, colspan, rowspan, selectable=True)
 
-    def addLabel(self, title, text=None, row=None, column=0, colspan=0, rowspan=0, selectable=False):
+    def addLabel(self, title, text=None, row=None, column=0, colspan=0, rowspan=0, selectable=False, **kwargs):
         """Add a label to the GUI.
         :param title: a unique identifier for the Label
         :param text: optional text for the Label
