@@ -7045,24 +7045,30 @@ class gui(object):
             else: self.setLabel(title, value)
         else:
             kind = "standard" if "kind" not in kwargs else kwargs.pop("kind").lower().strip()
-            submit = None if "submit" not in kwargs else kwargs.pop("submit")
-            drop = None if "drop" not in kwargs else kwargs.pop("drop")
 
             if kind == "flash": label = self.addFlashLabel(title, value, *args, **kwargs)
             elif kind == "selectable": label = self.addSelectableLabel(title, value, *args, **kwargs)
             else: label = self.addLabel(title, value, *args, **kwargs)
 
-            if submit is not None: self.setLabelSubmitFunction(title, submit)
-            if drop is not None: self.setLabelDropTarget(title, drop)
-
             self._configWidget(title, label, **kwargs)
-
             return label
 
     def _configWidget(self, title, widget, **kwargs):
         # remove any unwanted keys
         for key in ["row", "column", "colspan", "rowspan"]:
             kwargs.pop(key, None)
+
+        tip = kwargs.pop("tooltip", None)
+        drop = kwargs.pop("drop", None)
+        submit = kwargs.pop("submit", None)
+        menu = kwargs.pop("menu", False)
+
+        if tip is not None: self.__addTooltip(widget, tip, None)
+        if drop is not None: self.__registerExternalDropTarget(title, widget, drop[0], drop[1])
+        if submit is not None: self.setLabelSubmitFunction(title, submit)
+        if menu:
+            try: self.__addRightClickMenu(widget)
+            except: gui.error("Can't add menu to: %s", title)
 
         # now pass the kwargs to the config function
         try: widget.config(**kwargs)
