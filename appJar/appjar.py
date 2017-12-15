@@ -986,12 +986,14 @@ class gui(object):
         elif event.widget.dndFunction is not None:
             event.widget.dndFunction(event.data)
         else:
-            if widgType in ["Entry", "AutoCompleteEntry"]:
+            if widgType in ["Entry", "AutoCompleteEntry", "SelectableLabel"]:
+                if widgType == "SelectableLabel": event.widget.configure(state="normal")
                 if event.widget.dropReplace:
                     event.widget.delete(0, END)
                 event.widget.insert(END, event.data)
                 event.widget.focus_set()
                 event.widget.icursor(END)
+                if widgType == "SelectableLabel": event.widget.configure(state="readonly")
             elif widgType in ["TextArea", "AjText", "ScrolledText", "AjScrolledText"]:
                 if event.widget.dropReplace:
                     event.widget.delete(1.0, END)
@@ -2566,7 +2568,6 @@ class gui(object):
                     if self.ttkFlag:
                         gui.debug("%s configured with ttk style %s", name, value)
                         item.config(style=value)
-                        print(item.cget("style"))
                     else:
                         self.warn("Error configuring %s: can't set ttk style, not in ttk mode.", name)
                 elif option == 'align':
@@ -2664,8 +2665,11 @@ class gui(object):
 
     # generic function for over events
     def __validateFunctionList(self, functions, mode):
-        if not isinstance(functions, list):
+        if type(functions) == tuple:
+            functions = list(functions)
+        elif type(functions) != list:
             functions = [functions]
+
         if len(functions) == 1:
             functions.append(None)
         if len(functions) != 2:
@@ -7039,36 +7043,48 @@ class gui(object):
 
     def label(self, title, value=None, *args, **kwargs):
         """ adds, sets & gets labels all in one go """
-        try: self.widgetManager.verify(self.Widgets.Label, title)
+        widgKind = self.Widgets.Label
+
+        try: self.widgetManager.verify(widgKind, title)
         except: # widget exists
+            self._configWidget(title, self.widgetManager.get(widgKind, title), widgKind, **kwargs)
             if value is None: return self.getLabel(title)
             else: self.setLabel(title, value)
         else:
-            kind = "standard" if "kind" not in kwargs else kwargs.pop("kind").lower().strip()
+#            kind = "standard" if "kind" not in kwargs else kwargs.pop("kind").lower().strip()
+            kind = kwargs.pop("kind", "standard").lower().strip()
 
             if kind == "flash": label = self.addFlashLabel(title, value, *args, **kwargs)
             elif kind == "selectable": label = self.addSelectableLabel(title, value, *args, **kwargs)
             else: label = self.addLabel(title, value, *args, **kwargs)
 
-            self._configWidget(title, label, **kwargs)
+            self._configWidget(title, label, widgKind, **kwargs)
             return label
 
-    def _configWidget(self, title, widget, **kwargs):
+    def _configWidget(self, title, widget, kind, **kwargs):
         # remove any unwanted keys
         for key in ["row", "column", "colspan", "rowspan"]:
             kwargs.pop(key, None)
 
         tip = kwargs.pop("tooltip", None)
-        drop = kwargs.pop("drop", None)
-        submit = kwargs.pop("submit", None)
         menu = kwargs.pop("menu", False)
 
+        change = kwargs.pop("change", None)
+        submit = kwargs.pop("submit", None)
+        over = kwargs.pop("over", None)
+        drag = kwargs.pop("drag", None)
+        drop = kwargs.pop("drop", None)
+
         if tip is not None: self.__addTooltip(widget, tip, None)
-        if drop is not None: self.__registerExternalDropTarget(title, widget, drop[0], drop[1])
-        if submit is not None: self.setLabelSubmitFunction(title, submit)
         if menu:
             try: self.__addRightClickMenu(widget)
             except: gui.error("Can't add menu to: %s", title)
+
+        if change is not None: self.__bindEvent(kind, title, widget, change, "change", key=None)
+        if submit is not None: self.__bindEvent(kind, title, widget, submit, "submit", key=None)
+        if over is not None: self.__bindOverEvent(kind, title, widget, over, None, None)
+        if drag is not None: self.__bindDragEvent(kind, title, widget, drag, None, None)
+        if drop is not None: self.__registerExternalDropTarget(title, widget, drop)
 
         # now pass the kwargs to the config function
         try: widget.config(**kwargs)
@@ -7083,13 +7099,13 @@ class gui(object):
                 lab.config(background=fg, foreground=bg)
         self.flashId = self.topLevel.after(250, self.__flash)
 
-    def addFlashLabel(self, title, text=None, row=None, column=0, colspan=0, rowspan=0):
+    def addFlashLabel(self, title, text=None, row=None, column=0, colspan=0, rowspan=0, **kwargs):
         lab = self.addLabel(title, text, row, column, colspan, rowspan)
         self.widgetManager.log(self.Widgets.FlashLabel, lab)
         self.doFlash = True
         return lab
 
-    def addSelectableLabel(self, title, text=None, row=None, column=0, colspan=0, rowspan=0):
+    def addSelectableLabel(self, title, text=None, row=None, column=0, colspan=0, rowspan=0, **kwargs):
         return self.addLabel(title, text, row, column, colspan, rowspan, selectable=True)
 
     def addLabel(self, title, text=None, row=None, column=0, colspan=0, rowspan=0, selectable=False, **kwargs):
@@ -7112,7 +7128,7 @@ class gui(object):
                 lab = ttk.Label(self.getContainer(), text=text)
         else:
             lab = SelectableLabel(self.getContainer(), text=text)
-            lab.config(justify=LEFT, font=self.labelFont, background=self.__getContainerBg())
+            lab.config(justify=CENTER, font=self.labelFont, background=self.__getContainerBg())
             lab.origBg = self.__getContainerBg()
 
         lab.inContainer = False
