@@ -69,7 +69,7 @@ def drag(lbl):
 
 # called when a drag stops - check the label being dropped on
 def drop(lbl):
-    if lbl == "dd": 
+    if lbl == "dd":
         app.setLabel("dd", app.getLabel(dragged))
         app.setLabelBg("dd", colours[int(dragged[2])])
 
@@ -105,11 +105,11 @@ def scale(name):
 def move(direction):
     if direction == ">":
         for item in app.getListBox("Animals"):
-            app.addListItem("Sports",item) 
+            app.addListItem("Sports",item)
             app.removeListItem("Animals", item)
     elif direction == "<":
         for item in app.getListBox("Sports"):
-            app.addListItem("Animals",item) 
+            app.addListItem("Animals",item)
             app.removeListItem("Sports", item)
     elif direction == "<<":
         app.addListItems("Animals", app.getAllListItems("Sports"))
@@ -333,7 +333,7 @@ with gui("ShowCase") as app:
                     app.addLabel("p3", "Pane 3")
                 with app.panedFrame("d"):
                     app.addLabel("p4", "Pane 4")
-          
+
         with app.tab("Labels"):
             app.setSticky("nesw")
 
