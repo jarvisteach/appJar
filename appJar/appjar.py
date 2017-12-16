@@ -6636,19 +6636,72 @@ class gui(object):
 
     def button(self, title, value=None, *args, **kwargs):
         """ adds, sets & gets buttons all in one go """
-        if value is None: return self.getButton(title)
+        widgKind = self.Widgets.Button
+
+        if value is None:
+            if len(kwargs) > 0:
+                self._configWidget(title, self.widgetManager.get(widgKind, title), widgKind, **kwargs)
+            return self.getButton(title)
         else:
             try: self.widgetManager.verify(self.Widgets.Button, title)
-            except: self.setButton(title, value)
+            except:
+                if len(kwargs) > 0:
+                    self._configWidget(title, self.widgetManager.get(widgKind, title), widgKind, **kwargs)
+                self.setButton(title, value)
             else:
                 image = None if "image" not in kwargs else kwargs.pop("image")
                 icon = None if "icon" not in kwargs else kwargs.pop("icon")
+                name = None if "name" not in kwargs else kwargs.pop("name")
 
-                if image is not None: button = self.addImageButton(title, value, image, *args, **kwargs)
-                elif icon is not None: button = self.addIconButton(title, value, icon, *args, **kwargs)
-                else: button = self.addButton(title, value, *args, **kwargs)
+                if image is not None: button = self._buttonMaker(title, value, "image", extra=image, *args, **kwargs)
+                elif icon is not None: button = self._buttonMaker(title, value, "icon", extra=icon, *args, **kwargs)
+                elif name is not None: button = self._buttonMaker(title, value, "named", extra=name, *args, **kwargs)
+                else: button = self._buttonMaker(title, value, "button", extra=None, *args, **kwargs)
+
+                self._configWidget(title, button, widgKind, **kwargs)
 
                 return button
+
+    def _buttonMaker(self, title, func, kind, extra=None, row=None, column=0, colspan=0, rowspan=0, *args, **kwargs):
+        """ internal wrapper to hide kwargs from original add functions """
+        align = kwargs.pop("align", None)
+        if kind == "button": return self.addButton(title, func, row, column, colspan, rowspan)
+        elif kind == "named": return self.addNamedButton(extra, title, func, row, column, colspan, rowspan)
+        elif kind == "image": return self.addImageButton(title, func, extra, row, column, colspan, rowspan, align=align)
+        elif kind == "icon": return self.addIconButton(title, func, extra, row, column, colspan, rowspan, align=align)
+
+    def _configWidget(self, title, widget, kind, **kwargs):
+        # remove any unwanted keys
+        for key in ["row", "column", "colspan", "rowspan"]:
+            kwargs.pop(key, None)
+
+        tooltip = kwargs.pop("tooltip", None)
+        change = kwargs.pop("change", None)
+        submit = kwargs.pop("submit", None)
+        over = kwargs.pop("over", None)
+        drag = kwargs.pop("drag", None)
+        drop = kwargs.pop("drop", None)
+        focus = kwargs.pop('focus', False)
+
+        if tooltip is not None: self.__addTooltip(widget, tooltip, None)
+        if focus: widget.focus_set()
+
+        if change is not None: self.__bindEvent(kind, title, widget, change, "change", key=None)
+        if submit is not None: self.__bindEvent(kind, title, widget, submit, "submit", key=None)
+        if over is not None: self.__bindOverEvent(kind, title, widget, over, None, None)
+        if drag is not None: self.__bindDragEvent(kind, title, widget, drag, None, None)
+        if drop is not None: self.__registerExternalDropTarget(title, widget, drop)
+
+        # now pass the kwargs to the config function, ignore any baddies
+        while True:
+            try: widget.config(**kwargs)
+            except TclError as e:
+                key=str(e).split()[2][2:-1]
+                val=kwargs.pop(key)
+                gui.error("Invalid argument for %s %s - %s:%s", self.Widgets.name(kind), title, key, val)
+            else:
+                break
+
 
     def __buildButton(self, title, func, frame, name=None):
         if name is None:
@@ -7047,48 +7100,25 @@ class gui(object):
 
         try: self.widgetManager.verify(widgKind, title)
         except: # widget exists
-            self._configWidget(title, self.widgetManager.get(widgKind, title), widgKind, **kwargs)
+            if len(kwargs) > 0:
+                self._configWidget(title, self.widgetManager.get(widgKind, title), widgKind, **kwargs)
             if value is None: return self.getLabel(title)
             else: self.setLabel(title, value)
         else:
-#            kind = "standard" if "kind" not in kwargs else kwargs.pop("kind").lower().strip()
             kind = kwargs.pop("kind", "standard").lower().strip()
 
-            if kind == "flash": label = self.addFlashLabel(title, value, *args, **kwargs)
-            elif kind == "selectable": label = self.addSelectableLabel(title, value, *args, **kwargs)
-            else: label = self.addLabel(title, value, *args, **kwargs)
+            if kind == "flash": label = self._labelMaker(title, value, kind, *args, **kwargs)
+            elif kind == "selectable": label = self._labelMaker(title, value, kind, *args, **kwargs)
+            else: label = self._labelMaker(title, value, "label", *args, **kwargs)
 
             self._configWidget(title, label, widgKind, **kwargs)
             return label
 
-    def _configWidget(self, title, widget, kind, **kwargs):
-        # remove any unwanted keys
-        for key in ["row", "column", "colspan", "rowspan"]:
-            kwargs.pop(key, None)
-
-        tip = kwargs.pop("tooltip", None)
-        menu = kwargs.pop("menu", False)
-
-        change = kwargs.pop("change", None)
-        submit = kwargs.pop("submit", None)
-        over = kwargs.pop("over", None)
-        drag = kwargs.pop("drag", None)
-        drop = kwargs.pop("drop", None)
-
-        if tip is not None: self.__addTooltip(widget, tip, None)
-        if menu:
-            try: self.__addRightClickMenu(widget)
-            except: gui.error("Can't add menu to: %s", title)
-
-        if change is not None: self.__bindEvent(kind, title, widget, change, "change", key=None)
-        if submit is not None: self.__bindEvent(kind, title, widget, submit, "submit", key=None)
-        if over is not None: self.__bindOverEvent(kind, title, widget, over, None, None)
-        if drag is not None: self.__bindDragEvent(kind, title, widget, drag, None, None)
-        if drop is not None: self.__registerExternalDropTarget(title, widget, drop)
-
-        # now pass the kwargs to the config function
-        try: widget.config(**kwargs)
-        except: gui.error("Unexpected **kwarg for widget %s: %s", title, kwargs)
+    def _labelMaker(self, title, text=None, kind="label", row=None, column=0, colspan=0, rowspan=0, **kwargs):
+        """ Internal wrapper, to hide kwargs from original add functions """
+        if kind == "flash": return self.addFlashLabel(title, text, row, column, colspan, rowspan)
+        elif kind == "selectable": return self.addSelectableLabel(title, text, row, column, colspan, rowspan)
+        elif kind == "label": return self.addLabel(title, text, row, column, colspan, rowspan)
 
     def __flash(self):
         if not self.alive: return
@@ -7099,16 +7129,16 @@ class gui(object):
                 lab.config(background=fg, foreground=bg)
         self.flashId = self.topLevel.after(250, self.__flash)
 
-    def addFlashLabel(self, title, text=None, row=None, column=0, colspan=0, rowspan=0, **kwargs):
+    def addFlashLabel(self, title, text=None, row=None, column=0, colspan=0, rowspan=0):
         lab = self.addLabel(title, text, row, column, colspan, rowspan)
         self.widgetManager.log(self.Widgets.FlashLabel, lab)
         self.doFlash = True
         return lab
 
-    def addSelectableLabel(self, title, text=None, row=None, column=0, colspan=0, rowspan=0, **kwargs):
+    def addSelectableLabel(self, title, text=None, row=None, column=0, colspan=0, rowspan=0):
         return self.addLabel(title, text, row, column, colspan, rowspan, selectable=True)
 
-    def addLabel(self, title, text=None, row=None, column=0, colspan=0, rowspan=0, selectable=False, **kwargs):
+    def addLabel(self, title, text=None, row=None, column=0, colspan=0, rowspan=0, selectable=False):
         """Add a label to the GUI.
         :param title: a unique identifier for the Label
         :param text: optional text for the Label
@@ -7492,8 +7522,12 @@ class gui(object):
 
     def entry(self, title, value=None, *args, **kwargs):
         """ adds, sets & gets entries all in one go """
+        widgKind = self.Widgets.Entry
+
         try: self.widgetManager.verify(self.Widgets.Entry, title)
         except:
+            if len(kwargs) > 0:
+                self._configWidget(title, self.widgetManager.get(widgKind, title), widgKind, **kwargs)
             if value is None: return self.getEntry(title)
             else: self.setEntry(title, value, *args, **kwargs)
         else:
@@ -7501,19 +7535,15 @@ class gui(object):
 
             # remove setter values from kwargs
             default = None if "default" not in kwargs else kwargs.pop("default")
-            focus = False if "focus" not in kwargs else kwargs.pop("focus")
             limit = None if "limit" not in kwargs else kwargs.pop("limit")
             case = None if "case" not in kwargs else kwargs.pop("case").lower().strip()
             rows = None if "rows" not in kwargs else kwargs.pop("rows")
-            change = None if "change" not in kwargs else kwargs.pop("change")
-            submit = None if "submit" not in kwargs else kwargs.pop("submit")
-            drop = None if "drop" not in kwargs else kwargs.pop("drop")
 
             # create the entry widget
             if kind == "auto":
-                ent = self.__entryMaker(title, *args, kind=kind, words=value, **kwargs)
+                ent = self._entryMaker(title, *args, kind=kind, words=value, **kwargs)
             else:
-                ent = self.__entryMaker(title, *args, kind=kind, **kwargs)
+                ent = self._entryMaker(title, *args, kind=kind, **kwargs)
                 if not ent: return
 
             # apply any setter values
@@ -7521,20 +7551,17 @@ class gui(object):
             if case == "upper": self.setEntryUpperCase(title)
             elif case == "lower": self.setEntryLowerCase(title)
 
-            if change is not None: self.setEntryChangeFunction(title, change)
-            if submit is not None: self.setEntrySubmitFunction(title, submit)
             if default is not None: self.setEntryDefault(title, default)
-            if drop is not None: self.setEntryDropTarget(title, drop)
 
             if kind != "auto":
                 if value is not None: self.setEntry(title, value)
             else:
                 if rows is not None: self.setAutoEntryNumRows(title, rows)
-            if focus: self.setEntryFocus(title)
 
+            self._configWidget(title, ent, widgKind, **kwargs)
             return ent
 
-    def __entryMaker(self, title, row=None, column=0, colspan=0, rowspan=0, secret=False, label=False, kind="standard", words=None):
+    def _entryMaker(self, title, row=None, column=0, colspan=0, rowspan=0, secret=False, label=False, kind="standard", words=None, **kwargs):
         if label:
             frame = self.__getLabelBox(title, column)
         else:
@@ -7570,52 +7597,52 @@ class gui(object):
         return ent
 
     def addEntry(self, title, row=None, column=0, colspan=0, rowspan=0, secret=False):
-        return self.__entryMaker(title, row, column, colspan, rowspan, secret=secret, label=False, kind="standard")
+        return self._entryMaker(title, row, column, colspan, rowspan, secret=secret, label=False, kind="standard")
 
     def addLabelEntry(self, title, row=None, column=0, colspan=0, rowspan=0, secret=False):
-        return self.__entryMaker(title, row, column, colspan, rowspan, secret, label=True)
+        return self._entryMaker(title, row, column, colspan, rowspan, secret, label=True)
 
     def addSecretEntry(self, title, row=None, column=0, colspan=0, rowspan=0):
-        return self.__entryMaker(title, row, column, colspan, rowspan, True)
+        return self._entryMaker(title, row, column, colspan, rowspan, True)
 
     def addLabelSecretEntry(self, title, row=None, column=0, colspan=0, rowspan=0):
-        return self.__entryMaker(title, row, column, colspan, rowspan, secret=True, label=True)
+        return self._entryMaker(title, row, column, colspan, rowspan, secret=True, label=True)
 
     def addSecretLabelEntry(self, title, row=None, column=0, colspan=0, rowspan=0):
-        return self.__entryMaker(title, row, column, colspan, rowspan, secret=True, label=True)
+        return self._entryMaker(title, row, column, colspan, rowspan, secret=True, label=True)
 
     def addFileEntry(self, title, row=None, column=0, colspan=0, rowspan=0):
-        return self.__entryMaker(title, row, column, colspan, rowspan, secret=False, label=False, kind="file")
+        return self._entryMaker(title, row, column, colspan, rowspan, secret=False, label=False, kind="file")
 
     def addLabelFileEntry(self, title, row=None, column=0, colspan=0, rowspan=0):
-        return self.__entryMaker(title, row, column, colspan, rowspan, secret=False, label=True, kind="file")
+        return self._entryMaker(title, row, column, colspan, rowspan, secret=False, label=True, kind="file")
 
     def addDirectoryEntry(self, title, row=None, column=0, colspan=0, rowspan=0):
-        return self.__entryMaker(title, row, column, colspan, rowspan, secret=False, label=False, kind="directory")
+        return self._entryMaker(title, row, column, colspan, rowspan, secret=False, label=False, kind="directory")
 
     def addLabelDirectoryEntry(self, title, row=None, column=0, colspan=0, rowspan=0):
-        return self.__entryMaker(title, row, column, colspan, rowspan, secret=False, label=True, kind="directory")
+        return self._entryMaker(title, row, column, colspan, rowspan, secret=False, label=True, kind="directory")
 
     def addValidationEntry(self, title, row=None, column=0, colspan=0, rowspan=0, secret=False):
-        return self.__entryMaker(title, row, column, colspan, rowspan, secret=False, label=False, kind="validation")
+        return self._entryMaker(title, row, column, colspan, rowspan, secret=False, label=False, kind="validation")
 
     def addLabelValidationEntry(self, title, row=None, column=0, colspan=0, rowspan=0, secret=False):
-        return self.__entryMaker(title, row, column, colspan, rowspan, secret=False, label=True, kind="validation")
+        return self._entryMaker(title, row, column, colspan, rowspan, secret=False, label=True, kind="validation")
 
     def addAutoEntry(self, title, words, row=None, column=0, colspan=0, rowspan=0):
-        return self.__entryMaker(title, row, column, colspan, rowspan, secret=False, label=False, kind="auto", words=words)
+        return self._entryMaker(title, row, column, colspan, rowspan, secret=False, label=False, kind="auto", words=words)
 
     def addLabelAutoEntry(self, title, words, row=None, column=0, colspan=0, rowspan=0, secret=False):
-        return self.__entryMaker(title, row, column, colspan, rowspan, secret=False, label=True, kind="auto", words=words)
+        return self._entryMaker(title, row, column, colspan, rowspan, secret=False, label=True, kind="auto", words=words)
 
     def addNumericEntry(self, title, row=None, column=0, colspan=0, rowspan=0, secret=False):
-        return self.__entryMaker(title, row, column, colspan, rowspan, secret=secret, label=False, kind="numeric")
+        return self._entryMaker(title, row, column, colspan, rowspan, secret=secret, label=False, kind="numeric")
 
     def addLabelNumericEntry(self, title, row=None, column=0, colspan=0, rowspan=0, secret=False):
-        return self.__entryMaker(title, row, column, colspan, rowspan, secret=secret, label=True, kind="numeric")
+        return self._entryMaker(title, row, column, colspan, rowspan, secret=secret, label=True, kind="numeric")
 
     def addNumericLabelEntry(self, title, row=None, column=0, colspan=0, rowspan=0, secret=False):
-        return self.__entryMaker(title, row, column, colspan, rowspan, secret=secret, label=True, kind="numeric")
+        return self._entryMaker(title, row, column, colspan, rowspan, secret=secret, label=True, kind="numeric")
 
     def __getDirName(self, title):
         self.__getFileName(title, selectFile=False)
