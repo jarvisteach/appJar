@@ -28,9 +28,9 @@ with gui("Entry Demo") as app:
     app.entry("e9", kind="directory", change=change)
     app.label("l1", "hiya", focus=True, menu=True)
     x = app.gr()
-    app.text("t1", column=0, row=x, change=change, drop=drop, fg="red")
-    app.text("t2", scroll=True, column=1, row=x, over=change, bg="pink")
-    app.button("PRESS", press)
+    app.text("t1", pos=(x, 0), change=change, drop=drop, fg="red")
+    app.text("t2", scroll=True, pos=(x, 1), over=change, bg="pink")
+    app.button("PRESS", press, pos=(None, 0, 2))
 
-    app.setButtonFont(20, ("Times", "20", "underline"))
+    app.setButtonFont(size=20, family="Times", underline=True)
 

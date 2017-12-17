@@ -44,6 +44,14 @@ The following positional parameters are available when adding widgets:
 | rowspan | integer | 1 | The number of grid rows to stretch the widget across. |
 | colspan | integer | 1 | The number of grid columns to stretch the widget across. |
 
+Alternatively, they can be specified as a list/tuple:
+
+```python
+app.label("title0", "text", pos=(1, 0))      # ADD a label
+app.label("title2", "text", pos=(1, 1))      # ADD a label
+app.label("title3", "text", pos=(2, 0, 2))   # ADD a label
+```
+
 ## Events  
 ----
 

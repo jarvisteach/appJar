@@ -3213,10 +3213,13 @@ class gui(object):
 
     # convenience function to set RCS, referencing the current container's
     # settings
-    def __getRCS(self, row, column, colspan, rowspan):
-        if row is None:
+    def _getRCS(self, row, column, colspan, rowspan):
+        if row == -1:
             row = self.containerStack[-1]['emptyRow']
-        self.containerStack[-1]['emptyRow'] = row + 1
+        else:
+            if row is None:
+                row = self.containerStack[-1]['emptyRow']
+            self.containerStack[-1]['emptyRow'] = row + 1
 
         if column >= self.containerStack[-1]['colCount']:
             self.containerStack[-1]['colCount'] = column + 1
@@ -3439,7 +3442,7 @@ class gui(object):
             return
 
         # else, add to grid
-        row, column, colspan, rowspan = self.__getRCS(row, column, colspan, rowspan)
+        row, column, colspan, rowspan = self._getRCS(row, column, colspan, rowspan)
 
         # build a dictionary for the named params
         iX = self.containerStack[-1]['ipadx']
@@ -6665,6 +6668,7 @@ class gui(object):
                 image = None if "image" not in kwargs else kwargs.pop("image")
                 icon = None if "icon" not in kwargs else kwargs.pop("icon")
                 name = None if "name" not in kwargs else kwargs.pop("name")
+                kwargs = self._parsePos(kwargs.pop("pos", []), kwargs)
 
                 if image is not None: button = self._buttonMaker(title, value, "image", extra=image, *args, **kwargs)
                 elif icon is not None: button = self._buttonMaker(title, value, "icon", extra=icon, *args, **kwargs)
@@ -7113,6 +7117,15 @@ class gui(object):
 # FUNCTIONS for labels
 #####################################
 
+    def _parsePos(self, pos, kwargs):
+        # alternative for specifying position
+        if type(pos) != list and type(pos) != tuple: pos = (pos,)
+        if len(pos) > 0: kwargs["row"] = pos[0]
+        if len(pos) > 1: kwargs["column"] = pos[1]
+        if len(pos) > 2: kwargs["colspan"] = pos[2]
+        if len(pos) > 3: kwargs["rowspan"] = pos[3]
+        return kwargs
+
     def label(self, title, value=None, *args, **kwargs):
         """ adds, sets & gets labels all in one go """
         widgKind = self.Widgets.Label
@@ -7125,6 +7138,7 @@ class gui(object):
             else: self.setLabel(title, value)
         else:
             kind = kwargs.pop("kind", "standard").lower().strip()
+            kwargs = self._parsePos(kwargs.pop("pos", []), kwargs)
 
             if kind == "flash": label = self._labelMaker(title, value, kind, *args, **kwargs)
             elif kind == "selectable": label = self._labelMaker(title, value, kind, *args, **kwargs)
@@ -7245,6 +7259,7 @@ class gui(object):
             else: self.setTextArea(title, value, *args, **kwargs)
         else:
             scroll = False if "scroll" not in kwargs else kwargs.pop("scroll")
+            kwargs = self._parsePos(kwargs.pop("pos", []), kwargs)
 
             if scroll: text = self._textMaker(title, "scroll", *args, **kwargs)
             else: text = self._textMaker(title, "text", *args, **kwargs)
@@ -7504,6 +7519,7 @@ class gui(object):
             if value is None: return self.getMessage(title)
             else: self.setMessage(title, value, *args, **kwargs)
         else:
+            kwargs = self._parsePos(kwargs.pop("pos", []), kwargs)
             msg = self._messageMaker(title, value, *args, **kwargs)
             self._configWidget(title, msg, widgKind, **kwargs)
 
@@ -7570,6 +7586,7 @@ class gui(object):
             limit = None if "limit" not in kwargs else kwargs.pop("limit")
             case = None if "case" not in kwargs else kwargs.pop("case").lower().strip()
             rows = None if "rows" not in kwargs else kwargs.pop("rows")
+            kwargs = self._parsePos(kwargs.pop("pos", []), kwargs)
 
             # create the entry widget
             if kind == "auto":
