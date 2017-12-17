@@ -6688,6 +6688,12 @@ class gui(object):
         for key in ["row", "column", "colspan", "rowspan"]:
             kwargs.pop(key, None)
 
+        # ignore these for now as well
+        for key in ["stretch", "sticky", "pad", "inpad"]:
+            val = kwargs.pop(key, None)
+            if val is not None:
+                gui.error("Invalid argument for %s %s - %s:%s", self.Widgets.name(kind), title, key, val)
+
         tooltip = kwargs.pop("tooltip", None)
         change = kwargs.pop("change", None)
         submit = kwargs.pop("submit", None)
