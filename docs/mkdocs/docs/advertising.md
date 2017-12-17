@@ -14,7 +14,7 @@ If you have some kind of ad blocker running, you won't see the ads, although an 
 ## Supporting appJar  
 ---
 
-If you'd ike to help support appJar, please consider adding us to your ad blocker's whitelist.  
+If you'd like to help support appJar, please consider adding us to your ad blocker's whitelist.  
 
 Here's how to do it in the ad blockers I use:
 

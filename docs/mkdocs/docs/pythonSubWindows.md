@@ -66,7 +66,7 @@ Both SubWindows and the main window can be *shown* and *hidden* - this is usuall
     If you set a *SubWindow* as the ```startWindow``` *appJar* will start-up showing the named *SubWindow*.  
     The main window will be minimized.  
 
-```
+```python
 def login(btn):
     app.hideSubWindow("Login")
     app.show()
@@ -103,21 +103,6 @@ app.addLabel("l1", "Press the button to close this window")
 app.addNamedButton("CLOSE", "Demo", app.hideSubWindow)
 app.stopSubWindow()
 ```
-
----
-<div style='text-align: center;'>
-*Advertisement*  
-<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-<ins class="adsbygoogle"
-    style="display:block"
-    data-ad-format="fluid"
-    data-ad-layout-key="-gw-13-4l+6+pt"
-    data-ad-client="ca-pub-6185596049817878"
-    data-ad-slot="5627392164"></ins>
-<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-</div>
----
-
 ### Set Sub Windows  
 ---
 

@@ -27,4 +27,10 @@ with gui("Entry Demo") as app:
     app.entry("e8", kind="file", change=change, over=change)
     app.entry("e9", kind="directory", change=change)
     app.label("l1", "hiya", focus=True, menu=True)
+    x = app.gr()
+    app.text("t1", column=0, row=x, change=change, drop=drop, fg="red")
+    app.text("t2", scroll=True, column=1, row=x, over=change, bg="pink")
     app.button("PRESS", press)
+
+    app.setButtonFont(20, ("Times", "20", "underline"))
+

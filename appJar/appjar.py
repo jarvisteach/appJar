@@ -2236,51 +2236,6 @@ class gui(object):
     def getFonts(self):
         return list(font.families()).sort()
 
-    def increaseButtonFont(self):
-        self.setButtonFont(self.buttonFont['size'] + 1)
-
-    def decreaseButtonFont(self):
-        self.setButtonFont(self.buttonFont['size'] - 1)
-
-    def setButtonFont(self, size, font=None):
-        if font is None:
-            font = self.buttonFont['family']
-        self.buttonFont.config(family=font, size=size)
-
-    def increaseLabelFont(self):
-        self.setLabelFont(self.labelFont['size'] + 1)
-
-    def decreaseLabelFont(self):
-        self.setLabelFont(self.labelFont['size'] - 1)
-
-    def setLabelFont(self, size, font=None):
-        if font is None:
-            font = self.labelFont['family']
-        self.labelFont.config(family=font, size=size)
-        self.entryFont.config(family=font, size=size)
-        self.rbFont.config(family=font, size=size)
-        self.cbFont.config(family=font, size=size)
-        self.scaleFont.config(family=font, size=size)
-        self.messageFont.config(family=font, size=size)
-        self.spinFont.config(family=font, size=size)
-        self.optionFont.config(family=font, size=size)
-        self.lbFont.config(family=font, size=size)
-        self.taFont.config(family=font, size=size)
-        self.linkFont.config(family=font, size=size)
-        self.meterFont.config(family=font, size=size)
-        self.propertiesFont.config(family=font, size=size)
-        self.labelFrameFont.config(family=font, size=size)
-        self.frameFont.config(family=font, size=size)
-        self.toggleFrameFont.config(family=font, size=size)
-        self.tabbedFrameFont.config(family=font, size=size)
-        self.panedFrameFont.config(family=font, size=size)
-        self.scrollPaneFont.config(family=font, size=size)
-        self.gridFont.config(family=font, size=size)
-
-        # need better way to register font change events on grids
-        for k, v in self.widgetManager.group(self.Widgets.Grid).items():
-            v.config(font=self.gridFont)
-
     def increaseFont(self):
         self.increaseLabelFont()
         self.increaseButtonFont()
@@ -2289,9 +2244,67 @@ class gui(object):
         self.decreaseLabelFont()
         self.decreaseButtonFont()
 
-    def setFont(self, size, font=None):
-        self.setLabelFont(size, font)
-        self.setButtonFont(size, font)
+    def increaseButtonFont(self):
+        self.setButtonFont(size=self.buttonFont['size'] + 1)
+
+    def decreaseButtonFont(self):
+        self.setButtonFont(size=self.buttonFont['size'] - 1)
+
+    def increaseLabelFont(self):
+        self.setLabelFont(size=self.labelFont['size'] + 1)
+
+    def decreaseLabelFont(self):
+        self.setLabelFont(size=self.labelFont['size'] - 1)
+
+    def setFont(self, *args, **style):
+        if len(args) > 0:
+            gui.warn("Setting fonts has changed - you must specify a parameter name for all styles.")
+            style["size"] = args[0]
+            if len(args) > 1:
+                style["family"] = args[1]
+        self.setLabelFont(**style)
+        self.setButtonFont(**style)
+
+    def setButtonFont(self, *args, **style):
+        if len(args) > 0:
+            gui.warn("Setting button fonts has changed - you must specify a parameter name for all styles.")
+            style["size"] = args[0]
+            if len(args) > 1:
+                style["family"] = args[1]
+
+        self.buttonFont.config(**style)
+
+    def setLabelFont(self, *args, **style):
+        if len(args) > 0:
+            gui.warn("Setting label fonts has changed - you must specify a parameter name for all styles.")
+            style["size"] = args[0]
+            if len(args) > 1: 
+                tyle["family"] = args[1]
+
+        self.labelFont.config(**style)
+        self.entryFont.config(**style)
+        self.rbFont.config(**style)
+        self.cbFont.config(**style)
+        self.scaleFont.config(**style)
+        self.messageFont.config(**style)
+        self.spinFont.config(**style)
+        self.optionFont.config(**style)
+        self.lbFont.config(**style)
+        self.taFont.config(**style)
+        self.linkFont.config(**style)
+        self.meterFont.config(**style)
+        self.propertiesFont.config(**style)
+        self.labelFrameFont.config(**style)
+        self.frameFont.config(**style)
+        self.toggleFrameFont.config(**style)
+        self.tabbedFrameFont.config(**style)
+        self.panedFrameFont.config(**style)
+        self.scrollPaneFont.config(**style)
+        self.gridFont.config(**style)
+
+        # need better way to register font change events on grids
+        for k, v in self.widgetManager.group(self.Widgets.Grid).items():
+            v.config(font=self.gridFont)
 
     # need to set a default colour for container
     # then populate that field
@@ -2705,7 +2718,7 @@ class gui(object):
             if functions[1] is not None:
                 widget.bind("<ButtonRelease-1>", self.MAKE_FUNC(getLabel, functions[1], True), add="+")
         else:
-            self.warn("Only able to bind drag events to labels")
+            self.error("Only able to bind drag events to labels")
 
     # generic function for change/submit/events
     def __bindEvent(self, kind, name, widget, function, eventType, key=None):
@@ -7216,22 +7229,28 @@ class gui(object):
 
     def textArea(self, title, value=None, *args, **kwargs):
         """ adds, sets & gets textAreas all in one go """
+        widgKind = self.Widgets.TextArea
+
         try: self.widgetManager.verify(self.Widgets.TextArea, title)
         except:
+            if len(kwargs) > 0:
+                self._configWidget(title, self.widgetManager.get(widgKind, title), widgKind, **kwargs)
             if value is None: return self.getTextArea(title)
             else: self.setTextArea(title, value, *args, **kwargs)
         else:
             scroll = False if "scroll" not in kwargs else kwargs.pop("scroll")
-            change = None if "change" not in kwargs else kwargs.pop("change")
-            drop = None if "drop" not in kwargs else kwargs.pop("drop")
 
-            if scroll: text = self.addScrolledTextArea(title, *args, **kwargs)
-            else: text = self.addTextArea(title, *args, **kwargs)
+            if scroll: text = self._textMaker(title, "scroll", *args, **kwargs)
+            else: text = self._textMaker(title, "text", *args, **kwargs)
 
-            if change is not None: self.setTextAreaChangeFunction(title, change)
             if value is not None: self.setTextArea(title, value)
-            if drop is not None: self.setTextAreaDropTarget(title, drop)
+            if len(kwargs) > 0:
+                self._configWidget(title, text, widgKind, **kwargs)
             return text
+
+    def _textMaker(self, title, kind="text", row=None, column=0, colspan=0, rowspan=0, *args, **kwargs):
+        if kind == "scroll": return self.addScrolledTextArea(title, row, column, colspan, rowspan)
+        elif kind == "text": return self.addTextArea(title, row, column, colspan, rowspan)
 
     def __buildTextArea(self, title, frame, scrollable=False):
         """ Internal wrapper, used for building TextAreas.
@@ -7470,15 +7489,22 @@ class gui(object):
 
     def message(self, title, value=None, *args, **kwargs):
         """ adds, sets & gets messages all in one go """
+        widgKind = self.Widgets.Message
+
         try: self.widgetManager.verify(self.Widgets.Message, title)
         except:
+            if len(kwargs) > 0:
+                self._configWidget(title, self.widgetManager.get(widgKind, title), widgKind, **kwargs)
             if value is None: return self.getMessage(title)
             else: self.setMessage(title, value, *args, **kwargs)
         else:
-            drop = None if "drop" not in kwargs else kwargs.pop("drop")
-            msg = self.addMessage(title, value, *args, **kwargs)
-            if drop is not None: self.setMessageDropTarget(title, drop)
+            msg = self._messageMaker(title, value, *args, **kwargs)
+            self._configWidget(title, msg, widgKind, **kwargs)
+
             return msg
+
+    def _messageMaker(self, title, text, row=None, column=0, colspan=0, rowspan=0, *args, **kwargs):
+        return self.addMessage(title, text, row, column, colspan, rowspan)
 
     def addMessage(self, title, text, row=None, column=0, colspan=0, rowspan=0):
 
