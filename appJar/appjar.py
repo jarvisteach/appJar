@@ -4585,16 +4585,23 @@ class gui(object):
 
     def checkBox(self, title, value=None, *args, **kwargs):
         """ adds, sets & gets checkBoxes all in one go """
-        try: self.widgetManager.verify(self.Widgets.CheckBox, title)
+        widgKind = self.Widgets.CheckBox
+        try: self.widgetManager.verify(widgKind, title)
         except:
+            if len(kwargs) > 0:
+                self._configWidget(title, self.widgetManager.get(widgKind, title), widgKind, **kwargs)
             if value is None: return self.getCheckBox(title)
             else: self.setCheckBox(title, value, *args, **kwargs)
         else:
-            change = None if "change" not in kwargs else kwargs.pop("change")
-            check = self.addCheckBox(title, *args, **kwargs)
+            check = self._checkBoxMaker(title, *args, **kwargs)
             if value is not None: self.setCheckBox(title, value)
-            if change is not None: self.setCheckBoxChangeFunction(title, change)
+            self._configWidget(title, check, widgKind, **kwargs)
             return check
+
+    def _checkBoxMaker(self, title, value=None, kind="cb", row=None, column=0, colspan=0, rowspan=0, **kwargs):
+        """ internal wrapper to hide kwargs from original add functions """
+        name = kwargs.pop("name", None)
+        return self.addCheckBox(title, row, column, colspan, rowspan, name)
 
     def addCheckBox(self, title, row=None, column=0, colspan=0, rowspan=0, name=None):
         self.widgetManager.verify(self.Widgets.CheckBox, title)
