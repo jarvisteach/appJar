@@ -29,7 +29,7 @@ app.go()
 ```
 
 #### Start/Stop Sub Windows  
-* `.startSubwindow(name, title=None, modal=False, transient=False, blocking=False)` & `.stopSubwindow()`  
+* `.startSubWindow(name, title=None, modal=False, transient=False, blocking=False)` & `.stopSubWindow()`  
     Used to start and stop defining a *SubWindow*  
     Setting a `title` will override the `name` as a title for the *SubWindow*.  
     Setting `modal` to True, will prevent the user from interacting with the parent window until the *SubWindow* is closed.  
