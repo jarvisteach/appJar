@@ -2354,8 +2354,7 @@ class gui(object):
                     gui.SET_WIDGET_BG(child, colour, override, tint)
         else:
             gui.debug("In ttk mode - trying to set BG to %s", colour)
-            self.ttkStyle.configure("TLabel", background=colour)
-            self.ttkStyle.configure("TFrame", background=colour)
+            self.ttkStyle.configure(".", background=colour)
 
     @staticmethod
     def __isWidgetContainer(widget):
@@ -6677,10 +6676,10 @@ class gui(object):
                 name = None if "name" not in kwargs else kwargs.pop("name")
                 kwargs = self._parsePos(kwargs.pop("pos", []), kwargs)
 
-                if image is not None: button = self._buttonMaker(title, value, "image", extra=image, *args, **kwargs)
-                elif icon is not None: button = self._buttonMaker(title, value, "icon", extra=icon, *args, **kwargs)
-                elif name is not None: button = self._buttonMaker(title, value, "named", extra=name, *args, **kwargs)
-                else: button = self._buttonMaker(title, value, "button", extra=None, *args, **kwargs)
+                if image is not None: button = self._buttonMaker(title, value, "image", image, *args, **kwargs)
+                elif icon is not None: button = self._buttonMaker(title, value, "icon", icon, *args, **kwargs)
+                elif name is not None: button = self._buttonMaker(title, value, "named", name, *args, **kwargs)
+                else: button = self._buttonMaker(title, value, "button", None, *args, **kwargs)
 
                 self._configWidget(title, button, widgKind, **kwargs)
 
@@ -6726,9 +6725,13 @@ class gui(object):
         while True:
             try: widget.config(**kwargs)
             except TclError as e:
-                key=str(e).split()[2][2:-1]
-                val=kwargs.pop(key)
-                gui.error("Invalid argument for %s %s - %s:%s", self.Widgets.name(kind), title, key, val)
+                try:
+                    key=str(e).split()[2][2:-1]
+                    val=kwargs.pop(key)
+                    gui.error("Invalid argument for %s %s - %s:%s", self.Widgets.name(kind), title, key, val)
+                except:
+                    gui.error("Invalid argument for %s %s: %s", self.Widgets.name(kind), title, e)
+                    break
             else:
                 break
 
