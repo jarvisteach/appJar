@@ -4673,8 +4673,9 @@ class gui(object):
         return self.scale(title, value, *args, **kwargs)
 
     def scale(self, title, value=None, *args, **kwargs):
+        widgKind = self.Widgets.Scale
         """ adds, sets & gets scales all in one go """
-        try: self.widgetManager.verify(self.Widgets.Scale, title)
+        try: self.widgetManager.verify(widgKind, title)
         except:
             if value is None: return self.getScale(title)
             else: self.setScale(title, value, *args, **kwargs)
@@ -4683,16 +4684,20 @@ class gui(object):
             increment = None if "increment" not in kwargs else kwargs.pop("increment")
             interval = None if "interval" not in kwargs else kwargs.pop("interval")
             show = False if "show" not in kwargs else kwargs.pop("show")
-            change = None if "change" not in kwargs else kwargs.pop("change")
+            r = None if "range" not in kwargs else kwargs.pop("range")
 
-            scale = self.addScale(title, *args, **kwargs)
+            kwargs = self._parsePos(kwargs.pop("pos", []), kwargs)
+            scale = self._scaleMaker(title, *args, **kwargs)
 
-            if value is not None: self.setScale(title, value)
+            if len(kwargs) > 0:
+                self._configWidget(title, self.widgetManager.get(widgKind, title), widgKind, **kwargs)
+
+            if r is not None: self.setScaleRange(title, r[0], r[1])
             if vert: self.setScaleVertical(title)
             if increment is not None: self.setScaleIncrement(title, increment)
             if interval is not None: self.showScaleIntervals(title, interval)
             if show: self.showScaleValue(title)
-            if change is not None: self.setScaleChangeFunction(title, change)
+            if value is not None: self.setScale(title, value)
             return scale
 
     def __buildScale(self, title, frame):
@@ -4709,6 +4714,9 @@ class gui(object):
         scale.inContainer = False
         self.widgetManager.add(self.Widgets.Scale, title, scale)
         return scale
+
+    def _scaleMaker(self, title, row=None, column=0, colspan=0, rowspan=0, **kwargs):
+        return self.addScale(title, row, column, colspan, rowspan)
 
     def addScale(self, title, row=None, column=0, colspan=0, rowspan=0):
         scale = self.__buildScale(title, self.getContainer())
@@ -6956,12 +6964,53 @@ class gui(object):
     def addCanvas(self, title, row=None, column=0, colspan=0, rowspan=0):
         self.widgetManager.verify(self.Widgets.Canvas, title)
         canvas = Canvas(self.getContainer())
-        self.__positionWidget(canvas, row, column, colspan, rowspan)
+        self.__positionWidget(canvas, row, column, colspan, rowspan, "news")
         self.widgetManager.add(self.Widgets.Canvas, title, canvas)
         return canvas
 
     def getCanvas(self, title):
         return self.widgetManager.get(self.Widgets.Canvas, title)
+
+    def clearCanvas(self, title):
+        self.widgetManager.get(self.Widgets.Canvas, title).delete("all")
+
+    def addCanvasCircle(self, title, x, y, diameter, **kwargs):
+        return self.addCanvasOval(title, x, y, diameter, diameter, **kwargs)
+
+    def addCanvasOval(self, title, x, y, xDiam, yDiam, **kwargs):
+        return self.widgetManager.get(self.Widgets.Canvas, title).create_oval(x, y, x+xDiam, y+yDiam, **kwargs)
+
+    def addCanvasLine(self, title, x, y, x2, y2, **kwargs):
+        return self.widgetManager.get(self.Widgets.Canvas, title).create_line(x, y, x2, y2, **kwargs)
+
+    def addCanvasRectangle(self, title, x, y, w, h, **kwargs):
+        return self.widgetManager.get(self.Widgets.Canvas, title).create_rectangle(x, y, x+w, y+w, **kwargs)
+
+    def addCanvasText(self, title, x, y, text=None, **kwargs):
+        return self.widgetManager.get(self.Widgets.Canvas, title).create_text(x, y, text=text, **kwargs)
+
+    def setCanvasEvent(self, title, item, event, function, add=None):
+        canvas = self.widgetManager.get(self.Widgets.Canvas, title)
+        canvas.tag_bind(item, event, function, add)
+
+    def _canvasMaker(self, title, row=None, column=0, colspan=0, rowspan=0, **kwargs):
+        return self.addCanvas(title, row, column, rowspan)
+
+    def canvas(self, title, *args, **kwargs):
+        """ adds, sets & gets canases all in one go """
+        widgKind = self.Widgets.Canvas
+
+        try: self.widgetManager.verify(widgKind, title)
+        except: # widget exists
+            if len(kwargs) > 0:
+                self._configWidget(title, self.widgetManager.get(widgKind, title), widgKind, **kwargs)
+            return self.getCanvas(title)
+        else:
+            kwargs = self._parsePos(kwargs.pop("pos", []), kwargs)
+
+            canvas = self._canvasMaker(title, *args, **kwargs)
+            self._configWidget(title, canvas, widgKind, **kwargs)
+            return canvas
 
 #####################################
 # FUNCTIONS for Microbits

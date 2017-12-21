@@ -421,6 +421,26 @@ app.go()
 * `.getCanvas(title)`  
     Gets the specified canvas widget.  
 
+#### Drawing on a Canvas  
+
+* `.addCanvasCircle(title, x, y, diameter, **kwargs)`  
+    Draws a circle on the canvas.  
+
+* `.addCanvasOval(title, x, y, xDiam, yDiam, **kwargs)`  
+    Draws an oval on the canvas.  
+
+* `.addCanvasRectangle(title, x, y, w, h, **kwargs)`  
+    Draws a rectangle on the canvas.  
+
+* `.addCanvasLine(title, x, y, x2, y2, **kwargs)`  
+    Draws a line on the canvas.  
+
+* `.addCanvasText(title, x, y, text, **kwargs)`  
+    Draws text on the canvas.  
+
+* `.clearCanvas(title)  
+    Removes all drawings from the canavs.  
+
 ### Turtle
 ---
 This lets you embed a [turtle](https://docs.python.org/3.6/library/turtle.html) widget in appJar.  
