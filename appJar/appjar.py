@@ -2452,7 +2452,6 @@ class gui(object):
         if widget.var is None:  # TEXT:
             widget.bind('<KeyRelease>', self.__checkCopyAndPaste)
             widget.bind('<<Paste>>', self.__checkCopyAndPaste)
-
         else:
             widget.var.trace("w", lambda name, index, mode,
                 e=None, w=widget: self.__checkCopyAndPaste(e, w))  # ENTRY/OPTION
@@ -3161,6 +3160,7 @@ class gui(object):
         self.containerStack[0] = containerData
 
         self.__initVars()
+        self.copyAndPaste.inUse = False
         self.setSize(None)
 
 #####################################
