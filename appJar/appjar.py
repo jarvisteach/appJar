@@ -634,7 +634,7 @@ class gui(object):
                     self.ttkStyle = ThemedStyle(self.topLevel)
                     self.ttkStyle.set_theme(theme)
                 except:
-                    self.error("ttk theme: %s unavailable. Try one of: %s", theme, self.ttkStyle.theme_names())
+                    self.error("ttk theme: %s unavailable. Try one of: %s", theme, str(self.ttkStyle.theme_names()))
 
         # set up our ttk styles
         self.ttkStyle.configure("DefaultText.TEntry", foreground="grey")
@@ -3641,6 +3641,17 @@ class gui(object):
             # now, add to top of stack
             self.__addContainer(title, self.Widgets.LabelFrame, container, 0, 1, sticky)
             return container
+        elif fType == self.Widgets.Canvas:
+            # first, make a canvas, and position it correctly
+            self.widgetManager.verify(self.Widgets.Canvas, title)
+            container = Canvas(self.getContainer())
+            container.isContainer = True
+            self.__positionWidget(container, row, column, colspan, rowspan, "nsew")
+            self.widgetManager.add(self.Widgets.Canvas, title, container)
+
+            # now, add to top of stack
+            self.__addContainer(title, self.Widgets.Canvas, container, 0, 1, "")
+            return container
         elif fType == self.Widgets.Frame:
             # first, make a Frame, and position it correctly
             self.widgetManager.verify(self.Widgets.Frame, title)
@@ -3657,7 +3668,7 @@ class gui(object):
             return container
         elif fType == self.Widgets.TabbedFrame:
             self.widgetManager.verify(self.Widgets.TabbedFrame, title)
-            tabbedFrame = TabbedFrame(self.getContainer())
+            tabbedFrame = TabbedFrame(self.getContainer(), font=self.tabbedFrameFont)
             if not self.ttkFlag:
                 tabbedFrame.config(bg=self.__getContainerBg())
 #            tabbedFrame.isContainer = True
@@ -3842,6 +3853,24 @@ class gui(object):
             raise Exception("Can't stop a NOTE, currently in:",
                             self.containerStack[-1]['type'])
         self.stopContainer()
+    """
+    def startCanvas(self, title, row=None, column=0, colspan=0, rowspan=0, sticky="news"):
+        return self.startContainer(self.Widgets.Canvas, title)
+
+    def stopCanvas(self):
+        if self.containerStack[-1]['type'] != self.Widgets.Canvas:
+            raise Exception("Can't stop a CANVAS, currently in:", self.containerStack[-1]['type'])
+        self.stopContainer()
+
+    @contextmanager
+    def canvas(self, title, row=None, column=0, colspan=0, rowspan=0, sticky="NSEW"):
+        try:
+            canvas = self.startCanvas(title, row, column, colspan, rowspan, sticky)
+        except ItemLookupError:
+            canvas = self.openCanvas(title)
+        try: yield canvas
+        finally: self.stopCanvas()
+    """
 
 #####################################
 # Tabbed Frames
@@ -3885,6 +3914,10 @@ class gui(object):
     def setTabText(self, title, tab, newText=None):
         nb = self.widgetManager.get(self.Widgets.TabbedFrame, title)
         nb.renameTab(tab, newText)
+
+    def setTabFont(self, title, **kwargs):
+        nb = self.widgetManager.get(self.Widgets.TabbedFrame, title)
+        nb.setFont(**kwargs)
 
     def setTabBg(self, title, tab, colour):
         nb = self.widgetManager.get(self.Widgets.TabbedFrame, title)
@@ -10293,8 +10326,7 @@ class DualMeter(SplitMeter):
 #################################
 class TabbedFrame(Frame, object):
 
-    def __init__(self, master, fill=False,
-            changeOnFocus=True, **kwargs):
+    def __init__(self, master, fill=False, changeOnFocus=True, font=None, **kwargs):
 
         # main frame & tabContainer inherit BG colour
         super(TabbedFrame, self).__init__(master, **kwargs)
@@ -10321,6 +10353,7 @@ class TabbedFrame(Frame, object):
         self.highlightedTab = None
         self.changeOnFocus = changeOnFocus
         self.changeEvent = None
+        self.tabFont = font
 
         # selected tab & all panes
         self.activeFg = "#0000FF"
@@ -10367,6 +10400,9 @@ class TabbedFrame(Frame, object):
             self.tabContainer.configure(bg=kw["bg"])
             self.paneContainer.configure(bg=kw["bg"])
 
+        if "font" in kw:
+            self.tabFont.config(kw.pop("font"))
+
         if "command" in kw:
             self.changeEvent = kw.pop("command")
 
@@ -10391,7 +10427,9 @@ class TabbedFrame(Frame, object):
             relief=SUNKEN,
             cursor="hand2",
             takefocus=1,
+            font=self.tabFont,
             **kwargs)
+
         tab.disabled = False
         tab.DEFAULT_TEXT = text
 
@@ -10517,6 +10555,9 @@ class TabbedFrame(Frame, object):
 
     def getSelectedTab(self):
         return self.selectedTab
+
+    def setFont(self, **kwargs):
+        self.tabFont.config(**kwargs)
 
     def __colourTabs(self, swap=True):
         # clear all tabs & remove if necessary
