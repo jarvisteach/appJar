@@ -178,7 +178,7 @@ app.go()
 ```
 #### Start/Stop Tabbed Frames
 * `.startTabbedFrame(name)` & `.stopTabbedFrame()`  
-    Used to start & stop the a *TabbedFrame*, with the specified name.  
+    Used to start & stop a *TabbedFrame*, with the specified name.  
 
 * `.startTab(name)` & `.stopTab()`  
     Used to start and stop each of the tabs in the *TabbedFrame*.  
