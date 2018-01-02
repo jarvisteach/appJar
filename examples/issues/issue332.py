@@ -1,13 +1,29 @@
 import sys
 sys.path.append("../../")
 
+channels = ["this", "that", "another", "one more"]
+
 from appJar import gui
+
+def deleteTab(tabName):
+    print("deleting", tabName)
+#    tabs = app.widgetManager.get(app.Widgets.TabbedFrame, "tabs")
+#    tabs.deleteTab(tabName)
+    app.deleteTabbedFrameTab("tabs", tabName)
+
+def disableTab(tabName):
+    print("disabling", tabName)
+    tabs = app.widgetManager.get(app.Widgets.TabbedFrame, "tabs")
+    tabs.disableTab(app.getTabbedFrameSelectedTab("tabs"))
 
 def press(btn):
     app.openTabbedFrame("tabs")
-    app.startTab("Four")
-    app.addLabel("t4", "Tab Four")
-    app.stopTab()
+    for tab in channels:
+        app.startTab(tab)
+        app.addLabel(tab, tab)
+        app.addNamedButton("DELETE", tab, deleteTab)
+        app.addNamedButton("DISABLE", tab+"a", disableTab)
+        app.stopTab()
     app.stopTabbedFrame()
 
 def pressNew(btn):

@@ -8,7 +8,10 @@
 * More [ttk](/pythonTtk) improvements - grouped widgets now work, introduced external themes.  
 
 * Issues Resolved:
-    * [#317](https://github.com/jarvisteach/appJar/issues/317) - fixed issue with losing [file/directory Entry](/pythonWidgets/#entry) values  
+    * [#333](https://github.com/jarvisteach/appJar/issues/333) - started work on hide/show/delete [tabs](/pythonWidgetGrouping/#tabbed-frame)  
+    * [#325](https://github.com/jarvisteach/appJar/issues/325) - fixed issue with [right-click menus](/pythonBars/#platform-specificcustom-menus)
+    * [#324](https://github.com/jarvisteach/appJar/issues/324) - fixed issue with losing [file/directory Entry](/pythonWidgets/#entry) values  
+    * [#317](https://github.com/jarvisteach/appJar/issues/317) - implemented fonts on [tabbed frames](/pythonWidgetGrouping/#tabbed-frame)  
     * [#316](https://github.com/jarvisteach/appJar/issues/316) - can now display compound images and text in [buttons](/pythonWidgets/#button)  
     * [#309](https://github.com/jarvisteach/appJar/issues/309) - cleaned up handling of [fonts](/pythonGuiOptions/#font)  
     * [#303](https://github.com/jarvisteach/appJar/issues/303) - added functions to [bind/unbind mutiple keys](/pythonEvents/#binding-keys) to a function  

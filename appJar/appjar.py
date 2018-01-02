@@ -72,7 +72,7 @@ entryBase = Entry
 
 # details
 __author__ = "Richard Jarvis"
-__copyright__ = "Copyright 2016-2017, Richard Jarvis"
+__copyright__ = "Copyright 2015-2018, Richard Jarvis"
 __credits__ = ["Graham Turner", "Sarah Murch"]
 __license__ = "Apache 2.0"
 __version__ = "0.90.0"
@@ -2267,8 +2267,12 @@ class gui(object):
 
     def setButtonFont(self, *args, **style):
         if len(args) > 0:
-            gui.warn("Setting button fonts has changed - you must specify a parameter name for all styles.")
-            style["size"] = args[0]
+            if type(args[0]) != int:
+                gui.error("Error setting font - no widget name should be provided, this funciton is for all labels")
+                return
+            else:
+                gui.warn("Setting button fonts has changed - you must specify a parameter name for all styles.")
+                style["size"] = args[0]
             if len(args) > 1:
                 style["family"] = args[1]
 
@@ -2276,10 +2280,14 @@ class gui(object):
 
     def setLabelFont(self, *args, **style):
         if len(args) > 0:
-            gui.warn("Setting label fonts has changed - you must specify a parameter name for all styles.")
-            style["size"] = args[0]
+            if type(args[0]) != int:
+                gui.error("Error setting font - no widget name should be provided, this funciton is for all labels")
+                return
+            else:
+                gui.warn("Setting label fonts has changed - you must specify a parameter name for all styles.")
+                style["size"] = args[0]
             if len(args) > 1: 
-                tyle["family"] = args[1]
+                style["family"] = args[1]
 
         self.labelFont.config(**style)
         self.entryFont.config(**style)
@@ -3668,7 +3676,7 @@ class gui(object):
             return container
         elif fType == self.Widgets.TabbedFrame:
             self.widgetManager.verify(self.Widgets.TabbedFrame, title)
-            tabbedFrame = TabbedFrame(self.getContainer(), font=self.tabbedFrameFont)
+            tabbedFrame = self.tabbedFrameMaker(self.getContainer(), self.ttkFlag, font=self.tabbedFrameFont)
             if not self.ttkFlag:
                 tabbedFrame.config(bg=self.__getContainerBg())
 #            tabbedFrame.isContainer = True
@@ -3876,6 +3884,302 @@ class gui(object):
 # Tabbed Frames
 #####################################
 
+    #################################
+    # TabbedFrame Class
+    #################################
+    def tabbedFrameMaker(self, master, useTtk=False, **kwargs):
+        class TabbedFrame(frameBase, object):
+
+            def __init__(self, master, fill=False, changeOnFocus=True, font=None, **kwargs):
+
+                # main frame & tabContainer inherit BG colour
+                super(TabbedFrame, self).__init__(master, **kwargs)
+
+                # create two containers
+                self.tabContainer = frameBase(self, **kwargs)
+                self.paneContainer = frameBase(self, relief=SUNKEN, **kwargs)
+                self.paneContainer.config(borderwidth=4)
+
+                # grid the containers
+                Grid.columnconfigure(self, 0, weight=1)
+                Grid.rowconfigure(self, 1, weight=1)
+                self.fill = fill
+                if self.fill:
+                    self.tabContainer.grid(row=0, sticky=W + E)
+                else:
+                    self.tabContainer.grid(row=0, sticky=W)
+                self.paneContainer.grid(row=1, sticky="NESW")
+
+                # nain store dictionary: name = [tab, pane]
+                from collections import OrderedDict
+                self.widgetStore = OrderedDict()
+
+                self.selectedTab = None
+                self.highlightedTab = None
+                self.changeOnFocus = changeOnFocus
+                self.changeEvent = None
+                self.tabFont = font
+
+                # selected tab & all panes
+                self.activeFg = "#0000FF"
+                self.activeBg = "#FFFFFF"
+
+                # other tabs
+                self.inactiveFg = "#000000"
+                self.inactiveBg = "grey"
+
+                # disabled tabs
+                self.disabledFg = "lightGray"
+                self.disabledBg = "darkGray"
+
+            def config(self, cnf=None, **kw):
+                self.configure(cnf, **kw)
+
+            def configure(self, cnf=None, **kw):
+                kw = gui.CLEAN_CONFIG_DICTIONARY(**kw)
+                # configure fgs
+                if "activeforeground" in kw:
+                    self.activeFg = kw.pop("activeforeground")
+                    for key in list(self.widgetStore.keys()):
+                        self.widgetStore[key][0].config(highlightcolor=self.activeFg)
+                if "activebackground" in kw:
+                    self.activeBg = kw.pop("activebackground")
+                    for key in list(self.widgetStore.keys()):
+                        self.widgetStore[key][1].configure(bg=self.activeBg)
+                        for child in self.widgetStore[key][1].winfo_children():
+                            gui.SET_WIDGET_BG(child, self.activeBg)
+
+                if "fg" in kw:
+                    self.inactiveFg = kw.pop("fg")
+                if "inactivebackground" in kw:
+                    self.inactiveBg = kw.pop("inactivebackground")
+                if "inactiveforeground" in kw:
+                    self.inactiveFg = kw.pop("inactiveforeground")
+
+                if "disabledforeground" in kw:
+                    self.disabledFg = kw.pop("disabledforeground")
+                if "disabledbackground" in kw:
+                    self.disabledBg = kw.pop("disabledbackground")
+
+                if "bg" in kw:
+                    self.tabContainer.configure(bg=kw["bg"])
+                    self.paneContainer.configure(bg=kw["bg"])
+
+                if "font" in kw:
+                    self.tabFont.config(kw.pop("font"))
+
+                if "command" in kw:
+                    self.changeEvent = kw.pop("command")
+
+                # update tabs if we have any
+                if self.selectedTab is not None:
+                    self.__colourTabs(False)
+
+                # propagate any left over confs
+                super(TabbedFrame, self).config(cnf, **kw)
+
+            def deleteTab(self, text):
+                tab = self.widgetStore[text][0]
+                pane = self.widgetStore[text][1]
+
+                pane.grid_forget()
+                tab.pack_forget()
+
+                pane.destroy()
+                tab.destroy()
+
+                del self.widgetStore[text]
+                self._resetTabs(text)
+                self.__colourTabs()
+
+            def addTab(self, text, **kwargs):
+                # check for duplicates
+                if text in self.widgetStore:
+                    raise ItemLookupError("Duplicate tabName: " + text)
+
+                # create the tab, bind events, pack it in
+                tab = Label(
+                    self.tabContainer,
+                    text=text,
+                    highlightthickness=1,
+                    highlightcolor=self.activeFg,
+                    relief=SUNKEN,
+                    cursor="hand2",
+                    takefocus=1,
+                    font=self.tabFont,
+                    **kwargs)
+
+                tab.disabled = False
+                tab.DEFAULT_TEXT = text
+
+                tab.bind("<Button-1>", lambda *args: self.changeTab(text))
+                tab.bind("<Return>", lambda *args: self.changeTab(text))
+                tab.bind("<space>", lambda *args: self.changeTab(text))
+                tab.bind("<FocusIn>", lambda *args: self.__focusIn(text))
+                tab.bind("<FocusOut>", lambda *args: self.__focusOut(text))
+                if self.fill:
+                    tab.pack(side=LEFT, ipady=4, ipadx=4, expand=True, fill=BOTH)
+                else:
+                    tab.pack(side=LEFT, ipady=4, ipadx=4)
+
+                # create the pane
+                if not useTtk:
+                    pane = frameBase(self.paneContainer, bg=self.activeBg)
+                else:
+                    pane = frameBase(self.paneContainer)
+
+                pane.grid(sticky="nsew", row=0, column=0)
+                self.paneContainer.grid_columnconfigure(0, weight=1)
+                self.paneContainer.grid_rowconfigure(0, weight=1)
+
+                # log the first tab as the selected tab
+                if self.selectedTab is None:
+                    self.selectedTab = text
+                    tab.focus_set()
+                if self.highlightedTab is None:
+                    self.highlightedTab = text
+
+                self.widgetStore[text] = [tab, pane]
+                self.__colourTabs(self.selectedTab)
+
+                return pane
+
+            def getTab(self, title):
+                if title not in self.widgetStore.keys():
+                    raise ItemLookupError("Invalid tab name: " + title)
+                else:
+                    return self.widgetStore[title][1]
+
+            def expandTabs(self, fill=True):
+                self.fill = fill
+
+                # update the tabConatiner
+                self.tabContainer.grid_forget()
+                if self.fill:
+                    self.tabContainer.grid(row=0, sticky=W + E)
+                else:
+                    self.tabContainer.grid(row=0, sticky=W)
+
+                for key in list(self.widgetStore.keys()):
+                    tab = self.widgetStore[key][0]
+                    tab.pack_forget()
+                    if self.fill:
+                        tab.pack(side=LEFT, ipady=4, ipadx=4, expand=True, fill=BOTH)
+                    else:
+                        tab.pack(side=LEFT, ipady=4, ipadx=4)
+
+            def __focusIn(self, tabName):
+                if self.changeOnFocus:
+                    self.changeTab(tabName)
+                else:
+                    self.highlightedTab = tabName
+                    self.__colourTabs(False)
+
+            def __focusOut(self, tabName):
+                self.highlightedTab = None
+                self.__colourTabs(False)
+
+            def disableAllTabs(self, disabled=True):
+                for tab in self.widgetStore.keys():
+                    self.disableTab(tab, disabled)
+
+            def renameTab(self, tabName, newName=None):
+                if tabName not in self.widgetStore.keys():
+                    raise ItemLookupError("Invalid tab name: " + tabName)
+                if newName is None:
+                    newName = self.widgetStore[tabName][0].DEFAULT_TEXT
+
+                self.widgetStore[tabName][0].config(text=newName)
+
+            def disableTab(self, tabName, disabled=True):
+                if tabName not in self.widgetStore.keys():
+                    raise ItemLookupError("Invalid tab name: " + tabName)
+
+                if not disabled:
+                    self.widgetStore[tabName][0].disabled = False
+                    self.widgetStore[tabName][0].config(cursor="hand2", takefocus=1)
+                else:
+                    self.widgetStore[tabName][0].disabled = True
+                    self.widgetStore[tabName][0].config(cursor="X_cursor", takefocus=0)
+
+                    if self._resetTabs(tabName):
+                        self.widgetStore[tabName][1].grid_remove()
+                        
+                self.__colourTabs()
+
+            def _resetTabs(self, text):
+                unGrid = False
+                if self.highlightedTab == text:
+                    self.highlightedTab = None
+
+                # difficult if the active tab is disabled
+                if self.selectedTab == text:
+                    unGrid = True
+                    # find an enabled tab
+                    self.selectedTab = None
+                    for key in list(self.widgetStore.keys()):
+                        if not self.widgetStore[key][0].disabled:
+                            self.changeTab(key)
+                            break
+
+                return unGrid
+
+
+            def changeTab(self, tabName):
+                # quit changing the tab, if it's already selected
+                if self.focus_get() == self.widgetStore[tabName][0]:
+                    return
+
+                if tabName not in self.widgetStore.keys():
+                    raise ItemLookupError("Invalid tab name: " + tabName)
+
+                if self.widgetStore[tabName][0].disabled:
+                    return
+
+                self.selectedTab = tabName
+                self.highlightedTab = tabName
+                self.widgetStore[tabName][0].focus_set()
+                # this will also regrid the appropriate panes
+                self.__colourTabs()
+
+                if self.changeEvent is not None:
+                    self.changeEvent()
+
+            def getSelectedTab(self):
+                return self.selectedTab
+
+            def setFont(self, **kwargs):
+                self.tabFont.config(**kwargs)
+
+            def __colourTabs(self, swap=True):
+                # clear all tabs & remove if necessary
+                for key in list(self.widgetStore.keys()):
+                    if self.widgetStore[key][0].disabled:
+                        self.widgetStore[key][0]['bg'] = self.disabledBg
+                        self.widgetStore[key][0]['fg'] = self.disabledFg
+                        self.widgetStore[key][0]['relief'] = SUNKEN
+                    else:
+                        self.widgetStore[key][0]['bg'] = self.inactiveBg
+                        self.widgetStore[key][0]['fg'] = self.inactiveFg
+                        self.widgetStore[key][0]['relief'] = SUNKEN
+                        if swap:
+                            self.widgetStore[key][1].grid_remove()
+
+                # decorate the highlighted tab
+                if self.highlightedTab is not None:
+                    self.widgetStore[self.highlightedTab][0]['fg'] = self.activeFg
+
+                # now decorate the active tab
+                if self.selectedTab is not None:
+                    self.widgetStore[self.selectedTab][0]['bg'] = self.activeBg
+                    self.widgetStore[self.selectedTab][0]['fg'] = self.activeFg
+                    self.widgetStore[self.selectedTab][0]['relief'] = RAISED
+                    # and grid it if necessary
+                    if swap:
+                        self.widgetStore[self.selectedTab][1].grid()
+
+        return TabbedFrame(master, **kwargs)
+
     @contextmanager
     def tabbedFrame(self, title, row=None, column=0, colspan=0, rowspan=0, sticky="NSEW"):
         try:
@@ -3911,6 +4215,10 @@ class gui(object):
         nb = self.widgetManager.get(self.Widgets.TabbedFrame, title)
         nb.disableAllTabs(disabled)
 
+    def deleteTabbedFrameTab(self, title, tab):
+        nb = self.widgetManager.get(self.Widgets.TabbedFrame, title)
+        nb.deleteTab(tab)
+
     def setTabText(self, title, tab, newText=None):
         nb = self.widgetManager.get(self.Widgets.TabbedFrame, title)
         nb.renameTab(tab, newText)
@@ -3931,7 +4239,14 @@ class gui(object):
     @contextmanager
     def tab(self, title, tabTitle=None):
         if tabTitle is None:
-            tab = self.startTab(title)
+            try:
+                tab = self.startTab(title)
+            except ItemLookupError:
+                if self.containerStack[-1]['type'] != self.Widgets.TabbedFrame:
+                    raise Exception("Can't open a Tab in the current container: ", self.containerStack[-1]['type'])
+                else:
+                    tabTitle = self.containerStack[-1]['title']
+                    tab = self.openTab(tabTitle, title)
         else:
             tab = self.openTab(title, tabTitle)
         try: yield tab
@@ -3943,8 +4258,7 @@ class gui(object):
             self.warn("You didn't STOP the previous TAB")
             self.stopContainer()
         elif self.containerStack[-1]['type'] != self.Widgets.TabbedFrame:
-            raise Exception(
-                "Can't add a Tab to the current container: ", self.containerStack[-1]['type'])
+            raise Exception("Can't add a Tab to the current container: ", self.containerStack[-1]['type'])
         self.startContainer(self.Widgets.Tab, title)
 
     def getTabbedFrameSelectedTab(self, title):
@@ -10319,272 +10633,6 @@ class DualMeter(SplitMeter):
 
         self.drawLines(width, height, start, l_fin, self._value[0], self._leftFill, tags="left")
         self.drawLines(width, height, start, r_fin, self._value[1], self._rightFill, tags="right")
-
-
-#################################
-# TabbedFrame Class
-#################################
-class TabbedFrame(Frame, object):
-
-    def __init__(self, master, fill=False, changeOnFocus=True, font=None, **kwargs):
-
-        # main frame & tabContainer inherit BG colour
-        super(TabbedFrame, self).__init__(master, **kwargs)
-
-        # create two containers
-        self.tabContainer = Frame(self, **kwargs)
-        self.paneContainer = Frame(self, relief=SUNKEN, bd=2, **kwargs)
-
-        # grid the containers
-        Grid.columnconfigure(self, 0, weight=1)
-        Grid.rowconfigure(self, 1, weight=1)
-        self.fill = fill
-        if self.fill:
-            self.tabContainer.grid(row=0, sticky=W + E)
-        else:
-            self.tabContainer.grid(row=0, sticky=W)
-        self.paneContainer.grid(row=1, sticky="NESW")
-
-        # nain store dictionary: name = [tab, pane]
-        from collections import OrderedDict
-        self.widgetStore = OrderedDict()
-
-        self.selectedTab = None
-        self.highlightedTab = None
-        self.changeOnFocus = changeOnFocus
-        self.changeEvent = None
-        self.tabFont = font
-
-        # selected tab & all panes
-        self.activeFg = "#0000FF"
-        self.activeBg = "#FFFFFF"
-
-        # other tabs
-        self.inactiveFg = "#000000"
-        self.inactiveBg = "grey"
-
-        # disabled tabs
-        self.disabledFg = "lightGray"
-        self.disabledBg = "darkGray"
-
-    def config(self, cnf=None, **kw):
-        self.configure(cnf, **kw)
-
-    def configure(self, cnf=None, **kw):
-        kw = gui.CLEAN_CONFIG_DICTIONARY(**kw)
-        # configure fgs
-        if "activeforeground" in kw:
-            self.activeFg = kw.pop("activeforeground")
-            for key in list(self.widgetStore.keys()):
-                self.widgetStore[key][0].config(highlightcolor=self.activeFg)
-        if "activebackground" in kw:
-            self.activeBg = kw.pop("activebackground")
-            for key in list(self.widgetStore.keys()):
-                self.widgetStore[key][1].configure(bg=self.activeBg)
-                for child in self.widgetStore[key][1].winfo_children():
-                    gui.SET_WIDGET_BG(child, self.activeBg)
-
-        if "fg" in kw:
-            self.inactiveFg = kw.pop("fg")
-        if "inactivebackground" in kw:
-            self.inactiveBg = kw.pop("inactivebackground")
-        if "inactiveforeground" in kw:
-            self.inactiveFg = kw.pop("inactiveforeground")
-
-        if "disabledforeground" in kw:
-            self.disabledFg = kw.pop("disabledforeground")
-        if "disabledbackground" in kw:
-            self.disabledBg = kw.pop("disabledbackground")
-
-        if "bg" in kw:
-            self.tabContainer.configure(bg=kw["bg"])
-            self.paneContainer.configure(bg=kw["bg"])
-
-        if "font" in kw:
-            self.tabFont.config(kw.pop("font"))
-
-        if "command" in kw:
-            self.changeEvent = kw.pop("command")
-
-        # update tabs if we have any
-        if self.selectedTab is not None:
-            self.__colourTabs(False)
-
-        # propagate any left over confs
-        super(TabbedFrame, self).config(cnf, **kw)
-
-    def addTab(self, text, **kwargs):
-        # check for duplicates
-        if text in self.widgetStore:
-            raise ItemLookupError("Duplicate tabName: " + text)
-
-        # create the tab, bind events, pack it in
-        tab = Label(
-            self.tabContainer,
-            text=text,
-            highlightthickness=1,
-            highlightcolor=self.activeFg,
-            relief=SUNKEN,
-            cursor="hand2",
-            takefocus=1,
-            font=self.tabFont,
-            **kwargs)
-
-        tab.disabled = False
-        tab.DEFAULT_TEXT = text
-
-        tab.bind("<Button-1>", lambda *args: self.changeTab(text))
-        tab.bind("<Return>", lambda *args: self.changeTab(text))
-        tab.bind("<space>", lambda *args: self.changeTab(text))
-        tab.bind("<FocusIn>", lambda *args: self.__focusIn(text))
-        tab.bind("<FocusOut>", lambda *args: self.__focusOut(text))
-        if self.fill:
-            tab.pack(side=LEFT, ipady=4, ipadx=4, expand=True, fill=BOTH)
-        else:
-            tab.pack(side=LEFT, ipady=4, ipadx=4)
-
-        # create the pane
-        pane = Frame(self.paneContainer, bg=self.activeBg)
-        pane.grid(sticky="nsew", row=0, column=0)
-        self.paneContainer.grid_columnconfigure(0, weight=1)
-        self.paneContainer.grid_rowconfigure(0, weight=1)
-
-        # log the first tab as the selected tab
-        if self.selectedTab is None:
-            self.selectedTab = text
-            tab.focus_set()
-        if self.highlightedTab is None:
-            self.highlightedTab = text
-
-        self.widgetStore[text] = [tab, pane]
-        self.__colourTabs(self.selectedTab)
-
-        return pane
-
-    def getTab(self, title):
-        if title not in self.widgetStore.keys():
-            raise ItemLookupError("Invalid tab name: " + title)
-        else:
-            return self.widgetStore[title][1]
-
-    def expandTabs(self, fill=True):
-        self.fill = fill
-
-        # update the tabConatiner
-        self.tabContainer.grid_forget()
-        if self.fill:
-            self.tabContainer.grid(row=0, sticky=W + E)
-        else:
-            self.tabContainer.grid(row=0, sticky=W)
-
-        for key in list(self.widgetStore.keys()):
-            tab = self.widgetStore[key][0]
-            tab.pack_forget()
-            if self.fill:
-                tab.pack(side=LEFT, ipady=4, ipadx=4, expand=True, fill=BOTH)
-            else:
-                tab.pack(side=LEFT, ipady=4, ipadx=4)
-
-    def __focusIn(self, tabName):
-        if self.changeOnFocus:
-            self.changeTab(tabName)
-        else:
-            self.highlightedTab = tabName
-            self.__colourTabs(False)
-
-    def __focusOut(self, tabName):
-        self.highlightedTab = None
-        self.__colourTabs(False)
-
-    def disableAllTabs(self, disabled=True):
-        for tab in self.widgetStore.keys():
-            self.disableTab(tab, disabled)
-
-    def renameTab(self, tabName, newName=None):
-        if tabName not in self.widgetStore.keys():
-            raise ItemLookupError("Invalid tab name: " + tabName)
-        if newName is None:
-            newName = self.widgetStore[tabName][0].DEFAULT_TEXT
-
-        self.widgetStore[tabName][0].config(text=newName)
-
-    def disableTab(self, tabName, disabled=True):
-        if tabName not in self.widgetStore.keys():
-            raise ItemLookupError("Invalid tab name: " + tabName)
-
-        if not disabled:
-            self.widgetStore[tabName][0].disabled = False
-            self.widgetStore[tabName][0].config(cursor="hand2", takefocus=1)
-        else:
-            self.widgetStore[tabName][0].disabled = True
-            self.widgetStore[tabName][0].config(cursor="X_cursor", takefocus=0)
-            if self.highlightedTab == tabName:
-                self.highlightedTab = None
-
-            # difficult if the active tab is disabled
-            if self.selectedTab == tabName:
-                self.widgetStore[tabName][1].grid_remove()
-                # find an enabled tab
-                self.selectedTab = None
-                for key in list(self.widgetStore.keys()):
-                    if not self.widgetStore[key][0].disabled:
-                        self.changeTab(key)
-                        break
-
-        self.__colourTabs()
-
-    def changeTab(self, tabName):
-        # quit changing the tab, if it's already selected
-        if self.focus_get() == self.widgetStore[tabName][0]:
-            return
-
-        if tabName not in self.widgetStore.keys():
-            raise ItemLookupError("Invalid tab name: " + tabName)
-
-        if self.widgetStore[tabName][0].disabled:
-            return
-
-        self.selectedTab = tabName
-        self.highlightedTab = tabName
-        self.widgetStore[tabName][0].focus_set()
-        # this will also regrid the appropriate panes
-        self.__colourTabs()
-
-        if self.changeEvent is not None:
-            self.changeEvent()
-
-    def getSelectedTab(self):
-        return self.selectedTab
-
-    def setFont(self, **kwargs):
-        self.tabFont.config(**kwargs)
-
-    def __colourTabs(self, swap=True):
-        # clear all tabs & remove if necessary
-        for key in list(self.widgetStore.keys()):
-            if self.widgetStore[key][0].disabled:
-                self.widgetStore[key][0]['bg'] = self.disabledBg
-                self.widgetStore[key][0]['fg'] = self.disabledFg
-                self.widgetStore[key][0]['relief'] = SUNKEN
-            else:
-                self.widgetStore[key][0]['bg'] = self.inactiveBg
-                self.widgetStore[key][0]['fg'] = self.inactiveFg
-                self.widgetStore[key][0]['relief'] = SUNKEN
-                if swap:
-                    self.widgetStore[key][1].grid_remove()
-
-        # decorate the highlighted tab
-        if self.highlightedTab is not None:
-            self.widgetStore[self.highlightedTab][0]['fg'] = self.activeFg
-
-        # now decorate the active tab
-        if self.selectedTab is not None:
-            self.widgetStore[self.selectedTab][0]['bg'] = self.activeBg
-            self.widgetStore[self.selectedTab][0]['fg'] = self.activeFg
-            self.widgetStore[self.selectedTab][0]['relief'] = RAISED
-            # and grid it if necessary
-            if swap:
-                self.widgetStore[self.selectedTab][1].grid()
 
 #####################################
 # Properties Widget
