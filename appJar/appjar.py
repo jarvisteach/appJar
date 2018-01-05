@@ -1959,6 +1959,10 @@ class gui(object):
             t.daemon = True
             t.start()
 
+    def callback(self, *args, **kwargs):
+        """Shortner for threadCallback."""
+        return self.threadCallback(*args, **kwargs)
+
     def threadCallback(self, func, callback, *args, **kwargs):
         """Run a given method in a new thread with passed arguments.
            When func completes call the callback with the result.
@@ -2401,6 +2405,13 @@ class gui(object):
     # function to set the window's title
     def setTitle(self, title):
         self.__getTopLevel().title(title)
+
+    # function to get the window title
+    def getTitle(self):
+        return self.__getTopLevel().title()
+
+    # property for setTitle
+    title = property(getTitle, setTitle)
 
     # set an icon
     def setIcon(self, image):
@@ -5163,7 +5174,7 @@ class gui(object):
     def combo(self, title, value=None, *args, **kwargs):
         """ shortner for optionBox() """
         return self.optionBox(title, value, *args, **kwargs)
-        
+
     def option(self, title, value=None, *args, **kwargs):
         """ shortner for optionBox() """
         return self.optionBox(title, value, *args, **kwargs)
@@ -12031,7 +12042,7 @@ class SimpleGrid(ScrollPane):
         if newRows > 0:
             for pos in range(len(self.cells[0]), len(self.cells[0]) + newRows):
                 self.addColumn(pos, [])
-                
+
         for count in range(len(self.cells[0])):
             cell = self.cells[0][count]
             if count < len(data):
