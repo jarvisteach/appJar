@@ -63,7 +63,7 @@ parseString = TreeItem = TreeNode = None # AjTree
 base64 = urlencode = urlopen = urlretrieve = quote_plus = json = None # GoogleMap
 ConfigParser = codecs = ParsingError = None # used to parse language files
 Thread = Queue = None
-sqlite3 = None
+qlite3 = None
 turtle = None
 frameBase = Frame
 labelBase = Label
@@ -324,7 +324,7 @@ class gui(object):
 #####################################
 #####################################
     def __init__(self, title=None, geom=None, warn=None, debug=None, handleArgs=True, language=None, startWindow=None, useTtk=False, useSettings=False):
-        """ constructor - sets up the empty GUI window, and inits the various properties """
+        """ constructor - sets up the empty GUI window, and inits the various properties ""
 
         if self.__class__.instantiated:
             raise Exception("You cannot have more than one instance of gui, try using a subWindow.")

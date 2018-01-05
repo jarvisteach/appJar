@@ -27,7 +27,6 @@ app.addButtons(["one", "two"], launch)
 
 app.go()
 ```
-
 Definition of SubWindows happens in the same part of the code as the rest of the GUI, but they default to being hidden.  
 Both SubWindows and the main window can be *shown* and *hidden* - this is usually done through button presses.  
 
@@ -48,7 +47,7 @@ Both SubWindows and the main window can be *shown* and *hidden* - this is usuall
 ### Start/Stop Sub Windows  
 ---
 
-* `.startSubwindow(name, title=None, modal=False, transient=False, blocking=False)` & `.stopSubwindow()`  
+* `.startSubWindow(name, title=None, modal=False, transient=False, blocking=False)` & `.stopSubWindow()`  
     Used to start and stop defining a *SubWindow*  
     Setting a `title` will override the `name` as a title for the *SubWindow*.  
     Setting `modal` to True, will prevent the user from interacting with the parent window until the *SubWindow* is closed.  
