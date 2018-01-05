@@ -1458,6 +1458,13 @@ def test_grids():
 def test_gui_options():
     print("\tTesting gui options")
     app.setTitle("New title")
+    assert app.getTitle() == "New title"
+    assert app.title == "New title"
+
+    app.title = "Newer title"
+    assert app.title == "Newer title"
+    assert app.getTitle() == "Newer title"
+
     app.setTransparency(50)
     app.setTransparency(50)
 
@@ -2646,6 +2653,14 @@ test_widget_arranging()
 
 test_hideShow()
 
+def cbA(data):
+    print("Doing callback with", data)
+    time.sleep(1)
+    return True
+
+def cbB(success):
+    print("Callback finished with:", success)
+
 doStop = 0
 def test_gui(btn=None):
     print("Testing GUI")
@@ -2654,6 +2669,8 @@ def test_gui(btn=None):
         test_pop_ups()
         app.thread(run_events, "a", bbb="bbb")
         app.setEntryFocus("e1")
+        app.threadCallback(cbA, cbB, "text")
+        app.callback(cbA, cbB, "text2")
         app.thread(dismissEditMenu)
         app.thread(test_rightClick)
         doStop += 1
