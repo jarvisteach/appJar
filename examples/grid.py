@@ -1,3 +1,5 @@
+import sys
+sys.path.append("../")
 from appJar import gui
 
 app=gui("Grid Demo", "300x300")

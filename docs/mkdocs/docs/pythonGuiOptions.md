@@ -63,8 +63,22 @@ app.setLocation("CENTER")
     Hides/shows the GUI's title bar.  
     Note, if the title bar is removed, it's not possible to move or resize the GUI.  
 
-##GUI Design
+---
+<div style='text-align: center;'>
+*Advertisement*  
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+    style="display:block"
+    data-ad-format="fluid"
+    data-ad-layout-key="-gw-13-4l+6+pt"
+    data-ad-client="ca-pub-6185596049817878"
+    data-ad-slot="5627392164"></ins>
+<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
 ----
+
+##GUI Design
+---
 It's possible to change the default colours and fonts for widgets in the GUI.
 
 ###Colour
@@ -80,34 +94,41 @@ It's possible to change the default colours and fonts for widgets in the GUI.
 
 ###Font
 
-You can describe a font using a String or a Tuple. There are three properties that can be set:  
+When configuring a font, the following style options can be set:
 
-* Family - such as *Arial*, *Courier*, *Comic Sans*, *Sans Serif*, *Times* or *Verdana*  
-* Size - the height in points  
-* Style - one or more of *normal*, *bold*, *roman*, *italic*, *underline* & *overstrike*  
+* `size` - the height in points  
+* `family` - the family name, such as: *Arial*, *Courier*, *Comic Sans*, *Sans Serif*, *Times* or *Verdana*  
+* `weight` - *bold* or *normal*  
+* `slant` - *italic* or *roman*  
+* `underline` - *True* or *False*  
+* `overstrike` - *True* or *False*  
 
-If the family has a space, then you should use a tuple, otherwise you can simply pass a space separated string:  
 ```python
-font = "Times 16 bold underline"
-font = ("Comic Sans", "20", "underline")
+app.setFont(size=16, family="Times", underline=True, slant="italic")
+app.setButtonFont(size=14, family="Verdana", underline=False, slant="roman")
 ```
 
-If the font can't be found, a default font will be used.  
+#### Setting a font  
 
-* `.setFont(size, font=None)`  
-    This can be used to set the font size and style for all widgets.
+* `.setFont(**style)`  
+    This can be used to set the font for all widgets.  
+    Pass in any of the above styles that are required.  
+
+* `.setLabelFont(**style)`  
+    This can be used to set the font for all label-type widgets.  
+    Pass in any of the above styles that are required.  
+
+* `.setButtonFont(**style)`  
+    This can be used to set the font for all button-type widgets.  
+    Pass in any of the above styles that are required.  
+
+#### Modifying fonts
 
 * `.decreaseFont()` & `.increaseFont()`  
     These can be used to increase or decrease the font of all widgets.
 
-* `.setLabelFont(size, family=None)`  
-    This can be used to set the font size and style for all label-type widgets.
-
 * `.increaseLabelFont()` & `.decreaseLabelFont()`  
     These can be used to increase or decrease the font of all label-type widgets.
-
-* `.setButtonFont()`  
-    This can be used to set the font size and style for all button-type widgets.
 
 * `.increaseButtonFont()` & `.decreaseButtonFont()`  
     These can be used to increase or decrease the font of all butotn-type widgets.

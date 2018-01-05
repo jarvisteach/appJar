@@ -11,21 +11,21 @@ def launch(win):
     elif win == "trans": app.showSubWindow("trans")
     elif win == "pos": app.showSubWindow("pos")
     elif win == "in": app.showSubWindow("inner")
+    elif win == "GO_FULL": app.setFullscreen()
 
 with gui() as app:
     app.setLocation(100,100)
-    app.setLogLevel("debug")
 
-    app.addButtons(["modal", "full", "trans", "pos"], launch)
+    app.addButtons(["modal", "full", "trans", "pos", "GO_FULL"], launch)
 
     with app.subWindow("modal", modal=True):
         app.setBg("orange")
-        app.setGeometry("400x400")
+        app.setSize("400x400")
         app.setStopFunction(checkDone)
         app.addLabel("l1", "In sub window - MODAL")
 
     with app.subWindow("full"):
-        app.setGeometry("fullscreen")
+        app.setSize("fullscreen")
         app.addLabel("l2", "Sub Window two - FULLSCREEN")
 
     with app.subWindow("trans"):

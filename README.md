@@ -72,7 +72,8 @@ with gui("Example") as app:
    - Some of this was from the excellent resources @ http://effbot.org
    - Some of this was from slashdot examples of how to solve common problems
    - Some of this has been incorporated from other people's modules:
-     - Michael Lange's ToolTip
-     - Johann C. Rocholl's tkinter_png support
-     - Martin J. Fiedler's NanoJPEG library
+     - ToolTip support form Michael Lange  
+     - png support using James Wright's tkinter-png and Johann C. Rocholl's png.py libraries  
+     - jpeg support using NanoJPEG from Martin J. Fiedler  
+
  - I've tried to get as much functionality into this library as possible, without requiring any other modules

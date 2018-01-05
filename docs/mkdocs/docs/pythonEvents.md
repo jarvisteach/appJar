@@ -7,7 +7,7 @@ The `Button` has an event automatically linked to it - whenever you press it, a 
 
 ## Types of Event  
 ---
-appJar currenly has four basic types of event you can register:  
+appJar currently has four basic types of event you can register:  
 
 * `.set XXX ChangeFunction(title, function)` call a function whenever the widget *changes*  
 * `.set XXX SubmitFunction(title, function)` call a function when the widget is *submitted*    
@@ -22,6 +22,7 @@ These do similar things, so probably shouldn't both exist, but have evolved from
     * Scales, OptionBoxes, SpinBoxes, ListBoxes, RadioButtons & CheckBoxes, Entries & TextAreas, and Properties - the function will be called each time the widget is changed.  
     * Buttons, Labels & Images - it is not available.  
     * Other widgets - it will set the *command* property for the underlying tkinter widget; this may or may not do anything...  
+<br>
 
 * `.set XXX SubmitFunction(title, function)`  
     Creates a *submit* option for some widgets:  
@@ -52,7 +53,22 @@ app.addButton("Reset", reset)
 app.go()
 ```
 
+---
+<div style='text-align: center;'>
+*Advertisement*  
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+    style="display:block"
+    data-ad-format="fluid"
+    data-ad-layout-key="-gw-13-4l+6+pt"
+    data-ad-client="ca-pub-6185596049817878"
+    data-ad-slot="5627392164"></ins>
+<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
+---
+
 ### Over Functions
+---
 Set functions to call whenever the mouse enters (goes over) or leaves the specified widget.  
 
 * `.set XXX OverFunction(name, [inFunction, outFunction])`  
@@ -95,6 +111,20 @@ It's possible to register any of the standard event types with appJar widgets
 app.getEntryWidget("widget_name").bind("<FocusOut>", function_name, add="+")
 ```
 
+---
+<div style='text-align: center;'>
+*Advertisement*  
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+    style="display:block"
+    data-ad-format="fluid"
+    data-ad-layout-key="-gw-13-4l+6+pt"
+    data-ad-client="ca-pub-6185596049817878"
+    data-ad-slot="5627392164"></ins>
+<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
+---
+
 ## Binding Keys
 ---
 As well as changing widgets, we sometimes want keys to trigger events.  
@@ -107,12 +137,37 @@ Link a function to the ```<Enter>``` key
 Unlink a function from the ```<Enter>```  key
 
 You may also want to bind other keys to events.  
+See [here](http://effbot.org/tkinterbook/tkinter-events-and-bindings.htm) for a detailed list of the *Event Formats*.  
+
+```python
+from appJar import gui
+def keyPress(key):
+    if key == "<Up>":
+        app.increaseFont()
+    elif key == "<Down>":
+        app.decreaseFont()
+    elif key == "<F1>":
+        app.setFont(12)
+
+app = gui("Button Demo")
+app.addLabel("title", "Press the arrow keys to change the font")
+app.bindKey("<Up>", keyPress)
+app.bindKey("<Down>", keyPress)
+app.bindKey("<F1>", keyPress)
+app.go()
+```
 
 * `.bindKey(key, function)`  
 Link the specified key to the specified function.
 
+* `.bindKeys(keys, function)`  
+Link the specified keys to the specified function.
+
 * `.unbindKey(key)`  
 Unlink the specified key from any functions bound to it.
+
+* `.unbindKeys(keys)`  
+Unlink the specified keys from any functions bound to them.
 
 ## Stopping the GUI
 ---

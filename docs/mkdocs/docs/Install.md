@@ -1,7 +1,7 @@
 #Set-up Instructions
 ---
 appJar was designed for use in schools - it therefore doesn't require any kind of special  *installation*.  
-Instead, just [DOWNLOAD](https://github.com/RWBA/appJar/blob/appJar/releases/appJar.zip?raw=true) the ZIP file, unzip, and go - just put the folder in the [right place](#single-user-set-up).  
+Instead, just [DOWNLOAD](https://github.com/jarvisteach/appJar/blob/appJar/releases/appJar.zip?raw=true) the ZIP file, unzip, and go - just put the folder in the [right place](#single-user-set-up).  
 
 ##Pip Installation  
 However, if you can install python packages - we support that too!  
@@ -30,7 +30,22 @@ If you're on Linux you might be able to make this even simpler.
 You might have a `site-packages` folder, that is already in your path.  
 In this case, put the `appJar` folder in `~/.local/lib/python3.x/site-packages/` where 3.x is the version of python that you use.  
 
+---
+<div style='text-align: center;'>
+*Advertisement*  
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+    style="display:block"
+    data-ad-format="fluid"
+    data-ad-layout-key="-gw-13-4l+6+pt"
+    data-ad-client="ca-pub-6185596049817878"
+    data-ad-slot="5627392164"></ins>
+<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
+---
+
 ##Multi-user Set-up  
+---
 If you're trying to install appJar in a school, everyone can download their own copy ([see above](#single-user-set-up)), or:  
 
 * Put the **appJar folder** in a **shared location** (eg. a folder on a network drive): `E:\PYLIB`  
@@ -63,8 +78,23 @@ Create an environment variable, which will mean `E:\PYLIB` is always in your **p
 ![System](img/w_install_4.png)
 * Press **OK**, and you're done!    
 
+---
+<div style='text-align: center;'>
+*Advertisement*  
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+    style="display:block"
+    data-ad-format="fluid"
+    data-ad-layout-key="-gw-13-4l+6+pt"
+    data-ad-client="ca-pub-6185596049817878"
+    data-ad-slot="5627392164"></ins>
+<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
+---
+
 ###Linux (Raspberry Pi) /MacOS 
-----
+---
+
 If you're running python from a terminal:  
 
 * Type the following:  

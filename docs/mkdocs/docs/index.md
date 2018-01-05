@@ -7,7 +7,7 @@ Written by a teacher, in the classroom, for students.
 
 **appJar** is designed to run on as many versions of [Python](https://www.python.org/downloads/) as possible - so it should work in your school.  
 
-There are no other dependencies - simply [download](https://github.com/RWBA/appJar/blob/appJar/releases/appJar.zip?raw=true), unzip, and put it in your code folder.  
+There are no other dependencies - simply [download](https://github.com/jarvisteach/appJar/blob/appJar/releases/appJar.zip?raw=true), unzip, and put it in your code folder.  
 Check out the [installation](/Install) instructions for other ways to get **appJar** working.  
 
 GUIs in Python are hard, there's a huge amount of [boilerplate code](https://en.wikipedia.org/wiki/Boilerplate_code) required to get things working - so we hide all of that.  
@@ -117,8 +117,23 @@ app.setFocus("Username")
 
     (**NB.** We also set some other colours on the label - see [below](#full-code-listing)) 
 
+---
+<div style='text-align: center;'>
+*Advertisement*  
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+    style="display:block"
+    data-ad-format="fluid"
+    data-ad-layout-key="-gw-13-4l+6+pt"
+    data-ad-client="ca-pub-6185596049817878"
+    data-ad-slot="5627392164"></ins>
+<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
+---
+
 ###  Make your own  
 ---  
+
 And, that's all you need to know. Check out:  
 
 * All the different [widgets](/pythonWidgets) available.  

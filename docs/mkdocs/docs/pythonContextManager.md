@@ -40,7 +40,22 @@ The old start/stop functions all still exist, so there is no need to use the `wi
 
 An added bonus, is that the same syntax works for starting a container or opening a container!
 
+---
+<div style='text-align: center;'>
+*Advertisment*  
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+    style="display:block"
+    data-ad-format="fluid"
+    data-ad-layout-key="-gw-13-4l+6+pt"
+    data-ad-client="ca-pub-6185596049817878"
+    data-ad-slot="5627392164"></ins>
+<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
+---
+
 ## Available Containers
+---
 
 ```python
 from appJar import gui

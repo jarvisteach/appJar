@@ -46,6 +46,10 @@ app.startLabelFrame("Image Data", 0, 0)
 app.addImageData("imgdata", photo)
 app.stopLabelFrame()
 
+app.startLabelFrame("Compound Image", 1, 0)
+app.addImage("cimage", "balloons.gif", compound="top")
+app.stopLabelFrame()
+
 def imgMap(pos):
     print(pos)
 

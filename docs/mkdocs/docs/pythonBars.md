@@ -56,8 +56,22 @@ The toolbar will also gain an extra button (a pin) allowing the user to configur
 * `.showToolbar()` & `.hideToolbar()`  
     Will show/hide the toolbar.  
 
+---
+<div style='text-align: center;'>
+*Advertisement*  
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+    style="display:block"
+    data-ad-format="fluid"
+    data-ad-layout-key="-gw-13-4l+6+pt"
+    data-ad-client="ca-pub-6185596049817878"
+    data-ad-slot="5627392164"></ins>
+<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
+---
+
 ##Menubar
-___
+---
 Adds a standard Menubar along the top of the GUI.  
 On Windows/Linux a menubar will only be shown, once the first menu has been added.  
 On Mac, a menubar is always present.  

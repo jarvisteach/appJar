@@ -6,7 +6,7 @@ repo_url: https://github.com/jarvisteach/appJar
 google_analytics: ['UA-79206647-1', 'appjar.info']
 theme: united
 theme_dir: custom_united
-copyright: <p>&#169; Richard Jarvis, 2015-2017</p>
+copyright: <p>&#169; Richard Jarvis, 2015-2018</p>
 site_description: The easiest way to build tkinter GUIs in Python.
 site_author: Richard Jarvis
 extra_css: [extra.css]
@@ -22,7 +22,9 @@ pages:
     - Multiple Windows: pythonSubWindows.md
     - Splashscreen: splash.md
     - Special Characters: specialCharacters.md
-    - Beta Widgets...: pythonDevWidgets.md
+    - Beta:
+        - Widgets: pythonDevWidgets.md
+        - Simple Naming: simpleAppJar.md
 - Configuration:
     - GUI Options: pythonGuiOptions.md
     - Widgets:
@@ -36,9 +38,10 @@ pages:
         - Threads: pythonThreads.md
         - Drag'n Drop: pythonDnD.md
     - Internationalisation: pythonInternationalisation.md
+    - Settings: pythonSettings.md
     - Logging: pythonLogging.md
     - Command Line Arguments: pythonCommandLine.md
-    - ttk: pythonTtk.md
+    - ttk (BETA): pythonTtk.md
 - Examples:
     - Raspberry Pi Minecraft: examples/minecraft.md
     - Simple Layout: examples/simple.md
@@ -49,6 +52,7 @@ pages:
     - License: License.md
     - Support: Support.md
     - Acknowledgements: Thanks.md
+    - Advertising: advertising.md
     - Contributing: contributing.md
     - Change-Log: whatsNew.md
     - Old Documentation: oldDocs.md
@@ -58,3 +62,4 @@ pages:
         - Git & PyPi: gitGuide.md
 extra:
     theme_inverse: false
+

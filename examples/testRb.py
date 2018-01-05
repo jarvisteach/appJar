@@ -11,7 +11,7 @@ def press(btn):
 def updateMeter():
       global val
       val = random.randint(0,100)
-      app.setDualMeter("m1", val)
+      app.setMeter("m1", (val, val))
 #      val += 1
 
 app=gui()

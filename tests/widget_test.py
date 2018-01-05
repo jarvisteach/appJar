@@ -3,15 +3,16 @@ import time
 import datetime
 import pytest
 import os
+import turtle
 
-try: from tkinter import Event, Label, Entry, Button, Radiobutton, Checkbutton, OptionMenu, Spinbox, Listbox, Message, PhotoImage
-except: from Tkinter import Event, Label, Entry, Button, Radiobutton, Checkbutton, OptionMenu, Spinbox, Listbox, Message, PhotoImage
+try: from tkinter import Frame, Event, Label, Entry, Button, Radiobutton, Checkbutton, OptionMenu, Spinbox, Listbox, Message, PhotoImage, Scale, Canvas
+except: from Tkinter import Frame, Event, Label, Entry, Button, Radiobutton, Checkbutton, OptionMenu, Spinbox, Listbox, Message, PhotoImage, Scale, Canvas
 
 photo="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    pCZbEhAAOw=="
 
 
 sys.path.append("../")
-from appJar import gui, SelectableLabel, AutoCompleteEntry, ajScale, AjText, AjScrolledText, Meter, Properties, Link, Separator, Grip, PieChart, DraggableWidget
+from appJar import gui, SelectableLabel, AjText, AjScrolledText, Meter, Properties, PieChart, DraggableWidget
 
 PY_VER = str(sys.version_info[0]) + "." + str(sys.version_info[1])
 
@@ -61,6 +62,18 @@ def test_grid_layout():
     app.addLabel("lay12", TEXT_ONE, colspan=5, rowspan=5, column=5, row=5)
 
     print("\t >> all tests complete")
+
+def test_remover():
+    app.addLabel("removeMe", TEXT_ONE)
+    app.startLabelFrame("RemoveFrame")
+    app.startPagedWindow("RemovePage")
+    app.startPage()
+    app.addLabel("removeMe2", TEXT_ONE)
+    app.addLabel("removeMe3", TEXT_ONE)
+    app.stopPage()
+    app.stopPagedWindow()
+    app.stopLabelFrame()
+    app.removeAllWidgets()
 
 def test_labels():
     print("\tTesting labels")
@@ -125,13 +138,17 @@ def test_entries():
 
     app.addFileEntry("fe1")
     app.addDirectoryEntry("de1")
-    assert isinstance(app.addAutoEntry("ae1", ["a", "b", "c"]), AutoCompleteEntry)
+    assert isinstance(app.addAutoEntry("ae1", ["a", "b", "c"]), Entry)
     app.setAutoEntryNumRows("ae1", 5)
+    app.appendAutoEntry("ae1", "newOne")
+    app.appendAutoEntry("ae1", ["newTwo", "newThree"])
+    app.removeAutoEntry("ae1", "newOne")
+    app.changeAutoEntry("ae1", ["a", "b", "c"])
 
     # quick validation check
     app.addEntry("focusEnt")
     app.addValidationEntry("ve1")
-    app.addLabelValidationEntry("lve1")
+#    app.addLabelValidationEntry("lve1")
     app.setEntryValid("ve1")
     app.setEntryInvalid("ve1")
     app.setEntryWaitingValidation("ve1")
@@ -153,6 +170,9 @@ def test_entries():
     app._gui__entryIn("tester")
     app._gui__entryOut("tester")
 
+    app.setEntryDefault("tester3", TEXT_ONE)
+    app.setEntryDefault("tester3", TEXT_TWO)
+    app.setEntryDefault("tester3", TEXT_THREE)
     app.updateDefaultText("tester3", TEXT_ONE)
     app.updateEntryDefault("tester3", TEXT_ONE)
 
@@ -174,25 +194,26 @@ def test_entries():
     assert isinstance(app.addLabelEntry("le1"), Entry)
     assert isinstance(app.addLabelNumericEntry("lne1"), Entry)
     assert isinstance(app.addLabelSecretEntry("lse1"), Entry)
-    assert isinstance(app.addLabelAutoEntry("lae1", ["a", "b", "c"]), AutoCompleteEntry)
+    assert isinstance(app.addLabelAutoEntry("lae1", ["a", "b", "c"]), Entry)
 
     assert app.getEntry("le1") == EMPTY
-    assert app.getEntry("lne1") == 0
+    print( app.getEntry("lne1") )
+    assert app.getEntry("lne1") == None
     assert app.getEntry("lse1") == EMPTY
     assert app.getEntry("lae1") == EMPTY
 
     assert app.getEntry("e1") == EMPTY
-    assert app.getEntry("ne1") == 0
+    assert app.getEntry("ne1") == None
     assert app.getEntry("se1") == EMPTY
     assert app.getEntry("ae1") == EMPTY
 
     entryVals = app.getAllEntries()
     assert entryVals["le1"] == EMPTY
-    assert entryVals["lne1"] == 0
+    assert entryVals["lne1"] == None
     assert entryVals["lse1"] == EMPTY
     assert entryVals["lae1"] == EMPTY
     assert entryVals["e1"] == EMPTY
-    assert entryVals["ne1"] == 0
+    assert entryVals["ne1"] == None
     assert entryVals["se1"] == EMPTY
     assert entryVals["ae1"] == EMPTY
 
@@ -208,40 +229,40 @@ def test_entries():
     app.setEntryDefault("lae1", TEXT_FOUR)
 
     assert app.getEntry("e1") == EMPTY
-    assert app.getEntry("ne1") == 0
+    assert app.getEntry("ne1") == None
     assert app.getEntry("se1") == EMPTY
     assert app.getEntry("ae1") == EMPTY
 
     assert app.getEntry("le1") == EMPTY
-    assert app.getEntry("lne1") == 0
+    assert app.getEntry("lne1") == None
     assert app.getEntry("lse1") == EMPTY
     assert app.getEntry("lae1") == EMPTY
 
     app.setEntry("ne1", "-")
-    assert app.getEntry("ne1") == 0
+    assert app.getEntry("ne1") == None
     app.setEntry("ne1", ".")
-    assert app.getEntry("ne1") == 0
+    assert app.getEntry("ne1") == None
     app.setEntry("ne1", "0.0")
     assert app.getEntry("ne1") == 0
     app.setEntry("ne1", "-0.0")
     assert app.getEntry("ne1") == 0
     app.setEntry("ne1", ".")
-    assert app.getEntry("ne1") == 0
+    assert app.getEntry("ne1") == None
 
 # should fail...
 #    with pytest.raises(Exception) :
     app.setEntry("ne1", TEXT_ONE)
 
     app.setEntry("lne1", "-")
-    assert app.getEntry("lne1") == 0
+    assert app.getEntry("lne1") == None
     app.setEntry("lne1", ".")
-    assert app.getEntry("lne1") == 0
+    assert app.getEntry("lne1") == None
     app.setEntry("lne1", "0.0")
     assert app.getEntry("lne1") == 0
     app.setEntry("lne1", "-0.0")
     assert app.getEntry("lne1") == 0
     app.setEntry("lne1", ".")
-    assert app.getEntry("lne1") == 0
+    assert app.getEntry("lne1") == None
 
     app.setEntry("ne1", NUM_ONE)
     app.setEntry("e1", TEXT_ONE)
@@ -284,12 +305,12 @@ def test_entries():
     app.clearEntry("lae1")
 
     assert app.getEntry("e1") == EMPTY
-    assert app.getEntry("ne1") == 0
+    assert app.getEntry("ne1") == None
     assert app.getEntry("se1") == EMPTY
     assert app.getEntry("ae1") == EMPTY
 
     assert app.getEntry("le1") == EMPTY
-    assert app.getEntry("lne1") == 0
+    assert app.getEntry("lne1") == None
     assert app.getEntry("lse1") == EMPTY
     assert app.getEntry("lae1") == EMPTY
 
@@ -316,12 +337,12 @@ def test_entries():
     app.clearAllEntries()
 
     assert app.getEntry("e1") == EMPTY
-    assert app.getEntry("ne1") == 0
+    assert app.getEntry("ne1") == None
     assert app.getEntry("se1") == EMPTY
     assert app.getEntry("ae1") == EMPTY
 
     assert app.getEntry("le1") == EMPTY
-    assert app.getEntry("lne1") == 0
+    assert app.getEntry("lne1") == None
     assert app.getEntry("lse1") == EMPTY
     assert app.getEntry("lae1") == EMPTY
 
@@ -400,9 +421,14 @@ def test_buttons():
     app.setButtonImage("bb1", "1_entries.gif")
     but1 = app.getButtonWidget("bb1")
     assert but1.cget("text") == ""
+    app.setButtonImage("bb1", "1_entries.gif", align="top")
 
     assert isinstance(app.addImageButton("ib1", None, "1_entries.gif"), Button)
     assert isinstance(app.addIconButton("ib2", None, "map"), Button)
+
+    assert isinstance(app.addImageButton("ib1a", None, "1_entries.gif", align="left"), Button)
+    assert isinstance(app.addIconButton("ib2a", None, "map", align="right"), Button)
+
     but1 = app.getButtonWidget("ib1")
     assert but1.cget("text") == ""
 
@@ -455,7 +481,7 @@ def test_radios():
     assert rbs["rb2"] == TEXT_THREE
 
     # call generic setter functions
-    test_setters("RadioButton", "rb")
+    test_setters("RadioButton", "rb", TEXT_TWO)
     test_setters("Rb", "rb")
 
     app.clearAllRadioButtons()
@@ -551,12 +577,18 @@ def test_options():
     assert obs["l1"] == LIST_ONE[0]
     assert obs["l2"] == LIST_TWO[0]
 
-    # select new items - by position
-    app.setOptionBox("l1", 2)
-    app.setOptionBox("l2", 3)
+    print(LIST_ONE)
+    print(LIST_TWO)
 
-    assert app.getOptionBox("l1") == LIST_ONE[2]
-    assert app.getOptionBox("l2") == LIST_TWO[3]
+    # select new items - by position
+    app.setOptionBox("l1", 3)
+    app.setOptionBox("l2", 1)
+
+    print( app.getOptionBox("l1") , LIST_ONE[3])
+    print( app.getOptionBox("l2") , LIST_TWO[1])
+
+    assert app.getOptionBox("l2") == LIST_TWO[1]
+    assert app.getOptionBox("l1") == LIST_ONE[3]
 
     app.clearOptionBox("l1")
     assert app.getOptionBox("l1") == LIST_ONE[0]
@@ -862,7 +894,7 @@ def test_lists():
 
 def test_scales():
     print("\tTesting scales")
-    assert isinstance(app.addScale("s1"), ajScale)
+    assert isinstance(app.addScale("s1"), Scale)
     app.addScale("s2")
     with pytest.raises(Exception) :
         app.addScale("s2")
@@ -939,10 +971,10 @@ def test_scales():
     assert app.getScale("s3") == 100
     assert app.getScale("s4") == 100
 
-    sc = app.getWidget(app.SCALE, "s1")
+    sc = app.getWidget(app.Widgets.Scale, "s1")
 
-    sc._ajScale__jump("trough1")
-    sc._ajScale__jump("trough2")
+    sc._AjScale__jump("trough1")
+    sc._AjScale__jump("trough2")
 
 
     # call generic setter functions
@@ -1215,12 +1247,12 @@ def test_properties():
 
 def test_separators():
     print("\tTesting separators")
-    assert isinstance(app.addSeparator(colour="red"), Separator)
-    assert isinstance(app.addSeparator(), Separator)
-    assert isinstance(app.addHorizontalSeparator(), Separator)
-    assert isinstance(app.addHorizontalSeparator(colour="green"), Separator)
-    assert isinstance(app.addVerticalSeparator(), Separator)
-    assert isinstance(app.addVerticalSeparator(colour="pink"), Separator)
+    assert isinstance(app.addSeparator(colour="red"), Frame)
+    assert isinstance(app.addSeparator(), Frame)
+    assert isinstance(app.addHorizontalSeparator(), Frame)
+    assert isinstance(app.addHorizontalSeparator(colour="green"), Frame)
+    assert isinstance(app.addVerticalSeparator(), Frame)
+    assert isinstance(app.addVerticalSeparator(colour="pink"), Frame)
     print("\t >> all tests complete")
 
 def linkPressed(link=None):
@@ -1228,11 +1260,11 @@ def linkPressed(link=None):
 
 def test_links():
     print("\tTesting links")
-    assert isinstance(app.addLink("l1", None), Link)
+    assert isinstance(app.addLink("l1", None), Label)
 #    with pytest.raises(Exception) :
 #        app.addLink("l1", None)
-    assert isinstance(app.addLink("l2", linkPressed), Link)
-    assert isinstance(app.addWebLink("l3", "http://appJar.info"), Link)
+    assert isinstance(app.addLink("l2", linkPressed), Label)
+    assert isinstance(app.addWebLink("l3", "http://appJar.info"), Label)
     with pytest.raises(Exception) :
         app.addWebLink("l4", "appJar.info")
 
@@ -1249,7 +1281,7 @@ def test_links():
 
 def test_grips():
     print("\tTesting grips")
-    assert isinstance(app.addGrip(), Grip)
+    assert isinstance(app.addGrip(), Label)
     grip = app.addGrip()
     event = Event()
     event.widget = grip
@@ -1514,6 +1546,9 @@ def test_events():
     app.bindKey("b", tester_function)
     app.unbindKey("b")
 
+    app.bindKeys(["c", "d", "<Up>", "<F1>"], tester_function)
+    app.unbindKeys(["c", "<Up>", "<F1>"])
+
     app.registerEvent(tester_function)
     app.setPollTime(2)
     app.setPollTime(0.5)
@@ -1532,7 +1567,7 @@ def test_events():
     print(" >> not implemented...")
     #print("\t >> all tests complete")
 
-def run_events():
+def run_events(param1, bbb):
 
     time.sleep(1)
     assert app.getLabel("test_threads") == "full"
@@ -1546,7 +1581,7 @@ def checkPriority():
 def test_images():
     print("\tTesting images")
 
-    assert isinstance(app.addImage("im1", "1_flash.gif"), PhotoImage)
+    assert isinstance(app.addImage("im1", "1_flash.gif", compound="left"), PhotoImage)
     with pytest.raises(Exception) :
         app.addImage("im1", "1_flash.gif")
     app.addAnimatedImage("anim1", "1_flash.gif")
@@ -1659,15 +1694,15 @@ def test_menus():
 
     app.addMenuList("a", LIST_ONE, tester_function)
     app.createMenu("MEN2")
-    app.addMenuItem("MEN2", "MM2", tester_function, shortcut="k", underline=2)
+    app.addMenuItem("MEN2", "MM2", tester_function, shortcut="Control-k", underline=2)
     app.addMenuSeparator("MEN2")
-    app.addMenuCheckBox("MEN2", "CB2", tester_function, shortcut="c", underline=2)
-    app.addMenuRadioButton("MEN2", "a", "BB2", tester_function, shortcut="r", underline=2)
+    app.addMenuCheckBox("MEN2", "CB2", tester_function, shortcut="Control-Shift-c", underline=2)
+    app.addMenuRadioButton("MEN2", "a", "BB2", tester_function, shortcut="Control-2", underline=2)
     app.addMenuRadioButton("MEN2", "a", "BB3", tester_function)
     app.addSubMenu("MEN2", "sub1")
-    app.addMenuItem("sub1", "MMM2", tester_function, shortcut="w", underline=2)
+    app.addMenuItem("sub1", "MMM2", tester_function, shortcut="Alt-w", underline=2)
     app.addMenuSeparator("sub1")
-    app.addMenuCheckBox("sub1", "CB23", tester_function, shortcut="x", underline=2)
+    app.addMenuCheckBox("sub1", "CB23", tester_function, shortcut="Alt-Shift-x", underline=2)
     app.addMenuRadioButton("sub1", "b", "BB23", tester_function, shortcut="y", underline=2)
     app.addMenuRadioButton("sub1", "b", "BB33", tester_function, underline=0)
     app.addMenu("PRESS", tester_function, "P", 4)
@@ -1918,7 +1953,7 @@ def test_hideShow():
     #print("\t >> all tests complete")
 
 
-def test_setters(widg_type, widg_id):
+def test_setters(widg_type, widg_id, widg_val=None):
     print("\tTesting setters")
     exec("app.set" + widg_type + "Bg(\""+widg_id +"\", \"red\")")
     exec("app.set" + widg_type + "Fg(\""+widg_id +"\", \"red\")")
@@ -1981,7 +2016,10 @@ def test_setters(widg_type, widg_id):
     exec("app.set" + widg_type + "SubmitFunction(\""+widg_id +"\", tester_function)")
     exec("app.set" + widg_type + "RightClick('" + widg_id + "', 'RCLICK')")
 
-    exec("app.get"+widg_type+"Widget(\""+widg_id+"\")")
+    if widg_val is not None:
+        exec('app.get'+widg_type+'Widget("'+widg_id+'", "'+widg_val+'")')
+    else:
+        exec('app.get'+widg_type+'Widget("'+widg_id+'")')
 
 #    exec("app.show" + widg_type+ "(\""+widg_id +"\")")
 #    exec("app.hide" + widg_type+ "(\""+widg_id +"\")")
@@ -2194,7 +2232,7 @@ def test_containers():
     app.addLabel("pg2_np", TEXT_ONE)
     app.stopPage()
 
-    pw = app.getWidget("pagedWindow", "pg1")
+    pw = app.getWidget(app.Widgets.PagedWindow, "pg1")
     pw.showFirst()
     pw.showFirst()
     pw.showPrev()
@@ -2261,7 +2299,7 @@ def test_containers():
     with pytest.raises(Exception) :
         app.stopScrollPane()
 
-    sp = app.getWidget(app.SCROLLPANE, "sp1")
+    sp = app.getWidget(app.Widgets.ScrollPane, "sp1")
 
 
     for hHidden in [True, False]:
@@ -2385,12 +2423,36 @@ def test_googlemap():
     assert app.getGoogleMapSize("gm2") == "350x450"
 
     app.setGoogleMapMarker("gm2", "france")
-    app.setGoogleMapMarker("gm2", "paris")
+    app.setGoogleMapMarker("gm2", "paris", label="A")
+    app.removeGoogleMapMarker("gm2", label="A")
     app.setGoogleMapMarker("gm2", "leon")
 
     app.setGoogleMapMarker("gm2", "")
     app.saveGoogleMap("gm2", "gm.gif")
     gm2.getMapFile("image.map")
+
+    print(" >> not implemented...")
+    #print("\t >> all tests complete")
+
+def test_turtle():
+    print("\tTesting turtles:", PY_VER)
+    assert isinstance(app.addTurtle("t1"), turtle.RawTurtle)
+    t = app.getTurtle("t1")
+    t.fd(100)
+    s = app.getTurtleScreen("t1")
+    assert isinstance(s, turtle.TurtleScreen)
+    s.bgcolor("orange")
+    test_setters("Turtle", "t1")
+
+    print(" >> not implemented...")
+    #print("\t >> all tests complete")
+
+def test_canvas():
+    print("\tTesting canvas:", PY_VER)
+    assert isinstance(app.addCanvas("c1"), Canvas)
+    c = app.getCanvas("c1")
+    c.create_line(0, 0, 255, 244, width=5)
+    test_setters("Canvas", "c1")
 
     print(" >> not implemented...")
     #print("\t >> all tests complete")
@@ -2523,6 +2585,7 @@ app.showSplash()
 print("NEXT...")
 
 print("<<<Starting Widget Test Suite>>>")
+test_remover()
 test_gui_options()
 test_widget_arranging()
 test_grid_layout()
@@ -2548,6 +2611,8 @@ test_date_pickers()
 try: test_plots()
 except: print("Skipping plot tests - MatPlotLib not available")
 test_microbits()
+test_turtle()
+test_canvas()
 if PY_VER != "3.3":
     test_googlemap()
 
@@ -2587,7 +2652,7 @@ def test_gui(btn=None):
     global doStop
     if doStop == 0:
         test_pop_ups()
-        app.thread(run_events)
+        app.thread(run_events, "a", bbb="bbb")
         app.setEntryFocus("e1")
         app.thread(dismissEditMenu)
         app.thread(test_rightClick)
@@ -2652,6 +2717,180 @@ with gui(debug=True) as app3:
     app3.after(2000, app3.stop)
 
 print("<<<Widget Test Suite Complete on app3 >>>")
+
+print("<<<Starting app4>>>")
+
+def press(btn):
+    print(
+        app4.label("title"),
+        app4.label("title2"),
+        app4.meter("Cry"),
+        app4.entry("data"),
+        app4.date("date"),
+        app4.button("Clap"),
+        app4.radio("happy"),
+        app4.check("Clap"),
+        app4.option("feelings"),
+        app4.spin("feelings"),
+        app4.list("feelings"),
+        app4.scale("happiness"),
+        app4.message("mess"),
+        app4.text("mess2"),
+        app4.meter("Cry"),
+        app4.link("Cry"),
+        app4.link("Shout"),
+        app4.image("img"),
+        app4.image("img2"),
+        app4.properties("Toppings"),
+    )
+
+    app4.label("title2", "not empty")
+    app4.meter("Cry", app4.scale("happiness"), text="fred")
+    app4.meter("CryingMore", app4.slider("happiness again"))
+    app4.meter("CryingMorer", app4.scale("happiness again"), text="alphabet")
+    app4.meter("CryingMorerr", (app4.slider("happiness again"),app4.scale("happiness again")))
+
+def updateApp4(btn=None):
+    app4.label("title", "aaa")
+    app4.label("title2", "aaa")
+    app4.meter("Cry", 50)
+    app4.entry("data", "aaa")
+#    app4.date("date")
+    app4.button("Clap", test_gui4)
+    app4.radio("happy", "Miserable")
+    app4.check("Clap", True)
+    app4.option("feelings", 1)
+    app4.spin("feelings", 2)
+    app4.list("feelings", 3)
+    app4.scale("happiness", 50)
+    app4.message("mess", "aaa")
+    app4.text("mess2", "aaa")
+    app4.meter("Cry", 50)
+    app4.link("Cry", "http://www.google.com")
+    app4.link("Shout", updateApp4)
+    app4.image("img", "1_flash.gif")
+#    app4.image("img2")
+    app4.properties("Toppings", {"a":False, "b": True})
+
+doStopAgain = 0
+def test_gui4(btn=None):
+    print("Testing GUI4")
+    global doStopAgain
+    if doStopAgain == 2:
+        press(None)
+    elif doStopAgain == 3:
+        updateApp4(None)
+    elif doStopAgain == 5:
+        print("Show app4")
+        app4.show()
+    elif doStopAgain == 6:
+        print("Hide app4")
+        app4.hide()
+    elif doStopAgain == 8:
+        print("Stopping app4")
+        app4.stop()
+    doStopAgain += 1
+
+def changer(btn=None):
+    print(btn)
+
+with gui("Simple Demo") as app4:
+    app4.EXTERNAL_DND = None
+    app4.label("title", "Simple Props Demo", colspan=3, kind="flash")
+    app4.label("title2", row=0, column=3)
+    app4.setLabelBg("title", "green")
+
+    app4.radio("happy", "Very Happy", row=1, column=0)
+    app4.radio("happy", "Ambivalent", row=1, column=1, change=changer)
+    app4.radio("happy", "Miserable", row=1, column=2, selected=True)
+
+    app4.message("mess", "Simple Sadness", row=2, rowspan=3)
+    app4.setMessageBg("mess", "pink")
+
+    app4.text("mess2", "Simple Happiness", row=2, column=2, rowspan=3, scroll=False)
+    app4.text("mess3", "Simple Happiness", row=2, column=2, rowspan=3, scroll=True, change=changer)
+    app4.setTextAreaBg("mess2", "pink")
+
+    app4.image("img", "1_entries.gif", over="1_flash.gif", row=2, column=3, rowspan=7)
+    app4.image("img5", "1_entries.gif", over="1_flash.gif", submit=changer, row=2, column=3, rowspan=7)
+    app4.image("img2", "1_entries.gif", over="1_flash.gif", row=2, column=3, rowspan=7, map={"A":[1,1,5,5]}, submit=changer)
+    app4.image("img3", "1_entries.gif", over="1_flash.gif", row=2, submit=changer, column=3, rowspan=7)
+    app4.image("img4", "1_entries.gif", over="1_flash.gif", row=2, column=3, rowspan=7, compound="top")
+    app4.image("img2", "OPEN", row=2, column=4, rowspan=3, kind="icon")
+
+    app4.check("Clap", row=2, column=1)
+    app4.check("Cheer", True, row=3, column=1)
+    app4.check("Cry", row=4, column=1, change=changer)
+
+    app4.entry("data", colspan=3, kind="directory")
+    app4.entry("data2", value="lots of data", colspan=3, focus=True, case="upper", limit=15)
+    app4.entry("data3", colspan=3, default="france", kind="validation")
+    app4.entry("data4", value=["a", "aa", "aba", "abc", "abd"], colspan=3, kind="auto", rows=4)
+
+    app4.entry("se1", row=0, column=1, default="standard", submit=changer, change=changer, limit=5, case="lower", rows=3)
+    app4.entry("sv1", row=1, column=1, kind="validation", default="validation", submit=changer, change=changer, limit=5, case="upper", rows=3)
+    app4.entry("sf1", row=2, column=1, kind="file", default="file", submit=changer, change=changer, limit=5, case="upper", rows=3)
+    app4.entry("sd1", row=3, column=1, kind="directory", default="directory", submit=changer, change=changer, limit=5, case="upper", rows=3)
+    app4.entry("sn1", row=4, column=1, kind="numeric", default="numeric", submit=changer, change=changer, limit=5, case="upper", rows=3)
+    app4.entry("sa1", ["a", "b", "bb", "bbb"], row=5, column=1, kind="auto", default="auto", submit=changer, change=changer, limit=5, case="upper", rows=3)
+    app4.entry("ss1", row=6, column=1, secret=True, default="secret", submit=changer, change=changer, limit=5, case="upper", rows=3)
+
+    app4.entry("lse1", row=7, column=1,label=True)
+    #app4.entry("lsv1", row=8, column=1, kind="validation",label=True)
+    app4.entry("lsf1", row=8, column=1, kind="file",label=True)
+    app4.entry("lsd1", row=9, column=1, kind="directory",label=True)
+    app4.entry("lsn1", row=10, column=1, kind="numeric",label=True)
+    app4.entry("lsa1", ["a", "b", "bb", "bbb"], row=11, column=1, kind="auto",label=True)
+    app4.entry("lss1", row=12, column=1, secret=True,label=True)
+
+
+    row=app4.gr()
+
+    app4.button("Clap", press, icon="OPEN", row=row, column=0)
+    app4.button("Cheer", press, row=row, column=1)
+    app4.button("Cheer", "")
+    app4.button("Cheery", press, image="1_entries.gif")
+    app4.button("Cry", press, row=row, column=2)
+
+    app4.date("date", row=row, column=3, rowspan=4, change=changer)
+
+    app4.scale("happiness", colspan=3, increment=1, show=True, change=press)
+
+
+    row=app4.gr()
+    app4.option("feelings", ["happy", "bored", "angry"], column=0, row=row, change=press)
+    app4.option("feelings2", ["happy", "bored", "angry"], kind="ticks", column=0, row=row, change=press)
+    app4.option("feelings3", ["happy", "bored", "angry"], column=0, row=row, change=press)
+    app4.spin("feelings", ["happy", "bored", "angry"], change=changer, column=1, row=row, item="angry")
+    app4.list("feelings", ["happy", "bored", "angry"], column=2, row=row, rows=4, multi=True, group=True, change=press)
+
+    app4.separator(colspan=3)
+    app4.spin("vals", 4, endValue=10, colspan=3, pos=3)
+    app4.separator(colspan=3, direction="horizontal")
+
+    row=app4.gr()
+    app4.meter("Cry", row=row, column=0, fill="orange")
+    with app4.labelFrame("Links", row=row, column=1):
+        app4.link("Cry", "http://www.google.com")
+        app4.link("Shout", press)
+        app4.separator(row=0, column=1, rowspan=2, direction="vertical")
+        app4.slider("happiness again", 45, row=0, rowspan=2, direction="horizontal", show=True, column=2, interval=5, change=press)
+        app4.scale("Hhappiness again", 45, row=0, rowspan=2, direction="vertical", column=2, interval=25, change=press)
+
+    #    app4.grip(row=row, column=2)
+    toppings={"Cheese":False, "Tomato":False, "Bacon":False, "Corn":False, "Mushroom":False}
+
+    app4.properties("Toppings", toppings, row=row, column=2, change=changer)
+    app4.meter("CryingMor", fill="yellow")
+    app4.meter("CryingMore", 50, colspan=3, kind="other")
+    app4.meter("CryingMorer", 50, colspan=3, kind="split", fill=["green", "blue"])
+    app4.meter("CryingMorerr", (50,70), colspan=3, kind="dual", fill=["green", "blue"])
+
+    app4.registerEvent(test_gui4)
+    app4.setPollTime(1000)
+
+print("<<<Widget Test Suite Complete on app4 >>>")
+
 
 
 doStopAgain = 0
