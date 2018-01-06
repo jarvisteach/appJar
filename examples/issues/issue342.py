@@ -32,29 +32,17 @@ def press(btn):
         app.selectListItemAtPos("list", pos, True)
 
 with gui("SideMenu", "600x400") as app:
-    app.bg = "lightslategrey"
-    app.fg = "black"
-    app.stretch = "both"
-    app.sticky = "news"
-    app.labelFont = 20
-    app.buttonFont = 15
-    app.transparency=90
+    app.config(icon="favicon.ico", bg="lightslategrey", fg="black", stretch="both", sticky="news", labelFont=20, buttonFont=15, transparency=90, a=2)
     with app.labelFrame("Setup"):
-        app.sticky = "nws"
-        app.stretch = "none"
-        app.padding = (4,4)
+        app.configure(sticky="nws", stretch="none", padding=(4,4))
         app.listBox("list", pages, row=0, column=0, change=change, rows=len(pages), focus=True,
                     width=12, border=0, selectbackground="blue", selectforeground="white", background="lightslategrey", fg="black")
-        app.sticky = "news"
-        app.stretch = "both"
+        app.configure(sticky="news", stretch = "both")
         for pos, page in enumerate(pages):
             with app.frame(page, 0, 1):
-                app.inPadding = (17,17)
-                app.bg = bgs[pos]
-                app.sticky = "new"
+                app.configure(inPadding=(17,17), bg=bgs[pos], sticky="new")
                 app.label("l" + page, page, bg="white")
 
-    app.sticky = "se"
-    app.stretch = "column"
+    app.configure(sticky="se", stretch="column")
     app.addButtons(["Previous", "Next"], press)
     app.selectListItemAtPos("list", 0, callFunction=True)

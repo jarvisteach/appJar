@@ -409,7 +409,7 @@ class gui(object):
         # dynamically create lots of functions for configuring stuff
         self.__buildConfigFuncs()
         # language parser
-        self.config = None
+        self.configParser = None
 
         # set up some default path locations
         # this fails if in interactive mode....
@@ -685,10 +685,10 @@ class gui(object):
                     import codecs
                 except:
                     ConfigParser = ParsingError = codecs = False
-                    self.config = None
+                    self.configParser = None
                     return
-            self.config = ConfigParser()
-            self.config.optionxform = str
+            self.configParser = ConfigParser()
+            self.configParser.optionxform = str
 
     def __loadHashlib(self):
         """ loads hashlib - used by text area """
@@ -946,7 +946,7 @@ class gui(object):
             if self.drop_function is not None:
                 return self.drop_function(title, name)
             else:
-                self.config(text=name)
+                self.configParser(text=name)
                 return True
 
         widget.dnd_accept = types.MethodType(dnd_accept, widget)
@@ -1093,7 +1093,7 @@ class gui(object):
         if not PYTHON2:
             try:
                 with codecs.open(language, "r", "utf8") as langFile:
-                    self.config.read_file(langFile)
+                    self.configParser.read_file(langFile)
             except FileNotFoundError:
                 self.error("Invalid language, file not found: %s", language)
                 return
@@ -1101,10 +1101,10 @@ class gui(object):
             try:
                 try:
                     with codecs.open(language, "r", "utf8") as langFile:
-                        self.config.read_file(langFile)
+                        self.configParser.read_file(langFile)
                 except AttributeError:
                     with codecs.open(language, "r", "utf8") as langFile:
-                        self.config.readfp(langFile)
+                        self.configParser.readfp(langFile)
             except IOError:
                 self.error("Invalid language, file not found: %s", language)
                 return
@@ -1116,7 +1116,7 @@ class gui(object):
         self.translations = {"POPUP":{}, "SOUND":{}, "EXTERNAL":{}}
         # loop through each section, get the relative set of widgets
         # change the text
-        for section in self.config.sections():
+        for section in self.configParser.sections():
             getWidgets = True
             section = section.upper()
             self.debug("\tSection: %s", section)
@@ -1132,13 +1132,13 @@ class gui(object):
                 kind = "TOOLTIP"
                 getWidgets = False
             elif section in ["SOUND", "EXTERNAL", "POPUP"]:
-                for (key, val) in self.config.items(section):
+                for (key, val) in self.configParser.items(section):
                     if section == "POPUP": val = val.strip().split("\n")
                     self.translations[section][key] = val
                     self.debug("\t\t%s: %s", key, val)
                 continue
             elif section == "MENUBAR":
-                for (key, val) in self.config.items(section):
+                for (key, val) in self.configParser.items(section):
                     key = key.strip().split("-")
                     self.debug("\t\t%s: %s", key, val)
                     if len(key) == 1:
@@ -1170,7 +1170,7 @@ class gui(object):
                 self.warn("No text is displayed in %s", section)
                 continue
             elif kind in [self.Widgets.name(self.Widgets.SubWindow)]:
-                for (key, val) in self.config.items(section):
+                for (key, val) in self.configParser.items(section):
                     self.debug("\t\t%s: %s", key, val)
 
                     if key.lower() == "appjar":
@@ -1195,8 +1195,8 @@ class gui(object):
                     lb = widgets[k]
 
                     # convert data to a list
-                    if self.config.has_option(section, k):
-                        data = self.config.get(section, k)
+                    if self.configParser.has_option(section, k):
+                        data = self.configParser.get(section, k)
                     else:
                         data = lb.DEFAULT_TEXT
                     data = data.strip().split("\n")
@@ -1210,8 +1210,8 @@ class gui(object):
                     sb = widgets[k]
 
                     # convert data to a list
-                    if self.config.has_option(section, k):
-                        data = self.config.get(section, k)
+                    if self.configParser.has_option(section, k):
+                        data = self.configParser.get(section, k)
                     else:
                         data = sb.DEFAULT_TEXT
                     data = data.strip().split("\n")
@@ -1225,8 +1225,8 @@ class gui(object):
                     ob = widgets[k]
 
                     # convert data to a list
-                    if self.config.has_option(section, k):
-                        data = self.config.get(section, k)
+                    if self.configParser.has_option(section, k):
+                        data = self.configParser.get(section, k)
                     else:
                         data = ob.DEFAULT_TEXT
                     data = data.strip().split("\n")
@@ -1236,7 +1236,7 @@ class gui(object):
                     self.changeOptionBox(k, data)
 
             elif kind in [self.Widgets.RadioButton]:
-                for (key, val) in self.config.items(section):
+                for (key, val) in self.configParser.items(section):
                     self.debug("\t\t%s: %s", key, val)
                     keys = key.split("-")
                     if len(keys) != 2:
@@ -1253,7 +1253,7 @@ class gui(object):
                                 break
 
             elif kind in [self.Widgets.TabbedFrame]:
-                for (key, val) in self.config.items(section):
+                for (key, val) in self.configParser.items(section):
                     self.debug("\t\t%s: %s", key, val)
                     keys = key.split("-")
                     if len(keys) != 2:
@@ -1265,7 +1265,7 @@ class gui(object):
                             self.warn("Invalid TABBEDFRAME: %s with TAB: %s" , keys[0], keys[1])
 
             elif kind in [self.Widgets.Properties]:
-                for (key, val) in self.config.items(section):
+                for (key, val) in self.configParser.items(section):
                     self.debug("\t\t%s: %s", key, val)
                     keys = key.split("-")
                     if len(keys) != 2:
@@ -1279,7 +1279,7 @@ class gui(object):
                             self.warn("Invalid PROPERTY: %s", keys[1])
 
             elif kind == self.Widgets.Tree:
-                for (key, val) in self.config.items(section):
+                for (key, val) in self.configParser.items(section):
                     self.debug("\t\t%s: %s", key, val)
                     keys = key.split("-")
                     if len(keys) != 2:
@@ -1294,7 +1294,7 @@ class gui(object):
                                 self.warn("Invalid GRID: %s", keys[0])
 
             elif kind == self.PAGEDWINDOW:
-                for (key, val) in self.config.items(section):
+                for (key, val) in self.configParser.items(section):
                     self.debug("\t\t%s: %s", key, val)
                     keys = key.split("-")
                     if len(keys) != 2:
@@ -1312,8 +1312,8 @@ class gui(object):
                 for k in widgets.keys():
                     ent = widgets[k]
 
-                    if self.config.has_option(section, k):
-                        data = self.config.get(section, k)
+                    if self.configParser.has_option(section, k):
+                        data = self.configParser.get(section, k)
                     else:
                         data = ent.DEFAULT_TEXT
 
@@ -1322,8 +1322,8 @@ class gui(object):
 
             elif kind in [self.Widgets.Image]:
                 for k in widgets.keys():
-                    if self.config.has_option(section, k):
-                        data = str(self.config.get(section, k))
+                    if self.configParser.has_option(section, k):
+                        data = str(self.configParser.get(section, k))
 
                         try:
                             self.setImage(k, data)
@@ -1346,8 +1346,8 @@ class gui(object):
                     except:
                         pass
 
-                    if self.config.has_option(section, k):
-                        data = str(self.config.get(section, k))
+                    if self.configParser.has_option(section, k):
+                        data = str(self.configParser.get(section, k))
                     else:
                         data = widg.DEFAULT_TEXT
 
@@ -1358,8 +1358,8 @@ class gui(object):
                 for k in widgets.keys():
                     but = widgets[k]
                     if but.image is None:
-                        if self.config.has_option(section, k):
-                            data = str(self.config.get(section, k))
+                        if self.configParser.has_option(section, k):
+                            data = str(self.configParser.get(section, k))
                         else:
                             data = but.DEFAULT_TEXT
 
@@ -1375,7 +1375,7 @@ class gui(object):
                     return
                 self.debug("Parsing TOOLTIPs for: %s", kind)
 
-                for (key, val) in self.config.items(section):
+                for (key, val) in self.configParser.items(section):
                     try:
                         func(key, val)
                     except ItemLookupError:
@@ -2187,6 +2187,41 @@ class gui(object):
 
     padding = property(fset=setPadding)
 
+    def config(self, **kwargs):
+        self.configure(**kwargs)
+
+    def configure(self, **kwargs):
+        title = kwargs.pop("title", None)
+        fg = kwargs.pop("fg", None)
+        bg = kwargs.pop("bg", None)
+        font = kwargs.pop("font", None)
+        labelFont = kwargs.pop("labelFont", None)
+        buttonFont = kwargs.pop("buttonFont", None)
+        transparency = kwargs.pop("transparency", None)
+        stretch = kwargs.pop("stretch", None)
+        expand = kwargs.pop("expand", None)
+        sticky = kwargs.pop("sticky", None)
+        padding = kwargs.pop("padding", None)
+        inPadding = kwargs.pop("inPadding", None)
+        icon = kwargs.pop("icon", None)
+
+        for k, v in kwargs.items():
+            gui.error("Invalid config parameter: %s, %s", k, v)
+
+        if title is not None: self.title = title
+        if fg is not None: self.fg = fg
+        if bg is not None: self.bg = bg
+        if font is not None: self.font = font
+        if labelFont is not None: self.labelFont = labelFont
+        if buttonFont is not None: self.buttonFont = buttonFont
+        if transparency is not None: self.transparency = transparency
+        if stretch is not None: self.stretch = stretch
+        if expand is not None: self.expand = expand
+        if sticky is not None: self.sticky = sticky
+        if padding is not None: self.padding = padding
+        if inPadding is not None: self.inPadding = inPadding
+        if icon is not None: self.icon = icon
+
     def setGuiPadding(self, x, y=None):
         """ sets the padding around the border of the GUI """
         if y is None:
@@ -2460,6 +2495,12 @@ class gui(object):
         else:
             icon = self.__getImage(image)
             container.iconphoto(True, icon)
+
+    def getIcon(self):
+        return self.winIcon
+
+    # property for setTitle
+    icon = property(getIcon, setIcon)
 
     def __getCanvas(self, param=-1):
         if len(self.containerStack) > 1 and self.containerStack[param]['type'] == self.Widgets.SubWindow:
