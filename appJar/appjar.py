@@ -50,6 +50,7 @@ from platform import system as platform
 
 # we need to import these too
 # but will only import them when needed
+random = None
 ttk = None
 hashlib = None
 ToolTip = None
@@ -186,6 +187,13 @@ class gui(object):
         except: pass
         kw = dict((k.lower().strip(), v) for k, v in kw.items())
         return kw
+
+    def RANDOM_COLOUR(self):
+        self.__loadRandom()
+        de=("%02x"%random.randint(0,255))
+        re=("%02x"%random.randint(0,255))
+        we=("%02x"%random.randint(0,255))
+        return "#"+de+re+we
 
     @staticmethod
     def GET_PLATFORM():
@@ -662,6 +670,12 @@ class gui(object):
 ###############################################################
 # library loaders - on demand loading of different classes
 ###############################################################
+
+    def __loadRandom(self):
+        """ loasd random libraries """
+        global random
+        if random is None:
+            import random
 
     def __loadTurtle(self):
         """ loasd turtle libraries """
@@ -4782,11 +4796,12 @@ class gui(object):
 #####################################
 
     @contextmanager
-    def scrollPane(self, title, row=None, column=0, colspan=0, rowspan=0, sticky="NSEW"):
+    def scrollPane(self, title, row=None, column=0, colspan=0, rowspan=0, sticky="NSEW", **kwargs):
         try:
             sp = self.startScrollPane(title, row, column, colspan, rowspan, sticky)
         except ItemLookupError:
             sp = self.openScrollPane(title)
+        self.configure(**kwargs)
         try: yield sp
         finally: self.stopScrollPane()
 

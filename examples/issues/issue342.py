@@ -3,7 +3,6 @@ sys.path.append("../../")
 from appJar import gui
 
 pages = ["Page 1", "Page 2", "Page 3", "Page 4", "Page 5", "Page 6"]
-bgs = [ "red", "yellow", "green", "purple", "pink", "skyblue"]
 
 def updateButtons():
     currentPage = app.listBox("list")[0]
@@ -16,7 +15,7 @@ def updateButtons():
         app.enableButton("Next")
 
 def change(listName):
-    app.getFrameWidget(app.listBox("list")[0]).lift()
+    app.getLabelFrameWidget(app.listBox("list")[0]).lift()
     updateButtons()
 
 def press(btn):
@@ -40,8 +39,8 @@ with gui("SideMenu", resizable=True, icon="favicon.ico",
                     width=12, border=0, selectbackground="blue", selectforeground="white", background="lightslategrey", fg="black")
         app.configure(sticky="news", stretch = "both")
         for pos, page in enumerate(pages):
-            with app.frame(page, 0, 1, inPadding=(17,17), bg=bgs[pos], sticky="new"):
-                app.label("l" + page, page, bg="white")
+            with app.labelFrame(page, 0, 1, inPadding=(17,17), bg=app.RANDOM_COLOUR(), sticky="new", fg=app.RANDOM_COLOUR()):
+                app.label("l" + page, page)
 
     app.configure(sticky="se", stretch="column")
     app.addButtons(["Previous", "Next"], press)
