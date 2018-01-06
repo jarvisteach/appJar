@@ -2117,18 +2117,22 @@ class gui(object):
         if ignoreSettings is not None:
             container.ignoreSettings = ignoreSettings
 
-        x, y = self._parseTwoParams(x, y)
+        if x == "CENTER":
+            self.debug("Set location called with no params - CENTERING")
+            self.CENTER(container)
+        else:
+            x, y = self._parseTwoParams(x, y)
 
-        # get the window's width & height
-        m_width = self.topLevel.winfo_screenwidth()
-        m_height = self.topLevel.winfo_screenheight()
+            # get the window's width & height
+            m_width = self.topLevel.winfo_screenwidth()
+            m_height = self.topLevel.winfo_screenheight()
 
-        if x < 0 or x > m_width or y < 0 or y > m_height:
-            self.warn( "Invalid location: %s, %s - ignoring", x, y)
-            return
+            if x < 0 or x > m_width or y < 0 or y > m_height:
+                self.warn( "Invalid location: %s, %s - ignoring", x, y)
+                return
 
-        self.debug("Setting location to: %s, %s", x, y)
-        container.geometry("+%d+%d" % (x, y))
+            self.debug("Setting location to: %s, %s", x, y)
+            container.geometry("+%d+%d" % (x, y))
         container.locationSet = True
 
     def getLocation(self):
