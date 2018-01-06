@@ -470,8 +470,8 @@ class gui(object):
         self.setResizable(True)
 
         # set up fonts
-        self.buttonFont = font.Font(family="Helvetica", size=12,)
-        self.labelFont = font.Font(family="Helvetica", size=12)
+        self._buttonFont = font.Font(family="Helvetica", size=12,)
+        self._labelFont = font.Font(family="Helvetica", size=12)
         self.entryFont = font.Font(family="Helvetica", size=12)
         self.messageFont = font.Font(family="Helvetica", size=12)
         self.rbFont = font.Font(family="Helvetica", size=12)
@@ -588,7 +588,7 @@ class gui(object):
         # properly
 
         if not self.ttkFlag:
-            self.bgLabel = Label(container, anchor=CENTER, font=self.labelFont, background=self.__getContainerBg())
+            self.bgLabel = Label(container, anchor=CENTER, font=self._labelFont, background=self.__getContainerBg())
         else:
             self.bgLabel = ttk.Label(container)
         self.bgLabel.place(x=0, y=0, relwidth=1, relheight=1)
@@ -2268,16 +2268,16 @@ class gui(object):
         self.decreaseButtonFont()
 
     def increaseButtonFont(self):
-        self.setButtonFont(size=self.buttonFont['size'] + 1)
+        self.setButtonFont(size=self._buttonFont['size'] + 1)
 
     def decreaseButtonFont(self):
-        self.setButtonFont(size=self.buttonFont['size'] - 1)
+        self.setButtonFont(size=self._buttonFont['size'] - 1)
 
     def increaseLabelFont(self):
-        self.setLabelFont(size=self.labelFont['size'] + 1)
+        self.setLabelFont(size=self._labelFont['size'] + 1)
 
     def decreaseLabelFont(self):
-        self.setLabelFont(size=self.labelFont['size'] - 1)
+        self.setLabelFont(size=self._labelFont['size'] - 1)
 
     def setFont(self, *args, **style):
         if len(args) > 0:
@@ -2304,12 +2304,12 @@ class gui(object):
             if len(args) > 1:
                 style["family"] = args[1]
 
-        self.buttonFont.config(**style)
+        self._buttonFont.config(**style)
 
     def _setButtonFontSize(self, size):
         self.setButtonFont(size=size)
 
-    bFont = property(fset=_setButtonFontSize)
+    buttonFont = property(fset=_setButtonFontSize)
 
     def setLabelFont(self, *args, **style):
         if len(args) > 0:
@@ -2322,7 +2322,7 @@ class gui(object):
             if len(args) > 1: 
                 style["family"] = args[1]
 
-        self.labelFont.config(**style)
+        self._labelFont.config(**style)
         self.entryFont.config(**style)
         self.rbFont.config(**style)
         self.cbFont.config(**style)
@@ -2350,7 +2350,7 @@ class gui(object):
     def _setLabelFontSize(self, size):
         self.setLabelFont(size=size)
 
-    lFont = property(fset=_setLabelFontSize)
+    labelFont = property(fset=_setLabelFontSize)
 
     # need to set a default colour for container
     # then populate that field
@@ -2483,6 +2483,9 @@ class gui(object):
             if percentage > 1:
                 percentage = float(percentage) / 100
             self.__getTopLevel().attributes("-alpha", percentage)
+
+    # property for setTransparency
+    transparency = property(fset=setTransparency)
 
 ##############################
 # functions to deal with tabbing and right clicking
@@ -4375,7 +4378,7 @@ class gui(object):
         grid = SimpleGrid(self.getContainer(), title, data,
             action, addRow,
             actionHeading, actionButton, addButton,
-            showMenu, buttonFont=self.buttonFont)
+            showMenu, buttonFont=self._buttonFont)
         if not self.ttkFlag:
             grid.config(font=self.gridFont, background=self.__getContainerBg())
         self.__positionWidget(grid, row, column, colspan, rowspan, N+E+S+W)
@@ -4926,7 +4929,7 @@ class gui(object):
             text=title,
             anchor=W,
             justify=LEFT,
-            font=self.labelFont,
+            font=self._labelFont,
         )
 
         if not self.ttkFlag:
@@ -6400,7 +6403,7 @@ class gui(object):
 
         label.image.animating = False
         label.config(image=image)
-        label.config(anchor=CENTER, font=self.labelFont)
+        label.config(anchor=CENTER, font=self._labelFont)
         if not self.ttkFlag:
             label.config(background=self.__getContainerBg())
         label.image = image  # keep a reference!
@@ -6477,7 +6480,7 @@ class gui(object):
         else:
             label = ttk.Label(self.getContainer())
 
-        label.config(anchor=CENTER, font=self.labelFont,image=img)
+        label.config(anchor=CENTER, font=self._labelFont,image=img)
         label.image = img  # keep a reference!
 
         if compound is not None:
@@ -6517,7 +6520,7 @@ class gui(object):
         image = label.image.subsample(x, y)
 
         label.config(image=image)
-        label.config(anchor=CENTER, font=self.labelFont)
+        label.config(anchor=CENTER, font=self._labelFont)
 
         if not self.ttkFlag:
             label.config(background=self.__getContainerBg())
@@ -6531,7 +6534,7 @@ class gui(object):
         image = label.image.zoom(x, y)
 
         label.config(image=image)
-        label.config(anchor=CENTER, font=self.labelFont)
+        label.config(anchor=CENTER, font=self._labelFont)
 
         if not self.ttkFlag:
             label.config(background=self.__getContainerBg())
@@ -7155,7 +7158,7 @@ class gui(object):
         self.widgetManager.verify(self.Widgets.Button, title)
         if not self.ttkFlag:
             but = Button(frame, text=name)
-            but.config(font=self.buttonFont)
+            but.config(font=self._buttonFont)
             if self.platform in [self.MAC, self.LINUX]:
                 but.config(highlightbackground=self.__getContainerBg())
         else:
@@ -7647,13 +7650,13 @@ class gui(object):
         if not selectable:
             if not self.ttkFlag:
                 lab = Label(self.getContainer(), text=text)
-                lab.config(justify=LEFT, font=self.labelFont, background=self.__getContainerBg())
+                lab.config(justify=LEFT, font=self._labelFont, background=self.__getContainerBg())
                 lab.origBg = self.__getContainerBg()
             else:
                 lab = ttk.Label(self.getContainer(), text=text)
         else:
             lab = SelectableLabel(self.getContainer(), text=text)
-            lab.config(justify=CENTER, font=self.labelFont, background=self.__getContainerBg())
+            lab.config(justify=CENTER, font=self._labelFont, background=self.__getContainerBg())
             lab.origBg = self.__getContainerBg()
 
         lab.inContainer = False
@@ -7675,7 +7678,7 @@ class gui(object):
             self.widgetManager.verify(self.Widgets.Label, names[i])
             if not self.ttkFlag:
                 lab = Label(frame, text=names[i])
-                lab.config(font=self.labelFont, justify=LEFT, background=self.__getContainerBg())
+                lab.config(font=self._labelFont, justify=LEFT, background=self.__getContainerBg())
             else:
                 lab = ttk.Label(frame, text=names[i])
             lab.DEFAULT_TEXT = names[i]
@@ -8262,7 +8265,7 @@ class gui(object):
         vFrame.theWidget.bind("<Button-1>", click_command, "+")
 
         if not self.ttkFlag:
-            vFrame.theButton = Button(vFrame, font=self.buttonFont)
+            vFrame.theButton = Button(vFrame, font=self._buttonFont)
         else:
             vFrame.theButton = ttk.Button(vFrame)
 
@@ -8292,7 +8295,7 @@ class gui(object):
 
         lab = labelBase(vFrame)
         lab.pack(side=RIGHT, fill=Y)
-        lab.config(font=self.labelFont)
+        lab.config(font=self._labelFont)
         if not self.ttkFlag:
             lab.config(background=self.__getContainerBg())
         lab.inContainer = True

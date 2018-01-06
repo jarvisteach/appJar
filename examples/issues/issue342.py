@@ -36,8 +36,9 @@ with gui("SideMenu", "600x400") as app:
     app.fg = "black"
     app.stretch = "both"
     app.sticky = "news"
-    app.lFont = 20
-    app.bFont = 15
+    app.labelFont = 20
+    app.buttonFont = 15
+    app.transparency=90
     with app.labelFrame("Setup"):
         app.sticky = "nws"
         app.stretch = "none"
