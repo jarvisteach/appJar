@@ -3354,6 +3354,11 @@ class gui(object):
     def gr(self):
         return self.getRow()
 
+    def setRow(self, row):
+        self.containerStack[-1]['emptyRow'] = row
+
+    row = property(getRow, setRow)
+
     def __repackWidget(self, widget, params):
         if widget.winfo_manager() == "grid":
             ginfo = widget.grid_info()

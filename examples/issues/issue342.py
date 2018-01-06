@@ -35,7 +35,6 @@ with gui("SideMenu", resizable=True, icon="favicon.ico",
             guiPadding=(5,5), bg="lightslategrey", fg="black", stretch="both", location=(450,100),
             size=(600,400), sticky="news", labelFont=20, buttonFont=15, transparency=98) as app:
 
-
     with app.labelFrame("Setup", sticky="nws", stretch="none", padding=[10,10]):
         app.listBox("list", pages, row=0, column=0, change=change, rows=len(pages), focus=True,
                     width=12, border=0, selectbackground="blue", selectforeground="white", background="lightslategrey", fg="black")
