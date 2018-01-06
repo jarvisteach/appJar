@@ -323,7 +323,7 @@ class gui(object):
 # CONSTRUCTOR - creates the GUI
 #####################################
 #####################################
-    def __init__(self, title=None, geom=None, warn=None, debug=None, handleArgs=True, language=None, startWindow=None, useTtk=False, useSettings=False):
+    def __init__(self, title=None, geom=None, warn=None, debug=None, handleArgs=True, language=None, startWindow=None, useTtk=False, useSettings=False, **kwargs):
         """ constructor - sets up the empty GUI window, and inits the various properties """
 
         if self.__class__.instantiated:
@@ -543,6 +543,8 @@ class gui(object):
         self.events = []
         self.pollTime = 250
         self.built = True
+
+        self.configure(**kwargs)
 
     def __handleArgs(self):
         """ internal function to handle command line arguments """
@@ -4567,11 +4569,12 @@ class gui(object):
 #####################################
 
     @contextmanager
-    def labelFrame(self, title, row=None, column=0, colspan=0, rowspan=0, sticky=W, hideTitle=False):
+    def labelFrame(self, title, row=None, column=0, colspan=0, rowspan=0, sticky=W, hideTitle=False, **kwargs):
         try:
             lf = self.startLabelFrame(title, row, column, colspan, rowspan, sticky, hideTitle)
         except ItemLookupError:
             lf = self.openLabelFrame(title)
+        self.configure(**kwargs)
         try: yield lf
         finally: self.stopLabelFrame()
 
@@ -4774,11 +4777,12 @@ class gui(object):
 #####################################
 
     @contextmanager
-    def frame(self, title, row=None, column=0, colspan=0, rowspan=0, sticky="NSEW"):
+    def frame(self, title, row=None, column=0, colspan=0, rowspan=0, sticky="NSEW", **kwargs):
         try:
             fr = self.startFrame(title, row, column, colspan, rowspan, sticky)
         except ItemLookupError:
             fr = self.openFrame(title)
+        self.configure(**kwargs)
         try: yield fr
         finally: self.stopFrame()
 

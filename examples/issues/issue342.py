@@ -31,17 +31,16 @@ def press(btn):
     else:
         app.selectListItemAtPos("list", pos, True)
 
-with gui("SideMenu", "600x400") as app:
-    app.config(resizable=False, icon="favicon.ico", bg="lightslategrey", fg="black", stretch="both",
-                sticky="news", labelFont=20, buttonFont=15, transparency=90, a=2)
-    with app.labelFrame("Setup"):
-        app.configure(sticky="nws", stretch="none", padding=(4,4))
+with gui("SideMenu", "600x400", resizable=False, icon="favicon.ico",
+            bg="lightslategrey", fg="black", stretch="both",
+            sticky="news", labelFont=20, buttonFont=15, transparency=90) as app:
+
+    with app.labelFrame("Setup", sticky="nws", stretch="none", padding=(4,4)):
         app.listBox("list", pages, row=0, column=0, change=change, rows=len(pages), focus=True,
                     width=12, border=0, selectbackground="blue", selectforeground="white", background="lightslategrey", fg="black")
         app.configure(sticky="news", stretch = "both")
         for pos, page in enumerate(pages):
-            with app.frame(page, 0, 1):
-                app.configure(inPadding=(17,17), bg=bgs[pos], sticky="new")
+            with app.frame(page, 0, 1, inPadding=(17,17), bg=bgs[pos], sticky="new"):
                 app.label("l" + page, page, bg="white")
 
     app.configure(sticky="se", stretch="column")
