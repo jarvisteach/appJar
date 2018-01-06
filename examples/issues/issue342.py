@@ -32,7 +32,8 @@ def press(btn):
         app.selectListItemAtPos("list", pos, True)
 
 with gui("SideMenu", "600x400") as app:
-    app.config(icon="favicon.ico", bg="lightslategrey", fg="black", stretch="both", sticky="news", labelFont=20, buttonFont=15, transparency=90, a=2)
+    app.config(resizable=False, icon="favicon.ico", bg="lightslategrey", fg="black", stretch="both",
+                sticky="news", labelFont=20, buttonFont=15, transparency=90, a=2)
     with app.labelFrame("Setup"):
         app.configure(sticky="nws", stretch="none", padding=(4,4))
         app.listBox("list", pages, row=0, column=0, change=change, rows=len(pages), focus=True,

@@ -2120,6 +2120,7 @@ class gui(object):
             container.geometry("+%d+%d" % (x, y))
         container.locationSet = True
 
+
     def __bringToFront(self, win=None):
         """ called to make sure this window is on top of other windows """
         if win is None: win = self.topLevel
@@ -2150,6 +2151,20 @@ class gui(object):
             container.escapeBindId = container.bind(
                 '<Escape>', self.MAKE_FUNC(
                     self.exitFullscreen, container, True), "+")
+
+    def getFullscreen(self, title=None):
+        if title is None:
+            container = self.__getTopLevel()
+        else:
+            container = self.widgetManager.get(self.Widgets.SubWindow, title)
+
+        return container.isFullscreen
+
+    def _changeFullscreen(self, flag):
+        if flag: self.setFullscreen()
+        else: self.exitFullscreen()
+
+    fullscreen = property(getFullscreen, _changeFullscreen)
 
     def exitFullscreen(self, container=None):
         """ turns off fullscreen mode for the specified window """
@@ -2204,6 +2219,8 @@ class gui(object):
         padding = kwargs.pop("padding", None)
         inPadding = kwargs.pop("inPadding", None)
         icon = kwargs.pop("icon", None)
+        resizable = kwargs.pop("resizable", None)
+        fullscreen = kwargs.pop("fullscreen", None)
 
         for k, v in kwargs.items():
             gui.error("Invalid config parameter: %s, %s", k, v)
@@ -2221,6 +2238,8 @@ class gui(object):
         if padding is not None: self.padding = padding
         if inPadding is not None: self.inPadding = inPadding
         if icon is not None: self.icon = icon
+        if resizable is not None: self.resizable = resizable
+        if fullscreen is not None: self.fullscreen = fullscreen
 
     def setGuiPadding(self, x, y=None):
         """ sets the padding around the border of the GUI """
@@ -2459,6 +2478,8 @@ class gui(object):
 
     def getResizable(self):
         return self.__getTopLevel().isResizable
+
+    resizable = property(getResizable, setResizable)
 
     def __doTitleBar(self):
         if self.platform == self.MAC:
