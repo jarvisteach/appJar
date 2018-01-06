@@ -2074,6 +2074,9 @@ class gui(object):
             else:
                 if height is not None:
                     geom = "%sx%s" % (geom, height)
+                else:
+                    if isinstance(geom, list) or isinstance(geom, tuple):
+                        geom = str(geom[0])+"x"+str(geom[1])
 
                 dims = gui.GET_DIMS(container)
                 geom, loc = gui.SPLIT_GEOM(geom)
@@ -2093,6 +2096,13 @@ class gui(object):
             if size is not None:
                 container.geometry(size)
 
+    def getSize(self):
+        container = self.__getTopLevel()
+        size, loc = gui.SPLIT_GEOM(container.geometry())
+        return size
+
+    size = property(getSize, setSize)
+
     def setMinSize(self, container=None, size=None):
         """ sets a minimum size for the specified container - defaults to the whole GUI """
         if container is None: container = self.topLevel
@@ -2106,22 +2116,27 @@ class gui(object):
         container = self.__getTopLevel()
         if ignoreSettings is not None:
             container.ignoreSettings = ignoreSettings
-        if y is None:
-            self.debug("Set location called with no params - CENTERING")
-            self.CENTER(container)
-        else:
-            # get the window's width & height
-            m_width = self.topLevel.winfo_screenwidth()
-            m_height = self.topLevel.winfo_screenheight()
 
-            if x < 0 or x > m_width or y < 0 or y > m_height:
-                self.warn( "Invalid location: %s, %s - ignoring", x, y)
-                return
+        x, y = self._parseTwoParams(x, y)
 
-            self.debug("Setting location to: %s, %s", x, y)
-            container.geometry("+%d+%d" % (x, y))
+        # get the window's width & height
+        m_width = self.topLevel.winfo_screenwidth()
+        m_height = self.topLevel.winfo_screenheight()
+
+        if x < 0 or x > m_width or y < 0 or y > m_height:
+            self.warn( "Invalid location: %s, %s - ignoring", x, y)
+            return
+
+        self.debug("Setting location to: %s, %s", x, y)
+        container.geometry("+%d+%d" % (x, y))
         container.locationSet = True
 
+    def getLocation(self):
+        container = self.__getTopLevel()
+        size, loc = gui.SPLIT_GEOM(container.geometry())
+        return loc
+
+    location = property(getLocation, setLocation)
 
     def __bringToFront(self, win=None):
         """ called to make sure this window is on top of other windows """
@@ -2192,15 +2207,20 @@ class gui(object):
         """ set the current container's external grid padding """
         self.containerStack[-1]['pady'] = y
 
+    def _parseTwoParams(self, x, y):
+        if y is not None:
+            return (x,y)
+        else:
+            if isinstance(x, list) or isinstance(x, tuple):
+                return (x[0], x[1])
+            else:
+                return (x, x)
+
     def setPadding(self, x, y=None):
         """ sets the padding around the border of the current container """
-        if y is None:
-            if isinstance(x, list) or isinstance(x, tuple):
-                self.containerStack[-1]['padx'] = x[0]
-                self.containerStack[-1]['pady'] = x[1]
-        else:
-            self.containerStack[-1]['padx'] = x
-            self.containerStack[-1]['pady'] = y
+        x, y = self._parseTwoParams(x, y)
+        self.containerStack[-1]['padx'] = x
+        self.containerStack[-1]['pady'] = y
 
     padding = property(fset=setPadding)
 
@@ -2223,6 +2243,8 @@ class gui(object):
         icon = kwargs.pop("icon", None)
         resizable = kwargs.pop("resizable", None)
         fullscreen = kwargs.pop("fullscreen", None)
+        location = kwargs.pop("location", None)
+        size = kwargs.pop("size", None)
 
         for k, v in kwargs.items():
             gui.error("Invalid config parameter: %s, %s", k, v)
@@ -2242,6 +2264,8 @@ class gui(object):
         if icon is not None: self.icon = icon
         if resizable is not None: self.resizable = resizable
         if fullscreen is not None: self.fullscreen = fullscreen
+        if location is not None: self.location = location
+        if size is not None: self.size = size
 
     def setGuiPadding(self, x, y=None):
         """ sets the padding around the border of the GUI """
@@ -2637,7 +2661,7 @@ class gui(object):
 
     def configureWidget(self, kind, name, option, value, key=None, deprecated=False):
 
-        self.debug("Configuring: %s of %s with %s", name, kind, option)
+        self.debug("Configuring: %s of %s with %s of %s", name, kind, option, value)
 
         # warn about deprecated functions
         if deprecated:
