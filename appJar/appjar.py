@@ -2178,17 +2178,19 @@ class gui(object):
     def setPadding(self, x, y=None):
         """ sets the padding around the border of the current container """
         if y is None:
-            if isinstance(x, list):
+            if isinstance(x, list) or isinstance(x, tuple):
                 self.containerStack[-1]['padx'] = x[0]
                 self.containerStack[-1]['pady'] = x[1]
         else:
             self.containerStack[-1]['padx'] = x
             self.containerStack[-1]['pady'] = y
 
+    padding = property(fset=setPadding)
+
     def setGuiPadding(self, x, y=None):
         """ sets the padding around the border of the GUI """
         if y is None:
-            if isinstance(x, list):
+            if isinstance(x, list) or isinstance(x, tuple):
                 self.containerStack[0]['container'].config(padx=x[0], pady=x[1])
         else:
             self.containerStack[0]['container'].config(padx=x, pady=y)
@@ -2211,21 +2213,36 @@ class gui(object):
 
     def setInPadding(self, x, y=None):
         if y is None:
-            if isinstance(x, list):
+            if isinstance(x, list) or isinstance(x, tuple):
                 self.containerStack[-1]['ipadx'] = x[0]
                 self.containerStack[-1]['ipady'] = x[1]
         else:
             self.containerStack[-1]['ipadx'] = x
             self.containerStack[-1]['ipady'] = y
 
+    inPadding = property(fset=setInPadding)
 
     # set an override sticky for this container
     def setSticky(self, sticky):
         self.containerStack[-1]['sticky'] = sticky
 
+    def getSticky(self):
+        return self.containerStack[-1]['sticky']
+
+    # property for setTitle
+    sticky = property(getSticky, setSticky)
+
     # this tells widgets what to do when GUI is resized
     def setStretch(self, exp):
         self.setExpand(exp)
+
+    def getStretch(self):
+        return self.getExpand()
+
+    stretch = property(getStretch, setStretch)
+
+    def getExpand(self):
+        return self.containerStack[-1]['expand']
 
     def setExpand(self, exp):
         if exp.lower() == "none":
@@ -2236,6 +2253,8 @@ class gui(object):
             self.containerStack[-1]['expand'] = "COLUMN"
         else:
             self.containerStack[-1]['expand'] = "ALL"
+
+    expand = property(getExpand, setExpand)
 
     def getFonts(self):
         return list(font.families()).sort()
@@ -2269,6 +2288,11 @@ class gui(object):
         self.setLabelFont(**style)
         self.setButtonFont(**style)
 
+    def _setFontSize(self, size):
+        self.setFont(size=size)
+
+    font = property(fset=_setFontSize)
+
     def setButtonFont(self, *args, **style):
         if len(args) > 0:
             if type(args[0]) != int:
@@ -2281,6 +2305,11 @@ class gui(object):
                 style["family"] = args[1]
 
         self.buttonFont.config(**style)
+
+    def _setButtonFontSize(self, size):
+        self.setButtonFont(size=size)
+
+    bFont = property(fset=_setButtonFontSize)
 
     def setLabelFont(self, *args, **style):
         if len(args) > 0:
@@ -2318,6 +2347,11 @@ class gui(object):
         for k, v in self.widgetManager.group(self.Widgets.Grid).items():
             v.config(font=self.gridFont)
 
+    def _setLabelFontSize(self, size):
+        self.setLabelFont(size=size)
+
+    lFont = property(fset=_setLabelFontSize)
+
     # need to set a default colour for container
     # then populate that field
     # then use & update that field accordingly
@@ -2335,6 +2369,8 @@ class gui(object):
             gui.debug("In ttk mode - trying to set FG to %s", colour)
             self.ttkStyle.configure("TLabel", foreground=colour)
             self.ttkStyle.configure("TFrame", foreground=colour)
+
+    fg = property(fset=setFg)
 
     # self.topLevel = Tk()
     # self.appWindow = CanvasDnd, fills all of self.topLevel
@@ -2367,6 +2403,8 @@ class gui(object):
         else:
             gui.debug("In ttk mode - trying to set BG to %s", colour)
             self.ttkStyle.configure(".", background=colour)
+
+    bg = property(fset=setBg)
 
     @staticmethod
     def __isWidgetContainer(widget):
@@ -6765,8 +6803,10 @@ class gui(object):
         return self.listBox(title, value, *args, **kwargs)
 
     def listBox(self, title, value=None, *args, **kwargs):
+        widgKind = self.Widgets.ListBox
+
         """ adds, sets & gets listBoxes all in one go """
-        try: self.widgetManager.verify(self.Widgets.ListBox, title)
+        try: self.widgetManager.verify(widgKind, title)
         except:
             if value is None: return self.getListBox(title)
             else: self.selectListItem(title, value, *args, **kwargs)
@@ -6774,18 +6814,23 @@ class gui(object):
             rows = None if "rows" not in kwargs else kwargs.pop("rows")
             multi = False if "multi" not in kwargs else kwargs.pop("multi")
             group = False if "group" not in kwargs else kwargs.pop("group")
-            change = None if "change" not in kwargs else kwargs.pop("change")
-            drop = None if "drop" not in kwargs else kwargs.pop("drop")
+            selected = False if "selected" not in kwargs else kwargs.pop("selected")
 
-            listBox = self.addListBox(title, value, *args, **kwargs)
+            listBox = self._listBoxMaker(title, value, *args, **kwargs)
 
             if rows is not None: self.setListBoxRows(title, rows)
             if multi: self.setListBoxMulti(title)
             if group: self.setListBoxGroup(title)
-            if change is not None: self.setListBoxChangeFunction(title, change)
-            if drop is not None: self.setListBoxDropTarget(title, drop)
+            if selected is not None: self.selectListItemAtPos(title, selected, callFunction=False)
+
+            if len(kwargs) > 0:
+                self._configWidget(title, self.widgetManager.get(widgKind, title), widgKind, **kwargs)
 
             return listBox
+
+    def _listBoxMaker(self, name, values=None, row=None, column=0, colspan=0, rowspan=0, **kwargs):
+        """ internal wrapper to hide kwargs from original add functions """
+        return self.addListBox(name, values, row, column, colspan, rowspan)
 
     def addListBox(self, name, values=None, row=None, column=0, colspan=0, rowspan=0):
         self.widgetManager.verify(self.Widgets.ListBox, name)

@@ -610,7 +610,7 @@ app.go()
 ```
 
 * `.selectListItem(title, item, callFunction=True)`  
-    `.selectListItemAtPos(title, pos, callFunction=True)`  
+    `.selectListItemAtPos(title, pos, callFunction=False)`  
     Selects the specified item in the specified ListBox.  
     Set ```callFunction``` to be False, if you don't want to call any associated functions.  
 
