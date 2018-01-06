@@ -2245,6 +2245,7 @@ class gui(object):
         fullscreen = kwargs.pop("fullscreen", None)
         location = kwargs.pop("location", None)
         size = kwargs.pop("size", None)
+        guiPadding = kwargs.pop("guiPadding", None)
 
         for k, v in kwargs.items():
             gui.error("Invalid config parameter: %s, %s", k, v)
@@ -2266,6 +2267,7 @@ class gui(object):
         if fullscreen is not None: self.fullscreen = fullscreen
         if location is not None: self.location = location
         if size is not None: self.size = size
+        if guiPadding is not None: self.guiPadding = guiPadding
 
     def setGuiPadding(self, x, y=None):
         """ sets the padding around the border of the GUI """
@@ -2274,6 +2276,8 @@ class gui(object):
                 self.containerStack[0]['container'].config(padx=x[0], pady=x[1])
         else:
             self.containerStack[0]['container'].config(padx=x, pady=y)
+
+    guiPadding = property(fset=setGuiPadding)
 
     # sets the current containers internal padding
     def setIPadX(self, x=0):
