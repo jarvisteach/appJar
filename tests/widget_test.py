@@ -1806,6 +1806,29 @@ def test_toolbars():
         [tester_function, tester_function, tester_function, tester_function],
         True)
 
+    app.addToolbarButton("d", tester_function)
+    with pytest.raises(Exception) :
+        app.addToolbarButton("d", tester_function)
+
+    app.removeToolbarButton("d")
+    with pytest.raises(Exception) :
+        app.removeToolbarButton("d")
+
+    app.addToolbarButton("d", tester_function)
+    app.removeToolbarButton("d", hide=False)
+
+    app.removeToolbar()
+    app.removeToolbar()
+
+    app.addToolbar(["a", "b", "c", "ABOUT"], 
+        [tester_function, tester_function, tester_function, tester_function],
+        True)
+
+    app.removeToolbar(hide=False)
+    app.addToolbar(["a", "b", "c", "ABOUT"], 
+        [tester_function, tester_function, tester_function, tester_function],
+        True)
+
     app.setToolbarEnabled()
     app.setToolbarDisabled()
     app.setToolbarDisabled()

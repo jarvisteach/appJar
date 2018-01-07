@@ -28,6 +28,9 @@ app.addToolbar(tools, tbFunc, findIcon=True)
     If only one function is supplied, they will all call the same function, providing the button's name as a parameter.  
     A set of icons is available, if `findIcon` is set to True, then appJar will attempt to find an icon for each button.  
 
+* `.addToolbarButton(name, func, findIcon=False)`  
+    Adds a single button to the toolbar - see above.  
+
 ####Set Toolbars
 
 * `.setToolbarPinned(pinned=True)`  
@@ -55,6 +58,14 @@ The toolbar will also gain an extra button (a pin) allowing the user to configur
 
 * `.showToolbar()` & `.hideToolbar()`  
     Will show/hide the toolbar.  
+
+* `.removeToolbarButton(name, hide=True)`  
+    Will remove the named butotn from the toolbar.  
+    The toolbar will be hidden when there are no buttons on it, unless `hide` is set to False.  
+
+* `.removeToolbar(hide=True)`  
+    Will remove all buttons from the toolbar.  
+    The empty toolbar will be hidden, unless `hide` is set to False.  
 
 ---
 <div style='text-align: center;'>

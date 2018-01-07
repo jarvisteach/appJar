@@ -508,6 +508,7 @@ class gui(object):
         self.hasStatus = False
         self.hasTb = False
         self.tbPinned = True
+        self.pinBut = None
         self.copyAndPaste = CopyAndPaste(self.topLevel)
 
         # won't pack, if don't pack it here
@@ -516,7 +517,7 @@ class gui(object):
             self.tb.config(bd=1, relief=RAISED)
         else:
             self.tb.config(style="Toolbar.TFrame")
-        self.tb.pack(side=TOP, fill=X)
+#        self.tb.pack(side=TOP, fill=X)
         self.tbMinMade = False
 
         # create the main container for this GUI
@@ -8871,7 +8872,18 @@ class gui(object):
 # FUNCTIONS for toolbar
 #####################################
     # adds a list of buttons along the top - like a tool bar...
+    def addToolbarButton(self, name, func, findIcon=False):
+        self.addToolbar([name], func, findIcon)
+
     def addToolbar(self, names, funcs, findIcon=False):
+        # hide the tbm bar
+        if self.tbMinMade:
+            self.tbm.pack_forget()
+        # make sure the toolbar is showing
+        try:
+            self.tb.pack_info()
+        except: 
+            self.tb.pack(before=self.containerStack[0]['container'], side=TOP, fill=X)
         if not self.hasTb:
             self.hasTb = True
 
@@ -8923,9 +8935,6 @@ class gui(object):
             but.pack(side=LEFT, padx=2, pady=2)
             but.tt_var = self.__addTooltip(but, t.title(), True)
             but.DEFAULT_TEXT=t
-
-        # add the pinned image
-        self.pinBut = None
 
     def __setPinBut(self):
 
@@ -9001,6 +9010,22 @@ class gui(object):
         self.widgetManager.get(self.Widgets.Toolbar, name).config(image=image)
         self.widgetManager.get(self.Widgets.Toolbar, name).image = image
 
+    def removeToolbarButton(self, name, hide=True):
+        if (name not in self.widgetManager.group(self.Widgets.Toolbar)):
+            raise Exception("Unknown toolbar name: " + name)
+        self.widgetManager.get(self.Widgets.Toolbar, name).destroy()
+        self.widgetManager.remove(self.Widgets.Toolbar, name)
+        if hide:
+            if len(self.widgetManager.group(self.Widgets.Toolbar)) == 0:
+                self.tb.pack_forget()
+                self.hasTb = False
+            if self.tbMinMade:
+                self.tbm.pack_forget()
+
+    def removeToolbar(self, hide=True):
+        while len(self.widgetManager.group(self.Widgets.Toolbar)) > 0:
+            self.removeToolbarButton(list(self.widgetManager.group(self.Widgets.Toolbar))[0], hide)
+
     def setToolbarButtonEnabled(self, name):
         self.setToolbarButtonDisabled(name, False)
 
@@ -9060,8 +9085,7 @@ class gui(object):
 
     def showToolbar(self):
         if self.hasTb:
-            self.tb.pack(before=self.containerStack[0][
-                         'container'], side=TOP, fill=X)
+            self.tb.pack(before=self.containerStack[0]['container'], side=TOP, fill=X)
             if self.tbMinMade:
                 self.tbm.pack_forget()
 
