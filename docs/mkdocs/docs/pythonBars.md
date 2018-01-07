@@ -284,3 +284,10 @@ app.setStatusbarFg("white", 2)
 
 * `.setStatusbarHeader(header)`  
     Set a new header value to be used from the next time the statusbar text is updated.  
+
+* `.removeStatusbarField(field)`  
+    Remove the field at the specified position from the the statusbar.  
+
+* `.removeStatusbar()`  
+    Removes the statusbar from the GUI.  
+

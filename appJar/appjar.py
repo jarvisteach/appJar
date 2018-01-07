@@ -9547,30 +9547,52 @@ class gui(object):
         self.warn("addStatus() is deprecated, please use addStatusbar()")
         self.addStatusbar(header, fields, side)
 
+    def removeStatusbarField(self, field):
+        if self.hasStatus and field < len(self.status):
+            self.status[field].pack_forget()
+            self.status[field].destroy()
+            del self.status[field]
+        else:
+            raise ItemLookupError("Invalid field number for statusbar: " + str(field))
+
+    def removeStatusbar(self):
+        if self.hasStatus:
+            while len(self.status) > 0:
+                self.removeStatusbarField(0)
+
+            self.statusFrame.pack_forget()
+            self.statusFrame.destroy()
+
+            self.hasStatus = False
+            self.header = ""
+
     def addStatusbar(self, header="", fields=1, side=None):
-        self.hasStatus = True
-        self.header = header
-        self.statusFrame = Frame(self.appWindow)
-        self.statusFrame.config(bd=1, relief=SUNKEN)
-        self.statusFrame.pack(side=BOTTOM, fill=X, anchor=S)
+        if not self.hasStatus:
+            self.hasStatus = True
+            self.header = header
+            self.statusFrame = Frame(self.appWindow)
+            self.statusFrame.config(bd=1, relief=SUNKEN)
+            self.statusFrame.pack(side=BOTTOM, fill=X, anchor=S)
 
-        self.status = []
-        for i in range(fields):
-            self.status.append(Label(self.statusFrame))
-            self.status[i].config(
-                bd=1,
-                relief=SUNKEN,
-                anchor=W,
-                font=self.statusFont,
-                width=10)
-            self.__addTooltip(self.status[i], "Status bar", True)
+            self.status = []
+            for i in range(fields):
+                self.status.append(Label(self.statusFrame))
+                self.status[i].config(
+                    bd=1,
+                    relief=SUNKEN,
+                    anchor=W,
+                    font=self.statusFont,
+                    width=10)
+                self.__addTooltip(self.status[i], "Status bar", True)
 
-            if side == "LEFT":
-                self.status[i].pack(side=LEFT)
-            elif side == "RIGHT":
-                self.status[i].pack(side=RIGHT)
-            else:
-                self.status[i].pack(side=LEFT, expand=1, fill=BOTH)
+                if side == "LEFT":
+                    self.status[i].pack(side=LEFT)
+                elif side == "RIGHT":
+                    self.status[i].pack(side=RIGHT)
+                else:
+                    self.status[i].pack(side=LEFT, expand=1, fill=BOTH)
+        else:
+            self.error("Statusbar already exists - ignoring")
 
     def setStatusbarHeader(self, header):
         if self.hasStatus:
@@ -9648,6 +9670,7 @@ class gui(object):
             return text
         else:
             return self.header + ": " + text
+
 #####################################
 # TOOLTIPS
 #####################################

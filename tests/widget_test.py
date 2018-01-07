@@ -1661,9 +1661,22 @@ def test_images():
 def test_status():
     print("\tTesting Statusbar")
 
-    app.addStatusbar(TEXT_ONE, 3, "RIGHT")
+    app.addStatusbar(TEXT_ONE, 4, "RIGHT")
+    assert len(app.status) == 4
+
     with pytest.raises(Exception) :
         app.setStatus(TEXT_ONE, 43)
+
+    assert len(app.status) == 4
+    app.removeStatusbarField(3)
+    assert len(app.status) == 3
+
+    app.removeStatusbar()
+    assert len(app.status) == 0
+
+    app.addStatusbar(TEXT_ONE, 3, "RIGHT")
+    assert len(app.status) == 3
+
     app.setStatusbar(TEXT_ONE)
     app.setStatusbar(TEXT_ONE, None)
     app.setStatusbar(TEXT_ONE, 2)
