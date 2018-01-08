@@ -2,6 +2,8 @@ import sys
 sys.path.append("../../")
 from appJar import gui
 
+toolbar_list = ["Status", "settings", "about"]
+
 def press(btn):
     if btn == "ADD":
         app.addToolbarButton("E", press)
@@ -15,7 +17,7 @@ def again(btn=None):
     app.setStatusbar("b", 1)
     app.setStatusbar("c", 2)
     app.setStatusbar("d", 3)
-    app.addToolbar(["A", "B", "C", "D"], press)
+    app.addToolbar(toolbar_list, press)
 
 def remove(btn):
     app.removeToolbar()
@@ -24,5 +26,5 @@ def remove(btn):
 with gui() as app:
     again()
     app.label("a", "Press a button")
-    app.addButtons(["AGAIN", "ADD", "ALL"], [again, press, remove])
+    app.addButtons(["ADD ALL", "ADD", "REMOVE ALL"], [again, press, remove])
 #    app.setToolbarPinned()

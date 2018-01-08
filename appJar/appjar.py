@@ -7724,6 +7724,8 @@ class gui(object):
             kind = kwargs.pop("kind", "standard").lower().strip()
             kwargs = self._parsePos(kwargs.pop("pos", []), kwargs)
 
+            if value is None: value = title
+
             if kind == "flash": label = self._labelMaker(title, value, kind, *args, **kwargs)
             elif kind == "selectable": label = self._labelMaker(title, value, kind, *args, **kwargs)
             else: label = self._labelMaker(title, value, "label", *args, **kwargs)
