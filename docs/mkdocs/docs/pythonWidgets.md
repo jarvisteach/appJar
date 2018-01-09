@@ -43,7 +43,9 @@ app.go()
 
 ####Add Labels
 * `.addLabel(title, text=None)`  
-    As with all widgets, when you add a *label*, a title must be provided - to identify the *label*. This is then followed by an optional piece of text to display.
+    This will create a label widget to display text in the GUI.  
+    The `title` is used to uniquely identify the label, in case you want to change it later, and the `text` is what gets displayed.  
+    If `text` is set to None, or no `text` is provided, the `title` will be displayed in the label.  
 
 * `.addEmptyLabel(title)`  
     Does the same as add a *label*, except there's no parameter to set any text.

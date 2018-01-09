@@ -8,6 +8,7 @@
 * More [ttk](/pythonTtk) improvements - grouped widgets now work, introduced external themes.  
 
 * Issues Resolved:
+    * [#344](https://github.com/jarvisteach/appJar/issues/344) - [labels](/pythonWidgets/#add-labels) now display the title when no text is provided, instead of an empty label.  
     * [#339](https://github.com/jarvisteach/appJar/issues/339) - new functions to remove [toolbars](/pythonBars/#set-toolbars) and [statusbars](/pythonBars/#set-statusbars)    
     * [#335](https://github.com/jarvisteach/appJar/issues/335) - when setting functions for events, if no parameter is present in the function, no parameter will be passed by the event  
     * [#333](https://github.com/jarvisteach/appJar/issues/333) - started work on hide/show/delete [tabs](/pythonWidgetGrouping/#tabbed-frame)  

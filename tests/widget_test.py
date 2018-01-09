@@ -87,6 +87,11 @@ def test_labels():
     assert app.gr() == row + 1
     assert isinstance(app.addFlashLabel("fl1", TEXT_ONE), Label)
     assert isinstance(app.addSelectableLabel("sl1", TEXT_ONE), SelectableLabel)
+    assert isinstance(app.addLabel("nl1", None), Label)
+    assert isinstance(app.addLabel("nl2", None), Label)
+
+    assert app.getLabel("nl1") == "nl1"
+    assert app.getLabel("nl2") == "nl2"
 
     app.addLabels(LIST_ONE)
 

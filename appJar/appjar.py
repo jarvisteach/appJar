@@ -3353,7 +3353,6 @@ class gui(object):
         # no arguments
         args = getArgs(funcName)
         if len(args[0]) == 0 and args[1] is None and args[2] is None:
-            print("no args:", funcName)
             return lambda: funcName()
 
         if discard:
@@ -7735,8 +7734,6 @@ class gui(object):
             kind = kwargs.pop("kind", "standard").lower().strip()
             kwargs = self._parsePos(kwargs.pop("pos", []), kwargs)
 
-            if value is None: value = title
-
             if kind == "flash": label = self._labelMaker(title, value, kind, *args, **kwargs)
             elif kind == "selectable": label = self._labelMaker(title, value, kind, *args, **kwargs)
             else: label = self._labelMaker(title, value, "label", *args, **kwargs)
@@ -7777,7 +7774,8 @@ class gui(object):
         """
         self.widgetManager.verify(self.Widgets.Label, title)
         if text is None:
-            text = ""
+            gui.warn("Not specifying text for labels (%s) now uses the title for the text. If you want an empty label, pass an empty string ''", title)
+            text = title
 
         if not selectable:
             if not self.ttkFlag:
@@ -7799,7 +7797,7 @@ class gui(object):
         return lab
 
     def addEmptyLabel(self, title, row=None, column=0, colspan=0, rowspan=0):
-        return self.addLabel(title, None, row, column, colspan, rowspan)
+        return self.addLabel(title=title, text='', row=row, column=column, colspan=colspan, rowspan=rowspan)
 
     # adds a set of labels, in the row, spannning specified columns
     def addLabels(self, names, row=None, colspan=0, rowspan=0):
