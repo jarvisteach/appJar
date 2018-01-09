@@ -390,7 +390,7 @@ class gui(object):
                 "AnimationID", "ImageCache", "TickOptionBox", "Accelerators",
                 "FileEntry", "DirectoryEntry",
                 "FrameBox", "FrameLabel", "ContainerLog", "Menu"],
-            keepers=["Accelerators", "ContainerLog", "ImageCache", "Menu", "Toolbar", "RootPage"]
+            keepers=["Accelerators", "ImageCache", "Menu", "Toolbar"]
         )
 
         if warn is not None or debug is not None:
