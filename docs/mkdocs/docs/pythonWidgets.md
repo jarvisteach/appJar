@@ -249,6 +249,7 @@ That way, multiple widgets can use the same function, but different actions can 
 * `.addButton(title, function)`  
     Add a single button to the GUI, the text on the button will be the same as the button's title.  
     A function should be specified, which will be called when the button is clicked, where the title is passed as a parameter to the function.  
+    Alternatively, the function can have no parameter, and appJar will not supply an argument.     
 
 * `.addButtons(titles, functions)`  
     It's possible to add a list of buttons to the GUI.  

@@ -18,6 +18,8 @@ try:
     import tkFileDialog as filedialog
     import ScrolledText as scrolledtext
     import tkFont as font
+    # used to check if functions have a parameter
+    from inspect import getargspec as getArgs
     PYTHON2 = True
     PY_NAME = "Python"
 except ImportError:
@@ -29,6 +31,9 @@ except ImportError:
     from tkinter import filedialog
     from tkinter import scrolledtext
     from tkinter import font
+    # used to check if functions have a parameter
+    from inspect import getfullargspec as getArgs
+
     PYTHON2 = False
     PY_NAME = "python3"
 
@@ -3344,6 +3349,12 @@ class gui(object):
         # make sure we get a function
         if not callable(funcName) and not hasattr(funcName, '__call__'):
             raise Exception("Invalid function: " + str(funcName))
+
+        # no arguments
+        args = getArgs(funcName)
+        if len(args[0]) == 0 and args[1] is None and args[2] is None:
+            print("no args:", funcName)
+            return lambda: funcName()
 
         if discard:
             return lambda *args: funcName(param)

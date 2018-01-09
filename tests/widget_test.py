@@ -401,6 +401,10 @@ def test_buttons():
     app.addButtons(["bl1", "bl2"], buts)
 
 
+    def testNoParam():
+        pass
+
+    app.addButton("NO PARAM", testNoParam)
 
     assert isinstance(app.addNamedButton("butName", "nb1", None), Button)  # name/title
 
