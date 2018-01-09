@@ -336,7 +336,10 @@ class gui(object):
 # CONSTRUCTOR - creates the GUI
 #####################################
 #####################################
-    def __init__(self, title=None, geom=None, warn=None, debug=None, handleArgs=True, language=None, startWindow=None, useTtk=False, useSettings=False, **kwargs):
+    def __init__(
+                    self, title=None, geom=None, warn=None, debug=None, handleArgs=True, language=None,
+                    startWindow=None, useTtk=False, useSettings=False, showIcon=True, **kwargs
+                ):
         """ constructor - sets up the empty GUI window, and inits the various properties """
 
         if self.__class__.instantiated:
@@ -386,7 +389,8 @@ class gui(object):
                 "Note", "Tab", "Page", "Pane", "RootPage", "FlashLabel",
                 "AnimationID", "ImageCache", "TickOptionBox", "Accelerators",
                 "FileEntry", "DirectoryEntry",
-                "FrameBox", "FrameLabel", "ContainerLog", "Menu"]
+                "FrameBox", "FrameLabel", "ContainerLog", "Menu"],
+            keepers=["Accelerators", "ContainerLog", "ImageCache", "Menu", "Toolbar", "RootPage"]
         )
 
         if warn is not None or debug is not None:
@@ -537,7 +541,7 @@ class gui(object):
         # set up the main container to be able to host an image
         self.__configBg(container)
 
-        if self.platform == self.WINDOWS:
+        if self.platform == self.WINDOWS and showIcon:
             try:
                 self.setIcon(self.appJarIcon)
             except: # file not found
@@ -1053,7 +1057,7 @@ class gui(object):
 #####################################
 # set the arrays we use to store everything
 #####################################
-    def __initVars(self):
+    def __initVars(self, reset=False):
         # validate function callbacks - used by numeric texts
         # created first time a widget is used
         self.validateNumeric = None
@@ -1067,7 +1071,8 @@ class gui(object):
         self.dnd = None # the dnd manager
 
         # collections of widgets, widget name is key
-        self.widgetManager = WidgetManager()
+        if not reset: self.widgetManager = WidgetManager()
+        else: self.widgetManager.reset(self.Widgets.keepers)
 
 #####################################
 # Language/Translation functions
@@ -3335,7 +3340,7 @@ class gui(object):
         containerData = self.__prepContainer(containerData["title"], containerData["type"], containerData["container"], 0, 1)
         self.containerStack[0] = containerData
 
-        self.__initVars()
+        self.__initVars(reset=True)
         self.copyAndPaste.inUse = False
         self.setSize(None)
 
@@ -7774,7 +7779,7 @@ class gui(object):
         """
         self.widgetManager.verify(self.Widgets.Label, title)
         if text is None:
-            gui.warn("Not specifying text for labels (%s) now uses the title for the text. If you want an empty label, pass an empty string ''", title)
+            gui.debug("Not specifying text for labels (%s) now uses the title for the text. If you want an empty label, pass an empty string ''", title)
             text = title
 
         if not selectable:
@@ -13464,6 +13469,19 @@ class WidgetManager(object):
         self.widgets = {}
         self.vars = {}
 
+    def reset(self, keepers):
+        newWidg = {}
+        newVar = {}
+
+        for key in keepers:
+            if key in self.widgets:
+                newWidg[key] = self.widgets[key]
+            if key in self.vars:
+                newVar[key] = self.vars[key]
+
+        self.widgets = newWidg
+        self.vars = newVar
+
     def group(self, widgetType, group=None, array=False):
         """
         returns the list/dictionary containing the specified widget type
@@ -13581,10 +13599,13 @@ class Enum(object):
         also provides some extra functions """
 
     __initialized = False
-    def __init__(self, widgets, deprecated, excluded):
+    def __init__(self, widgets, deprecated, excluded, keepers):
         self.widgets = widgets
         self.deprecated = deprecated
         self.excluded = excluded
+        self.keepers = []
+        for k in keepers:
+            self.keepers.append(self.get(k))
         self.funcList = []
         for w in self.widgets:
             if w not in self.excluded:
