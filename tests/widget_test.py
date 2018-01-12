@@ -1008,28 +1008,35 @@ def test_message_boxes():
     assert isinstance(app.addEmptyMessage("m3"), Message)
     app.addEmptyMessage("m4")
 
-    assert app.getMessageWidget("m1").cget("text") == TEXT_ONE
-    assert app.getMessageWidget("m2").cget("text") == TEXT_TWO
-    assert app.getMessageWidget("m3").cget("text") == EMPTY
-    assert app.getMessageWidget("m4").cget("text") == EMPTY
+    app.addMessage(TEXT_TWO)
+
+    assert app.getMessage("m1") == TEXT_ONE
+    assert app.getMessage("m2") == TEXT_TWO
+    assert app.getMessage("m3") == EMPTY
+    assert app.getMessage("m4") == EMPTY
+    assert app.getMessage(TEXT_TWO) == TEXT_TWO
 
     app.setMessage("m1", EMPTY)
     app.setMessage("m2", TEXT_ONE)
     app.setMessage("m3", TEXT_THREE)
     app.setMessage("m4", EMPTY)
+    app.setMessage(TEXT_TWO, TEXT_THREE)
 
-    assert app.getMessageWidget("m1").cget("text") == EMPTY
-    assert app.getMessageWidget("m2").cget("text") == TEXT_ONE
-    assert app.getMessageWidget("m3").cget("text") == TEXT_THREE
-    assert app.getMessageWidget("m4").cget("text") == EMPTY
+    assert app.getMessage("m1") == EMPTY
+    assert app.getMessage("m2") == TEXT_ONE
+    assert app.getMessage("m3") == TEXT_THREE
+    assert app.getMessage("m4") == EMPTY
+    assert app.getMessage(TEXT_TWO) == TEXT_THREE
 
     app.clearMessage("m2")
     app.clearMessage("m3")
+    app.clearMessage(TEXT_TWO)
 
     assert app.getMessageWidget("m1").cget("text") == EMPTY
     assert app.getMessageWidget("m2").cget("text") == EMPTY
     assert app.getMessageWidget("m3").cget("text") == EMPTY
     assert app.getMessageWidget("m4").cget("text") == EMPTY
+    assert app.getMessageWidget(TEXT_TWO).cget("text") == EMPTY
 
     # call generic setter functions
     test_setters("Message", "m1")

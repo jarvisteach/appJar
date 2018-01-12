@@ -8128,18 +8128,18 @@ class gui(object):
     def _messageMaker(self, title, text, row=None, column=0, colspan=0, rowspan=0, *args, **kwargs):
         return self.addMessage(title, text, row, column, colspan, rowspan)
 
-    def addMessage(self, title, text, row=None, column=0, colspan=0, rowspan=0):
+    def addMessage(self, title, text=None, row=None, column=0, colspan=0, rowspan=0):
 
         self.widgetManager.verify(self.Widgets.Message, title)
+
+        if text is None:
+            text = title
+            gui.debug("Not specifying text for messages (%s) now uses the title for the text. If you want an empty message, pass an empty string ''", title)
         mess = Message(self.getContainer())
+        mess.config(text=text)
         mess.config(font=self.messageFont)
         mess.config(justify=LEFT, background=self.__getContainerBg())
-
-        if text is not None:
-            mess.config(text=text)
-            mess.DEFAULT_TEXT = text
-        else:
-            mess.DEFAULT_TEXT = ""
+        mess.DEFAULT_TEXT = text
 
         if self.platform in [self.MAC, self.LINUX]:
             mess.config(highlightbackground=self.__getContainerBg())
@@ -8151,7 +8151,7 @@ class gui(object):
         return mess
 
     def addEmptyMessage(self, title, row=None, column=0, colspan=0, rowspan=0):
-        return self.addMessage(title, None, row, column, colspan, rowspan)
+        return self.addMessage(title, "", row, column, colspan, rowspan)
 
     def setMessage(self, title, text):
         mess = self.widgetManager.get(self.Widgets.Message, title)

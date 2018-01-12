@@ -730,6 +730,7 @@ app.go()
 ####Add Messages
 * `.addMessage(title, text)`  
     Adds a Message widget, with the specified text.  
+    If not text is provided, the title will be used for the text.  
 
 * `.addEmptyMessage(title)`  
     Adds an empty Message widget.  
