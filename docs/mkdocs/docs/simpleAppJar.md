@@ -346,3 +346,46 @@ Displays a simple date picker widget.
 * `.date(title, value=None)`
     The `value` should contain a date object.  
     Date pickes can receive a `change` parameter.  
+
+## popUp  
+---
+
+Displays a popUp.  
+
+* `.popUp(title, message, kind="info", parent=None)`  
+    This will show any of the availabel popUps.  
+    `title`  will be displayed in the title bar.
+    `message` will be displayed as the text of the popUp.  
+    `kind` defaults to `info`, but can be any of: `error`, `warning`, `yesno`, `question`, `ok`, `retry`, `string`, `integer`, `float`, `text` or `number`.  
+    `parent` allows you to link this popUp to a named SubWindow, instead of the main window.  
+
+---
+
+# GUI Properties  
+---
+
+* `.title` - pass a string for the title of the GUI  
+* `.icon` - pass the path to an icon file  
+* `.transparency` - pass a percentage (between 0 & 100) to set the transparency  
+* `.visible` - pass either `True` or `False`  
+
+* `.padding` - pass a tuple containing the x & y padding or a single integer for both x & y  
+* `.inPadding` - pass a tuple containing the x & y padding or a single integer for both x & y  
+* `.guiPadding` - pass a tuple containing the x & y padding or a single integer for both x & y  
+
+* `.size` - pass a tuple containing the width & height (or the string `fullscreen`)  
+* `.location` - pass a tuple containing the x & y coordinates (or the string `CENTER`)  
+* `.fullscreen` - pass either `True` or `False`  
+* `.resizable` - pass either `True` or `False`  
+
+* `.sticky`
+* `.stretch`
+* `.expand`
+
+* `.fg`
+* `.bg`
+* `.font`
+* `.buttonFont`
+* `.labelFont`
+
+* `.row`

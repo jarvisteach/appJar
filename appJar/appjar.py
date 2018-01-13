@@ -2300,11 +2300,8 @@ class gui(object):
 
     def setGuiPadding(self, x, y=None):
         """ sets the padding around the border of the GUI """
-        if y is None:
-            if isinstance(x, list) or isinstance(x, tuple):
-                self.containerStack[0]['container'].config(padx=x[0], pady=x[1])
-        else:
-            self.containerStack[0]['container'].config(padx=x, pady=y)
+        x, y = self._parseTwoParams(x, y)
+        self.containerStack[0]['container'].config(padx=x, pady=y)
 
     guiPadding = property(fset=setGuiPadding)
 
@@ -2325,13 +2322,9 @@ class gui(object):
         self.containerStack[-1]['ipady'] = y
 
     def setInPadding(self, x, y=None):
-        if y is None:
-            if isinstance(x, list) or isinstance(x, tuple):
-                self.containerStack[-1]['ipadx'] = x[0]
-                self.containerStack[-1]['ipady'] = x[1]
-        else:
-            self.containerStack[-1]['ipadx'] = x
-            self.containerStack[-1]['ipady'] = y
+        x, y = self._parseTwoParams(x, y)
+        self.containerStack[-1]['ipadx'] = x
+        self.containerStack[-1]['ipady'] = y
 
     inPadding = property(fset=setInPadding)
 
@@ -5022,6 +5015,15 @@ class gui(object):
         self.topLevel.displayed = True
         self.topLevel.deiconify()
 
+    def setVisible(self, visible=True):
+        if visible: self.show()
+        else: self.hide()
+
+    def getVisible(self):
+        return self.topLevel.displayed
+
+    visible = property(getVisible, setVisible)
+
 
 #####################################
 # warn when bad functions called...
@@ -5112,7 +5114,7 @@ class gui(object):
 #####################################
 
     def check(self, title, value=None, *args, **kwargs):
-        """ shortner for checkBox() """
+        """ simpleGUI - shortner for checkBox() """
         return self.checkBox(title, value, *args, **kwargs)
 
     def checkBox(self, title, value=None, *args, **kwargs):
@@ -5202,7 +5204,7 @@ class gui(object):
 #####################################
 
     def slider(self, title, value=None, *args, **kwargs):
-        """ alternative for scale() """
+        """ simpleGUI - alternative for scale() """
         return self.scale(title, value, *args, **kwargs)
 
     def scale(self, title, value=None, *args, **kwargs):
@@ -5351,7 +5353,7 @@ class gui(object):
         return self.optionBox(title, value, *args, **kwargs)
 
     def option(self, title, value=None, *args, **kwargs):
-        """ shortner for optionBox() """
+        """ simpleGUI - shortner for optionBox() """
         return self.optionBox(title, value, *args, **kwargs)
 
     def optionBox(self, title, value=None, *args, **kwargs):
@@ -5955,7 +5957,7 @@ class gui(object):
 #####################################
 
     def properties(self, title, value=None, *args, **kwargs):
-        """ adds, sets & gets properties all in one go """
+        """ simpleGUI - adds, sets & gets properties all in one go """
         if value is None: return self.getProperties(title)
         else:
             try: self.widgetManager.verify(self.Widgets.Properties, title)
@@ -6036,7 +6038,7 @@ class gui(object):
 #####################################
 
     def spin(self, title, value=None, *args, **kwargs):
-        """ shortner for spinBox() """
+        """ simpleGUI - shortner for spinBox() """
         return self.spinBox(title, value, *args, **kwargs)
 
     def spinBox(self, title, value=None, *args, **kwargs):
@@ -6215,7 +6217,7 @@ class gui(object):
 #####################################
 
     def image(self, title, value=None, *args, **kwargs):
-        """ adds, sets & gets images all in one go """
+        """ simpleGUI - adds, sets & gets images all in one go """
         if value is None: return self.getImage(title)
         else:
             try: self.widgetManager.verify(self.Widgets.Image, title)
@@ -6840,7 +6842,7 @@ class gui(object):
 #####################################
 
     def radio(self, title, value=None, *args, **kwargs):
-        """ shortner for radioButton() """
+        """ simpleGUI - shortner for radioButton() """
         return self.radioButton(title, value, *args, **kwargs)
 
     def radioButton(self, title, value=None, *args, **kwargs):
@@ -6936,7 +6938,7 @@ class gui(object):
 #####################################
 
     def list(self, title, value=None, *args, **kwargs):
-        """ shortner for listBox() """
+        """ simpleGUI - shortner for listBox() """
         return self.listBox(title, value, *args, **kwargs)
 
     def listBox(self, title, value=None, *args, **kwargs):
@@ -7205,7 +7207,7 @@ class gui(object):
 #####################################
 
     def button(self, title, value=None, *args, **kwargs):
-        """ adds, sets & gets buttons all in one go """
+        """ simpleGUI - adds, sets & gets buttons all in one go """
         widgKind = self.Widgets.Button
 
         if value is None:
@@ -7403,7 +7405,7 @@ class gui(object):
 #####################################
 
     def link(self, title, value=None, *args, **kwargs):
-        """ adds, sets & gets links all in one go """
+        """ simpleGUI - adds, sets & gets links all in one go """
         try: self.widgetManager.verify(self.Widgets.Link, title)
         except:
             if value is None: return self.getLink(title)
@@ -7455,7 +7457,7 @@ class gui(object):
 #####################################
 
     def grip(self, *args, **kwargs):
-        """ adds grip """
+        """ simpleGUI - adds grip """
         return self.addGrip(*args, **kwargs)
 
     # adds a simple grip, used to drag the window around
@@ -7579,7 +7581,7 @@ class gui(object):
 #####################################
 
     def date(self, title, value=None, *args, **kwargs):
-        """ shortner for datePicker() """
+        """ simpleGUI - shortner for datePicker() """
         return self.datePicker(title, value, *args, **kwargs)
 
     def datePicker(self, title, value=None, *args, **kwargs):
@@ -7726,7 +7728,7 @@ class gui(object):
         return kwargs
 
     def label(self, title, value=None, *args, **kwargs):
-        """ adds, sets & gets labels all in one go """
+        """ simpleGUI - adds, sets & gets labels all in one go """
         widgKind = self.Widgets.Label
 
         try: self.widgetManager.verify(widgKind, title)
@@ -7844,7 +7846,7 @@ class gui(object):
 #####################################
 
     def text(self, title, value=None, *args, **kwargs):
-        """ shortner for textArea() """
+        """ simpleGUI - shortner for textArea() """
         return self.textArea(title, value, *args, **kwargs)
 
     def textArea(self, title, value=None, *args, **kwargs):
@@ -8109,7 +8111,7 @@ class gui(object):
 #####################################
 
     def message(self, title, value=None, *args, **kwargs):
-        """ adds, sets & gets messages all in one go """
+        """ simpleGUI - adds, sets & gets messages all in one go """
         widgKind = self.Widgets.Message
 
         try: self.widgetManager.verify(self.Widgets.Message, title)
@@ -8169,7 +8171,7 @@ class gui(object):
 #####################################
 
     def entry(self, title, value=None, *args, **kwargs):
-        """ adds, sets & gets entries all in one go """
+        """ simpleGUI - adds, sets & gets entries all in one go """
         widgKind = self.Widgets.Entry
 
         try: self.widgetManager.verify(self.Widgets.Entry, title)
@@ -8777,7 +8779,7 @@ class gui(object):
 #####################################
 
     def meter(self, title, value=None, *args, **kwargs):
-        """ adds, sets & gets meters all in one go """
+        """ simpleGUI - adds, sets & gets meters all in one go """
         try: self.widgetManager.verify(self.Widgets.Meter, title)
         except:
             if value is None: return self.getMeter(title)
@@ -8843,7 +8845,7 @@ class gui(object):
 #####################################
 
     def separator(self, *args, **kwargs):
-        """ adds horizontal separators
+        """ simpleGUI - adds horizontal separators
             unless a direction="vertical" kwargs is set
         """
         if "direction" in kwargs and kwargs.pop("direction").lower() == "vertical":
@@ -9731,7 +9733,7 @@ class gui(object):
 #####################################
 
     def popUp(self, title, message, kind="info", parent=None):
-        """ shortener for the various popUps """
+        """ simpleGUI - shortener for the various popUps """
         if kind == "info": return self.infoBox(title, message, parent)
         elif kind == "error": return self.errorBox(title, message, parent)
         elif kind == "warning": return self.warningBox(title, message, parent)

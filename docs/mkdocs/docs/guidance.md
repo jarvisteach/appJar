@@ -9,11 +9,6 @@ There are two main sections:
 * **Fillings** - these are things you can add to the GUI  
 * **Configuration** - these are ways of changing how the GUI looks or operates  
 
-Plus some extras:  
-
-* **Examples** - this will slowly become a source of sample applications  
-* **Help** - more general Python guidance, with a couple of useful extras, and information about appjar  
-
 ###Fillings  
 These are things you can add to the GUI:  
 

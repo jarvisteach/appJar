@@ -42,11 +42,11 @@ pages:
     - Logging: pythonLogging.md
     - Command Line Arguments: pythonCommandLine.md
     - ttk (BETA): pythonTtk.md
-- Examples:
-    - Raspberry Pi Minecraft: examples/minecraft.md
-    - Simple Layout: examples/simple.md
 - Help:
     - Guidance: guidance.md
+    - Examples:
+        - Raspberry Pi Minecraft: examples/minecraft.md
+        - Simple Layout: examples/simple.md
     - Installation: Install.md
     - Packaging: packaging.md
     - License: License.md
