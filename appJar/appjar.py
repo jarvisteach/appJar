@@ -3334,7 +3334,6 @@ class gui(object):
         self.containerStack[0] = containerData
 
         self.__initVars(reset=True)
-        self.copyAndPaste.inUse = False
         self.setSize(None)
 
 #####################################
@@ -6250,7 +6249,7 @@ class gui(object):
         drop = kwargs.pop("drop", None)
         over = kwargs.pop("over", None)
         submit = kwargs.pop("submit", None)
-        map = kwargs.pop("map", None)
+        _map = kwargs.pop("map", None)
         kwargs = self._parsePos(kwargs.pop("pos", []), kwargs)
 
         try: self.widgetManager.verify(widgKind, title)
@@ -6277,9 +6276,9 @@ class gui(object):
         if speed is not None: self.setAnimationSpeed(title, speed)
         if over is not None: self.setImageMouseOver(title, over)
         if submit is not None:
-            if map is not None: self.setImageMap(title, submit, map)
+            if _map is not None: self.setImageMap(title, submit, _map)
             else: self.setImageSubmitFunction(title, submit)
-        elif submit is None and map is not None:
+        elif submit is None and _map is not None:
             gui.warn("Must specify a submit funciton when setting an image map: %s", title)
         if drop is not None: self.setImageDropTarget(title, drop)
 
@@ -7925,6 +7924,7 @@ class gui(object):
         else:
             if scroll: text = self._textMaker(title, "scroll", *args, **kwargs)
             else: text = self._textMaker(title, "text", *args, **kwargs)
+            callFunction = False
 
         if value is not None: self.setTextArea(title, value, end=end, callFunction=callFunction)
         if len(kwargs) > 0:
@@ -8177,15 +8177,15 @@ class gui(object):
 
         try: self.widgetManager.verify(self.Widgets.Message, title)
         except:
-            if len(kwargs) > 0:
-                self._configWidget(title, self.widgetManager.get(widgKind, title), widgKind, **kwargs)
-            if value is None: return self.getMessage(title)
-            else: self.setMessage(title, value, *args, **kwargs)
+            if value is not None: self.setMessage(title, value)
+            msg = self.getMessage(title)
         else:
             msg = self._messageMaker(title, value, *args, **kwargs)
+
+        if len(kwargs) > 0:
             self._configWidget(title, msg, widgKind, **kwargs)
 
-            return msg
+        return msg
 
     def _messageMaker(self, title, text, row=None, column=0, colspan=0, rowspan=0, *args, **kwargs):
         return self.addMessage(title, text, row, column, colspan, rowspan)
@@ -8244,10 +8244,8 @@ class gui(object):
 
         try: self.widgetManager.verify(self.Widgets.Entry, title)
         except:
-            if len(kwargs) > 0:
-                self._configWidget(title, self.widgetManager.get(widgKind, title), widgKind, **kwargs)
-            if value is None: return self.getEntry(title)
-            else: self.setEntry(title, value, *args, **kwargs)
+            if value is not None: self.setEntry(title, value, *args, **kwargs)
+            ent = self.getEntry(title)
         else:
             # create the entry widget
             if kind == "auto":
@@ -8256,20 +8254,21 @@ class gui(object):
                 ent = self._entryMaker(title, *args, secret=secret, label=label, kind=kind, **kwargs)
                 if not ent: return
 
-            # apply any setter values
-            if limit is not None: self.setEntryMaxLength(title, limit)
-            if case == "upper": self.setEntryUpperCase(title)
-            elif case == "lower": self.setEntryLowerCase(title)
+        # apply any setter values
+        if limit is not None: self.setEntryMaxLength(title, limit)
+        if case == "upper": self.setEntryUpperCase(title)
+        elif case == "lower": self.setEntryLowerCase(title)
 
-            if default is not None: self.setEntryDefault(title, default)
+        if default is not None: self.setEntryDefault(title, default)
 
-            if kind != "auto":
-                if value is not None: self.setEntry(title, value)
-            else:
-                if rows is not None: self.setAutoEntryNumRows(title, rows)
+        if kind != "auto":
+            if value is not None: self.setEntry(title, value)
+        else:
+            if rows is not None: self.setAutoEntryNumRows(title, rows)
 
+        if len(kwargs) > 0:
             self._configWidget(title, ent, widgKind, **kwargs)
-            return ent
+        return ent
 
     def _entryMaker(self, title, row=None, column=0, colspan=0, rowspan=0, secret=False, label=False, kind="standard", words=None, **kwargs):
         if label:
@@ -9569,15 +9568,23 @@ class gui(object):
         else:
             self.warn("The Window Menu is specific to Mac OSX")
 
+    def disableMenuEdit(self):
+        self.copyAndPaste.inUse = False
+
     # adds an edit menu - by default only as a pop-up
     # if inMenuBar is True - then show in menu too
     def addMenuEdit(self, inMenuBar=False):
         self.__initMenu()
+        self.copyAndPaste.inUse = True
+
+        # in case we already made the menu - just return
+        try: self.widgetManager.verify(self.Widgets.Menu, "EDIT")
+        except: return
+
         editMenu = Menu(self.menuBar, tearoff=False)
         if inMenuBar:
             self.menuBar.add_cascade(menu=editMenu, label='Edit ')
         self.widgetManager.add(self.Widgets.Menu, "EDIT", editMenu)
-        self.copyAndPaste.inUse = True
 
         if gui.GET_PLATFORM() == gui.LINUX:
             self.addMenuSeparator("EDIT")

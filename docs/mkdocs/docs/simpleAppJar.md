@@ -347,6 +347,13 @@ Displays a simple date picker widget.
     The `value` should contain a date object.  
     Date pickes can receive a `change` parameter.  
 
+## Canvas  
+---
+Displays a the canvas widget.  
+
+* `.canvas(title)`
+    Creates a canvas with the specified title. 
+
 ## popUp  
 ---
 
