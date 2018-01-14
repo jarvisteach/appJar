@@ -4662,11 +4662,12 @@ class gui(object):
 #####################################
 
     @contextmanager
-    def toggleFrame(self, title, row=None, column=0, colspan=0, rowspan=0):
+    def toggleFrame(self, title, row=None, column=0, colspan=0, rowspan=0, **kwargs):
         try:
             tog = self.startToggleFrame(title, row, column, colspan, rowspan)
         except ItemLookupError:
             tog = self.openToggleFrame(title)
+        self.configure(**kwargs)
         try: yield tog
         finally: self.stopToggleFrame()
 
@@ -5120,6 +5121,7 @@ class gui(object):
     def checkBox(self, title, value=None, *args, **kwargs):
         """ adds, sets & gets checkBoxes all in one go """
         widgKind = self.Widgets.CheckBox
+        kwargs = self._parsePos(kwargs.pop("pos", []), kwargs)
         try: self.widgetManager.verify(widgKind, title)
         except:
             if len(kwargs) > 0:
@@ -5209,31 +5211,34 @@ class gui(object):
 
     def scale(self, title, value=None, *args, **kwargs):
         widgKind = self.Widgets.Scale
+
+        vert = kwargs.pop("direction", "horizontal").lower() == "vertical"
+        increment = kwargs.pop("increment", None)
+        interval = kwargs.pop("interval", None)
+        show = kwargs.pop("show", False)
+        _range = kwargs.pop("range", None)
+        callFunction = kwargs.pop("callFunction", True)
+
+        kwargs = self._parsePos(kwargs.pop("pos", []), kwargs)
+
         """ adds, sets & gets scales all in one go """
         try: self.widgetManager.verify(widgKind, title)
         except:
-            if value is None: return self.getScale(title)
-            else: self.setScale(title, value, *args, **kwargs)
+            scale = self.getScale(title)
         else:
-            vert = False if "direction" not in kwargs else kwargs.pop("direction").lower() == "vertical"
-            increment = None if "increment" not in kwargs else kwargs.pop("increment")
-            interval = None if "interval" not in kwargs else kwargs.pop("interval")
-            show = False if "show" not in kwargs else kwargs.pop("show")
-            r = None if "range" not in kwargs else kwargs.pop("range")
-
-            kwargs = self._parsePos(kwargs.pop("pos", []), kwargs)
             scale = self._scaleMaker(title, *args, **kwargs)
 
-            if len(kwargs) > 0:
-                self._configWidget(title, self.widgetManager.get(widgKind, title), widgKind, **kwargs)
+        if _range is not None: self.setScaleRange(title, _range[0], _range[1])
+        if vert: self.setScaleVertical(title)
+        if increment is not None: self.setScaleIncrement(title, increment)
+        if interval is not None: self.showScaleIntervals(title, interval)
+        if show: self.showScaleValue(title)
+        if value is not None: self.setScale(title, value, callFunction)
 
-            if r is not None: self.setScaleRange(title, r[0], r[1])
-            if vert: self.setScaleVertical(title)
-            if increment is not None: self.setScaleIncrement(title, increment)
-            if interval is not None: self.showScaleIntervals(title, interval)
-            if show: self.showScaleValue(title)
-            if value is not None: self.setScale(title, value)
-            return scale
+        if len(kwargs) > 0:
+            self._configWidget(title, self.widgetManager.get(widgKind, title), widgKind, **kwargs)
+
+        return scale
 
     def __buildScale(self, title, frame):
         self.widgetManager.verify(self.Widgets.Scale, title)
@@ -5357,21 +5362,31 @@ class gui(object):
         return self.optionBox(title, value, *args, **kwargs)
 
     def optionBox(self, title, value=None, *args, **kwargs):
+        widgKind = self.Widgets.OptionBox
+        kind = kwargs.pop("kind", "standard").lower().strip()
+        label = kwargs.pop("label", False)
+        callFunction = kwargs.pop("callFunction", True)
+        override = kwargs.pop("override", False)
+        checked = kwargs.pop("checked", True)
+        kwargs = self._parsePos(kwargs.pop("pos", []), kwargs)
+
         """ adds, sets & gets optionBoxes all in one go """
         try: self.widgetManager.verify(self.Widgets.OptionBox, title)
         except:
-            if value is None: return self.getOptionBox(title)
-            else: self.setOptionBox(title, value, *args, **kwargs)
+            if value is not None: self.setOptionBox(title, index=value, value=checked, callFunction=callFunction, override=override)
+            opt =  self.getOptionBox(title)
         else:
-            kind = "standard" if "kind" not in kwargs else kwargs.pop("kind").lower().strip()
-            change = None if "change" not in kwargs else kwargs.pop("change")
+            if kind == "ticks":
+                if label: opt = self.addLabelTickOptionBox(title, value, *args, **kwargs)
+                else: opt = self.addTickOptionBox(title, value, *args, **kwargs)
+            else:
+                if label: opt = self.addLabelOptionBox(title, value, *args, **kwargs)
+                else: opt = self.addOptionBox(title, value, *args, **kwargs)
 
-            if kind == "ticks": opt = self.addTickOptionBox(title, value, *args, **kwargs)
-            else: opt = self.addOptionBox(title, value, *args, **kwargs)
+        if len(kwargs) > 0:
+            self._configWidget(title, opt, widgKind, **kwargs)
 
-            if change is not None: self.setOptionBoxChangeFunction(title, change)
-
-            return opt
+        return opt
 
     def __buildOptionBox(self, frame, title, options, kind="normal"):
         """ Internal wrapper, used for building OptionBoxes.
@@ -5469,7 +5484,7 @@ class gui(object):
         self.widgetManager.update(self.Widgets.TickOptionBox, title, vals, group=WidgetManager.VARS)
         option.kind = "ticks"
 
-    def addOptionBox(self, title, options, row=None, column=0, colspan=0, rowspan=0):
+    def addOptionBox(self, title, options, row=None, column=0, colspan=0, rowspan=0, **kwargs):
         """ Adds a new standard OptionBox.
         Simply calls internal function __buildOptionBox.
 
@@ -5482,7 +5497,7 @@ class gui(object):
         self.__positionWidget(option, row, column, colspan, rowspan)
         return option
 
-    def addLabelOptionBox(self, title, options, row=None, column=0, colspan=0, rowspan=0):
+    def addLabelOptionBox(self, title, options, row=None, column=0, colspan=0, rowspan=0, **kwargs):
         """ Adds a new standard OptionBox, with a Label before it.
         Simply calls internal function __buildOptionBox, placing it in a LabelBox.
 
@@ -5497,7 +5512,7 @@ class gui(object):
         self.__positionWidget(frame, row, column, colspan, rowspan)
         return option
 
-    def addTickOptionBox(self, title, options, row=None, column=0, colspan=0, rowspan=0):
+    def addTickOptionBox(self, title, options, row=None, column=0, colspan=0, rowspan=0, **kwargs):
         """ Adds a new TickOptionBox.
         Simply calls internal function __buildOptionBox.
 
@@ -5510,7 +5525,7 @@ class gui(object):
         self.__positionWidget(tick, row, column, colspan, rowspan)
         return tick
 
-    def addLabelTickOptionBox(self, title, options, row=None, column=0, colspan=0, rowspan=0):
+    def addLabelTickOptionBox(self, title, options, row=None, column=0, colspan=0, rowspan=0, **kwargs):
         """ Adds a new TickOptionBox, with a Label before it
         Simply calls internal function __buildOptionBox, placing it in a LabelBox
 
@@ -5957,22 +5972,23 @@ class gui(object):
 #####################################
 
     def properties(self, title, value=None, *args, **kwargs):
+        widgKind = self.Widgets.Properties
+        kwargs = self._parsePos(kwargs.pop("pos", []), kwargs)
         """ simpleGUI - adds, sets & gets properties all in one go """
-        if value is None: return self.getProperties(title)
-        else:
-            try: self.widgetManager.verify(self.Widgets.Properties, title)
-            except:
+        try: self.widgetManager.verify(widgKind, title)
+        except:
+#            if value is not None:
 # need to work out args...
 #                self.setProperty(title, prop=value)
-                pass
-            else:
-                change = None if "change" not in kwargs else kwargs.pop("change")
-                props = self.addProperties(title, value, *args, **kwargs)
+            props = self.getProperties(title)
+        else:
+            props = self.addProperties(title, value, *args, **kwargs)
 
-                if change is not None: self.setPropertiesChangeFunction(title, change)
-                return props
+        if len(kwargs) > 0:
+            self._configWidget(title, props, widgKind, **kwargs)
+        return props
 
-    def addProperties(self, title, values=None, row=None, column=0, colspan=0, rowspan=0):
+    def addProperties(self, title, values=None, row=None, column=0, colspan=0, rowspan=0, **kwargs):
         self.widgetManager.verify(self.Widgets.Properties, title)
         haveTitle = True
         if self.containerStack[-1]['type'] == self.Widgets.ToggleFrame:
@@ -6042,25 +6058,34 @@ class gui(object):
         return self.spinBox(title, value, *args, **kwargs)
 
     def spinBox(self, title, value=None, *args, **kwargs):
+        widgKind = self.Widgets.SpinBox
+
+        endValue = kwargs.pop("endValue", None)
+        pos = kwargs.pop("pos", None)
+        item = kwargs.pop("item", None)
+        label = kwargs.pop("label", False)
+        kwargs = self._parsePos(kwargs.pop("pos", []), kwargs)
+
         """ adds, sets & gets spinBoxes all in one go """
-        try: self.widgetManager.verify(self.Widgets.SpinBox, title)
+        try: self.widgetManager.verify(widgKind, title)
         except:
-            if value is None: return self.getSpinBox(title)
-            else: self.setSpinBoxPos(title, value, *args, **kwargs)
+            if value is not None: self.setSpinBoxPos(title, value, *args, **kwargs)
+            spinBox =  self.getSpinBox(title)
         else:
-            endValue = None if "endValue" not in kwargs else kwargs.pop("endValue")
-            pos = None if "pos" not in kwargs else kwargs.pop("pos")
-            item = None if "item" not in kwargs else kwargs.pop("item").strip()
-            change = None if "change" not in kwargs else kwargs.pop("change")
+            if endValue is not None:
+                if label: spinBox = self.addLabelSpinBoxRange(title, fromVal=value, toVal=endValue, *args, **kwargs)
+                else: spinBox = self.addSpinBoxRange(title, fromVal=value, toVal=endValue, *args, **kwargs)
+            else:
+                if label: spinBox = self.addLabelSpinBox(title, value, *args, **kwargs) 
+                else: spinBox = self.addSpinBox(title, value, *args, **kwargs)
 
-            if endValue is not None: spinBox = self.addSpinBoxRange(title, fromVal=value, toVal=endValue, *args, **kwargs)
-            else: spinBox = self.addSpinBox(title, value, *args, **kwargs)
+        if pos is not None: self.setSpinBoxPos(title, pos)
+        if item is not None: self.setSpinBox(title, item)
 
-            if pos is not None: self.setSpinBoxPos(title, pos)
-            if item is not None: self.setSpinBox(title, item)
-            if change is not None: self.setSpinBoxChangeFunction(title, change)
+        if len(kwargs) > 0:
+            self._configWidget(title, spinBox, widgKind, **kwargs)
 
-            return spinBox
+        return spinBox
 
     def __buildSpinBox(self, frame, title, vals):
         self.widgetManager.verify(self.Widgets.SpinBox, title)
@@ -6108,10 +6133,10 @@ class gui(object):
         self.setSpinBoxPos(title, 0)
         return spin
 
-    def addSpinBox(self, title, values, row=None, column=0, colspan=0, rowspan=0):
+    def addSpinBox(self, title, values, row=None, column=0, colspan=0, rowspan=0, **kwargs):
         return self.__addSpinBox(title, values, row, column, colspan, rowspan)
 
-    def addLabelSpinBox(self, title, values, row=None, column=0, colspan=0, rowspan=0):
+    def addLabelSpinBox(self, title, values, row=None, column=0, colspan=0, rowspan=0, **kwargs):
         frame = self.__getLabelBox(title, column)
         spin = self.__buildSpinBox(frame, title, values)
         self.__packLabelBox(frame, spin)
@@ -6119,13 +6144,13 @@ class gui(object):
         self.setSpinBoxPos(title, 0)
         return spin
 
-    def addSpinBoxRange(self, title, fromVal, toVal, row=None, column=0, colspan=0, rowspan=0):
+    def addSpinBoxRange(self, title, fromVal, toVal, row=None, column=0, colspan=0, rowspan=0, **kwargs):
         vals = list(range(fromVal, toVal + 1))
         spin = self.__addSpinBox(title, vals, row, column, colspan, rowspan)
         spin.isRange = True
         return spin
 
-    def addLabelSpinBoxRange(self, title, fromVal, toVal, row=None, column=0, colspan=0, rowspan=0):
+    def addLabelSpinBoxRange(self, title, fromVal, toVal, row=None, column=0, colspan=0, rowspan=0, **kwargs):
         vals = list(range(fromVal, toVal + 1))
         spin = self.addLabelSpinBox(title, vals, row, column, colspan, rowspan)
         spin.isRange = True
@@ -6217,35 +6242,51 @@ class gui(object):
 #####################################
 
     def image(self, title, value=None, *args, **kwargs):
+        widgKind = self.Widgets.Image
+
         """ simpleGUI - adds, sets & gets images all in one go """
-        if value is None: return self.getImage(title)
+        kind = kwargs.pop("kind", "standard").lower().strip()
+        speed = kwargs.pop("speed", None)
+        drop = kwargs.pop("drop", None)
+        over = kwargs.pop("over", None)
+        submit = kwargs.pop("submit", None)
+        map = kwargs.pop("map", None)
+        kwargs = self._parsePos(kwargs.pop("pos", []), kwargs)
+
+        try: self.widgetManager.verify(widgKind, title)
+        # already exists
+        except:
+            if value is not None:
+                if kind == "data":
+                    self.setImageData(title, value, **kwargs)
+                elif kind == "icon":
+                    gui.warn("Changing image icons not yet supported: %s.", title)
+                else:
+                    self.setImage(title, value)
+            image =  self.getImage(title)
+        # new widget
         else:
-            try: self.widgetManager.verify(self.Widgets.Image, title)
-            except:
-                kind = "standard" if "kind" not in kwargs else kwargs.pop("kind").lower().strip()
-                if kind == "data": self.setImageData(title, value, **kwargs)
-                elif kind == "icon": gui.warn("Changing image icons not yet supported: %s.", title)
-                else: self.setImage(title, value)
+            if kind == "icon":
+                image = self.addIcon(title, value, *args, **kwargs)
+            elif kind == "data":
+                image = self.addImageData(title, value, *args, **kwargs)
             else:
-                kind = "standard" if "kind" not in kwargs else kwargs.pop("kind").lower().strip()
-                speed = None if "speed" not in kwargs else kwargs.pop("speed")
-                drop = None if "drop" not in kwargs else kwargs.pop("drop")
-                over = None if "over" not in kwargs else kwargs.pop("over")
-                submit = None if "submit" not in kwargs else kwargs.pop("submit")
-                map = None if "map" not in kwargs else kwargs.pop("map")
+                image = self.addImage(title, value, *args, **kwargs)
 
-                if kind == "icon": image = self.addIcon(title, value, *args, **kwargs)
-                elif kind == "data": image = self.addImageData(title, value, *args, **kwargs)
-                else: image = self.addImage(title, value, *args, **kwargs)
 
-                if speed is not None: self.setAnimationSpeed(title, speed)
-                if over is not None: self.setImageMouseOver(title, over)
-                if submit is not None:
-                    if map is not None: self.setImageMap(title, submit, map)
-                    else: self.setImageSubmitFunction(title, submit)
-                if drop is not None: self.setImageDropTarget(title, drop)
+        if speed is not None: self.setAnimationSpeed(title, speed)
+        if over is not None: self.setImageMouseOver(title, over)
+        if submit is not None:
+            if map is not None: self.setImageMap(title, submit, map)
+            else: self.setImageSubmitFunction(title, submit)
+        elif submit is None and map is not None:
+            gui.warn("Must specify a submit funciton when setting an image map: %s", title)
+        if drop is not None: self.setImageDropTarget(title, drop)
 
-                return image
+        if len(kwargs) > 0:
+            self._configWidget(title, self.widgetManager.get(widgKind, title), widgKind, **kwargs)
+
+        return image
 
     # looks up label containing image
     def __animateImage(self, title, firstTime=False):
@@ -6846,21 +6887,32 @@ class gui(object):
         return self.radioButton(title, value, *args, **kwargs)
 
     def radioButton(self, title, value=None, *args, **kwargs):
+        widgKind = self.Widgets.RadioButton
+        selected = kwargs.pop("selected", False)
+        change = kwargs.pop("change", None)
+        kwargs = self._parsePos(kwargs.pop("pos", []), kwargs)
+
         """ adds, sets & gets radioButtons all in one go """
         if value is None: return self.getRadioButton(title)
         else:
             ident = title + "-" + value
-            try: self.widgetManager.verify(self.Widgets.RadioButton, ident)
-            except: self.setRadioButton(title, value, *args, **kwargs)
+            try: self.widgetManager.verify(widgKind, ident)
+            except:
+                if len(kwargs) > 0:
+                    self._configWidget(title, self.widgetManager.get(widgKind, title), widgKind, **kwargs)
+                self.setRadioButton(title, value, *args, **kwargs)
             else:
-                selected = False if "selected" not in kwargs else kwargs.pop("selected")
-                change = None if "change" not in kwargs else kwargs.pop("change")
-                rb = self.addRadioButton(title, value, *args, **kwargs)
+                rb = self._radioButtonMaker(title, value, *args, **kwargs)
+
+                self._configWidget(title, rb, widgKind, **kwargs)
 
                 if selected: self.setRadioButton(title, value)
                 if change is not None: self.setRadioButtonChangeFunction(title, change)
 
                 return rb
+
+    def _radioButtonMaker(self, title, name, row=None, column=0, colspan=0, rowspan=0, **kwargs):
+        return self.addRadioButton(title, name, row, column, colspan, rowspan)
 
     def addRadioButton(self, title, name, row=None, column=0, colspan=0, rowspan=0):
 
@@ -6944,28 +6996,29 @@ class gui(object):
     def listBox(self, title, value=None, *args, **kwargs):
         widgKind = self.Widgets.ListBox
 
+        rows = kwargs.pop("rows", None)
+        multi = kwargs.pop("multi", False)
+        group = kwargs.pop("group", False)
+        selected = kwargs.pop("selected", None)
+        kwargs = self._parsePos(kwargs.pop("pos", []), kwargs)
+
         """ adds, sets & gets listBoxes all in one go """
         try: self.widgetManager.verify(widgKind, title)
         except:
-            if value is None: return self.getListBox(title)
-            else: self.selectListItem(title, value, *args, **kwargs)
+            if value is not None: self.selectListItem(title, value, *args, **kwargs)
+            listBox = self.getListBox(title)
         else:
-            rows = None if "rows" not in kwargs else kwargs.pop("rows")
-            multi = False if "multi" not in kwargs else kwargs.pop("multi")
-            group = False if "group" not in kwargs else kwargs.pop("group")
-            selected = False if "selected" not in kwargs else kwargs.pop("selected")
-
             listBox = self._listBoxMaker(title, value, *args, **kwargs)
 
-            if rows is not None: self.setListBoxRows(title, rows)
-            if multi: self.setListBoxMulti(title)
-            if group: self.setListBoxGroup(title)
-            if selected is not None: self.selectListItemAtPos(title, selected, callFunction=False)
+        if rows is not None: self.setListBoxRows(title, rows)
+        if multi: self.setListBoxMulti(title)
+        if group: self.setListBoxGroup(title)
+        if selected is not None: self.selectListItemAtPos(title, selected, callFunction=False)
 
-            if len(kwargs) > 0:
-                self._configWidget(title, self.widgetManager.get(widgKind, title), widgKind, **kwargs)
+        if len(kwargs) > 0:
+            self._configWidget(title, self.widgetManager.get(widgKind, title), widgKind, **kwargs)
 
-            return listBox
+        return listBox
 
     def _listBoxMaker(self, name, values=None, row=None, column=0, colspan=0, rowspan=0, **kwargs):
         """ internal wrapper to hide kwargs from original add functions """
@@ -7209,6 +7262,10 @@ class gui(object):
     def button(self, title, value=None, *args, **kwargs):
         """ simpleGUI - adds, sets & gets buttons all in one go """
         widgKind = self.Widgets.Button
+        image = kwargs.pop("image", None)
+        icon = kwargs.pop("icon", None)
+        name = kwargs.pop("name", None)
+        kwargs = self._parsePos(kwargs.pop("pos", []), kwargs)
 
         if value is None:
             if len(kwargs) > 0:
@@ -7221,11 +7278,6 @@ class gui(object):
                     self._configWidget(title, self.widgetManager.get(widgKind, title), widgKind, **kwargs)
                 self.setButton(title, value)
             else:
-                image = None if "image" not in kwargs else kwargs.pop("image")
-                icon = None if "icon" not in kwargs else kwargs.pop("icon")
-                name = None if "name" not in kwargs else kwargs.pop("name")
-                kwargs = self._parsePos(kwargs.pop("pos", []), kwargs)
-
                 if image is not None: button = self._buttonMaker(title, value, "image", image, *args, **kwargs)
                 elif icon is not None: button = self._buttonMaker(title, value, "icon", icon, *args, **kwargs)
                 elif name is not None: button = self._buttonMaker(title, value, "named", name, *args, **kwargs)
@@ -7406,15 +7458,26 @@ class gui(object):
 
     def link(self, title, value=None, *args, **kwargs):
         """ simpleGUI - adds, sets & gets links all in one go """
-        try: self.widgetManager.verify(self.Widgets.Link, title)
+        widgKind = self.Widgets.Link
+        kwargs = self._parsePos(kwargs.pop("pos", []), kwargs)
+
+        try: self.widgetManager.verify(widgKind, title)
         except:
+            if len(kwargs) > 0:
+                self._configWidget(title, self.widgetManager.get(widgKind, title), widgKind, **kwargs)
             if value is None: return self.getLink(title)
             else: self.setLink(title, value, *args, **kwargs)
         else:
-            if not callable(value) and not hasattr(value, '__call__'):
-                return self.addWebLink(title, value, *args, **kwargs)
-            else:
-                return self.addLink(title, value, *args, **kwargs)
+            link = self._linkMaker(title, value, *args, **kwargs)
+            if len(kwargs) > 0:
+                self._configWidget(title, link, widgKind, **kwargs)
+            return link
+
+    def _linkMaker(self, title, value, row=None, column=0, colspan=0, rowspan=0, *args, **kwargs):
+        if not callable(value) and not hasattr(value, '__call__'):
+            return self.addWebLink(title, value, row, column, colspan, rowspan)
+        else:
+            return self.addLink(title, value, row, column, colspan, rowspan)
 
     def __buildLink(self, title):
         link = self.makeLink()(self.getContainer(), useTtk=self.ttkFlag)
@@ -7458,6 +7521,7 @@ class gui(object):
 
     def grip(self, *args, **kwargs):
         """ simpleGUI - adds grip """
+        kwargs = self._parsePos(kwargs.pop("pos", []), kwargs)
         return self.addGrip(*args, **kwargs)
 
     # adds a simple grip, used to drag the window around
@@ -7541,6 +7605,7 @@ class gui(object):
     def canvas(self, title, *args, **kwargs):
         """ adds, sets & gets canases all in one go """
         widgKind = self.Widgets.Canvas
+        kwargs = self._parsePos(kwargs.pop("pos", []), kwargs)
 
         try: self.widgetManager.verify(widgKind, title)
         except: # widget exists
@@ -7548,8 +7613,6 @@ class gui(object):
                 self._configWidget(title, self.widgetManager.get(widgKind, title), widgKind, **kwargs)
             return self.getCanvas(title)
         else:
-            kwargs = self._parsePos(kwargs.pop("pos", []), kwargs)
-
             canvas = self._canvasMaker(title, *args, **kwargs)
             self._configWidget(title, canvas, widgKind, **kwargs)
             return canvas
@@ -7586,17 +7649,18 @@ class gui(object):
 
     def datePicker(self, title, value=None, *args, **kwargs):
         """ adds, sets & gets datePickers all in one go """
-        try: self.widgetManager.verify(self.Widgets.DatePicker, title)
+        widgKind = self.Widgets.DatePicker
+        change = kwargs.pop("change", None)
+        toValue = kwargs.pop("toValue", None)
+        kwargs = self._parsePos(kwargs.pop("pos", []), kwargs)
+        try: self.widgetManager.verify(widgKind, title)
         except:
             if value is None: return self.getDatePicker(title)
             else:
-                toValue = None if "toValue" not in kwargs else kwargs.pop("toValue")
                 if toValue is None: self.setDatePicker(title, value)
                 else: self.setDatePickerRange(title, startYear=value, endYear=toValue)
         else:
-            change = None if "change" not in kwargs else kwargs.pop("change")
             self.addDatePicker(title, *args, **kwargs)
-            toValue = None if "toValue" not in kwargs else kwargs.pop("toValue")
             if value is not None:
                 if toValue is None: self.setDatePicker(title, value)
                 else: self.setDatePickerRange(title, startYear=value, endYear=toValue)
@@ -7730,23 +7794,21 @@ class gui(object):
     def label(self, title, value=None, *args, **kwargs):
         """ simpleGUI - adds, sets & gets labels all in one go """
         widgKind = self.Widgets.Label
+        kind = kwargs.pop("kind", "standard").lower().strip()
+        kwargs = self._parsePos(kwargs.pop("pos", []), kwargs)
 
         try: self.widgetManager.verify(widgKind, title)
         except: # widget exists
-            if len(kwargs) > 0:
-                self._configWidget(title, self.widgetManager.get(widgKind, title), widgKind, **kwargs)
-            if value is None: return self.getLabel(title)
-            else: self.setLabel(title, value)
+            if value is not None: self.setLabel(title, value)
+            label = self.getLabel(title)
         else:
-            kind = kwargs.pop("kind", "standard").lower().strip()
-            kwargs = self._parsePos(kwargs.pop("pos", []), kwargs)
-
             if kind == "flash": label = self._labelMaker(title, value, kind, *args, **kwargs)
             elif kind == "selectable": label = self._labelMaker(title, value, kind, *args, **kwargs)
             else: label = self._labelMaker(title, value, "label", *args, **kwargs)
 
+        if len(kwargs) > 0:
             self._configWidget(title, label, widgKind, **kwargs)
-            return label
+        return label
 
     def _labelMaker(self, title, text=None, kind="label", row=None, column=0, colspan=0, rowspan=0, **kwargs):
         """ Internal wrapper, to hide kwargs from original add functions """
@@ -7852,24 +7914,22 @@ class gui(object):
     def textArea(self, title, value=None, *args, **kwargs):
         """ adds, sets & gets textAreas all in one go """
         widgKind = self.Widgets.TextArea
+        scroll = kwargs.pop("scroll", False)
+        end = kwargs.pop("end", True)
+        callFunction = kwargs.pop("callFunction", True)
+        kwargs = self._parsePos(kwargs.pop("pos", []), kwargs)
 
         try: self.widgetManager.verify(self.Widgets.TextArea, title)
         except:
-            if len(kwargs) > 0:
-                self._configWidget(title, self.widgetManager.get(widgKind, title), widgKind, **kwargs)
-            if value is None: return self.getTextArea(title)
-            else: self.setTextArea(title, value, *args, **kwargs)
+            text = self.getTextArea(title)
         else:
-            scroll = False if "scroll" not in kwargs else kwargs.pop("scroll")
-            kwargs = self._parsePos(kwargs.pop("pos", []), kwargs)
-
             if scroll: text = self._textMaker(title, "scroll", *args, **kwargs)
             else: text = self._textMaker(title, "text", *args, **kwargs)
 
-            if value is not None: self.setTextArea(title, value)
-            if len(kwargs) > 0:
-                self._configWidget(title, text, widgKind, **kwargs)
-            return text
+        if value is not None: self.setTextArea(title, value, end=end, callFunction=callFunction)
+        if len(kwargs) > 0:
+            self._configWidget(title, text, widgKind, **kwargs)
+        return text
 
     def _textMaker(self, title, kind="text", row=None, column=0, colspan=0, rowspan=0, *args, **kwargs):
         if kind == "scroll": return self.addScrolledTextArea(title, row, column, colspan, rowspan)
@@ -8113,6 +8173,7 @@ class gui(object):
     def message(self, title, value=None, *args, **kwargs):
         """ simpleGUI - adds, sets & gets messages all in one go """
         widgKind = self.Widgets.Message
+        kwargs = self._parsePos(kwargs.pop("pos", []), kwargs)
 
         try: self.widgetManager.verify(self.Widgets.Message, title)
         except:
@@ -8121,7 +8182,6 @@ class gui(object):
             if value is None: return self.getMessage(title)
             else: self.setMessage(title, value, *args, **kwargs)
         else:
-            kwargs = self._parsePos(kwargs.pop("pos", []), kwargs)
             msg = self._messageMaker(title, value, *args, **kwargs)
             self._configWidget(title, msg, widgKind, **kwargs)
 
@@ -8173,6 +8233,14 @@ class gui(object):
     def entry(self, title, value=None, *args, **kwargs):
         """ simpleGUI - adds, sets & gets entries all in one go """
         widgKind = self.Widgets.Entry
+        default = kwargs.pop("default", None)
+        limit = kwargs.pop("limit", None)
+        case = kwargs.pop("case", None)
+        rows = kwargs.pop("rows", None)
+        secret = kwargs.pop("secret", False)
+        label = kwargs.pop("label", False)
+        kind = kwargs.pop("kind", "standard").lower().strip()
+        kwargs = self._parsePos(kwargs.pop("pos", []), kwargs)
 
         try: self.widgetManager.verify(self.Widgets.Entry, title)
         except:
@@ -8181,20 +8249,11 @@ class gui(object):
             if value is None: return self.getEntry(title)
             else: self.setEntry(title, value, *args, **kwargs)
         else:
-            kind = "standard" if "kind" not in kwargs else kwargs.pop("kind").lower().strip()
-
-            # remove setter values from kwargs
-            default = None if "default" not in kwargs else kwargs.pop("default")
-            limit = None if "limit" not in kwargs else kwargs.pop("limit")
-            case = None if "case" not in kwargs else kwargs.pop("case").lower().strip()
-            rows = None if "rows" not in kwargs else kwargs.pop("rows")
-            kwargs = self._parsePos(kwargs.pop("pos", []), kwargs)
-
             # create the entry widget
             if kind == "auto":
-                ent = self._entryMaker(title, *args, kind=kind, words=value, **kwargs)
+                ent = self._entryMaker(title, *args, secret=secret, label=label, kind=kind, words=value, **kwargs)
             else:
-                ent = self._entryMaker(title, *args, kind=kind, **kwargs)
+                ent = self._entryMaker(title, *args, secret=secret, label=label, kind=kind, **kwargs)
                 if not ent: return
 
             # apply any setter values
@@ -8334,10 +8393,12 @@ class gui(object):
                     if event.keysym == "Up":
                         # move home
                         event.widget.icursor(0)
+                        event.widget.xview(0)
                         return "break"
                     elif event.keysym == "Down":
                         # move end
                         event.widget.icursor(END)
+                        event.widget.xview(END)
                         return "break"
 
                 ent.bind("<Key>", suppress)
@@ -8779,24 +8840,35 @@ class gui(object):
 #####################################
 
     def meter(self, title, value=None, *args, **kwargs):
+        widgKind = self.Widgets.Meter
+        kwargs = self._parsePos(kwargs.pop("pos", []), kwargs)
+
         """ simpleGUI - adds, sets & gets meters all in one go """
         try: self.widgetManager.verify(self.Widgets.Meter, title)
         except:
+            if len(kwargs) > 0:
+                self._configWidget(title, self.widgetManager.get(widgKind, title), widgKind, **kwargs)
             if value is None: return self.getMeter(title)
-            else: self.setMeter(title, value, *args, **kwargs)
+            else:
+                text = None if "text" not in kwargs else kwargs.pop("text")
+                self.setMeter(title, value, text=text)
         else:
             fill = None if "fill" not in kwargs else kwargs.pop("fill")
             kind = "meter" if "kind" not in kwargs else kwargs.pop("kind")
 
-            if kind == "split": meter = self.addSplitMeter(title, *args, **kwargs)
-            elif kind == "dual": meter = self.addDualMeter(title, *args, **kwargs)
-            else: meter = self.addMeter(title, *args, **kwargs)
+            if kind == "split": meter = self.__addMeter(title, "SPLIT", **kwargs)
+            elif kind == "dual":  meter = self.__addMeter(title, "DUAL", **kwargs)
+            else: meter = self.__addMeter(title, "METER", **kwargs)
 
             if value is not None: self.setMeter(title, value)
             if fill is not None: self.setMeterFill(title, fill)
+
+            if len(kwargs) > 0:
+                self._configWidget(title, meter, widgKind, **kwargs)
+
             return meter
 
-    def __addMeter(self, name, kind="METER", row=None, column=0, colspan=0, rowspan=0):
+    def __addMeter(self, name, kind="METER", row=None, column=0, colspan=0, rowspan=0, **kwargs):
         self.widgetManager.verify(self.Widgets.Meter, name)
 
         if kind == "SPLIT":
@@ -8848,7 +8920,8 @@ class gui(object):
         """ simpleGUI - adds horizontal separators
             unless a direction="vertical" kwargs is set
         """
-        if "direction" in kwargs and kwargs.pop("direction").lower() == "vertical":
+        kwargs = self._parsePos(kwargs.pop("pos", []), kwargs)
+        if kwargs.pop("direction", "horizontal").lower() == "vertical":
             return self.addVerticalSeparator(*args, **kwargs)
         else:
             return self.addHorizontalSeparator(*args, **kwargs)
