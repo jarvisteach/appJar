@@ -55,8 +55,8 @@ app.ttkStyle.configure("TLabel", foreground="green", backgroun="blue")
 
 To change the BG of the GUI & all labels:  
 ```python
-app.ttkStyle.configure("TLabel", backgroun="blue")
-app.ttkStyle.configure("TFrame", backgroun="blue")
+app.ttkStyle.configure("TLabel", background="blue")
+app.ttkStyle.configure("TFrame", background="blue")
 ```
 
 Or, you can call the `.setFg()` and `.setBg()` functions:  
