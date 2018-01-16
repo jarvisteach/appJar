@@ -6906,6 +6906,7 @@ class gui(object):
             except:
                 self.setRadioButton(title, name, callFunction=callFunction)
                 rb = self.getRadioButton(title)
+                selected = False
             else:
                 rb = self._radioButtonMaker(title, name, *args, **kwargs)
 
