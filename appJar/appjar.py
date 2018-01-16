@@ -363,10 +363,6 @@ class gui(object):
 
         # warn if we're in an untested mode
         self.__checkMode()
-        self.ttkFlag = False
-        if useTtk:
-            self.useTtk()
-
         # first out, verify the platform
         self.platform = gui.GET_PLATFORM()
 
@@ -397,6 +393,7 @@ class gui(object):
             self.warn("Cannot set logging level in __init__. You should use .setLogLevel()")
 
         # process any command line arguments
+        self.ttkFlag = False
         ttkTheme = None
         if handleArgs:
             if args.c: gui.setLogLevel("CRITICAL")
@@ -408,7 +405,7 @@ class gui(object):
             if args.l: self.language = args.l
             if args.f: gui.setLogFile(args.f)
             if args.ttk:
-                self.useTtk()
+                useTtk = True
                 if args.ttk is not True:
                     ttkTheme = args.ttk
 
@@ -416,6 +413,10 @@ class gui(object):
                 self.useSettings = True
                 if args.s is not True:
                     self.settingsFile = args.s
+
+        # configure as ttk
+        if useTtk:
+            self._useTtk()
 
         # a stack to hold containers as being built
         # done here, as initArrays is called elsewhere - to reset the gubbins
@@ -619,6 +620,10 @@ class gui(object):
 #####################################
 
     def useTtk(self):
+        gui.warn("useTtk is being deprecated - please set the useTtk flag in the constructor")
+        self._useTtk()
+
+    def _useTtk(self):
         """ enables use of ttk """
         global ttk, frameBase, labelBase, scaleBase, entryBase
         try:

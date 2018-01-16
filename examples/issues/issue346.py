@@ -5,7 +5,8 @@ from appJar import gui
 def a(press):
     print(press)
 
-with gui(useTtk=True) as app:
+#with gui(useTtk=True) as app:
+with gui() as app:
     app.addMenuEdit()
     app.removeAllWidgets()
     app.addMenuEdit()
