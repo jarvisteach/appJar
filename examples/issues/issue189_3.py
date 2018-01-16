@@ -9,7 +9,7 @@ with gui("appJar", useTtk=True) as app:
     app.addButton("Button2", func=None)
     
     with app.frame("frame"):
-#        app.setPadding(10, 10)
+        app.setPadding(10, 10)
         app.ttkStyle.configure(".", background="white")
         app.setBg("white")
         app.addButton("Button3", func=None)

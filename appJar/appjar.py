@@ -3843,7 +3843,7 @@ class gui(object):
         elif fType == self.Widgets.Frame:
             # first, make a Frame, and position it correctly
             self.widgetManager.verify(self.Widgets.Frame, title)
-            container = ajFrame(self.getContainer())
+            container = self.makeAjFrame()(self.getContainer())
             container.isContainer = True
 #            container.config(background=self.__getContainerBg(), font=self.frameFont, relief="groove")
             container.config(background=self.__getContainerBg())
@@ -10285,6 +10285,16 @@ class gui(object):
                 return 'break'
 
         return AjScale
+    #####################################
+    # appJar Frame
+    #####################################
+
+    def makeAjFrame(self):
+        class ajFrame(frameBase, object):
+            def __init__(self, parent, *args, **options):
+                super(ajFrame, self).__init__(parent, *args, **options)
+
+        return ajFrame
 
     #########################
     # Class to provide auto-completion on Entry boxes
@@ -11098,15 +11108,6 @@ class Properties(LabelFrame, object):
 
     def setChangeFunction(self, cmd):
         self.cmd = cmd
-
-#####################################
-# appJar Frame
-#####################################
-
-class ajFrame(Frame, object):
-
-    def __init__(self, parent, *args, **options):
-        super(ajFrame, self).__init__(parent, *args, **options)
 
 #####################################
 # Pie Chart Class
