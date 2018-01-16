@@ -3355,7 +3355,7 @@ class gui(object):
         # no arguments
         args = getArgs(funcName)
         if len(args[0]) == 0 and args[1] is None and args[2] is None:
-            return lambda: funcName()
+            return lambda *args: funcName()
 
         if discard:
             return lambda *args: funcName(param)
