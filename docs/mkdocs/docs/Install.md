@@ -30,20 +30,6 @@ If you're on Linux you might be able to make this even simpler.
 You might have a `site-packages` folder, that is already in your path.  
 In this case, put the `appJar` folder in `~/.local/lib/python3.x/site-packages/` where 3.x is the version of python that you use.  
 
----
-<div style='text-align: center;'>
-*Advertisement*  
-<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-<ins class="adsbygoogle"
-    style="display:block"
-    data-ad-format="fluid"
-    data-ad-layout-key="-gw-13-4l+6+pt"
-    data-ad-client="ca-pub-6185596049817878"
-    data-ad-slot="5627392164"></ins>
-<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-</div>
----
-
 ##Multi-user Set-up  
 ---
 If you're trying to install appJar in a school, everyone can download their own copy ([see above](#single-user-set-up)), or:  

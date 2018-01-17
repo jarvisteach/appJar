@@ -138,20 +138,6 @@ An interactive widget, for capturing multi-line user input in the GUI.
 | --------- | --------- | ------- | ------------|
 | scroll | boolean | False | Will configure this as a scrollable text area. |
 
----
-<div style='text-align: center;'>
-*Advertisement*  
-<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-<ins class="adsbygoogle"
-    style="display:block"
-    data-ad-format="fluid"
-    data-ad-layout-key="-gw-13-4l+6+pt"
-    data-ad-client="ca-pub-6185596049817878"
-    data-ad-slot="5627392164"></ins>
-<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-</div>
----
-
 ## Button  
 ---
 
@@ -221,20 +207,6 @@ Shows a single value, with arrows to scroll up or down, allowing the user to cha
 | pos | integer | 0 | The position of an item to select. |
 | item | string | None | The name of an item to select. |
 
----
-<div style='text-align: center;'>
-*Advertisement*  
-<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-<ins class="adsbygoogle"
-    style="display:block"
-    data-ad-format="fluid"
-    data-ad-layout-key="-gw-13-4l+6+pt"
-    data-ad-client="ca-pub-6185596049817878"
-    data-ad-slot="5627392164"></ins>
-<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-</div>
----
-
 ## Listbox
 ---
 
@@ -297,20 +269,6 @@ Displays a line, giving visual separation in the GUI.
 | Parameter | Data type | Default | Description |
 | --------- | --------- | ------- | ------------|
 | direction | string | horizontal | Set the orientation of the separator: `horizontal` or `vertical`. |
-
----
-<div style='text-align: center;'>
-*Advertisement*  
-<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-<ins class="adsbygoogle"
-    style="display:block"
-    data-ad-format="fluid"
-    data-ad-layout-key="-gw-13-4l+6+pt"
-    data-ad-client="ca-pub-6185596049817878"
-    data-ad-slot="5627392164"></ins>
-<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-</div>
----
 
 ## Image  
 ---
