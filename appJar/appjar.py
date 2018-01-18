@@ -7274,25 +7274,19 @@ class gui(object):
         name = kwargs.pop("name", None)
         kwargs = self._parsePos(kwargs.pop("pos", []), kwargs)
 
-        if value is None:
-            if len(kwargs) > 0:
-                self._configWidget(title, widgKind, **kwargs)
-            return self.getButton(title)
+        try: self.widgetManager.verify(self.Widgets.Button, title)
+        except:
+            if value is not None: self.setButton(title, value)
+            button = self.getButton(title)
         else:
-            try: self.widgetManager.verify(self.Widgets.Button, title)
-            except:
-                if len(kwargs) > 0:
-                    self._configWidget(title, widgKind, **kwargs)
-                self.setButton(title, value)
-            else:
-                if image is not None: button = self._buttonMaker(title, value, "image", image, *args, **kwargs)
-                elif icon is not None: button = self._buttonMaker(title, value, "icon", icon, *args, **kwargs)
-                elif name is not None: button = self._buttonMaker(title, value, "named", name, *args, **kwargs)
-                else: button = self._buttonMaker(title, value, "button", None, *args, **kwargs)
+            if image is not None: button = self._buttonMaker(title, value, "image", image, *args, **kwargs)
+            elif icon is not None: button = self._buttonMaker(title, value, "icon", icon, *args, **kwargs)
+            elif name is not None: button = self._buttonMaker(title, value, "named", name, *args, **kwargs)
+            else: button = self._buttonMaker(title, value, "button", None, *args, **kwargs)
 
-                self._configWidget(title, widgKind, **kwargs)
-
-                return button
+        if len(kwargs) > 0:
+            self._configWidget(title, widgKind, **kwargs)
+        return button
 
     def _buttonMaker(self, title, func, kind, extra=None, row=None, column=0, colspan=0, rowspan=0, *args, **kwargs):
         """ internal wrapper to hide kwargs from original add functions """
@@ -7399,7 +7393,11 @@ class gui(object):
 
     def setButton(self, name, text):
         but = self.widgetManager.get(self.Widgets.Button, name)
-        but.config(text=text)
+        try: # try to bind a function
+            command = self.MAKE_FUNC(text, name)
+            but.config(command=command)
+        except: # otherwise change the text
+            but.config(text=text)
 
     def getButton(self, name):
         but = self.widgetManager.get(self.Widgets.Button, name)
