@@ -52,6 +52,10 @@ app.label("title2", "text", pos=(1, 1))      # ADD a label in row 1, column 1
 app.label("title3", "text", pos=(2, 0, 2))   # ADD a label in row 2, column 0, spanning 2 columns
 ```
 
+| Parameter | Data type | Default | Description |
+| --------- | --------- | ------- | ------------|
+| pos | list/tuple | () | Position paramters for the widget, in the order: row, column, colspan, rowspan |
+
 ## Events  
 ----
 
