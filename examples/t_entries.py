@@ -83,7 +83,7 @@ app=gui()
 
 app.addButtons(["0", "A", "B", "C", "D", "E", "F", "G"], validater, colspan=2)
 app.setBg("green")
-app.setLabelFont(20)
+app.setLabelFont(size=20)
 
 app.addEntry("e1")
 app.addValidationEntry("v1")

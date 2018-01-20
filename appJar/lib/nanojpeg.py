@@ -409,7 +409,7 @@ def njColIDCT(blk, p, sout, out, stride):
             out += stride
             x0 -= 1
         return
-    
+
     x0 = (blk[p + 0] << 8) + 8192
     x8 = W7 * (x4 + x5) + 4
     x4 = (x8 + (W1 - W7) * x4) >> 3
@@ -456,7 +456,7 @@ def njShowBits(bits):
             nj.buf = (nj.buf << 8) | 0xFF
             nj.bufbits += 8
             continue
-        
+
         newbyte = nj.spos[nj.pos]
         nj.pos += 1
         nj.size -= 1
@@ -552,7 +552,7 @@ def njDecodeSOF():
         if (c.ssx > ssxmax): ssxmax = c.ssx
         if (c.ssy > ssymax): ssymax = c.ssy
         i += 1
-    
+
     nj.mbsizex = ssxmax << 3
     nj.mbsizey = ssymax << 3
     nj.mbwidth = (nj.width + nj.mbsizex - 1) // nj.mbsizex

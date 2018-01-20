@@ -9,7 +9,7 @@ def _load_tkdnd(master):
         master.tk.eval('global auto_path; lappend auto_path {%s}' % tkdndlib)
     master.tk.eval('package require tkdnd')
     master._tkdnd_loaded = True
-    
+
 class TkDND(object):
     def __init__(self, master):
         if not getattr(master, '_tkdnd_loaded', False):

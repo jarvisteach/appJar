@@ -87,6 +87,11 @@ def test_labels():
     assert app.gr() == row + 1
     assert isinstance(app.addFlashLabel("fl1", TEXT_ONE), Label)
     assert isinstance(app.addSelectableLabel("sl1", TEXT_ONE), SelectableLabel)
+    assert isinstance(app.addLabel("nl1", None), Label)
+    assert isinstance(app.addLabel("nl2", None), Label)
+
+    assert app.getLabel("nl1") == "nl1"
+    assert app.getLabel("nl2") == "nl2"
 
     app.addLabels(LIST_ONE)
 
@@ -401,6 +406,10 @@ def test_buttons():
     app.addButtons(["bl1", "bl2"], buts)
 
 
+    def testNoParam():
+        pass
+
+    app.addButton("NO PARAM", testNoParam)
 
     assert isinstance(app.addNamedButton("butName", "nb1", None), Button)  # name/title
 
@@ -999,28 +1008,35 @@ def test_message_boxes():
     assert isinstance(app.addEmptyMessage("m3"), Message)
     app.addEmptyMessage("m4")
 
-    assert app.getMessageWidget("m1").cget("text") == TEXT_ONE
-    assert app.getMessageWidget("m2").cget("text") == TEXT_TWO
-    assert app.getMessageWidget("m3").cget("text") == EMPTY
-    assert app.getMessageWidget("m4").cget("text") == EMPTY
+    app.addMessage(TEXT_TWO)
+
+    assert app.getMessage("m1") == TEXT_ONE
+    assert app.getMessage("m2") == TEXT_TWO
+    assert app.getMessage("m3") == EMPTY
+    assert app.getMessage("m4") == EMPTY
+    assert app.getMessage(TEXT_TWO) == TEXT_TWO
 
     app.setMessage("m1", EMPTY)
     app.setMessage("m2", TEXT_ONE)
     app.setMessage("m3", TEXT_THREE)
     app.setMessage("m4", EMPTY)
+    app.setMessage(TEXT_TWO, TEXT_THREE)
 
-    assert app.getMessageWidget("m1").cget("text") == EMPTY
-    assert app.getMessageWidget("m2").cget("text") == TEXT_ONE
-    assert app.getMessageWidget("m3").cget("text") == TEXT_THREE
-    assert app.getMessageWidget("m4").cget("text") == EMPTY
+    assert app.getMessage("m1") == EMPTY
+    assert app.getMessage("m2") == TEXT_ONE
+    assert app.getMessage("m3") == TEXT_THREE
+    assert app.getMessage("m4") == EMPTY
+    assert app.getMessage(TEXT_TWO) == TEXT_THREE
 
     app.clearMessage("m2")
     app.clearMessage("m3")
+    app.clearMessage(TEXT_TWO)
 
     assert app.getMessageWidget("m1").cget("text") == EMPTY
     assert app.getMessageWidget("m2").cget("text") == EMPTY
     assert app.getMessageWidget("m3").cget("text") == EMPTY
     assert app.getMessageWidget("m4").cget("text") == EMPTY
+    assert app.getMessageWidget(TEXT_TWO).cget("text") == EMPTY
 
     # call generic setter functions
     test_setters("Message", "m1")
@@ -1458,6 +1474,13 @@ def test_grids():
 def test_gui_options():
     print("\tTesting gui options")
     app.setTitle("New title")
+    assert app.getTitle() == "New title"
+    assert app.title == "New title"
+
+    app.title = "Newer title"
+    assert app.title == "Newer title"
+    assert app.getTitle() == "Newer title"
+
     app.setTransparency(50)
     app.setTransparency(50)
 
@@ -1654,9 +1677,22 @@ def test_images():
 def test_status():
     print("\tTesting Statusbar")
 
-    app.addStatusbar(TEXT_ONE, 3, "RIGHT")
+    app.addStatusbar(TEXT_ONE, 4, "RIGHT")
+    assert len(app.status) == 4
+
     with pytest.raises(Exception) :
         app.setStatus(TEXT_ONE, 43)
+
+    assert len(app.status) == 4
+    app.removeStatusbarField(3)
+    assert len(app.status) == 3
+
+    app.removeStatusbar()
+    assert len(app.status) == 0
+
+    app.addStatusbar(TEXT_ONE, 3, "RIGHT")
+    assert len(app.status) == 3
+
     app.setStatusbar(TEXT_ONE)
     app.setStatusbar(TEXT_ONE, None)
     app.setStatusbar(TEXT_ONE, 2)
@@ -1795,6 +1831,29 @@ def test_rightClick():
 def test_toolbars():
     print("\tTesting Toolbar")
 
+    app.addToolbar(["a", "b", "c", "ABOUT"], 
+        [tester_function, tester_function, tester_function, tester_function],
+        True)
+
+    app.addToolbarButton("d", tester_function)
+    with pytest.raises(Exception) :
+        app.addToolbarButton("d", tester_function)
+
+    app.removeToolbarButton("d")
+    with pytest.raises(Exception) :
+        app.removeToolbarButton("d")
+
+    app.addToolbarButton("d", tester_function)
+    app.removeToolbarButton("d", hide=False)
+
+    app.removeToolbar()
+    app.removeToolbar()
+
+    app.addToolbar(["a", "b", "c", "ABOUT"], 
+        [tester_function, tester_function, tester_function, tester_function],
+        True)
+
+    app.removeToolbar(hide=False)
     app.addToolbar(["a", "b", "c", "ABOUT"], 
         [tester_function, tester_function, tester_function, tester_function],
         True)
@@ -2646,6 +2705,14 @@ test_widget_arranging()
 
 test_hideShow()
 
+def cbA(data):
+    print("Doing callback with", data)
+    time.sleep(1)
+    return True
+
+def cbB(success):
+    print("Callback finished with:", success)
+
 doStop = 0
 def test_gui(btn=None):
     print("Testing GUI")
@@ -2654,6 +2721,8 @@ def test_gui(btn=None):
         test_pop_ups()
         app.thread(run_events, "a", bbb="bbb")
         app.setEntryFocus("e1")
+        app.threadCallback(cbA, cbB, "text")
+        app.callback(cbA, cbB, "text2")
         app.thread(dismissEditMenu)
         app.thread(test_rightClick)
         doStop += 1

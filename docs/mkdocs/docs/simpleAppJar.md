@@ -26,7 +26,7 @@ The logic is as follows:
 * If `title` already exists and a `value` is specified - **SET** the widget.  
 * If `title` already exists and a `value` is not specified - **GET** the widget.  
 
-## Position  
+## Positioning  
 ---
 
 When adding a widget, it's also possible to set its position.  
@@ -47,10 +47,14 @@ The following positional parameters are available when adding widgets:
 Alternatively, they can be specified as a list/tuple:
 
 ```python
-app.label("title0", "text", pos=(1, 0))      # ADD a label
-app.label("title2", "text", pos=(1, 1))      # ADD a label
-app.label("title3", "text", pos=(2, 0, 2))   # ADD a label
+app.label("title0", "text", pos=(1, 0))      # ADD a label in row 1, column 0
+app.label("title2", "text", pos=(1, 1))      # ADD a label in row 1, column 1
+app.label("title3", "text", pos=(2, 0, 2))   # ADD a label in row 2, column 0, spanning 2 columns
 ```
+
+| Parameter | Data type | Default | Description |
+| --------- | --------- | ------- | ------------|
+| pos | list/tuple | () | Position paramters for the widget, in the order: row, column, colspan, rowspan |
 
 ## Events  
 ----
@@ -60,9 +64,11 @@ Most of the widgets also have some support for events (see the [events page](/py
 
 | Parameter | Data type | Default | Description |
 | --------- | --------- | ------- | ------------|
-| submit | function | None | A function to call when the widget is *submitted*. |
 | change | function | None | A function to call when the widget is *changed*. |
+| submit | function | None | A function to call when the widget is *submitted*. |
+| over | function (list) | None | A function to call when the mouse *enters* the widget, with an optional second function to call when the mouse *leaves*. |
 | drop | boolean/function | None | Update the widget with *dropped* data if True, otherwise call the function. |
+| drag | function (list) | None | A function to call call when the widget is *dragged*, with an optional second function to call the the widget is *dropped*. |  
 
 `submit` & `change` will pass the name of the widget to the function, `drop` will pass the data to the function:  
 
@@ -138,20 +144,6 @@ An interactive widget, for capturing multi-line user input in the GUI.
 | --------- | --------- | ------- | ------------|
 | scroll | boolean | False | Will configure this as a scrollable text area. |
 
----
-<div style='text-align: center;'>
-*Advertisement*  
-<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-<ins class="adsbygoogle"
-    style="display:block"
-    data-ad-format="fluid"
-    data-ad-layout-key="-gw-13-4l+6+pt"
-    data-ad-client="ca-pub-6185596049817878"
-    data-ad-slot="5627392164"></ins>
-<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-</div>
----
-
 ## Button  
 ---
 
@@ -221,20 +213,6 @@ Shows a single value, with arrows to scroll up or down, allowing the user to cha
 | pos | integer | 0 | The position of an item to select. |
 | item | string | None | The name of an item to select. |
 
----
-<div style='text-align: center;'>
-*Advertisement*  
-<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-<ins class="adsbygoogle"
-    style="display:block"
-    data-ad-format="fluid"
-    data-ad-layout-key="-gw-13-4l+6+pt"
-    data-ad-client="ca-pub-6185596049817878"
-    data-ad-slot="5627392164"></ins>
-<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-</div>
----
-
 ## Listbox
 ---
 
@@ -298,20 +276,6 @@ Displays a line, giving visual separation in the GUI.
 | --------- | --------- | ------- | ------------|
 | direction | string | horizontal | Set the orientation of the separator: `horizontal` or `vertical`. |
 
----
-<div style='text-align: center;'>
-*Advertisement*  
-<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-<ins class="adsbygoogle"
-    style="display:block"
-    data-ad-format="fluid"
-    data-ad-layout-key="-gw-13-4l+6+pt"
-    data-ad-client="ca-pub-6185596049817878"
-    data-ad-slot="5627392164"></ins>
-<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-</div>
----
-
 ## Image  
 ---
 
@@ -346,3 +310,53 @@ Displays a simple date picker widget.
 * `.date(title, value=None)`
     The `value` should contain a date object.  
     Date pickes can receive a `change` parameter.  
+
+## Canvas  
+---
+Displays a the canvas widget.  
+
+* `.canvas(title)`
+    Creates a canvas with the specified title. 
+
+## popUp  
+---
+
+Displays a popUp.  
+
+* `.popUp(title, message, kind="info", parent=None)`  
+    This will show any of the availabel popUps.  
+    `title`  will be displayed in the title bar.
+    `message` will be displayed as the text of the popUp.  
+    `kind` defaults to `info`, but can be any of: `error`, `warning`, `yesno`, `question`, `ok`, `retry`, `string`, `integer`, `float`, `text` or `number`.  
+    `parent` allows you to link this popUp to a named SubWindow, instead of the main window.  
+
+---
+
+# GUI Properties  
+---
+
+* `.title` - pass a string for the title of the GUI  
+* `.icon` - pass the path to an icon file  
+* `.transparency` - pass a percentage (between 0 & 100) to set the transparency  
+* `.visible` - pass either `True` or `False`  
+
+* `.padding` - pass a tuple containing the x & y padding or a single integer for both x & y  
+* `.inPadding` - pass a tuple containing the x & y padding or a single integer for both x & y  
+* `.guiPadding` - pass a tuple containing the x & y padding or a single integer for both x & y  
+
+* `.size` - pass a tuple containing the width & height (or the string `fullscreen`)  
+* `.location` - pass a tuple containing the x & y coordinates (or the string `CENTER`)  
+* `.fullscreen` - pass either `True` or `False`  
+* `.resizable` - pass either `True` or `False`  
+
+* `.sticky`
+* `.stretch`
+* `.expand`
+
+* `.fg`
+* `.bg`
+* `.font`
+* `.buttonFont`
+* `.labelFont`
+
+* `.row`

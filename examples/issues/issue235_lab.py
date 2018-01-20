@@ -27,7 +27,7 @@ with gui("Simple Demo") as app:
     app.setFont(size=16, family="Times", underline=True, slant="italic")
     app.setButtonFont(size=14, family="Verdana", underline=False, slant="roman")
 
-    app.label("title", "TOOLTIP & MENU", bg="green", fg="blue", pos=(0, 0), tooltip="some info", menu=True)
+    app.label("title", "TOOLTIP & MENU", bg="green", fg="blue", pos=(0, 0), tooltip="some info", menu=True, anchor="e")
     app.label("title2", "SUBMIT", bg="red", fg="white", pos=(0, 1), submit=press)
     app.label("title3", "CHANGE & OVER", bg="orange", fg="black", pos=(1,0), over=[press3, press3], change=press)
     app.label("title4", "DRAG & DROP", bg="pink", fg="yellow", pos=(1, 1), drop=True, drag=(press3, press3))

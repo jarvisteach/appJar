@@ -19,11 +19,11 @@ class PhotoImage(PhotoImage):
     def transGet(self, x, y):
         """Returns a boolean if pixel at (x,y) is transparent"""
         return self.tk.call(self.name, "transparency", "get", x, y)
-    
+
     def transSet(self, x, y, alpha):
         """Makes the pixel at (x,y) transparent if alpha is is true or opaque otherwise"""
         self.tk.call(self.name, "transparency", "set", x, y, alpha)
-    
+
     # tkinter already has a gimped version of copy, but it's pretty useless
     # this version is still lacking and doesn't have all options, but is actually usable
     def copy(self, sourceImage, fromBox=None, toBox=None):
@@ -38,11 +38,11 @@ class PhotoImage(PhotoImage):
                 toBox = toBox[1:]
             args = args + ("-to",) + tuple(toBox)
         self.tk.call(args)
-    
+
     def redither(self):
         """Recalculate dithering used in PhotoImages to fix errors that may occur if image data was supplied in chunks"""
         self.tk.call(self.name, "redither")
-    
+
     def data(self, bg=None, fromBox=None, grey=None):
         """Returns image data in the form of a string"""
         args = (self.name, "data")
@@ -84,7 +84,7 @@ class PngImageTk(object):
         rep += "Greyscale:", self.meta["greyscale"], "\n"
         rep += "Alpha:", self.meta["alpha"], "\n"
         return rep
-        
+
     # Used to split each row into pairs of RGB or RGBA values
     def chunks(self, l, n):
         return [l[i:i+n] for i in range(0, len(l), n)]
@@ -97,9 +97,9 @@ class PngImageTk(object):
             a_append = alphapixels.append
         else:
             values = 3
-            
+
         pixelrows = []
-        
+
         # Possible optimisation by minimising re-evaluation of dot notation in loops
         p_append = pixelrows.append
         pixeldata = self.pixeldata
@@ -111,29 +111,29 @@ class PngImageTk(object):
         h = self.h
         put = self.image.put
         transSet = self.image.transSet
-        
+
         for row in pixeldata:
             row = row.tolist() #convert from array to list
             chunked = chunks(row, values) #RGB/RGBA format = 3/4 values
-                        
+
             for item in chunked:
                 if alpha is True:
                     # if 100% transparent, remember this pixel so we can make it transparent later
                     if item[3] == 0:
                         a_append((x, y))
                     del item[-1] #remove alpha bit
-                    
+
                     # Increment position, used for tracking coordinates of transparent pixels
                     x += 1
                     if x == w:
                         y += 1
                         x = 0
-                        
+
             p_append(["#%02x%02x%02x" % tuple(item) for item in chunked])
-        
+
         pixelrows = tuple(tuple(x) for x in pixelrows) #convert our list of lists into a tuple of tuples
         put(pixelrows,(0,0, w,h)) #pixels are finally written to the PhotoImage
-        
+
         # If we have alphapixels, set each stored coordinate to transparent
         if alphapixels:
             for item in alphapixels:

@@ -43,7 +43,9 @@ app.go()
 
 ####Add Labels
 * `.addLabel(title, text=None)`  
-    As with all widgets, when you add a *label*, a title must be provided - to identify the *label*. This is then followed by an optional piece of text to display.
+    This will create a label widget to display text in the GUI.  
+    The `title` is used to uniquely identify the label, in case you want to change it later, and the `text` is what gets displayed.  
+    If `text` is set to None, or no `text` is provided, the `title` will be displayed in the label.  
 
 * `.addEmptyLabel(title)`  
     Does the same as add a *label*, except there's no parameter to set any text.
@@ -249,6 +251,7 @@ That way, multiple widgets can use the same function, but different actions can 
 * `.addButton(title, function)`  
     Add a single button to the GUI, the text on the button will be the same as the button's title.  
     A function should be specified, which will be called when the button is clicked, where the title is passed as a parameter to the function.  
+    Alternatively, the function can have no parameter, and appJar will not supply an argument.     
 
 * `.addButtons(titles, functions)`  
     It's possible to add a list of buttons to the GUI.  
@@ -610,7 +613,7 @@ app.go()
 ```
 
 * `.selectListItem(title, item, callFunction=True)`  
-    `.selectListItemAtPos(title, pos, callFunction=True)`  
+    `.selectListItemAtPos(title, pos, callFunction=False)`  
     Selects the specified item in the specified ListBox.  
     Set ```callFunction``` to be False, if you don't want to call any associated functions.  
 
@@ -727,6 +730,7 @@ app.go()
 ####Add Messages
 * `.addMessage(title, text)`  
     Adds a Message widget, with the specified text.  
+    If not text is provided, the title will be used for the text.  
 
 * `.addEmptyMessage(title)`  
     Adds an empty Message widget.  

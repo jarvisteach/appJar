@@ -8,9 +8,6 @@ appJar includes experimental support for *ttk*,  a [tk themed widget set](https:
 * `.go(useTtk=True)`  
     Enabling ttk in the appJar constructor also sets the topLevel Frame to be a ttk.Frame - the preferred option.  
 
-* `.useTtk()`  
-    Calling this at the start of your program will tell it to use ttk widgets where possible.  
-
 * `.setTtkTheme(theme)`  
     This allows you to choose which theme to use.  
 
@@ -55,8 +52,8 @@ app.ttkStyle.configure("TLabel", foreground="green", backgroun="blue")
 
 To change the BG of the GUI & all labels:  
 ```python
-app.ttkStyle.configure("TLabel", backgroun="blue")
-app.ttkStyle.configure("TFrame", backgroun="blue")
+app.ttkStyle.configure("TLabel", background="blue")
+app.ttkStyle.configure("TFrame", background="blue")
 ```
 
 Or, you can call the `.setFg()` and `.setBg()` functions:  

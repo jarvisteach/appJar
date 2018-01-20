@@ -2,13 +2,22 @@
 ---
 
 ## Version 0.9  
-* Introduciton of alternative [widget access functions](/simpleAppJar) ([#235](https://github.com/jarvisteach/appJar/issues/235))  - now possible to **ADD**, **SET** & **GET** widgets by just using their name.  
-* Big improvements to [grids](/pythonDevWidgets/#grid) - can add/remove/replace rows/columns, can sort data, can access a right-click menu, can connect to an sqlite database.  
+* Introduction of alternative [widget access functions](/simpleAppJar) ([#235](https://github.com/jarvisteach/appJar/issues/235))  - now possible to **ADD**, **SET** & **GET** widgets by just using their name.  
+* Introduction of alternative [GUI properties](/simpleAppJar) ([#340](https://github.com/jarvisteach/appJar/issues/340)) - now possible to GET/SET properties with special property functions  
 * Introduction of appJar [settings](/pythonSettings/) - can now save/load GUI state to/from file.  
+* Big improvements to [grids](/pythonDevWidgets/#grid) - can add/remove/replace rows/columns, can sort data, can access a right-click menu, can connect to an sqlite database.  
 * More [ttk](/pythonTtk) improvements - grouped widgets now work, introduced external themes.  
 
 * Issues Resolved:
-    * [#317](https://github.com/jarvisteach/appJar/issues/317) - fixed issue with losing [file/directory Entry](/pythonWidgets/#entry) values  
+    * [#344](https://github.com/jarvisteach/appJar/issues/344) - [labels](/pythonWidgets/#add-labels) now display the title when no text is provided, instead of an empty label.  
+    * [#343](https://github.com/jarvisteach/appJar/issues/343) - new parameter for appJar constructor: `showIcon` allows the icon to be ignored when running Wondows
+    * [#340](https://github.com/jarvisteach/appJar/issues/340) - introduced [GUI properties](/simpleAppJar) for most settings  
+    * [#339](https://github.com/jarvisteach/appJar/issues/339) - new functions to remove [toolbars](/pythonBars/#set-toolbars) and [statusbars](/pythonBars/#set-statusbars)    
+    * [#335](https://github.com/jarvisteach/appJar/issues/335) - when setting functions for events, if no parameter is present in the function, no parameter will be passed by the event  
+    * [#333](https://github.com/jarvisteach/appJar/issues/333) - started work on hide/show/delete [tabs](/pythonWidgetGrouping/#tabbed-frame)  
+    * [#325](https://github.com/jarvisteach/appJar/issues/325) - fixed issue with [right-click menus](/pythonBars/#platform-specificcustom-menus)
+    * [#324](https://github.com/jarvisteach/appJar/issues/324) - fixed issue with losing [file/directory Entry](/pythonWidgets/#entry) values  
+    * [#317](https://github.com/jarvisteach/appJar/issues/317) - implemented fonts on [tabbed frames](/pythonWidgetGrouping/#tabbed-frame)  
     * [#316](https://github.com/jarvisteach/appJar/issues/316) - can now display compound images and text in [buttons](/pythonWidgets/#button)  
     * [#309](https://github.com/jarvisteach/appJar/issues/309) - cleaned up handling of [fonts](/pythonGuiOptions/#font)  
     * [#303](https://github.com/jarvisteach/appJar/issues/303) - added functions to [bind/unbind mutiple keys](/pythonEvents/#binding-keys) to a function  

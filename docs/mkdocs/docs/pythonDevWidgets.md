@@ -34,20 +34,6 @@ app.go()
 * ```.clearMicroBit(title)```  
     Will turn off all of the pixels - setting their brightness to 0.  
 
----
-<div style='text-align: center;'>
-*Advertisement*  
-<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-<ins class="adsbygoogle"
-    style="display:block"
-    data-ad-format="fluid"
-    data-ad-layout-key="-gw-13-4l+6+pt"
-    data-ad-client="ca-pub-6185596049817878"
-    data-ad-slot="5627392164"></ins>
-<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-</div>
----
-
 ###GoogleMaps
 ---
 A self-contained GoogleMaps widget.  
@@ -420,6 +406,26 @@ app.go()
 
 * `.getCanvas(title)`  
     Gets the specified canvas widget.  
+
+#### Drawing on a Canvas  
+
+* `.addCanvasCircle(title, x, y, diameter, **kwargs)`  
+    Draws a circle on the canvas.  
+
+* `.addCanvasOval(title, x, y, xDiam, yDiam, **kwargs)`  
+    Draws an oval on the canvas.  
+
+* `.addCanvasRectangle(title, x, y, w, h, **kwargs)`  
+    Draws a rectangle on the canvas.  
+
+* `.addCanvasLine(title, x, y, x2, y2, **kwargs)`  
+    Draws a line on the canvas.  
+
+* `.addCanvasText(title, x, y, text, **kwargs)`  
+    Draws text on the canvas.  
+
+* `.clearCanvas(title)  
+    Removes all drawings from the canavs.  
 
 ### Turtle
 ---
