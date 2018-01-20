@@ -56,7 +56,7 @@ from platform import system as platform
 # we need to import these too
 # but will only import them when needed
 random = None
-ttk = None
+ttk = ThemedStyle = None
 hashlib = None
 ToolTip = None
 nanojpeg = PngImageTk = array = None # extra image support
@@ -417,6 +417,8 @@ class gui(object):
         # configure as ttk
         if useTtk:
             self._useTtk()
+            if useTtk is not True:
+                ttkTheme = useTtk
 
         # a stack to hold containers as being built
         # done here, as initArrays is called elsewhere - to reset the gubbins
@@ -642,6 +644,23 @@ class gui(object):
 
         gui.debug("Mode switched to ttk")
 
+    def _loadTtkThemes(self):
+        global ThemedStyle
+        if ThemedStyle is None:
+            try:
+                from ttkthemes import ThemedStyle
+                self.ttkStyle = ThemedStyle(self.topLevel)
+            except:
+                ThemedStyle = False
+
+    def getTtkThemes(self, loadThemes=False):
+        if loadThemes:
+            self._loadTtkThemes()
+            if not ThemedStyle:
+                self.error("ttkThemes not available")
+
+        return self.ttkStyle.theme_names()
+
     # only call this after the main tk has been created
     # otherwise we get two windows!
     def setTtkTheme(self, theme=None):
@@ -654,12 +673,11 @@ class gui(object):
                 self.ttkStyle.theme_use(theme)
             except:
                 gui.debug("no basic ttk theme named %s found, searching for additional themes", theme)
-                try:
-                    from ttkthemes import ThemedStyle
-                    self.ttkStyle = ThemedStyle(self.topLevel)
-                    self.ttkStyle.set_theme(theme)
-                except:
+                self._loadTtkThemes()
+                if not ThemedStyle:
                     self.error("ttk theme: %s unavailable. Try one of: %s", theme, str(self.ttkStyle.theme_names()))
+                else:
+                    self.ttkStyle.set_theme(theme)
 
         # set up our ttk styles
         self.ttkStyle.configure("DefaultText.TEntry", foreground="grey")

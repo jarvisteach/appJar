@@ -2,61 +2,75 @@
 
 appJar includes experimental support for *ttk*,  a [tk themed widget set](https://docs.python.org/3/library/tkinter.ttk.html#module-tkinter.ttk).  
 
-## Setup
+If you run appJar in ttk mode, some of the widgets will be replaced with more native looking widgets.  
+
+**NB.** appJar has a lot of built in styling for standard widgets, supporting ttk has required changing how all this is done. When you come across issues, please log them in GitHub.  
+
+## Enabling ttk
 ---
 
-* `.go(useTtk=True)`  
-    Enabling ttk in the appJar constructor also sets the topLevel Frame to be a ttk.Frame - the preferred option.  
+* `.gui(useTtk=True)`  
+    To enable ttk, set the `useTtk` flag in the appJar constructor to `True`.  
+    If you want to specify a particular theme, set it to the name of the theme.  
 
 * `.setTtkTheme(theme)`  
-    This allows you to choose which theme to use.  
+    This allows you to choose a different theme to use.  
 
-* `.set XXX Style(style)`  
-    This lets you specify the name of a style for a widget.  
-
-## Additional Themes  
+## Themes  
 ---
+ttk will default to a theme similar to the operating system.  
+A list of additional themes can be displayed by calling:
+
+* `.getTtkThemes()`  
+    Returns a list of theme names.  
+
 Additional themes can be installed using [ttk extensions](github.com/RedFantom/ttkthemes).  
 
 These can be installed via pip: `pip install ttkthemes`  
 And then used the same as any other theme: `app.setTtkTheme("black")`.  
 
----
-<div style='text-align: center;'>
-*Advertisement*  
-<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-<ins class="adsbygoogle"
-    style="display:block"
-    data-ad-format="fluid"
-    data-ad-layout-key="-gw-13-4l+6+pt"
-    data-ad-client="ca-pub-6185596049817878"
-    data-ad-slot="5627392164"></ins>
-<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-</div>
----
-
-## Modifying ttk Styles  
+## Styling ttk Widgets
 ---
 appJar stores the ttk style as `app.ttkStyle` this can be modified or changed directly as required.  
 
-To modify individual widgets, create a new style and apply it to the widget:  
-```python
-app.ttkStyle.configure("BW.TEntry", foreground="green")
-app.setEntryStyle("Name", "BW.TEntry")
-```
+### Default Widget Style
+Each widget type has its own style, such as `TLabel` or `TButton`.  
+To change the style for all widgets of a certain type, reconfigure these styles:
 
-To modify all widgets of a particular type:  
 ```python
 app.ttkStyle.configure("TLabel", foreground="green", backgroun="blue")
 ```
 
-To change the BG of the GUI & all labels:  
+### Root Style
+All widgets inherit their style from the root style, known simply as `.`  
+If you want to change the style of all widgets, you can modify the root style.  
+**NB.** if particular widget types have set their own styles, modifying the root style won't change them.  
+
 ```python
-app.ttkStyle.configure("TLabel", background="blue")
-app.ttkStyle.configure("TFrame", background="blue")
+app.ttkStyle.configure(".", background="black", foreground="white")
 ```
 
-Or, you can call the `.setFg()` and `.setBg()` functions:  
+### Create Your Own Styles
+Finally, it's possible to create your own styles, and use them for particular widgets.  
+Your new style should inherit from the widget's style: `MyButton.TButton`  
+
+```python
+app.ttkStyle.configure("MyButton.TButton", foreground="red")
+```
+
+You then need to apply this style to the relevant widgets:
+
+* `.set XXX Style(style)`  
+    This lets you specify the name of a style for a particular widget.  
+
+```python
+app.setEntryStyle("Name", "BW.TEntry")
+```
+
+## Built in Setters
+---
+You can still use the existing setters for background `.setBg()` and foreground `.setFg()`:  
+
 ```python
 app.setBg("blue")
 app.setFg("yellow")
