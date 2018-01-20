@@ -7469,15 +7469,13 @@ class gui(object):
 
         try: self.widgetManager.verify(widgKind, title)
         except:
-            if len(kwargs) > 0:
-                self._configWidget(title, widgKind, **kwargs)
-            if value is None: return self.getLink(title)
-            else: self.setLink(title, value, *args, **kwargs)
+            if value is not None: self.setLink(title, value)
+            link = self.getLink(title)
         else:
             link = self._linkMaker(title, value, *args, **kwargs)
-            if len(kwargs) > 0:
-                self._configWidget(title, widgKind, **kwargs)
-            return link
+        if len(kwargs) > 0:
+            self._configWidget(title, widgKind, **kwargs)
+        return link
 
     def _linkMaker(self, title, value, row=None, column=0, colspan=0, rowspan=0, *args, **kwargs):
         if not callable(value) and not hasattr(value, '__call__'):
