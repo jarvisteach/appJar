@@ -246,7 +246,7 @@ app.go()
 #### Connecting to Databases
 
 * `.addDbGrid(title, db, table)`  
-    Will connect to the specified database, ans shw all rows in the specified table.  
+    Will connect to the specified database, and show all rows in the specified table.  
     appJar will query the table to detect the PrimaryKey, and use this as the key when selecting the row.
 
 * `.replaceDBGrid(title, db, table)`  

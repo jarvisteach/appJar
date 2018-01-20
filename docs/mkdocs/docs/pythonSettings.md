@@ -37,8 +37,9 @@ appJar will store the following settings:
 ## Usage  
 ---
 
-* `.go(useSettings=False)`  
-    This will enable settings, and cause them to be loaded & saved automatically.  
+* `gui(useSettings=False)`  
+    Set this flag to `True` in the constructor to enable settings.  
+    This will cause them to be loaded & saved automatically.  
 
 * `.loadSettings(fileName="appJar.ini", useSettings=True)`  
     This function can be called manually if you want to load settings at a later time.  
