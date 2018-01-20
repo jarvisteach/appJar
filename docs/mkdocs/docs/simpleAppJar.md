@@ -26,7 +26,7 @@ The logic is as follows:
 * If `title` already exists and a `value` is specified - **SET** the widget.  
 * If `title` already exists and a `value` is not specified - **GET** the widget.  
 
-## Position  
+## Positioning  
 ---
 
 When adding a widget, it's also possible to set its position.  
@@ -47,9 +47,9 @@ The following positional parameters are available when adding widgets:
 Alternatively, they can be specified as a list/tuple:
 
 ```python
-app.label("title0", "text", pos=(1, 0))      # ADD a label
-app.label("title2", "text", pos=(1, 1))      # ADD a label
-app.label("title3", "text", pos=(2, 0, 2))   # ADD a label
+app.label("title0", "text", pos=(1, 0))      # ADD a label in row 1, column 0
+app.label("title2", "text", pos=(1, 1))      # ADD a label in row 1, column 1
+app.label("title3", "text", pos=(2, 0, 2))   # ADD a label in row 2, column 0, spanning 2 columns
 ```
 
 ## Events  
@@ -60,9 +60,11 @@ Most of the widgets also have some support for events (see the [events page](/py
 
 | Parameter | Data type | Default | Description |
 | --------- | --------- | ------- | ------------|
-| submit | function | None | A function to call when the widget is *submitted*. |
 | change | function | None | A function to call when the widget is *changed*. |
+| submit | function | None | A function to call when the widget is *submitted*. |
+| over | function (list) | None | A function to call when the mouse *enters* the widget, with an optional second function to call when the mouse *leaves*. |
 | drop | boolean/function | None | Update the widget with *dropped* data if True, otherwise call the function. |
+| drag | function (list) | None | A function to call call when the widget is *dragged*, with an optional second function to call the the widget is *dropped*. |  
 
 `submit` & `change` will pass the name of the widget to the function, `drop` will pass the data to the function:  
 
