@@ -12,14 +12,21 @@ def param(a):
 def noParam():
     print("no param")
     app.button("NEW ONE", param)
-    app.link("GOOGLE", "aaa")
+
+def setTheme():
+    app.setTtkTheme(app.popUp("theme", "theme", kind="text"))
+
+def showThemes():
+   app.popUp("Themes", str(app.getTtkThemes(True)))
 
 
 from appJar import gui
 
-with gui("Button tester") as app:
+with gui("Button tester", useTtk=True) as app:
     app.button("PARAM", param)
     app.button("NO PARAM", noParam)
     app.link("GOOGLE", "http://www.google.com")
     app.link("PARAM", param)
     app.link("NO PARAM", noParam)
+    app.button("SET THEME", setTheme)
+    app.button("THEMES", showThemes)
