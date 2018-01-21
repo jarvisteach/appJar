@@ -16,6 +16,9 @@ If you run appJar in ttk mode, some of the widgets will be replaced with more na
 * `.setTtkTheme(theme)`  
     This allows you to choose a different theme to use.  
 
+* `.getTtkTheme()`  
+    Returns the currently selected ttk theme as a string. 
+
 ## Themes  
 ---
 ttk will default to a theme similar to the operating system.  

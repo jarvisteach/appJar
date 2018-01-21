@@ -35,7 +35,7 @@ These are values that can be set when appJar is initially run.
 
 ---
 <div style='text-align: center;'>
-*Advertisement*  
+*Advertisement&nbsp;<sup><a href="/advertising">why?</a></sup>*
 <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
 <ins class="adsbygoogle"
     style="display:block"

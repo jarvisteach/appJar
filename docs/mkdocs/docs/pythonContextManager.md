@@ -42,7 +42,7 @@ An added bonus, is that the same syntax works for starting a container or openin
 
 ---
 <div style='text-align: center;'>
-*Advertisment*  
+*Advertisement&nbsp;<sup><a href="/advertising">why?</a></sup>*
 <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
 <ins class="adsbygoogle"
     style="display:block"

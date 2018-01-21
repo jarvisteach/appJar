@@ -69,7 +69,7 @@ The toolbar will also gain an extra button (a pin) allowing the user to configur
 
 ---
 <div style='text-align: center;'>
-*Advertisement*  
+*Advertisement&nbsp;<sup>[why?](/advertising)</sup>*
 <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
 <ins class="adsbygoogle"
     style="display:block"

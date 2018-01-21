@@ -66,7 +66,7 @@ Create an environment variable, which will mean `E:\PYLIB` is always in your **p
 
 ---
 <div style='text-align: center;'>
-*Advertisement*  
+*Advertisement&nbsp;<sup>[why?](/advertising)</sup>*
 <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
 <ins class="adsbygoogle"
     style="display:block"

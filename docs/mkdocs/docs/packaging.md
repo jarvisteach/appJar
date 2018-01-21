@@ -15,7 +15,7 @@ If not, then you may need to specify the path of certain libraries:
 
 ---
 <div style='text-align: center;'>
-*Advertisement*  
+*Advertisement&nbsp;<sup>[why?](/advertising)</sup>*
 <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
 <ins class="adsbygoogle"
     style="display:block"

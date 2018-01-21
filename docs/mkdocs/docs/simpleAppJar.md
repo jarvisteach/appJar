@@ -1,19 +1,47 @@
 # appJar v1.0  
 
-A feature we are working towards in the 1.0 release, is a simplified way of adding, setting & getting widgets.  
+Some features we are working towards in the 1.0 release, are a simplified way of adding, setting & getting widgets.  
 Each widget will have a single function that supports all three actions.  
-This is in the current release, but only in BETA.  
+
+We're also simplifying GUI settings, exposing most settings as properties, as well as letting them be passed in the constructor.  
+This is available for BETA testing in the current release, but still needs a bit of work.  
+
+If you combine this with the context manager feature, building GUIs is getting even easier:
+
+```python
+from appJar import gui 
+
+def press(btnName):
+    app.popUp("INFO", "You pressed " + btnName)
+
+def update(value):
+    if value == "list": app.slider("slider", app.listbox(value)[0])
+    elif value == "slider": app.listbox("list", app.slider(value))
+    app.label("display", app.listbox("list")[0])
+
+with gui("Version 1.0", bg="teal") as app:
+    app.label("Version 1.0 Demo", colspan=2, bg="red")
+    with app.labelFrame("Big Buttons", colspan=2, sticky="news", expand="both"):
+        app.button("BUTTON A", press)
+        app.button("BUTTON B", press)
+        app.button("BUTTON C", press)
+    app.listbox("list", [1, 2, 3, 4, 5], rows=5, selected=0, submit=update)
+    app.label("display", "1", row=2, column=1, bg="yellow", sticky="news")
+    app.slider("slider", colspan=2, range=(1,5), change=update, interval=1)
+```
 
 ## Operation  
 ---
+As demonstrated above, each widget now has a single function - the name of the widget.  
+Call this function passing one or both of the key parameters, to determine what will happen:
 
 ```python
-app.label("title", "text")      # ADD a label if title is new
-app.label("title", "text_2")    # SET a label if title exists
-print(app.label("title"))       # GET a label
+app.label("title", "text")      # ADD a label if the title is new
+app.label("title", "text_2")    # SET a label if the title exists
+print(app.label("title"))       # GET a label if no widget is being created or set
 ```  
 
-There are two parameters being used here:  
+The two key parameters are:
 
 | Parameter | Data type | Description |
 | --------- | --------- | ------------|
@@ -22,7 +50,7 @@ There are two parameters being used here:
 
 The logic is as follows:
 
-* If `title` doesn't exist - **ADD** the widget.  
+* If `title` doesn't exist - **ADD** the widget, using the `value`, or `title` if no `value` is specified.  
 * If `title` already exists and a `value` is specified - **SET** the widget.  
 * If `title` already exists and a `value` is not specified - **GET** the widget.  
 
@@ -30,6 +58,7 @@ The logic is as follows:
 ---
 
 When adding a widget, it's also possible to set its position.  
+When no position is specified, each widget goes in the first column of a new row.  
 
 ```python
 app.label("title", "text", row=2, column=4, rowspan=3)      # ADD a label
@@ -44,7 +73,7 @@ The following positional parameters are available when adding widgets:
 | rowspan | integer | 1 | The number of grid rows to stretch the widget across. |
 | colspan | integer | 1 | The number of grid columns to stretch the widget across. |
 
-Alternatively, they can be specified as a list/tuple:
+Alternatively, they can be specified as a tuple:  
 
 ```python
 app.label("title0", "text", pos=(1, 0))      # ADD a label in row 1, column 0
@@ -56,10 +85,26 @@ app.label("title3", "text", pos=(2, 0, 2))   # ADD a label in row 2, column 0, s
 | --------- | --------- | ------- | ------------|
 | pos | list/tuple | () | Position paramters for the widget, in the order: row, column, colspan, rowspan |
 
+## GUI Properties  
+----
+There are two GUI properties which affect how widgets are displayed `sticky` and `stretch`.  
+These can be modified when adding a widget, just bear in mind they are GUI settings, and will affect all future widgets in the current container.  
+
+```python
+app.label("title0", "text", sticky="", strech="none")
+app.label("title2", "text", sticky="ns", stretcj="row")
+```
+
+| Parameter | Data type | Default | Description |
+| --------- | --------- | Default | ------------|
+| sticky | string | &lt;Container specific&gt; | Describes which sides the widget will stick to, one or more of: `n`, `e`, `w`, `s` in a single string. |
+| stretch | string | &lt;Container specific&gt; | Describes how the widget will stretch to fill the row/column: `none`, `row`, `column` or `all`. |
+
 ## Events  
 ----
 
 Most of the widgets also have some support for events (see the [events page](/pythonEvents/#types-of-event) for more information).  
+`submit` & `change` will pass the name of the widget to the function, `drop` will pass the data to the function:  
 **NB.** the parameter is only the name of the function, don't include any brackets.  
 
 | Parameter | Data type | Default | Description |
@@ -68,9 +113,7 @@ Most of the widgets also have some support for events (see the [events page](/py
 | submit | function | None | A function to call when the widget is *submitted*. |
 | over | function (list) | None | A function to call when the mouse *enters* the widget, with an optional second function to call when the mouse *leaves*. |
 | drop | boolean/function | None | Update the widget with *dropped* data if True, otherwise call the function. |
-| drag | function (list) | None | A function to call call when the widget is *dragged*, with an optional second function to call the the widget is *dropped*. |  
-
-`submit` & `change` will pass the name of the widget to the function, `drop` will pass the data to the function:  
+| drag | function (list) | None | A function to call call when the widget is *dragged*, with an optional second function to call hwne the widget is *dropped*. |  
 
 ```python
 def update(name):
@@ -90,9 +133,9 @@ app.image("img1", "placeholder.gif", drop=True)
 A widget for displaying text in the GUI.  
 
 * `.label(title, value=None)`  
-    The `value` will be the text to show in the label.  
-    Labels can receive a `submit` parameter, making them clickable.  
-    Labels can receive `drop` data.  
+The `value` will be the text to show in the label.  
+Labels can receive a `submit` parameter, making them clickable.  
+Labels can receive `drop` data.  
 
 | Parameter | Data type | Default | Description |
 | --------- | --------- | ------- | ------------|
@@ -335,28 +378,40 @@ Displays a popUp.
 # GUI Properties  
 ---
 
-* `.title` - pass a string for the title of the GUI  
-* `.icon` - pass the path to an icon file  
-* `.transparency` - pass a percentage (between 0 & 100) to set the transparency  
-* `.visible` - pass either `True` or `False`  
+Most of the setters & getters for GUI/widget configuration will now be available as properties.  
+This allows them to be set in a slightly simpler way:
 
-* `.padding` - pass a tuple containing the x & y padding or a single integer for both x & y  
-* `.inPadding` - pass a tuple containing the x & y padding or a single integer for both x & y  
-* `.guiPadding` - pass a tuple containing the x & y padding or a single integer for both x & y  
+```python
+app.title = "Property Demo"
+app.bg = "red"
+app.fg = "yellow"
+```
 
-* `.size` - pass a tuple containing the width & height (or the string `fullscreen`)  
-* `.location` - pass a tuple containing the x & y coordinates (or the string `CENTER`)  
-* `.fullscreen` - pass either `True` or `False`  
-* `.resizable` - pass either `True` or `False`  
-
-* `.sticky`
-* `.stretch`
-* `.expand`
-
-* `.fg`
-* `.bg`
-* `.font`
-* `.buttonFont`
-* `.labelFont`
-
-* `.row`
+| Property | Data type | Description |
+| --------- | --------- | ------------|
+| title | string | Pass a string for the title of the GUI |
+| icon | string | Pass the path to an icon file |
+| transparency | integer | Pass a percentage (between 0 & 100) to set the transparency |
+| visible | boolean | Pass either `True` or `False` |
+| | | | 
+| padding | integer (list) | Pass a tuple containing the x & y padding or a single integer for both x & y |
+| inPadding | integer (list) | Pass a tuple containing the x & y padding or a single integer for both x & y |
+| guiPadding | integer (list) | Pass a tuple containing the x & y padding or a single integer for both x & y |
+| | | | 
+| size | integer (list) | Pass a tuple containing the width & height (or the string `fullscreen`) |
+| location | integer (list) | Pass a tuple containing the x & y coordinates (or the string `CENTER`) |
+| fullscreen | boolean | Pass either `True` or `False` |
+| resizable | boolean | Pass either `True` or `False` |
+| | | | 
+| sticky | string | Pass a string describing which sides to stick to (news). |
+| stretch | string | Pass a string describing if rows/columns should stretch. |
+| | | | 
+| fg | string | Pass a colour to use for the text colour of all label style widgets. |
+| bg | string | Pass a colour to use for the background of all label style widgets. |
+| font | integer| Pass a value to set the size of the font. |
+| buttonFont | integer | Pass the font size to use for all button style widgets. |
+| labelFont | integer| Pass the font size to use for all label style widgets. |
+| ttkTheme | string | Only available in ttk mode - pass the name of the ttk theme you want to use. |
+| | | | 
+| row | integer | Gets or sets the next row number to be used. |
+| | | | 
