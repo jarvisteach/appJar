@@ -14,10 +14,10 @@ def noParam():
     app.button("NEW ONE", param)
 
 def setTheme():
-    app.setTtkTheme(app.popUp("theme", "theme", kind="text"))
+    app.ttkTheme = app.popUp("theme", "theme", kind="text")
 
-def showThemes():
-   app.popUp("Themes", str(app.getTtkThemes(True)))
+def showThemes(): app.popUp("Themes", str(app.getTtkThemes(True)))
+def showTheme(): app.popUp("Current Theme", app.ttkTheme)
 
 
 from appJar import gui
@@ -30,3 +30,4 @@ with gui("Button tester", useTtk=True) as app:
     app.link("NO PARAM", noParam)
     app.button("SET THEME", setTheme)
     app.button("THEMES", showThemes)
+    app.button("SHOW", showTheme)

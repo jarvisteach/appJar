@@ -394,7 +394,7 @@ class gui(object):
 
         # process any command line arguments
         self.ttkFlag = False
-        ttkTheme = None
+        selectedTtkTheme = None
         if handleArgs:
             if args.c: gui.setLogLevel("CRITICAL")
             elif args.e: gui.setLogLevel("ERROR")
@@ -407,7 +407,7 @@ class gui(object):
             if args.ttk:
                 useTtk = True
                 if args.ttk is not True:
-                    ttkTheme = args.ttk
+                    selectedTtkTheme = args.ttk
 
             if args.s:
                 self.useSettings = True
@@ -418,7 +418,7 @@ class gui(object):
         if useTtk:
             self._useTtk()
             if useTtk is not True:
-                ttkTheme = useTtk
+                selectedTtkTheme = useTtk
 
         # a stack to hold containers as being built
         # done here, as initArrays is called elsewhere - to reset the gubbins
@@ -552,7 +552,7 @@ class gui(object):
 
         # set the ttk theme
         if self.ttkFlag:
-            self.setTtkTheme(ttkTheme)
+            self.setTtkTheme(selectedTtkTheme)
 
         # for configuting event processing
         self.EVENT_SIZE = 1000
@@ -657,9 +657,12 @@ class gui(object):
         if loadThemes:
             self._loadTtkThemes()
             if not ThemedStyle:
-                self.error("ttkThemes not available")
+                self.error("Custom ttkThemes not available")
 
         return self.ttkStyle.theme_names()
+
+    def getTtkTheme(self):
+        return self.ttkStyle.theme_use()
 
     # only call this after the main tk has been created
     # otherwise we get two windows!
@@ -699,6 +702,9 @@ class gui(object):
 #        self.fgColour = self.topLevel.cget("foreground")
 #        self.buttonFgColour = self.topLevel.cget("foreground")
 #        self.labelFgColour = self.topLevel.cget("foreground")
+
+    # set a property for ttk theme
+    ttkTheme = property(getTtkTheme, setTtkTheme)
 
 ###############################################################
 # library loaders - on demand loading of different classes
@@ -7014,7 +7020,7 @@ class gui(object):
 # FUNCTION for list box
 #####################################
 
-    def list(self, title, value=None, *args, **kwargs):
+    def listbox(self, title, value=None, *args, **kwargs):
         """ simpleGUI - shortner for listBox() """
         return self.listBox(title, value, *args, **kwargs)
 
@@ -7321,7 +7327,7 @@ class gui(object):
             kwargs.pop(key, None)
 
         # ignore these for now as well
-        for key in ["stretch", "sticky", "pad", "inpad"]:
+        for key in ["pad", "inpad"]:
             val = kwargs.pop(key, None)
             if val is not None:
                 gui.error("Invalid argument for %s %s - %s:%s", self.Widgets.name(kind), title, key, val)
@@ -7378,9 +7384,7 @@ class gui(object):
             command = self.MAKE_FUNC(func, title)
             bindCommand = self.MAKE_FUNC(func, title, True)
             but.config(command=command)
-
         #    but.bind('<Return>', bindCommand)
-
 
         #but.bind("<Tab>", self.__focusNextWindow)
         #but.bind("<Shift-Tab>", self.__focusLastWindow)
@@ -7812,6 +7816,15 @@ class gui(object):
         if len(pos) > 1: kwargs["column"] = pos[1]
         if len(pos) > 2: kwargs["colspan"] = pos[2]
         if len(pos) > 3: kwargs["rowspan"] = pos[3]
+
+        # let user specify stickt/stretch/expan
+        sticky = kwargs.pop("sticky", None)
+        if sticky is not None: self.setSticky(sticky)
+        stretch = kwargs.pop("stretch", None)
+        if stretch is not None: self.setStretch(stretch)
+        expand = kwargs.pop("expand", None)
+        if expand is not None: self.setExpand(expand)
+
         return kwargs
 
     def label(self, title, value=None, *args, **kwargs):

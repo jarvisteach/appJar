@@ -2801,7 +2801,7 @@ def press(btn):
         app4.check("Clap"),
         app4.option("feelings"),
         app4.spin("feelings"),
-        app4.list("feelings"),
+        app4.listbox("feelings"),
         app4.scale("happiness"),
         app4.message("mess"),
         app4.text("mess2"),
@@ -2830,7 +2830,7 @@ def updateApp4(btn=None):
     app4.check("Clap", True)
     app4.option("feelings", 1)
     app4.spin("feelings", 2)
-    app4.list("feelings", 3)
+    app4.listbox("feelings", 3)
     app4.scale("happiness", 50)
     app4.message("mess", "aaa")
     app4.text("mess2", "aaa")
@@ -2931,7 +2931,7 @@ with gui("Simple Demo") as app4:
     app4.option("feelings2", ["happy", "bored", "angry"], kind="ticks", column=0, row=row, change=press)
     app4.option("feelings3", ["happy", "bored", "angry"], column=0, row=row, change=press)
     app4.spin("feelings", ["happy", "bored", "angry"], change=changer, column=1, row=row, item="angry")
-    app4.list("feelings", ["happy", "bored", "angry"], column=2, row=row, rows=4, multi=True, group=True, change=press)
+    app4.listbox("feelings", ["happy", "bored", "angry"], column=2, row=row, rows=4, multi=True, group=True, change=press)
 
     app4.separator(colspan=3)
     app4.spin("vals", 4, endValue=10, colspan=3, pos=3)
