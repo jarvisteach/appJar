@@ -30,7 +30,7 @@ def press(btn):
     else:
         app.selectListItemAtPos("list", pos, True)
 
-with gui("SideMenu", resizable=True, icon="favicon.ico",
+with gui("SideMenu", resizable=True, 
             guiPadding=(5,5), bg="lightslategrey", fg="black", stretch="both", location=(450,100),
             size=(600,400), sticky="news", labelFont=20, buttonFont=15, transparency=98) as app:
 
