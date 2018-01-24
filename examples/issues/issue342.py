@@ -30,12 +30,13 @@ def press(btn):
     else:
         app.selectListItemAtPos("list", pos, True)
 
-with gui("SideMenu", resizable=True, icon="favicon.ico",
+with gui("SideMenu", resizable=True,
             guiPadding=(5,5), bg="lightslategrey", fg="black", stretch="both", location=(450,100),
             size=(600,400), sticky="news", labelFont=20, buttonFont=15, transparency=98) as app:
 
     with app.labelFrame("Setup", sticky="nws", stretch="none", padding=[10,10]):
-        app.listBox("list", pages, row=0, column=0, change=change, rows=len(pages), focus=True,
+        lb = app.listBox("list", pages, row=0, column=0, change=change, rows=len(pages), focus=True, borderwidth=0, selectborderwidth=0,
+                    highlightthickness=0, 
                     width=12, border=0, selectbackground="blue", selectforeground="white", background="lightslategrey", fg="black")
         app.configure(sticky="news", stretch = "both")
         for pos, page in enumerate(pages):
