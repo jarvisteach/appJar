@@ -163,7 +163,7 @@ app.go()
     This will set a maximum length for the specified Entry.  
     Any additional characters typed will be discarded.  
 
-* `.setEntryValid(title)` & `.setEntryInvalid(title)` & `.setEntryWaitingValidaiton(title)`  
+* `.setEntryValid(title)` & `.setEntryInvalid(title)` & `.setEntryWaitingValidation(title)`  
     These will set the relevant status of a validation Entry.  
     (Have a look [here](/specialCharacters) for help displaying special characters)  
     ![EntryValidation](img/entValidation.png)
@@ -772,7 +772,7 @@ app.go()
 
 ####Add Meters
 * `.addMeter(name)` & `.addSplitMeter(name)` &  `.addDualMeter(name)`  
-    Adds a meter with the specified name, of the specified type..  
+    Adds a meter with the specified name, of the specified type.  
 ####Set Meters
 * `.setMeter(name, value, text=None)`  
     Changes the specified meter to the specified value.  
