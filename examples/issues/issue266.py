@@ -5,7 +5,6 @@ DB_NAME = "issue266.db"
 types = ["NULL", "INTEGER", "REAL", "TEXT", "BLOB"]
 
 def makeTable():
-#    app.hideSubWindow("Make Table")
     fields = app.getAllEntries()
     types = app.getAllOptionBoxes()
     prim = app.radio("PRIMARY")
@@ -28,7 +27,7 @@ def makeTable():
     data += ");"
     runSql(data)
     app.changeOptionBox("table", getTables())
-    app.removeSubWindow("Make Table")
+    changeDb()
 
 def runSql(sql):
     print(sql)
@@ -106,7 +105,8 @@ def setup():
         c.execute(task, ('Analyze the requirements of the app', 1, 1, project_id, '2015-01-01', '2015-01-02'))
         c.execute(task, ('Confirm with user about the top requirements', 1, 1, project_id, '2015-01-03', '2015-01-05'))
 
-with gui("DB Demo", stretch="column", bg="DarkOrange") as app:
+with gui("DB Demo", "800x600", stretch="column", bg="DarkOrange") as app:
+    app.setLogLevel("debug")
     app.label("title", "DB tester", bg="orange", font={'size':20})
     app.config(sticky="NE")
     tables = getTables()
@@ -114,4 +114,5 @@ with gui("DB Demo", stretch="column", bg="DarkOrange") as app:
     app.config(sticky="NEWS")
     app.setStretch("both")
     app.addDbGrid("projects", DB_NAME, "projects")
+    app.config(sticky="")
     app.button("NEW TABLE", showMakeTable)

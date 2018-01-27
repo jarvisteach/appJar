@@ -265,10 +265,8 @@ class gui(object):
                 dims["b_width"] = dims["r_width"]
                 dims["b_height"] = dims["r_height"]
         else:
-            dims["b_height"] = min(dims["r_height"], dims["w_height"])
-            dims["b_width"] = min(dims["r_width"], dims["w_width"])
-            dims["h_height"] = max(dims["r_height"], dims["w_height"])
-            dims["h_width"] = max(dims["r_width"], dims["w_width"])
+            dims["b_height"] = max(dims["r_height"], dims["w_height"])
+            dims["b_width"] = max(dims["r_width"], dims["w_width"])
 
         return dims
 
@@ -298,8 +296,10 @@ class gui(object):
 
         win.update_idletasks()
 
-        outer_frame_width = win.winfo_rootx() - win.winfo_x()
-        titlebar_height = win.winfo_rooty() - win.winfo_y()
+        # GUI's corner - widget's corner
+        # widgret's corner can be 0 on windows when size not set by user
+        outer_frame_width = 0 if win.winfo_x() == 0 else win.winfo_rootx() - win.winfo_x()
+        titlebar_height = 0 if win.winfo_rooty() == 0 else win.winfo_rooty() - win.winfo_y()
 
         dims = gui.GET_DIMS(win)
         actual_width = dims["b_width"] + (outer_frame_width * 2)
