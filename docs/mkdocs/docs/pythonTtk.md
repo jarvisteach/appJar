@@ -41,7 +41,7 @@ Each widget type has its own style, such as `TLabel` or `TButton`.
 To change the style for all widgets of a certain type, reconfigure these styles:
 
 ```python
-app.ttkStyle.configure("TLabel", foreground="green", backgroun="blue")
+app.ttkStyle.configure("TLabel", foreground="green", background="blue")
 ```
 
 ### Root Style

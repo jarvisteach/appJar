@@ -96,7 +96,7 @@ app.label("title2", "text", sticky="ns", stretcj="row")
 ```
 
 | Parameter | Data type | Default | Description |
-| --------- | --------- | Default | ------------|
+| --------- | --------- | ------- | ------------|
 | sticky | string | &lt;Container specific&gt; | Describes which sides the widget will stick to, one or more of: `n`, `e`, `w`, `s` in a single string. |
 | stretch | string | &lt;Container specific&gt; | Describes how the widget will stretch to fill the row/column: `none`, `row`, `column` or `all`. |
 
