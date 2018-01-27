@@ -255,11 +255,15 @@ class gui(object):
         dims["s_height"] = container.winfo_screenheight()
 
         # determine best geom for OS
-        # on MAC & LINUX, w_width/w_height always 1
+        # on MAC & LINUX, w_width/w_height always 1 unless user-set
         # on WIN, w_height is bigger then r_height - leaving empty space
         if gui.GET_PLATFORM() in [gui.MAC, gui.LINUX]:
-            dims["b_width"] = dims["r_width"]
-            dims["b_height"] = dims["r_height"]
+            if dims["w_width"] != 1:
+                dims["b_width"] = dims["w_width"]
+                dims["b_height"] = dims["w_height"]
+            else:
+                dims["b_width"] = dims["r_width"]
+                dims["b_height"] = dims["r_height"]
         else:
             dims["b_height"] = min(dims["r_height"], dims["w_height"])
             dims["b_width"] = min(dims["r_width"], dims["w_width"])
@@ -298,8 +302,8 @@ class gui(object):
         titlebar_height = win.winfo_rooty() - win.winfo_y()
 
         dims = gui.GET_DIMS(win)
-        actual_width = dims["r_width"] + (outer_frame_width * 2)
-        actual_height = dims["r_height"] + titlebar_height + outer_frame_width
+        actual_width = dims["b_width"] + (outer_frame_width * 2)
+        actual_height = dims["b_height"] + titlebar_height + outer_frame_width
 
         x = (dims["s_width"] // 2) - (actual_width // 2)
         y = (dims["s_height"] // 2) - (actual_height // 2)
@@ -307,7 +311,7 @@ class gui(object):
         # move the window up a bit if requested
         y = y - up if up < y else 0
 
-        gui.debug("Screen: %sx%s. Requested: %sx%s. Location: %s, %s", dims["s_width"], dims["s_height"], dims["r_width"], dims["r_height"], x, y)
+        gui.debug("Screen: %sx%s. Requested: %sx%s. Location: %s, %s", dims["s_width"], dims["s_height"], dims["b_width"], dims["b_height"], x, y)
         win.geometry("+%d+%d" % (x, y))
 
         if gui.GET_PLATFORM() != gui.LINUX:
@@ -3345,8 +3349,9 @@ class gui(object):
         # finally remove the widget - this will also remove the variable
         self.widgetManager.remove(kind, name)
 
-    def removeAllWidgets(self):
-        containerData = self.containerStack[0]
+    def removeAllWidgets(self, current=False):
+        if current: containerData = self.containerStack[-1]
+        else: containerData = self.containerStack[0]
         container = containerData['container']
 
         for child in container.winfo_children():
