@@ -1,5 +1,5 @@
 #Images
-____
+---
 ![ImageDemo](img/imageDemo.png)  
 
 Default image support in appJar assumes no extra libraries. That means it should only support `.GIF` and `.PPM` images.  
@@ -18,12 +18,14 @@ If you want to use one, you could just use `.addIcon()` or `.addIconButton()`
 Otherwise, concatenate `gui.icon_path` with the icon's name and `.png`  
 
 ###Add Images
+---
 
-* `.addImage(title, file)`  
+* `.addImage(title, file, compound=None)`  
     Adding an image is exactly the same as adding any other widget.  
     Simply give the image a title, and pass the filename.  
     appJar will confirm the file is valid, and will also check the file contains the type specified.  
     If an animated `.GIF` is found, then it will be animated within the GUI.  
+    `compound` can be set to one of *top*, *bottom*, *left*, *right*, *center* - this will show the image title in that position.  
 
 ```python
 app.startLabelFrame("Simple", 0, 0)
@@ -31,22 +33,47 @@ app.addImage("simple", "balloons.gif")
 app.stopLabelFrame()
 ```
 
-* `.addImageData(title, imgData, fmt="gif")`  
+* `.addImageData(title, imgData, fmt="gif", compound=None)`  
     As above, but receives raw image data.  
     Currently only supports base64 encoded GIF images.  
     Alternatively, you can pass in a ready made PhotoImage, simply set `fmt` to be 'PhotoImage'.  
+    `compound` can be set to one of *top*, *bottom*, *left*, *right*, *center* - this will show the image tite in that position.  
 
-* `.addIcon(title, iconName)`  
+```python
+from appJar import gui 
+from PIL import Image, ImageTk
+
+app = gui()
+photo = ImageTk.PhotoImage(Image.open("images.jpg"))
+app.addImageData("pic", photo, fmt="PhotoImage")
+app.go()
+```
+
+* `.addIcon(title, iconName, compound=None)`  
     This will create an image as above, but use one of appJar's inbuilt icons.  
     Simply pass the name of one of the icons.  
+    `compound` can be set to one of *top*, *bottom*, *left*, *right*, *center* - this will show the image tite in that position.  
 
 * `.setImageLocation(location)`  
     Set a folder for image files.  
     This will be put before the names of any image files used.  
 
+---
+<div style='text-align: center;'>
+*Advertisement&nbsp;<sup><a href="/advertising">why?</a></sup>*
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+    style="display:block"
+    data-ad-format="fluid"
+    data-ad-layout-key="-gw-13-4l+6+pt"
+    data-ad-client="ca-pub-6185596049817878"
+    data-ad-slot="5627392164"></ins>
+<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
+---
 
 ### Change Images
-
+---
 * `.setImage(title, image)` & `.setImageData(title, imgData, fmt="gif")`  
     This will replace the existing image with the new one.  
     If the image has the same path, it will not be changed.  
@@ -116,6 +143,7 @@ def changePic(btn):
     These are wrappers for the above function, simply causing the image to shrink or grow accordingly.
 
 ### Image Maps
+---
 It is possible to set up a simple ImageMap - a clickable image, with names linked to different areas.  
 When one of those areas is clicked, a function will be called, passing the name of the area as a parameter.  
 
@@ -145,6 +173,7 @@ app.go()
 ```
 
 ###Change Image Animation
+---
 If an image is animated, it's possible to control it.
 
 * `.setAnimationSpeed(title, speed)`  
@@ -173,6 +202,7 @@ app.stopLabelFrame()
 ```
 
 ###Set Background Images
+---
 It's also possible to add a background image to your GUI.  
 If you have lots of grouped widgets, this can look quite **UGLY**, as all of the widgets are drawn on top.  
 
@@ -183,6 +213,7 @@ If you have lots of grouped widgets, this can look quite **UGLY**, as all of the
     Remove the image form the background.
 
 ###Image Caching
+---
 appJar employs an image caching mechanism, to speed up image processing.  
 Every time an image is loaded, it's added to the cache.  
 The next time an image of the same filename is referenced, it will be loaded from the cache.  

@@ -22,8 +22,23 @@ app.addEmptyLabel("l2")
 app.go()
 ```
 
+---
+<div style='text-align: center;'>
+*Advertisement&nbsp;<sup><a href="/advertising">why?</a></sup>*
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+    style="display:block"
+    data-ad-format="fluid"
+    data-ad-layout-key="-gw-13-4l+6+pt"
+    data-ad-client="ca-pub-6185596049817878"
+    data-ad-slot="5627392164"></ins>
+<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
+---
+
 ###Grid Layout
 ---
+
 If, however, you want a bit more control, then you can treat your GUI like a **GRID**.  
 Think of it just like a spreadsheet, and position your widgets in whichever cell you want.  
 
@@ -97,6 +112,7 @@ Note, the parameters are read from left to right, so:
 * And, if you're specifying a column-span, you must first specify a row, column & column-span  
 
 ###Layout Tricks  
+---
 There are a few tricks you can employ, to make life a bit easier...
 
 ####Named Arguments  
@@ -138,11 +154,26 @@ for loop in range(3, 6):
 app.go()
 ```
 
+---
+<div style='text-align: center;'>
+*Advertisement&nbsp;<sup><a href="/advertising">why?</a></sup>*
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+    style="display:block"
+    data-ad-format="fluid"
+    data-ad-layout-key="-gw-13-4l+6+pt"
+    data-ad-client="ca-pub-6185596049817878"
+    data-ad-slot="5627392164"></ins>
+<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
+---
 
 ## Widget Positioning
-----
+---
 
 Once you've laid out your widgets, the next most important thing is how they line up in their rows and columns.  
+
+**NB.** These only take affect from the point they are added, so include them before adding the widgets.  
 
 There are two things you can configure:    
 

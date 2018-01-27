@@ -1,20 +1,6 @@
 #Beta Widgets  
 ----
-The following widgets are in [beta](https://en.wikipedia.org/wiki/Software_release_life_cycle#BETA).  
-They're available and in use, they're just not quite complete, and not fully tested...  
-
-### ttk
----
-If you want access to the [Tk themed widget set](https://docs.python.org/3/library/tkinter.ttk.html) then you'll need to tell appJar to use it:
-```python
-from appJar import gui
-app = gui("ttk Demo")
-app.useTtk()
-app.addButton("Press Me", None)
-app.go()
-```
-
-At the moment, this simply imports ttk, so the standard widget set will be replaced with a ttk widget set.  
+The following widgets are in [beta](https://en.wikipedia.org/wiki/Software_release_life_cycle#BETA) - they're available and being used, they're just not quite finished...  
 
 ###MicroBit Emulator  
 ---  
@@ -74,7 +60,7 @@ app.go()
 #### Set GoogleMaps  
 
 * `.searchGoogleMap(title, location)`  
-    Update the named GoogleMap widget to show the specified locaiton.  
+    Update the named GoogleMap widget to show the specified location.  
 
 * `.zoomGoogleMap(title, mod)`  
     Change the zoom level of the named GoogleMap.  
@@ -87,10 +73,17 @@ app.go()
     Set the size of the GoogleMap. Should be in the format `"300x300"`.  
     Note, if you set it too small, the control widgets won't look good...  
 
-* `.setGoogleMapMarker(title, location)`  
+* `.setGoogleMapMarker(title, location, size=None, colour=None, label=None, replace=False)`  
     Will drop a marker on the specified location.  
     The marker will only be visible if the current `location` & `zoom level` permit.  
     If an empty `location` is provided, all markers will be removed.  
+    `colour` can be set to any of (black, brown, green, purple, yellow, blue, gray, orange, red, white) or a hex value (starting '0x').  
+    `size` can be set to any of (tiny, mid, small).  
+    `label` can be set to a single letter or digit.  
+    If `replace` is `True` this marker will replace the last one added.  
+
+* `.removeGoogleMapMarker(title, label)`  
+    Will remove the specified marker, if found.  
 
 #### Get GoogleMaps  
 
@@ -188,6 +181,19 @@ app.go()
 * `.getTreeSelectedXML(title)`  
     Return the selected node (and any children) as XML
 
+---
+<div style='text-align: center;'>
+*Advertisement&nbsp;<sup><a href="/advertising">why?</a></sup>*
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+    style="display:block"
+    data-ad-format="fluid"
+    data-ad-layout-key="-gw-13-4l+6+pt"
+    data-ad-client="ca-pub-6185596049817878"
+    data-ad-slot="5627392164"></ins>
+<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
+---
 
 ###Grid
 ---
@@ -216,11 +222,12 @@ app.go()
 * `.addGrid(title, data, action=None, addRow=None)`  
     Receives a (jagged) 2D list of values. The first list should be the headers for the grid, the rest will contain each row of values.  
 
-    If `action` is set, a button will be created, at the end of each row, calling the specified function. It will pass a list of values, representing the selected row.   
+    If `action` is set, a button will be created, at the end of each row, calling the specified function. It will pass the row number (starting at 0).  
 
     ![Grid](img/dev/grid_2.png)   
 
     If `addRow` is set, then an additional row will appear at the end of the grid, with entry boxes and a button to call the specified function.  
+    The button will pass the string `newRow` to the specified function.  
 
     ![Grid](img/dev/grid_3.png)   
 
@@ -228,17 +235,39 @@ app.go()
 
     ![Grid](img/dev/grid_4.png)   
 
+    It's also possible to set the following parameters:  
+        * `actionHeading` - set the title of the right column  
+        * `actionButton` - set the button text for each row  
+        * `addButton` - set the button text for the Entry row  
+        * `showMenu` - boolean to show a right-click menu  
 
-####Get Grids  
+    ![Grid](img/dev/1_gridMenu.png)   
 
-* `.getGridEntries(title)`  
-    If `addRow` was set when the *Grid* was created, this function will get the contents of the entry boxes.  
-    They will be returned as a list, in the same order as the entry boxes.  
+#### Connecting to Databases
+
+* `.addDbGrid(title, db, table)`  
+    Will connect to the specified database, and show all rows in the specified table.  
+    appJar will query the table to detect the PrimaryKey, and use this as the key when selecting the row.
+
+* `.replaceDBGrid(title, db, table)`  
+    Will replace the currently shown data in the grid, with the data found in the specified database/table.  
+
+#### Get Grids  
+
+* `.getGridRow(title, rowNumber)`  
+    Returns a list of values representing the specified row.  
+
+* `.getGridRowCount(title)`  
+    Returns a count of how many rows are in the grid (not including the header row).  
 
 * `.getGridSelectedCells(title)`  
     Gets a dictionary of booleans, indicating the status of each cell.  
     True indicates the cell is selected, False indicates the cell is not selected.  
     The name of each entry on the dictionary will be in the format ROW-COLUMN, eg. 0-2  
+
+* `.getGridEntries(title)`  
+    If `addRow` was set when the *Grid* was created, this function will get the contents of the entry boxes.  
+    They will be returned as a list, in the same order as the entry boxes.  
 
 ####Set Grids  
 
@@ -249,10 +278,36 @@ app.go()
 To have the **Press** button on the entries row add a new row of data, try the following:  
 ```python
     def press(btn):
-        if btn == "Press":     # the button on the entries row
+        if btn == "addRow":     # the button on the entries row
             data = app.getGridEntries("g1")
             app.addGridRow("g1", data)
 ``` 
+
+* `.addGridRows(title, data)`  
+    Adds the new rows of data to the end of the existing grid.  
+
+* `.replaceGridRow(title, rowNum, data)`  
+    Replace the values in the specified row with the new data.  
+    If the new data has fewer items, the remaining cells will be emptied.  
+
+* `.replaceAllGridRows(title, rowNum, data)`  
+    Removes all existing rows, before adding the new rows.  
+
+* `.setGridHeaders(title, data)`  
+    Replace the values in the header row.  
+    If the new data has fewer items, the remaining header cells will be emptied.  
+
+* `.deleteGridRow(title, rowNum)`  
+    Delete the specified row from the specified grid.
+
+* `.deleteAllGridRows(title)`  
+    Delete all rows from the specified grid (except the header row).  
+
+* `.addGridColumn(title, columnNumber, data)`  
+    Add the column of data to the named grid, in the specified position.  
+
+* `.deleteGridColumn(title, columnNumber)`  
+    Delete the specified column from the named grid.  
 
 ###MatPlotLib
 ---
@@ -293,10 +348,115 @@ app.go()
     Create a plot with the specified x and y values.  
     Returns the plot object, to allow further customisation.  
 
+* `.addPlotFig(title)`  
+    Create an empty Figure, so that you can add your own plots.  
+    Returns the figure object, to allow further customisation.  
+
+```python
+from appJar import gui 
+from mpl_toolkits.mplot3d import Axes3D
+
+with gui() as app:
+    fig = app.addPlotFig("p1")
+    ax = fig.add_subplot(111, projection='3d')
+    ax.scatter([1,2],[1,2],[1,2])
+```
+
 * `.updatePlot(title, x, y, keepLabels=False)`  
     Update the specified plot with the specified x and y values.  
     **NB.** if you do this you will lose any customisations applied to the axes.  
     If you set `keepLabels` to True, then the axis labels & title will be retained.  
+    Also, your app will crash, if you call this after `.addPlotFig()`  
 
 * `.refreshPlot(title)`  
     Call this any time you modify the axes.  
+
+---
+<div style='text-align: center;'>
+*Advertisement&nbsp;<sup><a href="/advertising">why?</a></sup>*
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+    style="display:block"
+    data-ad-format="fluid"
+    data-ad-layout-key="-gw-13-4l+6+pt"
+    data-ad-client="ca-pub-6185596049817878"
+    data-ad-slot="5627392164"></ins>
+<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
+---
+
+### Canvas
+---
+This lets you embed a canvas in appJar
+
+![Canvas](img/1_canvas.png)  
+
+```python
+from appJar import gui
+app=gui()
+canvas = app.addCanvas("c1")
+canvas.create_oval(10, 10, 100, 100, fill="red", outline="blue", width=3)
+canvas.create_line(0, 0, 255, 255, width=5)
+canvas.create_line(0, 255, 255, 0, dash=123)
+app.go()
+```
+
+* `.addCanvas(title)`  
+    Creates a canvas widget.  
+
+* `.getCanvas(title)`  
+    Gets the specified canvas widget.  
+
+#### Drawing on a Canvas  
+
+* `.addCanvasCircle(title, x, y, diameter, **kwargs)`  
+    Draws a circle on the canvas.  
+
+* `.addCanvasOval(title, x, y, xDiam, yDiam, **kwargs)`  
+    Draws an oval on the canvas.  
+
+* `.addCanvasRectangle(title, x, y, w, h, **kwargs)`  
+    Draws a rectangle on the canvas.  
+
+* `.addCanvasLine(title, x, y, x2, y2, **kwargs)`  
+    Draws a line on the canvas.  
+
+* `.addCanvasText(title, x, y, text, **kwargs)`  
+    Draws text on the canvas.  
+
+* `.clearCanvas(title)  
+    Removes all drawings from the canavs.  
+
+### Turtle
+---
+This lets you embed a [turtle](https://docs.python.org/3.6/library/turtle.html) widget in appJar.  
+
+![Turtle](img/1_turtle.png)  
+
+```python
+from appJar import gui 
+
+def press(b):
+    s = app.getTurtleScreen("t1")
+    t = app.getTurtle("t1")
+    s.bgcolor("blue")
+    t.pencolor("white")
+    for i in range(20):
+        t.forward(i * 10) 
+        t.right(144)
+
+app=gui()
+app.addTurtle("t1")
+app.addButton("DRAW", press)
+app.go()
+```
+
+* `.addTurtle(title)`  
+    Creates a turtle widget.  
+
+* `.getTurtle(title)`  
+    Gets the specified turtle widget.  
+
+* `.getTurtleScreen(title)`  
+    Gets the screen behind the turtle widget.  
+

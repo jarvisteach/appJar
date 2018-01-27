@@ -43,7 +43,9 @@ app.go()
 
 ####Add Labels
 * `.addLabel(title, text=None)`  
-    As with all widgets, when you add a *label*, a title must be provided - to identify the *label*. This is then followed by an optional piece of text to display.
+    This will create a label widget to display text in the GUI.  
+    The `title` is used to uniquely identify the label, in case you want to change it later, and the `text` is what gets displayed.  
+    If `text` is set to None, or no `text` is provided, the `title` will be displayed in the label.  
 
 * `.addEmptyLabel(title)`  
     Does the same as add a *label*, except there's no parameter to set any text.
@@ -105,7 +107,7 @@ Entries are used to capture input from the user. They take a single parameter - 
 
 There are five special-case Entries:
 
-* NumericEntry - this only allows numbers to be typed in - always returns a float.
+* NumericEntry - this only allows numbers to be typed in - always returns a float (None if empty).
 * SecretEntry - this will show stars, instead of the letters typed - useful for capturing passwords.
 * AutoEntry - this takes a list of words to provide auto-completion.  
 * ValidationEntry - can be set to valid/invalid/waiting - will colour the border green/red/black and show a ✔/✖/★  
@@ -153,9 +155,6 @@ app.go()
     Once the user starts typing, it will disappear.  
     The text is centered, shown in a light gray font, and will not be returned by `.getEntry(title)`  
 
-* `.updateEntryDefault(title, text)`  
-    This will update the default value for the specified Entry.  
-
 * `.setEntryUpperCase(title)` & `.setEntryLowerCase(title)`   
     This will force all text typed into the Entry to be uppercase/lowercase.  
 
@@ -163,15 +162,27 @@ app.go()
     This will set a maximum length for the specified Entry.  
     Any additional characters typed will be discarded.  
 
-* `.setEntryValid(title)` & `.setEntryInvalid(title)` & `.setEntryWaitingValidaiton(title)`  
+* `.setEntryValid(title)` & `.setEntryInvalid(title)` & `.setEntryWaitingValidation(title)`  
     These will set the relevant status of a validation Entry.  
     (Have a look [here](/specialCharacters) for help displaying special characters)  
     ![EntryValidation](img/entValidation.png)
+
+* `.setValidationEntry(title, state="valid")`  
+    Same as above, set flag to one of `valid`, `invalid` or `wait`.  
 
 * `.setAutoEntryNumRows(title, rows)`  
     This will set the number of rows to display in an AutoEntry.  
     NB. this is limited to the depth of the GUI - if there is no space, then no rows will be displayed. 
     ![AutoEntry](img/1_autoEntry.png)  
+
+* `.appendAutoEntry(title, value)`  
+    This will add the value/list of values to the specified AutoEntry.  
+
+* `.removeAutoEntry(title, value)`  
+    This will remove the value from the specified AutoEntry.  
+
+* `.changeAutoEntry(title, value)`  
+    This will replace all items in the specified AutoEntry with a new list of values.  
 
 * `.clearEntry(title, callFunction=True)`  
     This will clear the contents of the specified Entry.
@@ -193,8 +204,23 @@ app.go()
     This will return the contents of all Entries in the app, as a dictionary.  
     NB. *numericEntries* always return a float.  
 
+---
+<div style='text-align: center;'>
+*Advertisement&nbsp;<sup><a href="/advertising">why?</a></sup>*
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+    style="display:block"
+    data-ad-format="fluid"
+    data-ad-layout-key="-gw-13-4l+6+pt"
+    data-ad-client="ca-pub-6185596049817878"
+    data-ad-slot="5627392164"></ins>
+<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
+---
+
 ##Button
-____
+---
+
 A clickable button, that will call a function.  
 These are the key to starting an interactive application.  
 The GUI is looping, waiting for something to happen.  
@@ -225,6 +251,7 @@ That way, multiple widgets can use the same function, but different actions can 
 * `.addButton(title, function)`  
     Add a single button to the GUI, the text on the button will be the same as the button's title.  
     A function should be specified, which will be called when the button is clicked, where the title is passed as a parameter to the function.  
+    Alternatively, the function can have no parameter, and appJar will not supply an argument.     
 
 * `.addButtons(titles, functions)`  
     It's possible to add a list of buttons to the GUI.  
@@ -232,11 +259,13 @@ That way, multiple widgets can use the same function, but different actions can 
     A single function can be passed, to use for all buttons.  
     Or a list of functions can be passed, which MUST correspond to the buttons.  
 
-* `.addImageButton(title, function, imgFile)`  
+* `.addImageButton(title, function, imgFile, align=None)`  
     This creates the named button, as above, using the specified image.  
+    If align is set, the image will be aligned relative to the text, otherwise the image will replace the text.  
 
-* `.addIconButton(title, function, iconName)`  
+* `.addIconButton(title, function, iconName, align=None)`  
     This creates the named button, as above, using the specified icon.  
+    If align is set, the image will be aligned relative to the text, otherwise the image will replace the text.  
 
 * `.addNamedButton(name, title, function)`  
     By default, it's not possible to have two buttons with the same text.  
@@ -248,8 +277,9 @@ That way, multiple widgets can use the same function, but different actions can 
 * `.setButton(name, text)`  
     This will change the text displayed on a button, but **NOT** the value passed as a parameter to the function.  
 
-* `.setButtonImage(title, image)`  
+* `.setButtonImage(title, image, align=None)`  
     This allows an image to be placed on a button, instead of the usual text.  
+    If align is set, the image will be aligned relative to the text, otherwise the image will replace the text.  
 
 ##RadioButton
 ____
@@ -504,8 +534,23 @@ app.go()
 * `.getAllSpinBoxes()`  
     This will return the contents of all SpinBoxes in the app, as a dictionary.  
 
+---
+<div style='text-align: center;'>
+*Advertisement&nbsp;<sup><a href="/advertising">why?</a></sup>*
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+    style="display:block"
+    data-ad-format="fluid"
+    data-ad-layout-key="-gw-13-4l+6+pt"
+    data-ad-client="ca-pub-6185596049817878"
+    data-ad-slot="5627392164"></ins>
+<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
+---
+
 ##ListBox
-____
+---
+
 A box containing a list of items, single or multi-select
 
 ![ListBox](img/1_listBox.png)  
@@ -534,7 +579,7 @@ app.go()
     `.setListItemAtPos(title, pos, newVal)`  
     Changes the specified list item to the new value.  
     If `first` is set to True, only the first item found will be changed.  
-    Otherwise, all occurences of the specified value will be changed.  
+    Otherwise, all occurrences of the specified value will be changed.  
 
 * `.removeListItem(title, item)`  
     `.removeListItemAtPos(title, pos)`  
@@ -568,7 +613,7 @@ app.go()
 ```
 
 * `.selectListItem(title, item, callFunction=True)`  
-    `.selectListItemAtPos(title, pos, callFunction=True)`  
+    `.selectListItemAtPos(title, pos, callFunction=False)`  
     Selects the specified item in the specified ListBox.  
     Set ```callFunction``` to be False, if you don't want to call any associated functions.  
 
@@ -685,6 +730,7 @@ app.go()
 ####Add Messages
 * `.addMessage(title, text)`  
     Adds a Message widget, with the specified text.  
+    If not text is provided, the title will be used for the text.  
 
 * `.addEmptyMessage(title)`  
     Adds an empty Message widget.  
@@ -742,8 +788,23 @@ app.go()
 * `.getAllTextAreas()`  
     This will return the contents of all TextAreas in the app, as a dictionary.  
 
+---
+<div style='text-align: center;'>
+*Advertisement&nbsp;<sup><a href="/advertising">why?</a></sup>*
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+    style="display:block"
+    data-ad-format="fluid"
+    data-ad-layout-key="-gw-13-4l+6+pt"
+    data-ad-client="ca-pub-6185596049817878"
+    data-ad-slot="5627392164"></ins>
+<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
+---
+
 ##Meter  
-____
+---
+
 Various styles of progress meter:  
 
 * #### Meter  
@@ -836,7 +897,7 @@ app.go()
 
 * `.setPropertyText(title, prop, newText=None)`  
     Change the displayed text for the named property.  
-    If no value is provided, the original vaue will be used.  
+    If no value is provided, the original value will be used.  
 
 * `.setProperties(title, props, callFunction=True)`  
     Adds the dictionary of properties to the widget.  
@@ -851,19 +912,19 @@ app.go()
 * `.deleteProperty(title, prop)`  
     Deletes the named property from the widget.  
 
-* `.resetProperties(title, callFunction=True):  
+* `.resetProperties(title, callFunction=True)`  
     This will reset the specified Properties back to its original values.  
     Set ```callFunction``` to be False, if you don't want to call any associated functions.  
 
-* `.clearProperties(title, callFunction=True):  
+* `.clearProperties(title, callFunction=True)`  
     This will set all values in the specified Properties to False.  
     Set ```callFunction``` to be False, if you don't want to call any associated functions.  
 
-* `.resetAllProperties(callFunction=False):  
+* `.resetAllProperties(callFunction=False)`  
     This will reset all Properties in the app back to their original values.  
     Set ```callFunction``` to be True, if you want to call any associated functions.  
 
-* `.clearAllProperties(callFunction=False):  
+* `.clearAllProperties(callFunction=False)`  
     This will set all values in all Properties in the app to False.  
     Set ```callFunction``` to be True, if you want to call any associated functions.  
 

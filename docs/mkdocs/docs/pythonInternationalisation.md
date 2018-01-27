@@ -59,8 +59,22 @@ It is possible to set the starting language as a command line argument:
 
 This will override any language set in the call to `.go()`, and removes the need to set one at all.  
 
-### Widget Support
+---
+<div style='text-align: center;'>
+*Advertisement&nbsp;<sup><a href="/advertising">why?</a></sup>*
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+    style="display:block"
+    data-ad-format="fluid"
+    data-ad-layout-key="-gw-13-4l+6+pt"
+    data-ad-client="ca-pub-6185596049817878"
+    data-ad-slot="5627392164"></ins>
+<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
+---
 
+### Widget Support
+---
 **NB.** changing the text of a widget through `setXXX()` method's will work, but will not be remembered if the language is changed.  
 
 * `[LABEL]`, `[BUTTON]`, `[ENTRY]`, `[CHECKBOX]`, `[MESSAGE]`, `[LINK]`, `[LABELFRAME]`, `[TOGGLEFRAME]`  
@@ -133,7 +147,7 @@ Address Book-nextButton: Danach
 ```
 
 * `[LISTBOX]`, `[SPINBOX]`, `[OPTIONBOX]`  
-    These have multiple values for a single widget, so each value should be on a new line, afet the ID.  
+    These have multiple values for a single widget, so each value should be on a new line, after the ID.  
     **NB.** You can't translate a SpinBox that was generated from a range.  
 ```sh
 [LISTBOX]
@@ -168,12 +182,12 @@ SAVE-POPUP:
 
 ```python
 def saveFile(btn):
-    # SAVE-POPUP is a translation key, so the two parameters shoud be replaced
+    # SAVE-POPUP is a translation key, so the two parameters should be replaced
     if app.okBox("SAVE-POPUP", "Confirm you want to save."):
         saveFile()
 
 def quit(btn):
-    # SAVE-POPUP is a translation key, so the two parameters shoud be replaced
+    # SAVE-POPUP is a translation key, so the two parameters should be replaced
     if app.okBox("EXIT-POPUP", "Confirm you want to exit."):
         app.stop()
 ```  
@@ -200,6 +214,7 @@ e1: Some more tooltip text
 ```
 
 ### External Translations
+---
 
 It's also possible to store additional translations to use on the fly. These are extra pieces of text you might want to translate during the running of the application, which aren't linked directly to a widget.  
 
@@ -213,7 +228,7 @@ VALUE-3: This is the last piece of translated text.
 These can then be accessed by using appJar's `.translate(key, default=None)` function.  
 
 ```python
-# this funciton will print out some translated text
+# this function will print out some translated text
 def showMessage():
     print(app.translate("VALUE-1"))
     print(app.translate("VALUE-2"))

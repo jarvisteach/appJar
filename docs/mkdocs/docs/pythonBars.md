@@ -28,6 +28,9 @@ app.addToolbar(tools, tbFunc, findIcon=True)
     If only one function is supplied, they will all call the same function, providing the button's name as a parameter.  
     A set of icons is available, if `findIcon` is set to True, then appJar will attempt to find an icon for each button.  
 
+* `.addToolbarButton(name, func, findIcon=False)`  
+    Adds a single button to the toolbar - see above.  
+
 ####Set Toolbars
 
 * `.setToolbarPinned(pinned=True)`  
@@ -56,8 +59,30 @@ The toolbar will also gain an extra button (a pin) allowing the user to configur
 * `.showToolbar()` & `.hideToolbar()`  
     Will show/hide the toolbar.  
 
+* `.removeToolbarButton(name, hide=True)`  
+    Will remove the named butotn from the toolbar.  
+    The toolbar will be hidden when there are no buttons on it, unless `hide` is set to False.  
+
+* `.removeToolbar(hide=True)`  
+    Will remove all buttons from the toolbar.  
+    The empty toolbar will be hidden, unless `hide` is set to False.  
+
+---
+<div style='text-align: center;'>
+*Advertisement&nbsp;<sup>[why?](/advertising)</sup>*
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+    style="display:block"
+    data-ad-format="fluid"
+    data-ad-layout-key="-gw-13-4l+6+pt"
+    data-ad-client="ca-pub-6185596049817878"
+    data-ad-slot="5627392164"></ins>
+<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
+---
+
 ##Menubar
-___
+---
 Adds a standard Menubar along the top of the GUI.  
 On Windows/Linux a menubar will only be shown, once the first menu has been added.  
 On Mac, a menubar is always present.  
@@ -259,3 +284,10 @@ app.setStatusbarFg("white", 2)
 
 * `.setStatusbarHeader(header)`  
     Set a new header value to be used from the next time the statusbar text is updated.  
+
+* `.removeStatusbarField(field)`  
+    Remove the field at the specified position from the the statusbar.  
+
+* `.removeStatusbar()`  
+    Removes the statusbar from the GUI.  
+

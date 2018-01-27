@@ -22,6 +22,20 @@ It will return an ID, which can be used to cancel the function, if it hasn't alr
 * `.afterCancel(afterId)`  
 This will cancel the specified function, if it hasn't already started.  
 
+---
+<div style='text-align: center;'>
+*Advertisement&nbsp;<sup><a href="/advertising">why?</a></sup>*
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+    style="display:block"
+    data-ad-format="fluid"
+    data-ad-layout-key="-gw-13-4l+6+pt"
+    data-ad-client="ca-pub-6185596049817878"
+    data-ad-slot="5627392164"></ins>
+<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
+---
+
 ## Infinite Loops  
 ---
 
@@ -51,7 +65,7 @@ app.registerEvent(getLocation)
 ## Conditional Loops
 ---
 
-If you want your loop to only repeat a certain number of times or unti a condition is met, you can put a decision at the beginning of the function and still use appJar's built in loop.  
+If you want your loop to only repeat a certain number of times or until a condition is met, you can put a decision at the beginning of the function and still use appJar's built in loop.  
 
 You can use this method to simulate both `while` and `for` loops.  
 
@@ -71,7 +85,7 @@ app.registerEvent(countdown)
 ## Advanced Loops  
 ---
 
-If you want more control over your loops, you can simuate your own...  
+If you want more control over your loops, you can simulate your own...  
 
 Using the `.after()` function mentioned above, you can simulate a loop, by having your function call `.after()` again.  
 
@@ -86,7 +100,7 @@ def acceleratingCountdown():
         counter -= 1
         app.after(100*counter, myLoop)
 
-app.after(0, accelratingCountdown)
+app.after(0, acceleratingCountdown)
 ```
 
 This will simulate a countdown, but each time there is a smaller delay between counts.  

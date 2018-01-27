@@ -27,7 +27,8 @@ def addRows(btn):
 ```
 
 ### Label Frame
-----
+---
+
 A way of grouping widgets into a box, with a label at the top of the box.  
 Position the *LabelFrame* within the grid, then position widgets inside the *LabelFrame*  
 
@@ -120,8 +121,23 @@ app.go()
 * `.getToggleFrameState(title)`  
     Will return True if the *ToggleFrame* is open, else will return False.  
 
+---
+<div style='text-align: center;'>
+*Advertisement&nbsp;<sup><a href="/advertising">why?</a></sup>*
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+    style="display:block"
+    data-ad-format="fluid"
+    data-ad-layout-key="-gw-13-4l+6+pt"
+    data-ad-client="ca-pub-6185596049817878"
+    data-ad-slot="5627392164"></ins>
+<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
+---
+
 ### Tabbed Frame
 ---
+
 A way to create a (basic) tabbed-style interface.  
 Position the *TabbedFrame* within the grid, start a *Tab*, then position widgets inside the *Tab*  
 ![TabbedFrame](img/layouts/tabbedFrame.png)  
@@ -148,7 +164,7 @@ app.go()
 ```
 #### Start/Stop Tabbed Frames
 * `.startTabbedFrame(name)` & `.stopTabbedFrame()`  
-    Used to start & stop the a *TabbedFrame*, with the specified name.  
+    Used to start & stop a *TabbedFrame*, with the specified name.  
 
 * `.startTab(name)` & `.stopTab()`  
     Used to start and stop each of the tabs in the *TabbedFrame*.  
@@ -282,7 +298,7 @@ app.go()
 ![E-Panes](img/layouts/pane3.png)  
 
 * Start an initial pane  
-* Start a second, vertical pane inside the intial pane  
+* Start a second, vertical pane inside the initial pane  
 * Start all additional panes inside the second pane  
 
 ```python
@@ -396,7 +412,7 @@ app.go()
 
 * `.setPagedWindowButtonsTop(title, top=True)`  
     Used to position the navigation buttons.  By default, they are at the bottom.  
-    Call this funtion to move them to the top.  
+    Call this function to move them to the top.  
 
 * `.setPagedWindowPage(title, pageNum)`  
     Used to display the selected page.  
@@ -410,8 +426,23 @@ app.go()
 * `.getPagedWindowPageNumber(title)`  
     Used to get the page number currently being shown.  
 
+---
+<div style='text-align: center;'>
+*Advertisement&nbsp;<sup><a href="/advertising">why?</a></sup>*
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+    style="display:block"
+    data-ad-format="fluid"
+    data-ad-layout-key="-gw-13-4l+6+pt"
+    data-ad-client="ca-pub-6185596049817878"
+    data-ad-slot="5627392164"></ins>
+<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
+---
+
 ### Sub Window
 ---
+
 A way to add additional windows, which can be hidden and shown.  
 ![SubWindow](img/layouts/subWin.png)
 

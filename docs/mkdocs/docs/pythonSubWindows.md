@@ -28,8 +28,27 @@ app.addButtons(["one", "two"], launch)
 app.go()
 ```
 
-#### Start/Stop Sub Windows  
-* `.startSubwindow(name, title=None, modal=False, transient=False, blocking=False)` & `.stopSubwindow()`  
+Definition of SubWindows happens in the same part of the code as the rest of the GUI, but they default to being hidden.  
+Both SubWindows and the main window can be *shown* and *hidden* - this is usually done through button presses.  
+
+---
+<div style='text-align: center;'>
+*Advertisement&nbsp;<sup><a href="/advertising">why?</a></sup>*
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+    style="display:block"
+    data-ad-format="fluid"
+    data-ad-layout-key="-gw-13-4l+6+pt"
+    data-ad-client="ca-pub-6185596049817878"
+    data-ad-slot="5627392164"></ins>
+<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
+---
+
+### Start/Stop Sub Windows  
+---
+
+* `.startSubWindow(name, title=None, modal=False, transient=False, blocking=False)` & `.stopSubWindow()`  
     Used to start and stop defining a *SubWindow*  
     Setting a `title` will override the `name` as a title for the *SubWindow*.  
     Setting `modal` to True, will prevent the user from interacting with the parent window until the *SubWindow* is closed.  
@@ -40,19 +59,35 @@ app.go()
     Used to reopen the named *SubWindow*.  
     This lets you modify SubWindows in a different part of the code, for example in a function call.  
 
-#### Show/Hide Sub Windows  
+### Show/Hide Sub Windows  
+---
 
 * `.go(startWindow=None)`  
     If you set a *SubWindow* as the ```startWindow``` *appJar* will start-up showing the named *SubWindow*.  
     The main window will be minimized.  
 
+```python
+def login(btn):
+    app.hideSubWindow("Login")
+    app.show()
+
+app.startSubWindow("Login")
+app.addLabel("l2", "Login Window")
+app.addButton("SUBMIT", login)
+app.stopSubWindow()
+
+app.go(startWindow="Login")
+```
+
 * `.showSubWindow(title)`  
     Will cause the specified *SubWindow* to be shown.  
     If it is set as *modal* the parent window will become uninteractive until the *SubWindow* is closed.  
 
-* `.hideSubWindow(title)`  
+* `.hideSubWindow(title, useStopFunction=False)` & `.confirmHideSubWindow(title)`  
     Used to hide the specified *SubWindow*.  
     This will not destroy the *SubWindow*, so it can be shown again later.  
+    By default it bypasses any `stopFunction`.  
+    Set `useStopFunction` to be True or call `.confirmHideSubWindow()` to use the `stopFunction`.  
 
 * `.destroySubWindow(title)`  
     This will hide and permanently destroy the specified *SubWindow*.  
@@ -68,8 +103,9 @@ app.addLabel("l1", "Press the button to close this window")
 app.addNamedButton("CLOSE", "Demo", app.hideSubWindow)
 app.stopSubWindow()
 ```
+### Set Sub Windows  
+---
 
-#### Set Sub Windows  
 Note, all functions available on the main window are also available on *SubWindows*.  
 Simply call those functions after starting a *SubWindow*.  
 

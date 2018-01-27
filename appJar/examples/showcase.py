@@ -69,7 +69,7 @@ def drag(lbl):
 
 # called when a drag stops - check the label being dropped on
 def drop(lbl):
-    if lbl == "dd": 
+    if lbl == "dd":
         app.setLabel("dd", app.getLabel(dragged))
         app.setLabelBg("dd", colours[int(dragged[2])])
 
@@ -84,7 +84,7 @@ def toolbar(btn):
         if app.exitFullscreen():
             app.setToolbarIcon("FULL-SCREEN", "FULL-SCREEN")
         else:
-            app.setGeometry("fullscreen")
+            app.setSize("fullscreen")
             app.setToolbarIcon("FULL-SCREEN", "FULL-SCREEN-EXIT")
     elif btn == "CALENDAR": app.showSubWindow("DatePicker")
     elif btn == "ADDRESS-BOOK": app.showSubWindow("AddressBook")
@@ -105,11 +105,11 @@ def scale(name):
 def move(direction):
     if direction == ">":
         for item in app.getListBox("Animals"):
-            app.addListItem("Sports",item) 
+            app.addListItem("Sports",item)
             app.removeListItem("Animals", item)
     elif direction == "<":
         for item in app.getListBox("Sports"):
-            app.addListItem("Animals",item) 
+            app.addListItem("Animals",item)
             app.removeListItem("Sports", item)
     elif direction == "<<":
         app.addListItems("Animals", app.getAllListItems("Sports"))
@@ -333,7 +333,7 @@ with gui("ShowCase") as app:
                     app.addLabel("p3", "Pane 3")
                 with app.panedFrame("d"):
                     app.addLabel("p4", "Pane 4")
-          
+
         with app.tab("Labels"):
             app.setSticky("nesw")
 
@@ -355,7 +355,7 @@ with gui("ShowCase") as app:
     with app.subWindow("Statistics", transient=True):
         app.setBg("yellow")
         app.setSticky("news")
-        app.setGeometry("300x330")
+        app.setSize("300x330")
         values={"German":20, "French":10, "English":60, "Dutch": 5, "Belgium":3, "Danish":2}
         app.addPieChart("Nationality", values)
         app.addLabelOptionBox("Nationality", values.keys())

@@ -1,12 +1,59 @@
 #Change-Log
 ---
 
+## Version 0.9  
+* Introduction of alternative [widget access functions](/simpleAppJar) ([#235](https://github.com/jarvisteach/appJar/issues/235))  - now possible to **ADD**, **SET** & **GET** widgets by just using their name.  
+* Introduction of alternative [GUI properties](/simpleAppJar) ([#340](https://github.com/jarvisteach/appJar/issues/340)) - now possible to GET/SET properties with special property functions  
+* Introduction of appJar [settings](/pythonSettings/) - can now save/load GUI state to/from file.  
+* Big improvements to [grids](/pythonDevWidgets/#grid) - can add/remove/replace rows/columns, can sort data, can access a right-click menu, can connect to an sqlite database.  
+* More [ttk](/pythonTtk) improvements - grouped widgets now work, introduced external themes.  
+
+* Issues Resolved:
+    * [#344](https://github.com/jarvisteach/appJar/issues/344) - [labels](/pythonWidgets/#add-labels) now display the title when no text is provided, instead of an empty label.  
+    * [#343](https://github.com/jarvisteach/appJar/issues/343) - new parameter for appJar constructor: `showIcon` allows the icon to be ignored when running Wondows
+    * [#340](https://github.com/jarvisteach/appJar/issues/340) - introduced [GUI properties](/simpleAppJar) for most settings  
+    * [#339](https://github.com/jarvisteach/appJar/issues/339) - new functions to remove [toolbars](/pythonBars/#set-toolbars) and [statusbars](/pythonBars/#set-statusbars)    
+    * [#335](https://github.com/jarvisteach/appJar/issues/335) - when setting functions for events, if no parameter is present in the function, no parameter will be passed by the event  
+    * [#333](https://github.com/jarvisteach/appJar/issues/333) - started work on hide/show/delete [tabs](/pythonWidgetGrouping/#tabbed-frame)  
+    * [#325](https://github.com/jarvisteach/appJar/issues/325) - fixed issue with [right-click menus](/pythonBars/#platform-specificcustom-menus)
+    * [#324](https://github.com/jarvisteach/appJar/issues/324) - fixed issue with losing [file/directory Entry](/pythonWidgets/#entry) values  
+    * [#317](https://github.com/jarvisteach/appJar/issues/317) - implemented fonts on [tabbed frames](/pythonWidgetGrouping/#tabbed-frame)  
+    * [#316](https://github.com/jarvisteach/appJar/issues/316) - can now display compound images and text in [buttons](/pythonWidgets/#button)  
+    * [#309](https://github.com/jarvisteach/appJar/issues/309) - cleaned up handling of [fonts](/pythonGuiOptions/#font)  
+    * [#303](https://github.com/jarvisteach/appJar/issues/303) - added functions to [bind/unbind mutiple keys](/pythonEvents/#binding-keys) to a function  
+    * [#298](https://github.com/jarvisteach/appJar/issues/298) - fixed issue in [menubar shortcuts](/pythonBars/#extra-features/) where numeric shortcuts didn't work.  
+    * [#296](https://github.com/jarvisteach/appJar/issues/296) - two new widgets introduced [turtle](/pythonDevWidgets/#turtle) and [canvas](/pythonDevWidgets/#canvas)  
+    * [#294](https://github.com/jarvisteach/appJar/issues/294) & [#292](https://github.com/jarvisteach/appJar/issues/292) - fixes on [entries](/pythonWidgets/#entry): better handle arrow key presses on mac, defaults work better on secret entries & file/directory entries  
+    * [#290](https://github.com/jarvisteach/appJar/issues/290) - fixed issue showing [AutoEntries](/pythonWidgets/#entry) in [subWindows](/pythonSubWindows)  
+    * [#289](https://github.com/jarvisteach/appJar/issues/289) - new functions to change list in [AutoEntries](/pythonWidgets/#entry) 
+    * [#288](https://github.com/jarvisteach/appJar/issues/288) - fixed issue showing [dialogs](/pythonDialogs/#message-boxes) in [subWindows](/pythonSubWindows)  
+    * [#286](https://github.com/jarvisteach/appJar/issues/286) - added new [threaded callback](/pythonThreads), contributed by [@mpmc](https://github.com/mpmc)
+    * [#284](https://github.com/jarvisteach/appJar/issues/284) - new [dialogs](/pythonDialogs/#message-boxes) for strings, integers & floats  
+    * [#283](https://github.com/jarvisteach/appJar/issues/283) - [questionBox](/pythonDialogs/#question-boxes) now returns Booleans instead of yes/no  
+    * [#281](https://github.com/jarvisteach/appJar/issues/281) - resolved issues with [threads](/pythonThreads)  
+    * [#279](https://github.com/jarvisteach/appJar/issues/279) - tidied up [remove all widgets](/pythonWidgetOptions/#widget-manipulation) - now leaves GUI looking better  
+    * [#271](https://github.com/jarvisteach/appJar/issues/271), [#266](https://github.com/jarvisteach/appJar/issues/266), [#255](https://github.com/jarvisteach/appJar/issues/255) & [#232](https://github.com/jarvisteach/appJar/issues/232) - [Grid](/pythonDevWidgets/#grid) improvements  
+    * [#242](https://github.com/jarvisteach/appJar/issues/242), [#259](https://github.com/jarvisteach/appJar/issues/259), [#267](https://github.com/jarvisteach/appJar/issues/267) - work on [MatPLotLib](/pythonDevWidgets/#matplotlib) now support multiple plot types, and retaining some settings  
+    * [#250](https://github.com/jarvisteach/appJar/issues/250) - Can now add [compound images](/python/Images/#add-images) - images with a built in label  
+    * [#236](https://github.com/jarvisteach/appJar/issues/236) - appJar can now save GUI [settings](/pythonSettings) and load them again  
+    * [#233](https://github.com/jarvisteach/appJar/issues/233) - [NumericEntries](/pythonWidgets/#entry) return `None` when empty
+    * [#218](https://github.com/jarvisteach/appJar/issues/218) - Can no longer set [NumericEntries](/pythonWidgets/#entry) to Strings  
+
+## Version 0.82.1
+* Issues Resolved:
+    * [#275](https://github.com/jarvisteach/appJar/issues/275) - maps fix  
+
+## Version 0.82
+* Issues Resolved:
+    * [#189](https://github.com/jarvisteach/appJar/issues/189) - some tweaks to [ttk support](/pythonTtk)  
+    * Fixes to documentation
+
 ## Version 0.8  
 * Changed versioning - PyPi difficulties, combined with close to a 1.0 release...
 * Create a GUI in **TWO** lines using [context managers](/pythonContextManager/) - appJar now allows you to use `with` to create a GUI and [containers](/pythonWidgetGrouping)  
 * [Events](/pythonEvents/), [Threads](/pythonThreads/), [Loops & Sleeps](/pythonLoopsAndSleeps/) have been improved. It's now possible to run background tasks (such as a download) and update the GUI safely.   
 * [Command line arguments](/pythonCommandLine): appJar now supports command line arguments for [logging](/pythonLogging) and [internationalisation](/pythonInternationalisation/) as well as help & version information.  
-* [Internationalisation](/pythonInternationalisation/) is now greatly imporved - nearly everything supoprts multiple languages.  
+* [Internationalisation](/pythonInternationalisation/) is now greatly improved - nearly everything supports multiple languages.  
 * [ScrollPanes](/pythonWidgetGrouping/#scroll-pane) & [Grids](/pythonDevWidgets/#grid) greatly improved  
 * Much more friendly [license](/License/)  
 

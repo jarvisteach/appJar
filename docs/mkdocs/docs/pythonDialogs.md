@@ -17,6 +17,20 @@ A number of pop-ups (aka dialogs) are available, to add a different user experie
     These will enable or disable the named tooltip.  
     When disabled, it will not show-up.  
 
+---
+<div style='text-align: center;'>
+*Advertisement&nbsp;<sup><a href="/advertising">why?</a></sup>*
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+    style="display:block"
+    data-ad-format="fluid"
+    data-ad-layout-key="-gw-13-4l+6+pt"
+    data-ad-client="ca-pub-6185596049817878"
+    data-ad-slot="5627392164"></ins>
+<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
+---
+
 ### Message Boxes
 ---
 * `.infoBox(title, message, parent=None)`  
@@ -56,6 +70,24 @@ A number of pop-ups (aka dialogs) are available, to add a different user experie
     If this dialog is being launched from a [subWindow](/pythonWidgetGrouping/#sub-window) set `parent` to be the name of the subWindow.  
     ![RetryBox](img/dialogs/retry.gif)
 
+* `.stringBox(title, message, parent=None)`  
+    Shows a question requesting a text response. Returns a String, or None if Cancel pressed.  
+    If this dialog is being launched from a [subWindow](/pythonWidgetGrouping/#sub-window) set `parent` to be the name of the subWindow.  
+    ![TextBox](img/dialogs/text.gif)
+
+* `.integerBox(title, message, parent=None)`  
+    Shows a question requesting an integer response. Returns an integer, or None if Cancel pressed.  
+    If this dialog is being launched from a [subWindow](/pythonWidgetGrouping/#sub-window) set `parent` to be the name of the subWindow.  
+    ![NumberBox](img/dialogs/num.gif)
+
+* `.floatBox(title, message, parent=None)`  
+    Shows a question requesting a float response. Returns a float, or None if Cancel pressed.  
+    If this dialog is being launched from a [subWindow](/pythonWidgetGrouping/#sub-window) set `parent` to be the name of the subWindow.  
+    ![NumberBox](img/dialogs/num.gif)
+
+### appJar Question Boxes
+---
+
 * `.textBox(title, message, parent=None)`  
     Shows a question requesting a text response. Returns a String, or None if Cancel pressed.  
     If this dialog is being launched from a [subWindow](/pythonWidgetGrouping/#sub-window) set `parent` to be the name of the subWindow.  
@@ -82,6 +114,7 @@ A number of pop-ups (aka dialogs) are available, to add a different user experie
     This will set the allowed file extensions, it should be a list of tuples. They will be grouped by the name.  
     * `asFile` this will determine whether a path or actual Python file object is returned, defaults to filename   
 
+<br>
 
 * `.saveBox(title=None, fileName=none, dirName=None, fileExt=".txt", fileTypes=None, asFile=None, parent=None)`  
     Shows a save file dialog.  
@@ -90,6 +123,7 @@ A number of pop-ups (aka dialogs) are available, to add a different user experie
     ![SaveBox](img/dialogs/save.png)  
 
     Various parameters can be provided (although they don't work on all platforms):  
+
     * ```title``` this will set a title for the dialog  
     * `fileName` this will set a starting file name to save as  
     * `dirName` this will set a starting directory, defaults to the current working directory  
@@ -97,6 +131,8 @@ A number of pop-ups (aka dialogs) are available, to add a different user experie
     * `fileTypes=[('images', '*.png'), ('images', '*.jpg')]`  
     This will set the allowed file extensions, it should be a list of tuples. They will be grouped by the name.  
     * `asFile` this will determine whether a path or actual Python file object is returned, defaults to filename   
+
+<br>
 
 * `.directoryBox(title=None, dirName=None, parent=None)`
     Shows a choose directory dialog.  
