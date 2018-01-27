@@ -10,7 +10,7 @@
 
 * Issues Resolved:
     * [#344](https://github.com/jarvisteach/appJar/issues/344) - [labels](/pythonWidgets/#add-labels) now display the title when no text is provided, instead of an empty label.  
-    * [#343](https://github.com/jarvisteach/appJar/issues/343) - new parameter for appJar constructor: `showIcon` allows the icon to be ignored when running Wondows
+    * [#343](https://github.com/jarvisteach/appJar/issues/343) - new parameter for appJar constructor: `showIcon` allows the icon to be ignored when running Windows
     * [#340](https://github.com/jarvisteach/appJar/issues/340) - introduced [GUI properties](/simpleAppJar) for most settings  
     * [#339](https://github.com/jarvisteach/appJar/issues/339) - new functions to remove [toolbars](/pythonBars/#set-toolbars) and [statusbars](/pythonBars/#set-statusbars)    
     * [#335](https://github.com/jarvisteach/appJar/issues/335) - when setting functions for events, if no parameter is present in the function, no parameter will be passed by the event  
@@ -20,7 +20,7 @@
     * [#317](https://github.com/jarvisteach/appJar/issues/317) - implemented fonts on [tabbed frames](/pythonWidgetGrouping/#tabbed-frame)  
     * [#316](https://github.com/jarvisteach/appJar/issues/316) - can now display compound images and text in [buttons](/pythonWidgets/#button)  
     * [#309](https://github.com/jarvisteach/appJar/issues/309) - cleaned up handling of [fonts](/pythonGuiOptions/#font)  
-    * [#303](https://github.com/jarvisteach/appJar/issues/303) - added functions to [bind/unbind mutiple keys](/pythonEvents/#binding-keys) to a function  
+    * [#303](https://github.com/jarvisteach/appJar/issues/303) - added functions to [bind/unbind multiple keys](/pythonEvents/#binding-keys) to a function  
     * [#298](https://github.com/jarvisteach/appJar/issues/298) - fixed issue in [menubar shortcuts](/pythonBars/#extra-features/) where numeric shortcuts didn't work.  
     * [#296](https://github.com/jarvisteach/appJar/issues/296) - two new widgets introduced [turtle](/pythonDevWidgets/#turtle) and [canvas](/pythonDevWidgets/#canvas)  
     * [#294](https://github.com/jarvisteach/appJar/issues/294) & [#292](https://github.com/jarvisteach/appJar/issues/292) - fixes on [entries](/pythonWidgets/#entry): better handle arrow key presses on mac, defaults work better on secret entries & file/directory entries  
@@ -81,7 +81,7 @@
     * [#203](https://github.com/jarvisteach/appJar/issues/203) - updated docs on [LabelFrames](/pythonWidgetGrouping/#label-frame)  
     * [#202](https://github.com/jarvisteach/appJar/issues/202) - functions now provided to get or clear all values of a selected widget type  
     * [#200](https://github.com/jarvisteach/appJar/issues/200) - Switched [Grid](/pythonDevWidgets/#grid) to use a [ScrollPane](/pythonWidgetGrouping/#scroll-pane) & changed ScrollPane to use AutoScrollbars.  
-    * [#196](https://github.com/jarvisteach/appJar/issues/196) - Resolved issue with configuing [ScrolledTextAreas](/pythonWidgets/#textarea)  
+    * [#196](https://github.com/jarvisteach/appJar/issues/196) - Resolved issue with configuring [ScrolledTextAreas](/pythonWidgets/#textarea)  
     * [#189](https://github.com/jarvisteach/appJar/issues/189) - More work on [ttk](/pythonTtk)  
     * [#177](https://github.com/jarvisteach/appJar/issues/177) - [setLocation](/pythonGuiOptions/#size-location) can now position windows in the center of the screen
     * [#162](https://github.com/jarvisteach/appJar/issues/162) - PhotoImage objects can now be passed directly when [adding/setting ImageData](/pythonImages/#add-images)  

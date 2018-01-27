@@ -85,7 +85,7 @@ app.label("title3", "text", pos=(2, 0, 2))   # ADD a label in row 2, column 0, s
 
 | Parameter | Data type | Default | Description |
 | --------- | --------- | ------- | ------------|
-| pos | list/tuple | () | Position paramters for the widget, in the order: row, column, colspan, rowspan |
+| pos | list/tuple | () | Position parameters for the widget, in the order: row, column, colspan, rowspan |
 
 ## GUI Properties  
 ----
@@ -93,8 +93,8 @@ There are two GUI properties which affect how widgets are displayed `sticky` and
 These can be modified when adding a widget, just bear in mind they are GUI settings, and will affect all future widgets in the current container.  
 
 ```python
-app.label("title0", "text", sticky="", strech="none")
-app.label("title2", "text", sticky="ns", stretcj="row")
+app.label("title0", "text", sticky="", stretch="none")
+app.label("title2", "text", sticky="ns", stretch="row")
 ```
 
 | Parameter | Data type | Default | Description |
@@ -115,7 +115,7 @@ Most of the widgets also have some support for events (see the [events page](/py
 | submit | function | None | A function to call when the widget is *submitted*. |
 | over | function (list) | None | A function to call when the mouse *enters* the widget, with an optional second function to call when the mouse *leaves*. |
 | drop | boolean/function | None | Update the widget with *dropped* data if True, otherwise call the function. |
-| drag | function (list) | None | A function to call call when the widget is *dragged*, with an optional second function to call hwne the widget is *dropped*. |  
+| drag | function (list) | None | A function to call call when the widget is *dragged*, with an optional second function to call when the widget is *dropped*. |  
 
 ```python
 def update(name):
@@ -163,7 +163,7 @@ An interactive widget, for capturing user input in the GUI.
 | Parameter | Data type | Default | Description |
 | --------- | --------- | ------- | ------------|
 | label | boolean | False | Adds a Label before the widget. |
-| kind | string | `standard` | One of: `standard`, `file`, `direcory`, `numeric`, `auto` or `validation`. |
+| kind | string | `standard` | One of: `standard`, `file`, `directory`, `numeric`, `auto` or `validation`. |
 | secret | boolean | False | Configures the entry box to show stars instead of characters. |
 | default | string | None | Sets default text to display in an empty entry. |
 | focus | boolean | False | Should the entry box be given focus? |
@@ -173,8 +173,8 @@ There are also some validation settings that can be applied:
 
 | Parameter | Data type | Default | Description |
 | --------- | --------- | ------- | ------------|
-| limit | integer | None | Sets a maximum limit on the number of characters taht can be entered. |
-| case | string | None | Set to `upper` to force upercase or `lower` to force lowercase. |
+| limit | integer | None | Sets a maximum limit on the number of characters that can be entered. |
+| case | string | None | Set to `upper` to force uppercase or `lower` to force lowercase. |
 
 ## Text  
 ---
@@ -286,7 +286,7 @@ A draggable widget, where the user can select a number from a range.
 | --------- | --------- | ------- | ------------|
 | direction | string | `horizontal` | Set the direction of the slider: `vertical` or `horizontal`. |
 | show | boolean | False | Show the slider's value above the slider. |
-| increment | integer | 10 | Configures how much the slider jumps, when the torugh is clicked. |
+| increment | integer | 10 | Configures how much the slider jumps, when the trough is clicked. |
 | interval | integer | None | Configures the slider to show interval values, along its length. In steps of the value specified. |
 
 ## Meter  
@@ -354,7 +354,7 @@ Displays a simple date picker widget.
 
 * `.date(title, value=None)`
     The `value` should contain a date object.  
-    Date pickes can receive a `change` parameter.  
+    Date pickers can receive a `change` parameter.  
 
 ## Canvas  
 ---
@@ -369,7 +369,7 @@ Displays a the canvas widget.
 Displays a popUp.  
 
 * `.popUp(title, message, kind="info", parent=None)`  
-    This will show any of the availabel popUps.  
+    This will show any of the available popUps.  
     `title`  will be displayed in the title bar.
     `message` will be displayed as the text of the popUp.  
     `kind` defaults to `info`, but can be any of: `error`, `warning`, `yesno`, `question`, `ok`, `retry`, `string`, `integer`, `float`, `text` or `number`.  

@@ -425,7 +425,7 @@ app.go()
     Draws text on the canvas.  
 
 * `.clearCanvas(title)  
-    Removes all drawings from the canavs.  
+    Removes all drawings from the canvas.  
 
 ### Turtle
 ---
