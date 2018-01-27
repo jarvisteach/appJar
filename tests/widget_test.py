@@ -760,49 +760,40 @@ def test_lists():
     app.addListBox("l2", LIST_TWO)
     with pytest.raises(Exception) :
         app.addListBox("l2", LIST_TWO)
-    app.setListBoxFunction("l1", tester_function)
+    app.setListBoxSubmitFunction("l1", tester_function)
 
     app.setListItemBg("l1", LIST_ONE[1], "red")
     app.setListItemFg("l1", LIST_ONE[1], "green")
 
-    assert app.getListItems("l1") == []
     assert app.getListBox("l1") == []
-    assert app.getListItems("l2") == []
     assert app.getListBox("l2") == []
 
     assert app.getAllListItems("l1") == LIST_ONE
     assert app.getAllListItems("l2") == LIST_TWO
 
     app.addListItem("l1", "f")
-    assert app.getListItems("l1") == ["f"]
     assert app.getListBox("l1") == ["f"]
     assert app.getAllListItems("l1") == LIST_ONE+["f"]
 
     app.addListItems("l2", LIST_ONE)
     assert app.getAllListItems("l2") == LIST_TWO+LIST_ONE
-    assert app.getListItems("l2") == [LIST_ONE[len(LIST_ONE)-1]]
+    assert app.getListBox("l2") == [LIST_ONE[len(LIST_ONE)-1]]
 
     app.setListBoxRows("l1", 2)
     app.setListBoxRows("l2", 10)
 
-    assert app.getListItems("l2") == [LIST_ONE[len(LIST_ONE)-1]]
-#    print(app.getListItems("l1"))
-#    assert app.getListItems("l1") == ["f"]
+    assert app.getListBox("l2") == [LIST_ONE[len(LIST_ONE)-1]]
 
     app.clearListBox("l1")
     assert app.getListBox("l1") == []
     assert app.getListBox("l2") == [LIST_ONE[len(LIST_ONE)-1]]
 
-    app.updateListItems("l1", LIST_ONE)
+    app.updateListBox("l1", LIST_ONE)
     app.selectListItem("l1", LIST_ONE[0])
     app.selectListItem("l1", LIST_ONE[3])
     assert app.getListBox("l1") == [LIST_ONE[3]]
     print("POS=", app.getListBoxPos("l1"))
     assert app.getListBoxPos("l1") == [3]
-    assert app.getListItemsPos("l1") == [3]
-
-    app.setListSingle("l1")
-    app.setListBoxSingle("l1")
 
     app.setListBoxMulti("l1")
     app.setListBoxMulti("l1", True)
@@ -811,13 +802,13 @@ def test_lists():
 
     app.selectListItem("l1", LIST_ONE[0])
     app.selectListItem("l1", LIST_ONE[3])
-    assert app.getListItems("l1") == [LIST_ONE[0], LIST_ONE[3]]
+    assert app.getListBox("l1") == [LIST_ONE[0], LIST_ONE[3]]
 
-    app.updateListItems("l2", LIST_TWO)
+    app.updateListBox("l2", LIST_TWO)
     assert app.getAllListItems("l2") == LIST_TWO
 # SELECTING THE LAST ONE...
 
-    app.updateListItems("l2", LIST_TWO, True)
+    app.updateListBox("l2", LIST_TWO, True)
     assert app.getListBox("l2") == [LIST_TWO[len(LIST_TWO)-1]]
 
     app.addListItem("l2", "new item")
@@ -834,13 +825,13 @@ def test_lists():
     app.setListItem("cl1", "newer_word", "newest_word", first=True)
     assert app.getAllListItems("cl1")[0] == "newest_word"
 
-    app.updateListItems("l2", LIST_TWO, True)
+    app.updateListBox("l2", LIST_TWO, True)
     app.removeListItem("l2", LIST_TWO[1])
     tmp_list = LIST_TWO
     tmp_list.remove(tmp_list[1])
     assert app.getAllListItems("l2") == tmp_list
 
-    app.updateListItems("l2", LIST_TWO, True)
+    app.updateListBox("l2", LIST_TWO, True)
     app.removeListItemAtPos("l2", 1)
     with pytest.raises(Exception) :
         app.removeListItemAtPos("l2", 10000)
@@ -856,7 +847,7 @@ def test_lists():
     app.addListBox("g1", LIST_ONE)
     app.addListBox("g2", LIST_TWO)
 
-    app.selectListItemPos("g1", 1)
+    app.selectListItemAtPos("g1", 1)
     assert app.getListBox("g1") == [LIST_ONE[1]]
 
     app.selectListItemAtPos("g1", 2)
@@ -1263,8 +1254,6 @@ def test_properties():
 
 def test_separators():
     print("\tTesting separators")
-    assert isinstance(app.addSeparator(colour="red"), Frame)
-    assert isinstance(app.addSeparator(), Frame)
     assert isinstance(app.addHorizontalSeparator(), Frame)
     assert isinstance(app.addHorizontalSeparator(colour="green"), Frame)
     assert isinstance(app.addVerticalSeparator(), Frame)
@@ -1484,9 +1473,9 @@ def test_gui_options():
     app.setTransparency(50)
     app.setTransparency(50)
 
-    app.setGeometry("100x100")
-    app.setGeometry(200,200)
-    app.setGeometry("fullscreen")
+    app.setSize("100x100")
+    app.setSize(200,200)
+    app.setSize("fullscreen")
     app.exitFullscreen()
 
     app.setResizable()
@@ -1607,7 +1596,7 @@ def test_images():
     assert isinstance(app.addImage("im1", "1_flash.gif", compound="left"), PhotoImage)
     with pytest.raises(Exception) :
         app.addImage("im1", "1_flash.gif")
-    app.addAnimatedImage("anim1", "1_flash.gif")
+    app.addImage("anim1", "1_flash.gif")
 
     app.setAnimationSpeed("im1", -10)
     app.setAnimationSpeed("im1", 10)
@@ -1681,7 +1670,7 @@ def test_status():
     assert len(app.status) == 4
 
     with pytest.raises(Exception) :
-        app.setStatus(TEXT_ONE, 43)
+        app.setStatusbar(TEXT_ONE, 43)
 
     assert len(app.status) == 4
     app.removeStatusbarField(3)
@@ -1697,11 +1686,11 @@ def test_status():
     app.setStatusbar(TEXT_ONE, None)
     app.setStatusbar(TEXT_ONE, 2)
 
-    app.setStatusBg("red")
-    app.setStatusBg("red", None)
-    app.setStatusBg("pink", 0)
+    app.setStatusbarBg("red")
+    app.setStatusbarBg("red", None)
+    app.setStatusbarBg("pink", 0)
     with pytest.raises(Exception) :
-        app.setStatusBg("orange", -4)
+        app.setStatusbarBg("orange", -4)
 
     app.setStatusbarFg("red")
     app.setStatusbarFg("yellow", None)
@@ -1946,17 +1935,13 @@ def test_messages():
     app.warn("warn message")
     app.debug("debug message")
 
-    app.disableWarnings()
     app.warn("warn message")
     app.debug("debug message")
 
-    app.enableDebug()
     app.warn("warn message")
     app.debug("debug message")
     print(" >> not implemented...")
     #print("\t >> all tests complete")
-    app.disableDebug()
-    app.enableWarnings()
 
 
 def test_sounds():
@@ -2564,12 +2549,6 @@ def test_pop_ups():
 def test_logging():
     print("\tTesting logging")
 
-    app.disableWarnings()
-    app.enableWarnings()
-
-    app.disableDebug()
-    app.enableDebug()
-
     app.setLogLevel("DEBUG")
     app.logMessage("test logging", "CRITICAL")
     app.logMessage("test logging", "ERROR")
@@ -2758,7 +2737,7 @@ del app
 
 print("<<<Starting app3>>>")
 with gui(debug=True) as app3:
-    app3.addStatus(TEXT_ONE, 1, "LEFT")
+    app3.addStatusbar(TEXT_ONE, 1, "LEFT")
     with app3.tabbedFrame("tf"):
         with app3.tab("t1"):
             with app3.labelFrame("lf1"):
@@ -2977,11 +2956,10 @@ def test_gui2(btn=None):
 
 print("<<<Starting app2>>>")
 
-app2 = gui(warn=True)
+app2 = gui(warn=True, useTtk=True)
 app2.addStatusbar()
 app2.setStatusbar("a")
 app2.addToolbar("a", tester_function, True)
-app2.useTtk()
 app2.setTtkTheme()
 try: app2.setTtkTheme("broken")
 except: pass
@@ -3014,7 +2992,7 @@ app2.startLabelFrame("l1", hideTitle=True)
 app2.addLabel("l1", "here")
 app2.registerEvent(test_gui2)
 app2.setPollTime(1000)
-app2.setGeometry("fullscreen")
+app2.setSize("fullscreen")
 app2.startSubWindow("login")
 app2.addLabel("log_l1", "Login page")
 app2.stopSubWindow()

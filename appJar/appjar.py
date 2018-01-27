@@ -340,7 +340,7 @@ class gui(object):
 # CONSTRUCTOR - creates the GUI
 #####################################
     def __init__(
-                    self, title=None, geom=None, warn=None, debug=None, handleArgs=True, language=None,
+                    self, title=None, geom=None, handleArgs=True, language=None,
                     startWindow=None, useTtk=False, useSettings=False, showIcon=True, **kwargs
                 ):
         """ constructor - sets up the empty GUI window, and inits the various properties """
@@ -362,7 +362,7 @@ class gui(object):
         self.externalSettings = {}
 
         self.startWindow = startWindow
-        args = self.__handleArgs() if handleArgs else None
+        args = self._handleArgs() if handleArgs else None
 
         # warn if we're in an untested mode
         self.__checkMode()
@@ -383,7 +383,6 @@ class gui(object):
                 "SubWindow", "ScrollPane", "PagedWindow", "Notebook", "Tree",
                 "Widget", "Window", "Toolbar", "RootPage",
                 "Note", "Tab", "Page", "Pane"],
-            deprecated=["Cb", "Rb", "Lb", "Spin", "Option"],
             excluded=["DatePicker", "SubWindow", "Window", "Toolbar",
                 "Note", "Tab", "Page", "Pane", "RootPage", "FlashLabel",
                 "AnimationID", "ImageCache", "TickOptionBox", "Accelerators",
@@ -391,9 +390,6 @@ class gui(object):
                 "FrameBox", "FrameLabel", "ContainerLog", "Menu"],
             keepers=["Accelerators", "ImageCache", "Menu", "Toolbar"]
         )
-
-        if warn is not None or debug is not None:
-            self.warn("Cannot set logging level in __init__. You should use .setLogLevel()")
 
         # process any command line arguments
         self.ttkFlag = False
@@ -570,7 +566,7 @@ class gui(object):
 
         self.configure(**kwargs)
 
-    def __handleArgs(self):
+    def _handleArgs(self):
         """ internal function to handle command line arguments """
         parser = argparse.ArgumentParser(
             description="appJar - the easiest way to create GUIs in python",
@@ -623,10 +619,6 @@ class gui(object):
 #####################################
 # TTK functions
 #####################################
-
-    def useTtk(self):
-        gui.warn("useTtk is being deprecated - please set the useTtk flag in the constructor")
-        self._useTtk()
 
     def _useTtk(self):
         """ enables use of ttk """
@@ -1462,31 +1454,6 @@ class gui(object):
         logging.basicConfig(level=logging.INFO, filename=fileName, format='%(asctime)s %(name)s:%(levelname)s: %(message)s')
         gui.info("Switched to logFile: %s", fileName)
 
-    def disableWarnings(self):
-        """ turns off warning messages - deprecated
-            sets log level to ERROR """
-        self.warn("Using old debug setter, should use gui.setLogLevel()")
-        gui.setLogLevel("ERROR")
-
-    def enableWarnings(self):
-        """ enables warning messages - deprecated
-            sets log level to WARNING """
-        self.warn("Using old debug setter, should use gui.setLogLevel()")
-        gui.setLogLevel("WARNING")
-
-    # function to turn on debug messages
-    def enableDebug(self):
-        """ enables debug messages - deprecated
-            sets log level to DEBUG """
-        self.warn("Using old debug setter, should use gui.setLogLevel()")
-        gui.setLogLevel("DEBUG")
-
-    def disableDebug(self):
-        """ turns off debug messages - deprecated
-            sets log level to INFO """
-        self.warn("Using old debug setter, should use gui.setLogLevel()")
-        gui.setLogLevel("INFO")
-
     @staticmethod
     def setLogLevel(level):
         """ main function for setting the logging level
@@ -2104,16 +2071,6 @@ class gui(object):
 #####################################
 # FUNCTIONS for configuring GUI settings
 #####################################
-
-    def setGeometry(self, geom, height=None):
-        """ called to update screen geometry - deprecated """
-        gui.warn("Deprecared function: setGeometry(). Please use setSize()")
-        self.setSize(geom, height)
-
-    def setGeom(self, geom, height=None):
-        """ called to update screen geometry - deprecated """
-        gui.warn("Deprecared function: setGeometry(). Please use setSize()")
-        self.setSize(geom, height)
 
     def setSize(self, geom, height=None, ignoreSettings=None):
         """ called to update screen geometry
@@ -3155,21 +3112,6 @@ class gui(object):
                 str(k) + ", name, 'over', val)")
             exec("gui.set" + v + "OverFunction=set" + v + "OverFunction")
 
-# deprecated, but left in for backwards compatability
-            exec( "def set" + v +
-                "Function(self, name, val, key=None): self.configureWidget(" +
-                str(k) + ", name, 'command', val, key, deprecated='Submit or Change')")
-            exec("gui.set" + v + "Function=set" + v + "Function")
-            exec( "def set" + v +
-                "Command(self, name, val, key=None): self.configureWidget(" +
-                str(k) + ", name, 'command', val, key, deprecated='Submit or Change')")
-            exec("gui.set" + v + "Command=set" + v + "Command")
-
-            exec( "def set" + v +
-                "Func(self, name, val, key=None): self.configureWidget(" +
-                str(k) + ", name, 'command', val, key, deprecated='Submit or Change')")
-            exec("gui.set" + v + "Func=set" + v + "Func")
-# end deprecated
             # http://infohost.nmt.edu/tcc/help/pubs/tkinter/web/cursors.html
             exec( "def set" + v +
                 "Cursor(self, name, val): self.configureWidget(" +
@@ -3801,10 +3743,6 @@ class gui(object):
         self.containerStack.append(cConf)
 
     # returns the current working container
-    def __getContainer(self):
-        self.warn(".__getContainer() has been deprecated. Please use .getContainer()")
-        return self.getContainer()
-
     def getContainer(self):
         container = self.containerStack[-1]['container']
         if self.containerStack[-1]['type'] == self.Widgets.ScrollPane:
@@ -5351,14 +5289,6 @@ class gui(object):
             self.warn("ttk: showScaleValue() not supported: %s", title)
 
     # change the orientation (Hor or Vert)
-    def orientScaleHor(self, title, hor=True):
-        self.warn(".orientScaleHor() is deprecated. Please use .setScaleHorizontal() or .setScaleVertical()")
-        sc = self.widgetManager.get(self.Widgets.Scale, title)
-        if hor:
-            sc.config(orient=HORIZONTAL)
-        else:
-            sc.config(orient=VERTICAL)
-
     def setScaleVertical(self, title):
         sc = self.widgetManager.get(self.Widgets.Scale, title)
         sc.config(orient=VERTICAL)
@@ -6409,10 +6339,6 @@ class gui(object):
             anim_id = self.topLevel.after(img.anim_speed, self.__animateImage, name)
             self.widgetManager.update(self.Widgets.AnimationID, name, anim_id)
 
-    def addAnimatedImage(self, name, imageFile, row=None, column=0, colspan=0, rowspan=0):
-        self.warn("addAnimatedImage() is now deprecated - use addImage()")
-        return self.addImage(name, imageFile, row, column, colspan, rowspan)
-
     # function to set an alternative image, when a mouse goes over
     def setImageMouseOver(self, title, overImg):
         lab = self.widgetManager.get(self.Widgets.Image, title)
@@ -7112,25 +7038,11 @@ class gui(object):
         else:
             lb.config(selectmode=BROWSE)
 
-    # make the list single/multi select
-    # default is single
-    def setListBoxSingle(self, title, single=True):
-        self.warn(".setListBoxSingle() is deprecated. You should be using .setListBoxMulti()")
-        self.setListBoxMulti(title, not single)
-
-    def setListSingle(self, title, single=True):
-        self.warn(".setListSingle() is deprecated. You should be using .setListBoxMulti()")
-        self.setListBoxMulti(title, not single)
-
     # select the specified item in the list
     def selectListItem(self, title, item, callFunction=True):
         positions = self.__getListPositions(title, item)
         if len(positions) > 0:
             self.selectListItemAtPos(title, positions[0], callFunction)
-
-    def selectListItemPos(self, title, pos, callFunction=False):
-        self.warn(".selectListItemPos() is deprecated. You should be using .selectListItemAtPos()")
-        self.selectListItemAtPos(title, pos, callFunction)
 
     def selectListItemAtPos(self, title, pos, callFunction=False):
         lb = self.widgetManager.get(self.Widgets.ListBox, title)
@@ -7150,10 +7062,6 @@ class gui(object):
             self.topLevel.update_idletasks()
 
     # replace the list items in the list box
-    def updateListItems(self, title, items, select=False):
-        self.warn(".updateListItems() is deprecated. You should be using .updateListBox()")
-        self.updateListBox(title, items, select)
-
     def updateListBox(self, title, items, select=False):
         self.clearListBox(title)
         self.addListItems(title, items, select=select)
@@ -7181,10 +7089,6 @@ class gui(object):
 
     # returns a list containing 0 or more elements
     # all that are in the selected range
-    def getListItems(self, title):
-        self.warn(".getListItems() is deprecated. You should be using .getListBox()")
-        return self.getListBox(title)
-
     def getListBox(self, title):
         lb = self.widgetManager.get(self.Widgets.ListBox, title)
         items = lb.curselection()
@@ -7203,10 +7107,6 @@ class gui(object):
         lb = self.widgetManager.get(self.Widgets.ListBox, title)
         items = lb.get(0, END)
         return list(items)
-
-    def getListItemsPos(self, title):
-        self.warn(".getListItemsPos() is deprecated. You should be using .getListBoxPos()")
-        return self.getListBoxPos(title)
 
     def getListBoxPos(self, title):
         lb = self.widgetManager.get(self.Widgets.ListBox, title)
@@ -8770,14 +8670,6 @@ class gui(object):
         if var.auto_id is not None:
             var.auto_id = var.trace('w', entry.textChanged)
 
-    def updateDefaultText(self, name, text):
-        self.warn(".updateDefaultText() is deprecated. You should be using .setEntryDefault()")
-        self.setEntryDefault(name, text)
-
-    def updateEntryDefault(self, name, text):
-        self.warn(".updateEntryDefault() is deprecated. You should be using .setEntryDefault()")
-        self.setEntryDefault(name, text)
-
     def setEntryDefault(self, name, text="default"):
         entry = self.widgetManager.get(self.Widgets.Entry, name)
         self.widgetManager.get(self.Widgets.Entry, name, group=WidgetManager.VARS)
@@ -8965,10 +8857,6 @@ class gui(object):
             return self.addVerticalSeparator(*args, **kwargs)
         else:
             return self.addHorizontalSeparator(*args, **kwargs)
-
-    def addSeparator(self, row=None, column=0, colspan=0, rowspan=0, colour=None):
-        self.warn(".addSeparator() is deprecated. You should be using .addHorizontalSeparator() or .addVerticalSeparator()")
-        return self.addHorizontalSeparator(row, column, colspan, rowspan, colour)
 
     def addHorizontalSeparator(self, row=None, column=0, colspan=0, rowspan=0, colour=None):
         return self.__addSeparator("horizontal", row, column, colspan, rowspan, colour)
@@ -9682,9 +9570,6 @@ class gui(object):
 #####################################
 # FUNCTIONS for status bar
 #####################################
-    def addStatus(self, header="", fields=1, side=None):
-        self.warn("addStatus() is deprecated, please use addStatusbar()")
-        self.addStatusbar(header, fields, side)
 
     def removeStatusbarField(self, field):
         if self.hasStatus and field < len(self.status):
@@ -9737,10 +9622,6 @@ class gui(object):
         if self.hasStatus:
             self.header = header
 
-    def setStatus(self, text, field=0):
-        self.warn("setStatus() is deprecated, please use setStatusbar()")
-        self.setStatusbar(text, field)
-
     def setStatusbar(self, text, field=0):
         if self.hasStatus:
             if field is None:
@@ -9751,10 +9632,6 @@ class gui(object):
             else:
                 raise Exception("Invalid status field: " + str(field) +
                                 ". Must be between 0 and " + str(len(self.status) - 1))
-
-    def setStatusBg(self, colour, field=None):
-        self.warn("setStatusBg() is deprecated, please use setStatusbarBg()")
-        self.setStatusbarBg(colour, field)
 
     def setStatusbarBg(self, colour, field=None):
         if self.hasStatus:
@@ -10040,7 +9917,6 @@ class gui(object):
             return col[1]
 
     def textBox(self, title="Text Box", question="Enter text", defaultValue=None, parent=None):
-#        self.warn("Deprecated dialog - textBox. Please use stringBox instead.")
         self.topLevel.update_idletasks()
         if defaultValue is not None:
             defaultVar = StringVar(self.topLevel)
@@ -10058,7 +9934,6 @@ class gui(object):
         return self.numBox(title, question, parent)
 
     def numBox(self, title="Number Box", question="Enter a number", parent=None):
-#        self.warn("Deprecated dialog - numBox. Please use integerBox or floatBox instead.")
         self.topLevel.update_idletasks()
         if parent is None:
             parent = self.topLevel
@@ -13723,9 +13598,8 @@ class Enum(object):
         also provides some extra functions """
 
     __initialized = False
-    def __init__(self, widgets, deprecated, excluded, keepers):
+    def __init__(self, widgets, excluded, keepers):
         self.widgets = widgets
-        self.deprecated = deprecated
         self.excluded = excluded
         self.keepers = []
         for k in keepers:
@@ -13740,22 +13614,16 @@ class Enum(object):
         return self.get(name)
 
     def get(self, name):
-        if name in self.deprecated: raise Exception(name + " no longer supported")
-        else:
-            try: return self.widgets.index(name)
-            except: raise KeyError("Invalid key: " + str(name))
+        try: return self.widgets.index(name)
+        except: raise KeyError("Invalid key: " + str(name))
 
     def getIgnoreCase(self, name):
         name = name.upper()
-        for w in self.deprecated:
+        for w in self.widgets:
             if w.upper() == name:
-                raise Exception(name + " no longer supported")
+                return self.widgets.index(w)
         else:
-            for w in self.widgets:
-                if w.upper() == name:
-                    return self.widgets.index(w)
-            else:
-                raise KeyError("Invalid key: " + str(name))
+            raise KeyError("Invalid key: " + str(name))
 
     def __setattr__(self, name, value):
         if self.__initialized: raise Exception("Unable to change Widget store")
