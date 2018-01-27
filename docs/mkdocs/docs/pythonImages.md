@@ -37,7 +37,7 @@ app.stopLabelFrame()
     As above, but receives raw image data.  
     Currently only supports base64 encoded GIF images.  
     Alternatively, you can pass in a ready made PhotoImage, simply set `fmt` to be 'PhotoImage'.  
-    `compound` can be set to one of *top*, *bottom*, *left*, *right*, *center* - this will show the image tite in that position.  
+    `compound` can be set to one of *top*, *bottom*, *left*, *right*, *center* - this will show the image title in that position.  
 
 ```python
 from appJar import gui 

@@ -339,7 +339,6 @@ class gui(object):
 #####################################
 # CONSTRUCTOR - creates the GUI
 #####################################
-#####################################
     def __init__(
                     self, title=None, geom=None, warn=None, debug=None, handleArgs=True, language=None,
                     startWindow=None, useTtk=False, useSettings=False, showIcon=True, **kwargs

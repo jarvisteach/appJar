@@ -60,7 +60,7 @@ The toolbar will also gain an extra button (a pin) allowing the user to configur
     Will show/hide the toolbar.  
 
 * `.removeToolbarButton(name, hide=True)`  
-    Will remove the named butotn from the toolbar.  
+    Will remove the named button from the toolbar.  
     The toolbar will be hidden when there are no buttons on it, unless `hide` is set to False.  
 
 * `.removeToolbar(hide=True)`  

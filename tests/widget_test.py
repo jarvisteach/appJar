@@ -2960,7 +2960,6 @@ with gui("Simple Demo") as app4:
 
 print("<<<Widget Test Suite Complete on app4 >>>")
 
-
 doStopAgain = 0
 def test_gui2(btn=None):
     print("Testing GUI2")
@@ -2984,7 +2983,8 @@ app2.setStatusbar("a")
 app2.addToolbar("a", tester_function, True)
 app2.useTtk()
 app2.setTtkTheme()
-app2.setTtkTheme("broken")
+try: app2.setTtkTheme("broken")
+except: pass
 app2.setTtkTheme("default")
 app2.startNotebook("nb1")
 app2.startNote("nb1_n1")
