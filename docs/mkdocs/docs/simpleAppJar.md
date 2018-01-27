@@ -30,7 +30,7 @@ with gui("Version 1.0", bg="teal") as app:
     app.slider("slider", colspan=2, range=(1,5), change=update, interval=1)
 ```
 
-![SimpleAppJar](img/simpleDemo.py)
+![SimpleAppJar](img/simpleDemo.png)
 
 ## Operation  
 ---
