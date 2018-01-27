@@ -5,6 +5,11 @@ from appJar import gui
 pages = ["Page 1", "Page 2", "Page 3", "Page 4", "Page 5", "Page 6"]
 showButtons = False
 
+def doIt():
+    with app.labelFrame("Page 1"):
+        app.configure(sticky="")
+        app.addLabel("DATA")
+
 def updateButtons():
     currentPage = app.listBox("list")[0]
     if currentPage == pages[0]:
@@ -54,3 +59,6 @@ with gui(
     if showButtons:
         app.addButtons(["Previous", "Next"], press)
     app.selectListItemAtPos("list", 0, callFunction=True)
+    with app.labelFrame("Page 1"):
+        app.configure(sticky="")
+        app.addButton("PRESS", doIt)
