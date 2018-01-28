@@ -7520,7 +7520,7 @@ class gui(object):
         return self.widgetManager.get(self.Widgets.Canvas, title).create_line(x, y, x2, y2, **kwargs)
 
     def addCanvasRectangle(self, title, x, y, w, h, **kwargs):
-        return self.widgetManager.get(self.Widgets.Canvas, title).create_rectangle(x, y, x+w, y+w, **kwargs)
+        return self.widgetManager.get(self.Widgets.Canvas, title).create_rectangle(x, y, x+w, y+h, **kwargs)
 
     def addCanvasText(self, title, x, y, text=None, **kwargs):
         return self.widgetManager.get(self.Widgets.Canvas, title).create_text(x, y, text=text, **kwargs)
