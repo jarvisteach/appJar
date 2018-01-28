@@ -7500,6 +7500,7 @@ class gui(object):
     def addCanvas(self, title, row=None, column=0, colspan=0, rowspan=0):
         self.widgetManager.verify(self.Widgets.Canvas, title)
         canvas = Canvas(self.getContainer())
+        canvas.imageStore = []
         self.__positionWidget(canvas, row, column, colspan, rowspan, "news")
         self.widgetManager.add(self.Widgets.Canvas, title, canvas)
         return canvas
@@ -7524,6 +7525,11 @@ class gui(object):
 
     def addCanvasText(self, title, x, y, text=None, **kwargs):
         return self.widgetManager.get(self.Widgets.Canvas, title).create_text(x, y, text=text, **kwargs)
+
+    def addCanvasImage(self, title, x, y, image=image, **kwargs):
+        canv = self.widgetManager.get(self.Widgets.Canvas, title)
+        canv.imageStore.append(image)
+        return self.widgetManager.get(self.Widgets.Canvas, title).create_image(x, y, image=image, **kwargs)
 
     def setCanvasEvent(self, title, item, event, function, add=None):
         canvas = self.widgetManager.get(self.Widgets.Canvas, title)
