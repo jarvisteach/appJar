@@ -3,7 +3,7 @@ ____
 A group of round boxes, only one of which can be selected.  
 These are great for getting a single value, for a multiple choice question.  
 
-![Radios](img/t_radios.png)  
+![Radios](../img/t_radios.png)  
 
 ```python
 from appJar import gui

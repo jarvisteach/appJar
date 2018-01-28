@@ -2,7 +2,7 @@
 ____
 Similar to an Entry, but allows you to type text over multiple lines.  
 
-![TextArea](img/1_textArea.png)  
+![TextArea](../img/1_textArea.png)  
 
 ```python
 from appJar import gui
@@ -19,7 +19,7 @@ app.go()
 * `.addScrolledTextArea(title)`  
     Adds a scrollable TextArea with the specified title.  
 
-![ScrolledTextArea](img/2_textArea.png)  
+![ScrolledTextArea](../img/2_textArea.png)  
 
 ####Set TextAreas
 * `.setTextArea(title, text, end=True, callFunction=True)`  

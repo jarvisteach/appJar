@@ -2,7 +2,7 @@
 ____
 Clickable text to call a function or launch a URL
 
-![Link](img/1_link.png)  
+![Link](../img/1_link.png)  
 
 ```python
 from appJar import gui

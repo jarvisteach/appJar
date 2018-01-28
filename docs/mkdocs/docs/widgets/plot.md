@@ -3,7 +3,7 @@
 
 Support for embedding very basic [MatPlotLib](http://matplotlib.org) plots.  
 
-![Plot](img/1_plot.png)  
+![Plot](../img/1_plot.png)  
 ```python
 from numpy import sin, pi, arange
 from appJar import gui 

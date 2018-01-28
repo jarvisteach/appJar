@@ -3,7 +3,7 @@ ____
 A scrollable list of options. Up and down buttons are provided to scroll from one item to the next.  
 Unlike the OptionBox, you do not get a drop-down of choices, instead it spins to the next/previous option.  
 
-![SpinBox](img/1_spinBox.png)  
+![SpinBox](../img/1_spinBox.png)  
 
 ```python
 from appJar import gui
@@ -21,7 +21,7 @@ app.go()
 * `.addSpinBoxRange(title, from, to)`  
     This will create a SpinBox, with a numeric range of items.  
 
-    ![SpinBox](img/3_spinBox.png)  
+    ![SpinBox](../img/3_spinBox.png)  
 
 ```python
     from appJar import gui

@@ -5,17 +5,17 @@ Various styles of progress meter:
 
 * #### Meter  
 
-    ![Meter](img/1_meter.png)  
+    ![Meter](../img/1_meter.png)  
     A simple meter for showing progress from 0% to 100%.  
 
 * #### SplitMeter  
 
-    ![Meter](img/2_meter.png)  
+    ![Meter](../img/2_meter.png)  
     A possession style meter, showing percentages on either side.  
 
 * #### DualMeter  
 
-    ![Meter](img/3_meter.png)  
+    ![Meter](../img/3_meter.png)  
     Two separate meters, expanding out from the middle.  
 
 ```python

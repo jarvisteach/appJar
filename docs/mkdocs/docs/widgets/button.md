@@ -9,7 +9,7 @@ A button click is the classic way to start interacting with a GUI.
 Whenever any function is called by the GUI, the title of the widget that called it is passed as a parameter.  
 That way, multiple widgets can use the same function, but different actions can be performed, depending on the name passed as a parameter.
 
-![Buttons](img/1_buttons.gif)
+![Buttons](../img/1_buttons.gif)
 
 ```python
     from appJar import gui

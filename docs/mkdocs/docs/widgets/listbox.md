@@ -3,7 +3,7 @@
 
 A box containing a list of items, single or multi-select
 
-![ListBox](img/1_listBox.png)  
+![ListBox](../img/1_listBox.png)  
 
 ```python
 from appJar import gui
@@ -82,7 +82,7 @@ app.go()
     Sets the background or foreground colours the specified ListBox item.  
     Can either specify a named item (will update all with that name) or the position of an item.  
 
-![LB Colours](img/lbCols.png)  
+![LB Colours](../img/lbCols.png)  
 
 ####Get ListBoxes
 

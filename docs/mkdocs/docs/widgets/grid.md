@@ -4,7 +4,7 @@ Used to create a spreadsheet like interface.
 The grid has mouse interactivity, with mouse-over highlighting, and mouse-click highlighting.  
 It is possible to include buttons at the end of each row, and an additional row of entry boxes, with their own button.  
 
-![Grid](img/dev/grid.png)  
+![Grid](../img/dev/grid.png)  
 
 ```python
 from appJar import gui
@@ -27,16 +27,16 @@ app.go()
 
     If `action` is set, a button will be created, at the end of each row, calling the specified function. It will pass the row number (starting at 0).  
 
-    ![Grid](img/dev/grid_2.png)   
+    ![Grid](../img/dev/grid_2.png)   
 
     If `addRow` is set, then an additional row will appear at the end of the grid, with entry boxes and a button to call the specified function.  
     The button will pass the string `newRow` to the specified function.  
 
-    ![Grid](img/dev/grid_3.png)   
+    ![Grid](../img/dev/grid_3.png)   
 
     If both parameters are set to a function, then both buttons at the end of each row and a row of Entry boxes will be shown:  
 
-    ![Grid](img/dev/grid_4.png)   
+    ![Grid](../img/dev/grid_4.png)   
 
     It's also possible to set the following parameters:  
         * `actionHeading` - set the title of the right column  
@@ -44,7 +44,7 @@ app.go()
         * `addButton` - set the button text for the Entry row  
         * `showMenu` - boolean to show a right-click menu  
 
-    ![Grid](img/dev/1_gridMenu.png)   
+    ![Grid](../img/dev/1_gridMenu.png)   
 
 #### Connecting to Databases
 

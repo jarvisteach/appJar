@@ -8,7 +8,7 @@ If the first item is empty, a simple title `- options -` will be created.
 Any other empty items will be removed.  
 If an item starts with a dash (-), it will be treated as a separator, and can't be selected.  
 
-![OptionBox](img/1_optBox.png) ![OptionBox](img/2_optBox.png)  
+![OptionBox](../img/1_optBox.png) ![OptionBox](../img/2_optBox.png)  
 
 ```python
 from appJar import gui
@@ -29,7 +29,7 @@ app.go()
     This will create an OptionBox made up of check boxes.  
     The `title` will always be displayed as the *selected* entry in the OptionBox, event though it can't be selected/ticked.  
     Instead of selecting a single item, you tick the ones you want.  
-    ![TickOptionBox](img/3_optBox.png)  
+    ![TickOptionBox](../img/3_optBox.png)  
 
     Calling `.getOptionBox(title)` will return a dictionary of the options along with a True/False value.  
 

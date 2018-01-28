@@ -1,7 +1,7 @@
 ##DatePicker
 ---
 A widget to capture a date - will handle presenting accurate drop-downs, and return a date.  
-![DatePicker](img/dev/1_cal.png)  
+![DatePicker](../img/dev/1_cal.png)  
 
 ```python
 from appJar import gui

@@ -2,7 +2,7 @@
 ____
 Useful for indicating separation between widgets.  
 Will draw a horizontal/vertical line spanning the cell.  
-![Separator](img/1_sep.png)  
+![Separator](../img/1_sep.png)  
 
 ```python
 from appJar import gui

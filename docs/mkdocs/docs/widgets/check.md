@@ -2,7 +2,7 @@
 ____
 A simple tick-box, with a label, that can be either ON or OFF.  
 
-![CheckBoxes](img/1_checks.png)  
+![CheckBoxes](../img/1_checks.png)  
 
 ```python
 from appJar import gui

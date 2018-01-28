@@ -2,7 +2,7 @@
 ____
 Clickable icon to drag the window around.  
 
-![Grip](img/1_grip.png)  
+![Grip](../img/1_grip.png)  
 
 ```python
 from appJar import gui

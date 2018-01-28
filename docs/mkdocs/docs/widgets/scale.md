@@ -2,7 +2,7 @@
 ____
 A slider, that has a minimum & maximum value.  
 
-![Scale](img/1_scale.png)  
+![Scale](../img/1_scale.png)  
 
 ```python
 from appJar import gui
@@ -33,16 +33,16 @@ app.go()
 * `.showScaleIntervals(title, intervals)`  
     Configures the Scale to show interval labels along its length.  
     `intervals` should be how often to show a value, eg. `25` would show 0, 25, 50, and so on...  
-    ![Scale](img/4_scale.png)  
+    ![Scale](../img/4_scale.png)  
 
 * `.showScaleValue(title, show=True)`  
     Configures the Scale to show the currently selected value.  
-    ![Scale](img/2_scale.png)  
+    ![Scale](../img/2_scale.png)  
 
 * `.setScaleHorizontal(title)` & `.setScaleVertical(title)`  
     Changes the Scale's orientation to the specified value.  
 
-    ![Scale](img/3_scale.png)  
+    ![Scale](../img/3_scale.png)  
 
 * `.setScaleWidth(title, width)` & `.setScaleLength(title, length)`  
     Sets a width/length for the scale's slider.  

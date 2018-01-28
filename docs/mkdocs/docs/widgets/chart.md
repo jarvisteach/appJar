@@ -3,7 +3,7 @@
 Widget to depict a Pie Chart.  
 It will automatically calculate percentages, and draw a pie chart, given a dictionary of items and their amount.  
 The PieChart is purely for display purposes, and is not interactive, other than a simple mouse-over effect with a tooltip.  
-![PieChart](img/dev/pie.png)  
+![PieChart](../img/dev/pie.png)  
 
 ```python
 from appJar import gui

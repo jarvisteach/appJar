@@ -2,7 +2,7 @@
 ---
 This lets you embed a canvas in appJar
 
-![Canvas](img/1_canvas.png)  
+![Canvas](../img/1_canvas.png)  
 
 ```python
 from appJar import gui

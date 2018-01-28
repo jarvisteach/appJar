@@ -2,7 +2,7 @@
 ---
 Takes an arbitrary XML string, and converts it into a tree structure.  
 
-![TreeWidget](img/dev/tree.png)
+![TreeWidget](../img/dev/tree.png)
 
 ```python
 from appJar import gui

@@ -2,7 +2,7 @@
 ---
 This lets you embed a [turtle](https://docs.python.org/3.6/library/turtle.html) widget in appJar.  
 
-![Turtle](img/1_turtle.png)  
+![Turtle](../img/1_turtle.png)  
 
 ```python
 from appJar import gui 

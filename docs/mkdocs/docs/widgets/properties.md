@@ -3,8 +3,8 @@ ____
 A compound widget that shows multiple CheckButtons linked to a dictionary.  
 Note, dictionaries have no order, so when added as a dictionary, the items will be automatically sorted.  
 
-![Properties](img/1_props.png)
-![Properties](img/2_props.png)
+![Properties](../img/1_props.png)
+![Properties](../img/2_props.png)
 
 ```python
 from appJar import gui
@@ -74,9 +74,9 @@ app.go()
 ####Examples
 It's possible to put Properties into ToggleFrames, and also set a Function to listen for any changes.  
 
-![Properties](img/3_props.png)
-![Properties](img/4_props.png)
-![Properties](img/5_props.png)
+![Properties](../img/3_props.png)
+![Properties](../img/4_props.png)
+![Properties](../img/5_props.png)
 
 ```python
 from appJar import gui

@@ -10,7 +10,7 @@ There are five special-case Entries:
 * ValidationEntry - can be set to valid/invalid/waiting - will colour the border green/red/black and show a ✔/✖/★  
 * FileEntry/DirectoryEntry - provides a button to select a file/directory and auto-populates the Entry  
 
-![Entries](img/1_entries.png)
+![Entries](../img/1_entries.png)
 
 ```python
 from appJar import gui
@@ -62,7 +62,7 @@ app.go()
 * `.setEntryValid(title)` & `.setEntryInvalid(title)` & `.setEntryWaitingValidation(title)`  
     These will set the relevant status of a validation Entry.  
     (Have a look [here](/specialCharacters) for help displaying special characters)  
-    ![EntryValidation](img/entValidation.png)
+    ![EntryValidation](../img/entValidation.png)
 
 * `.setValidationEntry(title, state="valid")`  
     Same as above, set flag to one of `valid`, `invalid` or `wait`.  
@@ -70,7 +70,7 @@ app.go()
 * `.setAutoEntryNumRows(title, rows)`  
     This will set the number of rows to display in an AutoEntry.  
     NB. this is limited to the depth of the GUI - if there is no space, then no rows will be displayed. 
-    ![AutoEntry](img/1_autoEntry.png)  
+    ![AutoEntry](../img/1_autoEntry.png)  
 
 * `.appendAutoEntry(title, value)`  
     This will add the value/list of values to the specified AutoEntry.  

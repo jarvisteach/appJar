@@ -4,7 +4,7 @@ A self-contained GoogleMaps widget.
 It provides useful functionality for finding somewhere on Earth.  
 All requests for map data are performed in the background, so the UI shouldn't become unresponsive.  
 
-![GoogleMaps](img/gmap_2.png)
+![GoogleMaps](../img/gmap_2.png)
 
 ```python
 from appjar import gui

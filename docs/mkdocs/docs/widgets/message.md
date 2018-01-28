@@ -2,7 +2,7 @@
 ____
 Similar to a Label, except it will wrap the text over multiple lines.  
 
-![Message](img/1_mess.png)  
+![Message](../img/1_mess.png)  
 
 ```python
 from appJar import gui

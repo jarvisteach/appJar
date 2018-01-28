@@ -2,7 +2,7 @@
 ---  
 Widget to emulate a [MicroBit](http://microbit.org)
 
-![MicroBit Emulator](img/mb.png)
+![MicroBit Emulator](../img/mb.png)
 
 ```python
 from appJar import gui
