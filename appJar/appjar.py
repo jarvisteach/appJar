@@ -7500,6 +7500,7 @@ class gui(object):
     def addCanvas(self, title, row=None, column=0, colspan=0, rowspan=0):
         self.widgetManager.verify(self.Widgets.Canvas, title)
         canvas = Canvas(self.getContainer())
+        canvas.config(bd=0, highlightthickness=0)
         canvas.imageStore = []
         self.__positionWidget(canvas, row, column, colspan, rowspan, "news")
         self.widgetManager.add(self.Widgets.Canvas, title, canvas)
