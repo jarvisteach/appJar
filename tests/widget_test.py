@@ -2498,6 +2498,14 @@ def test_canvas():
     c.create_line(0, 0, 255, 244, width=5)
     test_setters("Canvas", "c1")
 
+    app.addCanvasCircle("c1", 10, 10, 10)
+    app.addCanvasOval("c1", 10, 10, 10, 10)
+    app.addCanvasRectangle("c1", 10, 10, 10, 10)
+    app.addCanvasLine("c1", 10, 10, 10, 10)
+    app.addCanvasText("c1", 10, 10, "test text")
+    app.addCanvasImage("c1", 10, 10, "1_checks.png")
+    app.clearCanvas("c1")
+
     print(" >> not implemented...")
     #print("\t >> all tests complete")
 

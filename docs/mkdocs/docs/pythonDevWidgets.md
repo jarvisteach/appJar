@@ -424,8 +424,11 @@ app.go()
 * `.addCanvasText(title, x, y, text, **kwargs)`  
     Draws text on the canvas.  
 
-* `.clearCanvas(title)  
-    Removes all drawings from the canvas.  
+* `.addCanvasImage(title, x, y, image, **kwargs)`  
+    Draws the specified image on the canvas.  
+
+* `.clearCanvas(title)`  
+    Removes all items from the canvas.  
 
 ### Turtle
 ---

@@ -7529,6 +7529,8 @@ class gui(object):
 
     def addCanvasImage(self, title, x, y, image=image, **kwargs):
         canv = self.widgetManager.get(self.Widgets.Canvas, title)
+        if isinstance(image, str):
+            image = self.__getImage(image)
         canv.imageStore.append(image)
         return self.widgetManager.get(self.Widgets.Canvas, title).create_image(x, y, image=image, **kwargs)
 
