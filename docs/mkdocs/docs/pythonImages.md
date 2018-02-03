@@ -2,8 +2,8 @@
 ---
 ![ImageDemo](img/imageDemo.png)  
 
-Default image support in appJar assumes no extra libraries. That means it should only support `.GIF` and `.PPM` images.  
-However, code is included to allow the use of `.PNG` and `.JPG` files. appJar will convert these to `.GIF` files, before loading.  
+Default image support in appJar assumes no extra libraries, so it only has native support for `.GIF` and `.PPM` images.  
+However, extra code is included to allow the use of `.PNG` and `.JPG` files. appJar will convert these to `.GIF` files, before showing them.  
 Converting image files is **SLOW**, so it's best to stick to `.GIF` files!  
 Also, converting PNGs is temperamental in Python 2.7 - another reason to avoid.  
 
@@ -52,7 +52,7 @@ app.go()
 * `.addIcon(title, iconName, compound=None)`  
     This will create an image as above, but use one of appJar's inbuilt icons.  
     Simply pass the name of one of the icons.  
-    `compound` can be set to one of *top*, *bottom*, *left*, *right*, *center* - this will show the image tite in that position.  
+    `compound` can be set to one of *top*, *bottom*, *left*, *right*, *center* - this will show the image title in that position.  
 
 * `.setImageLocation(location)`  
     Set a folder for image files.  
@@ -219,7 +219,7 @@ Every time an image is loaded, it's added to the cache.
 The next time an image of the same filename is referenced, it will be loaded from the cache.  
 This speeds up processes such as mouse-overs, or setting images back-and-forth.  
 
-Animatd images also have their own internal cache, storing each version of the image.  
+Animated images also have their own internal cache, storing each version of the image.  
 
 appJar attempts to preload mouse over images and animated images, to improve smoothness.  
 
