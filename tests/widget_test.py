@@ -137,9 +137,9 @@ def test_entries():
     assert isinstance(app.addSecretEntry("se1"), Entry)
 
     # three key things: after, before, actual
-    assert app._gui__validateNumericEntry("1", None, "1", "", "1", None, None, None)
-    assert not app._gui__validateNumericEntry("1", None, "a", "", "a", None, None, None)
-    assert app._gui__validateNumericEntry("2", None, "a", "", "a", None, None, None)
+    assert app._validateNumericEntry("1", None, "1", "", "1", None, None, None)
+    assert not app._validateNumericEntry("1", None, "a", "", "a", None, None, None)
+    assert app._validateNumericEntry("2", None, "a", "", "a", None, None, None)
 
     app.addFileEntry("fe1")
     app.addDirectoryEntry("de1")
@@ -170,16 +170,14 @@ def test_entries():
     app.addEntry("tester3")
     app.setEntryDefault("tester3", TEXT_TWO)
 
-    app._gui__entryIn("tester")
-    app._gui__entryOut("tester")
-    app._gui__entryIn("tester")
-    app._gui__entryOut("tester")
+    app._entryIn("tester")
+    app._entryOut("tester")
+    app._entryIn("tester")
+    app._entryOut("tester")
 
     app.setEntryDefault("tester3", TEXT_ONE)
     app.setEntryDefault("tester3", TEXT_TWO)
     app.setEntryDefault("tester3", TEXT_THREE)
-    app.updateDefaultText("tester3", TEXT_ONE)
-    app.updateEntryDefault("tester3", TEXT_ONE)
 
     app.setEntryMaxLength("tester", 3)
     app.setEntryMaxLength("tester", 5)
@@ -491,7 +489,6 @@ def test_radios():
 
     # call generic setter functions
     test_setters("RadioButton", "rb", TEXT_TWO)
-    test_setters("Rb", "rb")
 
     app.clearAllRadioButtons()
     assert app.getRadioButton("rb") == TEXT_ONE
@@ -558,7 +555,6 @@ def test_checks():
 
     # call generic setter functions
     test_setters("CheckBox", TEXT_ONE)
-    test_setters("Cb", TEXT_ONE)
 
     app.clearAllCheckBoxes()
     assert app.getCheckBox(TEXT_ONE) is False
@@ -842,7 +838,6 @@ def test_lists():
 
     # call generic setter functions
     test_setters("ListBox", "l1")
-    test_setters("Lb", "l1")
 
     app.addListBox("g1", LIST_ONE)
     app.addListBox("g2", LIST_TWO)
@@ -963,8 +958,6 @@ def test_scales():
     app.setScaleLength("s1", 110)
     app.setScaleWidth("s3", 47)
     app.setScaleLength("s4", 88)
-    app.orientScaleHor("s2")
-    app.orientScaleHor("s2", False)
 
     assert app.getScale("s1") == 44
     assert app.getScale("s2") == 33
@@ -973,8 +966,8 @@ def test_scales():
 
     sc = app.getWidget(app.Widgets.Scale, "s1")
 
-    sc._AjScale__jump("trough1")
-    sc._AjScale__jump("trough2")
+    sc._jump("trough1")
+    sc._jump("trough2")
 
 
     # call generic setter functions
@@ -1621,7 +1614,7 @@ def test_images():
     event.widget = im
     event.x = 100
     event.y = 100
-    app._gui__imageMap("im2", event)
+    app._imageMap("im2", event)
 
     assert isinstance(app.addImage("im3", "1_checks.png"), PhotoImage)
     assert isinstance(app.addImage("im4", "sc.jpg"), PhotoImage)
@@ -1788,10 +1781,10 @@ def test_menus():
     #print("\t >> all tests complete")
 
 def dismissEditMenu():
-    for i in range(10):
+    for i in range(5):
         print("dismissit...")
-        app.n_menus["EDIT"].unpost()
-        app.n_menus["EDIT"].invoke(1)
+        app.widgetManager.get(app.Widgets.Menu, "EDIT").unpost()
+        app.widgetManager.get(app.Widgets.Menu, "EDIT").invoke(i)
         time.sleep(.2)
 
 def test_rightClick():
@@ -1806,15 +1799,16 @@ def test_rightClick():
 
     for type in [None, "9", "3", "4", "2"]:
         event.type = type
-        app._gui__rightClick(event)
+        app._rightClick(event)
         app.setEntry("RCLICK", "text")
-        app._gui__rightClick(event)
+        app._rightClick(event)
 
 # this breaks - there is no widget in focus??
     for action in ["Cut", "Copy", "Paste", "Select All", "Clear Clipboard", "Clear All", "Undo", "Redo"]:
+        print(action, action, action, action)
         app.setEntry("RCLICK", action)
         app.setEntryFocus("RCLICK")
-        app._gui__copyAndPasteHelper(action)
+        app._copyAndPasteHelper(action)
 
 
 def test_toolbars():
@@ -1867,14 +1861,14 @@ def test_toolbars():
     app.setToolbarImage("a", "1_entries.gif")
     app.setToolbarImage("b", "1_checks.png")
 
-    app._gui__minToolbar()
-    app._gui__minToolbar()
-    app._gui__maxToolbar()
-    app._gui__minToolbar()
+    app._minToolbar()
+    app._minToolbar()
+    app._maxToolbar()
+    app._minToolbar()
 
-    app._gui__toggletb()
-    app._gui__toggletb()
-    app._gui__toggletb()
+    app._toggletb()
+    app._toggletb()
+    app._toggletb()
 
     app.setToolbarEnabled()
     app.setToolbarDisabled()
@@ -2053,9 +2047,6 @@ def test_setters(widg_type, widg_id, widg_val=None):
     exec("app.set" + widg_type + "DragFunction(\""+widg_id +"\", [tester_function,tester_function] )")
     exec("app.set" + widg_type + "OverFunction(\""+widg_id +"\", tester_function)")
     exec("app.set" + widg_type + "OverFunction(\""+widg_id +"\", [tester_function, tester_function])")
-    exec("app.set" + widg_type + "Command(\""+widg_id +"\", tester_function)")
-    exec("app.set" + widg_type + "Func(\""+widg_id +"\", tester_function)")
-    exec("app.set" + widg_type + "Function(\""+widg_id +"\", tester_function)")
     exec("app.set" + widg_type + "ChangeFunction(\""+widg_id +"\", tester_function)")
     exec("app.set" + widg_type + "SubmitFunction(\""+widg_id +"\", tester_function)")
     exec("app.set" + widg_type + "RightClick('" + widg_id + "', 'RCLICK')")
@@ -2358,19 +2349,19 @@ def test_containers():
 def testScrollPaneScrolling(sp):
     event = Event()
 
-    sp._ScrollPane__mouseEnter(event)
-    sp._ScrollPane__mouseLeave(event)
+    sp._mouseEnter(event)
+    sp._mouseLeave(event)
 
     for num in [4, 5]:
         event.num = num
-        sp._ScrollPane__horizMouseScroll(event)
-        sp._ScrollPane__vertMouseScroll(event)
+        sp._horizMouseScroll(event)
+        sp._vertMouseScroll(event)
 
     event.num = 0
     for delta in [300, 30, -300, -30]:
         event.delta = delta
-        sp._ScrollPane__horizMouseScroll(event)
-        sp._ScrollPane__vertMouseScroll(event)
+        sp._horizMouseScroll(event)
+        sp._vertMouseScroll(event)
 
     # shift=0x0001, ctrl=0x0004, alt=0x0008
     states = [0, 0x0004, 0x0001, 0x0008, 0x0080]
@@ -2380,31 +2371,31 @@ def testScrollPaneScrolling(sp):
         event.state = state
         for key in ["Up", "Down", "Left", "Right", "Prior", "Next", "Home", "End"]:
             event.keysym = key
-            sp._ScrollPane__keyPressed(event)
+            sp._keyPressed(event)
 
     event = Event()
-    sp._ScrollPane__mouseEnter(event)
+    sp._mouseEnter(event)
 
     for num in [4, 5]:
         event.num = num
-        sp._ScrollPane__horizMouseScroll(event)
-        sp._ScrollPane__vertMouseScroll(event)
+        sp._horizMouseScroll(event)
+        sp._vertMouseScroll(event)
 
     event.num = 0
     for delta in [300, 30, -300, -30]:
         event.delta = delta
-        sp._ScrollPane__horizMouseScroll(event)
-        sp._ScrollPane__vertMouseScroll(event)
+        sp._horizMouseScroll(event)
+        sp._vertMouseScroll(event)
 
     event.type = "2"    # always 2
     for state in states:
         event.state = state
         for key in ["Up", "Down", "Left", "Right", "Prior", "Next", "Home", "End"]:
             event.keysym = key
-            sp._ScrollPane__keyPressed(event)
+            sp._keyPressed(event)
 
     event = Event()
-    sp._ScrollPane__mouseLeave(event)
+    sp._mouseLeave(event)
 
     sp.scrollLeft()
     sp.scrollRight()
@@ -2412,13 +2403,13 @@ def testScrollPaneScrolling(sp):
     sp.scrollBottom()
 
     event = Event()
-    sp._ScrollPane__mouseEnter(event)
+    sp._mouseEnter(event)
     sp.scrollLeft()
     sp.scrollRight()
     sp.scrollTop()
     sp.scrollBottom()
     event = Event()
-    sp._ScrollPane__mouseLeave(event)
+    sp._mouseLeave(event)
 
     print(" >> not implemented...")
     #print("\t >> all tests complete")
