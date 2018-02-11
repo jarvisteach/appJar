@@ -124,8 +124,7 @@ except:
     setup()
 
 # create the GUI
-with gui("DB Demo", "800x600", stretch="column", bg="DarkOrange", log="trace") as app:
-    app.config(sticky="NE")
+with gui("DB Demo", "800x600", stretch="column", bg="DarkOrange", log="trace", file="info.txt", sticky="NE") as app:
     app.addDbOptionBox("table", DB_NAME, change=changeDb)
     app.label("title", "DB tester:", bg="orange", font={'size':20}, sticky="EW")
     app.config(sticky="NEWS", stretch="both")

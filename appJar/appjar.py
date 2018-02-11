@@ -354,25 +354,29 @@ class gui(object):
         self.alive = True
 
         # first up, set the logger
-        def logForLevel(self, message, *args, **kwargs):
+        def _logForLevel(self, message, *args, **kwargs):
             if self.isEnabledFor(logging.DEBUG-5):
                 self._log(logging.DEBUG-5, message, args, **kwargs)
-        def logToRoot(message, *args, **kwargs):
+        def _logToRoot(message, *args, **kwargs):
             logging.log(logging.DEBUG-5, message, *args, **kwargs)
 
         logging.basicConfig(level=logging.WARNING, format='%(asctime)s %(name)s:%(levelname)s %(message)s')
         logging.addLevelName(logging.DEBUG - 5, 'TRACE') 
         setattr(logging, 'TRACE', logging.DEBUG -5)
-        setattr(logging.getLoggerClass(), "trace", logForLevel)
-        setattr(logging, "trace", logToRoot)
+        setattr(logging.getLoggerClass(), "trace", _logForLevel)
+        setattr(logging, "trace", _logToRoot)
 
-        # check any command line arguments
+        logFile = kwargs.pop("file", kwargs.pop("logFile", None))
+        logLevel = kwargs.pop("log", kwargs.pop("logLevel", None))
+
         self.language = language
         self.useSettings = useSettings
         self.settingsFile = "appJar.ini"
         self.externalSettings = {}
 
         self.startWindow = startWindow
+
+        # check any command line arguments
         args = self._handleArgs() if handleArgs else None
 
         # warn if we're in an untested mode
@@ -406,15 +410,24 @@ class gui(object):
         self.ttkFlag = False
         selectedTtkTheme = None
         if handleArgs:
+            if args.f:
+                gui.setLogFile(args.f)
+                logFile = None # don't use any param logFile
+
+            tmplevel, logLevel = logLevel, None
             if args.c: gui.setLogLevel("CRITICAL")
             elif args.e: gui.setLogLevel("ERROR")
             elif args.w: gui.setLogLevel("WARNING")
             elif args.i: gui.setLogLevel("INFO")
             elif args.d: gui.setLogLevel("DEBUG")
             elif args.t: gui.setLogLevel("TRACE")
+            else: loglevel = tmplevel
 
+        if logFile is not None: gui.setLogFile(logFile)
+        if logLevel is not None: gui.setLogLevel(logLevel)
+
+        if handleArgs:
             if args.l: self.language = args.l
-            if args.f: gui.setLogFile(args.f)
             if args.ttk:
                 useTtk = True
                 if args.ttk is not True:
@@ -1467,6 +1480,11 @@ class gui(object):
         logging.basicConfig(level=logging.INFO, filename=fileName, format='%(asctime)s %(name)s:%(levelname)s: %(message)s')
         gui.info("Switched to logFile: %s", fileName)
 
+    def getLogFile(self):
+        return logging.root.handlers[0].baseFilename
+
+    logFile = property(getLogFile, setLogFile)
+
     @staticmethod
     def setLogLevel(level):
         """ main function for setting the logging level
@@ -1474,7 +1492,11 @@ class gui(object):
         logging.getLogger("appJar").setLevel(getattr(logging, level.upper()))
         gui.info("Log level changed to: %s", level)
 
-    logLevel = property(fset=setLogLevel)
+
+    def getLogLevel(self):
+        return logging.getLevelName(logging.getLogger().getEffectiveLevel())
+
+    logLevel = property(getLogLevel, setLogLevel)
 
     @staticmethod
     def exception(message, *args):
@@ -1919,6 +1941,7 @@ class gui(object):
             self.topLevel.quit()
             self.topLevel.destroy()
             self.__class__.instantiated = False
+            gui.info("--- GUI stopped ---")
 
 #####################################
 # Functions for configuring polling events
@@ -2286,13 +2309,16 @@ class gui(object):
         location = kwargs.pop("location", None)
         size = kwargs.pop("size", None)
         guiPadding = kwargs.pop("guiPadding", None)
-        stopFunction = kwargs.pop("stop", None)
-        if stopFunction is None: stopFunction = kwargs.pop("stopFunction", None)
-        logLevel = kwargs.pop("log", None)
+        # two possible names
+        logFile = kwargs.pop("file", kwargs.pop("logFile", None))
+        logLevel = kwargs.pop("log", kwargs.pop("logLevel", None))
+        stopFunction = kwargs.pop("stop", kwargs.pop("stopFunction", None))
 
         for k, v in kwargs.items():
             gui.error("Invalid config parameter: %s, %s", k, v)
 
+        if logFile is not None: self.setLogFile(logFile)
+        if logLevel is not None: self.setLogLevel(logLevel)
         if title is not None: self.title = title
         if fg is not None: self.fg = fg
         if bg is not None: self.bg = bg
@@ -2312,7 +2338,6 @@ class gui(object):
         if size is not None: self.size = size
         if guiPadding is not None: self.guiPadding = guiPadding
         if stopFunction is not None: self.stopFunction = stopFunction
-        if logLevel is not None: self.setLogLevel(logLevel)
 
     def setGuiPadding(self, x, y=None):
         """ sets the padding around the border of the GUI """
