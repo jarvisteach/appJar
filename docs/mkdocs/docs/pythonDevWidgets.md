@@ -252,6 +252,15 @@ app.go()
 * `.replaceDBGrid(title, db, table)`  
     Will replace the currently shown data in the grid, with the data found in the specified database/table.  
 
+* `.refreshDBGrid(title)`  
+    Will refresh the specified DB Grid.  
+
+* `.addDbOptionBox(title, db, change=None)`  
+    Will create an OptionBox, containing a list of all the tables available in the specified database.  
+
+* `.refreshDbOptionBox(title)`  
+    Will reload the list of tables displayed in the specified DB OptionBox.  
+
 #### Get Grids  
 
 * `.getGridRow(title, rowNumber)`  
@@ -308,6 +317,12 @@ To have the **Press** button on the entries row add a new row of data, try the f
 
 * `.deleteGridColumn(title, columnNumber)`  
     Delete the specified column from the named grid.  
+    
+* `.selectGridRow(title, row, highlight=None)` & `.selectGridColumn(title, col, highlight=None)`  
+    These will either select or highlight the specified row or column in the named grid.  
+    If you leave `highlight=None` the row/column will be toggled between selected & deselected.  
+    If you set `highlight=True` the row/column will be highlighted (like a mouse over). 
+    If you set `highlight=False` the row/column will be un-highlighted (like a mouse over). 
 
 ###MatPlotLib
 ---

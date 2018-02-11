@@ -1,33 +1,9 @@
 import sys
 sys.path.append("../../")
+from appJar import gui
 
 DB_NAME = "issue266.db"
 types = ["NULL", "INTEGER", "REAL", "TEXT", "BLOB"]
-
-def makeTable():
-    fields = app.getAllEntries()
-    types = app.getAllOptionBoxes()
-    prim = app.radio("PRIMARY")
-    tbName = app.entry("Table Name")
-
-    data = "CREATE TABLE IF NOT EXISTS " + tbName + "("
-        
-
-    counter = 0
-    while True:
-        try:
-            data += fields["field"+str(counter)] + " " + types["type"+str(counter)]
-            if app.radio("PRIMARY") == "primary"+str(counter):
-                data += " PRIMARY KEY"
-            data += ", "
-            counter += 1
-        except:
-            break
-    data = data[:-2]
-    data += ");"
-    runSql(data)
-    app.changeOptionBox("table", getTables())
-    changeDb()
 
 def runSql(sql):
     print(sql)
@@ -40,40 +16,8 @@ def runSql(sql):
             data.append(r)
     return data
 
-def genRows():
-    with app.subWindow("Make Table"):
-        row = app.gr()
-        with app.labelFrame(app.entry("Table Name")):
-            for i in range(int(app.entry("Num Fields"))):
-                app.entry("field"+str(i), row=row, column=0)
-                app.optionBox("type"+str(i), types, row=row, column=1)
-                app.radio("PRIMARY", "primary"+str(i), row=row, column=2)
-                row += 1
-
-        app.setFocus("field0")
-
-        app.button("GO", makeTable)
-
-def showMakeTable():
-    with app.subWindow("Make Table"):
-        app.entry("Table Name", label=True, focus=True, colspan=3)
-        app.entry("Num Fields", label=True, kind="numeric", submit=genRows, colspan=3)
-    app.showSubWindow("Make Table")
-
-def changeDb():
-    app.replaceDbGrid("projects", DB_NAME, app.optionBox("table"))
-
-def getTables():
-    query = "SELECT distinct tbl_name from sqlite_master order by 1"
-    rows = runSql(query)
-    tables = []
-    for r in rows:
-        tables.append(r[0])
-    return tables
-
-from appJar import gui
-
 def setup():
+    ''' cretes a new database if needed '''
     import sqlite3
     from sqlite3 import Error
 
@@ -105,14 +49,86 @@ def setup():
         c.execute(task, ('Analyze the requirements of the app', 1, 1, project_id, '2015-01-01', '2015-01-02'))
         c.execute(task, ('Confirm with user about the top requirements', 1, 1, project_id, '2015-01-03', '2015-01-05'))
 
-with gui("DB Demo", "800x600", stretch="column", bg="DarkOrange") as app:
-    app.setLogLevel("debug")
-    app.label("title", "DB tester", bg="orange", font={'size':20})
+def showMakeTable():
+    with app.subWindow("Make Table"):
+        app.entry("Table Name", label=True, focus=True, colspan=3)
+        app.entry("Num Fields", label=True, kind="numeric", submit=genRows, colspan=3)
+    app.showSubWindow("Make Table")
+
+def genRows():
+    with app.subWindow("Make Table"):
+        row = app.gr()
+        with app.labelFrame(app.entry("Table Name")):
+            for i in range(int(app.entry("Num Fields"))):
+                app.entry("field"+str(i), row=row, column=0)
+                app.optionBox("type"+str(i), types, row=row, column=1)
+                app.radio("PRIMARY", "primary"+str(i), row=row, column=2)
+                row += 1
+
+        app.setFocus("field0")
+        app.button("GO", makeTable)
+
+def makeTable():
+    fields = app.getAllEntries()
+    types = app.getAllOptionBoxes()
+    prim = app.radio("PRIMARY")
+    tbName = app.entry("Table Name")
+    data = "CREATE TABLE IF NOT EXISTS " + tbName + "("
+    counter = 0
+    while True:
+        try:
+            data += fields["field"+str(counter)] + " " + types["type"+str(counter)]
+            if app.radio("PRIMARY") == "primary"+str(counter):
+                data += " PRIMARY KEY"
+            data += ", "
+            counter += 1
+        except:
+            break
+    data = data[:-2]
+    data += ");"
+    runSql(data)
+    app.refreshDbOptionBox("table", selected=tbName)
+
+def changeDb():
+    table = app.optionBox("table")
+    app.replaceDbGrid("table", DB_NAME, table)
+    app.label("title", "DB tester: " + table)
+
+def addRow(a):
+    table = app.optionBox("table")
+    values = app.getGridEntries("table")
+    sql = "INSERT INTO " + table + " VALUES ("
+    for v in values:
+        sql += "'" + v + "', "
+
+    sql = sql[:-2] + ")"
+    try:
+        runSql(sql)
+        app.refreshDbGrid("table")
+    except:
+        app.errorBox("SQL Error", "Unable to add row, check id is unique and numeric")
+
+def deleteRow(a):
+    app.selectGridRow("table", a, highlight=True)
+    if app.okBox("Delete Row " + str(a), "Are you sure you want to delete row " + str(a) + "?"):
+        table = app.optionBox("table")
+        sql = "DELETE FROM " + table + " WHERE id='" + str(a) + "'"
+        runSql(sql)
+        app.refreshDbGrid("table")
+    app.selectGridRow("table", a, highlight=False)
+
+# check the database exists, make if not
+try:
+    con = sqlite3.connect('file:'+DB_NAME+'?mode=rw', uri=True)
+except:
+    setup()
+
+# create the GUI
+with gui("DB Demo", "800x600", stretch="column", bg="DarkOrange", log="trace") as app:
     app.config(sticky="NE")
-    tables = getTables()
-    app.optionBox("table", tables, change=changeDb)
-    app.config(sticky="NEWS")
-    app.setStretch("both")
-    app.addDbGrid("projects", DB_NAME, "projects")
-    app.config(sticky="")
-    app.button("NEW TABLE", showMakeTable)
+    app.addDbOptionBox("table", DB_NAME, change=changeDb)
+    app.label("title", "DB tester:", bg="orange", font={'size':20}, sticky="EW")
+    app.config(sticky="NEWS", stretch="both")
+    app.addDbGrid("table", DB_NAME, "projects", action=deleteRow, addRow=addRow, actionButton="Delete", showMenu=True)
+    app.setOptionBox("table", "projects")
+    app.button("NEW TABLE", showMakeTable, sticky="", stretch="column")

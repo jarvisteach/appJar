@@ -1474,6 +1474,8 @@ class gui(object):
         logging.getLogger("appJar").setLevel(getattr(logging, level.upper()))
         gui.info("Log level changed to: %s", level)
 
+    logLevel = property(fset=setLogLevel)
+
     @staticmethod
     def exception(message, *args):
         """ wrapper for logMessage - setting level to EXCEPTION """
@@ -2286,6 +2288,7 @@ class gui(object):
         guiPadding = kwargs.pop("guiPadding", None)
         stopFunction = kwargs.pop("stop", None)
         if stopFunction is None: stopFunction = kwargs.pop("stopFunction", None)
+        logLevel = kwargs.pop("log", None)
 
         for k, v in kwargs.items():
             gui.error("Invalid config parameter: %s, %s", k, v)
@@ -2309,6 +2312,7 @@ class gui(object):
         if size is not None: self.size = size
         if guiPadding is not None: self.guiPadding = guiPadding
         if stopFunction is not None: self.stopFunction = stopFunction
+        if logLevel is not None: self.setLogLevel(logLevel)
 
     def setGuiPadding(self, x, y=None):
         """ sets the padding around the border of the GUI """
@@ -4445,29 +4449,49 @@ class gui(object):
 #####################################
 
     def _getDbData(self, db, table):
+        ''' query the specified db/table and return the PK, row headings & rows '''
         self._importSqlite3()
         if not sqlite3:
-            self.error("Can't load sqlite3")
+            self.error("Unable to load DB data - can't load sqlite3")
             return
 
+        dataQuery = 'SELECT * from ' + table
+        pkQuery = "PRAGMA table_info(" + table + ")"
         data = []
+        pk = None
 
         with sqlite3.connect(db) as conn:
             cursor = conn.cursor()
 
             # discover a PK
-            pk = None
-            cursor.execute("PRAGMA table_info(" + table + ")")
-            for r in cursor:
-                if r[5]: pk = r[1]
+            cursor.execute(pkQuery)
+            for row in cursor:
+                if row[5]: pk = row[1]
 
             # select all data
-            cursor.execute('SELECT * from ' + table)
+            cursor.execute(dataQuery)
             data.append([description[0] for description in cursor.description])
             for r in cursor:
                 data.append(r)
 
         return pk, data
+
+    def _getDbTables(self, db):
+        ''' query the specified database, and get a list of table names '''
+        self._importSqlite3()
+        if not sqlite3:
+            self.error("Unable to load DB tables - can't load sqlite3")
+            return []
+
+        query = "SELECT DISTINCT tbl_name FROM sqlite_master ORDER BY tbl_name COLLATE NOCASE"
+        data = []
+
+        with sqlite3.connect(db) as conn:
+            cursor = conn.cursor()
+            cursor.execute(query)
+            for row in cursor:
+                data.append(row[0])
+        return data
 
     def replaceDbGrid(self, title, db, table):
         pk, data = self._getDbData(db, table)
@@ -4477,6 +4501,18 @@ class gui(object):
         grid.dbPK = data[0].index(pk)
         self.setGridHeaders(title, data[0])
         self.replaceAllGridRows(title, data[1:])
+
+    def refreshDbGrid(self, title):
+        grid = self.widgetManager.get(self.Widgets.Grid, title)
+        pk, data = self._getDbData(grid.db, grid.dbTable)
+        self.replaceAllGridRows(title, data[1:])
+
+    def refreshDbOptionBox(self, title, selected=None):
+        opt = self.widgetManager.get(self.Widgets.OptionBox, title)
+        data = self._getDbTables(opt.db)
+        self.changeOptionBox(title, data)
+        if selected is not None:
+            self.setOptionBox(title, selected)
 
     def addDbGrid(self, title, db, table, row=None, column=0, colspan=0, rowspan=0, action=None, addRow=None,
                 actionHeading="Action", actionButton="Press", addButton="Add", showMenu=False):
@@ -4507,6 +4543,14 @@ class gui(object):
 
     def getGridSelectedCells(self, title):
         return self.widgetManager.get(self.Widgets.Grid, title).getSelectedCells()
+
+    def selectGridRow(self, title, row, highlight=None):
+        grid = self.widgetManager.get(self.Widgets.Grid, title)
+        grid.selectRow(row, highlight)
+
+    def selectGridColumn(self, title, col, highlight=None):
+        grid = self.widgetManager.get(self.Widgets.Grid, title)
+        grid.selectColumn(col, highlight)
 
     def addGridRow(self, title, data):
         grid = self.widgetManager.get(self.Widgets.Grid, title)
@@ -5372,6 +5416,12 @@ class gui(object):
         if len(kwargs) > 0:
             self._configWidget(title, widgKind, **kwargs)
 
+        return opt
+
+    def addDbOptionBox(self, title, db, row=None, column=0, colspan=0, rowspan=0, **kwargs):
+        data = self._getDbTables(db)
+        opt = self.option(title, data, row, column, colspan, rowspan, **kwargs)
+        opt.db = db
         return opt
 
     def _buildOptionBox(self, frame, title, options, kind="normal"):
@@ -12322,10 +12372,13 @@ class SimpleGrid(ScrollPane):
             return data
 
     def setHeaders(self, data):
-        newRows = len(data) - len(self.cells[0])
-        if newRows > 0:
-            for pos in range(len(self.cells[0]), len(self.cells[0]) + newRows):
+        newCols = len(data) - len(self.cells[0])
+        if newCols > 0:
+            for pos in range(len(self.cells[0]), len(self.cells[0]) + newCols):
                 self.addColumn(pos, [])
+        elif newCols < 0:
+            for pos in range(newCols*-1):
+                self.deleteColumn(len(self.cells[0])-1)
 
         for count in range(len(self.cells[0])):
             cell = self.cells[0][count]
@@ -12350,6 +12403,7 @@ class SimpleGrid(ScrollPane):
         for loop in range(len(self.cells)-2, -1, -1):
             self.deleteRow(loop, pauseUpdate=True)
         self.canvas.event_generate("<Configure>")
+        self._deleteEntryBoxes()
 
     def deleteRow(self, position, pauseUpdate=False):
         if 0 > position >= len(self.cells):
@@ -12457,15 +12511,24 @@ class SimpleGrid(ScrollPane):
 
     def _selectColumn(self, event=None):
         columnNumber = int(event.widget.gridPos.split("-")[1])
+        self.selectColumn(columnNumber)
+
+    def selectColumn(self, columnNumber, highlight=None):
         if columnNumber < 0 or columnNumber >= self.numColumns:
             raise Exception("Invalid column number.")
         else:
             selected = self.cells[1][columnNumber].selected
             for rowCount in range(1, len(self.cells)):
-                if selected:
-                    self.cells[rowCount][columnNumber].deselect()
+                if highlight is None:
+                    if selected:
+                        self.cells[rowCount][columnNumber].deselect()
+                    else:
+                        self.cells[rowCount][columnNumber].select()
                 else:
-                    self.cells[rowCount][columnNumber].select()
+                    if highlight:
+                        self.cells[rowCount][columnNumber].mouseEnter()
+                    else:
+                        self.cells[rowCount][columnNumber].mouseLeave()
 
     def _selectRow(self, event=None):
         rowNumber = event.widget.gridPos.split("-")[0]
@@ -12473,15 +12536,24 @@ class SimpleGrid(ScrollPane):
             rowNumber = 0
         else:
             rowNumber = int(rowNumber) + 1
+        self.selectRow(rowNumber)
+
+    def selectRow(self, rowNumber, highlight=None):
         if 1 > rowNumber >= len(self.cells):
             raise Exception("Invalid row number.")
         else:
             selected = self.cells[rowNumber][0].selected
             for cell in self.cells[rowNumber]:
-                if selected:
-                    cell.deselect()
+                if highlight is None:
+                    if selected:
+                        cell.deselect()
+                    else:
+                        cell.select()
                 else:
-                    cell.select()
+                    if highlight:
+                        cell.mouseEnter()
+                    else:
+                        cell.mouseLeave()
 
     def _buildMenu(self):
         self.menu = Menu(self, tearoff=0)
@@ -12499,18 +12571,19 @@ class SimpleGrid(ScrollPane):
         self.menu.add_command(label="Insert Before", command=lambda: self._menuHelper("cb"))
         self.menu.add_command(label="Insert After", command=lambda: self._menuHelper("ca"))
         self.menu.add_separator()
-        self.menu.add_command(label="Select", command=lambda: self._menuHelper("select"))
-        self.menu.add_command(label="Deselect", command=lambda: self._menuHelper("deselect"))
+        self.menu.add_command(label="Toggle Selection", command=lambda: self._menuHelper("select"))
+        self.menu.add_command(label="Toggle Row", command=lambda: self._menuHelper("selectRow"))
+        self.menu.add_command(label="Toggle Column", command=lambda: self._menuHelper("selectColumn"))
 
     def _configMenu(self, isHeader=False):
         if isHeader:
             self.menu.entryconfigure("Delete Row", state=DISABLED)
-            self.menu.entryconfigure("Select", state=DISABLED)
-            self.menu.entryconfigure("Deselect", state=DISABLED)
+            self.menu.entryconfigure("Toggle Selection", state=DISABLED)
+            self.menu.entryconfigure("Toggle Row", state=DISABLED)
         else:
             self.menu.entryconfigure("Delete Row", state=NORMAL)
-            self.menu.entryconfigure("Select", state=NORMAL)
-            self.menu.entryconfigure("Deselect", state=NORMAL)
+            self.menu.entryconfigure("Toggle Selection", state=NORMAL)
+            self.menu.entryconfigure("Toggle Row", state=NORMAL)
 
     def _rightClick(self, event):
         if self.lastSelected is None or not self.lastSelected.isHeader == event.widget.isHeader:
@@ -12532,9 +12605,11 @@ class SimpleGrid(ScrollPane):
         elif action == "ca":
             self.addColumn(int(vals[1])+1, [])
         elif action == "select" and vals[0] != "h":
-            if not self.lastSelected.selected: self.lastSelected.toggleSelection()
-        elif action == "deselect" and vals[0] != "h":
-            if self.lastSelected.selected: self.lastSelected.toggleSelection()
+            self.lastSelected.toggleSelection()
+        elif action == "selectRow":
+            self.selectRow(int(vals[0]))
+        elif action == "selectColumn":
+            self.selectColumn(int(vals[1]))
         if action == "sa":
             self.sort(int(vals[1]))
         if action == "sd":
@@ -12657,6 +12732,10 @@ class SimpleGrid(ScrollPane):
         for e in self.entries:
             e.lab.grid_forget()
         self.ent_but.lab.grid_forget()
+
+    def _deleteEntryBoxes(self):
+        self._hideEntryBoxes()
+        self.entries = []
 
     def _showEntryBoxes(self):
         if self.addRowEntries is None: return
