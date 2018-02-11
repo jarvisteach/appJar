@@ -15,13 +15,14 @@ These are values that can be set when appJar is initially run.
     This allows you to set the starting language, only useful if using [internationalisation](/pythoninternationalisation/).  
     It will override any language configured in the `.go()` function call.  
 
-* `-c`, `-e`, `-w`, `-i`, `-d`  
+* `-c`, `-e`, `-w`, `-i`, `-d`, `t`  
     This sets the [logging level](/pythonLogging/):  
     * `-c`   only log CRITICAL messages  
     * `-e`   log ERROR messages and above  
     * `-w`   log WARNING messages and above
     * `-i`   log INFO messages and above  
     * `-d`   log DEBUG messages and above  
+    * `-t`   log TRACE messages and above  
 
 * `-f [filename.log]`  
     This allows you to specify a [file](/pythonLogging/#logging-to-file) to log messages to.  

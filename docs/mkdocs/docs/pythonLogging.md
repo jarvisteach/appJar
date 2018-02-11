@@ -12,6 +12,7 @@ There are five levels of importance:
 * `WARNING` - something unexpected happened
 * `INFO` - confirmation that things are working as expected
 * `DEBUG` - detailed diagnostic information
+* `TRACE` - used by appJar to log DEBUG information
 
 By default, **appJar** will only log messages of importance `WARNING` or above. And, by default, appJar will simply print them to the console (screen).  
 
@@ -28,6 +29,7 @@ You can also use the following convenience functions for logging messages:
 * `.warn(msg, *args)`
 * `.info(msg, *args)`
 * `.debug(msg, *args)`
+* `.trace(msg, *args)`
 
 #### Optional Arguments:  
 
