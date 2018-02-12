@@ -12,29 +12,36 @@ Therefore, only ```.WAV``` files will work.
     By default, the sound is played asynchronously, meaning the function will return immediately, even though the sound hasn't finished playing.  
     It is possible to override this, by setting wait to True. This is not recommended though, as the GUI will become unresponsive.
 
+    If you want to call a function after a sound has finished playing, you will need to use a [thread](/pythonThreads):
+
+```
+# this function only returns once the sound finishes 
+def blockingSound():
+    app.playSound("sound.wav", wait=True)
+    app.infoBox("Sound", "Finished sound")
+
+# play the sound in a thread
+def playSound():
+    app.thread(blockingSound)
+
+with gui("SOUND") as app:
+    app.button("PLAY", playSound)
+```
+
+    **NB.** This causes a few issues:
+    * Threaded sounds queue up and only start when the previous threaded sound finishes.  
+    * Trying to play a non-threaded sound, will do nothing.  
+    * Trying to stop a threaded sound won't work, but **WILL** cause the GUI to hang, until the sound (and any queued sounds) finishes.  
+
 * `.stopSound()`  
     This will stop whatever sound is currently being played.
 
 * `.loopSound(sound)`  
-    This will play the named sound in a loop.
+    This will play the named sound in a loop, in the background.
 
 * `.setSoundLocation(location)`  
     Set a folder for the sound files.  
     This will be put before the names of any sound files used.  
-
----
-<div style='text-align: center;'>
-*Advertisement&nbsp;<sup><a href="/advertising">why?</a></sup>*
-<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-<ins class="adsbygoogle"
-    style="display:block"
-    data-ad-format="fluid"
-    data-ad-layout-key="-gw-13-4l+6+pt"
-    data-ad-client="ca-pub-6185596049817878"
-    data-ad-slot="5627392164"></ins>
-<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-</div>
----
 
 ###Playing Built-In Sounds
 ---
