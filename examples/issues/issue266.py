@@ -123,16 +123,24 @@ try:
 except:
     setup()
 
+def edit(btn):
+    if btn == "EN": app.editMenu = True 
+    else: app.editMenu = False
+
 # create the GUI
+#with gui("DB Demo", "800x600", stretch="column", bg="DarkOrange", log="trace", sticky="NE", labelFont = {"size":20, "family":"arial", "slant":"italic"}) as app:
 with gui("DB Demo", "800x600", stretch="column", bg="DarkOrange", log="trace", sticky="NE") as app:
-    app.addMenuEdit()
-    app.addDbOptionBox("table", DB_NAME, change=changeDb)
-    app.label("title", "DB tester:", bg="orange", font={'size':20}, sticky="EW")
+#    app.buttonFont = {"size":10, "family":"helvetica", "weight":"bold"}
+    app.editMenu = True
+    app.createRightClickMenu("demo")
+    app.addMenuItem("demo", "STOP", app.stop)
+
+    app.addDbOptionBox("table", DB_NAME, change=changeDb, right="demo")
+    app.label("title", "DB tester:", font=60, bg="orange", sticky="EW")
+    app.setLabelRightClick("title", "demo")
     app.config(sticky="NEWS", stretch="both")
     app.addDbTable("table", DB_NAME, "projects", action=deleteRow, addRow=addRow, actionButton="Delete", showMenu=True)
     app.setOptionBox("table", "projects")
     app.button("NEW TABLE", showMakeTable, sticky="", stretch="column")
-    app.label("PRESS ME")
-    app.createRightClickMenu("demo")
-    app.addMenuItem("demo", app.stop)
-    app.setLabelRightClick("PRESS ME", "demo")
+    app.label("PRESS ME", font={"size":40, "underline":True}, right="demo")
+    app.addButtons(["EN", "DI"], edit)

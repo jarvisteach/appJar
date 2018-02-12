@@ -2440,10 +2440,13 @@ class gui(object):
         self.setLabelFont(**style)
         self.setButtonFont(**style)
 
-    def _setFontSize(self, size):
-        self.setFont(size=size)
+    def _setFont(self, args):
+        if isinstance(args, dict):
+            self.setFont(**args)
+        else:
+            self.setFont(size=args)
 
-    font = property(fset=_setFontSize)
+    font = property(fset=_setFont)
 
     def setButtonFont(self, *args, **style):
         if len(args) > 0:
@@ -2458,10 +2461,13 @@ class gui(object):
 
         self._buttonFont.config(**style)
 
-    def _setButtonFontSize(self, size):
-        self.setButtonFont(size=size)
+    def _setButtonFont(self, args):
+        if isinstance(args, dict):
+            self.setButtonFont(**args)
+        else:
+            self.setFont(size=args)
 
-    buttonFont = property(fset=_setButtonFontSize)
+    buttonFont = property(fset=_setButtonFont)
 
     def setLabelFont(self, *args, **style):
         if len(args) > 0:
@@ -2499,10 +2505,13 @@ class gui(object):
         for k, v in self.widgetManager.group(self.Widgets.Table).items():
             v.config(font=self.tableFont)
 
-    def _setLabelFontSize(self, size):
-        self.setLabelFont(size=size)
+    def _setLabelFont(self, args):
+        if isinstance(args, dict):
+            self.setLabelFont(**args)
+        else:
+            self.setLabelFont(size=args)
 
-    labelFont = property(fset=_setLabelFontSize)
+    labelFont = property(fset=_setLabelFont)
 
     # need to set a default colour for container
     # then populate that field
@@ -2685,11 +2694,11 @@ class gui(object):
         event.widget.focus()
         if menu == "EDIT":
             if self._checkCopyAndPaste(event):
-                self.widgetManager.get(self.Widgets.Menu, menu).post(event.x_root - 10, event.y_root - 10)
                 self.widgetManager.get(self.Widgets.Menu, menu).focus_set()
+                self.widgetManager.get(self.Widgets.Menu, menu).post(event.x_root - 10, event.y_root - 10)
         else:
-            self.widgetManager.get(self.Widgets.Menu, menu).post(event.x_root - 10, event.y_root - 10)
             self.widgetManager.get(self.Widgets.Menu, menu).focus_set()
+            self.widgetManager.get(self.Widgets.Menu, menu).post(event.x_root - 10, event.y_root - 10)
         return "break"
 
 #####################################
@@ -2877,10 +2886,8 @@ class gui(object):
                     else:
                         item.config(ipadx=value[0], ipady=value[1])
                 elif option == 'rightClick':
-                    if self.platform in [self.WINDOWS, self.LINUX]:
-                        item.bind('<Button-3>', lambda e, menu=value: self._rightClick(e, menu))
-                    else:
-                        item.bind('<Button-2>', lambda e, menu=value: self._rightClick(e, menu))
+                    self._bindRightClick(item, value)
+
                 elif option == 'internalDrop':
                     self._registerInternalDropTarget(item, value)
 
@@ -7405,7 +7412,9 @@ class gui(object):
         over = kwargs.pop("over", None)
         drag = kwargs.pop("drag", None)
         drop = kwargs.pop("drop", None)
+        right = kwargs.pop("right", None)
         focus = kwargs.pop('focus', False)
+        _font = kwargs.pop('font', None)
 
         if tooltip is not None: self._addTooltip(widget, tooltip, None)
         if focus: widget.focus_set()
@@ -7415,7 +7424,15 @@ class gui(object):
         if over is not None: self._bindOverEvent(kind, title, widget, over, None, None)
         if drag is not None: self._bindDragEvent(kind, title, widget, drag, None, None)
         if drop is not None: self._registerExternalDropTarget(title, widget, drop)
+        if right is not None: self._bindRightClick(widget, right)
 
+        # allow fonts to be passed in as either a dictionary or a single integer
+        if _font is not None:
+            if not isinstance(_font, dict):
+                _font = {"size":_font}
+            custFont = font.Font(**_font)
+            widget.config(font=custFont)
+            
         # now pass the kwargs to the config function, ignore any baddies
         while True:
             try: widget.config(**kwargs)
@@ -9333,6 +9350,12 @@ class gui(object):
         men.bind("<FocusOut>", lambda e: men.unpost())
         return men
 
+    def _bindRightClick(self, item, value):
+        if self.platform in [self.WINDOWS, self.LINUX]:
+            item.bind('<Button-3>', lambda e, menu=value: self._rightClick(e, menu))
+        else:
+            item.bind('<Button-2>', lambda e, menu=value: self._rightClick(e, menu))
+
     # add items to the named menu
     def addMenuItem(self, title, item, func=None, kind=None, shortcut=None, underline=-1, rb_id=None, createBinding=True):
         # set the initial menubar
@@ -9724,6 +9747,14 @@ class gui(object):
         self.addMenuItem("EDIT", 'Undo', lambda e: self._copyAndPasteHelper("Undo"), shortcut=shortcut + "Z", createBinding=False)
         self.addMenuItem("EDIT", 'Redo', lambda e: self._copyAndPasteHelper( "Redo"), shortcut="Shift-" + shortcut + "Z", createBinding=True)
         self.disableMenu("EDIT")
+
+    def _editMenuWrapper(self, enabled=True):
+        if enabled:
+            self.addMenuEdit()
+        else:
+            self.disableMenuEdit()
+
+    editMenu = property(fset=_editMenuWrapper)
 
     def appJarAbout(self, menu=None):
         self.infoBox("About appJar",
@@ -12672,8 +12703,8 @@ class SimpleTable(ScrollPane):
         if self.lastSelected is None or not self.lastSelected.isHeader == event.widget.isHeader:
             self._configMenu(event.widget.isHeader)
         self.lastSelected = event.widget
-        self.menu.post(event.x_root - 10, event.y_root - 10)
         self.menu.focus_set()
+        self.menu.post(event.x_root - 10, event.y_root - 10)
         return "break"
 
     def _menuHelper(self, action):

@@ -117,6 +117,15 @@ Most of the widgets also have some support for events (see the [events page](/py
 | drop | boolean/function | None | Update the widget with *dropped* data if True, otherwise call the function. |
 | drag | function (list) | None | A function to call call when the widget is *dragged*, with an optional second function to call when the widget is *dropped*. |  
 
+## Other Properties  
+----
+There are a couple of other properties that can be set on widgets.  
+
+| Parameter | Data type | Default | Description |
+| --------- | --------- | ------- | ------------|
+| right | string | None | Specify a premade right-click menu to link to the widget. |
+| font | integer/dict | Pass either a font size, or a dictionary of font properties to use for this widget's font. |
+
 ```python
 def update(name):
     if name == "size":
@@ -410,10 +419,15 @@ app.fg = "yellow"
 | | | | 
 | fg | string | Pass a colour to use for the text colour of all label style widgets. |
 | bg | string | Pass a colour to use for the background of all label style widgets. |
-| font | integer| Pass a value to set the size of the font. |
-| buttonFont | integer | Pass the font size to use for all button style widgets. |
-| labelFont | integer| Pass the font size to use for all label style widgets. |
+| font | integer/dict | Pass either a font size, or a dictionary of font properties to use for all widgets. |
+| buttonFont | integer/dict | Pass either a font size, or dicitonary of font properties to use for all button style widgets. |
+| labelFont | integer/dict | Pass either a font size, or a dictionary of font properties to use for all label style widgets. |
 | ttkTheme | string | Only available in ttk mode - pass the name of the ttk theme you want to use. |
+| | | | 
+| editMenu | Boolean | Enables and disanles the right-click edit menu for text based widgets. |
+| stopFunction | function | Sets a function to call when the GUI is closed. |
+| logLevel | string | Sets the loggign level. |
+| logFile | string | Sets a file to lof messages to. |
 | | | | 
 | row | integer | Gets or sets the next row number to be used. |
 | | | | 
