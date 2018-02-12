@@ -9331,8 +9331,6 @@ class gui(object):
     def createRightClickMenu(self, title, showInBar=False):
         men = self.createMenu(title, False, showInBar)
         men.bind("<FocusOut>", lambda e: men.unpost())
-        if men is not None and gui.GET_PLATFORM() == gui.LINUX:
-            self.addMenuSeparator(title)
         return men
 
     # add items to the named menu
@@ -9700,9 +9698,6 @@ class gui(object):
         if inMenuBar:
             self.menuBar.add_cascade(menu=editMenu, label='Edit ')
         self.widgetManager.add(self.Widgets.Menu, "EDIT", editMenu)
-
-        if gui.GET_PLATFORM() == gui.LINUX:
-            self.addMenuSeparator("EDIT")
 
         if gui.GET_PLATFORM() == gui.MAC:
             shortcut = "Cmd+"
