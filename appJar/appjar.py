@@ -2685,9 +2685,11 @@ class gui(object):
         event.widget.focus()
         if menu == "EDIT":
             if self._checkCopyAndPaste(event):
-                self.widgetManager.get(self.Widgets.Menu, menu).tk_popup(event.x_root - 10, event.y_root - 10)
+                self.widgetManager.get(self.Widgets.Menu, menu).post(event.x_root - 10, event.y_root - 10)
+                self.widgetManager.get(self.Widgets.Menu, menu).focus_set()
         else:
-            self.widgetManager.get(self.Widgets.Menu, menu).tk_popup(event.x_root - 10, event.y_root - 10)
+            self.widgetManager.get(self.Widgets.Menu, menu).post(event.x_root - 10, event.y_root - 10)
+            self.widgetManager.get(self.Widgets.Menu, menu).focus_set()
         return "break"
 
 #####################################
@@ -9328,6 +9330,7 @@ class gui(object):
 
     def createRightClickMenu(self, title, showInBar=False):
         men = self.createMenu(title, False, showInBar)
+        men.bind("<FocusOut>", lambda e: men.unpost())
         if men is not None and gui.GET_PLATFORM() == gui.LINUX:
             self.addMenuSeparator(title)
         return men
@@ -9693,6 +9696,7 @@ class gui(object):
         except: return
 
         editMenu = Menu(self.menuBar, tearoff=False)
+        editMenu.bind("<FocusOut>", lambda e: editMenu.unpost())
         if inMenuBar:
             self.menuBar.add_cascade(menu=editMenu, label='Edit ')
         self.widgetManager.add(self.Widgets.Menu, "EDIT", editMenu)
