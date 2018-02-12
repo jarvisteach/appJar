@@ -479,6 +479,11 @@ class gui(object):
         # create the main window - topLevel
         self.topLevel = Tk()
         self.topLevel.bind('<Configure>', self._windowEvent)
+
+        # these are specifically to make right-click menus disapear on linux
+        self.topLevel.bind('<Button-1>', lambda e: e.widget.focus_set())
+        self.topLevel.bind('<Button-2>', lambda e: e.widget.focus_set())
+        self.topLevel.bind('<Button-3>', lambda e: e.widget.focus_set())
         # override close button
         self.topLevel.protocol("WM_DELETE_WINDOW", self.stop)
         # temporarily hide it
@@ -12599,6 +12604,7 @@ class SimpleGrid(ScrollPane):
         self.menu.add_command(label="Toggle Selection", command=lambda: self._menuHelper("select"))
         self.menu.add_command(label="Toggle Row", command=lambda: self._menuHelper("selectRow"))
         self.menu.add_command(label="Toggle Column", command=lambda: self._menuHelper("selectColumn"))
+        self.menu.bind("<FocusOut>", lambda e: self.menu.unpost())
 
     def _configMenu(self, isHeader=False):
         if isHeader:
@@ -12614,7 +12620,8 @@ class SimpleGrid(ScrollPane):
         if self.lastSelected is None or not self.lastSelected.isHeader == event.widget.isHeader:
             self._configMenu(event.widget.isHeader)
         self.lastSelected = event.widget
-        self.menu.tk_popup(event.x_root - 10, event.y_root - 10)
+        self.menu.post(event.x_root - 10, event.y_root - 10)
+        self.menu.focus_set()
         return "break"
 
     def _menuHelper(self, action):
