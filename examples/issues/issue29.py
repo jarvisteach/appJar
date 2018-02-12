@@ -2,15 +2,13 @@ import sys
 sys.path.append("../../")
 from appJar import gui
 
-def playSlow():
-    app.playSound("buzz.wav", True)
-    return "finished waiting"
-def done(msg):
-    print(msg)
+def blockingSound():
+    app.playSound("buzz.wav", wait=True)
+    app.infoBox("Sound", "Finished sound")
 
 def play():
     if app.getCheckBox("wait"):
-        app.threadCallback(playSlow, done)
+        app.thread(blockingSound)
     else:
         app.playSound("buzz.wav")
         print("no wait")
