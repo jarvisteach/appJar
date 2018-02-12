@@ -9,12 +9,17 @@ Therefore, only ```.WAV``` files will work.
 
 * `.playSound(sound, wait=False)`  
     Play the named sound file.  
-    By default, the sound is played asynchronously, meaning the function will return immediately, even though the sound hasn't finished playing.  
-    It is possible to override this, by setting wait to True. This is not recommended though, as the GUI will become unresponsive.
+    By default, the sound plays in the background (asynchronously), meaning the function will return immediately.  
+    If you set `wait=True` the GUI will wait for the sound to finish - *not recommended*, as the GUI will become unresponsive.  
 
-    If you want to call a function after a sound has finished playing, you will need to use a [thread](/pythonThreads):
+* If you want to *wait* for a sound to finish, use a [thread](/pythonThreads). **NB.** this causes a few *issues*:  
+    * Threaded sounds queue up and only start when the previous threaded sound finishes.  
+    * Trying to play a non-threaded sound does nothing, and returns immediately.  
+    * Trying to stop a threaded sound won't work, but **WILL** cause the GUI to hang, until the sound (and any queued sounds) finishes.  
 
 ```
+from appJar import gui
+
 # this function only returns once the sound finishes 
 def blockingSound():
     app.playSound("sound.wav", wait=True)
@@ -26,12 +31,7 @@ def playSound():
 
 with gui("SOUND") as app:
     app.button("PLAY", playSound)
-```
-
-    **NB.** This causes a few issues:
-    * Threaded sounds queue up and only start when the previous threaded sound finishes.  
-    * Trying to play a non-threaded sound, will do nothing.  
-    * Trying to stop a threaded sound won't work, but **WILL** cause the GUI to hang, until the sound (and any queued sounds) finishes.  
+```  
 
 * `.stopSound()`  
     This will stop whatever sound is currently being played.
