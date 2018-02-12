@@ -91,12 +91,12 @@ def makeTable():
 
 def changeDb():
     table = app.optionBox("table")
-    app.replaceDbGrid("table", DB_NAME, table)
+    app.replaceDbTable("table", DB_NAME, table)
     app.label("title", "DB tester: " + table)
 
 def addRow(a):
     table = app.optionBox("table")
-    values = app.getGridEntries("table")
+    values = app.getTableEntries("table")
     sql = "INSERT INTO " + table + " VALUES ("
     for v in values:
         sql += "'" + v + "', "
@@ -104,18 +104,18 @@ def addRow(a):
     sql = sql[:-2] + ")"
     try:
         runSql(sql)
-        app.refreshDbGrid("table")
+        app.refreshDbTable("table")
     except:
         app.errorBox("SQL Error", "Unable to add row, check id is unique and numeric")
 
 def deleteRow(a):
-    app.selectGridRow("table", a, highlight=True)
+    app.selectTableRow("table", a, highlight=True)
     if app.okBox("Delete Row " + str(a), "Are you sure you want to delete row " + str(a) + "?"):
         table = app.optionBox("table")
         sql = "DELETE FROM " + table + " WHERE id='" + str(a) + "'"
         runSql(sql)
-        app.refreshDbGrid("table")
-    app.selectGridRow("table", a, highlight=False)
+        app.refreshDbTable("table")
+    app.selectTableRow("table", a, highlight=False)
 
 # check the database exists, make if not
 try:
@@ -124,10 +124,10 @@ except:
     setup()
 
 # create the GUI
-with gui("DB Demo", "800x600", stretch="column", bg="DarkOrange", log="trace", file="info.txt", sticky="NE") as app:
+with gui("DB Demo", "800x600", stretch="column", bg="DarkOrange", log="trace", sticky="NE") as app:
     app.addDbOptionBox("table", DB_NAME, change=changeDb)
     app.label("title", "DB tester:", bg="orange", font={'size':20}, sticky="EW")
     app.config(sticky="NEWS", stretch="both")
-    app.addDbGrid("table", DB_NAME, "projects", action=deleteRow, addRow=addRow, actionButton="Delete", showMenu=True)
+    app.addDbTable("table", DB_NAME, "projects", action=deleteRow, addRow=addRow, actionButton="Delete", showMenu=True)
     app.setOptionBox("table", "projects")
     app.button("NEW TABLE", showMakeTable, sticky="", stretch="column")

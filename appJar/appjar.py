@@ -390,7 +390,7 @@ class gui(object):
                 "FileEntry", "DirectoryEntry", "Scale", "Link", "Meter", "Image",
                 "CheckBox", "RadioButton", "ListBox", "SpinBox", "OptionBox",
                 "TickOptionBox", "Accelerators",
-                "Map", "PieChart", "Properties", "Grid", "Plot", "MicroBit",
+                "Map", "PieChart", "Properties", "Table", "Plot", "MicroBit",
                 "DatePicker", "Separator", "Turtle", "Canvas",
                 "LabelFrame", "Frame", "TabbedFrame", "PanedFrame", "ToggleFrame",
                 "FrameBox", "FrameLabel", "ContainerLog", "FlashLabel",
@@ -2493,11 +2493,11 @@ class gui(object):
         self.tabbedFrameFont.config(**style)
         self.panedFrameFont.config(**style)
         self.scrollPaneFont.config(**style)
-        self.gridFont.config(**style)
+        self.tableFont.config(**style)
 
-        # need better way to register font change events on grids
-        for k, v in self.widgetManager.group(self.Widgets.Grid).items():
-            v.config(font=self.gridFont)
+        # need better way to register font change events on tables
+        for k, v in self.widgetManager.group(self.Widgets.Table).items():
+            v.config(font=self.tableFont)
 
     def _setLabelFontSize(self, size):
         self.setLabelFont(size=size)
@@ -2780,7 +2780,7 @@ class gui(object):
                     else:
                         self.warn("Error configuring %s: can't set inactiveforeground", name )
                 elif option == 'inactivebackground':
-                    if kind in [self.Widgets.TabbedFrame, self.Widgets.Grid]:
+                    if kind in [self.Widgets.TabbedFrame, self.Widgets.Table]:
                         item.config(inactivebackground=value)
                     else:
                         self.warn("Error configuring %s: can't set inactivebackground", name)
@@ -4475,7 +4475,7 @@ class gui(object):
         self.stopContainer()
 
 #####################################
-# Simple Grids
+# Simple Tables
 #####################################
 
     def _getDbData(self, db, table):
@@ -4523,19 +4523,19 @@ class gui(object):
                 data.append(row[0])
         return data
 
-    def replaceDbGrid(self, title, db, table):
+    def replaceDbTable(self, title, db, table):
         pk, data = self._getDbData(db, table)
-        grid = self.widgetManager.get(self.Widgets.Grid, title)
+        grid = self.widgetManager.get(self.Widgets.Table, title)
         grid.db = db
         grid.dbTable = table
         grid.dbPK = data[0].index(pk)
-        self.setGridHeaders(title, data[0])
-        self.replaceAllGridRows(title, data[1:])
+        self.setTableHeaders(title, data[0])
+        self.replaceAllTableRows(title, data[1:])
 
-    def refreshDbGrid(self, title):
-        grid = self.widgetManager.get(self.Widgets.Grid, title)
+    def refreshDbTable(self, title):
+        grid = self.widgetManager.get(self.Widgets.Table, title)
         pk, data = self._getDbData(grid.db, grid.dbTable)
-        self.replaceAllGridRows(title, data[1:])
+        self.replaceAllTableRows(title, data[1:])
 
     def refreshDbOptionBox(self, title, selected=None):
         opt = self.widgetManager.get(self.Widgets.OptionBox, title)
@@ -4544,97 +4544,150 @@ class gui(object):
         if selected is not None:
             self.setOptionBox(title, selected)
 
-    def addDbGrid(self, title, db, table, row=None, column=0, colspan=0, rowspan=0, action=None, addRow=None,
+    def addDbTable(self, title, db, table, row=None, column=0, colspan=0, rowspan=0, action=None, addRow=None,
                 actionHeading="Action", actionButton="Press", addButton="Add", showMenu=False):
 
         pk, data = self._getDbData(db, table)
-        grid = self.addGrid(title, data, row, column, colspan, rowspan, action, addRow, actionHeading, actionButton, addButton, showMenu)
+        grid = self.addTable(title, data, row, column, colspan, rowspan, action, addRow, actionHeading, actionButton, addButton, showMenu)
         grid.db = db
         grid.dbTable = table
         grid.dbPK = data[0].index(pk)
-        self.setGridHeaders(title, data[0])
-        self.replaceAllGridRows(title, data[1:])
+        self.setTableHeaders(title, data[0])
+        self.replaceAllTableRows(title, data[1:])
 
-    def addGrid(self, title, data, row=None, column=0, colspan=0, rowspan=0, action=None, addRow=None,
+    def addTable(self, title, data, row=None, column=0, colspan=0, rowspan=0, action=None, addRow=None,
                 actionHeading="Action", actionButton="Press", addButton="Add", showMenu=False):
-        self.widgetManager.verify(self.Widgets.Grid, title)
-        grid = SimpleGrid(self.getContainer(), title, data,
+        self.widgetManager.verify(self.Widgets.Table, title)
+        grid = SimpleTable(self.getContainer(), title, data,
             action, addRow,
             actionHeading, actionButton, addButton,
             showMenu, buttonFont=self._buttonFont)
         if not self.ttkFlag:
             grid.config(font=self.gridFont, background=self._getContainerBg())
         self._positionWidget(grid, row, column, colspan, rowspan, N+E+S+W)
-        self.widgetManager.add(self.Widgets.Grid, title, grid)
+        self.widgetManager.add(self.Widgets.Table, title, grid)
         return grid
 
-    def getGridEntries(self, title):
-        return self.widgetManager.get(self.Widgets.Grid, title).getEntries()
+    def getTableEntries(self, title):
+        return self.widgetManager.get(self.Widgets.Table, title).getEntries()
 
-    def getGridSelectedCells(self, title):
-        return self.widgetManager.get(self.Widgets.Grid, title).getSelectedCells()
+    def getTableSelectedCells(self, title):
+        return self.widgetManager.get(self.Widgets.Table, title).getSelectedCells()
 
-    def selectGridRow(self, title, row, highlight=None):
-        grid = self.widgetManager.get(self.Widgets.Grid, title)
+    def selectTableRow(self, title, row, highlight=None):
+        grid = self.widgetManager.get(self.Widgets.Table, title)
         grid.selectRow(row, highlight)
 
-    def selectGridColumn(self, title, col, highlight=None):
-        grid = self.widgetManager.get(self.Widgets.Grid, title)
+    def selectTableColumn(self, title, col, highlight=None):
+        grid = self.widgetManager.get(self.Widgets.Table, title)
         grid.selectColumn(col, highlight)
 
-    def addGridRow(self, title, data):
-        grid = self.widgetManager.get(self.Widgets.Grid, title)
+    def addTableRow(self, title, data):
+        grid = self.widgetManager.get(self.Widgets.Table, title)
         grid.addRow(data)
 
-    def addGridRows(self, title, data):
-        grid = self.widgetManager.get(self.Widgets.Grid, title)
+    def addTableRows(self, title, data):
+        grid = self.widgetManager.get(self.Widgets.Table, title)
         grid.addRows(data)
 
-    def addGridColumn(self, title, columnNumber, data):
-        grid = self.widgetManager.get(self.Widgets.Grid, title)
+    def addTableColumn(self, title, columnNumber, data):
+        grid = self.widgetManager.get(self.Widgets.Table, title)
         grid.addColumn(columnNumber, data)
 
-    def deleteGridColumn(self, title, columnNumber):
-        grid = self.widgetManager.get(self.Widgets.Grid, title)
+    def deleteTableColumn(self, title, columnNumber):
+        grid = self.widgetManager.get(self.Widgets.Table, title)
         grid.deleteColumn(columnNumber)
 
-    def setGridHeaders(self, title, data):
-        grid = self.widgetManager.get(self.Widgets.Grid, title)
+    def setTableHeaders(self, title, data):
+        grid = self.widgetManager.get(self.Widgets.Table, title)
         grid.setHeaders(data)
 
-    def deleteGridRow(self, title, rowNum):
-        grid = self.widgetManager.get(self.Widgets.Grid, title)
+    def deleteTableRow(self, title, rowNum):
+        grid = self.widgetManager.get(self.Widgets.Table, title)
         grid.deleteRow(rowNum)
 
-    def deleteAllGridRows(self, title):
-        grid = self.widgetManager.get(self.Widgets.Grid, title)
+    def deleteAllTableRows(self, title):
+        grid = self.widgetManager.get(self.Widgets.Table, title)
         grid.deleteAllRows()
 
-    def sortGrid(self, title, columnNumber, descending=False):
-        grid = self.widgetManager.get(self.Widgets.Grid, title)
+    def sortTable(self, title, columnNumber, descending=False):
+        grid = self.widgetManager.get(self.Widgets.Table, title)
         grid.sort(columnNumber, descending)
 
-    def getGridRowCount(self, title):
-        grid = self.widgetManager.get(self.Widgets.Grid, title)
+    def getTableRowCount(self, title):
+        grid = self.widgetManager.get(self.Widgets.Table, title)
         return grid.getRowCount()
 
-    def getGridRow(self, title, rowNumber):
-        grid = self.widgetManager.get(self.Widgets.Grid, title)
+    def getTableRow(self, title, rowNumber):
+        grid = self.widgetManager.get(self.Widgets.Table, title)
         return grid.getRow(rowNumber)
 
-    def confGrid(self, title, field, value):
-        grid = self.widgetManager.get(self.Widgets.Grid, title)
+    def confTable(self, title, field, value):
+        grid = self.widgetManager.get(self.Widgets.Table, title)
         kw = {field:value}
         grid.config(**kw)
 
-    def replaceGridRow(self, title, rowNum, data):
-        grid = self.widgetManager.get(self.Widgets.Grid, title)
+    def replaceTableRow(self, title, rowNum, data):
+        grid = self.widgetManager.get(self.Widgets.Table, title)
         grid.replaceRow(rowNum, data)
 
-    def replaceAllGridRows(self, title, data):
-        grid = self.widgetManager.get(self.Widgets.Grid, title)
+    def replaceAllTableRows(self, title, data):
+        grid = self.widgetManager.get(self.Widgets.Table, title)
         grid.deleteAllRows()
         grid.addRows(data)
+
+    # temporary deprecated functions
+    def addGrid(self, title, data, row=None, column=0, colspan=0, rowspan=0, action=None, addRow=None,
+                actionHeading="Action", actionButton="Press", addButton="Add", showMenu=False):
+        gui.warn("Deprecated - grids renamed to tables")
+        return self.addTable(title, data, row, column, colspan, rowspan, action, addRow, actionHeading, actionButton, addButton, showMenu)
+    def addDbGrid(self, title, db, table, row=None, column=0, colspan=0, rowspan=0, action=None, addRow=None,
+                actionHeading="Action", actionButton="Press", addButton="Add", showMenu=False):
+        gui.warn("Deprecated - grids renamed to tables")
+        return self.addDbTable(title, db, table, row, column, colspan, rowspan, action, addRow, actionHeading, actionButton, addButton, showMenu)
+    def replaceDbGrid(self, title, db, table):
+        gui.warn("Deprecated - grids renamed to tables")
+        return self.replaceDbTable(title, db, table)
+    def refreshDbGrid(self, title):
+        gui.warn("Deprecated - grids renamed to tables")
+        return self.refreshDbTable(title)
+    def selectGridRow(self, title, row, highlight=None):
+        gui.warn("Deprecated - grids renamed to tables")
+        return self.selectTableRow(title, row, highlight)
+    def getGridEntries(self, title):
+        gui.warn("Deprecated - grids renamed to tables")
+        return self.getTableEntries(title)
+    def getGridSelectedCells(self, title):
+        gui.warn("Deprecated - grids renamed to tables")
+        return self.getTableSelectedCells(title)
+    def selectGridColumn(self, title, col, highlight=None):
+        return self.selectTableColumn(title, col, highlight)
+    def addGridRow(self, title, data):
+        return self.addTableRow(title, data)
+    def addGridRows(self, title, data):
+        return self.addTableRows(title, data)
+    def addGridColumn(self, title, columnNumber, data):
+        return self.addTableColumn(title, columnNumber, data)
+    def deleteGridColumn(self, title, columnNumber):
+        return self.deleteTableColumn(title, columnNumber)
+    def setGridHeaders(self, title, data):
+        return self.setTableHeaders(title, data)
+    def deleteGridRow(self, title, rowNum):
+        return self.deleteTableRow(title, rowNum)
+    def deleteAllGridRows(self, title):
+        return self.deleteAllTableRows(title)
+    def sortGrid(self, title, columnNumber, descending=False):
+        return self.sortTable(title, columnNumber, descending)
+    def getGridRowCount(self, title):
+        return self.getTableRowCount(title)
+    def getGridRow(self, title, rowNumber):
+        return self.getTableRow(title, rowNumber)
+    def confGrid(self, title, field, value):
+        return self.confTable(title, field, value)
+    def replaceGridRow(self, title, rowNum, data):
+        return self.replaceTableRow(title, rowNum, data)
+    def replaceAllGridRows(self, title, data):
+        return self.replaceAllTableRows(title, data)
 
 #####################################
 # Paned Frames
@@ -12207,7 +12260,7 @@ class SubWindow(Toplevel, object):
 
 
 #####################################
-# SimpleGrid Stuff
+# SimpleTable Stuff
 #####################################
 
 class GridCell(Label, object):
@@ -12264,8 +12317,8 @@ class GridCell(Label, object):
             self.select()
 
 # first row is used as a header
-# SimpleGrid is a ScrollPane, where a Frame has been placed on the canvas - called GridContainer
-class SimpleGrid(ScrollPane):
+# SimpleTable is a ScrollPane, where a Frame has been placed on the canvas - called GridContainer
+class SimpleTable(ScrollPane):
 
     def __init__(self, parent, title, data, action=None, addRow=None,
                     actionHeading="Action", actionButton="Press",
@@ -12281,7 +12334,7 @@ class SimpleGrid(ScrollPane):
             "selectedBg": "#D3D3D3",
         }
 
-        super(SimpleGrid, self).__init__(parent, resize=True, **{})
+        super(SimpleTable, self).__init__(parent, resize=True, **{})
 
         # actions
         self.addRowEntries = addRow
@@ -12364,7 +12417,7 @@ class SimpleGrid(ScrollPane):
             self.addButton = kw.pop("addbutton")
             self.ent_but.config(text=self.addButton)
 
-        super(SimpleGrid, self).configure(**kw)
+        super(SimpleTable, self).configure(**kw)
 
     def _configCells(self):
         for row in self.cells:
