@@ -541,7 +541,7 @@ class gui(object):
         self.panedFrameFont = font.Font(family="Helvetica", size=12)
         self.scrollPaneFont = font.Font(family="Helvetica", size=12)
         self.propertiesFont = font.Font(family="Helvetica", size=12)
-        self.gridFont = font.Font(family="Helvetica", size=12)
+        self.tableFont = font.Font(family="Helvetica", size=12)
 
         # create a menu bar - only shows if populated
         # now created in menu functions, as it generated a blank line...
@@ -4565,7 +4565,7 @@ class gui(object):
             actionHeading, actionButton, addButton,
             showMenu, buttonFont=self._buttonFont)
         if not self.ttkFlag:
-            grid.config(font=self.gridFont, background=self._getContainerBg())
+            grid.config(font=self.tableFont, background=self._getContainerBg())
         self._positionWidget(grid, row, column, colspan, rowspan, N+E+S+W)
         self.widgetManager.add(self.Widgets.Table, title, grid)
         return grid
