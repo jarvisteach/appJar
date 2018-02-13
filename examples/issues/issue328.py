@@ -3,8 +3,8 @@ sys.path.append("../../")
 from appJar import gui
 
 def close(): app.hideSubWindow("Accessibility")
-def changeFg(): app.label("fg", bg=app.colourBox(app.getLabelWidget("fg").cget("bg")))
-def changeBg(): app.label("bg", bg=app.colourBox(app.getLabelWidget("bg").cget("bg")))
+def changeFg(): app.label("fg", bg=app.colourBox(app.getLabelBg("fg")))
+def changeBg(): app.label("bg", bg=app.colourBox(app.getLabelBg("bg")))
 
 def settings():
     font = {"underline":app.check("Underline"), "overstrike":app.check("Overstrike")}
@@ -15,8 +15,8 @@ def settings():
     if app.option("Size:") is not None: font["size"] = app.option("Size:")
 
     app.font = font
-    app.bg = app.getLabelWidget("bg").cget("bg")
-    app.fg = app.getLabelWidget("fg").cget("bg")
+    app.bg = app.getLabelBg("bg")
+    app.fg = app.getLabelBg("fg")
 
 with gui("COLOUR TEST", "400x400") as app:
     app.label("Some text")

@@ -2741,6 +2741,9 @@ class gui(object):
         if val is not None: name+= "-" + val
         return self.widgetManager.get(kind, name)
 
+    def _getWidgetBg(self, kind, name, val=None):
+        return self.getWidget(kind, name, val).cget("bg")
+
     def addWidget(self, title, widg, row=None, column=0, colspan=0, rowspan=0):
         self.widgetManager.verify(self.Widgets.Widget, title)
         self._positionWidget(widg, row, column, colspan, rowspan)
@@ -3252,6 +3255,11 @@ class gui(object):
                 "Widget(self, name, val=None): return self.getWidget(" +
                 str(k) + ", name, val)")
             exec("gui.get" + v + "Widget=get" + v + "Widget")
+
+            exec( "def get" + v +
+                "Bg(self, name, val=None): return self._getWidgetBg(" +
+                str(k) + ", name, val)")
+            exec("gui.get" + v + "Bg=get" + v + "Bg")
 
 #####################################
 #  FUNCTION to hide/show/remove widgets
