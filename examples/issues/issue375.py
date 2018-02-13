@@ -6,7 +6,9 @@ from appJar import gui
 with gui() as app:
     app.editMenu = True
     app.entry("a")
-    app.entry("b", kind="standard")
+    app.entry("s", secret=True)
+    app.entry("t", kind="numeric", default="enter a number")
+    app.entry("b", kind="standard", default="nothing to see here")
     app.entry("c", kind="file")
     app.entry("d", kind="numeric")
     app.entry("e", kind="directory")

@@ -550,7 +550,7 @@ class gui(object):
         self.hasTb = False
         self.tbPinned = True
         self.pinBut = None
-        self.copyAndPaste = CopyAndPaste(self.topLevel)
+        self.copyAndPaste = CopyAndPaste(self.topLevel, self)
 
         # won't pack, if don't pack it here
         self.tb = frameBase(self.appWindow)
@@ -2679,16 +2679,6 @@ class gui(object):
 
     # creates relevant bindings on the widget
     def _addRightClickMenu(self, widget):
-        widget.bind("<FocusIn>", self._checkCopyAndPaste, add="+")
-        widget.bind("<FocusOut>", self._checkCopyAndPaste, add="+")
-
-        if widget.var is None:  # TEXT:
-            widget.bind('<KeyRelease>', self._checkCopyAndPaste)
-            widget.bind('<<Paste>>', self._checkCopyAndPaste)
-        else:
-            widget.var.trace("w", lambda name, index, mode,
-                e=None, w=widget: self._checkCopyAndPaste(e, w))  # ENTRY/OPTION
-
         if self.platform in [self.WINDOWS, self.LINUX]:
             widget.bind('<Button-3>', self._rightClick)
         else:
@@ -2697,7 +2687,7 @@ class gui(object):
     def _rightClick(self, event, menu="EDIT"):
         event.widget.focus()
         if menu == "EDIT":
-            if self._checkCopyAndPaste(event):
+            if self._prepareCopyAndPasteMenu(event):
                 self.widgetManager.get(self.Widgets.Menu, menu).focus_set()
                 self.widgetManager.get(self.Widgets.Menu, menu).post(event.x_root - 10, event.y_root - 10)
         else:
@@ -9505,41 +9495,32 @@ class gui(object):
 
             self.addMenuItem(menuName, t, u)
 
-    def _checkCopyAndPaste(self, event, widget=None):
+    def _prepareCopyAndPasteMenu(self, event, widget=None):
         if self.copyAndPaste.inUse:
-            if event is None or not (
-                    event.type == "10" and self.GET_PLATFORM() == self.LINUX):
-                self.disableMenu("EDIT", 10)
-
             if event is not None:
                 widget = event.widget
-
-            # 9 = ENTER/10 = LEAVE/4=RCLICK/3=PRESS/2=PASTE
-            if event is None or event.type in ["9", "3", "4", "2"]:
-                self.copyAndPaste.setUp(widget)
-                if self.copyAndPaste.canCopy:
-                    self.enableMenuItem("EDIT", "Copy")
-                if self.copyAndPaste.canCut:
-                    self.enableMenuItem("EDIT", "Cut")
-                if self.copyAndPaste.canPaste:
-                    self.enableMenuItem("EDIT", "Paste")
-                    self.enableMenuItem("EDIT", "Clear Clipboard")
-                if self.copyAndPaste.canSelect:
-                    self.enableMenuItem("EDIT", "Select All")
-                    self.enableMenuItem("EDIT", "Clear All")
-                if self.copyAndPaste.canUndo:
-                    self.enableMenuItem("EDIT", "Undo")
-                if self.copyAndPaste.canRedo:
-                    self.enableMenuItem("EDIT", "Redo")
+            self.disableMenu("EDIT", 10)
+            self.copyAndPaste.setUp(widget)
+            if self.copyAndPaste.canCopy:
+                self.enableMenuItem("EDIT", "Copy")
+            if self.copyAndPaste.canCut:
+                self.enableMenuItem("EDIT", "Cut")
+            if self.copyAndPaste.canPaste:
+                self.enableMenuItem("EDIT", "Paste")
+                self.enableMenuItem("EDIT", "Clear Clipboard")
+            if self.copyAndPaste.canSelect:
+                self.enableMenuItem("EDIT", "Select All")
+                self.enableMenuItem("EDIT", "Clear All")
+            if self.copyAndPaste.canUndo:
+                self.enableMenuItem("EDIT", "Undo")
+            if self.copyAndPaste.canRedo:
+                self.enableMenuItem("EDIT", "Redo")
             return True
         else:
             return False
 
     # called when copy/paste menu items are clicked
     def _copyAndPasteHelper(self, menu):
-        widget = self.topLevel.focus_get()
-        self.copyAndPaste.setUp(widget)
-
         if menu == "Cut":
             self.copyAndPaste.cut()
         elif menu == "Copy":
@@ -13004,15 +12985,20 @@ class SplashScreen(Toplevel, object):
 
 class CopyAndPaste():
 
-    def __init__(self, topLevel):
+    def __init__(self, topLevel, gui):
         self.topLevel = topLevel
         self.inUse = False
+        self.gui = gui
 
     def setUp(self, widget):
         self.inUse = True
         # store globals
-        self.widget = widget
-        self.widgetType = gui.GET_WIDGET_TYPE(widget)
+        w = widget
+        wt = gui.GET_WIDGET_TYPE(widget)
+
+        if wt != "Menu":
+            self.widget = w
+            self.widgetType = wt
 
         # query widget
         self.canCut = False
@@ -13026,22 +13012,26 @@ class CopyAndPaste():
         except:
             self.canPaste = False
 
-        if self.widgetType in ["Entry", "AutoCompleteEntry"]:
-            if widget.selection_present():
-                self.canCut = self.canCopy = True
-            if widget.index(END) > 0:
-                self.canSelect = True
-        elif self.widgetType in ["ScrolledText", "Text", "AjText", "AjScrolledText"]:
-            if widget.tag_ranges("sel"):
-                self.canCut = self.canCopy = True
-            if widget.index("end-1c") != "1.0":
-                self.canSelect = True
-            if widget.edit_modified():
-                self.canUndo = True
-            self.canRedo = True
-        elif self.widgetType == "OptionMenu":
-            self.canCopy = True
-            self.canPaste = False
+        try:
+            if self.widgetType in ["Entry", "AutoCompleteEntry"]:
+                if widget.selection_present():
+                    self.canCut = self.canCopy = True
+                if not self.widget.showingDefault and widget.index(END) > 0:
+                    self.canSelect = True
+            elif self.widgetType in ["ScrolledText", "Text", "AjText", "AjScrolledText"]:
+                if widget.tag_ranges("sel"):
+                    self.canCut = self.canCopy = True
+                if widget.index("end-1c") != "1.0":
+                    self.canSelect = True
+                if widget.edit_modified():
+                    self.canUndo = True
+                self.canRedo = True
+            elif self.widgetType == "OptionMenu":
+                self.canCopy = True
+                self.canPaste = False
+        except Exception as e:
+            gui.warn("Error in EDIT menu: %s", self,widgetType)
+            gui.exception(e)
 
     def copy(self):
         if self.widgetType == "OptionMenu":
@@ -13059,6 +13049,10 @@ class CopyAndPaste():
             self.widget.selection_clear()
 
     def paste(self):
+        if self.widgetType in ["Entry", "AutoCompleteEntry"]:
+            # horrible hack to clear default text
+            name = self.gui._getWidgetName(self.widget)
+            self.gui._updateEntryDefault(name, mode="in")
         self.widget.event_generate('<<Paste>>')
         self.widget.selection_clear()
 
