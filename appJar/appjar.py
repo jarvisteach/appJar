@@ -13044,8 +13044,8 @@ class CopyAndPaste():
                     self.canCut = self.canCopy = True
                 if widget.index("end-1c") != "1.0":
                     self.canSelect = True
-                if widget.edit_modified():
-                    self.canUndo = True
+#                if widget.edit_modified():
+                self.canUndo = True
                 self.canRedo = True
             elif self.widgetType == "OptionMenu":
                 self.canCopy = True
@@ -13078,16 +13078,10 @@ class CopyAndPaste():
         self.widget.selection_clear()
 
     def undo(self):
-        try:
-            self.widget.edit_undo()
-        except:
-            self.topLevel.bell()
+        self.widget.event_generate("<<Undo>>")
 
     def redo(self):
-        try:
-            self.widget.edit_redo()
-        except:
-            self.topLevel.bell()
+        self.widget.event_generate("<<Redo>>")
 
     def clearClipboard(self):
         self.topLevel.clipboard_clear()
