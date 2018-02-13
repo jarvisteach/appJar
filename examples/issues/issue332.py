@@ -31,6 +31,10 @@ def pressNew(btn):
         with app.tab("Five"):
             app.label("t5", "Tab Five")
 
+def hide(btn):
+    if btn == "HIDE": app.hideTabbedFrameTab("tabs", "Two")
+    else: app.showTabbedFrameTab("tabs", "Two")
+
 with gui("Tabs") as app:
     with app.tabbedFrame("tabs"):
         app.setTabbedFrameTabExpand("tabs", expand=True)
@@ -42,3 +46,4 @@ with gui("Tabs") as app:
             app.label("t3", "Tab Three")
 
     app.addButtons(["OLD TAB", "NEW TAB"], [press, pressNew])
+    app.addButtons(["HIDE", "SHOW"], hide)

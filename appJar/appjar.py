@@ -4192,6 +4192,19 @@ class gui(object):
                 # propagate any left over confs
                 super(TabbedFrame, self).config(cnf, **kw)
 
+            def hideTab(self, text):
+                tab = self.widgetStore[text][0]
+                tab.pack_forget()
+                self._resetTabs(text)
+                self._colourTabs()
+
+            def showTab(self, text):
+                tab = self.widgetStore[text][0]
+                if self.fill:
+                    tab.pack(side=LEFT, ipady=4, ipadx=4, expand=True, fill=BOTH)
+                else:
+                    tab.pack(side=LEFT, ipady=4, ipadx=4)
+
             def deleteTab(self, text):
                 tab = self.widgetStore[text][0]
                 pane = self.widgetStore[text][1]
@@ -4432,6 +4445,14 @@ class gui(object):
     def deleteTabbedFrameTab(self, title, tab):
         nb = self.widgetManager.get(self.Widgets.TabbedFrame, title)
         nb.deleteTab(tab)
+
+    def showTabbedFrameTab(self, title, tab):
+        nb = self.widgetManager.get(self.Widgets.TabbedFrame, title)
+        nb.showTab(tab)
+
+    def hideTabbedFrameTab(self, title, tab):
+        nb = self.widgetManager.get(self.Widgets.TabbedFrame, title)
+        nb.hideTab(tab)
 
     def setTabText(self, title, tab, newText=None):
         nb = self.widgetManager.get(self.Widgets.TabbedFrame, title)
