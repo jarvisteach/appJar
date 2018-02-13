@@ -2409,7 +2409,11 @@ class gui(object):
     expand = property(getExpand, setExpand)
 
     def getFonts(self):
-        return list(font.families()).sort()
+        fonts = list(font.families())
+        fonts.sort()
+        return fonts
+
+    fonts = property(getFonts)
 
     def increaseFont(self):
         self.increaseLabelFont()
@@ -4991,11 +4995,12 @@ class gui(object):
 #####################################
 
     @contextmanager
-    def subWindow(self, name, title=None, modal=False, blocking=False, transient=False, grouped=True):
+    def subWindow(self, name, title=None, modal=False, blocking=False, transient=False, grouped=True, **kwargs):
         try:
             sw = self.startSubWindow(name, title, modal, blocking, transient, grouped)
         except ItemLookupError:
             sw = self.openSubWindow(name)
+        self.configure(**kwargs)
         try: yield sw
         finally: self.stopSubWindow()
 
@@ -5254,11 +5259,12 @@ class gui(object):
         kwargs = self._parsePos(kwargs.pop("pos", []), kwargs)
 
         try: self.widgetManager.verify(widgKind, title)
-        except:
+        except: #widget exists
             if len(kwargs) > 0:
                 self._configWidget(title, widgKind, **kwargs)
             if value is None: return self.getCheckBox(title)
             else: self.setCheckBox(title, ticked=value, callFunction=callFunction)
+        else:
             check = self._checkBoxMaker(title, *args, **kwargs)
             if value is not None: self.setCheckBox(title, value)
             self._configWidget(title, widgKind, **kwargs)
@@ -5490,6 +5496,7 @@ class gui(object):
         callFunction = kwargs.pop("callFunction", True)
         override = kwargs.pop("override", False)
         checked = kwargs.pop("checked", True)
+        selected = kwargs.pop("selected", None)
         kwargs = self._parsePos(kwargs.pop("pos", []), kwargs)
 
         """ adds, sets & gets optionBoxes all in one go """
@@ -5504,6 +5511,7 @@ class gui(object):
             else:
                 if label: opt = self.addLabelOptionBox(title, value, *args, **kwargs)
                 else: opt = self.addOptionBox(title, value, *args, **kwargs)
+                if selected is not None: self.setOptionBox(title, selected)
 
         if len(kwargs) > 0:
             self._configWidget(title, widgKind, **kwargs)
@@ -7406,7 +7414,7 @@ class gui(object):
             if val is not None:
                 gui.error("Invalid argument for %s %s - %s:%s", self.Widgets.name(kind), title, key, val)
 
-        tooltip = kwargs.pop("tooltip", None)
+        tooltip = kwargs.pop("tip", kwargs.pop("tooltip", None))
         change = kwargs.pop("change", None)
         submit = kwargs.pop("submit", None)
         over = kwargs.pop("over", None)
@@ -7524,6 +7532,15 @@ class gui(object):
     # adds a set of buttons, in the row, spannning specified columns
     # pass in a list of names & a list of functions (or a single function to
     # use for all)
+    def buttons(self, names, funcs, **kwargs):
+        kwargs = self._parsePos(kwargs.pop("pos", []), kwargs)
+        self._addButtons(names, funcs, **kwargs)
+        for title in names:
+            self._configWidget(title, self.Widgets.Button, **kwargs)
+
+    def _addButtons(self, names, funcs, row=None, column=0, colspan=0, rowspan=0, **kwargs):
+        self.addButtons(names, funcs, row, column, colspan, rowspan)
+
     def addButtons(self, names, funcs, row=None, column=0, colspan=0, rowspan=0):
 
         if not isinstance(names, list):

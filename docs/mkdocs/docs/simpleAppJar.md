@@ -251,6 +251,7 @@ When clicked, displays a drop-down of items, one of which can be selected.
 | Parameter | Data type | Default | Description |
 | --------- | --------- | ------- | ------------|
 | kind | string | `standard` | Set this to `ticks` if you want tickable options. |
+| selected | string/integer | None | Start with the specified item/position selected. |
 
 ## Spin  
 ---
