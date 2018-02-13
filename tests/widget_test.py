@@ -125,6 +125,17 @@ def test_labels():
     # call generic setter functions
     test_setters("Label", "l1")
 
+    app.label("xx1", row=0, column=0, rowspan=0, colspan=0)
+    app.label("xx2", row='p', column=0, rowspan=0, colspan=0)
+    app.label("xx3", row='previous', column=0, rowspan=0, colspan=0)
+    app.label("xx4", row='n', column=0, rowspan=0, colspan=0)
+    app.label("xx5", row='next', column=0, rowspan=0, colspan=0)
+    app.label("xx6", pos=(1,2,3,4))
+    app.label("xx7", pos=(2,2,3,4))
+    app.label("xx8", pos=('p',2,3,4))
+    app.label("xx9", pos=('n',2,3,4))
+    app.label("xx0", pos=(None,2,3,4))
+
     print("\t >> all tests complete")
 
 

@@ -120,10 +120,11 @@ It can be annoying having to specify all of the positional parameters each time,
 For example: `app.addLabel("l1", "text here", colspan=2)`, will set the `colspan` parameter, without having to set the preceding ones.   
 
 ####Row Helpers
-If you combine that with having appJar telling you the row you're on, things get even easier.  
+
+appJar tracks the next available row.:
 
 * `.getRow()` or `.gr()`  
-    Returns the row number currently being used.  
+    Returns the next free row.  
     Useful if you're mainly adding things sequentially, but want to modify one line out of sequence.  
 
 ![Grid Layout](img/layouts/grid3.png)
@@ -152,6 +153,18 @@ for loop in range(3, 6):
     app.setLabelBg(loop, colours[loop%2])
 
 app.go()
+```
+
+Instead of calling `.getRow()`, you can specify the string "previous" or "p" to use the the previous row:  
+
+```python
+from appJar import gui 
+with gui("LABS", "400x400", sticky="news") as app:
+    app.label("0-0", bg="red")
+    app.label("0-1", bg="orange", row="previous", column=1)
+    app.label("0-2", bg="yellow", row="previous", column=2)
+    app.label("1-0", bg="green")
+    app.label("1-1-2", bg="blue", row="previous", column=1, colspan=2)
 ```
 
 ---
