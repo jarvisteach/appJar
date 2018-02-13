@@ -2,6 +2,33 @@ import sys
 sys.path.append("../../")
 from appJar import gui
 
+currFont = currBg = currFg = None
+
+def open():
+    global currFont, currBg, currFg
+    # get current settings
+    currFont = app._labelFont.actual()
+    currBg = app.bgLabel.cget("bg")
+    currFg = app.containerStack[0]["fg"]
+    reset()
+    app.showSubWindow("Accessibility")
+
+def reset():
+    app.listbox("Family", currFont["family"])
+    app.option("Size:", str(currFont["size"]))
+
+    if currFont["weight"] == "normal": app.check("Bold", False)
+    else: app.check("Bold", True)
+
+    if currFont["slant"] == "roman": app.radio("slant", "Normal")
+    else: app.radio("slant", "Italic")
+
+    app.check("Overstrike", currFont["overstrike"])
+    app.check("Underline", currFont["underline"])
+
+    app.label("fg", bg=currFg)
+    app.label("bg", bg=currBg)
+ 
 def close(): app.hideSubWindow("Accessibility")
 def changeFg(): app.label("fg", bg=app.colourBox(app.getLabelBg("fg")))
 def changeBg(): app.label("bg", bg=app.colourBox(app.getLabelBg("bg")))
@@ -20,21 +47,21 @@ def settings():
 
 with gui("COLOUR TEST", "400x400") as app:
     app.label("Some text")
-    app.button("Accessibility", app.showSubWindow, icon="ACCESS", tip="Click here for accessibility options")
+    app.button("Accessibility", open, icon="ACCESS", tip="Click here for accessibility options")
 
     with app.subWindow("Accessibility", sticky = "news", location=(200,200)) as sw:
         sw.config(padx=5, pady=1)
         with app.labelFrame("Font", sticky="news") as lf:
             lf.config(padx=10, pady=10)
-            app.listbox("Family", app.fonts, colspan=2, rows=6)
-            app.option("Size:", [7, 8, 9, 10, 12, 13, 14, 16, 18, 20, 22, 25, 29, 34, 40], label=True, pos=(1,0), selected="12")
-            app.check("Bold", pos=(1,1))
-            app.radio("slant", "Normal", pos=(2,0))
-            app.radio("slant", "Italic", pos=(2,1))
-            app.check("Underline", pos=(3,0))
-            app.check("Overstrike", pos=(3,1))
+            app.listbox("Family", app.fonts, colspan=2, rows=6, tip="Choose a font")
+            app.option("Size:", [7, 8, 9, 10, 12, 13, 14, 16, 18, 20, 22, 25, 29, 34, 40], label=True, pos=(1,0), tip="Choose a font size")
+            app.check("Bold", pos=(1,1), tip="Check this to make all font bold")
+            app.radio("slant", "Normal", pos=(2,0), tip="No italics")
+            app.radio("slant", "Italic", pos=(2,1), tip="Set font italic")
+            app.check("Underline", pos=(3,0), tip="Underline all text")
+            app.check("Overstrike", pos=(3,1), tip="Strike out all text")
             app.label("Foreground:", pos=(4,0), sticky="ew", anchor="w")
-            app.label("fg", "", pos=(4,1), bg="black", sticky="ew", submit=changeFg, relief="ridge")
+            app.label("fg", "", pos=(4,1), sticky="ew", submit=changeFg, relief="ridge", tip="Click here to set the foreground colour")
             app.label("Background:", pos=(5,0), sticky="ew", anchor="w")
-            app.label("bg", "", pos=(5,1), bg="grey", sticky="ew", submit=changeBg, relief="ridge")
-        app.buttons(["Update", "Close"], [settings, close], sticky="se")
+            app.label("bg", "", pos=(5,1), sticky="ew", submit=changeBg, relief="ridge", tip="Click here to set the background colour")
+        app.buttons(["OK", "Cancel", "Reset"], [settings, close, reset], sticky="se")

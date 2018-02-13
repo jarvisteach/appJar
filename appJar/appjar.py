@@ -2741,8 +2741,8 @@ class gui(object):
         if val is not None: name+= "-" + val
         return self.widgetManager.get(kind, name)
 
-    def _getWidgetBg(self, kind, name, val=None):
-        return self.getWidget(kind, name, val).cget("bg")
+    def getWidgetProperty(self, kind, name, val, prop):
+        return self.getWidget(kind, name, val).cget(prop)
 
     def addWidget(self, title, widg, row=None, column=0, colspan=0, rowspan=0):
         self.widgetManager.verify(self.Widgets.Widget, title)
@@ -3257,8 +3257,8 @@ class gui(object):
             exec("gui.get" + v + "Widget=get" + v + "Widget")
 
             exec( "def get" + v +
-                "Bg(self, name, val=None): return self._getWidgetBg(" +
-                str(k) + ", name, val)")
+                "Bg(self, name, val=None): return self.getWidgetProperty(" +
+                str(k) + ", name, val, 'bg')")
             exec("gui.get" + v + "Bg=get" + v + "Bg")
 
 #####################################
