@@ -5,25 +5,19 @@ from appJar import gui
 
 # global variable to remember what's being dragged
 dragged = "dd"
-# globals to remember the meter's values
-meter1 = 0
-meter2 = 100
 # some useful colours
 colours = ["red", "orange", "green", "pink", "purple"]
 
 # calculator function
-calcVal = 0
 def calculator(key):
-    global calcVal
-    val = app.getLabel("calculator")
-    app.setLabel("calculator", val + key)
+    app.label("calculator", app.label("calculator") + key)
 
 # function to login the user
 def login(btn):
     if btn == "Clear":
-        app.clearEntry("username")
-        app.clearEntry("password")
+        app.entry("username", "")
         app.setEntryFocus("username")
+        app.entry("password", "")
     elif btn == "Submit":
         app.infoBox("Success", "Access granted")
         app.setTabbedFrameDisableAllTabs("Tabs", False)
@@ -49,18 +43,15 @@ def logout(btn = None):
 
 # function to update the meters
 def meters():
-    global meter1, meter2
-    meter1=(meter1+1)%100
-    meter2=(meter2-1)%100
-    app.setMeter("Meter1", meter1)
-    app.setMeter("Meter2", meter2)
+    val = app.meter("Meter1")[0]*100 + 1
+    app.meter("Meter1", (app.meter("Meter1")[0]*100 + 1)%100)
+    app.meter("Meter2", (app.meter("Meter2")[0]*100 - 1)%100)
 
 # functions to handle drag'n drop
 
 # call this to reset the drag'n drop label
 def resetDD(btn):
-    app.setLabel("dd", "Drop here")
-    app.setLabelBg("dd", "blue")
+    app.label("dd", "Drop here", bg="blue")
 
 # called when a drag starts - remember the label being dragged
 def drag(lbl):
@@ -70,8 +61,7 @@ def drag(lbl):
 # called when a drag stops - check the label being dropped on
 def drop(lbl):
     if lbl == "dd":
-        app.setLabel("dd", app.getLabel(dragged))
-        app.setLabelBg("dd", colours[int(dragged[2])])
+        app.label("dd", app.getLabel(dragged), bg=colours[int(dragged[2])])
 
 # called by the toolbar buttons
 def toolbar(btn):
@@ -100,7 +90,7 @@ def scale(name):
         trans = app.getScale(name)
         app.setTransparency(trans)
         app.setSpinBox("TransparencySpin", trans, callFunction=False)
-    elif name == "FontScale": app.setFont(app.getScale(name))
+    elif name == "FontScale": app.setFont(size=app.getScale(name))
 
 def move(direction):
     if direction == ">":
@@ -198,195 +188,105 @@ with gui("ShowCase") as app:
     # add a statusbar to show the time
     app.addStatusbar(side="RIGHT")
     app.registerEvent(showTime)
+    app.stopFunction = logoutFunction
 
-    app.setStopFunction(logoutFunction)
-
-    # start the tabbed frame
     with app.tabbedFrame("Tabs"):
-        #### LOGIN TAB
-        with app.tab("Login"):
-            app.setBg("SlateGray")
-            app.setSticky("NEW")
+        with app.tab("Login", bg="slategrey", sticky="new"):
             with app.labelFrame("Login Form"):
-                app.setSticky("ew")
-                app.addLabel("username", "Username", 0, 0)
-                app.addEntry("username", 0, 1)
-                app.addLabel("password", "Password", 1, 0)
-                app.addSecretEntry("password", 1, 1)
-                app.addButtons(["Submit", "Clear"], login, 2, 0, 2)
-                app.setEntryFocus("username")
-                app.setSticky("e")
-                app.addLink("help", helpMe, column=1)
+                app.label("username", "Username", sticky="ew")
+                app.entry("username", pos=('p', 1), focus=True)
+                app.label("password", "Password")
+                app.entry("password", pos=('p', 1), secret=True)
+                app.buttons(["Submit", "Clear"], login, colspan=2)
+                app.link("help", helpMe, column=1, sticky="e")
 
-        #### LISTS TAB
-        with app.tab("Lists"):
-            app.setSticky("ew")
-            app.setExpand("all")
-            app.setBg("OrangeRed")
+        with app.tab("Lists", sticky="ew", expand="all", bg="orangered"):
+            app.listbox("Animals", ["Zebra", "Sheep", "Lion", "Giraffe", "Snake", "Fish"], pos=(0, 0, 1, 4), bg="orange")
+            app.listbox("Sports", ["Football", "Rugby", "Cricket", "Golf", "Cycling", "Netball", "Rounders"], pos=(0, 2, 1, 4), bg="orange")
+            app.button("<", move, pos=(0, 1))
+            app.button("<<", move, pos=(1, 1))
+            app.button(">>", move, pos=(2, 1))
+            app.button(">", move, pos=(3, 1))
+            app.entry("animalsEntry", pos=(4, 0), bg="lightgrey", submit=add, default="-- add an item --")
+            app.entry("sportsEntry", pos=(4, 2), bg="lightgrey", submit=add, default="-- add an item --")
 
-            app.addListBox("Animals", ["Zebra", "Sheep", "Lion", "Giraffe", "Snake", "Fish"], 0, 0, 1, 4)
-            app.addListBox("Sports", ["Football", "Rugby", "Cricket", "Golf", "Cycling", "Netball", "Rounders"], 0, 2, 1, 4)
-
-            app.addButton("<", move, 0, 1)
-            app.addButton("<<", move, 1, 1)
-            app.addButton(">>", move, 2, 1)
-            app.addButton(">", move, 3, 1)
-
-            app.addEntry("animalsEntry", 4, 0)
-            app.addEntry("sportsEntry", 4, 2)
-
-            app.setListBoxBg("Animals", "Orange")
-            app.setListBoxBg("Sports", "Orange")
-            app.setEntryBg("animalsEntry", "LightGrey")
-            app.setEntryBg("sportsEntry", "LightGrey")
-            app.setEntrySubmitFunction("animalsEntry", add)
-            app.setEntrySubmitFunction("sportsEntry", add)
-
-            app.setEntryDefault("animalsEntry", "-- add an item --")
-            app.setEntryDefault("sportsEntry", "-- add an item --")
-
-        #### PROPERTIES TAB
         with app.tab("Properties"):
             with app.panedFrame("left"):
-                app.addLabel("t", "Transparency")
-                app.addLabel("t2", "Transparency")
-                app.addLabel("f","Font")
+                app.label("t", "Transparency")
+                app.label("t2", "Transparency")
+                app.label("f","Font")
 
                 with app.panedFrame("right"):
-                    app.addScale("TransparencyScale")
-                    app.setScale("TransparencyScale", 100)
-                    app.setScaleChangeFunction("TransparencyScale", scale)
-                    app.showScaleIntervals("TransparencyScale", 25)
+                    app.slider("TransparencyScale", 100, change=scale, interval=25)
+                    app.spin("TransparencySpin", value=0, endValue=100, item='100', change=scale)
+                    app.slider("FontScale", 12, show=True, change=scale, range=(6,40))
 
-                    app.addSpinBoxRange("TransparencySpin", 0, 100)
-                    app.setSpinBox("TransparencySpin", 100)
-                    app.setSpinBoxChangeFunction("TransparencySpin", scale)
-
-                    app.addScale("FontScale")
-                    app.setScaleRange("FontScale", 6, 40, 12)
-                    app.setScaleChangeFunction("FontScale", scale)
-                    app.showScaleValue("FontScale")
-
-        #### METERS TAB
         with app.tab("Meters"):
-            app.addMeter("Meter1")
-            app.addMeter("Meter2")
-            app.setMeterFill("Meter1", "Yellow")
-            app.setMeterFill("Meter2", "Orange")
+            app.meter("Meter1", fill="Yellow")
+            app.meter("Meter2", fill="green")
             app.registerEvent(meters)
 
-        #### DRAG'N DROP TAB
         with app.tab("Drag'nDrop"):
-            with app.labelFrame(""):
-                app.setSticky("news")
-                app.setIPadX(20)
-                app.setIPadY(20)
-
+            with app.labelFrame("dnd", hideTitle=True, sticky="news", inPadding=(20,20)):
                 for i in range(5):
                     l = "DD"+str(i)
-                    app.addLabel(l, l, 0, i)
-                    app.setLabelBg(l, colours[i])
-                    app.setLabelFg(l, "white")
-                    app.setLabelDragFunction(l, [drag, drop])
+                    app.label(l, l, pos=(0, i), tip=colours[i], bg=colours[i], fg="white", drag=[drag, drop])
 
-                app.addHorizontalSeparator(1, 0, 5)
+                app.separator(1, 0, 5)
+                app.label("dd", "DROP HERE", pos=(2, 0, 5), bg="blue", fg="white", tip="Drag any of the colours here to make a change...")
 
-                app.addLabel("dd", "DROP HERE", 2, 0, 5)
-                app.setLabelTooltip("dd", "Drag any of the colours here to make a change...")
-                app.setLabelBg("dd", "blue")
-                app.setLabelFg("dd", "white")
-                app.stopLabelFrame()
+            with app.labelFrame("Reset", sticky="news"):
+                app.button("RESET", resetDD, 0,0)
+                app.label("RESET", "RESET", 0,1, bg="grey", submit=resetDD)
+                app.link("RESET", resetDD, 0,2)
 
-                app.startLabelFrame("Reset")
-                app.setSticky("news")
-                app.addButton("RESET", resetDD, 0,0)
-                app.addLabel("RESET", "RESET", 0,1)
-                app.setLabelBg("RESET", "grey")
-                app.setLabelSubmitFunction("RESET", resetDD)
-                app.addLink("RESET", resetDD, 0,2)
-
-        with app.tab("Calculator"):
-            app.setIPadX(5)
-            app.setIPadY(5)
-            app.addEmptyLabel("calculator")
-            app.setLabelBg("calculator", "grey")
-            app.setLabelRelief("calculator", "sunken")
-            app.setLabelAlign("calculator", "e")
-            buttons=[["1", "2", "3", "C"],
-                            ["4", "5", "6", "+"],
-                            ["7", "8", "9", "-"],
-                            ["0", "*", "/", "="]]
-
-            app.addButtons(buttons, calculator)
-            app.setButtonWidths(buttons, 3)
-            app.setButtonHeights(buttons, 3)
+        with app.tab("Calculator", inPadding = (5,5)):
+            app.label("calculator", "", bg="grey", relief="sunken", anchor="e")
+            buttons=[["1", "2", "3", "C"], ["4", "5", "6", "+"], ["7", "8", "9", "-"], ["0", "*", "/", "="]]
+            app.buttons(buttons, calculator, width=3, height=3)
 
         with app.tab("Panes"):
-            with app.panedFrame("a"):
-                app.setSticky("news")
-                app.addLabel("p1", "Edit Pane")
-                app.setLabelRelief("p1", "groove")
-                app.addTextArea("t1")
-                with app.panedFrameVertical("b"):
-                    app.addLabel("p2", "Pane 2")
-                with app.panedFrame("c"):
-                    app.addLabel("p3", "Pane 3")
-                with app.panedFrame("d"):
-                    app.addLabel("p4", "Pane 4")
+            with app.panedFrame("a", sticky = "news"):
+                app.label("Edit Pane", relief="groove")
+                app.text("t1")
+                with app.panedFrameVertical("b"): app.label("Pane 2")
+                with app.panedFrame("c"): app.label("Pane 3")
+                with app.panedFrame("d"): app.label("Pane 4")
 
-        with app.tab("Labels"):
-            app.setSticky("nesw")
+        with app.tab("Labels", sticky = "news"):
+            app.label("Yellow", rowspan=4, bg="yellow")
+            app.label("Red", pos=('p', 1, 2), bg="red")
+            app.label("Green", pos=('n', 1), bg="green")
+            app.label("Blue", pos=('p', 2, 1, 2), bg="blue")
+            app.label("Orange", pos=('n', 1), bg="orange")
+            app.label("Pink", pos=('n', 1, 2), bg="pink")
+            app.label("Purple", colspan=3, bg="purple")
 
-            app.addLabel("ll1", "Red", 0, 1, 4)
-            app.setLabelBg("ll1", "Red")
-            app.addLabel("ll2", "Yellow", 0, 0, 1, 4)
-            app.setLabelBg("ll2", "Yellow")
-            app.addLabel("ll3", "Green", 1, 1, 2)
-            app.setLabelBg("ll3", "Green")
-            app.addLabel("ll4", "Blue", 1, 3, 1, 2)
-            app.setLabelBg("ll4", "Blue")
-            app.addLabel("ll5", "Orange", 2, 1, 2)
-            app.setLabelBg("ll5", "Orange")
-            app.addLabel("ll6", "Pink", 3, 1, 4)
-            app.setLabelBg("ll6", "Pink")
-            app.addLabel("ll7", "Purple", 4, 0, 4)
-            app.setLabelBg("ll7", "Purple")
-
-    with app.subWindow("Statistics", transient=True):
-        app.setBg("yellow")
-        app.setSticky("news")
-        app.setSize("300x330")
+    with app.subWindow("Statistics", transient=True, bg="yellow", sticky="news", size="300x330"):
         values={"German":20, "French":10, "English":60, "Dutch": 5, "Belgium":3, "Danish":2}
         app.addPieChart("Nationality", values)
-        app.addLabelOptionBox("Nationality", values.keys())
-        app.addNumericEntry("Percentage")
+        app.option("Nationality", values.keys(), label=True)
+        app.entry("Percentage", kind="numeric")
         def changePie(btn):
             app.setPieChart("Nationality", app.getOptionBox("Nationality"), app.getEntry("Percentage"))
-        app.addButton("Update", changePie)
+        app.button("Update", changePie)
 
-    # google maps
-    with app.subWindow("Maps"):
-        app.setSticky("news")
+    with app.subWindow("Maps", sticky="news"):
         app.addGoogleMap("g1")
 
-    # date picker
     with app.subWindow("DatePicker", transient=True, modal=True):
-        app.addDatePicker("dp")
-        app.setDatePicker("dp")
+        app.date("dp", "today")
         def getDate(btn=None):
             print(app.getDatePicker("dp"))
             return True
         app.addNamedButton("DONE", "DatePicker", app.hideSubWindow)
         app.setStopFunction(getDate)
 
-    # paged window
     with app.subWindow("AddressBook", transient=True):
         with app.pagedWindow("AddressBook"):
-            with app.page():
-                app.addLabel("PP1", "PP1")
-            with app.page():
-                app.addLabel("PP2", "PP2")
-            with app.page():
-                app.addLabel("PP3", "PP3")
+            with app.page(): app.label("PP1")
+            with app.page(): app.label("PP2")
+            with app.page(): app.label("PP3")
 
+    # start logged out
     logout()

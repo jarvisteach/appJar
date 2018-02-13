@@ -8,8 +8,8 @@ from appJar import gui
 with gui() as app:
     app.label("a", "Hello world")
     app.label("b", "Hello world")
-    app.grip(0,1)
-    app.button("a", press)
-    app.button("b", press)
-    app.button("c", press)
+    app.grip(pos=(0,1))
+    app.button("a", press, col=1)
+    app.button("b", press, col=1)
+    app.button("c", press, col=1)
 

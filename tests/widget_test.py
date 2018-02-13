@@ -1809,6 +1809,7 @@ def test_rightClick():
         app.setEntry("RCLICK", action)
         app.setEntryFocus("RCLICK")
         ent.focus_set()
+        app._prepareCopyAndPaste(event, widget=ent)
         app._copyAndPasteHelper(action)
 
 
