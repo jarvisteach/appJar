@@ -2737,6 +2737,7 @@ class gui(object):
         return self.getWidget(kind, name, val).cget(prop)
 
     def addWidget(self, title, widg, row=None, column=0, colspan=0, rowspan=0):
+        ''' adds a generic widget to the appJar grid manager '''
         self.widgetManager.verify(self.Widgets.Widget, title)
         self._positionWidget(widg, row, column, colspan, rowspan)
         self.widgetManager.add(self.Widgets.Widget, title, widg)
@@ -3882,7 +3883,7 @@ class gui(object):
         elif fType == self.Widgets.Frame:
             # first, make a Frame, and position it correctly
             self.widgetManager.verify(self.Widgets.Frame, title)
-            container = self.makeAjFrame()(self.getContainer())
+            container = self._makeAjFrame()(self.getContainer())
             container.isContainer = True
 #            container.config(background=self._getContainerBg(), font=self.frameFont, relief="groove")
             container.config(background=self._getContainerBg())
@@ -3895,7 +3896,7 @@ class gui(object):
             return container
         elif fType == self.Widgets.TabbedFrame:
             self.widgetManager.verify(self.Widgets.TabbedFrame, title)
-            tabbedFrame = self.tabbedFrameMaker(self.getContainer(), self.ttkFlag, font=self.tabbedFrameFont)
+            tabbedFrame = self._tabbedFrameMaker(self.getContainer(), self.ttkFlag, font=self.tabbedFrameFont)
             if not self.ttkFlag:
                 tabbedFrame.config(bg=self._getContainerBg())
 #            tabbedFrame.isContainer = True
@@ -4108,7 +4109,7 @@ class gui(object):
     #################################
     # TabbedFrame Class
     #################################
-    def tabbedFrameMaker(self, master, useTtk=False, **kwargs):
+    def _tabbedFrameMaker(self, master, useTtk=False, **kwargs):
         class TabbedFrame(frameBase, object):
 
             def __init__(self, master, fill=False, changeOnFocus=True, font=None, **kwargs):
@@ -4586,6 +4587,7 @@ class gui(object):
 
     def addDbTable(self, title, db, table, row=None, column=0, colspan=0, rowspan=0, action=None, addRow=None,
                 actionHeading="Action", actionButton="Press", addButton="Add", showMenu=False):
+        ''' creates a new Table, displaying the specified database & table '''
 
         pk, data = self._getDbData(db, table)
         grid = self.addTable(title, data, row, column, colspan, rowspan, action, addRow, actionHeading, actionButton, addButton, showMenu)
@@ -4597,6 +4599,7 @@ class gui(object):
 
     def addTable(self, title, data, row=None, column=0, colspan=0, rowspan=0, action=None, addRow=None,
                 actionHeading="Action", actionButton="Press", addButton="Add", showMenu=False):
+        ''' creates a new table, displaying the specified data '''
         self.widgetManager.verify(self.Widgets.Table, title)
         grid = SimpleTable(self.getContainer(), title, data,
             action, addRow,
@@ -4623,22 +4626,27 @@ class gui(object):
         grid.selectColumn(col, highlight)
 
     def addTableRow(self, title, data):
+        ''' adds a new row of data to the specified table '''
         grid = self.widgetManager.get(self.Widgets.Table, title)
         grid.addRow(data)
 
     def addTableRows(self, title, data):
+        ''' adds multiple rows of data to the specified table '''
         grid = self.widgetManager.get(self.Widgets.Table, title)
         grid.addRows(data)
 
     def addTableColumn(self, title, columnNumber, data):
+        ''' adds a new column of data, in the specified position, to the specified table '''
         grid = self.widgetManager.get(self.Widgets.Table, title)
         grid.addColumn(columnNumber, data)
 
     def deleteTableColumn(self, title, columnNumber):
+        ''' deletes the specified column from the specified table '''
         grid = self.widgetManager.get(self.Widgets.Table, title)
         grid.deleteColumn(columnNumber)
 
     def setTableHeaders(self, title, data):
+        ''' change the headers in the specified table '''
         grid = self.widgetManager.get(self.Widgets.Table, title)
         grid.setHeaders(data)
 
@@ -4679,10 +4687,12 @@ class gui(object):
     # temporary deprecated functions
     def addGrid(self, title, data, row=None, column=0, colspan=0, rowspan=0, action=None, addRow=None,
                 actionHeading="Action", actionButton="Press", addButton="Add", showMenu=False):
+        ''' DEPRECATED - adds a new grid widget with the specified data '''
         gui.warn("Deprecated - grids renamed to tables")
         return self.addTable(title, data, row, column, colspan, rowspan, action, addRow, actionHeading, actionButton, addButton, showMenu)
     def addDbGrid(self, title, db, table, row=None, column=0, colspan=0, rowspan=0, action=None, addRow=None,
                 actionHeading="Action", actionButton="Press", addButton="Add", showMenu=False):
+        ''' DEPRECATED - adds a new table widget, with the specified database and table '''
         gui.warn("Deprecated - grids renamed to tables")
         return self.addDbTable(title, db, table, row, column, colspan, rowspan, action, addRow, actionHeading, actionButton, addButton, showMenu)
     def replaceDbGrid(self, title, db, table):
@@ -4703,10 +4713,13 @@ class gui(object):
     def selectGridColumn(self, title, col, highlight=None):
         return self.selectTableColumn(title, col, highlight)
     def addGridRow(self, title, data):
+        ''' DEPRECATED - adds a row of data to the specified grid '''
         return self.addTableRow(title, data)
     def addGridRows(self, title, data):
+        ''' DEPRECATED - adds new rows of data to the specified grid '''
         return self.addTableRows(title, data)
     def addGridColumn(self, title, columnNumber, data):
+        ''' DEPRECATED - adds a column of data to the specified grid '''
         return self.addTableColumn(title, columnNumber, data)
     def deleteGridColumn(self, title, columnNumber):
         return self.deleteTableColumn(title, columnNumber)
@@ -5216,7 +5229,7 @@ class gui(object):
         if value is None or value is True: value = title
 
         # first, make a frame
-        frame = self.makeLabelBox()(self.getContainer())
+        frame = self._makeLabelBox()(self.getContainer())
         if not self.ttkFlag:
             frame.config(background=self._getContainerBg())
         self.widgetManager.log(self.Widgets.FrameBox, frame)
@@ -5309,6 +5322,7 @@ class gui(object):
         return self.addCheckBox(title, row, column, colspan, rowspan, name)
 
     def addCheckBox(self, title, row=None, column=0, colspan=0, rowspan=0, name=None):
+        ''' adds a new check box, at the specified position '''
         self.widgetManager.verify(self.Widgets.CheckBox, title)
         var = IntVar(self.topLevel)
         if name is None:
@@ -5332,6 +5346,7 @@ class gui(object):
         return cb
 
     def addNamedCheckBox(self, name, title, row=None, column=0, colspan=0, rowspan=0):
+        ''' adds a new check box, at the specified position, with the name as the text '''
         return self.addCheckBox(title, row, column, colspan, rowspan, name)
 
     def getCheckBox(self, title):
@@ -5412,10 +5427,10 @@ class gui(object):
         self.widgetManager.verify(self.Widgets.Scale, title)
         var = DoubleVar(self.topLevel)
         if not self.ttkFlag:
-            scale = self.makeAjScale()(frame, increment=10, variable=var, repeatinterval=10, orient=HORIZONTAL)
+            scale = self._makeAjScale()(frame, increment=10, variable=var, repeatinterval=10, orient=HORIZONTAL)
             scale.config(digits=1, showvalue=False, highlightthickness=1)
         else:
-            scale = self.makeAjScale()(frame, increment=10, variable=var, orient=HORIZONTAL)
+            scale = self._makeAjScale()(frame, increment=10, variable=var, orient=HORIZONTAL)
 
         scale.bind("<Button-1>", self._grabFocus, "+")
         scale.var = var
@@ -5427,11 +5442,13 @@ class gui(object):
         return self.addScale(title, row, column, colspan, rowspan)
 
     def addScale(self, title, row=None, column=0, colspan=0, rowspan=0):
+        ''' adds a slidable scale at the specified position '''
         scale = self._buildScale(title, self.getContainer())
         self._positionWidget(scale, row, column, colspan, rowspan)
         return scale
 
     def addLabelScale(self, title, row=None, column=0, colspan=0, rowspan=0):
+        ''' adds a slidable scale, with a lable showing the title  at the specified position '''
         frame = self._getLabelBox(title, column=column)
         scale = self._buildScale(title, frame)
         self._packLabelBox(frame, scale)
@@ -5551,6 +5568,7 @@ class gui(object):
         return opt
 
     def addDbOptionBox(self, title, db, row=None, column=0, colspan=0, rowspan=0, **kwargs):
+        ''' adds an option box, with a list of tables form the specified database '''
         data = self._getDbTables(db)
         opt = self.option(title, data, row, column, colspan, rowspan, **kwargs)
         opt.db = db
@@ -6001,6 +6019,7 @@ class gui(object):
 #####################################
 
     def addGoogleMap(self, title, row=None, column=0, colspan=0, rowspan=0):
+        ''' adds a GoogleMap widget at the specified position '''
         self._loadURL()
         self._loadTooltip()
         if urlencode is False:
@@ -6077,6 +6096,7 @@ class gui(object):
 #####################################
 
     def addPlot(self, title, t, s, row=None, column=0, colspan=0, rowspan=0, width=None, height=None):
+        ''' adds a MatPlotLib, with t/s plotted '''
         canvas, fig = self._addPlotFig(title, row, column, colspan, rowspan, width, height)
         axes = fig.add_subplot(111)
         axes.plot(t,s)
@@ -6157,6 +6177,7 @@ class gui(object):
         return props
 
     def addProperties(self, title, values=None, row=None, column=0, colspan=0, rowspan=0, **kwargs):
+        ''' adds a new properties widget, displaying the dictionary of booleans as tick boxes '''
         self.widgetManager.verify(self.Widgets.Properties, title)
         haveTitle = True
         if self.containerStack[-1]['type'] == self.Widgets.ToggleFrame:
@@ -6302,9 +6323,11 @@ class gui(object):
         return spin
 
     def addSpinBox(self, title, values, row=None, column=0, colspan=0, rowspan=0, **kwargs):
+        ''' adds a spinbox, with the specified values '''
         return self._addSpinBox(title, values, row, column, colspan, rowspan)
 
     def addLabelSpinBox(self, title, values, row=None, column=0, colspan=0, rowspan=0, **kwargs):
+        ''' adds a spinbox, with the specified values, and a label displaying the title '''
         frame = self._getLabelBox(title, column=column)
         spin = self._buildSpinBox(frame, title, values)
         self._packLabelBox(frame, spin)
@@ -6313,12 +6336,14 @@ class gui(object):
         return spin
 
     def addSpinBoxRange(self, title, fromVal, toVal, row=None, column=0, colspan=0, rowspan=0, **kwargs):
+        ''' adds a spinbox, with a range of whole numbers '''
         vals = list(range(fromVal, toVal + 1))
         spin = self._addSpinBox(title, vals, row, column, colspan, rowspan)
         spin.isRange = True
         return spin
 
     def addLabelSpinBoxRange(self, title, fromVal, toVal, row=None, column=0, colspan=0, rowspan=0, **kwargs):
+        ''' adds a spinbox, with a range of whole numbers, and a label displaying the title '''
         vals = list(range(fromVal, toVal + 1))
         spin = self.addLabelSpinBox(title, vals, row, column, colspan, rowspan)
         spin.isRange = True
@@ -6794,23 +6819,23 @@ class gui(object):
 
         img.MAP_FUNC("UNKNOWN: " + str(event.x) + ", " + str(event.y))
 
-    # must be GIF or PNG
     def addImage(self, name, imageFile, row=None, column=0, colspan=0, rowspan=0, compound=None):
+        ''' Adds an image at the specified position '''
         self.widgetManager.verify(self.Widgets.Image, name)
         imgObj = self._getImage(imageFile)
         self._addImageObj(name, imgObj, row, column, colspan, rowspan, compound=compound)
         self.widgetManager.get(self.Widgets.Image, name).hasMouseOver = False
         return imgObj
 
-    # uses built-in icons to add an image
     def addIcon(self, name, iconName, row=None, column=0, colspan=0, rowspan=0, compound=None):
+        ''' adds one of the built-in  icons at the specified position '''
         icon = os.path.join(self.icon_path, iconName.lower()+".png")
         with PauseLogger():
             return self.addImage(name, icon, row, column, colspan, rowspan, compound=compound)
 
-    # load image from base-64 encoded GIF
-    # use base64 module to convert binary data to base64
     def addImageData(self, name, imageData, row=None, column=0, colspan=0, rowspan=0, fmt="gif", compound=None):
+        ''' load image from base-64 encoded GIF
+            use base64 module to convert binary data to base64 '''
         self.widgetManager.verify(self.Widgets.Image, name)
         imgObj = self._getImageData(imageData, fmt)
         self._addImageObj(name, imgObj, row, column, colspan, rowspan, compound=compound)
@@ -7085,7 +7110,7 @@ class gui(object):
         return self.addRadioButton(title, name, row, column, colspan, rowspan)
 
     def addRadioButton(self, title, name, row=None, column=0, colspan=0, rowspan=0):
-
+        ''' adds a radio button, to thr group 'title' with the text 'name' '''
         ident = title + "-" + name
         self.widgetManager.verify(self.Widgets.RadioButton, ident)
 
@@ -7195,6 +7220,7 @@ class gui(object):
         return self.addListBox(name, values, row, column, colspan, rowspan)
 
     def addListBox(self, name, values=None, row=None, column=0, colspan=0, rowspan=0):
+        ''' adds a list box, with the the specified list of values '''
         self.widgetManager.verify(self.Widgets.ListBox, name)
         container = self.makeListBoxContainer()(self.getContainer())
         vscrollbar = AutoScrollbar(container)
@@ -7275,13 +7301,13 @@ class gui(object):
         self.clearListBox(title)
         self.addListItems(title, items, select=select)
 
-    # add the items to the specified list box
     def addListItems(self, title, items, select=True):
+        ''' adds the list of items to the specified list box '''
         for i in items:
             self.addListItem(title, i, select=select)
 
-    # add the item to the end of the list box
     def addListItem(self, title, item, pos=None, select=True):
+        ''' add the item to the end of the specified list box '''
         lb = self.widgetManager.get(self.Widgets.ListBox, title)
         # add it at the end
         if pos is None: pos = END
@@ -7514,22 +7540,26 @@ class gui(object):
         return but
 
     def addNamedButton(self, name, title, func, row=None, column=0, colspan=0, rowspan=0):
+        ''' adds a button, displaying the name as its text '''
         but = self._buildButton(title, func, self.getContainer(), name)
         self._positionWidget(but, row, column, colspan, rowspan, None)
         return but
 
     def addButton(self, title, func, row=None, column=0, colspan=0, rowspan=0):
+        ''' adds a button with the title as its text '''
         but = self._buildButton(title, func, self.getContainer())
         self._positionWidget(but, row, column, colspan, rowspan, None)
         return but
 
     def addImageButton(self, title, func, imgFile, row=None, column=0, colspan=0, rowspan=0, align=None):
+        ''' adds a button, displaying the specified image file '''
         but = self._buildButton(title, func, self.getContainer())
         self._positionWidget(but, row, column, colspan, rowspan, None)
         self.setButtonImage(title, imgFile, align)
         return but
 
     def addIconButton(self, title, func, iconName, row=None, column=0, colspan=0, rowspan=0, align=None):
+        ''' adds a button displaying the specified icon '''
         icon = os.path.join(self.icon_path, iconName.lower()+".png")
         with PauseLogger():
             return self.addImageButton(title, func, icon, row, column, colspan, rowspan, align)
@@ -7574,7 +7604,7 @@ class gui(object):
         self.addButtons(names, funcs, row, column, colspan, rowspan)
 
     def addButtons(self, names, funcs, row=None, column=0, colspan=0, rowspan=0):
-
+        ''' adds a 1D/2D list of buttons '''
         if not isinstance(names, list):
             raise Exception(
                 "Invalid button: " +
@@ -7583,7 +7613,7 @@ class gui(object):
 
         singleFunc = self._checkFunc(names, funcs)
 
-        frame = self.makeWidgetBox()(self.getContainer())
+        frame = self._makeWidgetBox()(self.getContainer())
         if not self.ttk:
             frame.config(background=self._getContainerBg())
 
@@ -7639,7 +7669,7 @@ class gui(object):
             return self.addLink(title, value, row, column, colspan, rowspan)
 
     def _buildLink(self, title):
-        link = self.makeLink()(self.getContainer(), useTtk=self.ttkFlag)
+        link = self._makeLink()(self.getContainer(), useTtk=self.ttkFlag)
         link.config(text=title, font=self.linkFont)
         if not self.ttk:
             link.config(background=self._getContainerBg())
@@ -7648,6 +7678,7 @@ class gui(object):
 
     # launches a browser to the specified page
     def addWebLink(self, title, page, row=None, column=0, colspan=0, rowspan=0):
+        ''' adds a hyperlink to the specified web page '''
         link = self._buildLink(title)
         link.registerWebpage(page)
         self._positionWidget(link, row, column, colspan, rowspan)
@@ -7655,6 +7686,7 @@ class gui(object):
 
     # executes the specified function
     def addLink(self, title, func, row=None, column=0, colspan=0, rowspan=0):
+        ''' adds a hyperlink to the specified function '''
         link = self._buildLink(title)
         if func is not None:
             myF = self.MAKE_FUNC(func, title, True)
@@ -7685,7 +7717,8 @@ class gui(object):
 
     # adds a simple grip, used to drag the window around
     def addGrip(self, row=None, column=0, colspan=0, rowspan=0):
-        grip = self.makeGrip()(self.getContainer())
+        ''' adds a grip, for dragging the GUI around '''
+        grip = self._makeGrip()(self.getContainer())
         self._positionWidget(grip, row, column, colspan, rowspan)
         self._addTooltip(grip, "Drag here to move", True)
         return grip
@@ -7696,6 +7729,7 @@ class gui(object):
 #####################################
 
     def addTrashBin(self, title, row=None, column=0, colspan=0, rowspan=0):
+        ''' NOT IN USE - adds a trashbin, for discarding dragged items '''
         trash = TrashBin(self.getContainer())
         self._positionWidget(trash, row, column, colspan, rowspan)
         return trash
@@ -7705,6 +7739,7 @@ class gui(object):
 #####################################
 
     def addTurtle(self, title, row=None, column=0, colspan=0, rowspan=0):
+        ''' adds a turtle widget at the specified position '''
         self._loadTurtle()
         if turtle is False:
             raise Exception("Unable to load turtle")
@@ -7723,10 +7758,11 @@ class gui(object):
         return self.widgetManager.get(self.Widgets.Turtle, title).turtle
 
 #####################################
-# FUNCTIONS for turtle
+# FUNCTIONS for canvas
 #####################################
 
     def addCanvas(self, title, row=None, column=0, colspan=0, rowspan=0):
+        ''' adds a canvas at the specified position '''
         self.widgetManager.verify(self.Widgets.Canvas, title)
         canvas = Canvas(self.getContainer())
         canvas.config(bd=0, highlightthickness=0)
@@ -7742,21 +7778,27 @@ class gui(object):
         self.widgetManager.get(self.Widgets.Canvas, title).delete("all")
 
     def addCanvasCircle(self, title, x, y, diameter, **kwargs):
+        ''' adds a circle to the specified canvas '''
         return self.addCanvasOval(title, x, y, diameter, diameter, **kwargs)
 
     def addCanvasOval(self, title, x, y, xDiam, yDiam, **kwargs):
+        ''' adds a oval to the specified canvas '''
         return self.widgetManager.get(self.Widgets.Canvas, title).create_oval(x, y, x+xDiam, y+yDiam, **kwargs)
 
     def addCanvasLine(self, title, x, y, x2, y2, **kwargs):
+        ''' adds a line to the specified canvas '''
         return self.widgetManager.get(self.Widgets.Canvas, title).create_line(x, y, x2, y2, **kwargs)
 
     def addCanvasRectangle(self, title, x, y, w, h, **kwargs):
+        ''' adds a rectangle to the specified canvas '''
         return self.widgetManager.get(self.Widgets.Canvas, title).create_rectangle(x, y, x+w, y+h, **kwargs)
 
     def addCanvasText(self, title, x, y, text=None, **kwargs):
+        ''' adds text to the specified canvas '''
         return self.widgetManager.get(self.Widgets.Canvas, title).create_text(x, y, text=text, **kwargs)
 
     def addCanvasImage(self, title, x, y, image=image, **kwargs):
+        ''' adds an image to the specified canvas '''
         canv = self.widgetManager.get(self.Widgets.Canvas, title)
         if isinstance(image, str):
             image = self._getImage(image)
@@ -7790,9 +7832,9 @@ class gui(object):
 # FUNCTIONS for Microbits
 #####################################
 
-    # adds a simple microbit widget
-    # used with permission from Ben Goodwin
     def addMicroBit(self, title, row=None, column=0, colspan=0, rowspan=0):
+        ''' adds a simple microbit widget
+             used with permission from Ben Goodwin '''
         self.widgetManager.verify(self.Widgets.MicroBit, title)
         mb = MicroBitSimulator(self.getContainer())
         self._positionWidget(mb, row, column, colspan, rowspan)
@@ -7836,6 +7878,7 @@ class gui(object):
             if change is not None: self.setDatePickerChangeFunction(title, change)
 
     def addDatePicker(self, name, row=None, column=0, colspan=0, rowspan=0):
+        ''' adds a date picker at the specified position '''
         self.widgetManager.verify(self.Widgets.DatePicker, name)
         # initial DatePicker has these dates
         days = range(1, 32)
@@ -8078,12 +8121,14 @@ class gui(object):
         self.flashId = self.topLevel.after(250, self._flash)
 
     def addFlashLabel(self, title, text=None, row=None, column=0, colspan=0, rowspan=0):
+        ''' adds a label with flashing text '''
         lab = self.addLabel(title, text, row, column, colspan, rowspan)
         self.widgetManager.log(self.Widgets.FlashLabel, lab)
         self.doFlash = True
         return lab
 
     def addSelectableLabel(self, title, text=None, row=None, column=0, colspan=0, rowspan=0):
+        ''' adds a label with selectable text '''
         return self.addLabel(title, text, row, column, colspan, rowspan, selectable=True)
 
     def addLabel(self, title, text=None, row=None, column=0, colspan=0, rowspan=0, selectable=False):
@@ -8118,11 +8163,12 @@ class gui(object):
         return lab
 
     def addEmptyLabel(self, title, row=None, column=0, colspan=0, rowspan=0):
+        ''' adds an empty label '''
         return self.addLabel(title=title, text='', row=row, column=column, colspan=colspan, rowspan=rowspan)
 
-    # adds a set of labels, in the row, spannning specified columns
     def addLabels(self, names, row=None, colspan=0, rowspan=0):
-        frame = self.makeWidgetBox()(self.getContainer())
+        ''' adds a set of labels, in the row, spannning specified columns '''
+        frame = self._makeWidgetBox()(self.getContainer())
         if not self.ttkFlag:
             frame.config(background=self._getContainerBg())
         for i in range(len(names)):
@@ -8340,6 +8386,7 @@ class gui(object):
 #####################################
 
     def addTree(self, title, data, row=None, column=0, colspan=0, rowspan=0):
+        ''' adds a navigatable tree, displaying the specified xml '''
         self.widgetManager.verify(self.Widgets.Tree, title)
 
         self._importAjtree()
@@ -8358,8 +8405,8 @@ class gui(object):
             takefocus=1)
         self._positionWidget(frame, row, column, colspan, rowspan, "NSEW")
 
-        item = self.makeAjTreeData()(xmlDoc.documentElement)
-        node = self.makeAjTreeNode()(frame.getPane(), None, item)
+        item = self._makeAjTreeData()(xmlDoc.documentElement)
+        node = self._makeAjTreeNode()(frame.getPane(), None, item)
         self.widgetManager.add(self.Widgets.Tree, title, node)
         # update() & expand() called in go() function
         return node
@@ -8444,7 +8491,7 @@ class gui(object):
         return self.addMessage(title, text, row, column, colspan, rowspan)
 
     def addMessage(self, title, text=None, row=None, column=0, colspan=0, rowspan=0):
-
+        ''' adds a message box, to display text across multiple lines '''
         self.widgetManager.verify(self.Widgets.Message, title)
 
         if text is None:
@@ -8466,6 +8513,7 @@ class gui(object):
         return mess
 
     def addEmptyMessage(self, title, row=None, column=0, colspan=0, rowspan=0):
+        ''' adds an empty message box '''
         return self.addMessage(title, "", row, column, colspan, rowspan)
 
     def setMessage(self, title, text):
@@ -8559,24 +8607,31 @@ class gui(object):
         return ent
 
     def addEntry(self, title, row=None, column=0, colspan=0, rowspan=0, secret=False):
+        ''' adds an entry box for capturing text '''
         return self._entryMaker(title, row, column, colspan, rowspan, secret=secret, label=False, kind="standard")
 
     def addLabelEntry(self, title, row=None, column=0, colspan=0, rowspan=0, secret=False):
+        ''' adds an entry box for capturing text, with the title as a label '''
         return self._entryMaker(title, row, column, colspan, rowspan, secret, label=True)
 
     def addSecretEntry(self, title, row=None, column=0, colspan=0, rowspan=0):
+        ''' adds an entry box for capturing text, where the text is displayed as stars '''
         return self._entryMaker(title, row, column, colspan, rowspan, True)
 
     def addLabelSecretEntry(self, title, row=None, column=0, colspan=0, rowspan=0):
+        ''' adds an entry box for capturing text, where the text is displayed as stars, with the title as a label '''
         return self._entryMaker(title, row, column, colspan, rowspan, secret=True, label=True)
 
     def addSecretLabelEntry(self, title, row=None, column=0, colspan=0, rowspan=0):
+        ''' adds an entry box for capturing text, where the text is displayed as stars, with the title as a label '''
         return self._entryMaker(title, row, column, colspan, rowspan, secret=True, label=True)
 
     def addFileEntry(self, title, row=None, column=0, colspan=0, rowspan=0):
+        ''' adds an entry box with a button, that pops-up a file dialog '''
         return self._entryMaker(title, row, column, colspan, rowspan, secret=False, label=False, kind="file")
 
     def addLabelFileEntry(self, title, row=None, column=0, colspan=0, rowspan=0):
+        ''' adds an entry box with a button, that pops-up a file dialog, with a label that displays the title '''
         return self._entryMaker(title, row, column, colspan, rowspan, secret=False, label=True, kind="file")
 
     def addDirectoryEntry(self, title, row=None, column=0, colspan=0, rowspan=0):
@@ -8632,7 +8687,7 @@ class gui(object):
         self.widgetManager.verify(self.Widgets.Entry, title)
         # if we are an autocompleter
         if len(words) > 0:
-            ent = self.makeAutoCompleteEntry()(words, self._getTopLevel(), frame)
+            ent = self._makeAutoCompleteEntry()(words, self._getTopLevel(), frame)
         else:
             var = StringVar(self.topLevel)
             ent = entryBase(frame, textvariable=var)
@@ -8690,7 +8745,7 @@ class gui(object):
         return ent
 
     def _buildFileEntry(self, title, frame, selectFile=True):
-        vFrame = self.makeButtonBox()(frame)
+        vFrame = self._makeButtonBox()(frame)
         self.widgetManager.log(self.Widgets.FrameBox, vFrame)
 
         if not self.ttkFlag:
@@ -8731,7 +8786,7 @@ class gui(object):
         return vFrame
 
     def _buildValidationEntry(self, title, frame, secret):
-        vFrame = self.makeLabelBox()(frame)
+        vFrame = self._makeLabelBox()(frame)
         self.widgetManager.log(self.Widgets.FrameBox, vFrame)
         vFrame.isValidation = True
 
@@ -9189,7 +9244,7 @@ class gui(object):
         return self._addSeparator("vertical", row, column, colspan, rowspan, colour)
 
     def _addSeparator(self, orient, row=None, column=0, colspan=0, rowspan=0, colour=None):
-        sep = self.makeSeparator()(self.getContainer(), orient)
+        sep = self._makeSeparator()(self.getContainer(), orient)
         if colour is not None:
             sep.configure(fg=colour)
         self.widgetManager.log(self.Widgets.Separator, sep)
@@ -10275,7 +10330,7 @@ class gui(object):
     #####################################
     # Named classes for containing groups
     #####################################
-    def makeParentBox(self):
+    def _makeParentBox(self):
         class ParentBox(frameBase, object):
 
             def __init__(self, parent, **opts):
@@ -10306,31 +10361,31 @@ class gui(object):
                 return kw
         return ParentBox
 
-    def makeLabelBox(self):
-        ParentBox = self.makeParentBox()
+    def _makeLabelBox(self):
+        ParentBox = self._makeParentBox()
         class LabelBox(ParentBox):
             def setup(self):
                 self.theLabel = None
                 self.theWidget = None
         return LabelBox
 
-    def makeButtonBox(self):
-        ParentBox = self.makeParentBox()
+    def _makeButtonBox(self):
+        ParentBox = self._makeParentBox()
         class ButtonBox(ParentBox):
             def setup(self):
                 self.theWidget = None
                 self.theButton = None
         return ButtonBox
 
-    def makeWidgetBox(self):
-        ParentBox = self.makeParentBox()
+    def _makeWidgetBox(self):
+        ParentBox = self._makeParentBox()
         class WidgetBox(ParentBox):
             def setup(self):
                 self.theWidgets = []
         return WidgetBox
 
     def makeListBoxContainer(self):
-        ParentBox = self.makeParentBox()
+        ParentBox = self._makeParentBox()
         class ListBoxContainer(Frame, object):
 
             def __init__(self, parent, **opts):
@@ -10350,7 +10405,7 @@ class gui(object):
     #####################################
     # Simple Separator
     #####################################
-    def makeSeparator(self):
+    def _makeSeparator(self):
         class Separator(frameBase, object):
 
             def __init__(self, parent, orient="horizontal", *args, **options):
@@ -10378,7 +10433,7 @@ class gui(object):
     # Drag Grip Label Class
     #####################################
 
-    def makeGrip(self):
+    def _makeGrip(self):
         class Grip(labelBase, object):
             gray25 = BitmapImage(data="""
             #define im_width 16
@@ -10420,7 +10475,7 @@ class gui(object):
     # Hyperlink Class
     #####################################
     @staticmethod
-    def makeLink():
+    def _makeLink():
         class Link(labelBase, object):
 
             def __init__(self, *args, **kwargs):
@@ -10496,7 +10551,7 @@ class gui(object):
     #######################
     # Upgraded scale - http://stackoverflow.com/questions/42843425/change-trough-increment-in-python-tkinter-scale-without-affecting-slider/
     #######################
-    def makeAjScale(self):
+    def _makeAjScale(self):
         class AjScale(scaleBase, object):
             '''a scale where a trough click jumps by a specified increment instead of the resolution'''
             def __init__(self, master=None, **kwargs):
@@ -10522,7 +10577,7 @@ class gui(object):
     # appJar Frame
     #####################################
 
-    def makeAjFrame(self):
+    def _makeAjFrame(self):
         class ajFrame(frameBase, object):
             def __init__(self, parent, *args, **options):
                 super(ajFrame, self).__init__(parent, *args, **options)
@@ -10533,7 +10588,7 @@ class gui(object):
     # Class to provide auto-completion on Entry boxes
     # inspired by: https://gist.github.com/uroshekic/11078820
     #########################
-    def makeAutoCompleteEntry(self):
+    def _makeAutoCompleteEntry(self):
         ### Create the dynamic class
         class AutoCompleteEntry(entryBase, object):
 
@@ -10711,7 +10766,7 @@ class gui(object):
     # idlelib -> TreeWidget.py
     # modify minidom - https://wiki.python.org/moin/MiniDom
     #####################################
-    def makeAjTreeNode(self):
+    def _makeAjTreeNode(self):
         class AjTreeNode(TreeNode, object):
 
             def __init__(self, canvas, parent, item):
@@ -10828,7 +10883,7 @@ class gui(object):
 
         return AjTreeNode
 
-    def makeAjTreeData(self):
+    def _makeAjTreeData(self):
         # implementation of container for XML data
         # functions implemented as specified in skeleton
         class AjTreeData(TreeItem, object):
@@ -13332,7 +13387,7 @@ class GoogleMap(LabelFrame, object):
                     Label(self.canvas, text="-"),
                     Label(self.canvas, text="+"),
                     Label(self.canvas, text="H"),
-                    gui.makeLink()(self.canvas, text="@", useTtk=useTtk)
+                    gui._makeLink()(self.canvas, text="@", useTtk=useTtk)
                         ]
         B_FONT = font.Font(family='Helvetica', size=10)
 
