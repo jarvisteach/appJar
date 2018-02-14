@@ -298,7 +298,7 @@ class gui(object):
         win.update_idletasks()
 
         # GUI's corner - widget's corner
-        # widgret's corner can be 0 on windows when size not set by user
+        # widget's corner can be 0 on windows when size not set by user
         outer_frame_width = 0 if win.winfo_x() == 0 else win.winfo_rootx() - win.winfo_x()
         titlebar_height = 0 if win.winfo_rooty() == 0 else win.winfo_rooty() - win.winfo_y()
 
@@ -12166,7 +12166,6 @@ class Dialog(Toplevel, object):
         super(Dialog, self).__init__(parent)
         self.transient(parent)
         self.withdraw()
-        gui.CENTER(self, up=150)
         parent.POP_UP = self
 
         if title:
@@ -12181,6 +12180,7 @@ class Dialog(Toplevel, object):
 
         # create the buttons
         self.buttonbox()
+        gui.CENTER(self, up=150)
 
         self.grab_set()
         if not self.initial_focus:
