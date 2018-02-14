@@ -5203,8 +5203,10 @@ class gui(object):
 #####################################
 
     # this will build a frame, with a label on the left hand side
-    def _getLabelBox(self, title, column):
+    def _getLabelBox(self, title, value=None, column=None):
         self.widgetManager.verify(self.Widgets.Label, title)
+
+        if value is None or value is True: value = title
 
         # first, make a frame
         frame = self.makeLabelBox()(self.getContainer())
@@ -5221,7 +5223,7 @@ class gui(object):
         lab.hidden = False
         lab.inContainer = True
         lab.config(
-            text=title,
+            text=value,
             anchor=W,
             justify=LEFT,
             font=self._labelFont,
@@ -5229,7 +5231,7 @@ class gui(object):
 
         if not self.ttkFlag:
             lab.config(background=self._getContainerBg())
-        lab.DEFAULT_TEXT = title
+        lab.DEFAULT_TEXT = value
 
         self.widgetManager.add(self.Widgets.Label, title, lab)
         self.widgetManager.add(self.Widgets.FrameLabel, title, lab)
@@ -5423,7 +5425,7 @@ class gui(object):
         return scale
 
     def addLabelScale(self, title, row=None, column=0, colspan=0, rowspan=0):
-        frame = self._getLabelBox(title, column)
+        frame = self._getLabelBox(title, column=column)
         scale = self._buildScale(title, frame)
         self._packLabelBox(frame, scale)
         self._positionWidget(frame, row, column, colspan, rowspan)
@@ -5665,7 +5667,7 @@ class gui(object):
         :returns: the created OptionBox (not the LabelBox)
         :raises ItemLookupError: if the title is already in use
         """
-        frame = self._getLabelBox(title, column)
+        frame = self._getLabelBox(title, column=column)
         option = self._buildOptionBox(frame, title, options)
         self._packLabelBox(frame, option)
         self._positionWidget(frame, row, column, colspan, rowspan)
@@ -5693,7 +5695,7 @@ class gui(object):
         :returns: the created TickOptionBox (not the LabelBox)
         :raises ItemLookupError: if the title is already in use
         """
-        frame = self._getLabelBox(title, column)
+        frame = self._getLabelBox(title, column=column)
         tick = self._buildOptionBox(frame, title, options, "ticks")
         self._packLabelBox(frame, tick)
         self._positionWidget(frame, row, column, colspan, rowspan)
@@ -6296,7 +6298,7 @@ class gui(object):
         return self._addSpinBox(title, values, row, column, colspan, rowspan)
 
     def addLabelSpinBox(self, title, values, row=None, column=0, colspan=0, rowspan=0, **kwargs):
-        frame = self._getLabelBox(title, column)
+        frame = self._getLabelBox(title, column=column)
         spin = self._buildSpinBox(frame, title, values)
         self._packLabelBox(frame, spin)
         self._positionWidget(frame, row, column, colspan, rowspan)
@@ -8513,10 +8515,10 @@ class gui(object):
         return ent
 
     def _entryMaker(self, title, row=None, column=0, colspan=0, rowspan=0, secret=False, label=False, kind="standard", words=None, **kwargs):
-        if label:
-            frame = self._getLabelBox(title, column)
-        else:
+        if not label:
             frame = self.getContainer()
+        else:
+            frame = self._getLabelBox(title, value=label, column=column)
 
         if kind == "standard":
             ent = self._buildEntry(title, frame, secret)
