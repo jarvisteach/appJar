@@ -10,7 +10,8 @@ tcp = 'TCP'
 timeout = 'Timeout'
 info = '\u2139 Just an (IP) address is required, leave the rest blank to use the defaults.'
 
-with gui() as app:
+def manual():
+    app.removeAllWidgets()
     with app.labelFrame('{}'.format(frame), 0, 0, 2):
         # Entry.
         app.entry('addr', pos=(0, 1), sticky='nesw')
@@ -22,4 +23,7 @@ with gui() as app:
         app.setEntryDefault('addr', '{}'.format(address))
         app.setEntryDefault('tcp', '{}'.format(tcp))
         app.setEntryDefault('timeout', '{}'.format(timeout))
+    app.button("PRESS", manual)
 
+with gui() as app:
+    app.button("PRESS", manual)
