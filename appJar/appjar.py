@@ -4041,11 +4041,12 @@ class gui(object):
 #####################################
 
     @contextmanager
-    def notebook(self, title, row=None, column=0, colspan=0, rowspan=0, sticky="NSEW"):
+    def notebook(self, title, row=None, column=0, colspan=0, rowspan=0, sticky="NSEW", **kwargs):
         try:
             note = self.startNotebook(title, row, column, colspan, rowspan, sticky)
         except ItemLookupError:
             note = self.openNotebook(title)
+        self.configure(**kwargs)
         try: yield note
         finally: self.stopNotebook()
 
@@ -4060,11 +4061,12 @@ class gui(object):
         self.stopContainer()
 
     @contextmanager
-    def note(self, title, tabTitle=None):
+    def note(self, title, tabTitle=None, **kwargs):
         if tabTitle is None:
             note = self.startNote(title)
         else:
             self.openNote(title, tabTitle)
+        self.configure(**kwargs)
         try: yield note
         finally: self.stopNote()
 
@@ -4416,11 +4418,12 @@ class gui(object):
         return TabbedFrame(master, **kwargs)
 
     @contextmanager
-    def tabbedFrame(self, title, row=None, column=0, colspan=0, rowspan=0, sticky="NSEW"):
+    def tabbedFrame(self, title, row=None, column=0, colspan=0, rowspan=0, sticky="NSEW", **kwargs):
         try:
             tabs = self.startTabbedFrame(title, row, column, colspan, rowspan, sticky)
         except ItemLookupError:
             tabs = self.openTabbedFrame(title)
+        self.configure(**kwargs)
         try: yield tabs
         finally: self.stopTabbedFrame()
 
@@ -4774,13 +4777,14 @@ class gui(object):
         self.stopContainer()
 
     @contextmanager
-    def panedFrameVertical(self, title, row=None, column=0, colspan=0, rowspan=0, sticky="NSEW"):
+    def panedFrameVertical(self, title, row=None, column=0, colspan=0, rowspan=0, sticky="NSEW", **kwargs):
         reOpen = False
         try:
             pane = self.startPanedFrameVertical(title, row, column, colspan, rowspan, sticky)
         except ItemLookupError:
             reOpen = True
             pane = self.openPane(title)
+        self.configure(**kwargs)
         try: yield pane
         finally:
             if reOpen:
@@ -4874,11 +4878,12 @@ class gui(object):
 #####################################
 
     @contextmanager
-    def pagedWindow(self, title, row=None, column=0, colspan=0, rowspan=0):
+    def pagedWindow(self, title, row=None, column=0, colspan=0, rowspan=0, **kwargs):
         try:
             pw = self.startPagedWindow(title, row, column, colspan, rowspan)
         except ItemLookupError:
             pw = self.openPagedWindow(title)
+        self.configure(**kwargs)
         try: yield pw
         finally: self.stopPagedWindow()
 
@@ -4924,11 +4929,12 @@ class gui(object):
         pager.setTitle(pageTitle)
 
     @contextmanager
-    def page(self, windowTitle=None, pageNumber=None, sticky="nw"):
+    def page(self, windowTitle=None, pageNumber=None, sticky="nw", **kwargs):
         if windowTitle is None:
             pg = self.startPage(sticky)
         else:
             pg = self.openPage(windowTitle, pageNumber)
+        self.configure(**kwargs)
         try: yield pg
         finally: self.stopPage()
 
