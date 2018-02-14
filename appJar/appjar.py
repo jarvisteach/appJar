@@ -3978,7 +3978,11 @@ class gui(object):
             return pane
         elif fType == self.Widgets.ScrollPane:
             self.widgetManager.verify(self.Widgets.ScrollPane, title)
-            scrollPane = ScrollPane(self.getContainer())
+            # naned used to diabled sctollbars
+            print(name)
+            if name not in ["horizontal", "vertical", ""]:
+                gui.warn("ScrollPane %s: Invalid value for disabled, must be one of 'horizontal' or 'vertical'", title)
+            scrollPane = ScrollPane(self.getContainer(), disabled=name)
             if not self.ttkFlag:
                 scrollPane.config(bg=self._getContainerBg())
             scrollPane.isContainer = True
@@ -4967,8 +4971,9 @@ class gui(object):
 
     @contextmanager
     def scrollPane(self, title, row=None, column=0, colspan=0, rowspan=0, sticky="NSEW", **kwargs):
+        disabled = kwargs.pop("disabled", "")
         try:
-            sp = self.startScrollPane(title, row, column, colspan, rowspan, sticky)
+            sp = self.startScrollPane(title, row, column, colspan, rowspan, sticky, disabled)
         except ItemLookupError:
             sp = self.openScrollPane(title)
         self.configure(**kwargs)
@@ -4976,8 +4981,8 @@ class gui(object):
         finally: self.stopScrollPane()
 
 
-    def startScrollPane(self, title, row=None, column=0, colspan=0, rowspan=0, sticky="NSEW"):
-        self.startContainer(self.Widgets.ScrollPane, title, row, column, colspan, rowspan, sticky)
+    def startScrollPane(self, title, row=None, column=0, colspan=0, rowspan=0, sticky="NSEW", disabled=""):
+        self.startContainer(self.Widgets.ScrollPane, title, row, column, colspan, rowspan, sticky, disabled)
 
     # functions to stop the various containers
     def stopContainer(self): self._removeContainer()
@@ -4995,16 +5000,6 @@ class gui(object):
             except:
                 break
 
-    def hideScrollPaneBar(self, title, bar, hide=True):
-        ''' hides/shows a scrollbar on a scrollpane
-            pass in horiz/vert
-        '''
-        sp = self.widgetManager.get(self.Widgets.ScrollPane, title)
-        if bar.lower().startswith("h"):
-            sp.hideHorizBar(hide)
-        else:
-            sp.hideVertBar(hide)
-            
 #####################################
 # Frames
 #####################################
@@ -12003,29 +11998,36 @@ class SelectableLabel(Entry, object):
 #######################
 
 class ScrollPane(frameBase, object):
-    def __init__(self, parent, resize=False, **opts):
+    def __init__(self, parent, resize=False, disabled=None, **opts):
         super(ScrollPane, self).__init__(parent)
         self.config(padx=5, pady=5)
         self.resize = resize
+
+        self.hDisabled = disabled == "horizontal"
+        self.vDisabled = disabled == "vertical"
 
         # make the ScrollPane expandable
         self.grid_rowconfigure(0, weight=1)
         self.grid_columnconfigure(0, weight=1)
 
-        self.vscrollbar = AutoScrollbar(self)
-        self.hscrollbar = AutoScrollbar(self, orient=HORIZONTAL)
-        opts['yscrollcommand'] = self.vscrollbar.set
-        opts['xscrollcommand'] = self.hscrollbar.set
+        if not self.vDisabled:
+            self.vscrollbar = AutoScrollbar(self)
+            opts['yscrollcommand'] = self.vscrollbar.set
+            self.vscrollbar.grid(row=0, column=1, sticky=N + S + E)
+
+        if not self.hDisabled:
+            self.hscrollbar = AutoScrollbar(self, orient=HORIZONTAL)
+            opts['xscrollcommand'] = self.hscrollbar.set
+            self.hscrollbar.grid(row=1, column=0, sticky=E + W + S)
 
         self.canvas = Canvas(self, **opts)
         self.canvas.config(highlightthickness=0)
-
-        self.vscrollbar.grid(row=0, column=1, sticky=N + S + E)
-        self.hscrollbar.grid(row=1, column=0, sticky=E + W + S)
         self.canvas.grid(row=0, column=0, sticky=N + S + E + W)
 
-        self.vscrollbar.config(command=self.canvas.yview)
-        self.hscrollbar.config(command=self.canvas.xview)
+        if not self.vDisabled:
+            self.vscrollbar.config(command=self.canvas.yview)
+        if not self.hDisabled:
+            self.hscrollbar.config(command=self.canvas.xview)
 
         self.canvas.bind("<Enter>", self._mouseEnter)
         self.canvas.bind("<Leave>", self._mouseLeave)
@@ -12034,19 +12036,12 @@ class ScrollPane(frameBase, object):
         self.canvas.focus_set()
 
         self.interior = frameBase(self.canvas)
-        self.interior_id = self.canvas.create_window(
-            0, 0, window=self.interior, anchor=NW)
+        self.interior_id = self.canvas.create_window(0, 0, window=self.interior, anchor=NW)
 
         if self.resize:
             self.canvas.bind('<Configure>', self._updateWidth)
         else:
             self.interior.bind('<Configure>', self._updateWidth)
-
-    def hideHorizBar(self, hide=True):
-        pass
-
-    def hideVertBar(self, hide=True):
-        pass
 
     def _updateWidth(self, event):
         if self.resize:
@@ -12131,11 +12126,11 @@ class ScrollPane(frameBase, object):
         self._unbindIds()
 
     def _horizMouseScroll(self, event):
-        if not self.hscrollbar.hidden:
+        if not self.hDisabled and not self.hscrollbar.hidden:
             self._mouseScroll(True, event)
 
     def _vertMouseScroll(self, event):
-        if not self.vscrollbar.hidden:
+        if not self.vDisabled and not self.vscrollbar.hidden:
             self._mouseScroll(False, event)
 
     def _mouseScroll(self, horiz, event):
@@ -12227,12 +12222,12 @@ class ScrollPane(frameBase, object):
             pass # shouldn't happen
 
     def xscroll(self, direction, value=None):
-        if not self.hscrollbar.hidden:
+        if not self.hDisabled and not self.hscrollbar.hidden:
             if value is not None: self.canvas.xview_scroll(direction, value)
             else: self.canvas.xview_moveto(direction)
 
     def yscroll(self, direction, value=None):
-        if not self.vscrollbar.hidden:
+        if not self.vDisabled and not self.vscrollbar.hidden:
             if value is not None: self.canvas.yview_scroll(direction, value)
             else: self.canvas.yview_moveto(direction)
 

@@ -5,11 +5,15 @@ from appJar import gui
 
 with gui() as app:
 
-    with app.scrollPane("p1"):
-        app.label("a"*200)
-
-    with app.scrollPane("p2"):
-        for i in range(500): app.label(str(i))
-
-    app.hideScrollPaneBar("p1", "horiz")
-    app.hideScrollPaneBar("p2", "horiz")
+    name = "p1"
+    with app.scrollPane(name):#, disabled="vertical"):
+        for i in range(50): app.label(name+str(i), "a"*100)
+    name = "p2"
+    with app.scrollPane(name, disabled="vertical"):
+        for i in range(50): app.label(name+str(i), "a"*100)
+    name = "p3"
+    with app.scrollPane(name, disabled="horizontal"):
+        for i in range(50): app.label(name+str(i), "a"*100)
+    name = "p4"
+    with app.scrollPane(name, disabled="something"):
+        for i in range(50): app.label(name+str(i), "a"*100)
