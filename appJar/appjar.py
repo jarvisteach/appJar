@@ -3392,15 +3392,16 @@ class gui(object):
         if not callable(funcName) and not hasattr(funcName, '__call__'):
             raise Exception("Invalid function: " + str(funcName))
 
-        # no arguments
-        args = getArgs(funcName)
-        if len(args[0]) == 0 and args[1] is None and args[2] is None:
-            return lambda *args: funcName()
+        # check if the function requires arguments
+        argsList = getArgs(funcName)
+        # if no args, or 1 arg in a bound function
+        noArgs = len(argsList[0])==0 or (len(argsList[0])==1 and inspect.ismethod(funcName))
 
-        if discard:
-            return lambda *args: funcName(param)
+        # if no args/varargs/kwargs then don't give the param
+        if noArgs and argsList[1] is None and argsList[2] is None:
+            return lambda *args: funcName()
         else:
-            return lambda: funcName(param)
+            return lambda *args: funcName(param)
 
     def _checkFunc(self, names, funcs):
         singleFunc = None
@@ -7500,9 +7501,7 @@ class gui(object):
 
         if func is not None:
             command = self.MAKE_FUNC(func, title)
-            bindCommand = self.MAKE_FUNC(func, title, True)
             but.config(command=command)
-        #    but.bind('<Return>', bindCommand)
 
         #but.bind("<Tab>", self._focusNextWindow)
         #but.bind("<Shift-Tab>", self._focusLastWindow)
@@ -7981,9 +7980,9 @@ class gui(object):
                     self.label("access_bg_colBox", "", pos=('p',1), sticky="ew", submit=_changeBg, relief="ridge", tip="Click here to set the background colour")
                 self.sticky="se"
                 with self.frame("access_button_box"):
-                    self.button("access_ok_button", _settings, name="OK", pos=(0,0))
-                    self.button("access_cancel_button", _close, name="Cancel", pos=(0,1))
-                    self.button("access_reset_button", self._resetAccess, name="Reset", pos=(0,2))
+                    self.button("access_apply_button", _settings, name="Apply", pos=(0,0))
+                    self.button("access_reset_button", self._resetAccess, name="Reset", pos=(0,1))
+                    self.button("access_close_button", _close, name="Close", pos=(0,2))
             self.accessMade = True
 
     def _resetAccess(self):
