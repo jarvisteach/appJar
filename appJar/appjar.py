@@ -3979,14 +3979,12 @@ class gui(object):
         elif fType == self.Widgets.ScrollPane:
             self.widgetManager.verify(self.Widgets.ScrollPane, title)
             # naned used to diabled sctollbars
-            print(name)
             if name not in ["horizontal", "vertical", ""]:
                 gui.warn("ScrollPane %s: Invalid value for disabled, must be one of 'horizontal' or 'vertical'", title)
             scrollPane = ScrollPane(self.getContainer(), disabled=name)
             if not self.ttkFlag:
                 scrollPane.config(bg=self._getContainerBg())
             scrollPane.isContainer = True
-#                self.containerStack[-1]['container'].add(scrollPane)
             self._positionWidget(
                 scrollPane,
                 row,
