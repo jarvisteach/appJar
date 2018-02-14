@@ -4994,6 +4994,17 @@ class gui(object):
                 self.stopPanedFrame()
             except:
                 break
+
+    def hideScrollPaneBar(self, title, bar, hide=True):
+        ''' hides/shows a scrollbar on a scrollpane
+            pass in horiz/vert
+        '''
+        sp = self.widgetManager.get(self.Widgets.ScrollPane, title)
+        if bar.lower().startswith("h"):
+            sp.hideHorizBar(hide)
+        else:
+            sp.hideVertBar(hide)
+            
 #####################################
 # Frames
 #####################################
@@ -12030,6 +12041,12 @@ class ScrollPane(frameBase, object):
             self.canvas.bind('<Configure>', self._updateWidth)
         else:
             self.interior.bind('<Configure>', self._updateWidth)
+
+    def hideHorizBar(self, hide=True):
+        pass
+
+    def hideVertBar(self, hide=True):
+        pass
 
     def _updateWidth(self, event):
         if self.resize:
