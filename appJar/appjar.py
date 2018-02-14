@@ -369,7 +369,7 @@ class gui(object):
         logFile = kwargs.pop("file", kwargs.pop("logFile", None))
         logLevel = kwargs.pop("log", kwargs.pop("logLevel", None))
 
-        self.language = language
+        self._language = language
         self.useSettings = useSettings
         self.settingsFile = "appJar.ini"
         self.externalSettings = {}
@@ -427,7 +427,7 @@ class gui(object):
         if logLevel is not None: gui.setLogLevel(logLevel)
 
         if handleArgs:
-            if args.l: self.language = args.l
+            if args.l: self._language = args.l
             if args.ttk:
                 useTtk = True
                 if args.ttk is not True:
@@ -1159,6 +1159,10 @@ class gui(object):
         else:
             return default
 
+    def getLanguage(self):
+        ''' returns the current language '''
+        return self._language
+
     def setLanguage(self, language):
         """ wrapper for changeLanguage() """
         self.changeLanguage(language)
@@ -1173,30 +1177,32 @@ class gui(object):
             self.error("Internationalisation not supported")
             return
 
-        language = language.upper() + ".ini"
+        fileName = language.upper() + ".ini"
+        gui.trace("Loading language file: %s", fileName)
         if not PYTHON2:
             try:
-                with codecs.open(language, "r", "utf8") as langFile:
+                with codecs.open(fileName, "r", "utf8") as langFile:
                     self.configParser.read_file(langFile)
             except FileNotFoundError:
-                self.error("Invalid language, file not found: %s", language)
+                self.error("Invalid language, file not found: %s", fileName)
                 return
         else:
             try:
                 try:
-                    with codecs.open(language, "r", "utf8") as langFile:
+                    with codecs.open(fileName, "r", "utf8") as langFile:
                         self.configParser.read_file(langFile)
                 except AttributeError:
-                    with codecs.open(language, "r", "utf8") as langFile:
+                    with codecs.open(fileName, "r", "utf8") as langFile:
                         self.configParser.readfp(langFile)
             except IOError:
-                self.error("Invalid language, file not found: %s", language)
+                self.error("Invalid language, file not found: %s", fileName)
                 return
             except ParsingError:
                 self.error("Translation failed - language file contains errors, ensure there is no whitespace at the beginning of any lines.")
                 return
 
         gui.trace("Switching to: %s", language)
+        self._language = language
         self.translations = {"POPUP":{}, "SOUND":{}, "EXTERNAL":{}}
         # loop through each section, get the relative set of widgets
         # change the text
@@ -1469,6 +1475,8 @@ class gui(object):
                 self.warn("Unsupported widget: %s", section)
                 continue
 
+    language = property(getLanguage, changeLanguage)
+
     def showSplash(self, text="appJar", fill="#FF0000", stripe="#000000", fg="#FFFFFF", font=44):
         """ creates a splash screen to show at start up """
         self.splashConfig= {'text':text, 'fill':fill, 'stripe':stripe, 'fg':fg, 'font':font}
@@ -1606,8 +1614,8 @@ class gui(object):
         """ Most important function! starts the GUI """
 
         # check if we have a command line language
-        if self.language is not None:
-            language = self.language
+        if self._language is not None:
+            language = self._language
 
         # if language is populated, we are in internationalisation mode
         # call the changeLanguage function - to re-badge all the widgets
@@ -2082,6 +2090,14 @@ class gui(object):
     def disableEnter(self):
         """ unbinds <Return> from all widgets """
         self.unbindKey("<Return>")
+
+    def _enterWrapper(self, func):
+        if func is None:
+            self.disableEnter()
+        else:
+            self.enableEnter(func)
+
+    enterKey = property(fset=_enterWrapper)
 
     def bindKeys(self, keys, func):
         """ bind the specified keys, to the specified function, for all widgets """

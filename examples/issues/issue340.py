@@ -3,6 +3,12 @@ sys.path.append("../../")
 
 from appJar import gui
 
+def press():
+    print("UNBINDING")
+    app.enterKey=None
+    app.language = "french"
+    print("NEW LANG:", app.language)
+
 with gui("KWARGS TEST", bg="green") as app:
     with app.tabbedFrame("nb1", bg="blue"):
         with app.tab("LabelFrame", bg="yellow"):
@@ -39,3 +45,6 @@ with gui("KWARGS TEST", bg="green") as app:
                     app.label("N_PINK NOTE2")
                 with app.note("note3", bg="blue"):
                     app.label("N_BLUE NOTE3")
+
+    app.enterKey=press
+    print(app.language)
