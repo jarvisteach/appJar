@@ -3846,17 +3846,18 @@ class gui(object):
             return container
 
     # functions to start the various containers
-    def startContainer(self, fType, title, row=None, column=0, colspan=0, rowspan=0, sticky=None):
+    def startContainer(self, fType, title, row=None, column=0, colspan=0, rowspan=0, sticky=None, name=None):
+        if name is None: name = title
         if fType == self.Widgets.LabelFrame:
             # first, make a LabelFrame, and position it correctly
             self.widgetManager.verify(self.Widgets.LabelFrame, title)
             if not self.ttkFlag:
-                container = LabelFrame(self.getContainer(), text=title, relief="groove")
+                container = LabelFrame(self.getContainer(), text=name, relief="groove")
                 container.config(background=self._getContainerBg(), font=self.labelFrameFont)
             else:
-                container = ttk.LabelFrame(self.getContainer(), text=title, relief="groove")
+                container = ttk.LabelFrame(self.getContainer(), text=name, relief="groove")
 
-            container.DEFAULT_TEXT = title
+            container.DEFAULT_TEXT = name
             container.isContainer = True
             self.setPadX(5)
             self.setPadY(5)
@@ -4787,8 +4788,9 @@ class gui(object):
 
     @contextmanager
     def labelFrame(self, title, row=None, column=0, colspan=0, rowspan=0, sticky=W, hideTitle=False, **kwargs):
+        name = kwargs.pop("name", None)
         try:
-            lf = self.startLabelFrame(title, row, column, colspan, rowspan, sticky, hideTitle)
+            lf = self.startLabelFrame(title, row, column, colspan, rowspan, sticky, hideTitle, name)
         except ItemLookupError:
             lf = self.openLabelFrame(title)
         self.configure(**kwargs)
@@ -4797,8 +4799,8 @@ class gui(object):
 
     # sticky is alignment inside frame
     # frame will be added as other widgets
-    def startLabelFrame(self, title, row=None, column=0, colspan=0, rowspan=0, sticky=W, hideTitle=False):
-        lf = self.startContainer(self.Widgets.LabelFrame, title, row, column, colspan, rowspan, sticky)
+    def startLabelFrame(self, title, row=None, column=0, colspan=0, rowspan=0, sticky=W, hideTitle=False, name=None):
+        lf = self.startContainer(self.Widgets.LabelFrame, title, row, column, colspan, rowspan, sticky, name)
         if hideTitle:
             self.setLabelFrameTitle(title, "")
         return lf
@@ -7429,7 +7431,7 @@ class gui(object):
     def _configWidget(self, title, kind, **kwargs):
         widget = self.widgetManager.get(kind, title)
         # remove any unwanted keys
-        for key in ["row", "column", "colspan", "rowspan"]:
+        for key in ["row", "column", "colspan", "rowspan", "label", "name"]:
             kwargs.pop(key, None)
 
         # ignore these for now as well
@@ -7948,54 +7950,58 @@ class gui(object):
 
     def _makeAccess(self):
         if not self.accessMade:
-            def _close(): self.hideSubWindow("Accessibility")
-            def _changeFg(): self.label("fg", bg=self.colourBox(self.getLabelBg("fg")))
-            def _changeBg(): self.label("bg", bg=self.colourBox(self.getLabelBg("bg")))
+            def _close(): self.hideSubWindow("access_access_subwindow")
+            def _changeFg(): self.label("access_fg_colBox", bg=self.colourBox(self.getLabelBg("access_fg_colBox")))
+            def _changeBg(): self.label("access_bg_colBox", bg=self.colourBox(self.getLabelBg("access_bg_colBox")))
             def _settings():
-                font = {"underline":self.check("Underline"), "overstrike":self.check("Overstrike")}
-                font["weight"] = "bold" if self.check("Bold") is True else "normal"
-                font["slant"] = "roman" if self.radio("slant") == "Normal" else "italic"
-                if len(self.listbox("Family")) > 0: font["family"] = self.listbox("Family")[0]
+                font = {"underline":self.check("access_underline_check"), "overstrike":self.check("access_overstrike_check")}
+                font["weight"] = "bold" if self.check("access_bold_check") is True else "normal"
+                font["slant"] = "roman" if self.radio("access_italic_radio") == "Normal" else "italic"
+                if len(self.listbox("access_family_listbox")) > 0: font["family"] = self.listbox("access_family_listbox")[0]
                 if self.option("Size:") is not None: font["size"] = self.option("Size:")
                 self.font = font
-                self.bg = self.getLabelBg("bg")
-                self.fg = self.getLabelBg("fg")
+                self.bg = self.getLabelBg("access_bg_colBox")
+                self.fg = self.getLabelBg("access_fg_colBox")
 
             self.accessFont = self.accessBg = self.accessFg = None
-            with self.subWindow("Accessibility", sticky = "news") as sw:
+            with self.subWindow("access_access_subwindow", sticky = "news", title="Accessibility") as sw:
                 sw.config(padx=5, pady=1)
-                with self.labelFrame("Font", sticky="news") as lf:
+                with self.labelFrame("access_font_labelframe", sticky="news", name="Font") as lf:
                     lf.config(padx=10, pady=10)
-                    self.listbox("Family", self.fonts, rows=6, tip="Choose a font", colspan=2)
+                    self.listbox("access_family_listbox", self.fonts, rows=6, tip="Choose a font", colspan=2)
                     self.option("Size:", [7, 8, 9, 10, 12, 13, 14, 16, 18, 20, 22, 25, 29, 34, 40], label=True, tip="Choose a font size")
-                    self.check("Bold", pos=('p',1), tip="Check this to make all font bold")
-                    self.radio("slant", "Normal", tip="No italics")
-                    self.radio("slant", "Italic", pos=('p',1), tip="Set font italic")
-                    self.check("Underline", tip="Underline all text")
-                    self.check("Overstrike", pos=('p',1), tip="Strike out all text")
-                    self.label("Foreground:", sticky="ew", anchor="w")
-                    self.label("fg", "", pos=('p',1), sticky="ew", submit=_changeFg, relief="ridge", tip="Click here to set the foreground colour")
-                    self.label("Background:", sticky="ew", anchor="w")
-                    self.label("bg", "", pos=('p',1), sticky="ew", submit=_changeBg, relief="ridge", tip="Click here to set the background colour")
-                self.buttons(["OK", "Cancel", "Reset"], [_settings, _close, self._resetAccess], sticky="se")
+                    self.check("access_bold_check", name="Bold", pos=('p',1), tip="Check this to make all font bold")
+                    self.radio("access_italic_radio", "Normal", tip="No italics")
+                    self.radio("access_italic_radio", "Italic", pos=('p',1), tip="Set font italic")
+                    self.check("access_underline_check", name="Underline", tip="Underline all text")
+                    self.check("access_overstrike_check", name="Overstrike", pos=('p',1), tip="Strike out all text")
+                    self.label("access_fg_text", "Foreground:", sticky="ew", anchor="w")
+                    self.label("access_fg_colBox", "", pos=('p',1), sticky="ew", submit=_changeFg, relief="ridge", tip="Click here to set the foreground colour")
+                    self.label("access_bg_text", "Background:", sticky="ew", anchor="w")
+                    self.label("access_bg_colBox", "", pos=('p',1), sticky="ew", submit=_changeBg, relief="ridge", tip="Click here to set the background colour")
+                self.sticky="se"
+                with self.frame("access_button_box"):
+                    self.button("access_ok_button", _settings, name="OK", pos=(0,0))
+                    self.button("access_cancel_button", _close, name="Cancel", pos=(0,1))
+                    self.button("access_reset_button", self._resetAccess, name="Reset", pos=(0,2))
             self.accessMade = True
 
     def _resetAccess(self):
         if self.accessMade:
-            self.listbox("Family", self.accessFont["family"])
+            self.listbox("access_family_listbox", self.accessFont["family"])
             self.option("Size:", str(self.accessFont["size"]))
 
-            if self.accessFont["weight"] == "normal": self.check("Bold", False)
-            else: self.check("Bold", True)
+            if self.accessFont["weight"] == "normal": self.check("access_bold_check", False)
+            else: self.check("access_bold_check", True)
 
-            if self.accessFont["slant"] == "roman": self.radio("slant", "Normal")
-            else: self.radio("slant", "Italic")
+            if self.accessFont["slant"] == "roman": self.radio("access_italic_radio", "Normal")
+            else: self.radio("access_italic_radio", "Italic")
 
-            self.check("Overstrike", self.accessFont["overstrike"])
-            self.check("Underline", self.accessFont["underline"])
+            self.check("access_overstrike_check", self.accessFont["overstrike"])
+            self.check("access_underline_check", self.accessFont["underline"])
 
-            self.label("fg", bg=self.accessFg)
-            self.label("bg", bg=self.accessBg)
+            self.label("access_fg_colBox", bg=self.accessFg)
+            self.label("access_bg_colBox", bg=self.accessBg)
         else:
             gui.warn("Accessibility not set up yet.")
         
@@ -8007,7 +8013,7 @@ class gui(object):
         self.accessBg = self.bgLabel.cget("bg")
         self.accessFg = self.containerStack[0]["fg"]
         self._resetAccess()
-        self.showSubWindow("Accessibility")
+        self.showSubWindow("access_access_subwindow")
 
 #####################################
 # FUNCTIONS for labels
