@@ -1125,6 +1125,8 @@ class gui(object):
         self.winIcon = None # store the path to any icon
         self.dnd = None # the dnd manager
 
+        self.accessMade = False # accessibility subWindow
+
         # collections of widgets, widget name is key
         if not reset: self.widgetManager = WidgetManager()
         else: self.widgetManager.reset(self.Widgets.keepers)
@@ -7937,6 +7939,73 @@ class gui(object):
         for k in self.widgetManager.group(self.Widgets.DatePicker):
             dps[k] = self.getDatePicker(k)
         return dps
+
+#####################################
+# FUNCTIONS for ACCESSABILITY
+#####################################
+
+    def _makeAccess(self):
+        if not self.accessMade:
+            def _close(): self.hideSubWindow("Accessibility")
+            def _changeFg(): self.label("fg", bg=self.colourBox(self.getLabelBg("fg")))
+            def _changeBg(): self.label("bg", bg=self.colourBox(self.getLabelBg("bg")))
+            def _settings():
+                font = {"underline":self.check("Underline"), "overstrike":self.check("Overstrike")}
+                font["weight"] = "bold" if self.check("Bold") is True else "normal"
+                font["slant"] = "roman" if self.radio("slant") == "Normal" else "italic"
+                if len(self.listbox("Family")) > 0: font["family"] = self.listbox("Family")[0]
+                if self.option("Size:") is not None: font["size"] = self.option("Size:")
+                self.font = font
+                self.bg = self.getLabelBg("bg")
+                self.fg = self.getLabelBg("fg")
+
+            self.accessFont = self.accessBg = self.accessFg = None
+            with self.subWindow("Accessibility", sticky = "news") as sw:
+                sw.config(padx=5, pady=1)
+                with self.labelFrame("Font", sticky="news") as lf:
+                    lf.config(padx=10, pady=10)
+                    self.listbox("Family", self.fonts, rows=6, tip="Choose a font", colspan=2)
+                    self.option("Size:", [7, 8, 9, 10, 12, 13, 14, 16, 18, 20, 22, 25, 29, 34, 40], label=True, tip="Choose a font size")
+                    self.check("Bold", pos=('p',1), tip="Check this to make all font bold")
+                    self.radio("slant", "Normal", tip="No italics")
+                    self.radio("slant", "Italic", pos=('p',1), tip="Set font italic")
+                    self.check("Underline", tip="Underline all text")
+                    self.check("Overstrike", pos=('p',1), tip="Strike out all text")
+                    self.label("Foreground:", sticky="ew", anchor="w")
+                    self.label("fg", "", pos=('p',1), sticky="ew", submit=_changeFg, relief="ridge", tip="Click here to set the foreground colour")
+                    self.label("Background:", sticky="ew", anchor="w")
+                    self.label("bg", "", pos=('p',1), sticky="ew", submit=_changeBg, relief="ridge", tip="Click here to set the background colour")
+                self.buttons(["OK", "Cancel", "Reset"], [_settings, _close, self._resetAccess], sticky="se")
+            self.accessMade = True
+
+    def _resetAccess(self):
+        if self.accessMade:
+            self.listbox("Family", self.accessFont["family"])
+            self.option("Size:", str(self.accessFont["size"]))
+
+            if self.accessFont["weight"] == "normal": self.check("Bold", False)
+            else: self.check("Bold", True)
+
+            if self.accessFont["slant"] == "roman": self.radio("slant", "Normal")
+            else: self.radio("slant", "Italic")
+
+            self.check("Overstrike", self.accessFont["overstrike"])
+            self.check("Underline", self.accessFont["underline"])
+
+            self.label("fg", bg=self.accessFg)
+            self.label("bg", bg=self.accessBg)
+        else:
+            gui.warn("Accessibility not set up yet.")
+        
+
+    def showAccess(self, location=None):
+        self._makeAccess()
+        # update current settings
+        self.accessFont = self._labelFont.actual()
+        self.accessBg = self.bgLabel.cget("bg")
+        self.accessFg = self.containerStack[0]["fg"]
+        self._resetAccess()
+        self.showSubWindow("Accessibility")
 
 #####################################
 # FUNCTIONS for labels
