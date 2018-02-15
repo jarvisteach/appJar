@@ -2665,7 +2665,6 @@ def test_gui_properties():
     app.labelFont = {'size':20, 'family':'Arial'}
     print(app.fonts)
 
-#    app.ttkTheme
     app.editMenu = True
     app.editMenu = False
 
@@ -2676,16 +2675,17 @@ def test_gui_properties():
     app.enterKey = propFunc
     app.enterKey = None
 
-#    app.logLevel = "error"
-#    app.logLevel = "warn"
-#    app.logLevel = "debug"
-#    app.logLevel = "trace"
-##    assert app.logLevel.lower() == "trace"
-#
-#    app.logFile = "logger.txt"
-#    assert app.logFile == "logger.txt"
-#    app.logFile = None
-#    assert app.logFile == None
+    app.logLevel = "error"
+    assert app.logLevel.lower() == "error"
+    app.logLevel = "warn"
+    assert app.logLevel.lower() == "warn"
+    app.logLevel = "debug"
+    assert app.logLevel.lower() == "debug"
+    app.logLevel = "trace"
+    assert app.logLevel.lower() == "trace"
+
+    app.logFile = "logger.txt"
+    assert app.logFile.endswith("logger.txt")
     app.language = "french"
     assert app.language == "french"
 
@@ -3079,6 +3079,7 @@ app2.setTtkTheme()
 try: app2.setTtkTheme("broken")
 except: pass
 app2.setTtkTheme("default")
+app.ttkTheme = "default"
 app2.startNotebook("nb1")
 app2.startNote("nb1_n1")
 app2.addLabel("nb1_l1", TEXT_ONE)

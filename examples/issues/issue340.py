@@ -8,12 +8,25 @@ def press():
     app.enterKey=None
     app.language = "french"
     print("NEW LANG:", app.language)
+    app.logFile = None
+    print(app.logFile.endswith("a.txt"))
+
+def logger(level):
+    lev = app.radio("logger")
+    print("BEFORE", app.logLevel, " -> ", lev)
+    app.logLevel = app.radio("logger")
+    print("AFTER", app.logLevel)
 
 with gui("KWARGS TEST", bg="green") as app:
     with app.tabbedFrame("nb1", bg="blue"):
         with app.tab("LabelFrame", bg="yellow"):
             with app.labelFrame("LabelFrame", bg="green", fg="blue"):
                 app.label("YELLOW NOTE")
+                app.radio("logger", "error", change=logger)
+                app.radio("logger", "warning", change=logger)
+                app.radio("logger", "debug", change=logger)
+                app.radio("logger", "info", change=logger)
+                app.radio("logger", "trace", change=logger)
         with app.tab("ToggleFrame", bg="black", fg="white"):
             with app.toggleFrame("ToggleFrame", bg="pink", fg="red"):
                 app.label("BLACK NOTE")
