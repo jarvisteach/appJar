@@ -21,12 +21,22 @@ with gui("KWARGS TEST", bg="green") as app:
     with app.tabbedFrame("nb1", bg="blue"):
         with app.tab("LabelFrame", bg="yellow"):
             with app.labelFrame("LabelFrame", bg="green", fg="blue"):
-                app.label("YELLOW NOTE")
+                app.label("NEW ONES")
                 app.radio("logger", "error", change=logger)
                 app.radio("logger", "warning", change=logger)
                 app.radio("logger", "debug", change=logger)
                 app.radio("logger", "info", change=logger)
                 app.radio("logger", "trace", change=logger)
+            with app.labelFrame("LabelFrame", bg="green", fg="blue", row='p', column=1):
+                app.label("OLD ONES")
+                app.addRadioButton("logger2", "error")
+                app.addRadioButton("logger2", "warning")
+                app.addRadioButton("logger2", "debug")
+                app.addRadioButton("logger2", "info")
+                app.addRadioButton("logger2", "trace")
+                app.setRadioButtonChangeFunction('logger2', logger)
+                app.setRadioButtonChangeFunction('logger2', logger)
+
         with app.tab("ToggleFrame", bg="black", fg="white"):
             with app.toggleFrame("ToggleFrame", bg="pink", fg="red"):
                 app.label("BLACK NOTE")

@@ -3048,6 +3048,13 @@ class gui(object):
             cmd = self.MAKE_FUNC(function, name, True)
             # get rb variable
             var = self.widgetManager.get(self.Widgets.RadioButton, name, group=WidgetManager.VARS)
+
+            # only allow one trace to be bound
+            # users are more likely to call multiple binds on radios
+            #because they all share one var
+            if hasattr(var, "cmd_id"):
+                var.trace_vdelete('w', var.cmd_id)
+
             var.cmd_id = var.trace('w', cmd)
             var.cmd = cmd
         elif kind == self.Widgets.Properties:
