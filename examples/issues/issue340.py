@@ -17,8 +17,34 @@ def logger(level):
     app.logLevel = app.radio("logger")
     print("AFTER", app.logLevel)
 
+def setts(btn):
+    if btn == 'SIZE':
+        app.size=(app.entry('x'), app.entry('y'))
+    elif btn == 'LOCATION':
+        app.location=(app.entry('x'), app.entry('y'))
+    elif btn == 'FSIZE':
+        app.size="fullscreen"
+    elif btn == 'FULL':
+        app.fullscreen = True
+    elif btn == 'NOFULL':
+        app.fullscreen = False
+    elif btn == 'GET':
+        app.label("t",
+            "SIZE: " + str(app.size) + "\n" +
+            "LOC: " + str(app.location) + "\n" +
+            "FULL: " + str(app.fullscreen) 
+        )
+
 with gui("KWARGS TEST", bg="green") as app:
     with app.tabbedFrame("nb1", bg="blue"):
+
+        with app.tab("settings", bg="green", fg="red"):
+            app.entry("x", label=True, kind='numeric')
+            app.entry("y", label=True, kind='numeric', pos=(0,1))
+            app.buttons(["SIZE", "FSIZE", "LOCATION", "FULL", "NOFULL"], setts, colspan=2)
+            app.button('GET', setts, colspan=2)
+            app.label('t', colspan=2, font={'size':20})
+
         with app.tab("LabelFrame", bg="yellow"):
             with app.labelFrame("LabelFrame", bg="green", fg="blue"):
                 app.label("NEW ONES")
@@ -60,14 +86,14 @@ with gui("KWARGS TEST", bg="green") as app:
         with app.tab("ScrollPane", bg="grey"):
             with app.scrollPane("ScrollPane", sticky="SE", bg="pink"):
                 app.label("GREY NOTE", bg="orange")
-        with app.tab("NoteBook", bg="yellow"):
-            with app.notebook("nb1"):
-                with app.note("note1", bg="green"):
-                    app.label("N_GREEN NOTE")
-                with app.note("note2", bg="pink"):
-                    app.label("N_PINK NOTE2")
-                with app.note("note3", bg="blue"):
-                    app.label("N_BLUE NOTE3")
+#        with app.tab("NoteBook", bg="yellow"):
+#            with app.notebook("nb1"):
+#                with app.note("note1", bg="green"):
+#                    app.label("N_GREEN NOTE")
+#                with app.note("note2", bg="pink"):
+#                    app.label("N_PINK NOTE2")
+#                with app.note("note3", bg="blue"):
+#                    app.label("N_BLUE NOTE3")
 
     app.enterKey=press
     print(app.language)

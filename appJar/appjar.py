@@ -275,11 +275,11 @@ class gui(object):
     def SPLIT_GEOM(geom):
         """ returns 2 lists made from the geom string """
         geom = geom.lower().split("x")
-        width = int(geom[0])
-        height = int(geom[1].split("+")[0])
+        width = int(float(geom[0]))
+        height = int(float(geom[1].split("+")[0]))
         try:
-            x = int(geom[1].split("+")[1])
-            y = int(geom[1].split("+")[2])
+            x = int(float(geom[1].split("+")[1]))
+            y = int(float(geom[1].split("+")[2]))
         except IndexError:
             x = y = -1
 
