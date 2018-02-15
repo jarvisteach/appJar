@@ -2862,7 +2862,12 @@ test_containers()
 test_messages()
 test_dnd()
 
-print(app.getAllInputs(extra='something', extra2=True, extra3=4))
+data = app.getAllInputs(extra='something', extra2=True, extra3=4)
+assert data['extra'] == 'something'
+assert data['ae1'] == TEXT_ONE
+assert data['rb'] == TEXT_ONE
+assert data['e1'] == TEXT_ONE
+
 
 test_sets()
 test_gui_options()
