@@ -34,9 +34,22 @@ def setts(btn):
             "LOC: " + str(app.location) + "\n" +
             "FULL: " + str(app.fullscreen) 
         )
+    elif btn == "fonts":
+        app.label("fonts",
+            "FG: " + str(app.fg) + "\n" +
+            "BG: " + str(app.bg) + "\n" +
+            "FONT: " + str(app.font) + "\n" +
+            "BUTFONT: " + str(app.buttonFont) + "\n" + 
+            "LABFONT: " + str(app.labelFont) + "\n"
+        )
 
 with gui("KWARGS TEST", bg="green") as app:
     with app.tabbedFrame("nb1", bg="blue"):
+
+        with app.tab("fonts"):
+            app.buttonFont = {'family':'arial', 'size':20}
+            app.button("fonts", setts)
+            app.label("fonts")
 
         with app.tab("settings", bg="green", fg="red"):
             app.entry("x", label=True, kind='numeric')

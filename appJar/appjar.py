@@ -2498,7 +2498,10 @@ class gui(object):
         else:
             self.setFont(size=args)
 
-    font = property(fset=_setFont)
+    def getFont(self):
+        return self._labelFont.actual()
+
+    font = property(getFont, _setFont)
 
     def setButtonFont(self, *args, **style):
         if len(args) > 0:
@@ -2519,7 +2522,10 @@ class gui(object):
         else:
             self.setFont(size=args)
 
-    buttonFont = property(fset=_setButtonFont)
+    def getButtonFont(self):
+        return self._buttonFont.actual()
+
+    buttonFont = property(getButtonFont, _setButtonFont)
 
     def setLabelFont(self, *args, **style):
         if len(args) > 0:
@@ -2563,7 +2569,11 @@ class gui(object):
         else:
             self.setLabelFont(size=args)
 
-    labelFont = property(fset=_setLabelFont)
+    def getLabelFont(self):
+        return self._labelFont.actual()
+
+
+    labelFont = property(getLabelFont, _setLabelFont)
 
     # need to set a default colour for container
     # then populate that field
@@ -2583,7 +2593,16 @@ class gui(object):
             self.ttkStyle.configure("TLabel", foreground=colour)
             self.ttkStyle.configure("TFrame", foreground=colour)
 
-    fg = property(fset=setFg)
+    def getBg(self):
+        if self.containerStack[-1]['type'] == self.Widgets.RootPage:
+            return self.bgLabel.cget("bg")
+        else:
+            return self.containerStack[-1]['container'].cget("bg")
+
+    def getFg(self):
+        return self.containerStack[-1]["fg"]
+
+    fg = property(getFg, setFg)
 
     # self.topLevel = Tk()
     # self.appWindow = CanvasDnd, fills all of self.topLevel
@@ -2617,7 +2636,7 @@ class gui(object):
             gui.trace("In ttk mode - trying to set BG to %s", colour)
             self.ttkStyle.configure(".", background=colour)
 
-    bg = property(fset=setBg)
+    bg = property(getBg, setBg)
 
     @staticmethod
     def _isWidgetContainer(widget):
