@@ -14,6 +14,7 @@ strict: true
 pages:
 - Welcome: index.md
 - Fillings:
+    - Old Widgets: pythonWidgets.md
     - Widgets:
         - Label: widgets/label.md
         - Message: widgets/message.md
@@ -50,6 +51,7 @@ pages:
     - Beta:
         - Widgets: pythonDevWidgets.md
         - Simple Naming: simpleAppJar.md
+        - Simple Properties: simpleProperties.md
 - Configuration:
     - GUI Options: pythonGuiOptions.md
     - Widgets:
