@@ -3084,7 +3084,7 @@ app2.setTtkTheme()
 try: app2.setTtkTheme("broken")
 except: pass
 app2.setTtkTheme("default")
-app.ttkTheme = "default"
+app2.ttkTheme = "default"
 app2.startNotebook("nb1")
 app2.startNote("nb1_n1")
 app2.addLabel("nb1_l1", TEXT_ONE)
