@@ -2675,13 +2675,18 @@ def test_gui_properties():
     app.enterKey = propFunc
     app.enterKey = None
 
+    print(app.logLevel)
     app.logLevel = "error"
+    print(app.logLevel)
     assert app.logLevel.lower() == "error"
     app.logLevel = "warn"
-    assert app.logLevel.lower() == "warn"
+    print(app.logLevel)
+    assert app.logLevel.lower() == "warning"
     app.logLevel = "debug"
+    print(app.logLevel)
     assert app.logLevel.lower() == "debug"
     app.logLevel = "trace"
+    print(app.logLevel)
     assert app.logLevel.lower() == "trace"
 
     app.logFile = "logger.txt"
