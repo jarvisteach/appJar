@@ -9673,7 +9673,7 @@ class gui(object):
                 self.tbm.pack_forget()
 
     # Method to get all inputs.
-    def GetAllInputs(self, **kwargs):
+    def getAllInputs(self, **kwargs):
         """Get all values, merge & return as a single dictionary.
 
         :param kwargs: will be _appended_ to the input list.
