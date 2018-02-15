@@ -2590,8 +2590,8 @@ def test_logging():
 def test_gui_properties():
     app.title = "aaa"
     assert app.title == "aaa"
-    app.icon = "images/favicon.ico"
-    assert app.icon == "images/favicon.ico"
+#    app.icon = "images/favicon.ico"
+#    assert app.icon == "images/favicon.ico"
 
     app.transparency = 50
 #    print(app.transparency)
