@@ -2323,52 +2323,74 @@ class gui(object):
 
     def configure(self, **kwargs):
         title = kwargs.pop("title", None)
+        icon = kwargs.pop("icon", None)
+        transparency = kwargs.pop("transparency", None)
+        visible = kwargs.pop("visible", None)
+
+        padding = kwargs.pop("padding", None)
+        inPadding = kwargs.pop("inPadding", None)
+        guiPadding = kwargs.pop("guiPadding", None)
+
+        size = kwargs.pop("size", None)
+        location = kwargs.pop("location", None)
+        fullscreen = kwargs.pop("fullscreen", None)
+        resizable = kwargs.pop("resizable", None)
+
+        sticky = kwargs.pop("sticky", None)
+        stretch = kwargs.pop("stretch", None)
+        expand = kwargs.pop("expand", None)
+        row = kwargs.pop("row", None)
+
         fg = kwargs.pop("fg", None)
         bg = kwargs.pop("bg", None)
         font = kwargs.pop("font", None)
-        labelFont = kwargs.pop("labelFont", None)
         buttonFont = kwargs.pop("buttonFont", None)
-        transparency = kwargs.pop("transparency", None)
-        stretch = kwargs.pop("stretch", None)
-        expand = kwargs.pop("expand", None)
-        sticky = kwargs.pop("sticky", None)
-        padding = kwargs.pop("padding", None)
-        inPadding = kwargs.pop("inPadding", None)
-        icon = kwargs.pop("icon", None)
-        resizable = kwargs.pop("resizable", None)
-        fullscreen = kwargs.pop("fullscreen", None)
-        location = kwargs.pop("location", None)
-        size = kwargs.pop("size", None)
-        guiPadding = kwargs.pop("guiPadding", None)
+        labelFont = kwargs.pop("labelFont", None)
+        ttkTheme = kwargs.pop("ttkTheme", None)
+
+        editMenu = kwargs.pop("editMenu", None)
         # two possible names
-        logFile = kwargs.pop("file", kwargs.pop("logFile", None))
-        logLevel = kwargs.pop("log", kwargs.pop("logLevel", None))
         stopFunction = kwargs.pop("stop", kwargs.pop("stopFunction", None))
+        enterKey = kwargs.pop("enterKey", None)
+        logLevel = kwargs.pop("log", kwargs.pop("logLevel", None))
+        logFile = kwargs.pop("file", kwargs.pop("logFile", None))
+        language = kwargs.pop("language", None)
 
         for k, v in kwargs.items():
             gui.error("Invalid config parameter: %s, %s", k, v)
 
-        if logFile is not None: self.setLogFile(logFile)
-        if logLevel is not None: self.setLogLevel(logLevel)
         if title is not None: self.title = title
+        if icon is not None: self.icon = icon
+        if transparency is not None: self.transparency = transparency
+        if visible is not None: self.visible = visible
+
+        if padding is not None: self.padding = padding
+        if inPadding is not None: self.inPadding = inPadding
+        if guiPadding is not None: self.guiPadding = guiPadding
+
+        if size is not None: self.size = size
+        if location is not None: self.location = location
+        if fullscreen is not None: self.fullscreen = fullscreen
+        if resizable is not None: self.resizable = resizable
+
+        if sticky is not None: self.sticky = sticky
+        if expand is not None: self.expand = expand
+        if stretch is not None: self.stretch = stretch
+        if row is not None: self.row = row
+
         if fg is not None: self.fg = fg
         if bg is not None: self.bg = bg
         if font is not None: self.font = font
         if labelFont is not None: self.labelFont = labelFont
         if buttonFont is not None: self.buttonFont = buttonFont
-        if transparency is not None: self.transparency = transparency
-        if stretch is not None: self.stretch = stretch
-        if expand is not None: self.expand = expand
-        if sticky is not None: self.sticky = sticky
-        if padding is not None: self.padding = padding
-        if inPadding is not None: self.inPadding = inPadding
-        if icon is not None: self.icon = icon
-        if resizable is not None: self.resizable = resizable
-        if fullscreen is not None: self.fullscreen = fullscreen
-        if location is not None: self.location = location
-        if size is not None: self.size = size
-        if guiPadding is not None: self.guiPadding = guiPadding
+        if ttkTheme is not None: self.ttkTheme = ttkTheme
+
+        if editMenu is not None: self.editMenu = editMenu
         if stopFunction is not None: self.stopFunction = stopFunction
+        if enterKey is not None: self.enterKey = enterKey
+        if logLevel is not None: self.logLevel = logLevel
+        if logFile is not None: self.logFile = logFile
+        if language is not None: self.language = language
 
     def setGuiPadding(self, x, y=None):
         """ sets the padding around the border of the GUI """

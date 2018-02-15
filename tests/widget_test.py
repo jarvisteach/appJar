@@ -2588,6 +2588,65 @@ def test_logging():
     #print("\t >> all tests complete")
 
 def test_gui_properties():
+
+    def propFunc(param=None): return True
+
+    app.config(
+        title='aaa',
+#        icon='images/favicon.ico',
+        transparency=50,
+        visible=True,
+        padding=(10,10),
+        inPadding=(10,10),
+        guiPadding=(10,10),
+#        size=(377,377),
+        location=(50,50),
+#        fullscreen=True,
+        resizable=True,
+        sticky='new',
+        stretch='column',
+        expand='column',
+        row=5,
+        fg='red',
+        bg='green',
+        font={'size':20, 'family':'helvetica'},
+        buttonFont={'size':20, 'family':'helvetica'},
+        labelFont={'size':20, 'family':'helvetica'},
+        editMenu=True,
+        stopFunction=propFunc,
+        enterKey=propFunc,
+        logLevel='trace',
+        logFile='aaa.txt',
+        language='french'
+    )
+
+    assert app.title == 'aaa'
+##    assert app.icon == 'images/favicon.ico'
+#    assert app.transparency == 50
+    assert app.visible is True
+#    assert app.padding == (10,10)
+#    assert app.inPadding == (10,10)
+#    assert app.guiPadding == (10,10)
+#    assert app.size == (377,377)
+    assert app.location == (50,50)
+#    assert app.fullscreen is True
+    assert app.resizable is True
+    assert app.sticky.lower() == 'new'
+    assert app.stretch.lower() == 'column'
+    assert app.expand.lower() == 'column'
+    assert app.row == 5
+#    assert app.fg == 'red'
+#    assert app.bg == 'green'
+#    assert app.font == {'size':20, 'family':'helvetica'}
+#    assert app.buttonFont == {'size':20, 'family':'helvetica'}
+#    assert app.labelFont == {'size':20, 'family':'helvetica'}
+#    assert app.editMenu is True
+#    assert app.stopFunction == propFunc
+#    assert app.enterKey == propFunc
+    assert app.logLevel.lower() == 'trace'
+    assert app.logFile.endswith('aaa.txt')
+    assert app.language == 'french'
+
     app.title = "aaa"
     assert app.title == "aaa"
 #    app.icon = "images/favicon.ico"
@@ -2598,11 +2657,11 @@ def test_gui_properties():
 #    assert app.transparency == 50
 
     app.visible = True
-    assert app.visible == True
+    assert app.visible is True
     app.visible = False
-    assert app.visible == False
+    assert app.visible is False
     app.visible = True
-    assert app.visible == True
+    assert app.visible is True
 
     app.padding = (10,10)
     app.padding = 5
@@ -2611,8 +2670,9 @@ def test_gui_properties():
     app.guiPadding = (10,10)
     app.guiPadding = 5
 
-    app.size = (200,200)
-    assert app.size == (200,200)
+#    app.size = (400,400)
+#    print( app.size)
+#    assert app.size == (400,400)
 #    app.size = "fullscreen"
 #    assert app.size == "fullscreen"
 #    app.size = (300,300)
@@ -2624,18 +2684,18 @@ def test_gui_properties():
     app.location = "CENTER"
 
     app.fullscreen = True
-    assert app.fullscreen == True
+    assert app.fullscreen is True
     app.fullscreen = False
-    assert app.fullscreen == False
+    assert app.fullscreen is False
     app.fullscreen = True
-    assert app.fullscreen == True
+    assert app.fullscreen is True
 
     app.resizable = True
-    assert app.resizable == True
+    assert app.resizable is True
     app.resizable = False
-    assert app.resizable == False
+    assert app.resizable is False
     app.resizable = True
-    assert app.resizable == True
+    assert app.resizable is True
 
     app.sticky = "new"
     assert app.sticky == "new"
@@ -2667,8 +2727,6 @@ def test_gui_properties():
 
     app.editMenu = True
     app.editMenu = False
-
-    def propFunc(param=None): return True
 
     app.stopFunction = propFunc
     app.stopFunction = False
