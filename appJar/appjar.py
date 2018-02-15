@@ -11611,7 +11611,7 @@ class PieChart(Canvas, object):
 
             # generate a tooltip
             if ToolTip is not False:
-                frac = int(val / sum(self.fracs.values()) * 100)
+                frac = int(float(val) / sum(self.fracs.values()) * 100)
                 tip = key + ": " + str(val) + " (" + str(frac) + "%)"
                 tt = ToolTip(self, tip, delay=500, follow_mouse=1, specId=sliceId)
 
