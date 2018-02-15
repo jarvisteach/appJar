@@ -1495,10 +1495,14 @@ class gui(object):
         logging.basicConfig(level=logging.INFO, filename=fileName, format='%(asctime)s %(name)s:%(levelname)s: %(message)s')
         gui.info("Switched to logFile: %s", fileName)
 
+    def _setLogFile(self, fileName):
+        ''' necessary so we can access this as a property '''
+        gui.setLogFile(fileName)
+
     def getLogFile(self):
         return logging.root.handlers[0].baseFilename
 
-    logFile = property(getLogFile, setLogFile)
+    logFile = property(getLogFile, _setLogFile)
 
     @staticmethod
     def setLogLevel(level):
@@ -1509,9 +1513,13 @@ class gui(object):
 
 
     def getLogLevel(self):
-        return logging.getLevelName(logging.getLogger().getEffectiveLevel())
+        return logging.getLevelName(logging.getLogger("appJar").getEffectiveLevel())
 
-    logLevel = property(getLogLevel, setLogLevel)
+    def _setLogLevel(self, level):
+        ''' necessary so we can access this as a property '''
+        gui.setLogLevel(level)
+
+    logLevel = property(getLogLevel, _setLogLevel)
 
     @staticmethod
     def exception(message, *args):
