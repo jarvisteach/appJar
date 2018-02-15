@@ -399,36 +399,38 @@ app.bg = "red"
 app.fg = "yellow"
 ```
 
-| Property | Data type | Description |
-| --------- | --------- | ------------|
-| title | string | Pass a string for the title of the GUI |
-| icon | string | Pass the path to an icon file |
-| transparency | integer | Pass a percentage (between 0 & 100) to set the transparency |
-| visible | boolean | Pass either `True` or `False` |
-| | | | 
-| padding | integer (list) | Pass a tuple containing the x & y padding or a single integer for both x & y |
-| inPadding | integer (list) | Pass a tuple containing the x & y padding or a single integer for both x & y |
-| guiPadding | integer (list) | Pass a tuple containing the x & y padding or a single integer for both x & y |
-| | | | 
-| size | integer (list) | Pass a tuple containing the width & height (or the string `fullscreen`) |
-| location | integer (list) | Pass a tuple containing the x & y coordinates (or the string `CENTER`) |
-| fullscreen | boolean | Pass either `True` or `False` |
-| resizable | boolean | Pass either `True` or `False` |
-| | | | 
-| sticky | string | Pass a string describing which sides to stick to (news). |
-| stretch | string | Pass a string describing if rows/columns should stretch. |
-| | | | 
-| fg | string | Pass a colour to use for the text colour of all label style widgets. |
-| bg | string | Pass a colour to use for the background of all label style widgets. |
-| font | integer/dict | Pass either a font size, or a dictionary of font properties to use for all widgets. |
-| buttonFont | integer/dict | Pass either a font size, or dicitonary of font properties to use for all button style widgets. |
-| labelFont | integer/dict | Pass either a font size, or a dictionary of font properties to use for all label style widgets. |
-| ttkTheme | string | Only available in ttk mode - pass the name of the ttk theme you want to use. |
-| | | | 
-| editMenu | Boolean | Enables and disanles the right-click edit menu for text based widgets. |
-| stopFunction | function | Sets a function to call when the GUI is closed. |
-| logLevel | string | Sets the loggign level. |
-| logFile | string | Sets a file to lof messages to. |
-| | | | 
-| row | integer | Gets or sets the next row number to be used. |
-| | | | 
+| Property | Data type | GET/SET |Description |
+| --------- | --------- | --------- | ------------|
+| title | string | GET & SET | Pass a string for the title of the GUI |
+| icon | string | GET & SET | Pass the path to an icon file |
+| transparency | SET | integer | Pass a percentage (between 0 & 100) to set the transparency |
+| visible | GET & SET | boolean | Pass either `True` or `False` |
+| | | | |
+| padding | integer (list) | SET | Pass a tuple containing the x & y padding or a single integer for both x & y |
+| inPadding | integer (list) | SET | Pass a tuple containing the x & y padding or a single integer for both x & y |
+| guiPadding | integer (list) | SET | Pass a tuple containing the x & y padding or a single integer for both x & y |
+| | | | |
+| size | integer (list) | GET & SET | Pass a tuple containing the width & height (or the string `fullscreen`) |
+| location | integer (list) | GET & SET | Pass a tuple containing the x & y coordinates (or the string `CENTER`) |
+| fullscreen | boolean | GET & SET | Pass either `True` or `False` |
+| resizable | boolean | GET & SET | Pass either `True` or `False` |
+| | | | |
+| sticky | string | GET & SET | Pass a string describing which sides to stick to (news). |
+| stretch | string | GET & SET | Pass a string describing if rows/columns should stretch. |
+| row | integer | GET & SET | Gets or sets the next row number to be used. |
+| | | | |
+| fg | string | SET | Pass a colour to use for the text colour of all label style widgets. |
+| bg | string | SET | Pass a colour to use for the background of all label style widgets. |
+| font | integer/dict | SET | Pass either a font size, or a dictionary of font properties to use for all widgets. |
+| buttonFont | integer/dict | SET | Pass either a font size, or dicitonary of font properties to use for all button style widgets. |
+| labelFont | integer/dict | SET | Pass either a font size, or a dictionary of font properties to use for all label style widgets. |
+| fonts | string (list) | GET | Returns a list of available fonts. |
+| ttkTheme | string | GET & SET | Only available in ttk mode - pass the name of the ttk theme you want to use. |
+| | | | |
+| editMenu | Boolean | SET | Enables and disables the right-click edit menu for text based widgets. |
+| stopFunction | function | SET | Sets a function to call when the GUI is closed. |
+| enterKey | function | SET | Sets or disables (pass None) a function bound to the enter key. |
+| logLevel | string | GET & SET | Sets the logging level. |
+| logFile | string | GET & SET | Sets a file to log messages to. |
+| language | string | GET & SET | Sets the current language. |
+| | | | |

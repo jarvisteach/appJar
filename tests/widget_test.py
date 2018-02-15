@@ -2587,6 +2587,108 @@ def test_logging():
     print(" >> not implemented...")
     #print("\t >> all tests complete")
 
+def test_gui_properties():
+    app.title = "aaa"
+    assert app.title == "aaa"
+    app.icon = "images/favicon.ico"
+    assert app.icon == "images/favicon.ico"
+
+    app.transparency = 50
+#    print(app.transparency)
+#    assert app.transparency == 50
+
+    app.visible = True
+    assert app.visible == True
+    app.visible = False
+    assert app.visible == False
+    app.visible = True
+    assert app.visible == True
+
+    app.padding = (10,10)
+    app.padding = 5
+    app.inPadding = (10,10)
+    app.inPadding = 5
+    app.guiPadding = (10,10)
+    app.guiPadding = 5
+
+    app.size = (200,200)
+    assert app.size == (200,200)
+#    app.size = "fullscreen"
+#    assert app.size == "fullscreen"
+#    app.size = (300,300)
+#    print(app.size)
+#    assert app.size == (300,300)
+
+    app.location = (300,300)
+    assert app.location == (300,300)
+    app.location = "CENTER"
+
+    app.fullscreen = True
+    assert app.fullscreen == True
+    app.fullscreen = False
+    assert app.fullscreen == False
+    app.fullscreen = True
+    assert app.fullscreen == True
+
+    app.resizable = True
+    assert app.resizable == True
+    app.resizable = False
+    assert app.resizable == False
+    app.resizable = True
+    assert app.resizable == True
+
+    app.sticky = "new"
+    assert app.sticky == "new"
+    app.sticky = "n"
+    assert app.sticky == "n"
+    app.sticky = "news"
+    assert app.sticky == "news"
+
+    app.stretch = "row"
+    assert app.stretch.lower() == "row"
+    app.stretch = "column"
+    assert app.stretch.lower() == "column"
+    app.stretch = "both"
+    assert app.stretch.lower() == "all"
+
+    app.row = 5
+    assert app.row == 5
+
+    app.fg = "blue"
+    app.bg = "red"
+
+    app.font = 20
+    app.font = {'size':20, 'family':'Arial'}
+    app.buttonFont = 20
+    app.buttonFont = {'size':20, 'family':'Arial'}
+    app.labelFont = 20
+    app.labelFont = {'size':20, 'family':'Arial'}
+    print(app.fonts)
+
+#    app.ttkTheme
+    app.editMenu = True
+    app.editMenu = False
+
+    def propFunc(param=None): return True
+
+    app.stopFunction = propFunc
+    app.stopFunction = False
+    app.enterKey = propFunc
+    app.enterKey = None
+
+#    app.logLevel = "error"
+#    app.logLevel = "warn"
+#    app.logLevel = "debug"
+#    app.logLevel = "trace"
+##    assert app.logLevel.lower() == "trace"
+#
+#    app.logFile = "logger.txt"
+#    assert app.logFile == "logger.txt"
+#    app.logFile = None
+#    assert app.logFile == None
+    app.language = "french"
+    assert app.language == "french"
+
 def dragFunc(val=None):
     pass
 
@@ -2654,6 +2756,7 @@ test_message_boxes()
 test_text_areas()
 test_meters()
 test_properties()
+test_gui_properties()
 test_separators()
 test_links()
 test_grips()
