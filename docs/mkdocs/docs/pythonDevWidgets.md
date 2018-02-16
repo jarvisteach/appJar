@@ -16,7 +16,7 @@ with gui("Demo Access") as app:
     app.button('Accessibility', app.showAccess, icon='ACCESS')
 ```
 
-It allows you to configure:
+It allows you to configure:  
 * Font Family
 * Font Size
 * Bold True/False

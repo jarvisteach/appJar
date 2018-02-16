@@ -1,7 +1,23 @@
 #Change-Log
 ---
 
+## Version 0.91  
+
+* Issues Resolved:
+    * [#379](https://github.com/jarvisteach/appJar/issues/379) - PieChart % fix in Python 2.7
+    * [#347](https://github.com/jarvisteach/appJar/issues/347), [#360](https://github.com/jarvisteach/appJar/issues/360) & [#375](https://github.com/jarvisteach/appJar/issues/375) - Right Click Menu updates
+    * [#369](https://github.com/jarvisteach/appJar/issues/369) - Hide scrollbars in ScollPane
+    * [#366](https://github.com/jarvisteach/appJar/issues/366) - Better eror reporting on AutoEntries
+    * [#367](https://github.com/jarvisteach/appJar/issues/367) - Update to logging
+    * [#340](https://github.com/jarvisteach/appJar/issues/340) - Introduced appJar properties
+    * [#329](https://github.com/jarvisteach/appJar/issues/329) - Hide starting separator in Windows Menus
+    * [#328](https://github.com/jarvisteach/appJar/issues/328) - Accessibility Widget
+    * [#301](https://github.com/jarvisteach/appJar/issues/301) - Updated layout
+    * [#29](https://github.com/jarvisteach/appJar/issues/29) - Updated sounds
+
+
 ## Version 0.9  
+
 * Introduction of alternative [widget access functions](/simpleAppJar) ([#235](https://github.com/jarvisteach/appJar/issues/235))  - now possible to **ADD**, **SET** & **GET** widgets by just using their name.  
 * Introduction of alternative [GUI properties](/simpleAppJar) ([#340](https://github.com/jarvisteach/appJar/issues/340)) - now possible to GET/SET properties with special property functions  
 * Introduction of appJar [settings](/pythonSettings/) - can now save/load GUI state to/from file.  
