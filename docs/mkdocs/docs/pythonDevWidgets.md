@@ -7,6 +7,25 @@ The following widgets are in [beta](https://en.wikipedia.org/wiki/Software_relea
 
 A pop-up to configure GUI settings.  
 
+![Accessibility](img/accessibility.png)
+
+```python
+from appJar import gui
+
+with gui("Demo Access") as app:
+    app.button('Accessibility', app.showAccess, icon='ACCESS')
+```
+
+It allows you to configure:
+* Font Family
+* Font Size
+* Bold True/False
+* Normal/Italic
+* Underline True/False
+* Overstrike True/False
+* Foreground Colour
+* Background Colour
+
 ## Table
 ---
 Used to create a spreadsheet like interface.  
