@@ -2728,19 +2728,31 @@ def test_gui_properties():
     app.bg = "red"
     assert app.bg == "red"
 
+    myFont = str(app.fonts[0])
+    myFont1 = str(app.fonts[1])
+    myFont2 = str(app.fonts[2])
+
     app.font = 30
     assert app.font['size'] == 30
-    app.font = {'size':25, 'family':'Arial'}
+
+    app.font = {'size':25, 'family':myFont}
     assert app.font['size'] == 25
-    assert app.font['family'] == 'Arial'
+    assert app.font['family'] == myFont
+
     app.buttonFont = 24
     assert app.buttonFont['size'] == 24
-    app.buttonFont = {'size':23, 'family':'Arial'}
+
+    app.buttonFont = {'size':23, 'family':myFont1}
     assert app.buttonFont['size'] == 23
+    assert app.buttonFont['family'] == myFont1
+
     app.labelFont = 22
     assert app.labelFont['size'] == 22
-    app.labelFont = {'size':21, 'family':'Arial'}
+
+    app.labelFont = {'size':21, 'family':myFont2}
     assert app.labelFont['size'] == 21
+    assert app.labelFont['family'] == myFont2
+
     print(app.fonts)
 
     app.editMenu = False
