@@ -18,7 +18,7 @@ If you want to set multiple properties at once, there is a `configure()` functio
 app.configure(bg='red', fg='yellow', font={'size':20, 'family':'Helvetica'})
 ```
 
-Nearly all properties also support being got in the same way:  
+Nearly all properties can be got in the same way:  
 
 ```python
 app.label('sizeLab', app.size)
@@ -79,7 +79,7 @@ app.label('transLab', app.transparency)
 | buttonFont | integer/dict | Pass either a font size, or dicitonary of font properties to use for all button style widgets. |
 | labelFont | integer/dict | Pass either a font size, or a dictionary of font properties to use for all label style widgets. |
 | ttkTheme | string | Only available in ttk mode - pass the name of the ttk theme you want to use. |
-| fonts | string (list) | (no SETTER) Returns a list of available fonts. |
+| fonts | string (list) | (no SETTER) Returns a list of all available fonts. |
 | | | | |
 
 ### Other

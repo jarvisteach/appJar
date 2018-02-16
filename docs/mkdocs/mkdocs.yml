@@ -14,33 +14,10 @@ strict: true
 pages:
 - Welcome: index.md
 - Fillings:
-    - Old Widgets: pythonWidgets.md
-    - Widgets:
-        - Label: widgets/label.md
-        - Message: widgets/message.md
-        - Entry: widgets/entry.md
-        - Text: widgets/text.md
-        - Button: widgets/button.md
-        - RadioButton: widgets/radio.md
-        - CheckBox: widgets/check.md
-        - OptionBox: widgets/option.md
-        - SpinBox: widgets/spin.md
-        - ListBox: widgets/listbox.md
-        - Scale: widgets/scale.md
-        - Meter: widgets/meter.md
-        - Properties: widgets/properties.md
-        - Separator: widgets/separator.md
-        - Link: widgets/link.md
-        - Grip: widgets/grip.md
-        - DatePicker: widgets/date.md
-        - MicroBit: widgets/microbit.md
-        - GoogleMap: widgets/maps.md
-        - PieChart: widgets/chart.md
-        - Tree: widgets/tree.md
-        - Grid: widgets/grid.md
-        - MatPLotLib: widgets/plot.md
-        - Canvas: widgets/canvas.md
-        - Turtle: widgets/turtle.md
+    - Input Widgets: inputWidgets.md
+    - Output Widgets: outputWidgets.md
+    - Beta Widgets: pythonDevWidgets.md
+    - (Beta Naming): simpleAppJar.md
     - Images: pythonImages.md
     - Sounds: pythonSound.md
     - Bars: pythonBars.md
@@ -48,11 +25,8 @@ pages:
     - Multiple Windows: pythonSubWindows.md
     - Splashscreen: splash.md
     - Special Characters: specialCharacters.md
-    - Beta:
-        - Widgets: pythonDevWidgets.md
-        - Simple Naming: simpleAppJar.md
-        - Simple Properties: simpleProperties.md
 - Configuration:
+    - appJar Properties: simpleProperties.md
     - GUI Options: pythonGuiOptions.md
     - Widgets:
         - Layout: pythonWidgetLayout.md
