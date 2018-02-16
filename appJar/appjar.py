@@ -9701,15 +9701,17 @@ class gui(object):
                   self.getAllDatePickers(),
                   kwargs,
         ])
-        result = dict()
+        result = data = dict()
         for pairs in inputs:
-            # Remove pairs with empty values (anything that doesn't
-            # equal True).
-            data = {key: val for key, val in pairs.items() if val}
-            # Only add the pair if they don't already exist.
-            for key, val in data.items():
+            for key, val in pairs.items():
+                # Try and strip values.
                 try:
-                    if result[key]:
+                    val = val.strip()
+                except AttributeError:
+                    pass
+                try:
+                    # Skip if value is empty or if key already exists.
+                    if not val or result[key]:
                         continue
                 except KeyError:
                     pass
