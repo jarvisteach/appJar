@@ -17,21 +17,21 @@ pages:
     - Input Widgets: inputWidgets.md
     - Output Widgets: outputWidgets.md
     - Beta Widgets: pythonDevWidgets.md
-    - (Beta Naming): simpleAppJar.md
     - Images: pythonImages.md
+    - Grouping Widgets: pythonWidgetGrouping.md
     - Sounds: pythonSound.md
     - Bars: pythonBars.md
     - Pop-ups: pythonDialogs.md
     - Multiple Windows: pythonSubWindows.md
     - Splashscreen: splash.md
     - Special Characters: specialCharacters.md
+    - (Beta Naming): simpleAppJar.md
 - Configuration:
     - appJar Properties: simpleProperties.md
     - GUI Options: pythonGuiOptions.md
     - Widgets:
         - Layout: pythonWidgetLayout.md
         - Configuration: pythonWidgetOptions.md
-        - Grouping: pythonWidgetGrouping.md
         - The power of WITH: pythonContextManager.md
     - Events:
         - Events: pythonEvents.md
