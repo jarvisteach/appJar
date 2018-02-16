@@ -2158,33 +2158,27 @@ class gui(object):
 
         if geom == "fullscreen":
             self.setFullscreen()
-        else:
-            if geom is None:
-                size = None
-            else:
-                if height is not None:
-                    geom = "%sx%s" % (geom, height)
-                else:
-                    if isinstance(geom, list) or isinstance(geom, tuple):
-                        geom = str(geom[0])+"x"+str(geom[1])
-
-                dims = gui.GET_DIMS(container)
+        elif geom is not None:
+            if height is not None:
+                geom=(geom, height)
+            elif not isinstance(geom, list) and not isinstance(geom, tuple):
                 geom, loc = gui.SPLIT_GEOM(geom)
-                size = str(geom[0]) + "x" + str(geom[1])
 
-                gui.trace("Setting size: %s", size)
-                # warn the user that their geom is not big enough
-                if geom[0] < dims["b_width"] or geom[1] < dims["b_height"]:
-                    self.warn("Specified dimensions (%s, %s) less than requested dimensions (%s, %s)",
-                            geom[0], geom[1], dims["b_width"], dims["b_height"])
+            size = "%sx%s" % (int(geom[0]), int(geom[1]))
+            gui.trace("Setting size: %s", size)
 
-                # and set it as the minimum size
-                if not hasattr(container, 'ms'):
-                    self.setMinSize(container, geom)
+            # warn the user that their geom is not big enough
+            dims = gui.GET_DIMS(container)
+            if geom[0] < dims["b_width"] or geom[1] < dims["b_height"]:
+                self.warn("Specified dimensions (%s, %s) less than requested dimensions (%s, %s)",
+                        geom[0], geom[1], dims["b_width"], dims["b_height"])
+
+            # and set it as the minimum size
+            if not hasattr(container, 'ms'):
+                self.setMinSize(container, geom)
 
             self.exitFullscreen()
-            if size is not None:
-                container.geometry(size)
+            container.geometry(size)
 
     def getSize(self):
         container = self._getTopLevel()
@@ -2316,7 +2310,10 @@ class gui(object):
         self.containerStack[-1]['padx'] = x
         self.containerStack[-1]['pady'] = y
 
-    padding = property(fset=setPadding)
+    def getPadding(self):
+        return self.containerStack[-1]['padx'], self.containerStack[-1]['pady']
+
+    padding = property(getPadding, setPadding)
 
     def config(self, **kwargs):
         self.configure(**kwargs)
@@ -2397,7 +2394,10 @@ class gui(object):
         x, y = self._parseTwoParams(x, y)
         self.containerStack[0]['container'].config(padx=x, pady=y)
 
-    guiPadding = property(fset=setGuiPadding)
+    def getGuiPadding(self):
+        return int(str(self.containerStack[0]['container'].cget('padx'))), int(str(self.containerStack[0]['container'].cget('pady')))
+
+    guiPadding = property(getGuiPadding, setGuiPadding)
 
     # sets the current containers internal padding
     def setIPadX(self, x=0):
@@ -2420,7 +2420,10 @@ class gui(object):
         self.containerStack[-1]['ipadx'] = x
         self.containerStack[-1]['ipady'] = y
 
-    inPadding = property(fset=setInPadding)
+    def getInPadding(self):
+        return self.containerStack[-1]['ipadx'], self.containerStack[-1]['ipady']
+
+    inPadding = property(getInPadding, setInPadding)
 
     # set an override sticky for this container
     def setSticky(self, sticky):
@@ -2724,8 +2727,11 @@ class gui(object):
                 percentage = float(percentage) / 100
             self._getTopLevel().attributes("-alpha", percentage)
 
+    def getTransparency(self):
+        return self._getTopLevel().attributes("-alpha") * 100
+
     # property for setTransparency
-    transparency = property(fset=setTransparency)
+    transparency = property(getTransparency, setTransparency)
 
 ##############################
 # functions to deal with tabbing and right clicking
@@ -8211,9 +8217,9 @@ class gui(object):
     def showAccess(self, location=None):
         self._makeAccess()
         # update current settings
-        self.accessFont = self._labelFont.actual()
-        self.accessBg = self.bgLabel.cget("bg")
-        self.accessFg = self.containerStack[0]["fg"]
+        self.accessFont = self.font
+        self.accessBg = self.bg
+        self.accessFg = self.fg
         self._resetAccess()
         self.showSubWindow("access_access_subwindow")
 
@@ -10140,13 +10146,16 @@ class gui(object):
         self.addMenuItem("EDIT", 'Redo', lambda e: self._copyAndPasteHelper( "Redo"), shortcut="Shift-" + shortcut + "Z", createBinding=True)
         self.disableMenu("EDIT")
 
-    def _editMenuWrapper(self, enabled=True):
+    def _editMenuSetter(self, enabled=True):
         if enabled:
             self.addMenuEdit()
         else:
             self.disableMenuEdit()
 
-    editMenu = property(fset=_editMenuWrapper)
+    def _editMenuGetter(self):
+        return self.copyAndPaste.inUse
+
+    editMenu = property(_editMenuGetter, _editMenuSetter)
 
     def appJarAbout(self, menu=None):
         self.infoBox("About appJar",

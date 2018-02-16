@@ -19,7 +19,10 @@ def logger(level):
 
 def setts(btn):
     if btn == 'SIZE':
-        app.size=(app.entry('x'), app.entry('y'))
+        if app.entry('y') is None:
+            app.size=str(app.entry('x'))+'x'+str(app.entry('x'))
+        else:
+            app.size=(app.entry('x'), app.entry('y'))
     elif btn == 'LOCATION':
         app.location=(app.entry('x'), app.entry('y'))
     elif btn == 'FSIZE':
@@ -28,11 +31,14 @@ def setts(btn):
         app.fullscreen = True
     elif btn == 'NOFULL':
         app.fullscreen = False
+    elif btn == "RESIZE":
+        app.resizable = app.check("RESIZE")
     elif btn == 'GET':
         app.label("t",
             "SIZE: " + str(app.size) + "\n" +
             "LOC: " + str(app.location) + "\n" +
-            "FULL: " + str(app.fullscreen) 
+            "FULL: " + str(app.fullscreen) + '\n' +
+            "RES: " + str(app.resizable) 
         )
     elif btn == "fonts":
         app.label("fonts",
@@ -54,6 +60,7 @@ with gui("KWARGS TEST", bg="green") as app:
         with app.tab("settings", bg="green", fg="red"):
             app.entry("x", label=True, kind='numeric')
             app.entry("y", label=True, kind='numeric', pos=(0,1))
+            app.check("RESIZE", label=True, change=setts)
             app.buttons(["SIZE", "FSIZE", "LOCATION", "FULL", "NOFULL"], setts, colspan=2)
             app.button('GET', setts, colspan=2)
             app.label('t', colspan=2, font={'size':20})

@@ -2594,14 +2594,13 @@ def test_gui_properties():
     app.config(
         title='aaa',
 #        icon='images/favicon.ico',
-        transparency=50,
-        visible=True,
-        padding=(10,10),
-        inPadding=(10,10),
-        guiPadding=(10,10),
-#        size=(377,377),
+        transparency=49,
+        visible=False,
+        padding=(1,2),
+        inPadding=(3,4),
+        guiPadding=(5,6),
+        size=(377,377),
         location=(50,50),
-#        fullscreen=True,
         resizable=True,
         sticky='new',
         stretch='column',
@@ -2622,14 +2621,19 @@ def test_gui_properties():
 
     assert app.title == 'aaa'
 ##    assert app.icon == 'images/favicon.ico'
-#    assert app.transparency == 50
-    assert app.visible is True
-#    assert app.padding == (10,10)
-#    assert app.inPadding == (10,10)
-#    assert app.guiPadding == (10,10)
-#    assert app.size == (377,377)
+    assert app.transparency == 49
+    assert app.visible is False
+    assert app.padding == (1,2)
+    assert app.inPadding == (3,4)
+    assert app.guiPadding == (5,6)
     assert app.location == (50,50)
-#    assert app.fullscreen is True
+
+    assert app.size == (377,377)
+    app.configure(fullscreen=True)
+    assert app.fullscreen is True
+    assert app.size != (377,377)
+    app.configure(fullscreen=False)
+
     assert app.resizable is True
     assert app.sticky.lower() == 'new'
     assert app.stretch.lower() == 'column'
@@ -2640,7 +2644,7 @@ def test_gui_properties():
     assert app.font['size'] == 18
     assert app.buttonFont['size'] == 19
     assert app.labelFont['size'] == 18
-#    assert app.editMenu is True
+    assert app.editMenu is True
 #    assert app.stopFunction == propFunc
 #    assert app.enterKey == propFunc
     assert app.logLevel.lower() == 'trace'
@@ -2652,9 +2656,8 @@ def test_gui_properties():
 #    app.icon = "images/favicon.ico"
 #    assert app.icon == "images/favicon.ico"
 
-    app.transparency = 50
-#    print(app.transparency)
-#    assert app.transparency == 50
+    app.transparency = 70
+    assert app.transparency == 70
 
     app.visible = True
     assert app.visible is True
@@ -2663,25 +2666,23 @@ def test_gui_properties():
     app.visible = True
     assert app.visible is True
 
-    app.padding = (10,10)
+    app.padding = (20,21)
+    assert app.padding == (20,21)
     app.padding = 5
-    app.inPadding = (10,10)
-    app.inPadding = 5
-    app.guiPadding = (10,10)
-    app.guiPadding = 5
-
-#    app.size = (400,400)
-#    print( app.size)
-#    assert app.size == (400,400)
-#    app.size = "fullscreen"
-#    assert app.size == "fullscreen"
-#    app.size = (300,300)
-#    print(app.size)
-#    assert app.size == (300,300)
+    assert app.padding == (5,5)
+    app.inPadding = (22,23)
+    assert app.inPadding == (22,23)
+    app.inPadding = 7
+    assert app.inPadding == (7,7)
+    app.guiPadding = (24,25)
+    assert app.guiPadding == (24,25)
+    app.guiPadding = 3
+    assert app.guiPadding == (3,3)
 
     app.location = (300,300)
     assert app.location == (300,300)
     app.location = "CENTER"
+    assert app.location != (300,300)
 
     app.fullscreen = True
     assert app.fullscreen is True
@@ -2696,6 +2697,10 @@ def test_gui_properties():
     assert app.resizable is False
     app.resizable = True
     assert app.resizable is True
+
+#    app.size = (777,777)
+#    print(app.size)
+#    assert app.size == (777,777)
 
     app.sticky = "new"
     assert app.sticky == "new"
@@ -2734,26 +2739,25 @@ def test_gui_properties():
     assert app.labelFont['size'] == 21
     print(app.fonts)
 
-    app.editMenu = True
     app.editMenu = False
+    assert app.editMenu is False
+    app.editMenu = True
+    assert app.editMenu is True
+    app.editMenu = False
+    assert app.editMenu is False
 
     app.stopFunction = propFunc
     app.stopFunction = False
     app.enterKey = propFunc
     app.enterKey = None
 
-    print(app.logLevel)
     app.logLevel = "error"
-    print(app.logLevel)
     assert app.logLevel.lower() == "error"
     app.logLevel = "warn"
-    print(app.logLevel)
     assert app.logLevel.lower() == "warning"
     app.logLevel = "debug"
-    print(app.logLevel)
     assert app.logLevel.lower() == "debug"
     app.logLevel = "trace"
-    print(app.logLevel)
     assert app.logLevel.lower() == "trace"
 
     app.logFile = "logger.txt"
@@ -2868,6 +2872,8 @@ assert data['ae1'] == TEXT_ONE
 assert data['rb'] == TEXT_ONE
 assert data['e1'] == TEXT_ONE
 
+app.showAccess()
+app.hideSubWindow('access_access_subwindow')
 
 test_sets()
 test_gui_options()
