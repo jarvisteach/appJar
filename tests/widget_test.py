@@ -2610,8 +2610,8 @@ def test_gui_properties():
         fg='red',
         bg='green',
         font={'size':20, 'family':'helvetica'},
-        buttonFont={'size':20, 'family':'helvetica'},
-        labelFont={'size':20, 'family':'helvetica'},
+        buttonFont={'size':19, 'family':'helvetica'},
+        labelFont={'size':18, 'family':'helvetica'},
         editMenu=True,
         stopFunction=propFunc,
         enterKey=propFunc,
@@ -2635,11 +2635,11 @@ def test_gui_properties():
     assert app.stretch.lower() == 'column'
     assert app.expand.lower() == 'column'
     assert app.row == 5
-#    assert app.fg == 'red'
-#    assert app.bg == 'green'
-#    assert app.font == {'size':20, 'family':'helvetica'}
-#    assert app.buttonFont == {'size':20, 'family':'helvetica'}
-#    assert app.labelFont == {'size':20, 'family':'helvetica'}
+    assert app.fg == 'red'
+    assert app.bg == 'green'
+    assert app.font['size'] == 18
+    assert app.buttonFont['size'] == 19
+    assert app.labelFont['size'] == 18
 #    assert app.editMenu is True
 #    assert app.stopFunction == propFunc
 #    assert app.enterKey == propFunc
@@ -2715,14 +2715,23 @@ def test_gui_properties():
     assert app.row == 5
 
     app.fg = "blue"
+    assert app.fg == "blue"
     app.bg = "red"
+    assert app.bg == "red"
 
-    app.font = 20
-    app.font = {'size':20, 'family':'Arial'}
-    app.buttonFont = 20
-    app.buttonFont = {'size':20, 'family':'Arial'}
-    app.labelFont = 20
-    app.labelFont = {'size':20, 'family':'Arial'}
+    app.font = 30
+    assert app.font['size'] == 30
+    app.font = {'size':25, 'family':'Arial'}
+    assert app.font['size'] == 25
+    assert app.font['family'] == 'Arial'
+    app.buttonFont = 24
+    assert app.buttonFont['size'] == 24
+    app.buttonFont = {'size':23, 'family':'Arial'}
+    assert app.buttonFont['size'] == 23
+    app.labelFont = 22
+    assert app.labelFont['size'] == 22
+    app.labelFont = {'size':21, 'family':'Arial'}
+    assert app.labelFont['size'] == 21
     print(app.fonts)
 
     app.editMenu = True
@@ -2853,6 +2862,11 @@ test_containers()
 test_messages()
 test_dnd()
 
+data = app.getAllInputs(extra='something', extra2=True, extra3=4)
+assert data['extra'] == 'something'
+assert data['ae1'] == TEXT_ONE
+assert data['rb'] == TEXT_ONE
+assert data['e1'] == TEXT_ONE
 
 
 test_sets()

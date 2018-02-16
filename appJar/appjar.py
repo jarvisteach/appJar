@@ -361,7 +361,7 @@ class gui(object):
             logging.log(logging.DEBUG-5, message, *args, **kwargs)
 
         logging.basicConfig(level=logging.WARNING, format='%(asctime)s %(name)s:%(levelname)s %(message)s')
-        logging.addLevelName(logging.DEBUG - 5, 'TRACE') 
+        logging.addLevelName(logging.DEBUG - 5, 'TRACE')
         setattr(logging, 'TRACE', logging.DEBUG -5)
         setattr(logging.getLoggerClass(), "trace", _logForLevel)
         setattr(logging, "trace", _logToRoot)
@@ -2535,7 +2535,7 @@ class gui(object):
             else:
                 gui.warn("Setting label fonts has changed - you must specify a parameter name for all styles.")
                 style["size"] = args[0]
-            if len(args) > 1: 
+            if len(args) > 1:
                 style["family"] = args[1]
 
         self._labelFont.config(**style)
@@ -3518,7 +3518,7 @@ class gui(object):
         if row in[-1, 'previous', 'p', 'pr']:
             row = self.containerStack[-1]['emptyRow'] - 1
         else:
-            # this is the default, 
+            # this is the default,
             if row is None or row in ['next', 'n']:
                 row = self.containerStack[-1]['emptyRow']
             self.containerStack[-1]['emptyRow'] = row + 1
@@ -4413,7 +4413,7 @@ class gui(object):
 
                     if self._resetTabs(tabName):
                         self.widgetStore[tabName][1].grid_remove()
-                        
+
                 self._colourTabs()
 
             def _resetTabs(self, text):
@@ -6390,7 +6390,7 @@ class gui(object):
                 if label: spinBox = self.addLabelSpinBoxRange(title, fromVal=value, toVal=endValue, *args, **kwargs)
                 else: spinBox = self.addSpinBoxRange(title, fromVal=value, toVal=endValue, *args, **kwargs)
             else:
-                if label: spinBox = self.addLabelSpinBox(title, value, *args, **kwargs) 
+                if label: spinBox = self.addLabelSpinBox(title, value, *args, **kwargs)
                 else: spinBox = self.addSpinBox(title, value, *args, **kwargs)
 
         if pos is not None: self.setSpinBoxPos(title, pos)
@@ -7622,7 +7622,7 @@ class gui(object):
                 _font = {"size":_font}
             custFont = font.Font(**_font)
             widget.config(font=custFont)
-            
+
         # now pass the kwargs to the config function, ignore any baddies
         while True:
             try: widget.config(**kwargs)
@@ -8206,7 +8206,7 @@ class gui(object):
             self.label("access_bg_colBox", bg=self.accessBg)
         else:
             gui.warn("Accessibility not set up yet.")
-        
+
 
     def showAccess(self, location=None):
         self._makeAccess()
@@ -9465,7 +9465,7 @@ class gui(object):
         # make sure the toolbar is showing
         try:
             self.tb.pack_info()
-        except: 
+        except:
             self.tb.pack(before=self.containerStack[0]['container'], side=TOP, fill=X)
         if not self.hasTb:
             self.hasTb = True
@@ -9671,6 +9671,44 @@ class gui(object):
             self.tb.pack(before=self.containerStack[0]['container'], side=TOP, fill=X)
             if self.tbMinMade:
                 self.tbm.pack_forget()
+
+    # Method to get all inputs.
+    def getAllInputs(self, **kwargs):
+        """Get all values, merge & return as a single dictionary.
+
+        :param kwargs: will be _appended_ to the input list.
+
+        Note, empty pairs from each input is stripped, existing keys
+        will not be overridden!
+        """
+        # All available inputs.
+        inputs = filter(None, [
+                  self.getAllEntries(),
+                  self.getAllOptionBoxes(),
+                  self.getAllSpinBoxes(),
+                  self.getAllListBoxes(),
+                  self.getAllProperties(),
+                  self.getAllCheckBoxes(),
+                  self.getAllRadioButtons(),
+                  self.getAllScales(),
+                  self.getAllMeters(),
+                  self.getAllDatePickers(),
+                  kwargs,
+        ])
+        result = dict()
+        for pairs in inputs:
+            # Remove pairs with empty values (anything that doesn't
+            # equal True).
+            data = {key: val for key, val in pairs.items() if val}
+            # Only add the pair if they don't already exist.
+            for key, val in data.items():
+                try:
+                    if result[key]:
+                        continue
+                except KeyError:
+                    pass
+                result[key] = val
+        return result
 
 #####################################
 # FUNCTIONS for menu bar
