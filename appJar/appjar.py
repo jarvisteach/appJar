@@ -1732,7 +1732,7 @@ class gui(object):
         tl.stopFunction = function
         # link to exit item in topMenu
         # only if in root
-        if self.containerStack[-1]['type'] != self.Widgets.SubWindow:
+        if self._getContainerProperty('type') != self.Widgets.SubWindow:
             tl.createcommand('exit', self.stop)
 
     stopFunction = property(fset=setStopFunction)
@@ -2311,7 +2311,7 @@ class gui(object):
         self.containerStack[-1]['pady'] = y
 
     def getPadding(self):
-        return self.containerStack[-1]['padx'], self.containerStack[-1]['pady']
+        return self._getContainerProperty('padx'), self._getContainerProperty('pady')
 
     padding = property(getPadding, setPadding)
 
@@ -2421,7 +2421,7 @@ class gui(object):
         self.containerStack[-1]['ipady'] = y
 
     def getInPadding(self):
-        return self.containerStack[-1]['ipadx'], self.containerStack[-1]['ipady']
+        return self._getContainerProperty('ipadx'), self._getContainerProperty('ipady')
 
     inPadding = property(getInPadding, setInPadding)
 
@@ -2430,7 +2430,7 @@ class gui(object):
         self.containerStack[-1]['sticky'] = sticky
 
     def getSticky(self):
-        return self.containerStack[-1]['sticky']
+        return self._getContainerProperty('sticky')
 
     # property for setTitle
     sticky = property(getSticky, setSticky)
@@ -2445,7 +2445,7 @@ class gui(object):
     stretch = property(getStretch, setStretch)
 
     def getExpand(self):
-        return self.containerStack[-1]['expand']
+        return self._getContainerProperty('expand')
 
     def setExpand(self, exp):
         if exp.lower() == "none":
@@ -2586,9 +2586,9 @@ class gui(object):
     def setFg(self, colour, override=False):
         if not self.ttkFlag:
             self.containerStack[-1]['fg']=colour
-            gui.SET_WIDGET_FG(self.containerStack[-1]['container'], colour, override)
+            gui.SET_WIDGET_FG(self._getContainerProperty('container'), colour, override)
 
-            for child in self.containerStack[-1]['container'].winfo_children():
+            for child in self._getContainerProperty('container').winfo_children():
                 if not self._isWidgetContainer(child):
                     gui.SET_WIDGET_FG(child, colour, override)
         else:
@@ -2597,13 +2597,13 @@ class gui(object):
             self.ttkStyle.configure("TFrame", foreground=colour)
 
     def getBg(self):
-        if self.containerStack[-1]['type'] == self.Widgets.RootPage:
+        if self._getContainerProperty('type') == self.Widgets.RootPage:
             return self.bgLabel.cget("bg")
         else:
-            return self.containerStack[-1]['container'].cget("bg")
+            return self._getContainerProperty('container').cget("bg")
 
     def getFg(self):
-        return self.containerStack[-1]["fg"]
+        return self._getContainerProperty("fg")
 
     fg = property(getFg, setFg)
 
@@ -2614,14 +2614,14 @@ class gui(object):
     # self.bglabel = Label, filling all of container
     def setBg(self, colour, override=False, tint=False):
         if not self.ttkFlag:
-            if self.containerStack[-1]['type'] == self.Widgets.RootPage:
+            if self._getContainerProperty('type') == self.Widgets.RootPage:
 # removed this - it makes the screen do funny stuff
 #                self.appWindow.config(background=colour)
                 self.bgLabel.config(background=colour)
 
-            self.containerStack[-1]['container'].config(background=colour)
+            self._getContainerProperty('container').config(background=colour)
 
-            for child in self.containerStack[-1]['container'].winfo_children():
+            for child in self._getContainerProperty('container').winfo_children():
                 if not self._isWidgetContainer(child):
 
                     # horrible hack to deal with weird ScrolledText
@@ -2713,8 +2713,8 @@ class gui(object):
             return self.topLevel
 
     def _getTopLevel(self):
-        if len(self.containerStack) > 1 and self.containerStack[-1]['type'] == self.Widgets.SubWindow:
-            return self.containerStack[-1]['container']
+        if len(self.containerStack) > 1 and self._getContainerProperty('type') == self.Widgets.SubWindow:
+            return self._getContainerProperty('container')
         else:
             return self.topLevel
 
@@ -3496,7 +3496,7 @@ class gui(object):
 # FUNCTIONS to position a widget
 #####################################
     def getRow(self):
-        return self.containerStack[-1]['emptyRow']
+        return self._getContainerProperty('emptyRow')
 
     def gr(self):
         return self.getRow()
@@ -3522,17 +3522,17 @@ class gui(object):
     # settings
     def _getRCS(self, row, column, colspan, rowspan):
         if row in[-1, 'previous', 'p', 'pr']:
-            row = self.containerStack[-1]['emptyRow'] - 1
+            row = self._getContainerProperty('emptyRow') - 1
         else:
             # this is the default,
             if row is None or row in ['next', 'n']:
-                row = self.containerStack[-1]['emptyRow']
+                row = self._getContainerProperty('emptyRow')
             self.containerStack[-1]['emptyRow'] = row + 1
 
-        if column >= self.containerStack[-1]['colCount']:
+        if column >= self._getContainerProperty('colCount'):
             self.containerStack[-1]['colCount'] = column + 1
-        # if column == 0 and colspan == 0 and self.containerStack[-1]['colCount'] > 1:
-        #      colspan = self.containerStack[-1]['colCount']
+        # if column == 0 and colspan == 0 and self._getContainerProperty('colCount') > 1:
+        #      colspan = self._getContainerProperty('colCount')
 
         return row, column, colspan, rowspan
 
@@ -3721,6 +3721,12 @@ class gui(object):
             for widg in widget.theWidgets:
                 gui.SET_WIDGET_BG(widg, bg, external, tint)
 
+    def _getContainerProperty(self, prop=None):
+        if prop is not None:
+            return self.containerStack[-1][prop]
+        else:
+            return self.containerStack[-1]
+
     def _getContainerBg(self):
         if not self.ttkFlag:
             return self.getContainer()["bg"]
@@ -3729,7 +3735,7 @@ class gui(object):
 
     def _getContainerFg(self):
         try:
-            return self.containerStack[-1]['fg']
+            return self._getContainerProperty('fg')
         except:
             return "#000000"
 
@@ -3744,7 +3750,7 @@ class gui(object):
             gui.SET_WIDGET_BG(widget, self._getContainerBg())
 
         # alpha paned window placement
-        if self.containerStack[-1]['type'] == self.Widgets.PanedFrame:
+        if self._getContainerProperty('type') == self.Widgets.PanedFrame:
             container.add(widget)
             self.containerStack[-1]['widgets'] = True
             return
@@ -3753,10 +3759,10 @@ class gui(object):
         row, column, colspan, rowspan = self._getRCS(row, column, colspan, rowspan)
 
         # build a dictionary for the named params
-        iX = self.containerStack[-1]['ipadx']
-        iY = self.containerStack[-1]['ipady']
-        cX = self.containerStack[-1]['padx']
-        cY = self.containerStack[-1]['pady']
+        iX = self._getContainerProperty('ipadx')
+        iY = self._getContainerProperty('ipady')
+        cX = self._getContainerProperty('padx')
+        cY = self._getContainerProperty('pady')
         params = {
             "row": row,
             "column": column,
@@ -3775,8 +3781,8 @@ class gui(object):
         # 1) if param has sticky, use that
         # 2) if container has sticky - override
         # 3) else, none
-        if self.containerStack[-1]["sticky"] is not None:
-            params["sticky"] = self.containerStack[-1]["sticky"]
+        if self._getContainerProperty("sticky") is not None:
+            params["sticky"] = self._getContainerProperty("sticky")
         elif sticky is not None:
             params["sticky"] = sticky
         else:
@@ -3796,21 +3802,21 @@ class gui(object):
         widget.grid(**params)
         self.containerStack[-1]['widgets'] = True
         # if we're in a PANEDFRAME - we need to set parent...
-        if self.containerStack[-1]['type'] == self.Widgets.Pane:
+        if self._getContainerProperty('type') == self.Widgets.Pane:
             self.containerStack[-2]['widgets'] = True
 
         # configure the row/column to expand equally
-        if self.containerStack[-1]['expand'] in ["ALL", "COLUMN"]:
+        if self._getContainerProperty('expand') in ["ALL", "COLUMN"]:
             Grid.columnconfigure(container, column, weight=1)
         else:
             Grid.columnconfigure(container, column, weight=0)
-        if self.containerStack[-1]['expand'] in ["ALL", "ROW"]:
+        if self._getContainerProperty('expand') in ["ALL", "ROW"]:
             Grid.rowconfigure(container, row, weight=1)
         else:
             Grid.rowconfigure(container, row, weight=0)
 
-#        self.containerStack[-1]['container'].columnconfigure(0, weight=1)
-#        self.containerStack[-1]['container'].rowconfigure(0, weight=1)
+#        self._getContainerProperty('container').columnconfigure(0, weight=1)
+#        self._getContainerProperty('container').rowconfigure(0, weight=1)
 
 
 #####################################
@@ -3830,6 +3836,9 @@ class gui(object):
                     'ipady': 0,
                     'expand': "ALL",
                     'widgets': False,
+                    'inputFont': self._labelFont,
+                    'outputFont': self._labelFont,
+                    'commandFont': self._labelFont,
                     "fg": self._getContainerFg()}
         return containerData
 
@@ -3895,14 +3904,14 @@ class gui(object):
 
     # returns the current working container
     def getContainer(self):
-        container = self.containerStack[-1]['container']
-        if self.containerStack[-1]['type'] == self.Widgets.ScrollPane:
+        container = self._getContainerProperty('container')
+        if self._getContainerProperty('type') == self.Widgets.ScrollPane:
             return container.interior
-        elif self.containerStack[-1]['type'] == self.Widgets.PagedWindow:
+        elif self._getContainerProperty('type') == self.Widgets.PagedWindow:
             return container.getPage()
-        elif self.containerStack[-1]['type'] == self.Widgets.ToggleFrame:
+        elif self._getContainerProperty('type') == self.Widgets.ToggleFrame:
             return container.getContainer()
-        elif self.containerStack[-1]['type'] == self.Widgets.SubWindow:
+        elif self._getContainerProperty('type') == self.Widgets.SubWindow:
             return container.canvasPane
         else:
             return container
@@ -3993,9 +4002,9 @@ class gui(object):
         elif fType == self.Widgets.Tab:
             # add to top of stack
             self.containerStack[-1]['widgets'] = True
-            tabTitle = self.containerStack[-1]['title'] + "__" + title
+            tabTitle = self._getContainerProperty('title') + "__" + title
             self._addContainer(tabTitle,
-                self.Widgets.Tab, self.containerStack[-1]['container'].addTab(title), 0, 1, sticky)
+                self.Widgets.Tab, self._getContainerProperty('container').addTab(title), 0, 1, sticky)
         elif fType == self.Widgets.Notebook:
             if not self.ttkFlag:
                 raise Exception("Cannot create a ttk Notebook, unless ttk is enabled.")
@@ -4017,14 +4026,14 @@ class gui(object):
         elif fType == self.Widgets.Note:
             # add to top of stack
             self.containerStack[-1]['widgets'] = True
-            noteTitle = self.containerStack[-1]['title'] + "__" + title
-            frame = ttk.Frame(self.containerStack[-1]['container'])
-            self.containerStack[-1]['container'].add(frame, text=title)
+            noteTitle = self._getContainerProperty('title') + "__" + title
+            frame = ttk.Frame(self._getContainerProperty('container'))
+            self._getContainerProperty('container').add(frame, text=title)
             self._addContainer(noteTitle, self.Widgets.Note, frame, 0, 1, sticky)
         elif fType == self.Widgets.PanedFrame:
             # if we previously put a frame for widgets
             # remove it
-            if self.containerStack[-1]['type'] == self.Widgets.Pane:
+            if self._getContainerProperty('type') == self.Widgets.Pane:
                 self.stopContainer()
 
             # now, add the new pane
@@ -4049,7 +4058,7 @@ class gui(object):
             # create a frame, and add it to the pane
             pane = Pane(self.getContainer(), bg=self._getContainerBg())
             pane.isContainer = True
-            self.containerStack[-1]['container'].add(pane)
+            self._getContainerProperty('container').add(pane)
             self.widgetManager.add(self.Widgets.Pane, title, pane)
 
             # now, add to top of stack
@@ -4106,7 +4115,7 @@ class gui(object):
             self.widgetManager.add(self.Widgets.PagedWindow, title, pagedWindow)
             return pagedWindow
         elif fType == self.Widgets.Page:
-            page = self.containerStack[-1]['container'].addPage()
+            page = self._getContainerProperty('container').addPage()
             page.isContainer = True
             self._addContainer(title, self.Widgets.Page, page, 0, 1, sticky)
             self.containerStack[-1]['expand'] = "None"
@@ -4133,7 +4142,7 @@ class gui(object):
 
     def stopNotebook(self):
         # auto close the existing TAB - keep it?
-        if self.containerStack[-1]['type'] == self.Widgets.Note:
+        if self._getContainerProperty('type') == self.Widgets.Note:
             self.warn("You didn't STOP the previous NOTE")
             self.stopContainer()
         self.stopContainer()
@@ -4150,26 +4159,26 @@ class gui(object):
 
     def startNote(self, title):
         # auto close the previous TAB - keep it?
-        if self.containerStack[-1]['type'] == self.Widgets.Note:
+        if self._getContainerProperty('type') == self.Widgets.Note:
             self.warn("You didn't STOP the previous NOTE")
             self.stopContainer()
-        elif self.containerStack[-1]['type'] != self.Widgets.Notebook:
+        elif self._getContainerProperty('type') != self.Widgets.Notebook:
             raise Exception(
-                "Can't add a Note to the current container: ", self.containerStack[-1]['type'])
+                "Can't add a Note to the current container: ", self._getContainerProperty('type'))
         self.startContainer(self.Widgets.Note, title)
 
     def stopNote(self):
-        if self.containerStack[-1]['type'] != self.Widgets.Note:
+        if self._getContainerProperty('type') != self.Widgets.Note:
             raise Exception("Can't stop a NOTE, currently in:",
-                            self.containerStack[-1]['type'])
+                            self._getContainerProperty('type'))
         self.stopContainer()
     """
     def startCanvas(self, title, row=None, column=0, colspan=0, rowspan=0, sticky="news"):
         return self.startContainer(self.Widgets.Canvas, title)
 
     def stopCanvas(self):
-        if self.containerStack[-1]['type'] != self.Widgets.Canvas:
-            raise Exception("Can't stop a CANVAS, currently in:", self.containerStack[-1]['type'])
+        if self._getContainerProperty('type') != self.Widgets.Canvas:
+            raise Exception("Can't stop a CANVAS, currently in:", self._getContainerProperty('type'))
         self.stopContainer()
 
     @contextmanager
@@ -4510,7 +4519,7 @@ class gui(object):
 
     def stopTabbedFrame(self):
         # auto close the existing TAB - keep it?
-        if self.containerStack[-1]['type'] == self.Widgets.Tab:
+        if self._getContainerProperty('type') == self.Widgets.Tab:
             self.warn("You didn't STOP the previous TAB")
             self.stopContainer()
         self.stopContainer()
@@ -4566,10 +4575,10 @@ class gui(object):
             try:
                 tab = self.startTab(title)
             except ItemLookupError:
-                if self.containerStack[-1]['type'] != self.Widgets.TabbedFrame:
-                    raise Exception("Can't open a Tab in the current container: ", self.containerStack[-1]['type'])
+                if self._getContainerProperty('type') != self.Widgets.TabbedFrame:
+                    raise Exception("Can't open a Tab in the current container: ", self._getContainerProperty('type'))
                 else:
-                    tabTitle = self.containerStack[-1]['title']
+                    tabTitle = self._getContainerProperty('title')
                     tab = self.openTab(tabTitle, title)
         else:
             tab = self.openTab(title, tabTitle)
@@ -4579,11 +4588,11 @@ class gui(object):
 
     def startTab(self, title):
         # auto close the previous TAB - keep it?
-        if self.containerStack[-1]['type'] == self.Widgets.Tab:
+        if self._getContainerProperty('type') == self.Widgets.Tab:
             self.warn("You didn't STOP the previous TAB")
             self.stopContainer()
-        elif self.containerStack[-1]['type'] != self.Widgets.TabbedFrame:
-            raise Exception("Can't add a Tab to the current container: ", self.containerStack[-1]['type'])
+        elif self._getContainerProperty('type') != self.Widgets.TabbedFrame:
+            raise Exception("Can't add a Tab to the current container: ", self._getContainerProperty('type'))
         self.startContainer(self.Widgets.Tab, title)
 
     def getTabbedFrameSelectedTab(self, title):
@@ -4591,9 +4600,9 @@ class gui(object):
         return nb.getSelectedTab()
 
     def stopTab(self):
-        if self.containerStack[-1]['type'] != self.Widgets.Tab:
+        if self._getContainerProperty('type') != self.Widgets.Tab:
             raise Exception("Can't stop a TAB, currently in:",
-                            self.containerStack[-1]['type'])
+                            self._getContainerProperty('type'))
         self.stopContainer()
 
 #####################################
@@ -4847,11 +4856,11 @@ class gui(object):
         self.startContainer(self.Widgets.PanedFrame, title, row, column, colspan, rowspan, sticky)
 
     def stopPanedFrame(self):
-        if self.containerStack[-1]['type'] == self.Widgets.Pane:
+        if self._getContainerProperty('type') == self.Widgets.Pane:
             self.stopContainer()
-        if self.containerStack[-1]['type'] != self.Widgets.PanedFrame:
+        if self._getContainerProperty('type') != self.Widgets.PanedFrame:
             raise Exception("Can't stop a PANEDFRAME, currently in:",
-                            self.containerStack[-1]['type'])
+                            self._getContainerProperty('type'))
         self.stopContainer()
 
     @contextmanager
@@ -4904,9 +4913,9 @@ class gui(object):
         return lf
 
     def stopLabelFrame(self):
-        if self.containerStack[-1]['type'] != self.Widgets.LabelFrame:
+        if self._getContainerProperty('type') != self.Widgets.LabelFrame:
             raise Exception("Can't stop a LABELFRAME, currently in:",
-                            self.containerStack[-1]['type'])
+                            self._getContainerProperty('type'))
         self.stopContainer()
 
     # function to set position of title for label frame
@@ -4933,10 +4942,10 @@ class gui(object):
         return self.startContainer(self.Widgets.ToggleFrame, title, row, column, colspan, rowspan, sticky="new")
 
     def stopToggleFrame(self):
-        if self.containerStack[-1]['type'] != self.Widgets.ToggleFrame:
+        if self._getContainerProperty('type') != self.Widgets.ToggleFrame:
             raise Exception("Can't stop a TOGGLEFRAME, currently in:",
-                            self.containerStack[-1]['type'])
-        self.containerStack[-1]['container'].stop()
+                            self._getContainerProperty('type'))
+        self._getContainerProperty('container').stop()
         self.stopContainer()
 
     def toggleToggleFrame(self, title):
@@ -5018,46 +5027,46 @@ class gui(object):
 
 
     def startPage(self, sticky="nw"):
-        if self.containerStack[-1]['type'] == self.Widgets.Page:
+        if self._getContainerProperty('type') == self.Widgets.Page:
             self.warn("You didn't STOP the previous PAGE")
             self.stopPage()
-        elif self.containerStack[-1]['type'] != self.Widgets.PagedWindow:
+        elif self._getContainerProperty('type') != self.Widgets.PagedWindow:
             raise Exception("Can't start a PAGE, currently in:",
-                            self.containerStack[-1]['type'])
+                            self._getContainerProperty('type'))
 
         self.containerStack[-1]['widgets'] = True
 
         # generate a page title
-        pageNum = len(self.containerStack[-1]['container'].frames) + 1
-        pageTitle = self.containerStack[-1]['title'] + "__" + str(pageNum)
+        pageNum = len(self._getContainerProperty('container').frames) + 1
+        pageTitle = self._getContainerProperty('title') + "__" + str(pageNum)
 
         self.startContainer(self.Widgets.Page, pageTitle, row=None, column=None, colspan=None, rowspan=None, sticky=sticky)
 
     def stopPage(self):
         # get a handle on the page object
-        page = self.containerStack[-1]['container']
+        page = self._getContainerProperty('container')
 
-        if self.containerStack[-1]['type'] == self.Widgets.Page:
+        if self._getContainerProperty('type') == self.Widgets.Page:
             self.stopContainer()
         else:
             raise Exception("Can't stop PAGE, currently in:",
-                            self.containerStack[-1]['type'])
+                            self._getContainerProperty('type'))
 
         # call the stopPage function on the paged window
-        if self.containerStack[-1]['type'] == self.Widgets.PagedWindow:
-            self.containerStack[-1]['container'].stopPage()
+        if self._getContainerProperty('type') == self.Widgets.PagedWindow:
+            self._getContainerProperty('container').stopPage()
         else:
             # we need to find the container and call stopPage
             page.container.stopPage()
 
     def stopPagedWindow(self):
-        if self.containerStack[-1]['type'] == self.Widgets.Page:
+        if self._getContainerProperty('type') == self.Widgets.Page:
             self.warn("You didn't STOP the previous PAGE")
             self.stopPage()
 
-        if self.containerStack[-1]['type'] != self.Widgets.PagedWindow:
+        if self._getContainerProperty('type') != self.Widgets.PagedWindow:
             raise Exception("Can't stop a PAGEDWINDOW, currently in:",
-                            self.containerStack[-1]['type'])
+                            self._getContainerProperty('type'))
         self.stopContainer()
 
 #####################################
@@ -5083,9 +5092,9 @@ class gui(object):
     def stopContainer(self): self._removeContainer()
 
     def stopScrollPane(self):
-        if self.containerStack[-1]['type'] != self.Widgets.ScrollPane:
+        if self._getContainerProperty('type') != self.Widgets.ScrollPane:
             raise Exception("Can't stop a SCROLLPANE, currently in:",
-                            self.containerStack[-1]['type'])
+                            self._getContainerProperty('type'))
         self.stopContainer()
 
     def stopAllPanedFrames(self):
@@ -5113,9 +5122,9 @@ class gui(object):
         return self.startContainer(self.Widgets.Frame, title, row, column, colspan, rowspan, sticky)
 
     def stopFrame(self):
-        if self.containerStack[-1]['type'] != self.Widgets.Frame:
+        if self._getContainerProperty('type') != self.Widgets.Frame:
             raise Exception("Can't stop a FRAME, currently in:",
-                            self.containerStack[-1]['type'])
+                            self._getContainerProperty('type'))
         self.stopContainer()
 
 #####################################
@@ -5176,7 +5185,7 @@ class gui(object):
             self.stopContainer()
         else:
             raise Exception("Can't stop a SUBWINDOW, currently in:",
-                            self.containerStack[-1]['type'])
+                            self._getContainerProperty('type'))
 
     def setSubWindowLocation(self, title, x, y):
         tl = self.widgetManager.get(self.Widgets.SubWindow, title)
@@ -6311,7 +6320,7 @@ class gui(object):
         ''' adds a new properties widget, displaying the dictionary of booleans as tick boxes '''
         self.widgetManager.verify(self.Widgets.Properties, title)
         haveTitle = True
-        if self.containerStack[-1]['type'] == self.Widgets.ToggleFrame:
+        if self._getContainerProperty('type') == self.Widgets.ToggleFrame:
             self.containerStack[-1]['sticky'] = "ew"
             haveTitle = False
 
