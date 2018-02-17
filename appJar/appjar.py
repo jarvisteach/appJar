@@ -17,7 +17,7 @@ try:
     from tkColorChooser import askcolor
     import tkFileDialog as filedialog
     import ScrolledText as scrolledtext
-    import tkFont as font
+    import tkFont as tkFont
     # used to check if functions have a parameter
     from inspect import getargspec as getArgs
     PYTHON2 = True
@@ -30,7 +30,7 @@ except ImportError:
     from tkinter.colorchooser import askcolor
     from tkinter import filedialog
     from tkinter import scrolledtext
-    from tkinter import font
+    from tkinter import tkFont
     # used to check if functions have a parameter
     from inspect import getfullargspec as getArgs
 
@@ -519,18 +519,18 @@ class gui(object):
         self.setResizable(True)
 
         # 3 fonts used for most widgets
-        self._buttonFont = font.Font(family="Helvetica", size=12,)
-        self._labelFont = font.Font(family="Helvetica", size=12)
-        self._inputFont = font.Font(family="Helvetica", size=12)
+        self._buttonFont = tkFont.Font(family="Helvetica", size=12,)
+        self._labelFont = tkFont.Font(family="Helvetica", size=12)
+        self._inputFont = tkFont.Font(family="Helvetica", size=12)
 
-        self.statusFont = font.Font(family="Helvetica", size=12)
+        self.statusFont = tkFont.Font(family="Helvetica", size=12)
 
         # dedicated font for access widget
-        self._accessFont = font.Font(family="Arial", size=11,)
+        self._accessFont = tkFont.Font(family="Arial", size=11,)
         # dedicated font for links - forces bold & underlined, but updated with label fonts
-        self._linkFont = font.Font(family="Helvetica", size=12, weight='bold', underline=1)
+        self._linkFont = tkFont.Font(family="Helvetica", size=12, weight='bold', underline=1)
 
-        self.tableFont = font.Font(family="Helvetica", size=12)
+        self.tableFont = tkFont.Font(family="Helvetica", size=12)
 
         # create a menu bar - only shows if populated
         # now created in menu functions, as it generated a blank line...
@@ -2452,7 +2452,7 @@ class gui(object):
     expand = property(getExpand, setExpand)
 
     def getFonts(self):
-        fonts = list(font.families())
+        fonts = list(tkFont.families())
         fonts.sort()
         return fonts
 
@@ -2494,7 +2494,7 @@ class gui(object):
                 kwargs={'size':args[0]}
             elif isinstance(args[0], dict):
                 kwargs=args[0]
-            elif isinstance(args[0], font.Font):
+            elif isinstance(args[0], tkFont.Font):
                 gui.trace("InputFont set to new object")
                 self.containerStack[-1]['inputFont']=args[0]
                 return
@@ -2512,7 +2512,7 @@ class gui(object):
                 kwargs={'size':args[0]}
             elif isinstance(args[0], dict):
                 kwargs=args[0]
-            elif isinstance(args[0], font.Font):
+            elif isinstance(args[0], tkFont.Font):
                 gui.trace("ButtonFont set to new object")
                 self.containerStack[-1]['buttonFont']=args[0]
                 return
@@ -2530,7 +2530,7 @@ class gui(object):
                 kwargs={'size':args[0]}
             elif isinstance(args[0], dict):
                 kwargs=args[0]
-            elif isinstance(args[0], font.Font):
+            elif isinstance(args[0], tkFont.Font):
                 gui.trace("LabelFont set to new object")
                 self.containerStack[-1]['labelFont']=args[0]
                 return
@@ -6108,7 +6108,7 @@ class gui(object):
         if urlencode is False:
             raise Exception("Unable to load GoogleMaps - urlencode library not available")
         self.widgetManager.verify(self.Widgets.Map, title)
-        gMap = GoogleMap(self.getContainer(), self, useTtk = self.ttkFlag)
+        gMap = GoogleMap(self.getContainer(), self, useTtk = self.ttkFlag, font=self._getContainerProperty('labelFont'))
         self._positionWidget(gMap, row, column, colspan, rowspan)
         self.widgetManager.add(self.Widgets.Map, title, gMap)
         return gMap
@@ -7598,12 +7598,12 @@ class gui(object):
 
         # allow fonts to be passed in as either a dictionary or a single integer or a font object
         if _font is not None:
-            if isinstance(_font, font.Font):
+            if isinstance(_font, tkFont.Font):
                 widget.config(font=_font)
             else:
                 if not isinstance(_font, dict): # assume int
                     _font = {"size":_font}
-                custFont = font.Font(**_font)
+                custFont = tkFont.Font(**_font)
                 widget.config(font=custFont)
 
         # now pass the kwargs to the config function, ignore any baddies
@@ -12775,9 +12775,9 @@ class SimpleTable(ScrollPane):
                     addButton="Add", showMenu=False, **opts):
 
         self.fonts = {
-            "data": font.Font(family="Helvetica", size=12),
-            "header": font.Font(family="Helvetica", size=12),
-            "button": font.Font(family="Helvetica", size=12),
+            "data": tkFont.Font(family="Helvetica", size=12),
+            "header": tkFont.Font(family="Helvetica", size=12),
+            "button": tkFont.Font(family="Helvetica", size=12),
             "headerBg": "#A9A9A9",
             "dataBg": "#E0FFFF",
             "overBg": "#C0C0C0",
@@ -13575,7 +13575,7 @@ class AJRectangle(object):
 class GoogleMap(LabelFrame, object):
     """ Class to wrap a GoogleMap tile download into a widget"""
 
-    def __init__(self, parent, app, defaultLocation="Marlborough, UK", proxyString=None, useTtk=False):
+    def __init__(self, parent, app, defaultLocation="Marlborough, UK", proxyString=None, useTtk=False, font=None):
         super(GoogleMap, self).__init__(parent, text="GoogleMaps")
         self.alive = True
         self.API_KEY = ""
@@ -13585,6 +13585,9 @@ class GoogleMap(LabelFrame, object):
         self.currentLocation = None
         self.app = app
         self.proxyString = proxyString
+        if font is not None:
+            print(font)
+            self.config(font=font)
 
         self.TERRAINS = ("Roadmap", "Satellite", "Hybrid", "Terrain")
         self.MAP_URL =  "http://maps.google.com/maps/api/staticmap?"
@@ -13634,7 +13637,7 @@ class GoogleMap(LabelFrame, object):
                     Label(self.canvas, text="H"),
                     gui._makeLink()(self.canvas, text="@", useTtk=useTtk)
                         ]
-        B_FONT = font.Font(family='Helvetica', size=10)
+        B_FONT = tkFont.Font(family='Helvetica', size=10)
 
         for b in self.buttons:
             b.configure(width=3, relief=GROOVE, font=B_FONT)
