@@ -521,6 +521,7 @@ class gui(object):
         # set up fonts
         self._buttonFont = font.Font(family="Helvetica", size=12,)
         self._labelFont = font.Font(family="Helvetica", size=12)
+        self._accessFont = font.Font(family="Arial", size=11,)
         self.entryFont = font.Font(family="Helvetica", size=12)
         self.messageFont = font.Font(family="Helvetica", size=12)
         self.rbFont = font.Font(family="Helvetica", size=12)
@@ -7631,12 +7632,15 @@ class gui(object):
         if drop is not None: self._registerExternalDropTarget(title, widget, drop)
         if right is not None: self._bindRightClick(widget, right)
 
-        # allow fonts to be passed in as either a dictionary or a single integer
+        # allow fonts to be passed in as either a dictionary or a single integer or a font object
         if _font is not None:
-            if not isinstance(_font, dict):
-                _font = {"size":_font}
-            custFont = font.Font(**_font)
-            widget.config(font=custFont)
+            if isinstance(_font, font.Font):
+                widget.config(font=_font)
+            else:
+                if not isinstance(_font, dict):
+                    _font = {"size":_font}
+                custFont = font.Font(**_font)
+                widget.config(font=custFont)
 
         # now pass the kwargs to the config function, ignore any baddies
         while True:
@@ -8180,45 +8184,47 @@ class gui(object):
                 self.bg = self.getLabelBg("access_bg_colBox")
                 self.fg = self.getLabelBg("access_fg_colBox")
 
-            self.accessFont = self.accessBg = self.accessFg = None
-            with self.subWindow("access_access_subwindow", sticky = "news", title="Accessibility") as sw:
+            self.accessOrigFont = self.accessOrigBg = self.accessOrigFg = None
+            with self.subWindow("access_access_subwindow", sticky = "news", title="Accessibility", resizable=False) as sw:
                 sw.config(padx=5, pady=1)
                 with self.labelFrame("access_font_labelframe", sticky="news", name="Font") as lf:
-                    lf.config(padx=10, pady=10)
-                    self.listbox("access_family_listbox", self.fonts, rows=6, tip="Choose a font", colspan=2)
-                    self.option("Size:", [7, 8, 9, 10, 12, 13, 14, 16, 18, 20, 22, 25, 29, 34, 40], label=True, tip="Choose a font size")
-                    self.check("access_bold_check", name="Bold", pos=('p',1), tip="Check this to make all font bold")
-                    self.radio("access_italic_radio", "Normal", tip="No italics")
-                    self.radio("access_italic_radio", "Italic", pos=('p',1), tip="Set font italic")
-                    self.check("access_underline_check", name="Underline", tip="Underline all text")
-                    self.check("access_overstrike_check", name="Overstrike", pos=('p',1), tip="Strike out all text")
-                    self.label("access_fg_text", "Foreground:", sticky="ew", anchor="w")
-                    self.label("access_fg_colBox", "", pos=('p',1), sticky="ew", submit=_changeFg, relief="ridge", tip="Click here to set the foreground colour")
-                    self.label("access_bg_text", "Background:", sticky="ew", anchor="w")
-                    self.label("access_bg_colBox", "", pos=('p',1), sticky="ew", submit=_changeBg, relief="ridge", tip="Click here to set the background colour")
+                    lf.config(padx=10, pady=10, font=self._accessFont)
+                    self.listbox("access_family_listbox", self.fonts, rows=6, tip="Choose a font", colspan=2, font=self._accessFont)
+                    self.option("Size:", [7, 8, 9, 10, 12, 13, 14, 16, 18, 20, 22, 25, 29, 34, 40], label=True, tip="Choose a font size", font=self._accessFont)
+                    self.check("access_bold_check", name="Bold", pos=('p',1), tip="Check this to make all font bold", font=self._accessFont)
+                    self.radio("access_italic_radio", "Normal", tip="No italics", font=self._accessFont)
+                    self.radio("access_italic_radio", "Italic", pos=('p',1), tip="Set font italic", font=self._accessFont)
+                    self.check("access_underline_check", name="Underline", tip="Underline all text", font=self._accessFont)
+                    self.check("access_overstrike_check", name="Overstrike", pos=('p',1), tip="Strike out all text", font=self._accessFont)
+                with self.labelFrame("access_colour_labelframe", sticky="news", name="Colours") as lf:
+                    lf.config(padx=5, pady=2, font=self._accessFont)
+                    self.label("access_fg_text", "Foreground:", sticky="ew", anchor="w", font=self._accessFont)
+                    self.label("access_fg_colBox", "", pos=('p',1), sticky="ew", submit=_changeFg, relief="ridge", tip="Click here to set the foreground colour", font=self._accessFont, width=12)
+                    self.label("access_bg_text", "Background:", sticky="ew", anchor="w", font=self._accessFont)
+                    self.label("access_bg_colBox", "", pos=('p',1), sticky="ew", submit=_changeBg, relief="ridge", tip="Click here to set the background colour", font=self._accessFont, width=12)
                 self.sticky="se"
                 with self.frame("access_button_box"):
-                    self.button("access_apply_button", _settings, name="Apply", pos=(0,0))
-                    self.button("access_reset_button", self._resetAccess, name="Reset", pos=(0,1))
-                    self.button("access_close_button", _close, name="Close", pos=(0,2))
+                    self.button("access_apply_button", _settings, name="Apply", pos=(0,0), font=self._accessFont)
+                    self.button("access_reset_button", self._resetAccess, name="Reset", pos=(0,1), font=self._accessFont)
+                    self.button("access_close_button", _close, name="Close", pos=(0,2), font=self._accessFont)
             self.accessMade = True
 
     def _resetAccess(self):
         if self.accessMade:
-            self.listbox("access_family_listbox", self.accessFont["family"])
-            self.option("Size:", str(self.accessFont["size"]))
+            self.listbox("access_family_listbox", self.accessOrigFont["family"])
+            self.option("Size:", str(self.accessOrigFont["size"]))
 
-            if self.accessFont["weight"] == "normal": self.check("access_bold_check", False)
+            if self.accessOrigFont["weight"] == "normal": self.check("access_bold_check", False)
             else: self.check("access_bold_check", True)
 
-            if self.accessFont["slant"] == "roman": self.radio("access_italic_radio", "Normal")
+            if self.accessOrigFont["slant"] == "roman": self.radio("access_italic_radio", "Normal")
             else: self.radio("access_italic_radio", "Italic")
 
-            self.check("access_overstrike_check", self.accessFont["overstrike"])
-            self.check("access_underline_check", self.accessFont["underline"])
+            self.check("access_overstrike_check", self.accessOrigFont["overstrike"])
+            self.check("access_underline_check", self.accessOrigFont["underline"])
 
-            self.label("access_fg_colBox", bg=self.accessFg)
-            self.label("access_bg_colBox", bg=self.accessBg)
+            self.label("access_fg_colBox", bg=self.accessOrigFg)
+            self.label("access_bg_colBox", bg=self.accessOrigBg)
         else:
             gui.warn("Accessibility not set up yet.")
 
@@ -8226,9 +8232,9 @@ class gui(object):
     def showAccess(self, location=None):
         self._makeAccess()
         # update current settings
-        self.accessFont = self.font
-        self.accessBg = self.bg
-        self.accessFg = self.fg
+        self.accessOrigFont = self.font
+        self.accessOrigBg = self.bg
+        self.accessOrigFg = self.fg
         self._resetAccess()
         self.showSubWindow("access_access_subwindow")
 

@@ -79,6 +79,7 @@ def toolbar(btn):
     elif btn == "CALENDAR": app.showSubWindow("DatePicker")
     elif btn == "ADDRESS-BOOK": app.showSubWindow("AddressBook")
     elif btn == "MAP": app.showSubWindow("Maps")
+    elif btn == "ACCESS": app.showAccess()
 
 # called when scale/meters are changed
 def scale(name):
@@ -138,7 +139,7 @@ with gui("ShowCase") as app:
     app.showSplash("appJar Showcase")
 
     # add a simple toolbar
-    app.addToolbar(["EXIT", "LOGOUT", "FILL", "PIE-CHART", "CALENDAR", "ADDRESS-BOOK", "MAP", "FULL-SCREEN"], toolbar, findIcon=True)
+    app.addToolbar(["EXIT", "LOGOUT", "FILL", "ACCESS", "PIE-CHART", "CALENDAR", "ADDRESS-BOOK", "MAP", "FULL-SCREEN"], toolbar, findIcon=True)
 
     #app.createMenu("Test")
     app.addMenuPreferences(toolbar)
