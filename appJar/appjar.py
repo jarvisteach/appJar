@@ -629,7 +629,7 @@ class gui(object):
         # properly
 
         if not self.ttkFlag:
-            self.bgLabel = Label(container, anchor=CENTER, font=self._outputFont, background=self._getContainerBg())
+            self.bgLabel = Label(container, anchor=CENTER, font=self._getContainerProperty('outputFont'), background=self._getContainerBg())
         else:
             self.bgLabel = ttk.Label(container)
         self.bgLabel.place(x=0, y=0, relwidth=1, relheight=1)
@@ -2366,6 +2366,7 @@ class gui(object):
 
         if fg is not None: self.fg = fg
         if bg is not None: self.bg = bg
+
         if font is not None: self.font = font
         if outputFont is not None: self.outputFont = outputFont
         if buttonFont is not None: self.buttonFont = buttonFont
@@ -2482,7 +2483,7 @@ class gui(object):
         self.setButtonFont(*args, **kwargs)
 
     def getFont(self):
-        return self._outputFont.actual()
+        return self._getContainerProperty('outputFont').actual()
 
     font = property(getFont, setFont)
 
@@ -2496,10 +2497,10 @@ class gui(object):
                 gui.warn("Unable to set input fonts using Font class")
                 return
 
-        self._inputFont.config(**kwargs)
+        self._getContainerProperty('inputFont').config(**kwargs)
 
     def getInputFont(self):
-        return self._inputFont.actual()
+        return self._getContainerProperty('inputFont').actual()
 
     inputFont = property(getInputFont, setInputFont)
 
@@ -2513,10 +2514,10 @@ class gui(object):
                 gui.warn("Unable to set command fonts using Font class")
                 return
 
-        self._buttonFont.config(**kwargs)
+        self._getContainerProperty('buttonFont').config(**kwargs)
 
     def getButtonFont(self):
-        return self._buttonFont.actual()
+        return self._getContainerProperty('buttonFont').actual()
 
     buttonFont = property(getButtonFont, setButtonFont)
 
@@ -2530,7 +2531,7 @@ class gui(object):
                 gui.warn("Unable to set output fonts using Font class")
                 return
 
-        self._outputFont.config(**kwargs)
+        self._getContainerProperty('outputFont').config(**kwargs)
         self.tableFont.config(**kwargs)
 
         # need better way to register font change events on tables
@@ -2542,7 +2543,7 @@ class gui(object):
         self.linkFont.config(**kwargs)
 
     def getOutputFont(self):
-        return self._outputFont.actual()
+        return self._getContainerProperty('outputFont').actual()
 
     outputFont = property(getOutputFont, setOutputFont)
 
@@ -3914,7 +3915,7 @@ class gui(object):
             self.widgetManager.verify(self.Widgets.LabelFrame, title)
             if not self.ttkFlag:
                 container = LabelFrame(self.getContainer(), text=name, relief="groove")
-                container.config(background=self._getContainerBg(), font=self._outputFont)
+                container.config(background=self._getContainerBg(), font=self._getContainerProperty('outputFont'))
             else:
                 container = ttk.LabelFrame(self.getContainer(), text=name, relief="groove")
 
@@ -3955,7 +3956,7 @@ class gui(object):
             return container
         elif fType == self.Widgets.TabbedFrame:
             self.widgetManager.verify(self.Widgets.TabbedFrame, title)
-            tabbedFrame = self._tabbedFrameMaker(self.getContainer(), self.ttkFlag, font=self._outputFont)
+            tabbedFrame = self._tabbedFrameMaker(self.getContainer(), self.ttkFlag, font=self._getContainerProperty('outputFont'))
             if not self.ttkFlag:
                 tabbedFrame.config(bg=self._getContainerBg())
 #            tabbedFrame.isContainer = True
@@ -4060,7 +4061,7 @@ class gui(object):
         elif fType == self.Widgets.ToggleFrame:
             self.widgetManager.verify(self.Widgets.ToggleFrame, title)
             toggleFrame = ToggleFrame(self.getContainer(), title=title, bg=self._getContainerBg())
-            toggleFrame.configure(font=self._outputFont)
+            toggleFrame.configure(font=self._getContainerProperty('outputFont'))
             toggleFrame.isContainer = True
             self._positionWidget(
                 toggleFrame,
@@ -4074,7 +4075,7 @@ class gui(object):
             return toggleFrame
         elif fType == self.Widgets.PagedWindow:
             # create the paged window
-            pagedWindow = PagedWindow(self.getContainer(), title=title, bg=self._getContainerBg(), width=200, height=400, buttonFont=self._buttonFont, titleFont=self._outputFont)
+            pagedWindow = PagedWindow(self.getContainer(), title=title, bg=self._getContainerBg(), width=200, height=400, buttonFont=self._getContainerProperty('buttonFont'), titleFont=self._getContainerProperty('outputFont'))
             # bind events
             self.topLevel.bind("<Left>", pagedWindow.showPrev)
             self.topLevel.bind("<Control-Left>", pagedWindow.showFirst)
@@ -4666,7 +4667,7 @@ class gui(object):
         grid = SimpleTable(self.getContainer(), title, data,
             action, addRow,
             actionHeading, actionButton, addButton,
-            showMenu, buttonFont=self._buttonFont)
+            showMenu, buttonFont=self._getContainerProperty('buttonFont'))
         if not self.ttkFlag:
             grid.config(font=self.tableFont, background=self._getContainerBg())
         self._positionWidget(grid, row, column, colspan, rowspan, N+E+S+W)
@@ -5392,7 +5393,7 @@ class gui(object):
         if not self.ttkFlag:
             cb = Checkbutton(self.getContainer(), text=name, variable=var)
             cb.config(
-                font=self._outputFont,
+                font=self._getContainerProperty('outputFont'),
                 background=self._getContainerBg(),
                 activebackground=self._getContainerBg(),
                 anchor=W)
@@ -5488,7 +5489,7 @@ class gui(object):
         self.widgetManager.verify(self.Widgets.Scale, title)
         var = DoubleVar(self.topLevel)
         if not self.ttkFlag:
-            scale = self._makeAjScale()(frame, increment=10, variable=var, repeatinterval=10, orient=HORIZONTAL, font=self._inputFont)
+            scale = self._makeAjScale()(frame, increment=10, variable=var, repeatinterval=10, orient=HORIZONTAL, font=self._getContainerProperty('inputFont'))
             scale.config(digits=1, showvalue=False, highlightthickness=1)
         else:
             scale = self._makeAjScale()(frame, increment=10, variable=var, orient=HORIZONTAL)
@@ -5669,7 +5670,7 @@ class gui(object):
 
         option.config(
             justify=LEFT,
-            font=self._inputFont,
+            font=self._getContainerProperty('inputFont'),
 #            background=self._getContainerBg(),
             highlightthickness=0,
             width=maxSize,
@@ -6288,7 +6289,7 @@ class gui(object):
             haveTitle = False
 
         props = Properties(self.getContainer(), title, values, haveTitle,
-                            font=self._outputFont, background=self._getContainerBg())
+                            font=self._getContainerProperty('outputFont'), background=self._getContainerBg())
         self._positionWidget(props, row, column, colspan, rowspan)
         self.widgetManager.add(self.Widgets.Properties, title, props)
         return props
@@ -6387,7 +6388,7 @@ class gui(object):
         spin = Spinbox(frame)
         spin.inContainer = False
         spin.isRange = False
-        spin.config(font=self._inputFont, highlightthickness=0)
+        spin.config(font=self._getContainerProperty('inputFont'), highlightthickness=0)
 
 # adds bg colour under spinners
 #        if self.platform == self.MAC:
@@ -6875,7 +6876,7 @@ class gui(object):
 
         label.image.animating = False
         label.config(image=image)
-        label.config(anchor=CENTER, font=self._outputFont)
+        label.config(anchor=CENTER, font=self._getContainerProperty('outputFont'))
         if not self.ttkFlag:
             label.config(background=self._getContainerBg())
         label.image = image  # keep a reference!
@@ -6952,7 +6953,7 @@ class gui(object):
         else:
             label = ttk.Label(self.getContainer())
 
-        label.config(anchor=CENTER, font=self._outputFont,image=img)
+        label.config(anchor=CENTER, font=self._getContainerProperty('outputFont'),image=img)
         label.image = img  # keep a reference!
 
         if compound is not None:
@@ -6992,7 +6993,7 @@ class gui(object):
         image = label.image.subsample(x, y)
 
         label.config(image=image)
-        label.config(anchor=CENTER, font=self._outputFont)
+        label.config(anchor=CENTER, font=self._getContainerProperty('outputFont'))
 
         if not self.ttkFlag:
             label.config(background=self._getContainerBg())
@@ -7006,7 +7007,7 @@ class gui(object):
         image = label.image.zoom(x, y)
 
         label.config(image=image)
-        label.config(anchor=CENTER, font=self._outputFont)
+        label.config(anchor=CENTER, font=self._getContainerProperty('outputFont'))
 
         if not self.ttkFlag:
             label.config(background=self._getContainerBg())
@@ -7233,7 +7234,7 @@ class gui(object):
         if not self.ttkFlag:
             rb = Radiobutton(self.getContainer(), text=name, variable=var, value=name)
             rb.config(anchor=W, background=self._getContainerBg(), indicatoron=1,
-                activebackground=self._getContainerBg(), font=self._outputFont
+                activebackground=self._getContainerBg(), font=self._getContainerProperty('outputFont')
             )
         else:
             rb = ttk.Radiobutton(self.getContainer(), text=name, variable=var, value=name)
@@ -7344,7 +7345,7 @@ class gui(object):
         vscrollbar.config(command=container.lb.yview)
         hscrollbar.config(command=container.lb.xview)
 
-        container.lb.config(font=self._inputFont)
+        container.lb.config(font=self._getContainerProperty('inputFont'))
         self.widgetManager.add(self.Widgets.ListBox, name, container.lb)
 
         container.lb.DEFAULT_TEXT=""
@@ -7627,7 +7628,7 @@ class gui(object):
         self.widgetManager.verify(self.Widgets.Button, title)
         if not self.ttkFlag:
             but = Button(frame, text=name)
-            but.config(font=self._buttonFont)
+            but.config(font=self._getContainerProperty('buttonFont'))
             if self.platform in [self.MAC, self.LINUX]:
                 but.config(highlightbackground=self._getContainerBg())
         else:
@@ -8295,13 +8296,13 @@ class gui(object):
         if not selectable:
             if not self.ttkFlag:
                 lab = Label(self.getContainer(), text=text)
-                lab.config(justify=LEFT, font=self._outputFont, background=self._getContainerBg())
+                lab.config(justify=LEFT, font=self._getContainerProperty('outputFont'), background=self._getContainerBg())
                 lab.origBg = self._getContainerBg()
             else:
                 lab = ttk.Label(self.getContainer(), text=text)
         else:
             lab = SelectableLabel(self.getContainer(), text=text)
-            lab.config(justify=CENTER, font=self._outputFont, background=self._getContainerBg())
+            lab.config(justify=CENTER, font=self._getContainerProperty('outputFont'), background=self._getContainerBg())
             lab.origBg = self._getContainerBg()
 
         lab.inContainer = False
@@ -8324,7 +8325,7 @@ class gui(object):
             self.widgetManager.verify(self.Widgets.Label, names[i])
             if not self.ttkFlag:
                 lab = Label(frame, text=names[i])
-                lab.config(font=self._outputFont, justify=LEFT, background=self._getContainerBg())
+                lab.config(font=self._getContainerProperty('outputFont'), justify=LEFT, background=self._getContainerBg())
             else:
                 lab = ttk.Label(frame, text=names[i])
             lab.DEFAULT_TEXT = names[i]
@@ -8397,7 +8398,7 @@ class gui(object):
             text = AjScrolledText(frame)
         else:
             text = AjText(frame)
-        text.config(font=self._inputFont, width=20, height=10, undo=True, wrap=WORD)
+        text.config(font=self._getContainerProperty('inputFont'), width=20, height=10, undo=True, wrap=WORD)
 
         if not self.ttkFlag:
             if self.platform in [self.MAC, self.LINUX]:
@@ -8665,7 +8666,7 @@ class gui(object):
             gui.trace("Not specifying text for messages (%s) now uses the title for the text. If you want an empty message, pass an empty string ''", title)
         mess = Message(self.getContainer())
         mess.config(text=text)
-        mess.config(font=self._inputFont)
+        mess.config(font=self._getContainerProperty('outputFont'))
         mess.config(justify=LEFT, background=self._getContainerBg())
         mess.DEFAULT_TEXT = text
 
@@ -8876,7 +8877,7 @@ class gui(object):
                 ent.bind("<Key>", suppress)
 
         if not self.ttkFlag:
-            ent.config(font=self._inputFont)
+            ent.config(font=self._getContainerProperty('inputFont'))
             if self.platform in [self.MAC, self.LINUX]:
                 ent.config(highlightbackground=self._getContainerBg())
 
@@ -8935,7 +8936,7 @@ class gui(object):
         vFrame.theWidget.bind("<Button-1>", click_command, "+")
 
         if not self.ttkFlag:
-            vFrame.theButton = Button(vFrame, font=self._buttonFont)
+            vFrame.theButton = Button(vFrame, font=self._getContainerProperty('buttonFont'))
         else:
             vFrame.theButton = ttk.Button(vFrame)
 
@@ -8965,7 +8966,7 @@ class gui(object):
 
         lab = labelBase(vFrame)
         lab.pack(side=RIGHT, fill=Y)
-        lab.config(font=self._outputFont)
+        lab.config(font=self._getContainerProperty('outputFont'))
         if not self.ttkFlag:
             lab.config(background=self._getContainerBg())
         lab.inContainer = True
@@ -9343,11 +9344,11 @@ class gui(object):
         self.widgetManager.verify(self.Widgets.Meter, name)
 
         if kind == "SPLIT":
-            meter = SplitMeter(self.getContainer(), font=self._outputFont)
+            meter = SplitMeter(self.getContainer(), font=self._getContainerProperty('outputFont'))
         elif kind == "DUAL":
-            meter = DualMeter(self.getContainer(), font=self._outputFont)
+            meter = DualMeter(self.getContainer(), font=self._getContainerProperty('outputFont'))
         else:
-            meter = Meter(self.getContainer(), font=self._outputFont)
+            meter = Meter(self.getContainer(), font=self._getContainerProperty('outputFont'))
 
         self.widgetManager.add(self.Widgets.Meter, name, meter)
         self._positionWidget(meter, row, column, colspan, rowspan)
