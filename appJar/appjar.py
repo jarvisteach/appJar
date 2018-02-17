@@ -5317,10 +5317,12 @@ class gui(object):
 #####################################
 
     # this will build a frame, with a label on the left hand side
-    def _getLabelBox(self, title, value=None, column=None):
+    def _getLabelBox(self, title, **kwargs):
         self.widgetManager.verify(self.Widgets.Label, title)
 
-        if value is None or value is True: value = title
+        label = kwargs.pop('label', title)
+        if label is True: label = title
+        font = kwargs.pop('font', self._getContainerProperty('outputFont'))
 
         # first, make a frame
         frame = self._makeLabelBox()(self.getContainer())
@@ -5333,32 +5335,26 @@ class gui(object):
             lab = ttk.Label(frame)
         else:
             lab = Label(frame, background=self._getContainerBg())
+
         frame.theLabel = lab
         lab.hidden = False
         lab.inContainer = True
         lab.config(
-            text=value,
+            text=label,
             anchor=W,
             justify=LEFT,
-            font=self._labelFont,
+            font=font
         )
 
         if not self.ttkFlag:
             lab.config(background=self._getContainerBg())
-        lab.DEFAULT_TEXT = value
+        lab.DEFAULT_TEXT = label
 
         self.widgetManager.add(self.Widgets.Label, title, lab)
         self.widgetManager.add(self.Widgets.FrameLabel, title, lab)
 
-#        # if this is a big label, update the others to match...
-#        self._updateLabelBoxes(title, column)
-#        lab.config(width=self.labWidth[column])
-
         # now put the label in the frame
         lab.pack(side=LEFT, fill=Y)
-        #lab.grid( row=0, column=0, sticky=W )
-        #Grid.columnconfigure(frame, 0, weight=1)
-        #Grid.rowconfigure(frame, 0, weight=1)
 
         return frame
 
@@ -5541,9 +5537,9 @@ class gui(object):
         self._positionWidget(scale, row, column, colspan, rowspan)
         return scale
 
-    def addLabelScale(self, title, row=None, column=0, colspan=0, rowspan=0):
-        ''' adds a slidable scale, with a lable showing the title  at the specified position '''
-        frame = self._getLabelBox(title, column=column)
+    def addLabelScale(self, title, row=None, column=0, colspan=0, rowspan=0, label=True):
+        ''' adds a slidable scale, with a label showing the title  at the specified position '''
+        frame = self._getLabelBox(title, label=label)
         scale = self._buildScale(title, frame)
         self._packLabelBox(frame, scale)
         self._positionWidget(frame, row, column, colspan, rowspan)
@@ -5649,10 +5645,10 @@ class gui(object):
         else: # new widget
             kwargs = self._parsePos(kwargs.pop("pos", []), kwargs)
             if kind == "ticks":
-                if label: opt = self.addLabelTickOptionBox(title, value, *args, **kwargs)
+                if label: opt = self.addLabelTickOptionBox(title, value, *args, label=label, **kwargs)
                 else: opt = self.addTickOptionBox(title, value, *args, **kwargs)
             else:
-                if label: opt = self.addLabelOptionBox(title, value, *args, **kwargs)
+                if label: opt = self.addLabelOptionBox(title, value, *args, label=label, **kwargs)
                 else: opt = self.addOptionBox(title, value, *args, **kwargs)
                 if selected is not None: self.setOptionBox(title, selected)
 
@@ -5781,7 +5777,7 @@ class gui(object):
         :returns: the created OptionBox (not the LabelBox)
         :raises ItemLookupError: if the title is already in use
         """
-        frame = self._getLabelBox(title, column=column)
+        frame = self._getLabelBox(title, **kwargs)
         option = self._buildOptionBox(frame, title, options)
         self._packLabelBox(frame, option)
         self._positionWidget(frame, row, column, colspan, rowspan)
@@ -5809,7 +5805,7 @@ class gui(object):
         :returns: the created TickOptionBox (not the LabelBox)
         :raises ItemLookupError: if the title is already in use
         """
-        frame = self._getLabelBox(title, column=column)
+        frame = self._getLabelBox(title, **kwargs)
         tick = self._buildOptionBox(frame, title, options, "ticks")
         self._packLabelBox(frame, tick)
         self._positionWidget(frame, row, column, colspan, rowspan)
@@ -6464,7 +6460,7 @@ class gui(object):
 
     def addLabelSpinBox(self, title, values, row=None, column=0, colspan=0, rowspan=0, **kwargs):
         ''' adds a spinbox, with the specified values, and a label displaying the title '''
-        frame = self._getLabelBox(title, column=column)
+        frame = self._getLabelBox(title, **kwargs)
         spin = self._buildSpinBox(frame, title, values)
         self._packLabelBox(frame, spin)
         self._positionWidget(frame, row, column, colspan, rowspan)
@@ -8174,7 +8170,7 @@ class gui(object):
                 font["weight"] = "bold" if self.check("access_bold_check") is True else "normal"
                 font["slant"] = "roman" if self.radio("access_italic_radio") == "Normal" else "italic"
                 if len(self.listbox("access_family_listbox")) > 0: font["family"] = self.listbox("access_family_listbox")[0]
-                if self.option("Size:") is not None: font["size"] = self.option("Size:")
+                if self.option("access_size_option") is not None: font["size"] = self.option("access_size_option")
                 self.font = font
                 self.bg = self.getLabelBg("access_bg_colBox")
                 self.fg = self.getLabelBg("access_fg_colBox")
@@ -8185,7 +8181,7 @@ class gui(object):
                 with self.labelFrame("access_font_labelframe", sticky="news", name="Font") as lf:
                     lf.config(padx=10, pady=10, font=self._accessFont)
                     self.listbox("access_family_listbox", self.fonts, rows=6, tip="Choose a font", colspan=2, font=self._accessFont)
-                    self.option("Size:", [7, 8, 9, 10, 12, 13, 14, 16, 18, 20, 22, 25, 29, 34, 40], label=True, tip="Choose a font size", font=self._accessFont)
+                    self.option("access_size_option", [7, 8, 9, 10, 12, 13, 14, 16, 18, 20, 22, 25, 29, 34, 40], label="Size:", tip="Choose a font size", font=self._accessFont)
                     self.check("access_bold_check", name="Bold", pos=('p',1), tip="Check this to make all font bold", font=self._accessFont)
                     self.radio("access_italic_radio", "Normal", tip="No italics", font=self._accessFont)
                     self.radio("access_italic_radio", "Italic", pos=('p',1), tip="Set font italic", font=self._accessFont)
@@ -8207,7 +8203,7 @@ class gui(object):
     def _resetAccess(self):
         if self.accessMade:
             self.listbox("access_family_listbox", self.accessOrigFont["family"])
-            self.option("Size:", str(self.accessOrigFont["size"]))
+            self.option("access_size_option", str(self.accessOrigFont["size"]))
 
             if self.accessOrigFont["weight"] == "normal": self.check("access_bold_check", False)
             else: self.check("access_bold_check", True)
@@ -8728,7 +8724,6 @@ class gui(object):
         case = kwargs.pop("case", None)
         rows = kwargs.pop("rows", None)
         secret = kwargs.pop("secret", False)
-        label = kwargs.pop("label", False)
         kind = kwargs.pop("kind", "standard").lower().strip()
 
         try: self.widgetManager.verify(self.Widgets.Entry, title)
@@ -8739,9 +8734,9 @@ class gui(object):
             kwargs = self._parsePos(kwargs.pop("pos", []), kwargs)
             # create the entry widget
             if kind == "auto":
-                ent = self._entryMaker(title, *args, secret=secret, label=label, kind=kind, words=value, **kwargs)
+                ent = self._entryMaker(title, *args, secret=secret, kind=kind, words=value, **kwargs)
             else:
-                ent = self._entryMaker(title, *args, secret=secret, label=label, kind=kind, **kwargs)
+                ent = self._entryMaker(title, *args, secret=secret, kind=kind, **kwargs)
                 if not ent: return
 
         # apply any setter values
@@ -8764,7 +8759,7 @@ class gui(object):
         if not label:
             frame = self.getContainer()
         else:
-            frame = self._getLabelBox(title, value=label, column=column)
+            frame = self._getLabelBox(title, label=label, **kwargs)
 
         if kind == "standard":
             ent = self._buildEntry(title, frame, secret)
@@ -8788,11 +8783,11 @@ class gui(object):
         else:
             raise Exception("Invalid entry kind: %s", kind)
 
-        if label:
+        if not label:
+            self._positionWidget(ent, row, column, colspan, rowspan)
+        else:
             self._packLabelBox(frame, ent)
             self._positionWidget(frame, row, column, colspan, rowspan)
-        else:
-            self._positionWidget(ent, row, column, colspan, rowspan)
         return ent
 
     def addEntry(self, title, row=None, column=0, colspan=0, rowspan=0, secret=False):
