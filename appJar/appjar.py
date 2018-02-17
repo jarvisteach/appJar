@@ -5689,15 +5689,15 @@ class gui(object):
         maxSize, options = self._configOptionBoxList(title, options, kind)
 
         if len(options) > 0 and kind == "normal":
-            option = OptionMenu(frame, var, *options)
+            option = ajOption(frame, var, *options)
             var.set(options[0])
             option.kind = "normal"
 
         elif kind == "ticks":
-            option = OptionMenu(frame, variable=var, value="")
+            option = ajOption(frame, variable=var, value="")
             self._buildTickOptionBox(title, option, options)
         else:
-            option = OptionMenu(frame, var, [])
+            option = ajOption(frame, var, [])
             option.kind = "normal"
 
         option.config(
@@ -5719,11 +5719,6 @@ class gui(object):
         option.DEFAULT_TEXT=""
         if options is not None:
             option.DEFAULT_TEXT='\n'.join(str(x) for x in options)
-
-        # configure the drop-down too
-        dropDown = option.nametowidget(option.menuname)
-        dropDown.configure(font=self.optionFont)
-#        dropDown.configure(background=self._getContainerBg())
 
 #        if self.platform == self.MAC:
 #            option.config(highlightbackground=self._getContainerBg())
@@ -8199,9 +8194,9 @@ class gui(object):
                 with self.labelFrame("access_colour_labelframe", sticky="news", name="Colours") as lf:
                     lf.config(padx=5, pady=2, font=self._accessFont)
                     self.label("access_fg_text", "Foreground:", sticky="ew", anchor="w", font=self._accessFont)
-                    self.label("access_fg_colBox", "", pos=('p',1), sticky="ew", submit=_changeFg, relief="ridge", tip="Click here to set the foreground colour", font=self._accessFont, width=12)
+                    self.label("access_fg_colBox", "", pos=('p',1), sticky="ew", submit=_changeFg, relief="ridge", tip="Click here to set the foreground colour", font=self._accessFont, width=14)
                     self.label("access_bg_text", "Background:", sticky="ew", anchor="w", font=self._accessFont)
-                    self.label("access_bg_colBox", "", pos=('p',1), sticky="ew", submit=_changeBg, relief="ridge", tip="Click here to set the background colour", font=self._accessFont, width=12)
+                    self.label("access_bg_colBox", "", pos=('p',1), sticky="ew", submit=_changeBg, relief="ridge", tip="Click here to set the background colour", font=self._accessFont, width=14)
                 self.sticky="se"
                 with self.frame("access_button_box"):
                     self.button("access_apply_button", _settings, name="Apply", pos=(0,0), font=self._accessFont)
@@ -10822,6 +10817,7 @@ class gui(object):
                 return 'break'
 
         return AjScale
+
     #####################################
     # appJar Frame
     #####################################
@@ -11209,6 +11205,20 @@ class gui(object):
 ############################################################################
 #### ******* ------ CLASS DEFINITIONS FROM HERE ------ *********** #########
 ############################################################################
+
+#####################################
+# appJar OptionMenu
+# allows dropDown to be configure at the same time
+#####################################
+class ajOption(OptionMenu, object):
+    def __init__(self, parent, *args, **options):
+        super(ajOption, self).__init__(parent, *args, **options)
+        self.dropDown = self.nametowidget(self.menuname)
+        self.dropDown.configure(font=options.pop('font', None))
+
+    def config(self, **args):
+        super(ajOption, self).config(**args)
+        self.dropDown.configure(font=args.pop('font', None))
 
 #####################################
 # ProgressBar Class
