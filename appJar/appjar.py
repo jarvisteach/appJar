@@ -13050,7 +13050,7 @@ class SimpleTable(ScrollPane):
 
                     val = rowNum - 1
 
-                    for text in self.actionButton:
+                    for row, text in enumerate(self.actionButton):
                         if len(self.actionButton) == 1:
                             command=lambda row=val, *args: self.action(row)
                         else:
@@ -13061,7 +13061,7 @@ class SimpleTable(ScrollPane):
 
                         if gui.GET_PLATFORM() in [gui.MAC, gui.LINUX]:
                             but.config(highlightbackground=widg.cget("bg"))
-                        but.pack()
+                        but.grid(row=row, sticky=N+E+S+W, pady=1)
                         widg.but.append(but)
                 self.rightColumn.append(widg)
                 widg.grid(row=rowNum, column=cellNum + 1, sticky=N+E+S+W)
