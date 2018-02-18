@@ -12754,12 +12754,12 @@ class GridCell(Label, object):
     def updateFonts(self, fonts):
         self.fonts = fonts
         if self.isHeader:
-            self.config(font=self.fonts["header"], background=self.fonts["headerBg"], fg=self.fonts['headerFg'])
+            self.config(font=self.fonts["headerFont"], background=self.fonts["headerBg"], fg=self.fonts['headerFg'])
         else:
             if self.selected:
-                self.config(font=self.fonts["data"], background=self.fonts["selectedBg"], fg=self.fonts['selectedFg'])
+                self.config(font=self.fonts["dataFont"], background=self.fonts["selectedBg"], fg=self.fonts['selectedFg'])
             else:
-                self.config(font=self.fonts["data"], background=self.fonts["inactiveBg"], fg=self.fonts['inactiveFg'])
+                self.config(font=self.fonts["dataFont"], background=self.fonts["inactiveBg"], fg=self.fonts['inactiveFg'])
 
     def setText(self, text):
         self.config(text=text)
@@ -12799,17 +12799,17 @@ class SimpleTable(ScrollPane):
                     addButton="Add", showMenu=False, **opts):
 
         self.fonts = {
-            "data": tkFont.Font(family="Helvetica", size=12),
-            "header": tkFont.Font(family="Helvetica", size=12),
-            "button": tkFont.Font(family="Helvetica", size=12),
+            "dataFont": tkFont.Font(family="Arial", size=11),
+            "headerFont": tkFont.Font(family="Arial", size=13, weight='bold'),
+            "buttonFont": tkFont.Font(family="Arial", size=10),
             "headerBg": "#6e7274",
             "headerFg": "#FFFFFF",
             "selectedBg": "#D3D3D3",
             "selectedFg": "#000000",
-            "inactiveBg": "#E0FFFF",
+            "inactiveBg": "#F6F6F6",
             "inactiveFg":"#000000",
-            "overBg": "#C0C0C0",
-            "overFg": "#FFFFFF"
+            "overBg": "#DDDDDD",
+            "overFg": "#000000"
         }
 
         super(SimpleTable, self).__init__(parent, resize=True, **{})
@@ -12844,7 +12844,11 @@ class SimpleTable(ScrollPane):
 
         # headings
         self.actionHeading = actionHeading
-        self.actionButton= actionButton
+        if isinstance(actionButton, str):
+            self.actionButton = [actionButton]
+        else:
+            self.actionButton = actionButton
+
         self.addButton= addButton
 
         # add the grid container to the frame
@@ -12880,12 +12884,13 @@ class SimpleTable(ScrollPane):
 
         if "font" in kw:
             font = kw.pop("font")
-            self.fonts["data"].configure(family=font.actual("family"), size=font.actual("size"))
-            self.fonts["header"].configure(family=font.actual("family"), size=font.actual("size") + 2, weight="bold")
+            self.fonts["dataFont"].configure(family=font.actual("family"), size=font.actual("size"))
+            self.fonts["headerFont"].configure(family=font.actual("family"), size=font.actual("size") + 2, weight="bold")
             updateCells = True
+
         if "buttonfont" in kw:
             buttonFont = kw.pop("buttonfont")
-            self.fonts["button"].configure(family=buttonFont.actual("family"), size=buttonFont.actual("size"))
+            self.fonts["buttonFont"].configure(family=buttonFont.actual("family"), size=buttonFont.actual("size")-2)
             updateCells = True
 
         if updateCells: self._configCells()
@@ -13000,6 +13005,10 @@ class SimpleTable(ScrollPane):
                     self.rightColumn[loop] = self.rightColumn[loop+1]
                     self.rightColumn[loop+1].grid(row=loop, column=self.numColumns, sticky=N+E+S+W)
 
+                # update its button
+                for but in self.rightColumn[loop].but:
+                    but.config(command=lambda name=but.cget['text'], row=loop, *args: self.action(name, row))
+
                 # re-grid them
                 for cellNum in range(len(self.cells[loop])):
                     self.cells[loop][cellNum].grid(row=loop, column=cellNum, sticky=N+E+S+W)
@@ -13036,26 +13045,29 @@ class SimpleTable(ScrollPane):
                 # add a button
                 else:
                     widg = GridCell(self.interior, self.fonts, isHeader=True)
-                    widg.config(borderwidth=2, bg='#000000')
+                    widg.config(borderwidth=0, bg=self.fonts['headerBg'])
+                    widg.but=[]
 
-                    if self.dbPK is not None: val = rowData[self.dbPK]
-                    else: val = rowNum - 1
+                    val = rowNum - 1
 
-                    but = Button(widg, font=self.fonts["button"],
-                        text=self.actionButton,
-                        command=gui.MAKE_FUNC(self.action, val)
-                    )
-                    if gui.GET_PLATFORM() in [gui.MAC, gui.LINUX]:
-                        but.config(highlightbackground=widg.cget("bg"))
-                    but.place(relx=0.5, rely=0.5, anchor=CENTER)
-                    widg.but = but
+                    for text in self.actionButton:
+                        but = Button(widg, font=self.fonts["buttonFont"],
+                            text=text,
+                            bd=0, highlightthickness=0, 
+                            command=lambda name=text, row=val, *args: self.action(name, row)
+                        )
+
+                        if gui.GET_PLATFORM() in [gui.MAC, gui.LINUX]:
+                            but.config(highlightbackground=widg.cget("bg"))
+                        but.pack()
+                        widg.but.append(but)
                 self.rightColumn.append(widg)
                 widg.grid(row=rowNum, column=cellNum + 1, sticky=N+E+S+W)
 
     def _updateButtons(self, position=0):
         for pos in range(position+1, len(self.rightColumn)):
-            but = self.rightColumn[pos].but
-            but.config(command=gui.MAKE_FUNC(self.action, pos-1))
+            for but in self.rightColumn[pos].but:
+                but.config(command=lambda name=but.cget['text'], row=pos-1, *args: self.action(name, row))
 
     def _createCell(self, rowNum, cellNum, val):
         if rowNum == 0: # adding title row
@@ -13103,14 +13115,16 @@ class SimpleTable(ScrollPane):
 
     def _selectRow(self, event=None):
         rowNumber = event.widget.gridPos.split("-")[0]
+        self.selectRow(rowNumber)
+
+    def selectRow(self, rowNumber, highlight=None):
+
         if rowNumber == "h":
             rowNumber = 0
         else:
             rowNumber = int(rowNumber) + 1
-        self.selectRow(rowNumber)
 
-    def selectRow(self, rowNumber, highlight=None):
-        if 1 > rowNumber >= len(self.cells):
+        if 1 > rowNumber >= len(self.cells)+1:
             raise Exception("Invalid row number.")
         else:
             selected = self.cells[rowNumber][0].selected
@@ -13328,7 +13342,7 @@ class SimpleTable(ScrollPane):
         lab = GridCell(self.interior, self.fonts, isHeader=True)
         lab.grid(row=len(self.cells), column=self.numColumns, sticky=N+E+S+W)
         self.ent_but = Button(
-            lab, font=self.fonts["button"],
+            lab, font=self.fonts["buttonFont"],
             text=self.addButton,
             command=gui.MAKE_FUNC(self.addRowEntries, "newRow")
         )
@@ -13625,7 +13639,6 @@ class GoogleMap(LabelFrame, object):
         self.app = app
         self.proxyString = proxyString
         if font is not None:
-            print(font)
             self.config(font=font)
 
         self.TERRAINS = ("Roadmap", "Satellite", "Hybrid", "Terrain")

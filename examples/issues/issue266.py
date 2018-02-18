@@ -108,14 +108,17 @@ def addRow(a):
     except:
         app.errorBox("SQL Error", "Unable to add row, check id is unique and numeric")
 
-def deleteRow(a):
-    app.selectTableRow("table", a, highlight=True)
-    if app.okBox("Delete Row " + str(a), "Are you sure you want to delete row " + str(a) + "?"):
-        table = app.optionBox("table")
-        sql = "DELETE FROM " + table + " WHERE id='" + str(a) + "'"
-        runSql(sql)
-        app.refreshDbTable("table")
-    app.selectTableRow("table", a, highlight=False)
+def deleteRow(btn, row):
+    if btn == "Delete":
+        rowData = app.getTableRow('table', row)
+        app.selectTableRow("table", row, highlight=True)
+        if app.okBox("Delete Row " + str(row), "Are you sure you want to delete row " + str(row) + "?"):
+            table = app.optionBox("table")
+            sql = "DELETE FROM " + table + " WHERE id='" + str(rowData[0]) + "'"
+            runSql(sql)
+            app.refreshDbTable("table")
+        try: app.selectTableRow("table", row, highlight=False)
+        except: pass
 
 # check the database exists, make if not
 try:
@@ -139,7 +142,7 @@ with gui("DB Demo", "800x600", stretch="column", bg="DarkOrange", log="trace", s
     app.label("title", "DB tester:", font=60, bg="orange", sticky="EW")
     app.setLabelRightClick("title", "demo")
     app.config(sticky="NEWS", stretch="both")
-    app.table("table", DB_NAME, "projects", kind='database', action=deleteRow, addRow=addRow, actionButton="Delete", showMenu=True, inactiveBg="pink", inactiveFg="green", activeBg="red", activeFg="orange")
+    app.table("table", DB_NAME, "projects", kind='database', action=deleteRow, addRow=addRow, actionButton="Delete", showMenu=True)
     app.setOptionBox("table", "projects")
     app.button("NEW TABLE", showMakeTable, sticky="", stretch="column")
     app.label("PRESS ME", font={"size":40, "underline":True}, right="demo")
