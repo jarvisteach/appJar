@@ -12808,7 +12808,7 @@ class SimpleTable(ScrollPane):
             "selectedFg": "#000000",
             "inactiveBg": "#F6F6F6",
             "inactiveFg":"#000000",
-            "overBg": "#DDDDDD",
+            "overBg": "#F0F9FF",
             "overFg": "#000000"
         }
 
@@ -13116,10 +13116,8 @@ class SimpleTable(ScrollPane):
 
     def selectRow(self, rowNumber, highlight=None):
 
-        if rowNumber == "h":
-            rowNumber = 0
-        else:
-            rowNumber = int(rowNumber) + 1
+        if rowNumber == "h": rowNumber = 0
+        else: rowNumber = int(rowNumber) + 1
 
         if 1 > rowNumber >= len(self.cells)+1:
             raise Exception("Invalid row number.")
@@ -13127,15 +13125,11 @@ class SimpleTable(ScrollPane):
             selected = self.cells[rowNumber][0].selected
             for cell in self.cells[rowNumber]:
                 if highlight is None:
-                    if selected:
-                        cell.deselect()
-                    else:
-                        cell.select()
+                    if selected: cell.deselect()
+                    else: cell.select()
                 else:
-                    if highlight:
-                        cell.mouseEnter()
-                    else:
-                        cell.mouseLeave()
+                    if highlight: cell.mouseEnter()
+                    else: cell.mouseLeave()
 
     def _buildMenu(self):
         self.menu = Menu(self, tearoff=0)
@@ -13153,20 +13147,20 @@ class SimpleTable(ScrollPane):
         self.menu.add_command(label="Insert Before", command=lambda: self._menuHelper("cb"))
         self.menu.add_command(label="Insert After", command=lambda: self._menuHelper("ca"))
         self.menu.add_separator()
-        self.menu.add_command(label="Toggle Selection", command=lambda: self._menuHelper("select"))
-        self.menu.add_command(label="Toggle Row", command=lambda: self._menuHelper("selectRow"))
-        self.menu.add_command(label="Toggle Column", command=lambda: self._menuHelper("selectColumn"))
+        self.menu.add_command(label="Select Cell", command=lambda: self._menuHelper("select"))
+        self.menu.add_command(label="Select Row", command=lambda: self._menuHelper("selectRow"))
+        self.menu.add_command(label="Select Column", command=lambda: self._menuHelper("selectColumn"))
         self.menu.bind("<FocusOut>", lambda e: self.menu.unpost())
 
     def _configMenu(self, isHeader=False):
         if isHeader:
             self.menu.entryconfigure("Delete Row", state=DISABLED)
-            self.menu.entryconfigure("Toggle Selection", state=DISABLED)
-            self.menu.entryconfigure("Toggle Row", state=DISABLED)
+            self.menu.entryconfigure("Select Cell", state=DISABLED)
+            self.menu.entryconfigure("Select Row", state=DISABLED)
         else:
             self.menu.entryconfigure("Delete Row", state=NORMAL)
-            self.menu.entryconfigure("Toggle Selection", state=NORMAL)
-            self.menu.entryconfigure("Toggle Row", state=NORMAL)
+            self.menu.entryconfigure("Select Cell", state=NORMAL)
+            self.menu.entryconfigure("Select Row", state=NORMAL)
 
     def _rightClick(self, event):
         if self.lastSelected is None or not self.lastSelected.isHeader == event.widget.isHeader:
@@ -13281,8 +13275,12 @@ class SimpleTable(ScrollPane):
                     cell = row[colCount]
                     cell.grid_forget()
                     cell.grid(row=rowCount, column=colCount, sticky=N+E+S+W)
+
                     # update the cells
-                    cell.gridPos = str(rowCount - 1) + "-" + str(colCount)
+                    val = rowCount -1
+                    if val == -1: val = 'h'
+                    else: val = str(val)
+                    cell.gridPos = val + "-" + str(colCount)
 
             # move the buttons
             if self.action is not None:
@@ -13332,10 +13330,12 @@ class SimpleTable(ScrollPane):
 
     def _createEntryBoxes(self):
         if self.addRowEntries is None: return
+        # add the entries
         for cellNum in range(self.numColumns):
             ent = self._createEntryBox(cellNum)
             self.entries.append(ent)
 
+        # add a button
         lab = GridCell(self.interior, self.fonts, isHeader=True)
         lab.grid(row=len(self.cells), column=self.numColumns, sticky=N+E+S+W)
         self.ent_but = Button(
@@ -13349,10 +13349,12 @@ class SimpleTable(ScrollPane):
         self.ent_but.pack(expand=True, fill='both')
 
     def _createEntryBox(self, cellNum):
-        lab = GridCell(self.interior, self.fonts, isHeader=True, width=6, height=2)
+        # create the container
+        lab = GridCell(self.interior, self.fonts, isHeader=True)
         lab.grid(row=len(self.cells), column=cellNum, sticky=N + E + S + W)
-        ent = Entry(lab, width=5)
-        ent.config(relief=FLAT, borderwidth=1, highlightbackground='black', highlightthickness=3)
+
+        # create the entry
+        ent = Entry(lab, relief=FLAT, borderwidth=1, highlightbackground='black', highlightthickness=3, width=6)
         ent.pack(expand=True, fill='both')
         ent.lab = lab
         return ent
