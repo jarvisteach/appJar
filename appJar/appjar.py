@@ -13051,11 +13051,13 @@ class SimpleTable(ScrollPane):
                     val = rowNum - 1
 
                     for text in self.actionButton:
-                        but = Button(widg, font=self.fonts["buttonFont"],
-                            text=text,
-                            bd=0, highlightthickness=0, 
+                        if len(self.actionButton) == 1:
+                            command=lambda row=val, *args: self.action(row)
+                        else:
                             command=lambda name=text, row=val, *args: self.action(name, row)
-                        )
+
+                        but = Button(widg, font=self.fonts["buttonFont"], text=text,
+                                        bd=0, highlightthickness=0, command=command)
 
                         if gui.GET_PLATFORM() in [gui.MAC, gui.LINUX]:
                             but.config(highlightbackground=widg.cget("bg"))

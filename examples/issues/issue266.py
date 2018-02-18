@@ -108,7 +108,9 @@ def addRow(a):
     except:
         app.errorBox("SQL Error", "Unable to add row, check id is unique and numeric")
 
-def deleteRow(btn, row):
+def deleteRow(btn, row=None):
+    if row is None:
+        btn, row = "Delete", btn
     if btn == "Delete":
         rowData = app.getTableRow('table', row)
         app.selectTableRow("table", row, highlight=True)
@@ -142,7 +144,7 @@ with gui("DB Demo", "800x600", stretch="column", bg="DarkOrange", log="trace", s
     app.label("title", "DB tester:", font=60, bg="orange", sticky="EW")
     app.setLabelRightClick("title", "demo")
     app.config(sticky="NEWS", stretch="both")
-    app.table("table", DB_NAME, "projects", kind='database', action=deleteRow, addRow=addRow, actionButton="Delete", showMenu=True)
+    app.table("table", DB_NAME, "projects", kind='database', action=deleteRow, addRow=addRow, actionButton=["Delete", "Clear"], showMenu=True)
     app.setOptionBox("table", "projects")
     app.button("NEW TABLE", showMakeTable, sticky="", stretch="column")
     app.label("PRESS ME", font={"size":40, "underline":True}, right="demo")
