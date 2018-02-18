@@ -4649,13 +4649,38 @@ class gui(object):
         if selected is not None:
             self.setOptionBox(title, selected)
 
-    def addDbTable(self, title, db, table, row=None, column=0, colspan=0, rowspan=0, action=None, addRow=None,
-                actionHeading="Action", actionButton="Press", addButton="Add", showMenu=False):
+    def table(self, title, value=None, *args, **kwargs):
+        """ simpleGUI - adds, sets & gets tables all in one go """
+        widgKind = self.Widgets.Table
+        kind = kwargs.pop("kind", 'normal')
+
+        action=kwargs.pop('action', None)
+        addRow=kwargs.pop('addRow', None)
+        actionHeading=kwargs.pop('actionHeading', "Action")
+        actionButton=kwargs.pop('actionButton', "Press")
+        addButton=kwargs.pop('addButton', "Add")
+        showMenu=kwargs.pop('showMenu', False)
+
+        try: self.widgetManager.verify(widgKind, title)
+        except: # widget exists
+            if value is not None: self.replaceAllTableRows(title, value)
+            table = self.getTableEntries(title)
+        else: # new widget
+            kwargs = self._parsePos(kwargs.pop("pos", []), kwargs)
+            if kind == 'normal': table = self.addTable(title, value, *args, action=action, addRow=addRow, actionHeading=actionHeading, actionButton=actionButton, addButton=addButton, showMenu=showMenu, **kwargs)
+            else: table = self.addDbTable(title, value, *args, action=action, addRow=addRow, actionHeading=actionHeading, actionButton=actionButton, addButton=addButton, showMenu=showMenu, **kwargs)
+
+        if len(kwargs) > 0:
+            self._configWidget(title, widgKind, **kwargs)
+        return table
+
+    def addDbTable(self, title, value, table=table, row=None, column=0, colspan=0, rowspan=0, action=None, addRow=None,
+                actionHeading="Action", actionButton="Press", addButton="Add", showMenu=False, **kwargs):
         ''' creates a new Table, displaying the specified database & table '''
 
-        pk, data = self._getDbData(db, table)
+        pk, data = self._getDbData(value, table)
         grid = self.addTable(title, data, row, column, colspan, rowspan, action, addRow, actionHeading, actionButton, addButton, showMenu)
-        grid.db = db
+        grid.db = value
         grid.dbTable = table
         grid.dbPK = data[0].index(pk)
         self.setTableHeaders(title, data[0])
@@ -12298,7 +12323,7 @@ class SelectableLabel(Entry, object):
 class ScrollPane(frameBase, object):
     def __init__(self, parent, resize=False, disabled=None, **opts):
         super(ScrollPane, self).__init__(parent)
-        self.config(padx=5, pady=5)
+        self.config(padx=1, pady=1)
         self.resize = resize
 
         self.hDisabled = disabled == "horizontal"
@@ -12718,7 +12743,7 @@ class GridCell(Label, object):
         super(GridCell, self).__init__(parent, **opts)
         self.selected = False
         self.isHeader = isHeader
-        self.config(relief=RIDGE)
+        self.config(relief=FLAT, borderwidth=2, highlightbackground='black', highlightthickness=1)
         self.updateFonts(fonts)
 
         if not self.isHeader:
@@ -12726,16 +12751,15 @@ class GridCell(Label, object):
             self.bind("<Leave>", self.mouseLeave)
             self.bind("<Button-1>", self.toggleSelection)
 
-
     def updateFonts(self, fonts):
         self.fonts = fonts
         if self.isHeader:
-            self.config(font=self.fonts["header"], background=self.fonts["headerBg"])
+            self.config(font=self.fonts["header"], background=self.fonts["headerBg"], fg=self.fonts['headerFg'])
         else:
             if self.selected:
-                self.config(font=self.fonts["data"], background=self.fonts["selectedBg"])
+                self.config(font=self.fonts["data"], background=self.fonts["selectedBg"], fg=self.fonts['selectedFg'])
             else:
-                self.config(font=self.fonts["data"], background=self.fonts["dataBg"])
+                self.config(font=self.fonts["data"], background=self.fonts["inactiveBg"], fg=self.fonts['inactiveFg'])
 
     def setText(self, text):
         self.config(text=text)
@@ -12744,20 +12768,20 @@ class GridCell(Label, object):
         self.config(text="")
 
     def mouseEnter(self, event=None):
-        self.config(background=self.fonts["overBg"])
+        self.config(background=self.fonts["overBg"], fg=self.fonts["overFg"])
 
     def mouseLeave(self, event=None):
         if self.selected:
-            self.config(background=self.fonts["selectedBg"])
+            self.config(background=self.fonts["selectedBg"], fg=self.fonts["selectedFg"])
         else:
-            self.config(background=self.fonts["dataBg"])
+            self.config(background=self.fonts["inactiveBg"], fg=self.fonts["inactiveFg"])
 
     def select(self):
-        self.config(background=self.fonts["selectedBg"])
+        self.config(background=self.fonts["selectedBg"], fg=self.fonts["selectedFg"])
         self.selected = True
 
     def deselect(self):
-        self.config(background=self.fonts["dataBg"])
+        self.config(background=self.fonts["inactiveBg"], fg=self.fonts["inactiveFg"])
         self.selected = False
 
     def toggleSelection(self, event=None):
@@ -12778,10 +12802,14 @@ class SimpleTable(ScrollPane):
             "data": tkFont.Font(family="Helvetica", size=12),
             "header": tkFont.Font(family="Helvetica", size=12),
             "button": tkFont.Font(family="Helvetica", size=12),
-            "headerBg": "#A9A9A9",
-            "dataBg": "#E0FFFF",
-            "overBg": "#C0C0C0",
+            "headerBg": "#6e7274",
+            "headerFg": "#FFFFFF",
             "selectedBg": "#D3D3D3",
+            "selectedFg": "#000000",
+            "inactiveBg": "#E0FFFF",
+            "inactiveFg":"#000000",
+            "overBg": "#C0C0C0",
+            "overFg": "#FFFFFF"
         }
 
         super(SimpleTable, self).__init__(parent, resize=True, **{})
@@ -12830,15 +12858,24 @@ class SimpleTable(ScrollPane):
     def configure(self, cnf=None, **kw):
         kw = gui.CLEAN_CONFIG_DICTIONARY(**kw)
         updateCells = False
+
         if "bg" in kw:
             bg = kw.pop("bg")
             self.canvas.config(bg=bg)
             self.interior.config(bg=bg)
-        if "activebackground" in kw:
-            self.fonts["selectedBg"] = kw.pop("activebackground")
+
+        if "activebg" in kw:
+            self.fonts["selectedBg"] = kw.pop("activebg", self.fonts['selectedBg'])
             updateCells = True
-        if "inactivebackground" in kw:
-            self.fonts["dataBg"] = kw.pop("inactivebackground")
+        if "activefg" in kw:
+            self.fonts["selectedFg"] = kw.pop("activefg", self.fonts['selectedFg'])
+            updateCells = True
+
+        if "inactivebg" in kw:
+            self.fonts["inactiveBg"] = kw.pop("inactivebg", self.fonts['inactiveBg'])
+            updateCells = True
+        if "inactivefg" in kw:
+            self.fonts["inactiveFg"] = kw.pop("inactivefg", self.fonts['inactiveFg'])
             updateCells = True
 
         if "font" in kw:
@@ -12999,6 +13036,7 @@ class SimpleTable(ScrollPane):
                 # add a button
                 else:
                     widg = GridCell(self.interior, self.fonts, isHeader=True)
+                    widg.config(borderwidth=2, bg='#000000')
 
                     if self.dbPK is not None: val = rowData[self.dbPK]
                     else: val = rowNum - 1
@@ -13303,6 +13341,7 @@ class SimpleTable(ScrollPane):
         lab = GridCell(self.interior, self.fonts, isHeader=True, width=6, height=2)
         lab.grid(row=len(self.cells), column=cellNum, sticky=N + E + S + W)
         ent = Entry(lab, width=5)
+        ent.config(relief=FLAT, borderwidth=1, highlightbackground='black', highlightthickness=3)
         ent.pack(expand=True, fill='both')
         ent.lab = lab
         return ent

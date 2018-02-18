@@ -96,7 +96,7 @@ def changeDb():
 
 def addRow(a):
     table = app.optionBox("table")
-    values = app.getTableEntries("table")
+    values = app.table("table")
     sql = "INSERT INTO " + table + " VALUES ("
     for v in values:
         sql += "'" + v + "', "
@@ -139,7 +139,7 @@ with gui("DB Demo", "800x600", stretch="column", bg="DarkOrange", log="trace", s
     app.label("title", "DB tester:", font=60, bg="orange", sticky="EW")
     app.setLabelRightClick("title", "demo")
     app.config(sticky="NEWS", stretch="both")
-    app.addDbTable("table", DB_NAME, "projects", action=deleteRow, addRow=addRow, actionButton="Delete", showMenu=True)
+    app.table("table", DB_NAME, "projects", kind='database', action=deleteRow, addRow=addRow, actionButton="Delete", showMenu=True, inactiveBg="pink", inactiveFg="green", activeBg="red", activeFg="orange")
     app.setOptionBox("table", "projects")
     app.button("NEW TABLE", showMakeTable, sticky="", stretch="column")
     app.label("PRESS ME", font={"size":40, "underline":True}, right="demo")
