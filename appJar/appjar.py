@@ -30,7 +30,7 @@ except ImportError:
     from tkinter.colorchooser import askcolor
     from tkinter import filedialog
     from tkinter import scrolledtext
-    from tkinter import tkFont
+    from tkinter import font as tkFont
     # used to check if functions have a parameter
     from inspect import getfullargspec as getArgs
 
@@ -12743,7 +12743,7 @@ class GridCell(Label, object):
         super(GridCell, self).__init__(parent, **opts)
         self.selected = False
         self.isHeader = isHeader
-        self.config(relief=FLAT, borderwidth=2, highlightbackground='black', highlightthickness=1)
+        self.config(relief=FLAT, borderwidth=2, highlightbackground='black', highlightthickness=1, padx=0, pady=0)
         self.updateFonts(fonts)
 
         if not self.isHeader:
@@ -12806,9 +12806,9 @@ class SimpleTable(ScrollPane):
             "headerFg": "#FFFFFF",
             "selectedBg": "#D3D3D3",
             "selectedFg": "#000000",
-            "inactiveBg": "#F6F6F6",
+            "inactiveBg": "#FFFFFF",
             "inactiveFg":"#000000",
-            "overBg": "#F0F9FF",
+            "overBg": "#E0E9EE",
             "overFg": "#000000"
         }
 
@@ -13354,7 +13354,7 @@ class SimpleTable(ScrollPane):
         lab.grid(row=len(self.cells), column=cellNum, sticky=N + E + S + W)
 
         # create the entry
-        ent = Entry(lab, relief=FLAT, borderwidth=1, highlightbackground='black', highlightthickness=3, width=6)
+        ent = Entry(lab, relief=FLAT, borderwidth=1, highlightbackground='black', highlightthickness=1, width=6)
         ent.pack(expand=True, fill='both')
         ent.lab = lab
         return ent
