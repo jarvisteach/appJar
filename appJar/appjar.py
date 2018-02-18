@@ -13173,6 +13173,7 @@ class SimpleTable(ScrollPane):
     def _menuHelper(self, action):
         self.update_idletasks()
         vals=self.lastSelected.gridPos.split("-")
+        gui.trace('Table Menu Helper: %s-%s', action, vals)
 
         if action == "dc":
             self.deleteColumn(int(vals[1]))
@@ -13215,6 +13216,8 @@ class SimpleTable(ScrollPane):
         else:
             self._hideEntryBoxes()
 
+            gui.trace('Adding column: %s', columnNumber)
+
             # move the right column, if necessary
             if self.action is not None:
                 for rowPos in range(len(self.cells)):
@@ -13235,7 +13238,10 @@ class SimpleTable(ScrollPane):
                     cell = self.cells[rowPos][colPos]
                     cell.grid_forget()
                     cell.grid(row=rowPos, column=colPos+1, sticky=N+E+S+W)
-                    cell.gridPos = str(rowPos - 1) + "-" + str(colPos+1)
+                    val = rowPos-1
+                    if val == -1: val ='h'
+                    else: val = str(val)
+                    cell.gridPos = val + "-" + str(colPos+1)
 
             # then add this column
             for rowPos in range(len(self.cells)):
