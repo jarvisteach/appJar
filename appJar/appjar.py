@@ -13084,9 +13084,6 @@ class SimpleTable(ScrollPane):
             else:
                 lab.bind('<Button-2>', self._rightClick)
 
-        if cellNum == 0:
-            lab.bind("<Button-1>", self._selectRow)
-
         lab.grid(row=rowNum, column=cellNum, sticky=N+E+S+W)
         Grid.columnconfigure(self.interior, cellNum, weight=1)
         Grid.rowconfigure(self.interior, rowNum, weight=1)
