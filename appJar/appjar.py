@@ -12848,10 +12848,10 @@ class SimpleTable(ScrollPane):
         # how many rows & columns
         self.numColumns = 0
         # find out the max number of cells in a row
-        if isinstance(data, sqlite3.Cursor):
+        if sqlite3 is not None and sqlite3 is not False and isinstance(data, sqlite3.Cursor):
             self.numColumns = len([description[0] for description in data.description])
         else:
-            self.numColumns = max(data, key=len)
+            self.numColumns = len(max(data, key=len))
 
         # headings
         self.actionHeading = actionHeading
@@ -12944,7 +12944,7 @@ class SimpleTable(ScrollPane):
 
     def addRows(self, data, scroll=True):
         self._hideEntryBoxes()
-        if isinstance(data, sqlite3.Cursor):
+        if sqlite3 is not None and sqlite3 is not False and isinstance(data, sqlite3.Cursor):
             self._addRow([description[0] for description in data.description])
         map(self._addRow, data)
         gui.trace("Added all rows in addRows()")
@@ -12967,7 +12967,7 @@ class SimpleTable(ScrollPane):
             return data
 
     def setHeaders(self, data):
-        if isinstance(data, sqlite3.Cursor):
+        if sqlite3 is not None and sqlite3 is not False and isinstance(data, sqlite3.Cursor):
             data = [description[0] for description in data.description]
 
         cellsLen = len(self.cells[0])

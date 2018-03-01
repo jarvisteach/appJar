@@ -10,16 +10,16 @@ appjar = 'next'
 #from appJar_3 import gui
 #appjar = 'None'
 
-app = gui()
+app = gui("men", "110x100")
 app.setFont(size=7)
 
 if (appjar == 'next'):
     app.addTable("g1",
         [["Name", "Age", "Gender"],
         ["Fred", 45, "Male"],
-        ["TinTinTinTinTinaaaaaTina", 37, "Female"],
-        ["Clive", 28, "MalMalMalMalMaleeeeeMale"],
-        ["Betty", 555555551111111151, "Female"]])
+        ["Tina", 37, "Female"],
+        ["Clive", 28, "Male"],
+        ["Betty", 51, "Female"]])
 else:
     app.addGrid("g1",
         [["Name", "Age", "Gender"],
