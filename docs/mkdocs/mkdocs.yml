@@ -25,6 +25,7 @@ pages:
     - Multiple Windows: pythonSubWindows.md
     - Splashscreen: splash.md
     - Special Characters: specialCharacters.md
+    - Clipboard: clipboard.md
     - (Beta Naming): simpleAppJar.md
 - Configuration:
     - appJar Properties: simpleProperties.md
