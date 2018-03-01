@@ -14,5 +14,5 @@ with gui("timer", font={'size':20}) as app:
     ta.config(relief='groove', bd=3)
     e = app.entry("entry")
 
-    ta.bind('<Command-a>', select_all)
-    e.bind('<Command-a>', select_all)
+#    ta.bind('<Command-a>', select_all)
+#    e.bind('<Command-a>', select_all)

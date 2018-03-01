@@ -585,6 +585,23 @@ class gui(object):
 
         self.configure(**kwargs)
 
+        # special bindings
+        self._globalBindings()
+
+    def _globalBindings(self):
+        def _selectEntry(event):
+            event.widget.select_range(0, 'end')
+
+        def _selectText(event):
+            event.widget.tag_add("sel","1.0","end")
+
+        if self.GET_PLATFORM() == self.MAC:
+            self.topLevel.bind_class("Text", "<Command-a>", _selectText)
+            self.topLevel.bind_class("Entry", "<Command-a>", _selectEntry)
+        else:
+            self.topLevel.bind_class("Text", "<Control-a>", _selectText)
+            self.topLevel.bind_class("Entry", "<Control-a>", _selectEntry)
+
     def _handleArgs(self):
         """ internal function to handle command line arguments """
         parser = argparse.ArgumentParser(
