@@ -5,6 +5,9 @@ from appJar import gui
 DB_NAME = "issue266.db"
 types = ["NULL", "INTEGER", "REAL", "TEXT", "BLOB"]
 
+def press():
+    print(app.getTableSelectedCells("table"))
+
 def runSql(sql):
     print(sql)
     data = []
@@ -46,8 +49,9 @@ def setup():
 
         c.execute(proj, ('Cool App with SQLite & Python', '2015-01-01', '2015-01-30'))
         project_id = c.lastrowid
-        c.execute(task, ('Analyze the requirements of the app', 1, 1, project_id, '2015-01-01', '2015-01-02'))
-        c.execute(task, ('Confirm with user about the top requirements', 1, 1, project_id, '2015-01-03', '2015-01-05'))
+        for i in range(100):
+            c.execute(task, ('Analyze the requirements of the app', 1, 1, project_id, '2015-01-01', '2015-01-02'))
+            c.execute(task, ('Confirm with user about the top requirements', 1, 1, project_id, '2015-01-03', '2015-01-05'))
 
 def showMakeTable():
     with app.subWindow("Make Table"):
@@ -145,8 +149,9 @@ with gui("DB Demo", "800x600", stretch="column", bg="DarkOrange", log="trace", s
     app.label("title", "DB tester:", font=60, bg="orange", sticky="EW")
     app.setLabelRightClick("title", "demo")
     app.config(sticky="NEWS", stretch="both")
-    app.table("table", DB_NAME, "projects", kind='database', action=deleteRow, addRow=addRow, actionButton=["Delete", 'AAA', 'BBB'], showMenu=True)
-    app.setOptionBox("table", "projects")
+    app.table("table", DB_NAME, "projects", kind='database', action=deleteRow, addRow=addRow, actionButton="Delete", showMenu=True, disabledEntries=[0])
+    app.setOptionBox("table", "projects", callFunction=False)
     app.button("NEW TABLE", showMakeTable, sticky="", stretch="column")
     app.label("PRESS ME", font={"size":40, "underline":True}, right="demo")
     app.addButtons(["EN", "DI"], edit)
+    app.button("COUNT", press)

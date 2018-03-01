@@ -71,6 +71,7 @@ app.go()
         * `actionButton` - set the button text for each row  
         * `addButton` - set the button text for the Entry row  
         * `showMenu` - boolean to show a right-click menu  
+        * `disabledEntries` - pass a list of numbers, to disable entry boxes in those positions  
 
     ![Table](img/dev/1_gridMenu.png)   
 
@@ -154,6 +155,9 @@ To have the **Press** button on the entries row add a new row of data, try the f
     If you leave `highlight=None` the row/column will be toggled between selected & deselected.  
     If you set `highlight=True` the row/column will be highlighted (like a mouse over). 
     If you set `highlight=False` the row/column will be un-highlighted (like a mouse over). 
+
+* `.disableTableEntry(title, entryPos, disabled=True)`  
+    Will disable the specified entry box (starting at 0) if entries are being displayed.  
 
 ## Tree
 ---

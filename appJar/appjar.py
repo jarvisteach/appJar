@@ -138,7 +138,7 @@ class gui(object):
     FLAT = FLAT
 
     ###################################
-    # Constsnats for music stuff
+    # Constants for music stuff
     ###################################
     BASIC_NOTES = {"A": 440, "B": 493, "C": 261,
                     "D": 293, "E": 329, "F": 349, "G": 392
@@ -1919,7 +1919,7 @@ class gui(object):
             for k in settings.options("EXTERNAL"):
                 self.externalSettings[k] = settings.get("EXTERNAL", k)
 
-    def stop(self, event=None):
+    def stop(self, event=None, fast=False):
         """ Closes the GUI. If a stop function is set, will only close the GUI if True """
         theFunc = self._getTopLevel().stopFunction
         if theFunc is None or theFunc():
@@ -1951,7 +1951,7 @@ class gui(object):
                 pass
 
             self.topLevel.quit()
-            self.topLevel.destroy()
+            if not fast: self.topLevel.destroy()
             self.__class__.instantiated = False
             gui.info("--- GUI stopped ---")
 
@@ -4583,34 +4583,6 @@ class gui(object):
 # Simple Tables
 #####################################
 
-    def _getDbData(self, db, table):
-        ''' query the specified db/table and return the PK, row headings & rows '''
-        self._importSqlite3()
-        if not sqlite3:
-            self.error("Unable to load DB data - can't load sqlite3")
-            return
-
-        dataQuery = 'SELECT * from ' + table
-        pkQuery = "PRAGMA table_info(" + table + ")"
-        data = []
-        pk = None
-
-        with sqlite3.connect(db) as conn:
-            cursor = conn.cursor()
-
-            # discover a PK
-            cursor.execute(pkQuery)
-            for row in cursor:
-                if row[5]: pk = row[1]
-
-            # select all data
-            cursor.execute(dataQuery)
-            data.append([description[0] for description in cursor.description])
-            for r in cursor:
-                data.append(r)
-
-        return pk, data
-
     def _getDbTables(self, db):
         ''' query the specified database, and get a list of table names '''
         self._importSqlite3()
@@ -4629,18 +4601,42 @@ class gui(object):
         return data
 
     def replaceDbTable(self, title, db, table):
-        pk, data = self._getDbData(db, table)
         grid = self.widgetManager.get(self.Widgets.Table, title)
         grid.db = db
         grid.dbTable = table
-        grid.dbPK = data[0].index(pk)
-        self.setTableHeaders(title, data[0])
-        self.replaceAllTableRows(title, data[1:])
+        self._importSqlite3()
+        if not sqlite3:
+            self.error("Unable to load DB data - can't load sqlite3")
+            return
+
+        with sqlite3.connect(db) as conn:
+            cursor = conn.cursor()
+            dataQuery = 'SELECT * from ' + table
+
+            # select all data
+            cursor.execute(dataQuery)
+            self.setTableHeaders(title, cursor)
+            self.replaceAllTableRows(title, cursor)
+        self.topLevel.update_idletasks()
+
+    def disableTableEntry(self, title, entryPos, disabled=True):
+        grid = self.widgetManager.get(self.Widgets.Table, title)
+        grid.disableEntry(entryPos, disabled=disabled)
 
     def refreshDbTable(self, title):
         grid = self.widgetManager.get(self.Widgets.Table, title)
-        pk, data = self._getDbData(grid.db, grid.dbTable)
-        self.replaceAllTableRows(title, data[1:])
+        self._importSqlite3()
+        if not sqlite3:
+            self.error("Unable to load DB data - can't load sqlite3")
+            return
+
+        with sqlite3.connect(value) as conn:
+            cursor = conn.cursor()
+            dataQuery = 'SELECT * from ' + table
+
+            # select all data
+            cursor.execute(dataQuery)
+            self.replaceAllTableRows(title, cursor)
 
     def refreshDbOptionBox(self, title, selected=None):
         opt = self.widgetManager.get(self.Widgets.OptionBox, title)
@@ -4678,24 +4674,37 @@ class gui(object):
                 actionHeading="Action", actionButton="Press", addButton="Add", showMenu=False, **kwargs):
         ''' creates a new Table, displaying the specified database & table '''
 
-        pk, data = self._getDbData(value, table)
-        grid = self.addTable(title, data, row, column, colspan, rowspan, action, addRow, actionHeading, actionButton, addButton, showMenu)
+        self._importSqlite3()
+        if not sqlite3:
+            self.error("Unable to load DB data - can't load sqlite3")
+            return
+
+        with sqlite3.connect(value) as conn:
+            cursor = conn.cursor()
+            dataQuery = 'SELECT * from ' + table
+
+            # select all data
+            cursor.execute(dataQuery)
+
+            grid = self.addTable(title, cursor, row, column, colspan, rowspan, action, addRow, actionHeading, actionButton, addButton, showMenu)
         grid.db = value
         grid.dbTable = table
-        grid.dbPK = data[0].index(pk)
-        self.setTableHeaders(title, data[0])
-        self.replaceAllTableRows(title, data[1:])
 
     def addTable(self, title, data, row=None, column=0, colspan=0, rowspan=0, action=None, addRow=None,
                 actionHeading="Action", actionButton="Press", addButton="Add", showMenu=False):
         ''' creates a new table, displaying the specified data '''
         self.widgetManager.verify(self.Widgets.Table, title)
-        grid = SimpleTable(self.getContainer(), title, data,
-            action, addRow,
-            actionHeading, actionButton, addButton,
-            showMenu, buttonFont=self._getContainerProperty('buttonFont'))
         if not self.ttkFlag:
-            grid.config(font=self.tableFont, background=self._getContainerBg())
+            grid = SimpleTable(self.getContainer(), title, data,
+                action, addRow,
+                actionHeading, actionButton, addButton,
+                showMenu, buttonFont=self._getContainerProperty('buttonFont'),
+                font=self.tableFont, background=self._getContainerBg(), queueFunction=self.queueFunction)
+        else:
+            grid = SimpleTable(self.getContainer(), title, data,
+                action, addRow,
+                actionHeading, actionButton, addButton,
+                showMenu, buttonFont=self._getContainerProperty('buttonFont'), queueFunction=self.queueFunction)
         self._positionWidget(grid, row, column, colspan, rowspan, N+E+S+W)
         self.widgetManager.add(self.Widgets.Table, title, grid)
         return grid
@@ -4722,7 +4731,7 @@ class gui(object):
     def addTableRows(self, title, data):
         ''' adds multiple rows of data to the specified table '''
         grid = self.widgetManager.get(self.Widgets.Table, title)
-        grid.addRows(data)
+        grid.addRows(data, scroll=True)
 
     def addTableColumn(self, title, columnNumber, data):
         ''' adds a new column of data, in the specified position, to the specified table '''
@@ -4771,7 +4780,7 @@ class gui(object):
     def replaceAllTableRows(self, title, data):
         grid = self.widgetManager.get(self.Widgets.Table, title)
         grid.deleteAllRows()
-        grid.addRows(data)
+        grid.addRows(data, scroll=False)
 
     # temporary deprecated functions
     def addGrid(self, title, data, row=None, column=0, colspan=0, rowspan=0, action=None, addRow=None,
@@ -4989,7 +4998,7 @@ class gui(object):
         pager = self.widgetManager.get(self.Widgets.PagedWindow, title)
         if not isinstance(buttons, list) or len(buttons) != 2:
             raise Exception(
-                "You must provide a list of two strings fot setPagedWinowButtons()")
+                "You must provide a list of two strings for setPagedWinowButtons()")
         pager.setPrevButton(buttons[0])
         pager.setNextButton(buttons[1])
 
@@ -12796,7 +12805,7 @@ class SimpleTable(ScrollPane):
 
     def __init__(self, parent, title, data, action=None, addRow=None,
                     actionHeading="Action", actionButton="Press",
-                    addButton="Add", showMenu=False, **opts):
+                    addButton="Add", showMenu=False, queueFunction=None, **opts):
 
         self.fonts = {
             "dataFont": tkFont.Font(family="Arial", size=11),
@@ -12817,16 +12826,17 @@ class SimpleTable(ScrollPane):
         # actions
         self.addRowEntries = addRow
         self.action = action
+        self.queueFunction = queueFunction
 
         # lists to store the data in
         self.cells = []
         self.entries = []
+        self.entryProps = []
         self.rightColumn = []
 
         # database stuff
         self.db = None
         self.dbTable = None
-        self.dbPK = None
 
         self.config(**opts)
 
@@ -12838,9 +12848,10 @@ class SimpleTable(ScrollPane):
         # how many rows & columns
         self.numColumns = 0
         # find out the max number of cells in a row
-        for row in data:
-            if len(row) > self.numColumns:
-                self.numColumns = len(row)
+        if isinstance(data, sqlite3.Cursor):
+            self.numColumns = len([description[0] for description in data.description])
+        else:
+            self.numColumns = max(data, key=len)
 
         # headings
         self.actionHeading = actionHeading
@@ -12854,7 +12865,8 @@ class SimpleTable(ScrollPane):
         # add the grid container to the frame
         self.interior.bind("<Configure>", self._refreshGrids)
 
-        self.addRows(data)
+        gui.trace("SimpleTable %s constructed, adding rows", title)
+        self.addRows(data, scroll=False)
 
     def config(self, cnf=None, **kw):
         self.configure(cnf, **kw)
@@ -12862,6 +12874,10 @@ class SimpleTable(ScrollPane):
     def configure(self, cnf=None, **kw):
         kw = gui.CLEAN_CONFIG_DICTIONARY(**kw)
         updateCells = False
+
+        if "disabledentries" in kw:
+            entries = kw.pop("disabledentries")
+            map(self.disableEntry, entries)
 
         if "bg" in kw:
             bg = kw.pop("bg")
@@ -12912,22 +12928,26 @@ class SimpleTable(ScrollPane):
         super(SimpleTable, self).configure(**kw)
 
     def _configCells(self):
+        gui.trace("Config all cells")
         for row in self.cells:
             for cell in row:
+                gui.trace("Update Fonts: %s, %s", row, cell)
                 cell.updateFonts(self.fonts)
 
     def addRow(self, rowData, scroll=True):
-        self._hideEntryBoxes()
-        self._addRow(rowData)
-        self._showEntryBoxes()
-        self.canvas.event_generate("<Configure>")
+        self.queueFunction(self._hideEntryBoxes)
+        self.queueFunction(self._addRow, rowData)
+        self.queueFunction(self._showEntryBoxes)
+        self.queueFunction(self.canvas.event_generate, "<Configure>")
         if scroll:
-            self.scrollBottom()
+            self.queueFunction(self.scrollBottom)
 
     def addRows(self, data, scroll=True):
         self._hideEntryBoxes()
-        for row in data:
-            self._addRow(row)
+        if isinstance(data, sqlite3.Cursor):
+            self._addRow([description[0] for description in data.description])
+        map(self._addRow, data)
+        gui.trace("Added all rows in addRows()")
         self._showEntryBoxes()
         self.canvas.event_generate("<Configure>")
         if scroll:
@@ -12947,17 +12967,24 @@ class SimpleTable(ScrollPane):
             return data
 
     def setHeaders(self, data):
-        newCols = len(data) - len(self.cells[0])
+        if isinstance(data, sqlite3.Cursor):
+            data = [description[0] for description in data.description]
+
+        cellsLen = len(self.cells[0])
+        newCols = len(data) - cellsLen
         if newCols > 0:
-            for pos in range(len(self.cells[0]), len(self.cells[0]) + newCols):
+            for pos in range(cellsLen, cellsLen + newCols):
                 self.addColumn(pos, [])
         elif newCols < 0:
             for pos in range(newCols*-1):
-                self.deleteColumn(len(self.cells[0])-1)
+                cellsLen = len(self.cells[0])
+                self.deleteColumn(cellsLen-1)
 
-        for count in range(len(self.cells[0])):
+        dataLen = len(data)
+        cellsLen = len(self.cells[0])
+        for count in range(cellsLen):
             cell = self.cells[0][count]
-            if count < len(data):
+            if count < dataLen:
                 cell.setText(data[count])
             else:
                 cell.clear()
@@ -12966,19 +12993,22 @@ class SimpleTable(ScrollPane):
         if 0 > rowNum >= len(self.cells):
             raise Exception("Invalid row number.")
         else:
+            dataLen = len(data)
             for count in range(len(self.cells[rowNum+1])):
                 cell = self.cells[rowNum+1][count]
-                if count < len(data):
+                if count < dataLen:
                     cell.setText(data[count])
                 else:
                     cell.clear()
             self.canvas.event_generate("<Configure>")
 
     def deleteAllRows(self):
-        for loop in range(len(self.cells)-2, -1, -1):
-            self.deleteRow(loop, pauseUpdate=True)
+        map(self._quickDeleteRow, range(len(self.cells)-2, -1, -1))
         self.canvas.event_generate("<Configure>")
         self._deleteEntryBoxes()
+
+    def _quickDeleteRow(self, position):
+        self.deleteRow(position, True)
 
     def deleteRow(self, position, pauseUpdate=False):
         if 0 > position >= len(self.cells):
@@ -13023,12 +13053,14 @@ class SimpleTable(ScrollPane):
         if self.numColumns == 0:
             raise Exception("No columns to add to.")
         else:
+            gui.trace(rowData)
             rowNum = len(self.cells)
+            numCols = len(rowData)
             newRow = []
             for cellNum in range(self.numColumns):
 
                 # get a val ("" if no val)
-                if cellNum >= len(rowData):
+                if cellNum >= numCols:
                     val = ""
                 else:
                     val = rowData[cellNum]
@@ -13050,8 +13082,9 @@ class SimpleTable(ScrollPane):
 
                     val = rowNum - 1
 
+                    butCount = len(self.actionButton)
                     for row, text in enumerate(self.actionButton):
-                        if len(self.actionButton) == 1:
+                        if butCount == 1:
                             command=lambda row=val, *args: self.action(row)
                         else:
                             command=lambda name=text, row=val, *args: self.action(name, row)
@@ -13074,11 +13107,11 @@ class SimpleTable(ScrollPane):
     def _createCell(self, rowNum, cellNum, val):
         if rowNum == 0: # adding title row
             lab = GridCell(self.interior, self.fonts, isHeader=True, text=val)
-            lab.gridPos = "h-" + str(cellNum)
+            lab.gridPos = ''.join(["h-", str(cellNum)])
             lab.bind("<Button-1>", self._selectColumn)
         else:
             lab = GridCell(self.interior, self.fonts, text=val)
-            lab.gridPos = str(rowNum - 1) + "-" + str(cellNum)
+            lab.gridPos = ''.join([str(rowNum - 1), "-", str(cellNum)])
 
         if self.showMenu:
             if gui.GET_PLATFORM() in [gui.WINDOWS, gui.LINUX]:
@@ -13087,8 +13120,8 @@ class SimpleTable(ScrollPane):
                 lab.bind('<Button-2>', self._rightClick)
 
         lab.grid(row=rowNum, column=cellNum, sticky=N+E+S+W)
-        Grid.columnconfigure(self.interior, cellNum, weight=1)
-        Grid.rowconfigure(self.interior, rowNum, weight=1)
+        self.interior.columnconfigure(cellNum, weight=1)
+        self.interior.rowconfigure(rowNum, weight=1)
         return lab
 
     def _selectColumn(self, event=None):
@@ -13219,35 +13252,38 @@ class SimpleTable(ScrollPane):
             self._hideEntryBoxes()
 
             gui.trace('Adding column: %s', columnNumber)
+            cellCount = len(self.cells)
 
             # move the right column, if necessary
             if self.action is not None:
-                for rowPos in range(len(self.cells)):
+                for rowPos in range(cellCount):
                     self.rightColumn[rowPos].grid_forget()
                     self.rightColumn[rowPos].grid(row=rowPos, column=self.numColumns+1, sticky=N+E+S+W)
 
                 # move the button
                 self.ent_but.lab.grid_forget()
-                self.ent_but.lab.grid(row=len(self.cells), column=self.numColumns+2, sticky=N+E+S+W)
+                self.ent_but.lab.grid(row=cellCount, column=self.numColumns+2, sticky=N+E+S+W)
 
                 # add another entry
                 ent = self._createEntryBox(self.numColumns)
                 self.entries.append(ent)
+                self.entryProps.append({'disabled':False})
 
             # move all columns including this position right one
             for colPos in range(self.numColumns-1, columnNumber-1, -1):
-                for rowPos in range(len(self.cells)):
+                for rowPos in range(cellCount):
                     cell = self.cells[rowPos][colPos]
                     cell.grid_forget()
                     cell.grid(row=rowPos, column=colPos+1, sticky=N+E+S+W)
                     val = rowPos-1
                     if val == -1: val ='h'
                     else: val = str(val)
-                    cell.gridPos = val + "-" + str(colPos+1)
+                    cell.gridPos = ''.join(val, "-", str(colPos+1))
 
             # then add this column
-            for rowPos in range(len(self.cells)):
-                if rowPos < len(data):
+            dataLen = len(data)
+            for rowPos in range(cellCount):
+                if rowPos < dataLen:
                     val = data[rowPos]
                 else:
                     val = ""
@@ -13261,10 +13297,11 @@ class SimpleTable(ScrollPane):
     def deleteColumn(self, columnNumber):
 
         if columnNumber < 0 or columnNumber >= self.numColumns:
-            raise Exception("Invalid column number.")
+            raise Exception("Invalid column number: %s.", columnNumber)
         else:
             # hide the entries
             self._hideEntryBoxes()
+            cellCount = len(self.cells)
 
             # delete the column
             for row in self.cells:
@@ -13275,9 +13312,10 @@ class SimpleTable(ScrollPane):
             if self.addRowEntries is not None and len(self.entries) >= columnNumber:
                 self.entries[columnNumber].grid_forget()
                 del self.entries[columnNumber]
+                del self.entryProps[columnNumber]
 
             # move the remaining columns
-            for rowCount in range(len(self.cells)):
+            for rowCount in range(cellCount):
                 row = self.cells[rowCount]
                 for colCount in range(columnNumber, len(row)):
                     cell = row[colCount]
@@ -13288,11 +13326,11 @@ class SimpleTable(ScrollPane):
                     val = rowCount -1
                     if val == -1: val = 'h'
                     else: val = str(val)
-                    cell.gridPos = val + "-" + str(colCount)
+                    cell.gridPos = ''.join(val, "-", str(colCount))
 
             # move the buttons
             if self.action is not None:
-                for rowPos in range(len(self.cells)):
+                for rowPos in range(cellCount):
                     self.rightColumn[rowPos].grid_forget()
                     self.rightColumn[rowPos].grid(row=rowPos, column=self.numColumns-1, sticky=N+E+S+W)
 
@@ -13326,15 +13364,28 @@ class SimpleTable(ScrollPane):
     def _deleteEntryBoxes(self):
         self._hideEntryBoxes()
         self.entries = []
+        self.entryProps = []
 
     def _showEntryBoxes(self):
         if self.addRowEntries is None: return
         if len(self.entries) > 0:
+            cellCount = len(self.cells)
             for pos in range(len(self.entries)):
-                self.entries[pos].lab.grid(row=len(self.cells), column=pos, sticky=N+E+S+W)
-            self.ent_but.lab.grid(row=len(self.cells), column=len(self.entries), sticky=N+E+S+W)
+                self.entries[pos].lab.grid(row=cellCount, column=pos, sticky=N+E+S+W)
+            self.ent_but.lab.grid(row=cellCount, column=len(self.entries), sticky=N+E+S+W)
         else:
             self._createEntryBoxes()
+
+    def _configEntryBoxes(self):
+        if self.addRowEntries is None: return
+        # config the entries
+        for cellNum in range(self.numColumns):
+            if self.entryProps[cellNum]['disabled']:
+                self.entries[cellNum].config(state='readonly')
+
+    def disableEntry(self, pos, disabled=True):
+        self.entryProps[pos]['disabled'] = disabled
+        self._configEntryBoxes()
 
     def _createEntryBoxes(self):
         if self.addRowEntries is None: return
@@ -13342,6 +13393,7 @@ class SimpleTable(ScrollPane):
         for cellNum in range(self.numColumns):
             ent = self._createEntryBox(cellNum)
             self.entries.append(ent)
+            self.entryProps.append({'disabled':False})
 
         # add a button
         lab = GridCell(self.interior, self.fonts, isHeader=True)
@@ -13362,7 +13414,7 @@ class SimpleTable(ScrollPane):
         lab.grid(row=len(self.cells), column=cellNum, sticky=N + E + S + W)
 
         # create the entry
-        ent = Entry(lab, relief=FLAT, borderwidth=1, highlightbackground='black', highlightthickness=1, width=6)
+        ent = Entry(lab, relief=FLAT, borderwidth=1, highlightbackground='black', highlightthickness=1, width=6, disabledbackground='grey')
         ent.pack(expand=True, fill='both')
         ent.lab = lab
         return ent
@@ -13376,6 +13428,7 @@ class SimpleTable(ScrollPane):
             for cell in row:
                 if cell.selected:
                     selectedCells.append(cell.gridPos)
+
         return selectedCells
 
     def _refreshGrids(self, event):
