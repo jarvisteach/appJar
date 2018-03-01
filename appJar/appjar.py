@@ -7664,18 +7664,20 @@ class gui(object):
                 widget.config(font=custFont)
 
         # now pass the kwargs to the config function, ignore any baddies
+        errorMsg = ""
         while True:
             try: widget.config(**kwargs)
             except TclError as e:
                 try:
                     key=str(e).split()[2][2:-1]
-                    val=kwargs.pop(key)
-                    gui.error("Invalid argument for %s %s - %s:%s", self.Widgets.name(kind), title, key, val)
+                    errorMsg = "".join([errorMsg, key, ":", kwargs.pop(key), ", "])
                 except:
                     gui.error("Invalid argument for %s %s: %s", self.Widgets.name(kind), title, e)
                     break
             else:
                 break
+        if len(errorMsg) > 0:
+            gui.error("Invalid arguments for %s %s - %s", self.Widgets.name(kind), title, errorMsg)
 
 
     def _buildButton(self, title, func, frame, name=None):
