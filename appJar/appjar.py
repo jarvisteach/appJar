@@ -595,12 +595,18 @@ class gui(object):
         def _selectText(event):
             event.widget.tag_add("sel","1.0","end")
 
+        def _scrollPaste(event):
+            event.widget.event_generate('<<Paste>>')
+            event.widget.see(END)
+
         if self.GET_PLATFORM() == self.MAC:
             self.topLevel.bind_class("Text", "<Command-a>", _selectText)
             self.topLevel.bind_class("Entry", "<Command-a>", _selectEntry)
+            self.topLevel.bind_class("Text", "<Command-v>", _scrollPaste)
         else:
             self.topLevel.bind_class("Text", "<Control-a>", _selectText)
             self.topLevel.bind_class("Entry", "<Control-a>", _selectEntry)
+            self.topLevel.bind_class("Text", "<Control-v>", _scrollPaste)
 
     def _handleArgs(self):
         """ internal function to handle command line arguments """
