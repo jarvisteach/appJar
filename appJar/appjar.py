@@ -522,8 +522,7 @@ class gui(object):
         self._buttonFont = tkFont.Font(family="Helvetica", size=12,)
         self._labelFont = tkFont.Font(family="Helvetica", size=12)
         self._inputFont = tkFont.Font(family="Helvetica", size=12)
-
-        self.statusFont = tkFont.Font(family="Helvetica", size=12)
+        self._statusFont = tkFont.Font(family="Helvetica", size=12)
 
         # dedicated font for access widget
         self._accessFont = tkFont.Font(family="Arial", size=11,)
@@ -10238,16 +10237,16 @@ class gui(object):
 #####################################
 
     def removeStatusbarField(self, field):
-        if self.hasStatus and field < len(self.status):
-            self.status[field].pack_forget()
-            self.status[field].destroy()
-            del self.status[field]
+        if self.hasStatus and field < len(self._statusFields):
+            self._statusFields[field].pack_forget()
+            self._statusFields[field].destroy()
+            del self._statusFields[field]
         else:
             raise ItemLookupError("Invalid field number for statusbar: " + str(field))
 
     def removeStatusbar(self):
         if self.hasStatus:
-            while len(self.status) > 0:
+            while len(self._statusFields) > 0:
                 self.removeStatusbarField(0)
 
             self.statusFrame.pack_forget()
@@ -10255,6 +10254,27 @@ class gui(object):
 
             self.hasStatus = False
             self.header = ""
+
+    def status(self, *args, **kwargs):
+        self.statusbar(*args, **kwargs)
+
+    def statusbar(self, *args, **kwargs):
+        """ simpleGUI - shortener for statusbar """
+        header = kwargs.pop('header', None)
+        bg = kwargs.pop('bg', None)
+        fg = kwargs.pop('fg', None)
+        width = kwargs.pop('width', None)
+
+        if not self.hasStatus:
+            self.addStatusbar(header=kwargs.pop('header', ""), fields=kwargs.pop('fields', 1), side=kwargs.pop('side', None))
+        else:
+            text = "" if len(args) == 0 else args[0]
+            self.setStatusbar(text=kwargs.pop('text', text), field=kwargs.pop('field', 0))
+
+        if header is not None: self.setStatusbarHeader(header)
+        if bg is not None: self.setStatusbarBg(bg)
+        if fg is not None: self.setStatusbarFg(fg)
+        if width is not None: self.setStatusbarWidth(width)
 
     def addStatusbar(self, header="", fields=1, side=None):
         if not self.hasStatus:
@@ -10264,23 +10284,23 @@ class gui(object):
             self.statusFrame.config(bd=1, relief=SUNKEN)
             self.statusFrame.pack(side=BOTTOM, fill=X, anchor=S)
 
-            self.status = []
+            self._statusFields = []
             for i in range(fields):
-                self.status.append(Label(self.statusFrame))
-                self.status[i].config(
+                self._statusFields.append(Label(self.statusFrame))
+                self._statusFields[i].config(
                     bd=1,
                     relief=SUNKEN,
                     anchor=W,
-                    font=self.statusFont,
+                    font=self._statusFont,
                     width=10)
-                self._addTooltip(self.status[i], "Status bar", True)
+                self._addTooltip(self._statusFields[i], "Status bar", True)
 
                 if side == "LEFT":
-                    self.status[i].pack(side=LEFT)
+                    self._statusFields[i].pack(side=LEFT)
                 elif side == "RIGHT":
-                    self.status[i].pack(side=RIGHT)
+                    self._statusFields[i].pack(side=RIGHT)
                 else:
-                    self.status[i].pack(side=LEFT, expand=1, fill=BOTH)
+                    self._statusFields[i].pack(side=LEFT, expand=1, fill=BOTH)
         else:
             self.error("Statusbar already exists - ignoring")
 
@@ -10291,57 +10311,57 @@ class gui(object):
     def setStatusbar(self, text, field=0):
         if self.hasStatus:
             if field is None:
-                for status in self.status:
+                for status in self._statusFields:
                     status.config(text=self._getFormatStatus(text))
-            elif field >= 0 and field < len(self.status):
-                self.status[field].config(text=self._getFormatStatus(text))
+            elif field >= 0 and field < len(self._statusFields):
+                self._statusFields[field].config(text=self._getFormatStatus(text))
             else:
                 raise Exception("Invalid status field: " + str(field) +
-                                ". Must be between 0 and " + str(len(self.status) - 1))
+                                ". Must be between 0 and " + str(len(self._statusFields) - 1))
 
     def setStatusbarBg(self, colour, field=None):
         if self.hasStatus:
             if field is None:
-                for status in self.status:
+                for status in self._statusFields:
                     status.config(background=colour)
-            elif field >= 0 and field < len(self.status):
-                self.status[field].config(background=colour)
+            elif field >= 0 and field < len(self._statusFields):
+                self._statusFields[field].config(background=colour)
             else:
                 raise Exception("Invalid status field: " + str(field) +
-                                ". Must be between 0 and " + str(len(self.status) - 1))
+                                ". Must be between 0 and " + str(len(self._statusFields) - 1))
 
     def setStatusbarFg(self, colour, field=None):
         if self.hasStatus:
             if field is None:
-                for status in self.status:
+                for status in self._statusFields:
                     status.config(foreground=colour)
-            elif field >= 0 and field < len(self.status):
-                self.status[field].config(foreground=colour)
+            elif field >= 0 and field < len(self._statusFields):
+                self._statusFields[field].config(foreground=colour)
             else:
                 raise Exception("Invalid status field: " + str(field) +
-                                ". Must be between 0 and " + str(len(self.status) - 1))
+                                ". Must be between 0 and " + str(len(self._statusFields) - 1))
 
     def setStatusbarWidth(self, width, field=None):
         if self.hasStatus:
             if field is None:
-                for status in self.status:
+                for status in self._statusFields:
                     status.config(width=width)
-            elif field >= 0 and field < len(self.status):
-                self.status[field].config(width=width)
+            elif field >= 0 and field < len(self._statusFields):
+                self._statusFields[field].config(width=width)
             else:
                 raise Exception("Invalid status field: " + str(field) +
-                                ". Must be between 0 and " + str(len(self.status) - 1))
+                                ". Must be between 0 and " + str(len(self._statusFields) - 1))
 
     def clearStatusbar(self, field=None):
         if self.hasStatus:
             if field is None:
-                for status in self.status:
+                for status in self._statusFields:
                     status.config(text=self._getFormatStatus(""))
-            elif field >= 0 and field < len(self.status):
-                self.status[field].config(text=self._getFormatStatus(""))
+            elif field >= 0 and field < len(self._statusFields):
+                self._statusFields[field].config(text=self._getFormatStatus(""))
             else:
                 raise Exception("Invalid status field: " + str(field) +
-                                ". Must be between 0 and " + str(len(self.status) - 1))
+                                ". Must be between 0 and " + str(len(self._statusFields) - 1))
 
     # formats the string shown in the status bar
     def _getFormatStatus(self, text):
