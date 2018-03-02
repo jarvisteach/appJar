@@ -480,6 +480,7 @@ A scrollable pane, to contain widgets.
 
 * `.startScrollPane(title)` & `.stopScrollPane()`  
     Used to start and stop the *ScrollPane*.  
+    Pass a `disabled` parameter of **horizontal** or **vertical** to disable one of the scrollbars.  
 
 * `.openScrollPane(title)`  
     Used to reopen the named *ScrollPane*.  

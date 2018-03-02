@@ -4,16 +4,17 @@
 ## Version 0.91  
 
 * Issues Resolved:
-    * [#379](https://github.com/jarvisteach/appJar/issues/379) - PieChart % fix in Python 2.7
-    * [#347](https://github.com/jarvisteach/appJar/issues/347), [#360](https://github.com/jarvisteach/appJar/issues/360) & [#375](https://github.com/jarvisteach/appJar/issues/375) - Right Click Menu updates
-    * [#369](https://github.com/jarvisteach/appJar/issues/369) - Hide scrollbars in ScollPane
+    * [#379](https://github.com/jarvisteach/appJar/issues/379) - [PieChart](/pythonDevWidgts/#pie) % fix in Python 2.7
+    * [#373](https://github.com/jarvisteach/appJar/issues/373) - Added function to get the BG colour of a widget.  
+    * [#347](https://github.com/jarvisteach/appJar/issues/347), [#360](https://github.com/jarvisteach/appJar/issues/360), [374](https://github.com/jarvisteach/appJar/issues/374) & [#375](https://github.com/jarvisteach/appJar/issues/375) - Right Click Menu updates
+    * [#369](https://github.com/jarvisteach/appJar/issues/369) - Hide scrollbars in [ScollPane](/pythonWidgetGrouping/#scroll-pane)
+    * [#367](https://github.com/jarvisteach/appJar/issues/367) - Update to [logging](/pythonLogging) - all appJar looging now done at a `TRACE` level, below `DEBUG`  
     * [#366](https://github.com/jarvisteach/appJar/issues/366) - Better eror reporting on AutoEntries
-    * [#367](https://github.com/jarvisteach/appJar/issues/367) - Update to logging
-    * [#340](https://github.com/jarvisteach/appJar/issues/340) - Introduced appJar properties
-    * [#329](https://github.com/jarvisteach/appJar/issues/329) - Hide starting separator in Windows Menus
-    * [#328](https://github.com/jarvisteach/appJar/issues/328) - Accessibility Widget
-    * [#301](https://github.com/jarvisteach/appJar/issues/301) - Updated layout
-    * [#29](https://github.com/jarvisteach/appJar/issues/29) - Updated sounds
+    * [#340](https://github.com/jarvisteach/appJar/issues/340) - [appJar properties](/simpleProperties) now fully documented & tested  
+    * [#329](https://github.com/jarvisteach/appJar/issues/329) - Starting separator removed from Windows [Right-click Menus](/pythonBars/#menubar)  
+    * [#328](https://github.com/jarvisteach/appJar/issues/328) - New [Accessibility Widget](/pythonDevWidgets/#accessibility) introduced to configure colours & fonts  
+    * [#301](https://github.com/jarvisteach/appJar/issues/301) - Updated [layout parameters](pythonWidgetLayout/#layout-tricks), can now pass `previous` & `next` for the row parameter, to make it easier to grid widgets  
+    * [#29](https://github.com/jarvisteach/appJar/issues/29) - Updated [sound](/pythonSound) documentation to discuss blocking sounds.  
 
 
 ## Version 0.9  

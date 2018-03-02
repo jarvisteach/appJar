@@ -28,7 +28,7 @@ pages:
     - Clipboard: clipboard.md
     - (Beta Naming): simpleAppJar.md
 - Configuration:
-    - appJar Properties: simpleProperties.md
+    - Properties: simpleProperties.md
     - GUI Options: pythonGuiOptions.md
     - Widgets:
         - Layout: pythonWidgetLayout.md

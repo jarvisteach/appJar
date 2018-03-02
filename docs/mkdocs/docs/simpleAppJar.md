@@ -388,5 +388,14 @@ Displays a popUp.
 ## statusbar
 ---
 * `.statusbar(**kwargs)`  
-    If adding, pass: header, fields, side
-    If updating, pass: text, field
+    Functions to show or update a statusbar.  
+    It will add a statusbar if none exists, with the following parameters:  
+    * `header` this will set a piece of text to put before any messages.  
+    * `fields` this will set the number of fields to show in the statusbar.  
+    * `side` this will set whether to show the fields on the `LEFT`, `RIGHT`, or the default `stretched`.  
+    * `text` text to put in the first field.  
+
+* `.statusbar(**kwargs)`  
+    Or, update the statusbar if one does exist:  
+    * `text` text to put in the field.  
+    * `field` the field numberis applicable.  
