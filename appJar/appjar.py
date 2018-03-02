@@ -4713,7 +4713,7 @@ class gui(object):
         grid.dbTable = table
 
     def addTable(self, title, data, row=None, column=0, colspan=0, rowspan=0, action=None, addRow=None,
-                actionHeading="Action", actionButton="Press", addButton="Add", showMenu=False):
+                actionHeading="Action", actionButton="Press", addButton="Add", showMenu=False, **kwargs):
         ''' creates a new table, displaying the specified data '''
         self.widgetManager.verify(self.Widgets.Table, title)
         if not self.ttkFlag:
@@ -12806,7 +12806,7 @@ class GridCell(Label, object):
         super(GridCell, self).__init__(parent, **opts)
         self.selected = False
         self.isHeader = isHeader
-        self.config(relief=FLAT, borderwidth=2, highlightbackground='black', highlightthickness=1, padx=0, pady=0)
+        self.config(borderwidth=1, highlightthickness=0, padx=0, pady=0)
         self.updateFonts(fonts)
 
         if not self.isHeader:
@@ -12817,12 +12817,12 @@ class GridCell(Label, object):
     def updateFonts(self, fonts):
         self.fonts = fonts
         if self.isHeader:
-            self.config(font=self.fonts["headerFont"], background=self.fonts["headerBg"], fg=self.fonts['headerFg'])
+            self.config(font=self.fonts["headerFont"], background=self.fonts["headerBg"], fg=self.fonts['headerFg'], relief=self.fonts['border'])
         else:
             if self.selected:
-                self.config(font=self.fonts["dataFont"], background=self.fonts["selectedBg"], fg=self.fonts['selectedFg'])
+                self.config(font=self.fonts["dataFont"], background=self.fonts["selectedBg"], fg=self.fonts['selectedFg'], relief=self.fonts['border'])
             else:
-                self.config(font=self.fonts["dataFont"], background=self.fonts["inactiveBg"], fg=self.fonts['inactiveFg'])
+                self.config(font=self.fonts["dataFont"], background=self.fonts["inactiveBg"], fg=self.fonts['inactiveFg'], relief=self.fonts['border'])
 
     def setText(self, text):
         self.config(text=text)
@@ -12872,7 +12872,8 @@ class SimpleTable(ScrollPane):
             "inactiveBg": "#FFFFFF",
             "inactiveFg":"#000000",
             "overBg": "#E0E9EE",
-            "overFg": "#000000"
+            "overFg": "#000000",
+            "border": 'solid'
         }
 
         super(SimpleTable, self).__init__(parent, resize=True, **{})
@@ -12961,6 +12962,10 @@ class SimpleTable(ScrollPane):
         if "buttonfont" in kw:
             buttonFont = kw.pop("buttonfont")
             self.fonts["buttonFont"].configure(family=buttonFont.actual("family"), size=buttonFont.actual("size")-2)
+            updateCells = True
+
+        if "border" in kw:
+            self.fonts["border"]=kw.pop("border").lower().strip()
             updateCells = True
 
         if updateCells: self._configCells()
