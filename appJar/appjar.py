@@ -10270,12 +10270,14 @@ class gui(object):
         bg = kwargs.pop('bg', None)
         fg = kwargs.pop('fg', None)
         width = kwargs.pop('width', None)
+        text = kwargs.pop('text', "")
 
         if not self.hasStatus:
             self.addStatusbar(header=kwargs.pop('header', ""), fields=kwargs.pop('fields', 1), side=kwargs.pop('side', None))
+            self.setStatusbar(text=text)
         else:
-            text = "" if len(args) == 0 else args[0]
-            field = 0 if len(args) < 2 else args[1]
+            if len(args) > 0: text = args[0]
+            field = 0 if len(args) > 1 else args[1]
             self.setStatusbar(text=kwargs.pop('text', text), field=kwargs.pop('field', field))
 
         if header is not None: self.setStatusbarHeader(header)
@@ -12929,7 +12931,7 @@ class SimpleTable(ScrollPane):
 
         if "disabledentries" in kw:
             entries = kw.pop("disabledentries")
-            map(self.disableEntry, entries)
+            list(map(self.disableEntry, entries))
 
         if "bg" in kw:
             bg = kw.pop("bg")
@@ -12998,7 +13000,7 @@ class SimpleTable(ScrollPane):
         self._hideEntryBoxes()
         if sqlite3 is not None and sqlite3 is not False and isinstance(data, sqlite3.Cursor):
             self._addRow([description[0] for description in data.description])
-        map(self._addRow, data)
+        list(map(self._addRow, data))
         gui.trace("Added all rows in addRows()")
         self._showEntryBoxes()
         self.canvas.event_generate("<Configure>")
@@ -13055,7 +13057,7 @@ class SimpleTable(ScrollPane):
             self.canvas.event_generate("<Configure>")
 
     def deleteAllRows(self):
-        map(self._quickDeleteRow, range(len(self.cells)-2, -1, -1))
+        list(map(self._quickDeleteRow, range(len(self.cells)-2, -1, -1)))
         self.canvas.event_generate("<Configure>")
         self._deleteEntryBoxes()
 
