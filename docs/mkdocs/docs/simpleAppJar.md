@@ -384,3 +384,9 @@ Displays a popUp.
     `message` will be displayed as the text of the popUp.  
     `kind` defaults to `info`, but can be any of: `error`, `warning`, `yesno`, `question`, `ok`, `retry`, `string`, `integer`, `float`, `text` or `number`.  
     `parent` allows you to link this popUp to a named SubWindow, instead of the main window.  
+
+## statusbar
+---
+* `.statusbar(**kwargs)`  
+    If adding, pass: header, fields, side
+    If updating, pass: text, field

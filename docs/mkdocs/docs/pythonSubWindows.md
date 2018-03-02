@@ -79,15 +79,20 @@ app.stopSubWindow()
 app.go(startWindow="Login")
 ```
 
-* `.showSubWindow(title)`  
+* `.showSubWindow(title, hide=False)`  
     Will cause the specified *SubWindow* to be shown.  
     If it is set as *modal* the parent window will become uninteractive until the *SubWindow* is closed.  
+    If `hide` is set to True, all other *SubWindows* will be hidden.  
 
 * `.hideSubWindow(title, useStopFunction=False)` & `.confirmHideSubWindow(title)`  
     Used to hide the specified *SubWindow*.  
     This will not destroy the *SubWindow*, so it can be shown again later.  
     By default it bypasses any `stopFunction`.  
     Set `useStopFunction` to be True or call `.confirmHideSubWindow()` to use the `stopFunction`.  
+
+* `.hideAllSubWindows(useStopFunction=False)`  
+    Will hide all *SubWindows*.  
+    Set `useStopFunction` to be True to use the `stopFunction`.  
 
 * `.destroySubWindow(title)`  
     This will hide and permanently destroy the specified *SubWindow*.  

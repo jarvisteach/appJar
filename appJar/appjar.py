@@ -5223,8 +5223,10 @@ class gui(object):
         tl.locationSet = True
 
     # functions to show/hide/destroy SubWindows
-    def showSubWindow(self, title, follow=False):
+    def showSubWindow(self, title, hide=False, follow=False):
         tl = self.widgetManager.get(self.Widgets.SubWindow, title)
+        if hide:
+            self.hideAllSubWindows()
         gui.trace("Showing subWindow %s", title)
         tl.shown = True
         if not tl.locationSet:
@@ -5250,6 +5252,10 @@ class gui(object):
             self.topLevel.wait_window(tl.killLab)
 
         return tl
+
+    def hideAllSubWindows(self, useStopFunction=False):
+        for sub in self.widgetManager.group(self.Widgets.SubWindow):
+            self.hideSubWindow(sub, useStopFunction)
 
     def hideSubWindow(self, title, useStopFunction=False):
         tl = self.widgetManager.get(self.Widgets.SubWindow, title)
@@ -10269,7 +10275,8 @@ class gui(object):
             self.addStatusbar(header=kwargs.pop('header', ""), fields=kwargs.pop('fields', 1), side=kwargs.pop('side', None))
         else:
             text = "" if len(args) == 0 else args[0]
-            self.setStatusbar(text=kwargs.pop('text', text), field=kwargs.pop('field', 0))
+            field = 0 if len(args) < 2 else args[1]
+            self.setStatusbar(text=kwargs.pop('text', text), field=kwargs.pop('field', field))
 
         if header is not None: self.setStatusbarHeader(header)
         if bg is not None: self.setStatusbarBg(bg)

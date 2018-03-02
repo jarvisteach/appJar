@@ -1671,20 +1671,20 @@ def test_status():
     print("\tTesting Statusbar")
 
     app.addStatusbar(TEXT_ONE, 4, "RIGHT")
-    assert len(app.status) == 4
+    assert len(app._statusFields) == 4
 
     with pytest.raises(Exception) :
         app.setStatusbar(TEXT_ONE, 43)
 
-    assert len(app.status) == 4
+    assert len(app._statusFields) == 4
     app.removeStatusbarField(3)
-    assert len(app.status) == 3
+    assert len(app._statusFields) == 3
 
     app.removeStatusbar()
-    assert len(app.status) == 0
+    assert len(app._statusFields) == 0
 
     app.addStatusbar(TEXT_ONE, 3, "RIGHT")
-    assert len(app.status) == 3
+    assert len(app._statusFields) == 3
 
     app.setStatusbar(TEXT_ONE)
     app.setStatusbar(TEXT_ONE, None)
@@ -3057,6 +3057,12 @@ def changer(btn=None):
     print(btn)
 
 with gui("Simple Demo") as app4:
+
+    app4.status(header="header", fields=3, side="RIGHT", bg='red', fg='green', width=40)
+    app4.statusbar(text="a", field=1)
+    app4.statusbar("a", field=2)
+    app4.statusbar("a", 0)
+
     app4.EXTERNAL_DND = None
     app4.label("title", "Simple Props Demo", colspan=3, kind="flash")
     app4.label("title2", row=0, column=3)
