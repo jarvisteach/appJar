@@ -10,9 +10,7 @@ def select_all(e):
     print(app.topLevel.clipboard_get())
 
 with gui("timer", font={'size':20}) as app:
-    ta = app.textArea("text")
-    ta.config(relief='groove', bd=3)
-    e = app.entry("entry")
-
-#    ta.bind('<Command-a>', select_all)
-#    e.bind('<Command-a>', select_all)
+    app.textArea("text").config(relief='groove', bd=3)
+    app.entry("entry")
+    app.option("opt", [1,2,3,4])
+    app.spin("sp", [1,2,3,4])
