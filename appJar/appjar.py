@@ -10288,7 +10288,7 @@ class gui(object):
             self.setStatusbar(text=text)
         else:
             if len(args) > 0: text = args[0]
-            field = 0 if len(args) > 1 else args[1]
+            field = 0 if len(args) < 2 else args[1]
             self.setStatusbar(text=kwargs.pop('text', text), field=kwargs.pop('field', field))
 
         if header is not None: self.setStatusbarHeader(header)

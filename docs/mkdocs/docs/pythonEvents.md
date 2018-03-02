@@ -176,7 +176,7 @@ app.setStopFunction(checkStop)
 ```
 
 If you have a **LOT** of widgets (maybe a Table with hundreds of rows), stopping the GUI can take a while...  
-In which case, you should enable `fastStop` on the GUI:
+In which case, you should enable `fastStop` on the GUI (**NB.** this doesn't work from IDLE):
 ```python
 app.setFastStop(True)
 ```

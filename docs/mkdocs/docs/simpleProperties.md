@@ -89,7 +89,7 @@ app.label('transLab', app.transparency)
 | --------- | --------- | ------------|
 | editMenu | Boolean | Enables and disables the right-click edit menu for text based widgets. |
 | stopFunction | function | (no GETTER) Sets a function to call when the GUI is closed. |
-| fastStop | Boolean | Sets this to True if you have a **LOT** of widgets, and stopping appJar has gotten slow. |
+| fastStop | Boolean | Set this to True if you have a **LOT** of widgets, and stopping appJar has gotten slow (doesn't work from IDLE). |
 | enterKey | function | (no GETTER) Sets or disables (pass None) a function bound to the enter key. |
 | logLevel | string | Sets the logging level. |
 | logFile | string | Sets a file to log messages to. |
