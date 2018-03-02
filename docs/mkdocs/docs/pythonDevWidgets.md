@@ -72,6 +72,7 @@ app.go()
         * `addButton` - set the button text for the Entry row  
         * `showMenu` - boolean to show a right-click menu  
         * `disabledEntries` - pass a list of numbers, to disable entry boxes in those positions  
+        * `border` - the style of the cell border: `sunken`, `solid`, etc
 
     ![Table](img/dev/1_gridMenu.png)   
 

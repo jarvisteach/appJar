@@ -4696,15 +4696,24 @@ class gui(object):
             table = self.getTableEntries(title)
         else: # new widget
             kwargs = self._parsePos(kwargs.pop("pos", []), kwargs)
-            if kind == 'normal': table = self.addTable(title, value, *args, action=action, addRow=addRow, actionHeading=actionHeading, actionButton=actionButton, addButton=addButton, showMenu=showMenu, **kwargs)
-            else: table = self.addDbTable(title, value, *args, action=action, addRow=addRow, actionHeading=actionHeading, actionButton=actionButton, addButton=addButton, showMenu=showMenu, **kwargs)
+            if kind == 'normal':
+                table = self.addTable(title, value, *args,
+                            action=action, addRow=addRow, actionHeading=actionHeading, actionButton=actionButton,
+                            addButton=addButton, showMenu=showMenu, **kwargs
+                        )
+            else:
+                table = self.addDbTable(title, value, *args,
+                            action=action, addRow=addRow, actionHeading=actionHeading, actionButton=actionButton,
+                            addButton=addButton, showMenu=showMenu, **kwargs
+                        )
 
         if len(kwargs) > 0:
             self._configWidget(title, widgKind, **kwargs)
         return table
 
-    def addDbTable(self, title, value, table=table, row=None, column=0, colspan=0, rowspan=0, action=None, addRow=None,
-                actionHeading="Action", actionButton="Press", addButton="Add", showMenu=False, **kwargs):
+    def addDbTable(self, title, value, table=table, row=None, column=0, colspan=0, rowspan=0,
+                action=None, addRow=None, actionHeading="Action", actionButton="Press",
+                addButton="Add", showMenu=False, border="solid", **kwargs):
         ''' creates a new Table, displaying the specified database & table '''
 
         self._importSqlite3()
@@ -4719,25 +4728,33 @@ class gui(object):
             # select all data
             cursor.execute(dataQuery)
 
-            grid = self.addTable(title, cursor, row, column, colspan, rowspan, action, addRow, actionHeading, actionButton, addButton, showMenu)
+            grid = self.addTable(title, cursor, row, column, colspan, rowspan,
+                        action, addRow, actionHeading, actionButton,
+                        addButton, showMenu, border=border
+                    )
         grid.db = value
         grid.dbTable = table
+        return grid
 
     def addTable(self, title, data, row=None, column=0, colspan=0, rowspan=0, action=None, addRow=None,
-                actionHeading="Action", actionButton="Press", addButton="Add", showMenu=False, **kwargs):
+                actionHeading="Action", actionButton="Press", addButton="Add", showMenu=False, border="solid", **kwargs):
         ''' creates a new table, displaying the specified data '''
         self.widgetManager.verify(self.Widgets.Table, title)
         if not self.ttkFlag:
             grid = SimpleTable(self.getContainer(), title, data,
-                action, addRow,
-                actionHeading, actionButton, addButton,
-                showMenu, buttonFont=self._getContainerProperty('buttonFont'),
-                font=self.tableFont, background=self._getContainerBg(), queueFunction=self.queueFunction)
+                        action, addRow,
+                        actionHeading, actionButton, addButton,
+                        showMenu, buttonFont=self._getContainerProperty('buttonFont'),
+                        font=self.tableFont, background=self._getContainerBg(),
+                        queueFunction=self.queueFunction, border=border
+                    )
         else:
             grid = SimpleTable(self.getContainer(), title, data,
-                action, addRow,
-                actionHeading, actionButton, addButton,
-                showMenu, buttonFont=self._getContainerProperty('buttonFont'), queueFunction=self.queueFunction)
+                        action, addRow,
+                        actionHeading, actionButton, addButton,
+                        showMenu, buttonFont=self._getContainerProperty('buttonFont'),
+                        queueFunction=self.queueFunction, border=border
+                    )
         self._positionWidget(grid, row, column, colspan, rowspan, N+E+S+W)
         self.widgetManager.add(self.Widgets.Table, title, grid)
         return grid
@@ -12870,7 +12887,7 @@ class SimpleTable(ScrollPane):
 
     def __init__(self, parent, title, data, action=None, addRow=None,
                     actionHeading="Action", actionButton="Press",
-                    addButton="Add", showMenu=False, queueFunction=None, **opts):
+                    addButton="Add", showMenu=False, queueFunction=None, border='solid', **opts):
 
         self.fonts = {
             "dataFont": tkFont.Font(family="Arial", size=11),
@@ -12884,7 +12901,7 @@ class SimpleTable(ScrollPane):
             "inactiveFg":"#000000",
             "overBg": "#E0E9EE",
             "overFg": "#000000",
-            "border": 'solid'
+            "border": border.lower()
         }
 
         super(SimpleTable, self).__init__(parent, resize=True, **{})

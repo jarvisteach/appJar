@@ -14,7 +14,7 @@ def family():
 
 with gui("men", font={'size':12}) as app:
 
-    app.table("g1",
+    app.addTable("g1",
         [["Name", "Age", "Gender"],
         ["Fred", 45, "Male"],
         ["Tina", 37, "Female"],
