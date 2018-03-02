@@ -581,6 +581,7 @@ class gui(object):
         self.events = []
         self.pollTime = 250
         self.built = True
+        self._fastStop = False
 
         self.configure(**kwargs)
 
@@ -1941,7 +1942,7 @@ class gui(object):
             for k in settings.options("EXTERNAL"):
                 self.externalSettings[k] = settings.get("EXTERNAL", k)
 
-    def stop(self, event=None, fast=False):
+    def stop(self, event=None):
         """ Closes the GUI. If a stop function is set, will only close the GUI if True """
         theFunc = self._getTopLevel().stopFunction
         if theFunc is None or theFunc():
@@ -1973,9 +1974,17 @@ class gui(object):
                 pass
 
             self.topLevel.quit()
-            if not fast: self.topLevel.destroy()
+            if not self.fastStop: self.topLevel.destroy()
             self.__class__.instantiated = False
             gui.info("--- GUI stopped ---")
+
+    def setFastStop(self, fast=True):
+        self._fastStop = fast
+
+    def getFastStop(self):
+        return self._fastStop
+
+    fastStop = property(getFastStop, setFastStop)
 
 #####################################
 # Functions for configuring polling events
@@ -2360,6 +2369,7 @@ class gui(object):
         editMenu = kwargs.pop("editMenu", None)
         # two possible names
         stopFunction = kwargs.pop("stop", kwargs.pop("stopFunction", None))
+        fastStop = kwargs.pop("fastStop", None)
         enterKey = kwargs.pop("enterKey", None)
         logLevel = kwargs.pop("log", kwargs.pop("logLevel", None))
         logFile = kwargs.pop("file", kwargs.pop("logFile", None))
@@ -2398,6 +2408,7 @@ class gui(object):
 
         if editMenu is not None: self.editMenu = editMenu
         if stopFunction is not None: self.stopFunction = stopFunction
+        if fastStop is not None: self.fastStop = fastStop
         if enterKey is not None: self.enterKey = enterKey
         if logLevel is not None: self.logLevel = logLevel
         if logFile is not None: self.logFile = logFile
@@ -6879,12 +6890,12 @@ class gui(object):
         else:
             raise Exception("Image " + imagePath + " does not exist")
 
-        # store the full poath to this image
+        # store the full path to this image
         photo.path = imagePath
         # store the modification time
         photo.modTime = os.path.getmtime(imagePath)
 
-        # sort out if it's an animated images
+        # sort out if it's an animated image
         if self._checkIsAnimated(imagePath):
             self._configAnimatedImage(photo)
             self._preloadAnimatedImage(photo)

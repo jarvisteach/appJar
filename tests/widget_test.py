@@ -2613,6 +2613,7 @@ def test_gui_properties():
         labelFont={'size':18, 'family':'helvetica'},
         editMenu=True,
         stopFunction=propFunc,
+        fastStop=False,
         enterKey=propFunc,
         logLevel='trace',
         logFile='aaa.txt',
@@ -2764,6 +2765,10 @@ def test_gui_properties():
 
     app.stopFunction = propFunc
     app.stopFunction = False
+    app.fastStop = True
+    assert app.fastStop is True
+    app.fastStop = False
+    assert app.fastStop is False
     app.enterKey = propFunc
     app.enterKey = None
 
@@ -2823,6 +2828,7 @@ app = gui()
 #with pytest.raises(Exception) :
 #    app3 = gui()
 app.createRightClickMenu("RCLICK")
+app.setFastStop()
 print(app.SHOW_VERSION())
 print(app.SHOW_PATHS())
 app.showSplash()
