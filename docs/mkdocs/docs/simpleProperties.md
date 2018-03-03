@@ -1,4 +1,4 @@
-# appJar Properties  
+# v1.0 Properties  
 ---
 
 appJar includes a number of properties that can be configured to change how the GUI looks/acts.  

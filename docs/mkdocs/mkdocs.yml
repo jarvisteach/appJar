@@ -17,10 +17,10 @@ pages:
     - Widgets:
         - Output Widgets: outputWidgets.md
         - Input Widgets: inputWidgets.md
-        - Beta Widgets: pythonDevWidgets.md
         - Images: pythonImages.md
         - Containers: pythonWidgetGrouping.md
-        - (Beta Naming): simpleAppJar.md
+        - Beta Widgets: pythonDevWidgets.md
+        - (v1.0 Naming): simpleAppJar.md
     - Bars: pythonBars.md
     - Pop-ups: pythonDialogs.md
     - Sounds: pythonSound.md
@@ -29,7 +29,6 @@ pages:
     - Splashscreen: splash.md
     - Special Characters: specialCharacters.md
 - Configuration:
-    - Properties: simpleProperties.md
     - GUI Options: pythonGuiOptions.md
     - Widgets:
         - Layout: pythonWidgetLayout.md
@@ -46,6 +45,7 @@ pages:
     - Command Line Arguments: pythonCommandLine.md
     - ttk (BETA): pythonTtk.md
     - Clipboard: clipboard.md
+    - (v1.0 Properties): simpleProperties.md
 - Help:
     - Guidance: guidance.md
     - Examples:
