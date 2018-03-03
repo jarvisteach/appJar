@@ -7,8 +7,12 @@
 * appJar logging now uses its own logLevel of TRACE
 
 * Issues Resolved:
-    * [#388](https://github.com/jarvisteach/appJar/issues/388) - Can now specify the cell style of grids.
-    * [#379](https://github.com/jarvisteach/appJar/issues/379) - [PieChart](/pythonDevWidgts/#pie) % fix in Python 2.7
+    * [#398](https://github.com/jarvisteach/appJar/issues/398) - Documented [.pyw files](/packaging).  
+    * [#395](https://github.com/jarvisteach/appJar/issues/395) - Option to [fast stop](/pythonEvents/#stopping-the-gui) a GUI.  
+    * [#391](https://github.com/jarvisteach/appJar/issues/391) - Updated error messages on `_configWidget`  
+    * [#390](https://github.com/jarvisteach/appJar/issues/390) - New simpleAppJar funcitons for [statusbar](/simpleAppJar/#statusbar).  
+    * [#388](https://github.com/jarvisteach/appJar/issues/388) - Can now specify the cell style of [grids](/pythonDevWidgets/#grid).
+    * [#379](https://github.com/jarvisteach/appJar/issues/379) - [PieChart](/outputWidgets/#pie) % fix in Python 2.7
     * [#373](https://github.com/jarvisteach/appJar/issues/373) - Added function to get the BG colour of a widget.  
     * [#347](https://github.com/jarvisteach/appJar/issues/347), [#360](https://github.com/jarvisteach/appJar/issues/360), [374](https://github.com/jarvisteach/appJar/issues/374) & [#375](https://github.com/jarvisteach/appJar/issues/375) - Right Click Menu updates
     * [#369](https://github.com/jarvisteach/appJar/issues/369) - Hide scrollbars in [ScollPane](/pythonWidgetGrouping/#scroll-pane)
