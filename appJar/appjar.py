@@ -3033,18 +3033,18 @@ class gui(object):
         # this will discard the scale value, as default function
         # can't handle it
         if kind == self.Widgets.Scale:
-            cmd = self.MAKE_FUNC(function, name, True)
+            cmd = self.MAKE_FUNC(function, name)
             widget.cmd_id = widget.var.trace('w', cmd)
             widget.cmd = cmd
         elif kind == self.Widgets.OptionBox:
             if widget.kind == "ticks":
                 vals = self.widgetManager.get(self.Widgets.TickOptionBox, name, group=WidgetManager.VARS)
                 for o in vals:
-                    cmd = self.MAKE_FUNC(function, str(o), True)
+                    cmd = self.MAKE_FUNC(function, str(o))
                     vals[o].cmd_id = vals[o].trace('w', cmd)
                     vals[o].cmd = cmd
             else:
-                cmd = self.MAKE_FUNC(function, name, True)
+                cmd = self.MAKE_FUNC(function, name)
                 # need to trace the variable??
                 widget.cmd_id = widget.var.trace('w', cmd)
                 widget.cmd = cmd
@@ -3053,7 +3053,7 @@ class gui(object):
                 # not populated by change/submit
                 if key is None:
                     key = name
-                cmd = self.MAKE_FUNC(function, key, True)
+                cmd = self.MAKE_FUNC(function, key)
                 # get Entry variable
                 var = self.widgetManager.get(self.Widgets.Entry, name, group=WidgetManager.VARS)
                 var.cmd_id = var.trace('w', cmd)
@@ -3062,22 +3062,20 @@ class gui(object):
                 # not populated by change/submit
                 if key is None:
                     key = name
-                sbm = self.MAKE_FUNC(function, key, True)
+                sbm = self.MAKE_FUNC(function, key)
                 widget.sbm_id = widget.bind('<Return>', sbm)
                 widget.sbm = sbm
         elif kind == self.Widgets.TextArea:
             if eventType == "change":
                 # get Entry variable
-                cmd = self.MAKE_FUNC(function, name, True)
+                cmd = self.MAKE_FUNC(function, name)
                 widget.bindChangeEvent(cmd)
         elif kind == self.Widgets.Button:
             if eventType == "change":
                 self.warn("Error configuring %s : can't set a change function", name)
             else:
                 widget.config(command=self.MAKE_FUNC(function, name))
-                widget.bind(
-                    '<Return>', self.MAKE_FUNC(
-                        function, name, True))
+                widget.bind('<Return>', self.MAKE_FUNC(function, name))
         # make labels clickable, add a cursor, and change the look
         elif kind == self.Widgets.Label or kind == self.Widgets.Image:
             if eventType in ["command", "submit"]:
@@ -3086,7 +3084,7 @@ class gui(object):
                 elif self.platform in [self.WINDOWS, self.LINUX]:
                     widget.config(cursor="hand2")
 
-                cmd = self.MAKE_FUNC(function, name, True)
+                cmd = self.MAKE_FUNC(function, name)
                 widget.bind("<Button-1>", cmd, add="+")
                 widget.cmd = cmd
                 # these look good, but break when dialogs take focus
@@ -3098,11 +3096,11 @@ class gui(object):
             elif eventType == "change":
                 self.warn("Error configuring %s : can't set a change function", name)
         elif kind == self.Widgets.ListBox:
-            cmd = self.MAKE_FUNC(function, name, True)
+            cmd = self.MAKE_FUNC(function, name)
             widget.bind('<<ListboxSelect>>', cmd)
             widget.cmd = cmd
         elif kind in [self.Widgets.RadioButton]:
-            cmd = self.MAKE_FUNC(function, name, True)
+            cmd = self.MAKE_FUNC(function, name)
             # get rb variable
             var = self.widgetManager.get(self.Widgets.RadioButton, name, group=WidgetManager.VARS)
 
@@ -3115,7 +3113,7 @@ class gui(object):
             var.cmd_id = var.trace('w', cmd)
             var.cmd = cmd
         elif kind == self.Widgets.Properties:
-            cmd = self.MAKE_FUNC(function, name, True)
+            cmd = self.MAKE_FUNC(function, name)
             widget.setChangeFunction(cmd)
         else:
             if kind not in [self.Widgets.SpinBox, self.Widgets.CheckBox]:
@@ -3474,7 +3472,7 @@ class gui(object):
 # FUNCTION for managing commands
 #####################################
     @staticmethod
-    def MAKE_FUNC(funcName, param, discard=False):
+    def MAKE_FUNC(funcName, param):
         ''' function to automate lambdas '''
         # make sure we get a function
         if not callable(funcName) and not hasattr(funcName, '__call__'):
