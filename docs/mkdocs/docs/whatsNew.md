@@ -11,6 +11,7 @@
     * [#367](https://github.com/jarvisteach/appJar/issues/367) - Update to [logging](/pythonLogging) - all appJar looging now done at a `TRACE` level, below `DEBUG`  
     * [#366](https://github.com/jarvisteach/appJar/issues/366) - Better eror reporting on AutoEntries
     * [#340](https://github.com/jarvisteach/appJar/issues/340) - [appJar properties](/simpleProperties) now fully documented & tested  
+    * [#335](https://github.com/jarvisteach/appJar/issues/335) - No longer necessary to receive a parameter in functions linked to appJar widgets.  
     * [#329](https://github.com/jarvisteach/appJar/issues/329) - Starting separator removed from Windows [Right-click Menus](/pythonBars/#menubar)  
     * [#328](https://github.com/jarvisteach/appJar/issues/328) - New [Accessibility Widget](/pythonDevWidgets/#accessibility) introduced to configure colours & fonts  
     * [#301](https://github.com/jarvisteach/appJar/issues/301) - Updated [layout parameters](pythonWidgetLayout/#layout-tricks), can now pass `previous` & `next` for the row parameter, to make it easier to grid widgets  
