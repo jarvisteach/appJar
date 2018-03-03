@@ -79,7 +79,7 @@ This will override any language set in the call to `.go()`, and removes the need
 
 * `[LABEL]`, `[BUTTON]`, `[ENTRY]`, `[CHECKBOX]`, `[MESSAGE]`, `[LINK]`, `[LABELFRAME]`, `[TOGGLEFRAME]`  
     As demonstrated above, use the widget ID, followed by the text to update it with.  
-    Any labels created by [auto-label](/pythonWidgets/#auto-labelled-widgets) widgets are also set here.  
+    Any labels created by [auto-label](/inputWidgets/#auto-labelled-widgets) widgets are also set here.  
     **NB.** Only the *default value* of entries will be translated.  
 
 * `[IMAGE]` & `[SOUND]`  
@@ -131,7 +131,7 @@ mainFrame-Tab3: Details
 
 * `[GRID]` & `[PAGEDWINDOW]`  
     As above, the key is made of two parts.  
-    There are three configurable items in a [Grid](/pythonDevWidgets/#grid); the buttons & label in the right-hand column.  
+    There are three configurable items in a [Grid](/pythonDevWidgets/#table); the buttons & label in the right-hand column.  
     There are three configurable items in a [PagedWindow](/pythonWidgetGrouping/#paged-window); the title, previous & next buttons.  
     These should each be preceeded by the name of the widget:  
 ```sh

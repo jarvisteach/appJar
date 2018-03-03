@@ -84,6 +84,6 @@ Some functions have now been [deprecated](https://en.wikipedia.org/wiki/Deprecat
 
 ##Beta Code
 
-Some elements of appjar are in [beta](https://en.wikipedia.org/wiki/Software_release_life_cycle#BETA). This means you can use them, and they *generally* work - but you may come across issues or they may change in the future. Generally, the beta code works pretty well - it wouldn't be included if it didn't. But, equally, we know its not perfect - [drag'n drop](/pythonDnD) will keep growing & improving, and the [grid](/pythonDevWidgets/#grid) needs some work.  
+Some elements of appjar are in [beta](https://en.wikipedia.org/wiki/Software_release_life_cycle#BETA). This means you can use them, and they *generally* work - but you may come across issues or they may change in the future. Generally, the beta code works pretty well - it wouldn't be included if it didn't. But, equally, we know its not perfect - [drag'n drop](/pythonDnD) will keep growing & improving, and the [table](/pythonDevWidgets/#table) needs some work.  
 
 So, please use them, and let us know any issues or improvements you'd like...  

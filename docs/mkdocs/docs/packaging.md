@@ -1,7 +1,7 @@
 # Packaging appJar Apps ![PyInstaller](img/pyinstaller-draft1a-100_trans.png)
 ---
 
-## pyw files on Windows
+## .pyw files on Windows
 ---
 
 If you're on Windows, there is a clever way to make your python files act like executables.  

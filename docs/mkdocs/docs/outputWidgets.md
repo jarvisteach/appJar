@@ -1,4 +1,4 @@
-#Widgets
+# Output Widgets
 ----
 In a GUI, the fillings are known as **widgets**.  
 There are lots of different widgets to choose from, each suited to a specific task.  

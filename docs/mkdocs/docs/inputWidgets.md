@@ -1,50 +1,31 @@
 # Input Widgets
 ----
-In a GUI, the fillings are known as **widgets**.  
-There are lots of different widgets to choose from, each suited to a specific task.  
 
-Nearly every widget needs a **TITLE**.  
-This is a unique name for the widget, so that later you can get information from that widget, or change it.  
+Input widgets are used for capturing user interactions, either by cicking, typing or dragging.  
 
-Nearly all widgets in appJar provide the same three functions:
+They usually provide three functions:  
 
-* (Always) - **ADD** a widget (with a unique title) - this creates the widget
-* (Often) - **GET** the widget (using its unique title) - this gets the contents of the widget (usually done in a function)
-* (Sometimes) - **SET** the widget (using its unique title) - this changes what's in the widget
+* **ADD** - this creates the widget  
+* **GET** - this gets the contents/state of the widget  
+* **SET** - this changes what's in the widget  
 
-On top of these, there is a common set of functions for [changing widgets](pythonWidgetOptions.md).  
-As well as some specialist functions, unique to each widget (see below).  
+As well as options to change the way they [look/act](pythonWidgetOptions.md).  
 
-##Auto-Labelled Widgets
-___
+For each of the above to work, we need to know which widget you are referring to - so every widget gets a **unique title**.  
 
-It's possible to automatically include a *label* alongside some of widgets below.  
-Both the label and widget will be placed in the same grid space.  
-Simply add the word `Label` to the command when adding the widget:  
-
-* `.addLabelEntry(title)`
-* `.addLabelNumericEntry(title)`
-* `.addLabelSecretEntry(title)`
-* `.addLabelAutoEntry(title, words)`
-* `.addLabelScale(title)`
-* `.addLabelOptionBox(title, values)`
-* `.addLabelTickOptionBox(title, values)`
-* `.addLabelSpinBox(title, values)`
-* `.addLabelSpinBoxRange(title, from, to)`  
-
-See the relevant section for a description of what the widget does.
+If you want your input widget to have a label, there are some [auto-label functions](#auto-labelled-widgets)
 
 ##Entry
 ____
-Entries are used to capture input from the user. They take a single parameter - a title.
+Entries are used to capture typed input from the user. They take a single parameter - a title.
 
 There are five special-case Entries:
 
-* NumericEntry - this only allows numbers to be typed in - always returns a float (None if empty).
-* SecretEntry - this will show stars, instead of the letters typed - useful for capturing passwords.
-* AutoEntry - this takes a list of words to provide auto-completion.  
-* ValidationEntry - can be set to valid/invalid/waiting - will colour the border green/red/black and show a ✔/✖/★  
-* FileEntry/DirectoryEntry - provides a button to select a file/directory and auto-populates the Entry  
+* **NumericEntry** - this only allows numbers to be typed in - always returns a float (None if empty).
+* **SecretEntry** - this will show stars, instead of the letters typed - useful for capturing passwords.
+* **AutoEntry** - this takes a list of words to provide auto-completion.  
+* **ValidationEntry** - can be set to valid/invalid/waiting - will colour the border green/red/black and show a ✔/✖/★  
+* **FileEntry/DirectoryEntry** - provides a button to select a file/directory and auto-populates the Entry  
 
 ![Entries](img/1_entries.png)
 
@@ -71,12 +52,13 @@ app.go()
 * `.addEntry(title)`
 * `.addNumericEntry(title)`
 * `.addSecretEntry(title)`
-* `.addAutoEntry(title, words)`  
 * `.addValidationEntry(title)`  
 * `.addFileEntry(title)`  
 * `.addDirectoryEntry(title)`  
+* `.addAutoEntry(title, words)`  
+    This also takes a `words` paramter, which must be a list, and is used to populate he drop-down.  
 
-    Each of these will add the specified type of Entry, using the title provided.
+Each of these will add the specified type of Entry, using the title provided.
 
 #### Set Entries
 * `.setEntry(title, text, callFunction=True)`  
@@ -96,7 +78,7 @@ app.go()
     Any additional characters typed will be discarded.  
 
 * `.setEntryValid(title)` & `.setEntryInvalid(title)` & `.setEntryWaitingValidation(title)`  
-    These will set the relevant status of a validation Entry.  
+    These will set the relevant status of a Validation Entry (how it looks).  
     (Have a look [here](/specialCharacters) for help displaying special characters)  
     ![EntryValidation](img/entValidation.png)
 
@@ -118,7 +100,7 @@ app.go()
     This will replace all items in the specified AutoEntry with a new list of values.  
 
 * `.clearEntry(title, callFunction=True)`  
-    This will clear the contents of the specified Entry.
+    This will clear the contents of the specified Entry.  
     Set ```callFunction``` to be False, if you don't want to call any associated functions.  
 
 * `.clearAllEntries(callFunction=False)`  
@@ -136,6 +118,52 @@ app.go()
 * `.getAllEntries()`  
     This will return the contents of all Entries in the app, as a dictionary.  
     NB. *numericEntries* always return a float.  
+
+##TextArea
+____
+Similar to an Entry, but allows you to type text over multiple lines.  
+
+![TextArea](img/1_textArea.png)  
+
+```python
+from appJar import gui
+
+app=gui()
+app.addTextArea("t1")
+app.go()
+```
+
+####Add TextAreas
+* `.addTextArea(title)`  
+    Adds an empty TextArea, with the specified title.  
+
+* `.addScrolledTextArea(title)`  
+    Adds a scrollable TextArea with the specified title.  
+
+![ScrolledTextArea](img/2_textArea.png)  
+
+####Set TextAreas
+* `.setTextArea(title, text, end=True, callFunction=True)`  
+    Adds the supplied text to the specified TextArea.  
+    By default, the text is added to the end.  
+    Set `end` to be False if you want to add at the beginning.  
+    Set ```callFunction``` to be False, if you don't want to call any associated functions.  
+
+* `.clearTextArea(title, callFunction=True)`  
+    Clears the contents of the specified TextArea.  
+    Set ```callFunction``` to be False, if you don't want to call any associated functions.  
+
+* `.clearAllTextAreas(callFunction=False)`  
+    This will clear the contents of all TextAreas in the app.  
+    Set ```callFunction``` to be True, if you want to call any associated functions.  
+
+####Get TextAreas
+
+* `.getTextArea(title)`  
+    Gets the contents of the specified TextArea.  
+
+* `.getAllTextAreas()`  
+    This will return the contents of all TextAreas in the app, as a dictionary.  
 
 ##Button
 ---
@@ -199,6 +227,43 @@ That way, multiple widgets can use the same function, but different actions can 
 * `.setButtonImage(title, image, align=None)`  
     This allows an image to be placed on a button, instead of the usual text.  
     If align is set, the image will be aligned relative to the text, otherwise the image will replace the text.  
+
+##Link/WebLink
+____
+Clickable text to call a function or launch a URL
+
+![Link](img/1_link.png)  
+
+```python
+from appJar import gui
+def press(link):
+    app.infoBox("Info", "You clicked the link!")
+
+app=gui()
+app.setFont(20)
+app.addLink("Click me", press)
+app.addWebLink("appJar.info", "http://appJar.info")
+app.go()
+```
+
+####Add Links
+
+* `.addLink(title, func)`  
+    Adds a **hyperlink**, that when clicked, will call the specified function.  
+
+* `.addWebLink(title, page)`  
+    Adds a **hyperlink**, that when clicked, will launch the default browser, and load the specified page.  
+    It must be a fully formed link, including ```http://```  
+
+####Get Links
+
+* `.getLink(title)`  
+    Returns the text displayed in the link.  
+
+####Set Links
+
+* `.setLink(title, func)`  
+    Changes the function/webpage the link calls.  
 
 ##RadioButton
 ____
@@ -615,52 +680,6 @@ app.go()
 * `.getAllScales()`  
     This will return the contents of all Scales in the app, as a dictionary.  
 
-##TextArea
-____
-Similar to an Entry, but allows you to type text over multiple lines.  
-
-![TextArea](img/1_textArea.png)  
-
-```python
-from appJar import gui
-
-app=gui()
-app.addTextArea("t1")
-app.go()
-```
-
-####Add TextAreas
-* `.addTextArea(title)`  
-    Adds an empty TextArea, with the specified title.  
-
-* `.addScrolledTextArea(title)`  
-    Adds a scrollable TextArea with the specified title.  
-
-![ScrolledTextArea](img/2_textArea.png)  
-
-####Set TextAreas
-* `.setTextArea(title, text, end=True, callFunction=True)`  
-    Adds the supplied text to the specified TextArea.  
-    By default, the text is added to the end.  
-    Set `end` to be False if you want to add at the beginning.  
-    Set ```callFunction``` to be False, if you don't want to call any associated functions.  
-
-* `.clearTextArea(title, callFunction=True)`  
-    Clears the contents of the specified TextArea.  
-    Set ```callFunction``` to be False, if you don't want to call any associated functions.  
-
-* `.clearAllTextAreas(callFunction=False)`  
-    This will clear the contents of all TextAreas in the app.  
-    Set ```callFunction``` to be True, if you want to call any associated functions.  
-
-####Get TextAreas
-
-* `.getTextArea(title)`  
-    Gets the contents of the specified TextArea.  
-
-* `.getAllTextAreas()`  
-    This will return the contents of all TextAreas in the app, as a dictionary.  
-
 ##Properties
 ____
 A compound widget that shows multiple CheckButtons linked to a dictionary.  
@@ -762,33 +781,6 @@ app.stopToggleFrame()
 app.go()
 ```
 
-##Link/WebLink
-____
-Clickable text to call a function or launch a URL
-
-![Link](img/1_link.png)  
-
-```python
-from appJar import gui
-def press(link):
-    app.infoBox("Info", "You clicked the link!")
-
-app=gui()
-app.setFont(20)
-app.addLink("Click me", press)
-app.addWebLink("appJar.info", "http://appJar.info")
-app.go()
-```
-
-####Add Links
-
-* `.addLink(title, func)`  
-    Adds a **hyperlink**, that when clicked, will call the specified function.  
-
-* `.addWebLink(title, page)`  
-    Adds a **hyperlink**, that when clicked, will launch the default browser, and load the specified page.  
-    It must be a fully formed link, including ```http://```  
-
 ##DatePicker
 ---
 A widget to capture a date - will handle presenting accurate drop-downs, and return a date.  
@@ -839,3 +831,20 @@ app.go()
 
 * `.getAllDatePickers()`  
     This will return the contents of all DatePickers in the app, as a dictionary.  
+
+##Auto-Labelled Widgets
+___
+
+It's possible to automatically include a *label* alongside some of widgets below.  
+Both the label and widget will be placed in the same grid space.  
+Simply add the word `Label` to the command when adding the widget:  
+
+* `.addLabelEntry(title)`
+* `.addLabelNumericEntry(title)`
+* `.addLabelSecretEntry(title)`
+* `.addLabelAutoEntry(title, words)`
+* `.addLabelScale(title)`
+* `.addLabelOptionBox(title, values)`
+* `.addLabelTickOptionBox(title, values)`
+* `.addLabelSpinBox(title, values)`
+* `.addLabelSpinBoxRange(title, from, to)`  

@@ -6,7 +6,7 @@ repo_url: https://github.com/jarvisteach/appJar
 google_analytics: ['UA-79206647-1', 'appjar.info']
 theme: united
 theme_dir: custom_united
-copyright: <p>&#169; Richard Jarvis, 2015-2018</p>
+copyright: <p><a href='/License'>&#169; Richard Jarvis, 2015-2018</a></p>
 site_description: The easiest way to build tkinter GUIs in Python.
 site_author: Richard Jarvis
 extra_css: [extra.css]
@@ -14,19 +14,20 @@ strict: true
 pages:
 - Welcome: index.md
 - Fillings:
-    - Input Widgets: inputWidgets.md
-    - Output Widgets: outputWidgets.md
-    - Beta Widgets: pythonDevWidgets.md
-    - Images: pythonImages.md
-    - Grouping Widgets: pythonWidgetGrouping.md
-    - Sounds: pythonSound.md
+    - Widgets:
+        - Output Widgets: outputWidgets.md
+        - Input Widgets: inputWidgets.md
+        - Beta Widgets: pythonDevWidgets.md
+        - Images: pythonImages.md
+        - Containers: pythonWidgetGrouping.md
+        - (Beta Naming): simpleAppJar.md
     - Bars: pythonBars.md
     - Pop-ups: pythonDialogs.md
+    - Sounds: pythonSound.md
+    - Grouping Widgets: pythonWidgetGrouping.md
     - Multiple Windows: pythonSubWindows.md
     - Splashscreen: splash.md
     - Special Characters: specialCharacters.md
-    - Clipboard: clipboard.md
-    - (Beta Naming): simpleAppJar.md
 - Configuration:
     - Properties: simpleProperties.md
     - GUI Options: pythonGuiOptions.md
@@ -40,10 +41,11 @@ pages:
         - Threads: pythonThreads.md
         - Drag'n Drop: pythonDnD.md
     - Internationalisation: pythonInternationalisation.md
-    - Settings: pythonSettings.md
+    - Saving Settings: pythonSettings.md
     - Logging: pythonLogging.md
     - Command Line Arguments: pythonCommandLine.md
     - ttk (BETA): pythonTtk.md
+    - Clipboard: clipboard.md
 - Help:
     - Guidance: guidance.md
     - Examples:

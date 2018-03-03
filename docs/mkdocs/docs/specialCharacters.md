@@ -1,7 +1,7 @@
 # Special Characters
 ---
 
-If you've ever tried a [ValidationEntry](pythonWidgets/#entry), you'll notice we use some special characters:
+If you've ever tried a [ValidationEntry](/inputWidgets/#entry), you'll notice we use some special characters:
 
 ![ValidationEntry](img/entValidation.png)
 
