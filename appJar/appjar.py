@@ -12047,11 +12047,12 @@ class ToggleFrame(Frame, object):
 
 class FrameSet(Frame, object):
 
-    def __init__(self, parent, **opts):
+    def __init__(self, parent, beep=True, **opts):
         super(FrameSet, self).__init__(parent, **opts)
         # the list of frames
         self._frames = []
         self._currentFrame = 0
+        self._beep = beep
 
         Grid.rowconfigure(self, 0, weight=1)
         Grid.columnconfigure(self, 0, weight=1)
@@ -12063,15 +12064,26 @@ class FrameSet(Frame, object):
     def showNextFrame(self):
         if self._currentFrame < len(self._frames) - 1:
             self.showFrame(self._currentFrame + 1)
+        else:
+            if self._beep: self.bell()
+
     def showPrevFrame(self):
         if self._currentFrame > 0:
             self.showFrame(self._currentFrame - 1)
+        else:
+            if self._beep: self.bell()
 
     def showFirstFrame(self):
-        self.showFrame(0)
+        if self._currentFrame == 0:
+            if self._beep: self.bell()
+        else:
+            self.showFrame(0)
 
     def showLastFrame(self):
-        self.showFrame(len(self._frames) - 1)
+        if self._currentFrame == len(self._frames)-1:
+            if self._beep: self.bell()
+        else:
+            self.showFrame(len(self._frames) - 1)
 
     def addFrame(self):
         self._frames.append(frameBase(self))
