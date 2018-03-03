@@ -3,18 +3,22 @@
 
 ## Version 0.91  
 
+* Grids have been renamed to Tables!
+* appJar logging now uses its own logLevel of TRACE
+
 * Issues Resolved:
+    * [#388](https://github.com/jarvisteach/appJar/issues/388) - Can now specify the cell style of grids.
     * [#379](https://github.com/jarvisteach/appJar/issues/379) - [PieChart](/pythonDevWidgts/#pie) % fix in Python 2.7
     * [#373](https://github.com/jarvisteach/appJar/issues/373) - Added function to get the BG colour of a widget.  
     * [#347](https://github.com/jarvisteach/appJar/issues/347), [#360](https://github.com/jarvisteach/appJar/issues/360), [374](https://github.com/jarvisteach/appJar/issues/374) & [#375](https://github.com/jarvisteach/appJar/issues/375) - Right Click Menu updates
     * [#369](https://github.com/jarvisteach/appJar/issues/369) - Hide scrollbars in [ScollPane](/pythonWidgetGrouping/#scroll-pane)
     * [#367](https://github.com/jarvisteach/appJar/issues/367) - Update to [logging](/pythonLogging) - all appJar looging now done at a `TRACE` level, below `DEBUG`  
-    * [#366](https://github.com/jarvisteach/appJar/issues/366) - Better eror reporting on AutoEntries
+    * [#366](https://github.com/jarvisteach/appJar/issues/366) - Better error reporting on AutoEntries
     * [#340](https://github.com/jarvisteach/appJar/issues/340) - [appJar properties](/simpleProperties) now fully documented & tested  
     * [#335](https://github.com/jarvisteach/appJar/issues/335) - No longer necessary to receive a parameter in functions linked to appJar widgets.  
     * [#329](https://github.com/jarvisteach/appJar/issues/329) - Starting separator removed from Windows [Right-click Menus](/pythonBars/#menubar)  
     * [#328](https://github.com/jarvisteach/appJar/issues/328) - New [Accessibility Widget](/pythonDevWidgets/#accessibility) introduced to configure colours & fonts  
-    * [#301](https://github.com/jarvisteach/appJar/issues/301) - Updated [layout parameters](pythonWidgetLayout/#layout-tricks), can now pass `previous` & `next` for the row parameter, to make it easier to grid widgets  
+    * [#301](https://github.com/jarvisteach/appJar/issues/301) - Updated [layout parameters](pythonWidgetLayout/#layout-tricks), can now pass `previous` & `next` for the row parameter, to make it easier to position widgets  
     * [#29](https://github.com/jarvisteach/appJar/issues/29) - Updated [sound](/pythonSound) documentation to discuss blocking sounds.  
 
 
