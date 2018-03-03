@@ -5,11 +5,9 @@ from appJar import gui
 current = 0
 
 def up():
-
     global current
-    current += 1
-    if current > 5: current = 1
-    app.getFrameWidget(str(current)).lift()
+    current = 1 if current > 4 else current + 1
+    app.raiseFrame(str(current))
 
 with gui() as app:
     with app.frame("1", bg='red', row=0, column=0):

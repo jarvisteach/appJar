@@ -5185,6 +5185,11 @@ class gui(object):
                             self._getContainerProperty('type'))
         self.stopContainer()
 
+    def raiseFrame(self, title):
+        ''' will bring the named frame in front of any others '''
+        gui.trace("Raising frame: %s", title)
+        self.widgetManager.get(self.Widgets.Frame, title).lift()
+
 #####################################
 # SubWindows
 #####################################
