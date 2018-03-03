@@ -2135,7 +2135,7 @@ class gui(object):
     def bindKey(self, key, func):
         """ bind the specified key, to the specified function, for all widgets """
         # for now discard the Event...
-        myF = self.MAKE_FUNC(func, key, True)
+        myF = self.MAKE_FUNC(func, key)
         self._getTopLevel().bind(key, myF)
 
     def unbindKeys(self, keys):
@@ -2265,17 +2265,17 @@ class gui(object):
     def setFullscreen(self, title=None):
         """ sets the specified window to be fullscreen
             if no title, will set the main GUI """
-        if title is None:
-            container = self._getTopLevel()
-        else:
+        try:
             container = self.widgetManager.get(self.Widgets.SubWindow, title)
+        except:
+            container = self._getTopLevel()
 
         if not container.isFullscreen:
             container.isFullscreen = True
             container.attributes('-fullscreen', True)
             container.escapeBindId = container.bind(
                 '<Escape>', self.MAKE_FUNC(
-                    self.exitFullscreen, container, True), "+")
+                    self.exitFullscreen, container), "+")
 
     def getFullscreen(self, title=None):
         if title is None:
@@ -2293,8 +2293,11 @@ class gui(object):
 
     def exitFullscreen(self, container=None):
         """ turns off fullscreen mode for the specified window """
-        if container is None:
-            container = self._getTopLevel()
+        if container is None or isinstance(container, str):
+            try:
+                container = self.widgetManager.get(self.Widgets.SubWindow, container)
+            except:
+                container = self._getTopLevel()
 
         if container.isFullscreen:
             container.isFullscreen = False
@@ -2999,11 +3002,11 @@ class gui(object):
         functions = self._validateFunctionList(functions, "Over")
 
         if functions[0] is not None:
-            widget.bind("<Enter>", self.MAKE_FUNC(functions[0], name, True), add="+")
+            widget.bind("<Enter>", self.MAKE_FUNC(functions[0], name), add="+")
         if functions[1] is not None:
-            widget.bind("<Leave>", self.MAKE_FUNC(functions[1], name, True), add="+")
+            widget.bind("<Leave>", self.MAKE_FUNC(functions[1], name), add="+")
 
-    # generic function for over events
+    # generic function for drag events
     def _bindDragEvent(self, kind, name, widget, functions, eventType, key=None):
         functions = self._validateFunctionList(functions, "Drag")
 
@@ -3015,13 +3018,13 @@ class gui(object):
                 items = self.widgetManager.group(kind)
                 for key, value in items.items():
                     if self._isMouseInWidget(value):
-                        f(key)
+                        self.MAKE_FUNC(f,key)()
                         return
 
             if functions[0] is not None:
-                widget.bind("<ButtonPress-1>", self.MAKE_FUNC(functions[0], name, True), add="+")
+                widget.bind("<ButtonPress-1>", self.MAKE_FUNC(functions[0], name), add="+")
             if functions[1] is not None:
-                widget.bind("<ButtonRelease-1>", self.MAKE_FUNC(getLabel, functions[1], True), add="+")
+                widget.bind("<ButtonRelease-1>", self.MAKE_FUNC(getLabel, functions[1]), add="+")
         else:
             self.error("Only able to bind drag events to labels")
 
@@ -3105,7 +3108,7 @@ class gui(object):
 
             # only allow one trace to be bound
             # users are more likely to call multiple binds on radios
-            #because they all share one var
+            # because they all share one var
             if hasattr(var, "cmd_id"):
                 var.trace_vdelete('w', var.cmd_id)
 
@@ -3470,10 +3473,9 @@ class gui(object):
 #####################################
 # FUNCTION for managing commands
 #####################################
-    # function to wrap up lambda
-    # if the thing calling this generates parameters - then set discard=True
     @staticmethod
     def MAKE_FUNC(funcName, param, discard=False):
+        ''' function to automate lambdas '''
         # make sure we get a function
         if not callable(funcName) and not hasattr(funcName, '__call__'):
             raise Exception("Invalid function: " + str(funcName))
@@ -7890,7 +7892,7 @@ class gui(object):
         ''' adds a hyperlink to the specified function '''
         link = self._buildLink(title)
         if func is not None:
-            myF = self.MAKE_FUNC(func, title, True)
+            myF = self.MAKE_FUNC(func, title)
             link.registerCallback(myF)
         self._positionWidget(link, row, column, colspan, rowspan)
         return link
@@ -7904,7 +7906,7 @@ class gui(object):
         if not callable(func) and not hasattr(func, '__call__'):
             link.registerWebpage(func)
         else:
-            myF = self.MAKE_FUNC(func, title, True)
+            myF = self.MAKE_FUNC(func, title)
             link.registerCallback(myF)
 
 #####################################
@@ -8146,14 +8148,9 @@ class gui(object):
 
     def setDatePickerChangeFunction(self, title, function):
         self.widgetManager.get(self.Widgets.DatePicker, title)
-        cmd = self.MAKE_FUNC(self._datePickerChangeFunction, title, True)
+        cmd = self.MAKE_FUNC(function, title)
         self.setOptionBoxChangeFunction(title + "_DP_DayOptionBox", cmd)
-        self.widgetManager.get(self.Widgets.OptionBox, title + "_DP_DayOptionBox").function = function
-
-    def _datePickerChangeFunction(self, title):
-        box = self.widgetManager.get(self.Widgets.OptionBox, title + "_DP_DayOptionBox")
-        if hasattr(box, 'function'):
-            box.function(title)
+        self.widgetManager.get(self.Widgets.OptionBox, title + "_DP_DayOptionBox").function = cmd
 
     # function to update DatePicker dropDowns
     def _updateDatePickerDays(self, title):
@@ -8166,9 +8163,7 @@ class gui(object):
             return
 
         day = self.getOptionBox(title + "_DP_DayOptionBox")
-        month = self.MONTH_NAMES.index(
-            self.getOptionBox(
-                title + "_DP_MonthOptionBox")) + 1
+        month = self.MONTH_NAMES.index(self.getOptionBox(title + "_DP_MonthOptionBox")) + 1
         year = int(self.getOptionBox(title + "_DP_YearOptionBox"))
         days = range(1, calendar.monthrange(year, month)[1] + 1)
         self.changeOptionBox(title + "_DP_DayOptionBox", days)
@@ -8177,7 +8172,9 @@ class gui(object):
         with PauseLogger():
             self.setOptionBox(title + "_DP_DayOptionBox", day, callFunction=False)
 
-        self._datePickerChangeFunction(title)
+        box = self.widgetManager.get(self.Widgets.OptionBox, title + "_DP_DayOptionBox")
+        if hasattr(box, 'function'):
+            box.function()
 
     # set a date for the named DatePicker
     def setDatePickerRange(self, title, startYear, endYear=None):
@@ -9020,12 +9017,12 @@ class gui(object):
 
         if selectFile:
             command = self.MAKE_FUNC(self._getFileName, title)
-            click_command = self.MAKE_FUNC(self._checkFileName, title, True)
+            click_command = self.MAKE_FUNC(self._checkFileName, title)
             text = "File"
             default = "-- enter a filename --"
         else:
             command = self.MAKE_FUNC(self._getDirName, title)
-            click_command = self.MAKE_FUNC(self._checkDirName, title, True)
+            click_command = self.MAKE_FUNC(self._checkDirName, title)
             text = "Directory"
             default = "-- enter a directory --"
 
@@ -9212,19 +9209,19 @@ class gui(object):
         var.maxLength = length
         if var.ml_id is not None:
             var.trace_vdelete('w', var.ml_id)
-        var.ml_id = var.trace('w', self.MAKE_FUNC(self._limitEntry, name, True))
+        var.ml_id = var.trace('w', self.MAKE_FUNC(self._limitEntry, name))
 
     def setEntryUpperCase(self, name):
         var = self.widgetManager.get(self.Widgets.Entry, name, group=WidgetManager.VARS)
         if var.uc_id is not None:
             var.trace_vdelete('w', var.uc_id)
-        var.uc_id = var.trace('w', self.MAKE_FUNC(self._upperEntry, name, True))
+        var.uc_id = var.trace('w', self.MAKE_FUNC(self._upperEntry, name))
 
     def setEntryLowerCase(self, name):
         var = self.widgetManager.get(self.Widgets.Entry, name, group=WidgetManager.VARS)
         if var.lc_id is not None:
             var.trace_vdelete('w', var.lc_id)
-        var.lc_id = var.trace('w', self.MAKE_FUNC(self._lowerEntry, name, True))
+        var.lc_id = var.trace('w', self.MAKE_FUNC(self._lowerEntry, name))
 
     def _limitEntry(self, name):
         var = self.widgetManager.get(self.Widgets.Entry, name, group=WidgetManager.VARS)
@@ -9302,11 +9299,11 @@ class gui(object):
 
         # re-enable any limits
         if var.lc_id is not None:
-            var.lc_id = var.trace('w', self.MAKE_FUNC(self._lowerEntry, name, True))
+            var.lc_id = var.trace('w', self.MAKE_FUNC(self._lowerEntry, name))
         if var.uc_id is not None:
-            var.uc_id = var.trace('w', self.MAKE_FUNC(self._upperEntry, name, True))
+            var.uc_id = var.trace('w', self.MAKE_FUNC(self._upperEntry, name))
         if var.ml_id is not None:
-            var.ml_id = var.trace('w', self.MAKE_FUNC(self._limitEntry, name, True))
+            var.ml_id = var.trace('w', self.MAKE_FUNC(self._limitEntry, name))
 
         # re-enable auto completion
         if var.auto_id is not None:
@@ -9337,8 +9334,8 @@ class gui(object):
             entry.unbind(entry.defaultInEvent)
             entry.unbind(entry.defaultOutEvent)
 
-        in_command = self.MAKE_FUNC(self._entryIn, name, True)
-        out_command = self.MAKE_FUNC(self._entryOut, name, True)
+        in_command = self.MAKE_FUNC(self._entryIn, name)
+        out_command = self.MAKE_FUNC(self._entryOut, name)
         entry.defaultInEvent = entry.bind("<FocusIn>", in_command, add="+")
         entry.defaultOutEvent = entry.bind("<FocusOut>", out_command, add="+")
 
@@ -9867,7 +9864,7 @@ class gui(object):
             self.warn("Underlining menu items not available on MAC")
 
         if func is not None:
-            u = self.MAKE_FUNC(func, item, True)
+            u = self.MAKE_FUNC(func, item)
         else:
             u = None
 
