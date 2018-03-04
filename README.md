@@ -48,12 +48,20 @@ app.addLabel("label1", "Hello World")
 app.go()  
 ```
 
-or:  
+or (using context managers):  
 
 ```
 from appJar import gui  
 with gui("Example") as app:
     app.addLabel("label1", "Hello World")  
+```
+
+or (using simple naming):  
+
+```
+from appJar import gui  
+with gui("Example") as app:
+    app.label("Hello World")  
 ```
 
 ### Reasoning:
