@@ -7,7 +7,11 @@ class appJarExplorer:
         self._topLevel = topLevel
 
     def buildTag(self, tag, data, details):
-        xml = "<" + tag + ">" + "<text>" + data + "</text>" + details + "</" + tag + ">\n"
+        xml = "<" + tag + ">"
+        if data is not None:
+            xml += "<text>" + data + "</text>"
+        xml += details
+        xml += "</" + tag + ">\n"
         return xml
 
     def getClass(self, widg):
@@ -19,11 +23,10 @@ class appJarExplorer:
 
     def getText(self, widg):
         try:
-            text = widg.cget('text')
+            text = widg.cget('text').replace("&", "&amp;")
             if text == "": text = "-EMPTY-"
-        except: text = "-NONE-"
-        text = text.replace("&", "&amp;")
-        return text
+            return text
+        except: return None
 
     def getDetails(self, widg):
         try:
@@ -82,3 +85,5 @@ with gui("appJar Explorer") as app:
 
     with app.subWindow("sub"):
         app.label("in sub")
+
+    app.addStatusbar()
