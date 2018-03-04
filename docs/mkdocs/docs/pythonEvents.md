@@ -105,10 +105,25 @@ Set functions to call when the mouse button is clicked and dragged on a Label, t
 
 ### Registering Other Event Types  
 
-It's possible to register any of the standard event types with appJar widgets  
+It's possible to register any of the standard event types with appJar widgets.  
+Get the widget, then call the tkinter bind function.  
+**NB.** The function you register must receive a single paramter, the event object.  
+See [here](http://effbot.org/tkinterbook/tkinter-events-and-bindings.htm) for information on what you can bind, and what properties the event object has.   
 
 ```python
-app.getEntryWidget("widget_name").bind("<FocusOut>", function_name, add="+")
+# either grab the widget when it's created, and bind the event
+ent = app.addEntry("e1")
+ent.bind("<FocusOut>", function_name, add="+")
+
+# or do the above in one line
+app.addEntry("e1").bind("<FocusOut>", function_name, add="+")
+
+# or, if doing later on, get the widget from appJar and bind the event
+ent = app.getEntryWidget("e1")
+ent..bind("<FocusOut>", function_name, add="+")
+
+# or do the above in one line
+app.getEntryWidget("e1").bind("<FocusOut>", function_name, add="+")
 ```
 
 ## Binding Keys
