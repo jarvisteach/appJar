@@ -12,8 +12,9 @@ class appJarExplorer:
 
     def getClass(self, widg):
         wClass = widg.winfo_class()
+        wType = type(widg).__name__
+        if wType != 'instance': wClass = wType
         if wClass == "Tk": wClass = "appJar"
-        elif wClass == "Toplevel": wClass = "SubWindow"
         return wClass
 
     def getText(self, widg):
@@ -58,24 +59,26 @@ def makeExplorer():
     global _explorerMade
     if not _explorerMade:
         _explorerMade = True
-        explorer = appJarExplorer(app.topLevel)
+        xml = appJarExplorer(app.topLevel).getXml()
         with app.subWindow("appJar Explorer", size="300x450", sticky='news') as sw:
             sw.configure(padx=5, pady=5)
             with app.labelFrame("Explorer Tree", sticky='news'):
                 app.configure(sticky="news")
-                app.addTree("b", explorer.getXml(), row=1, column=1, rowspan=6)
+                app.addTree("b", xml, row=1, column=1, rowspan=6)
         app.generateTree("b")
     app.showSubWindow("appJar Explorer")
 
 with gui("appJar Explorer") as app:
-    app.label("Title Label", colspan=2)
-    app.label("DETAILS", "")
-    app.entry("DETAILS2")
-    app.check("check")
-    app.radio("radio", "r1")
-    app.button("DETAILS", makeExplorer)
+    with app.tabbedFrame("tf"):
+        with app.tab("a"):
+            app.label("Title Label", colspan=2)
+            app.label("DETAILS", "")
+            app.entry("DETAILS2")
+            app.check("check")
+            app.radio("radio", "r1")
+            app.button("DETAILS", makeExplorer)
+        with app.tab("b"):
+            app.addGoogleMap("g")
 
     with app.subWindow("sub"):
         app.label("in sub")
-
-    app.addGoogleMap("g")
