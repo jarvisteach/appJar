@@ -12,6 +12,9 @@ def launch(win):
 
 app=gui()
 
+# these go in the main window
+app.addButtons(["one", "two"], launch)
+
 # this is a pop-up
 app.startSubWindow("one", modal=True)
 app.addLabel("l1", "SubWindow One")
@@ -22,28 +25,11 @@ app.startSubWindow("two")
 app.addLabel("l2", "SubWindow Two")
 app.stopSubWindow()
 
-# these go in the main window
-app.addButtons(["one", "two"], launch)
-
 app.go()
 ```
 
 Definition of SubWindows happens in the same part of the code as the rest of the GUI, but they default to being hidden.  
 Both SubWindows and the main window can be *shown* and *hidden* - this is usually done through button presses.  
-
----
-<div style='text-align: center;'>
-*Advertisement&nbsp;<sup><a href="/advertising">why?</a></sup>*
-<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-<ins class="adsbygoogle"
-    style="display:block"
-    data-ad-format="fluid"
-    data-ad-layout-key="-gw-13-4l+6+pt"
-    data-ad-client="ca-pub-6185596049817878"
-    data-ad-slot="5627392164"></ins>
-<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-</div>
----
 
 ### Start/Stop Sub Windows  
 ---

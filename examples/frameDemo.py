@@ -7,7 +7,7 @@ app=gui("FRAME DEMO", "250x150")
 app.setBg("yellow")
 
 app.startFrame("LEFT", row=0, column=0)
-app.setBg("green")
+app.setBg("blue")
 app.setSticky("NEW")
 app.setStretch("COLUMN")
 

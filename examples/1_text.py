@@ -1,3 +1,5 @@
+import sys
+sys.path.append("../")
 from appJar import gui
 def f1(e): print(e)
 app=gui()
