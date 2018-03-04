@@ -1663,9 +1663,8 @@ class gui(object):
                     self.warn("No stopContainer called on: %s", self.Widgets.name(kind))
 
         # update any trees
-        for k, v in self.widgetManager.group(self.Widgets.Tree).items():
-            v.update()
-            v.expand()
+        for k in self.widgetManager.group(self.Widgets.Tree):
+            self.generateTree(k)
 
         # create appJar menu, if no menuBar created
         if not self.hasMenu:
@@ -8825,6 +8824,12 @@ class gui(object):
             return item.node.toxml()
         else:
             return None
+
+    def generateTree(self, title):
+        """ displays data inside tree """
+        tree = self.widgetManager.get(self.Widgets.Tree, title)
+        tree.update()
+        tree.expand()
 
 #####################################
 # FUNCTIONS to add Message Box
