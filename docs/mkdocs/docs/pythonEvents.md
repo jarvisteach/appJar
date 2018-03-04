@@ -5,7 +5,7 @@ An [event](https://en.wikipedia.org/wiki/Event-driven_programming) is just calli
 The `Button` has an event automatically linked to it - whenever you press it, a function gets called. The other widgets don't.  
 
 
-## Types of Event  
+## Built-in Events  
 ---
 appJar currently has four basic types of event you can register:  
 
@@ -14,7 +14,7 @@ appJar currently has four basic types of event you can register:
 * `.set XXX OverFunction(title, functions)` call function(s) when the mouse *enters/leaves* the widget  
 * `.set XXX DragFunction(title, functions)` call function(s) when the mouse is *dragged in/out* of the widget  
 
-### Change & Submit Functions
+### Change & Submit Events  
 These do similar things, so probably shouldn't both exist, but have evolved from a single `.set XXX Function()` which is now deprecated.  
 
 * `.set XXX ChangeFunction(title, function)`  
@@ -30,10 +30,6 @@ These do similar things, so probably shouldn't both exist, but have evolved from
     * Entries & Buttons - it binds a function to the ```<Enter>``` key  
     * TextAreas - it's not available
     * Other widgets - it does the same as `ChangeFunction`  
-
-**WARNING** - it's possible to generate a RuntimeError. If you've got two widgets changing the same variable, say a Scale and a SpinBox, and you want a change in one widget to cause an update in the other, you might inadvertently end up stuck in a recursive loop, until the [stack overflows](https://en.wikipedia.org/wiki/Stack_overflow).  
-
-In this case, make sure you set the optional parameter ```callFunction = False``` when you  call the ```set XXX Function()``` of a widget.  
 
 ```python
 from appJar import gui
@@ -53,21 +49,12 @@ app.addButton("Reset", reset)
 app.go()
 ```
 
----
-<div style='text-align: center;'>
-*Advertisement&nbsp;<sup><a href="/advertising">why?</a></sup>*
-<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-<ins class="adsbygoogle"
-    style="display:block"
-    data-ad-format="fluid"
-    data-ad-layout-key="-gw-13-4l+6+pt"
-    data-ad-client="ca-pub-6185596049817878"
-    data-ad-slot="5627392164"></ins>
-<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-</div>
----
+**WARNING** - it's possible to generate a RuntimeError. If you've got two widgets changing the same variable, say a Scale and a SpinBox, and you want a change in one widget to cause an update in the other, you might inadvertently end up stuck in a recursive loop, until the [stack overflows](https://en.wikipedia.org/wiki/Stack_overflow).  
 
-### Over Functions
+In this case, make sure you set the optional parameter ```callFunction = False``` when you  call the ```set XXX Function()``` of a widget.  
+
+
+### Over Events  
 ---
 Set functions to call whenever the mouse enters (goes over) or leaves the specified widget.  
 
@@ -93,7 +80,7 @@ Set functions to call whenever the mouse enters (goes over) or leaves the specif
 * `.setImageMouseOver(title, image)`  
     Additional function, specific to [images](/pythonImages/#change-images), to change the specified image, while the mouse is over it.
 
-### Drag Functions
+### Drag Events  
 
 Set functions to call when the mouse button is clicked and dragged on a Label, then released.  
 
@@ -103,12 +90,11 @@ Set functions to call when the mouse button is clicked and dragged on a Label, t
     The second function will be called when the mouse is released, this can happen anywhere.  
     The same rules for passing functions apply as above.  
 
-### Registering Other Event Types  
+## Registering Other Events  
 
-It's possible to register any of the standard event types with appJar widgets.  
-Get the widget, then call the tkinter bind function.  
-**NB.** The function you register must receive a single paramter, the event object.  
-See [here](http://effbot.org/tkinterbook/tkinter-events-and-bindings.htm) for information on what you can bind, and what properties the event object has.   
+It's possible to register any of the other [tkinter event types](http://effbot.org/tkinterbook/tkinter-events-and-bindings.htm) with appJar widgets.  
+Just get the widget, then call the tkinter `bind()` function, passing in the event name and function to call.  
+**NB.** The function you register must receive a single parameter, the event object.  
 
 ```python
 # either grab the widget when it's created, and bind the event
@@ -120,7 +106,7 @@ app.addEntry("e1").bind("<FocusOut>", function_name, add="+")
 
 # or, if doing later on, get the widget from appJar and bind the event
 ent = app.getEntryWidget("e1")
-ent..bind("<FocusOut>", function_name, add="+")
+ent.bind("<FocusOut>", function_name, add="+")
 
 # or do the above in one line
 app.getEntryWidget("e1").bind("<FocusOut>", function_name, add="+")
@@ -128,7 +114,7 @@ app.getEntryWidget("e1").bind("<FocusOut>", function_name, add="+")
 
 ## Binding Keys
 ---
-As well as changing widgets, we sometimes want keys to trigger events.  
+We also sometimes want keys to trigger events.  
 The classic example is the ```<Enter>``` key, we often want to be able to hit the ```<Enter>``` key to submit a form...
 
 * `.enableEnter(function)`  
@@ -191,7 +177,9 @@ app.setStopFunction(checkStop)
 ```
 
 If you have a **LOT** of widgets (maybe a Table with hundreds of rows), stopping the GUI can take a while...  
-In which case, you should enable `fastStop` on the GUI (**NB.** this doesn't work from IDLE):
+In which case, you should enable `fastStop` on the GUI.  
+**NB.** this doesn't work from IDLE.  
+
 ```python
 app.setFastStop(True)
 ```
