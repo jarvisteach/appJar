@@ -56,7 +56,7 @@ app.go()
 * `.addFileEntry(title)`  
 * `.addDirectoryEntry(title)`  
 * `.addAutoEntry(title, words)`  
-    This also takes a `words` paramter, which must be a list, and is used to populate he drop-down.  
+    This also takes a `words` parameter, which must be a list, and is used to populate he drop-down.  
 
 Each of these will add the specified type of Entry, using the title provided.
 

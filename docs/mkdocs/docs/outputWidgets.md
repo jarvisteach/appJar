@@ -1,19 +1,18 @@
 # Output Widgets
 ----
-In a GUI, the fillings are known as **widgets**.  
-There are lots of different widgets to choose from, each suited to a specific task.  
+In a GUI, the fillings are known as **widgets**. There are lots of different widgets to choose from, each suited to a specific task - we've grouped them into [output widgets](#) & [input widgets](/inputWidgets).  
 
-Nearly every widget needs a **TITLE**.  
-This is a unique name for the widget, so that later you can get information from that widget, or change it.  
+Output widgets are used for displaying information to a user.  
 
-Nearly all widgets in appJar provide the same three functions:
+They usually provide three functions:  
 
-* (Always) - **ADD** a widget (with a unique title) - this creates the widget
-* (Often) - **GET** the widget (using its unique title) - this gets the contents of the widget (usually done in a function)
-* (Sometimes) - **SET** the widget (using its unique title) - this changes what's in the widget
+* **ADD** - this creates the widget
+* **GET** - this gets the contents of the widget  
+* **SET** - this changes the contents of the widget  
 
-On top of these, there is a common set of functions for [changing widgets](pythonWidgetOptions.md).  
-As well as some specialist functions, unique to each widget (see below).  
+As well as options to change the way they [look/act](pythonWidgetOptions.md).
+
+For each of the above to work, we need to know which widget you are referring to - so every widget gets a **unique title**.
 
 ## Label
 ---

@@ -364,7 +364,7 @@ Displays a the canvas widget.
 * `.canvas(title)`
     Creates a canvas with the specified title. 
 
-## popUp  
+## PopUp  
 ---
 
 Displays a popUp.  
@@ -376,7 +376,7 @@ Displays a popUp.
     `kind` defaults to `info`, but can be any of: `error`, `warning`, `yesno`, `question`, `ok`, `retry`, `string`, `integer`, `float`, `text` or `number`.  
     `parent` allows you to link this popUp to a named SubWindow, instead of the main window.  
 
-## statusbar
+## Statusbar
 ---
 * `.statusbar(**kwargs)`  
     Functions to show or update a statusbar.  
