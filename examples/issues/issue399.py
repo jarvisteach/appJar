@@ -7,6 +7,8 @@ def leftClick(event):
     print("CLICK")
     print(event.x, event.y)
 
+    print(app.MOUSE_POS_IN_WIDGET(canvas, event))
+
 from appJar import gui
 app=gui()
 canvas = app.addCanvas("c1")
