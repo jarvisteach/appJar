@@ -26,6 +26,47 @@ def addRows(btn):
     app.stopTab()
 ```
 
+### Frame
+A way of grouping together widgets.  
+Position the *Frame* within the grid, then position widgets inside the *Frame*  
+
+```python
+from appJar import gui 
+
+app=gui("FRAME DEMO", "250x150")
+app.setBg("yellow")
+
+app.startFrame("LEFT", row=0, column=0)
+app.setBg("green")
+app.setSticky("NEW")
+app.setStretch("COLUMN")
+
+app.addLabel("LEFT LABEL", "Label on the left")
+app.setLabelBg("LEFT LABEL", "red")
+app.addLabel("LEFT LABEL2", "Label on the left")
+app.setLabelBg("LEFT LABEL2", "orange")
+app.addLabel("LEFT LABEL3", "Label on the left")
+app.setLabelBg("LEFT LABEL3", "yellow")
+app.stopFrame()
+
+app.startFrame("RIGHT", row=0, column=1)
+app.setBg("green")
+app.setFg("white")
+for x in range(5):
+    app.addRadioButton("RADIO", "Choice " + str(x))
+app.stopFrame()
+
+app.go()
+
+```
+
+#### Start/Stop Frames  
+* `.startFrame(name)` & `.stopFrame()`  
+    Used to start and stop a *Frame*.  
+
+* `.openFrame(title)`  
+    Used to reopen the named *Frame*.  
+
 ### Label Frame
 ---
 
@@ -63,7 +104,7 @@ app.go()
     Set hideTitle to be True if you don;t want to show a title.  
 
 * `.openLabelFrame(title)`  
-    Used to reopen the named *LabelFrame*.  
+    Used to reopen the named *LabelFrame*, for later modification.  
 
 #### Set Label Frames  
 * `.setLabelFrameTitle(name, newTitle)`  
@@ -77,6 +118,31 @@ app.go()
     By default, widgets in the frame will align on the left.  
     If you want to change this, specify a different `sticky` value.  
     For example, `.setSticky("ew")` will cause the widgets to stretch to fit the width, aligning in the centre.  
+
+### Scroll Pane  
+---
+A scrollable pane, to contain widgets.  
+
+* Will respond to horizontal & vertical scroll events on Mac & Windows.  
+* Will respond to horizontal scroll events, and interpret SHIFT-horizontal scroll events as vertical scroll events on Linux.  
+* Will also respond to key presses:  
+    * Up & Down: Move up or down the equivalent of a line  
+    * Left & Right: Move left or right the equivalent of a line  
+    * PageUp & PageDown: Move up or down the equivalent of a page  
+    * Ctrl-PageUp & Ctrl-PageDown: Move left or right the equivalent of a page  
+    * Ctrl-Up & Ctrl-Down: Move up or down the equivalent of a page  
+    * Ctrl-Left & Ctrl-Right: Move left or right the equivalent of a page   
+    * Home & End: Move to the top or bottom  
+    * Ctrl-Home & Ctrl-End: Move to the far-left or the far-right  
+
+#### Start/Stop Scroll Panes  
+
+* `.startScrollPane(title)` & `.stopScrollPane()`  
+    Used to start and stop the *ScrollPane*.  
+    Pass a `disabled` parameter of **horizontal** or **vertical** to disable one of the scrollbars.  
+
+* `.openScrollPane(title)`  
+    Used to reopen the named *ScrollPane*, for later modification.  
 
 ### Toggle Frame
 ----
@@ -447,40 +513,3 @@ A way to add additional windows, which can be hidden and shown.
 ![SubWindow](img/layouts/subWin.png)
 
 This has been moved to its own page: [Multiple Windows](/pythonSubWindows).  
-
-# In Beta  
----
-
-### Frame
-A simple way of grouping together widgets.  
-Position the *Frame* within the grid, then position widgets inside the *Frame*  
-
-#### Start/Stop Frames  
-* `.startFrame(name)` & `.stopFrame()`  
-    Used to start and stop a *Frame*.  
-
-* `.openFrame(title)`  
-    Used to reopen the named *Frame*.  
-
-### Scroll Pane  
----
-A scrollable pane, to contain widgets.  
-
-* Will respond to horizontal & vertical scroll events on Mac & Windows.  
-* Will respond to horizontal scroll events, and interpret SHIFT-horizontal scroll events as vertical scroll events on Linux.  
-* Will also respond to key presses:  
-    * Up & Down: Move up or down the equivalent of a line  
-    * Left & Right: Move left or right the equivalent of a line  
-    * PageUp & PageDown: Move up or down the equivalent of a page  
-    * Ctrl-PageUp & Ctrl-PageDown: Move left or right the equivalent of a page  
-    * Ctrl-Up & Ctrl-Down: Move up or down the equivalent of a page  
-    * Ctrl-Left & Ctrl-Right: Move left or right the equivalent of a page   
-    * Home & End: Move to the top or bottom  
-    * Ctrl-Home & Ctrl-End: Move to the far-left or the far-right  
-
-* `.startScrollPane(title)` & `.stopScrollPane()`  
-    Used to start and stop the *ScrollPane*.  
-    Pass a `disabled` parameter of **horizontal** or **vertical** to disable one of the scrollbars.  
-
-* `.openScrollPane(title)`  
-    Used to reopen the named *ScrollPane*.  
