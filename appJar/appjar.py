@@ -541,7 +541,16 @@ class gui(object):
         self.copyAndPaste = CopyAndPaste(self.topLevel, self)
 
         # won't pack, if don't pack it here
-        self.tb = frameBase(self.appWindow)
+
+        class Toolbar(frameBase, object):
+            def __init__(self, master, **kwargs):
+                super(Toolbar, self).__init__(master, **kwargs)
+
+        class WidgetContainer(frameBase, object):
+            def __init__(self, master, **kwargs):
+                super(WidgetContainer, self).__init__(master, **kwargs)
+
+        self.tb = Toolbar(self.appWindow)
         if not self.ttkFlag:
             self.tb.config(bd=1, relief=RAISED)
         else:
@@ -550,7 +559,7 @@ class gui(object):
         self.tbMinMade = False
 
         # create the main container for this GUI
-        container = frameBase(self.appWindow)
+        container = WidgetContainer(self.appWindow)
         # container = Label(self.appWindow) # made as a label, so we can set an
         # image
         if not self.ttkFlag:
@@ -4224,6 +4233,23 @@ class gui(object):
     # TabbedFrame Class
     #################################
     def _tabbedFrameMaker(self, master, useTtk=False, **kwargs):
+
+        class TabContainer(frameBase, object):
+            def __init__(self, master, **kwargs):
+                super(TabContainer, self).__init__(master, **kwargs)
+
+        class PaneContainer(frameBase, object):
+            def __init__(self, master, **kwargs):
+                super(PaneContainer, self).__init__(master, **kwargs)
+
+        class TabPane(frameBase, object):
+            def __init__(self, master, **kwargs):
+                super(TabPane, self).__init__(master, **kwargs)
+
+        class Tab(labelBase, object):
+            def __init__(self, master, **kwargs):
+                super(Tab, self).__init__(master, **kwargs)
+
         class TabbedFrame(frameBase, object):
 
             def __init__(self, master, fill=False, changeOnFocus=True, font=None, **kwargs):
@@ -4232,8 +4258,8 @@ class gui(object):
                 super(TabbedFrame, self).__init__(master, **kwargs)
 
                 # create two containers
-                self.tabContainer = frameBase(self, **kwargs)
-                self.paneContainer = frameBase(self, relief=SUNKEN, **kwargs)
+                self.tabContainer = TabContainer(self, **kwargs)
+                self.paneContainer = PaneContainer(self, relief=SUNKEN, **kwargs)
                 self.paneContainer.config(borderwidth=4)
 
                 # grid the containers
@@ -4347,7 +4373,7 @@ class gui(object):
                     raise ItemLookupError("Duplicate tabName: " + text)
 
                 # create the tab, bind events, pack it in
-                tab = Label(
+                tab = Tab(
                     self.tabContainer,
                     text=text,
                     highlightthickness=1,
@@ -4373,9 +4399,9 @@ class gui(object):
 
                 # create the pane
                 if not useTtk:
-                    pane = frameBase(self.paneContainer, bg=self.activeBg)
+                    pane = TabPane(self.paneContainer, bg=self.activeBg)
                 else:
-                    pane = frameBase(self.paneContainer)
+                    pane = TabPane(self.paneContainer)
 
                 pane.grid(sticky="nsew", row=0, column=0)
                 self.paneContainer.grid_columnconfigure(0, weight=1)
@@ -8797,8 +8823,7 @@ class gui(object):
     def setTreeDoubleClickFunction(self, title, func):
         if func is not None:
             tree = self.widgetManager.get(self.Widgets.Tree, title)
-            command = self.MAKE_FUNC(func, title)
-            tree.item.registerDblClick(command)
+            tree.item.registerDblClick(title, func)
 
     def setTreeEditFunction(self, title, func):
         if func is not None:
@@ -10416,9 +10441,13 @@ class gui(object):
 
     def addStatusbar(self, header="", fields=1, side=None):
         if not self.hasStatus:
+            class Statusbar(Frame, object):
+                def __init__(self, master, **kwargs):
+                    super(Statusbar, self).__init__(master, **kwargs)
+
             self.hasStatus = True
             self.header = header
-            self.statusFrame = Frame(self.appWindow)
+            self.statusFrame = Statusbar(self.appWindow)
             self.statusFrame.config(bd=1, relief=SUNKEN)
             self.statusFrame.pack(side=BOTTOM, fill=X, anchor=S)
 
@@ -11311,7 +11340,7 @@ class gui(object):
             def getSelectedText(self):
                 item = self.getSelected()
                 if item is not None:
-                    return item.GetText()
+                    return item.GetText(), item.getAttribute()
                 else:
                     return None
 
@@ -11335,6 +11364,7 @@ class gui(object):
             def __init__(self, node):
                 self.node = node
                 self.dblClickFunc = None
+                self.treeTitle = None
                 self.canEdit = True
 
         # REQUIRED FUNCTIONS
@@ -11347,6 +11377,10 @@ class gui(object):
                 elif node.nodeType == node.TEXT_NODE:
                     return node.nodeValue
 
+            def getAttribute(self, att='id'):
+                try: return self.node.attributes['id'].value
+                except: return None
+
             def IsEditable(self):
                 return self.canEdit and not self.node.hasChildNodes()
 
@@ -11357,6 +11391,7 @@ class gui(object):
                 return self.node.hasChildNodes()
 
             def GetIconName(self):
+                self.dblClickFunc(self.treeTitle, self.getAttribute())
                 if not self.IsExpandable():
                     return "python"  # change to file icon
 
@@ -11365,7 +11400,7 @@ class gui(object):
                 prelist = [AjTreeData(node) for node in children]
                 itemList = [item for item in prelist if item.GetText().strip()]
                 for item in itemList:
-                    item.registerDblClick(self.dblClickFunc)
+                    item.registerDblClick(self.treeTitle, self.dblClickFunc)
                     item.canEdit = self.canEdit
                 return itemList
 
@@ -11374,7 +11409,8 @@ class gui(object):
                     # TO DO: start editing this node...
                     pass
                 if self.dblClickFunc is not None:
-                    self.dblClickFunc()
+                    _id = self.getAttribute()
+                    self.dblClickFunc(self.treeTitle, _id)
 
         #  EXTRA FUNCTIONS
 
@@ -11383,7 +11419,8 @@ class gui(object):
                 self.canEdit = value
 
             # TODO: can only set before calling go()
-            def registerDblClick(self, func):
+            def registerDblClick(self, title, func):
+                self.treeTitle = title
                 self.dblClickFunc = func
 
             # not used - for DEBUG
