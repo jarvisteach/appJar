@@ -6,10 +6,8 @@ class appJarExplorer:
     def __init__(self, topLevel):
         self._topLevel = topLevel
 
-    def buildTag(self, tag, details, _id):
-        xml = "<" + tag + " id='" + _id + "'>"
-#        xml += details
-        xml += "</" + tag + ">\n"
+    def buildTag(self, tag, _id):
+        xml = "\t<" + tag + " id='" + _id + "'></" + tag + ">\n"
         return xml
 
     def getClass(self, widg):
@@ -18,47 +16,49 @@ class appJarExplorer:
         if kind == "Tk": kind = "appJar"
         return kind
 
-    def getDetails(self, widg):
-        try:
-            text = widg.cget('text').replace("&", "&amp;")
-            if text == "": text = "-EMPTY-"
-            text = "<text>" + text + "</text>"
-        except: text=""
-        try:
-            grid = "<grid>"+widg.grid_info()['row']+"x"+widg.grid_info()['column']+"</grid>"
-        except: grid = ""
-        coordinates = "<coordinates>"+str(widg.winfo_rootx())+","+str(widg.winfo_rooty())+"</coordinates>"
-        size = "<size>"+str(widg.winfo_reqwidth())+"x"+str(widg.winfo_reqheight())+"</size>"
-        return text+coordinates+size + grid
-
     def getChildren(self, widg):
         children =  widg.winfo_children()
         kind = self.getClass(widg)
-        details = self.getDetails(widg)
+
+        if kind.lower() == 'menu':
+            print(widg)
+            menus = widg.index('end')
+            if menus is not None:
+                for item in range(menus+1):
+                    print('\t\t', widg.entrycget(item, 'label'))
+
+        try: name = widg.cget('text')
+        except: name = ''
+
+        if len(name) > 0: kind += '-' + name.replace(' ', '_')
 
         if len(children) == 0:
-            return self.buildTag(kind, details, str(widg))
+            return self.buildTag(kind, str(widg))
         else:
-            text = "<" + kind + " id='" + str(widg) + "'>"
-#            text += details
+            text = "<" + kind + " id='" + str(widg) + "'>\n"
             for w in widg.winfo_children():
                 text += self.getChildren(w)
             text += "</" + kind + ">\n"
             return text
 
     def getXml(self):
-        xml = "<?xml version='1.0' encoding='iso-8859-1'?>"
+        xml = "<?xml version='1.0' encoding='iso-8859-1'?>\n"
         xml += self.getChildren(self._topLevel)
+        print(xml)
         return xml
 
 def widgProps(widg):
     props = {}
     try: props['text'] = widg.cget('text')
     except: props['text'] = ""
-    try: props['grid'] = widg.grid_info()['row']+"x"+widg.grid_info()['column']
-    except: props['grid'] = ""
-    props['coordinates'] = str(widg.winfo_rootx())+","+str(widg.winfo_rooty())
-    props['size'] = str(widg.winfo_reqwidth())+"x"+str(widg.winfo_reqheight())
+    try:
+        props['row'] = widg.grid_info()['row']
+        props['column'] = widg.grid_info()['column']
+    except: props['row'] = props['column'] = ""
+    props['x'] = str(widg.winfo_rootx())
+    props['y'] = str(widg.winfo_rooty())
+    props['width'] = str(widg.winfo_reqwidth())
+    props['height'] = str(widg.winfo_reqheight())
     props['kind'] = type(widg).__name__
     if props['kind'] == 'instance': props['kind'] = widg.winfo_class()
     if props['kind'] == "Tk": props['kind'] = "appJar"
@@ -76,18 +76,23 @@ def makeExplorer():
             if vals is not None and vals[1] == val:
                 global _currentId
                 _currentId = val
-                app.entry("Text", props['text'])
-                app.entry("Grid", props['grid'])
-                app.entry("Coordinates", props['coordinates'])
-                app.entry("Size", props['size'])
-                app.entry("Kind", props['kind'])
+                app.entry("text", props['text'])
+                app.entry("row", props['row'])
+                app.entry("column", props['column'])
+                app.entry("x", props['x'])
+                app.entry("y", props['y'])
+                app.entry("width", props['width'])
+                app.entry("height", props['height'])
+                app.entry("kind", props['kind'])
         else:
             pass
 
     def press():
         if _currentId is not None:
+            print(app.getAllEntries())
             widg = app.topLevel.nametowidget(_currentId)
-            widg.config(text=app.entry('Text'))
+            widg.config(text=app.entry('text'))
+            widg.grid(row=int(app.entry("row")), column=int(app.entry("column")))
         
 
     global _explorerMade
@@ -95,28 +100,35 @@ def makeExplorer():
         _explorerMade = True
         xml = appJarExplorer(app.topLevel).getXml()
         with app.subWindow("appJar Explorer", size="600x450", sticky='news') as sw:
+            app.bg = "#3b3f40"
             sw.configure(padx=5, pady=5)
             with app.panedFrame("LEFT"):
                 app.configure(sticky="news")
                 app.addTree("b", xml, row=1, column=1, rowspan=6)
-                app.setTreeDoubleClickFunction("b", updateConfigPane)
+                app.setTreeClickFunction("b", updateConfigPane)
                 app.setTreeEditable("b", False)
+                app.setTreeBg('b', "#3b3f40")
+                app.setTreeFg('b', "#adadad")
                 with app.panedFrame("RIGHT", sticky="new"):
-                    app.config(sticky='new', stretch='column')
-                    app.bg="blue"
-                    app.fg="white"
-                    app.label("Configure Widget", colspan=2)
-                    app.label("Kind:")
-                    app.entry("Kind", pos=('p', 1))
-                    app.label("Text:")
-                    app.entry("Text", pos=('p', 1))
-                    app.label("Grid:")
-                    app.entry("Grid", pos=('p', 1))
-                    app.label("Coords:")
-                    app.entry("Coordinates", pos=('p', 1))
-                    app.label("Size:")
-                    app.entry("Size", pos=('p', 1))
-                    app.button("Update", press, colspan=2)
+                    app.config(sticky='new', stretch='column', bg="#3b3f40", fg="#adadad", font={'size':16})
+                    app.label("Configure Widget", colspan=2, fg='#ca753d', font={'size':20, 'weight':'bold'})
+                    app.label("Kind:", anchor='w')
+                    app.entry("kind", pos=('p', 1))
+                    app.label("Text:", anchor='w')
+                    app.entry("text", pos=('p', 1))
+                    app.label("Row:", anchor='w')
+                    app.entry("row", pos=('p', 1))
+                    app.label("Column:", anchor='w')
+                    app.entry("column", pos=('p', 1))
+                    app.label("X:", anchor='w')
+                    app.entry("x", pos=('p', 1))
+                    app.label("Y:", anchor='w')
+                    app.entry("y", pos=('p', 1))
+                    app.label("Width:", anchor='w')
+                    app.entry("width", pos=('p', 1))
+                    app.label("Height:", anchor='w')
+                    app.entry("height", pos=('p', 1))
+                    app.button("Update", press, column=1)
         app.generateTree("b")
     app.showSubWindow("appJar Explorer")
 
@@ -129,10 +141,13 @@ with gui("appJar Explorer") as app:
             app.check("check")
             app.radio("radio", "r1")
             app.button("DETAILS", makeExplorer)
-        with app.tab("b"):
-            app.addGoogleMap("g")
+#        with app.tab("b"):
+#            app.addGoogleMap("g")
 
     with app.subWindow("sub"):
         app.label("in sub")
 
+    app.addToolbarButton('SAVE', makeExplorer, True)
     app.addStatusbar()
+    for x in range(5):
+        app.addMenuItem('MY MEN', str(x))

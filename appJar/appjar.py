@@ -661,8 +661,12 @@ class gui(object):
         # alternative to label option above, as label doesn't update widgets
         # properly
 
+        class BgLabel(labelBase, object):
+            def __init__(self, master, **kwargs):
+                super(BgLabel, self).__init__(master, **kwargs)
+
         if not self.ttkFlag:
-            self.bgLabel = Label(container, anchor=CENTER, font=self._getContainerProperty('labelFont'), background=self._getContainerBg())
+            self.bgLabel = BgLabel(container, anchor=CENTER, font=self._getContainerProperty('labelFont'), background=self._getContainerBg())
         else:
             self.bgLabel = ttk.Label(container)
         self.bgLabel.place(x=0, y=0, relwidth=1, relheight=1)
@@ -8825,6 +8829,11 @@ class gui(object):
             tree = self.widgetManager.get(self.Widgets.Tree, title)
             tree.item.registerDblClick(title, func)
 
+    def setTreeClickFunction(self, title, func):
+        if func is not None:
+            tree = self.widgetManager.get(self.Widgets.Tree, title)
+            tree.item.registerClick(title, func)
+
     def setTreeEditFunction(self, title, func):
         if func is not None:
             tree = self.widgetManager.get(self.Widgets.Tree, title)
@@ -11364,6 +11373,7 @@ class gui(object):
             def __init__(self, node):
                 self.node = node
                 self.dblClickFunc = None
+                self.clickFunc = None
                 self.treeTitle = None
                 self.canEdit = True
 
@@ -11391,7 +11401,8 @@ class gui(object):
                 return self.node.hasChildNodes()
 
             def GetIconName(self):
-                self.dblClickFunc(self.treeTitle, self.getAttribute())
+                if self.clickFunc is not None:
+                    self.clickFunc(self.treeTitle, self.getAttribute())
                 if not self.IsExpandable():
                     return "python"  # change to file icon
 
@@ -11401,6 +11412,7 @@ class gui(object):
                 itemList = [item for item in prelist if item.GetText().strip()]
                 for item in itemList:
                     item.registerDblClick(self.treeTitle, self.dblClickFunc)
+                    item.registerClick(self.treeTitle, self.clickFunc)
                     item.canEdit = self.canEdit
                 return itemList
 
@@ -11409,8 +11421,7 @@ class gui(object):
                     # TO DO: start editing this node...
                     pass
                 if self.dblClickFunc is not None:
-                    _id = self.getAttribute()
-                    self.dblClickFunc(self.treeTitle, _id)
+                    self.dblClickFunc(self.treeTitle, self.getAttributee())
 
         #  EXTRA FUNCTIONS
 
@@ -11422,6 +11433,11 @@ class gui(object):
             def registerDblClick(self, title, func):
                 self.treeTitle = title
                 self.dblClickFunc = func
+
+            # TODO: can only set before calling go()
+            def registerClick(self, title, func):
+                self.treeTitle = title
+                self.clickFunc = func
 
             # not used - for DEBUG
             def getSelected(self, spaces=1):
@@ -12613,7 +12629,7 @@ class SelectableLabel(Entry, object):
 class ScrollPane(frameBase, object):
     def __init__(self, parent, resize=False, disabled=None, **opts):
         super(ScrollPane, self).__init__(parent)
-        self.config(padx=1, pady=1)
+#        self.config(padx=1, pady=1, bd=0)
         self.resize = resize
 
         self.hDisabled = disabled == "horizontal"
@@ -12634,7 +12650,7 @@ class ScrollPane(frameBase, object):
             self.hscrollbar.grid(row=1, column=0, sticky=E + W + S)
 
         self.canvas = Canvas(self, **opts)
-        self.canvas.config(highlightthickness=0)
+        self.canvas.config(highlightthickness=0, bd=0)
         self.canvas.grid(row=0, column=0, sticky=N + S + E + W)
 
         if not self.vDisabled:
