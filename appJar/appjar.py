@@ -13109,7 +13109,6 @@ class SimpleTable(ScrollPane):
         if isinstance(actionButton, (str, unicode)):
             self.actionButton = [actionButton]
         else:
-            print('other')
             self.actionButton = actionButton
 
         self.addButton= addButton
