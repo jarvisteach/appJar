@@ -4686,9 +4686,9 @@ class gui(object):
             self.error("Unable to load DB data - can't load sqlite3")
             return
 
-        with sqlite3.connect(value) as conn:
+        with sqlite3.connect(grid.db) as conn:
             cursor = conn.cursor()
-            dataQuery = 'SELECT * from ' + table
+            dataQuery = 'SELECT * from ' + grid.dbTable
 
             # select all data
             cursor.execute(dataQuery)
