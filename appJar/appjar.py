@@ -13106,10 +13106,10 @@ class SimpleTable(ScrollPane):
 
         # headings
         self.actionHeading = actionHeading
-        if isinstance(actionButton, (str, unicode)):
-            self.actionButton = [actionButton]
-        else:
+        if type(actionButton) in (list, tuple):
             self.actionButton = actionButton
+        else:
+            self.actionButton = [actionButton]
 
         self.addButton= addButton
 
