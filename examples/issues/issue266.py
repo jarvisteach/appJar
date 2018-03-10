@@ -5,8 +5,10 @@ from appJar import gui
 DB_NAME = "issue266.db"
 types = ["NULL", "INTEGER", "REAL", "TEXT", "BLOB"]
 
-def press():
+def press(btn):
     print(app.getTableSelectedCells("table"))
+    if btn == 'REFRESH':
+        app.refreshDbTable('table')
 
 def runSql(sql):
     print(sql)
@@ -155,3 +157,4 @@ with gui("DB Demo", "800x600", stretch="column", bg="DarkOrange", log="trace", s
     app.label("PRESS ME", font={"size":40, "underline":True}, right="demo")
     app.addButtons(["EN", "DI"], edit)
     app.button("COUNT", press)
+    app.button("REFRESH", press)
