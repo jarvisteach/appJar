@@ -1,6 +1,14 @@
 #Change-Log
 ---
 
+## Version 0.92  
+
+* Issues Resolved:
+    * [#413](https://github.com/jarvisteach/appJar/issues/413) - Fixed issue with `.refreshDbTable()` in [DB tables](/pythonDevWidgets/#connecting-to-databases)  
+    * [#410](https://github.com/jarvisteach/appJar/issues/410) - Fixed issue with button text when [adding tables](/pythonDevWidgets/#add-tables) 
+    * [#409](https://github.com/jarvisteach/appJar/issues/409) - Fixed issue with topLevel binds on mouse down events  
+    * [#408](https://github.com/jarvisteach/appJar/issues/408) - Changed logLevel for some widget removal  
+
 ## Version 0.91  
 
 * Grids have been renamed to Tables!
@@ -10,7 +18,7 @@
     * [#398](https://github.com/jarvisteach/appJar/issues/398) - Documented [.pyw files](/packaging).  
     * [#395](https://github.com/jarvisteach/appJar/issues/395) - Option to [fast stop](/pythonEvents/#stopping-the-gui) a GUI.  
     * [#391](https://github.com/jarvisteach/appJar/issues/391) - Updated error messages on `_configWidget`  
-    * [#390](https://github.com/jarvisteach/appJar/issues/390) - New simpleAppJar funcitons for [statusbar](/simpleAppJar/#statusbar).  
+    * [#390](https://github.com/jarvisteach/appJar/issues/390) - New simpleAppJar functions for [statusbar](/simpleAppJar/#statusbar).  
     * [#388](https://github.com/jarvisteach/appJar/issues/388) - Can now specify the cell style of [tables](/pythonDevWidgets/#table).
     * [#379](https://github.com/jarvisteach/appJar/issues/379) - [PieChart](/outputWidgets/#piechart) % fix in Python 2.7
     * [#373](https://github.com/jarvisteach/appJar/issues/373) - Added function to get the BG colour of a widget.  
