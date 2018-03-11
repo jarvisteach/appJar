@@ -1438,6 +1438,46 @@ def test_trees():
     print(" >> not implemented...")
     #print("\t >> all tests complete")
 
+def test_tables():
+    print("\tTesting Tables")
+    app.addTable("t1",
+        [["Name", "Age", "Gender"],
+        ["Fred", 45, "Male"],
+        ["Tina", 37, "Female"],
+        ["Clive", 28, "Male"],
+        ["Betty", 51, "Female"]],
+        action=tester_function,
+        addRow=tester_function)
+
+    with pytest.raises(Exception) :
+        app.addTable("g1", [])
+
+    app.getTableEntries("t1")
+    app.getTableSelectedCells("t1")
+    app.addTableRow("t1", ["aaa", 22, "Male"])
+
+    # call generic setter functions
+    test_setters("Table", "g1")
+
+    app.addDbTable('db1', 'test.db', 'projects')
+    app.addReplaceDbTable('db1', 'test.db', 'projects')
+    app.addRefreshDbTable('db1')
+
+    app.addDbOptionBox('db1', 'test.db')
+    app.refreshDbOptionBox('db1', 'test.db')
+
+    app.getTableRow("db1", 1)
+    app.getTableEntries("db1")
+    app.getTableSelectedCells("db1")
+    app.getTableEntries("db1")
+
+    app.addTableRows("db1", ['a', 'b', 'c'])
+    app.replaceTableRow("db1", 0, ['a', 'b', 'c'])
+
+    print(" >> not implemented...")
+    #print("\t >> all tests complete")
+
+
 
 def test_grids():
     print("\tTesting Grids")
@@ -2878,6 +2918,7 @@ test_auto_labels()
 test_pies()
 test_trees()
 test_grids()
+test_tables()
 
 test_images()
 test_sounds()

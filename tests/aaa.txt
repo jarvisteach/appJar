@@ -1,0 +1,1398 @@
+2018-03-08 22:11:52,920 appJar:INFO: [Line 2660->1512/setLogFile]: Switched to logFile: aaa.txt
+2018-03-08 22:11:52,934 appJar:TRACE: [Line 2660->1197/changeLanguage]: Loading language file: FRENCH.ini
+2018-03-08 22:11:52,940 appJar:TRACE: [Line 2660->1220/changeLanguage]: Switching to: french
+2018-03-08 22:11:52,941 appJar:TRACE: [Line 2660->1228/changeLanguage]: 	Section: TITLE
+2018-03-08 22:11:52,943 appJar:WARNING: [Line 2660->1491/changeLanguage]: Unsupported widget: TITLE
+2018-03-08 22:11:52,944 appJar:TRACE: [Line 2660->1228/changeLanguage]: 	Section: LABEL
+2018-03-08 22:11:52,946 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		lay1: l_one_x
+2018-03-08 22:11:52,947 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		lay2: l_one_x
+2018-03-08 22:11:52,949 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		lay3: l_one_x
+2018-03-08 22:11:52,951 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		lay4: l_one_x
+2018-03-08 22:11:52,961 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		lay5: l_one_x
+2018-03-08 22:11:52,963 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		lay6: l_one_x
+2018-03-08 22:11:52,965 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		lay7: l_one_x
+2018-03-08 22:11:52,966 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		lay8: l_one_x
+2018-03-08 22:11:52,968 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		lay9: l_one_x
+2018-03-08 22:11:52,970 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		lay11: l_one_x
+2018-03-08 22:11:52,971 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		lay12: l_one_x
+2018-03-08 22:11:52,973 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		el1: bbb
+2018-03-08 22:11:52,974 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		l0: l_one_x
+2018-03-08 22:11:52,978 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		l1: aaa
+2018-03-08 22:11:52,981 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		rowl1: l_one_x
+2018-03-08 22:11:52,983 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		fl1: ccc
+2018-03-08 22:11:52,984 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		sl1: l_one_x
+2018-03-08 22:11:52,986 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		nl1: nl1
+2018-03-08 22:11:52,988 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		nl2: nl2
+2018-03-08 22:11:52,990 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		a: a
+2018-03-08 22:11:52,991 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		b: b
+2018-03-08 22:11:52,993 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		c: c
+2018-03-08 22:11:52,994 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		d: d
+2018-03-08 22:11:52,995 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		e: e
+2018-03-08 22:11:52,997 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		xx1: xx1
+2018-03-08 22:11:52,998 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		xx2: xx2
+2018-03-08 22:11:53,000 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		xx3: xx3
+2018-03-08 22:11:53,002 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		xx4: xx4
+2018-03-08 22:11:53,003 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		xx5: xx5
+2018-03-08 22:11:53,005 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		xx6: xx6
+2018-03-08 22:11:53,007 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		xx7: xx7
+2018-03-08 22:11:53,008 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		xx8: xx8
+2018-03-08 22:11:53,010 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		xx9: xx9
+2018-03-08 22:11:53,012 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		xx0: xx0
+2018-03-08 22:11:53,014 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		le1: le1
+2018-03-08 22:11:53,015 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		lne1: lne1
+2018-03-08 22:11:53,017 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		lse1: lse1
+2018-03-08 22:11:53,019 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		lae1: lae1
+2018-03-08 22:11:53,020 appJar:TRACE: [Line 2660->1228/changeLanguage]: 	Section: ENTRY
+2018-03-08 22:11:53,022 appJar:TRACE: [Line 2660->1426/changeLanguage]: 		e1: aaa
+2018-03-08 22:11:53,024 appJar:TRACE: [Line 2660->13906/__init__]: PauseCallFunction: callFunction=False, useVar=False
+2018-03-08 22:11:53,026 appJar:TRACE: [Line 2660->13911/__enter__]: callFunction paused
+2018-03-08 22:11:53,028 appJar:TRACE: [Line 2660->13916/__exit__]: callFunction resumed
+2018-03-08 22:11:53,030 appJar:TRACE: [Line 2660->1426/changeLanguage]: 		ne1: bbb
+2018-03-08 22:11:53,031 appJar:TRACE: [Line 2660->13906/__init__]: PauseCallFunction: callFunction=False, useVar=False
+2018-03-08 22:11:53,033 appJar:TRACE: [Line 2660->13911/__enter__]: callFunction paused
+2018-03-08 22:11:53,036 appJar:TRACE: [Line 2660->13916/__exit__]: callFunction resumed
+2018-03-08 22:11:53,037 appJar:TRACE: [Line 2660->1426/changeLanguage]: 		se1: l_one_z
+2018-03-08 22:11:53,039 appJar:TRACE: [Line 2660->13906/__init__]: PauseCallFunction: callFunction=False, useVar=False
+2018-03-08 22:11:53,041 appJar:TRACE: [Line 2660->1426/changeLanguage]: 		fe1: -- enter a filename --
+2018-03-08 22:11:53,043 appJar:TRACE: [Line 2660->13906/__init__]: PauseCallFunction: callFunction=False, useVar=False
+2018-03-08 22:11:53,045 appJar:TRACE: [Line 2660->1426/changeLanguage]: 		de1: -- enter a directory --
+2018-03-08 22:11:53,047 appJar:TRACE: [Line 2660->13906/__init__]: PauseCallFunction: callFunction=False, useVar=False
+2018-03-08 22:11:53,049 appJar:TRACE: [Line 2660->1426/changeLanguage]: 		ae1: l_one_a
+2018-03-08 22:11:53,051 appJar:TRACE: [Line 2660->13906/__init__]: PauseCallFunction: callFunction=False, useVar=False
+2018-03-08 22:11:53,053 appJar:TRACE: [Line 2660->1426/changeLanguage]: 		focusEnt: 
+2018-03-08 22:11:53,054 appJar:TRACE: [Line 2660->1426/changeLanguage]: 		ve1: 
+2018-03-08 22:11:53,056 appJar:TRACE: [Line 2660->1426/changeLanguage]: 		tester: l_one_y
+2018-03-08 22:11:53,058 appJar:TRACE: [Line 2660->13906/__init__]: PauseCallFunction: callFunction=False, useVar=False
+2018-03-08 22:11:53,060 appJar:TRACE: [Line 2660->1426/changeLanguage]: 		tester2: l_one_y
+2018-03-08 22:11:53,062 appJar:TRACE: [Line 2660->13906/__init__]: PauseCallFunction: callFunction=False, useVar=False
+2018-03-08 22:11:53,065 appJar:TRACE: [Line 2660->1426/changeLanguage]: 		tester3: l_one_z
+2018-03-08 22:11:53,067 appJar:TRACE: [Line 2660->13906/__init__]: PauseCallFunction: callFunction=False, useVar=False
+2018-03-08 22:11:53,069 appJar:TRACE: [Line 2660->1426/changeLanguage]: 		le1: l_one_y
+2018-03-08 22:11:53,071 appJar:TRACE: [Line 2660->13906/__init__]: PauseCallFunction: callFunction=False, useVar=False
+2018-03-08 22:11:53,073 appJar:TRACE: [Line 2660->1426/changeLanguage]: 		lne1: 33221
+2018-03-08 22:11:53,075 appJar:TRACE: [Line 2660->13906/__init__]: PauseCallFunction: callFunction=False, useVar=False
+2018-03-08 22:11:53,076 appJar:TRACE: [Line 2660->1426/changeLanguage]: 		lse1: l_one_z
+2018-03-08 22:11:53,079 appJar:TRACE: [Line 2660->13906/__init__]: PauseCallFunction: callFunction=False, useVar=False
+2018-03-08 22:11:53,080 appJar:TRACE: [Line 2660->1426/changeLanguage]: 		lae1: l_one_a
+2018-03-08 22:11:53,082 appJar:TRACE: [Line 2660->13906/__init__]: PauseCallFunction: callFunction=False, useVar=False
+2018-03-08 22:11:53,084 appJar:TRACE: [Line 2660->1228/changeLanguage]: 	Section: SCALE
+2018-03-08 22:11:53,086 appJar:WARNING: [Line 2660->1273/changeLanguage]: No text is displayed in SCALE. Maybe it has a Label?
+2018-03-08 22:11:53,087 appJar:TRACE: [Line 2660->1228/changeLanguage]: 	Section: TEXTAREA
+2018-03-08 22:11:53,089 appJar:WARNING: [Line 2660->1276/changeLanguage]: No text is displayed in TEXTAREA
+2018-03-08 22:11:53,090 appJar:TRACE: [Line 2660->1228/changeLanguage]: 	Section: METER
+2018-03-08 22:11:53,092 appJar:WARNING: [Line 2660->1276/changeLanguage]: No text is displayed in METER
+2018-03-08 22:11:53,093 appJar:TRACE: [Line 2660->1228/changeLanguage]: 	Section: SPINBOX
+2018-03-08 22:11:53,096 appJar:WARNING: [Line 2660->6728/changeSpinBox]: Can't convert s3 RangeSpinBox to SpinBox
+2018-03-08 22:11:53,098 appJar:WARNING: [Line 2660->6728/changeSpinBox]: Can't convert s4 RangeSpinBox to SpinBox
+2018-03-08 22:11:53,099 appJar:TRACE: [Line 2660->1228/changeLanguage]: 	Section: OPTIONBOX
+2018-03-08 22:11:53,101 appJar:WARNING: [Line 2660->6097/changeOptionBox]: The new options are wider then the old ones: 6 > 4
+2018-03-08 22:11:53,103 appJar:TRACE: [Line 2660->13906/__init__]: PauseCallFunction: callFunction=False, useVar=True
+2018-03-08 22:11:53,105 appJar:TRACE: [Line 2660->13911/__enter__]: callFunction paused
+2018-03-08 22:11:53,107 appJar:TRACE: [Line 2660->13916/__exit__]: callFunction resumed
+2018-03-08 22:11:53,109 appJar:TRACE: [Line 2660->6225/setOptionBox]: Updating regular optionBox: l1 at: None to: True
+2018-03-08 22:11:53,111 appJar:TRACE: [Line 2660->6240/setOptionBox]: --> index now: 0
+2018-03-08 22:11:53,113 appJar:TRACE: [Line 2660->6251/setOptionBox]: Updating: OptionBox: l1 to: 0
+2018-03-08 22:11:53,115 appJar:TRACE: [Line 2660->13906/__init__]: PauseCallFunction: callFunction=False, useVar=True
+2018-03-08 22:11:53,118 appJar:TRACE: [Line 2660->13911/__enter__]: callFunction paused
+2018-03-08 22:11:53,121 appJar:TRACE: [Line 2660->6262/setOptionBox]: Invoked item: 0
+2018-03-08 22:11:53,123 appJar:TRACE: [Line 2660->13916/__exit__]: callFunction resumed
+2018-03-08 22:11:53,124 appJar:WARNING: [Line 2660->6097/changeOptionBox]: The new options are wider then the old ones: 6 > 4
+2018-03-08 22:11:53,127 appJar:TRACE: [Line 2660->13906/__init__]: PauseCallFunction: callFunction=False, useVar=True
+2018-03-08 22:11:53,140 appJar:TRACE: [Line 2660->6225/setOptionBox]: Updating regular optionBox: l2 at: None to: True
+2018-03-08 22:11:53,142 appJar:TRACE: [Line 2660->6240/setOptionBox]: --> index now: 0
+2018-03-08 22:11:53,144 appJar:TRACE: [Line 2660->6251/setOptionBox]: Updating: OptionBox: l2 to: 0
+2018-03-08 22:11:53,145 appJar:TRACE: [Line 2660->13906/__init__]: PauseCallFunction: callFunction=False, useVar=True
+2018-03-08 22:11:53,147 appJar:TRACE: [Line 2660->6262/setOptionBox]: Invoked item: 0
+2018-03-08 22:11:53,155 appJar:TRACE: [Line 2660->6187/setOptionBox]: Updating tickOptionBox
+2018-03-08 22:11:53,157 appJar:TRACE: [Line 2660->6190/setOptionBox]: Index empty - nothing to update
+2018-03-08 22:11:53,160 appJar:TRACE: [Line 2660->6187/setOptionBox]: Updating tickOptionBox
+2018-03-08 22:11:53,162 appJar:TRACE: [Line 2660->6190/setOptionBox]: Index empty - nothing to update
+2018-03-08 22:11:53,165 appJar:TRACE: [Line 2660->13906/__init__]: PauseCallFunction: callFunction=False, useVar=True
+2018-03-08 22:11:53,168 appJar:TRACE: [Line 2660->6225/setOptionBox]: Updating regular optionBox: l3 at: None to: True
+2018-03-08 22:11:53,170 appJar:TRACE: [Line 2660->6240/setOptionBox]: --> index now: 0
+2018-03-08 22:11:53,171 appJar:TRACE: [Line 2660->6251/setOptionBox]: Updating: OptionBox: l3 to: 0
+2018-03-08 22:11:53,173 appJar:TRACE: [Line 2660->13906/__init__]: PauseCallFunction: callFunction=False, useVar=True
+2018-03-08 22:11:53,175 appJar:TRACE: [Line 2660->6255/setOptionBox]: Setting OptionBox: l3 to disabled option: 0
+2018-03-08 22:11:53,176 appJar:TRACE: [Line 2660->1228/changeLanguage]: 	Section: LISTBOX
+2018-03-08 22:11:53,179 appJar:TRACE: [Line 2660->1228/changeLanguage]: 	Section: RADIOBUTTON
+2018-03-08 22:11:53,180 appJar:TRACE: [Line 2660->1346/changeLanguage]: 		rb: aaa
+2018-03-08 22:11:53,181 appJar:WARNING: [Line 2660->1349/changeLanguage]: Invalid RADIOBUTTON key: rb
+2018-03-08 22:11:53,183 appJar:TRACE: [Line 2660->1228/changeLanguage]: 	Section: PIECHART
+2018-03-08 22:11:53,185 appJar:WARNING: [Line 2660->1276/changeLanguage]: No text is displayed in PIECHART
+2018-03-08 22:11:53,186 appJar:TRACE: [Line 2660->1228/changeLanguage]: 	Section: CHECKBOX
+2018-03-08 22:11:53,188 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		l_one_x: aaa
+2018-03-08 22:11:53,189 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		l_one_y: l_one_y
+2018-03-08 22:11:53,191 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		l_one_z: l_one_z
+2018-03-08 22:11:53,192 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		NCB1: l_one_y
+2018-03-08 22:11:53,194 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		NCB2: l_one_y
+2018-03-08 22:11:53,195 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		NCB3: l_one_y
+2018-03-08 22:11:53,196 appJar:TRACE: [Line 2660->1228/changeLanguage]: 	Section: MESSAGE
+2018-03-08 22:11:53,198 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		m1: l_one_x
+2018-03-08 22:11:53,200 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		m2: aaa
+2018-03-08 22:11:53,202 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		m3: 
+2018-03-08 22:11:53,204 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		m4: 
+2018-03-08 22:11:53,205 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		l_one_y: l_one_y
+2018-03-08 22:11:53,207 appJar:TRACE: [Line 2660->1228/changeLanguage]: 	Section: LINK
+2018-03-08 22:11:53,208 appJar:TRACE: [Line 2660->1228/changeLanguage]: 	Section: BUTTON
+2018-03-08 22:11:53,210 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		b1_func: b1_func
+2018-03-08 22:11:53,216 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		b1: bbb
+2018-03-08 22:11:53,221 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		bb1: bbb
+2018-03-08 22:11:53,225 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		bb2: bbb
+2018-03-08 22:11:53,226 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		bb3: bb3
+2018-03-08 22:11:53,228 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		bb4: bb4
+2018-03-08 22:11:53,229 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		a2b1: a2b1
+2018-03-08 22:11:53,231 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		a2b2: a2b2
+2018-03-08 22:11:53,232 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		a2b3: a2b3
+2018-03-08 22:11:53,237 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		a2b4: a2b4
+2018-03-08 22:11:53,239 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		b2b1: b2b1
+2018-03-08 22:11:53,240 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		b2b2: b2b2
+2018-03-08 22:11:53,241 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		b2b3: b2b3
+2018-03-08 22:11:53,243 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		b2b4: b2b4
+2018-03-08 22:11:53,244 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		c2b1: c2b1
+2018-03-08 22:11:53,246 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		c2b2: c2b2
+2018-03-08 22:11:53,247 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		c2b3: c2b3
+2018-03-08 22:11:53,249 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		c2b4: c2b4
+2018-03-08 22:11:53,250 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		bl1: bl1
+2018-03-08 22:11:53,252 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		bl2: bl2
+2018-03-08 22:11:53,254 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		NO PARAM: NO PARAM
+2018-03-08 22:11:53,255 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		nb1: butName
+2018-03-08 22:11:53,256 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		ib1: ib1
+2018-03-08 22:11:53,259 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		ib2: ib2
+2018-03-08 22:11:53,260 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		ib1a: ib1a
+2018-03-08 22:11:53,263 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		ib2a: ib2a
+2018-03-08 22:11:53,264 appJar:TRACE: [Line 2660->1228/changeLanguage]: 	Section: LABELFRAME
+2018-03-08 22:11:53,266 appJar:TRACE: [Line 2660->1228/changeLanguage]: 	Section: UNKNOWN
+2018-03-08 22:11:53,267 appJar:WARNING: [Line 2660->1265/changeLanguage]: Invalid config section: UNKNOWN
+2018-03-08 22:11:53,269 appJar:TRACE: [Line 2660->1228/changeLanguage]: 	Section: RB
+2018-03-08 22:11:53,270 appJar:WARNING: [Line 2660->1265/changeLanguage]: Invalid config section: RB
+2018-03-08 22:11:53,271 appJar:TRACE: [Line 2660->1228/changeLanguage]: 	Section: TABBEDFRAME
+2018-03-08 22:11:53,273 appJar:TRACE: [Line 2660->1363/changeLanguage]: 		tbf1-tab1: new name 1
+2018-03-08 22:11:53,274 appJar:WARNING: [Line 2660->1371/changeLanguage]: Invalid TABBEDFRAME: tbf1 with TAB: tab1
+2018-03-08 22:11:53,275 appJar:TRACE: [Line 2660->1363/changeLanguage]: 		tbf1-tab2: new name 2
+2018-03-08 22:11:53,277 appJar:WARNING: [Line 2660->1371/changeLanguage]: Invalid TABBEDFRAME: tbf1 with TAB: tab2
+2018-03-08 22:11:53,278 appJar:TRACE: [Line 2660->1363/changeLanguage]: 		tbf1-tab3: new name 3
+2018-03-08 22:11:53,279 appJar:WARNING: [Line 2660->1371/changeLanguage]: Invalid TABBEDFRAME: tbf1 with TAB: tab3
+2018-03-08 22:11:53,280 appJar:TRACE: [Line 2660->1363/changeLanguage]: 		tbf1-tab4: new name 4
+2018-03-08 22:11:53,282 appJar:WARNING: [Line 2660->1371/changeLanguage]: Invalid TABBEDFRAME: tbf1 with TAB: tab4
+2018-03-08 22:11:53,283 appJar:TRACE: [Line 2660->1363/changeLanguage]: 		tbf1-tabx: new name 4
+2018-03-08 22:11:53,285 appJar:WARNING: [Line 2660->1371/changeLanguage]: Invalid TABBEDFRAME: tbf1 with TAB: tabx
+2018-03-08 22:11:53,286 appJar:TRACE: [Line 2660->1363/changeLanguage]: 		tbf7-tabx: new name 4
+2018-03-08 22:11:53,288 appJar:WARNING: [Line 2660->1371/changeLanguage]: Invalid TABBEDFRAME: tbf7 with TAB: tabx
+2018-03-08 22:11:53,289 appJar:TRACE: [Line 2660->1228/changeLanguage]: 	Section: PROPERTIES
+2018-03-08 22:11:53,291 appJar:TRACE: [Line 2660->1375/changeLanguage]: 		p1-a: aaa
+2018-03-08 22:11:53,293 appJar:TRACE: [Line 2660->1375/changeLanguage]: 		p1-b: bbb
+2018-03-08 22:11:53,294 appJar:TRACE: [Line 2660->1375/changeLanguage]: 		p1-c: ccc
+2018-03-08 22:11:53,296 appJar:TRACE: [Line 2660->1375/changeLanguage]: 		p1-xxx_unknown: ccc
+2018-03-08 22:11:53,297 appJar:WARNING: [Line 2660->11791/renameProperty]: Unknown property: xxx_unknown
+2018-03-08 22:11:53,299 appJar:TRACE: [Line 2660->1375/changeLanguage]: 		p7-k: nothing here
+2018-03-08 22:11:53,300 appJar:WARNING: [Line 2660->1383/changeLanguage]: Invalid PROPERTIES: p7
+2018-03-08 22:11:53,301 appJar:TRACE: [Line 2660->1228/changeLanguage]: 	Section: CONFIG
+2018-03-08 22:11:53,302 appJar:TRACE: [Line 2660->1233/changeLanguage]: 	Skipping CONFIG
+2018-03-08 22:11:53,304 appJar:TRACE: [Line 2660->1228/changeLanguage]: 	Section: TOOLBAR
+2018-03-08 22:11:53,305 appJar:TRACE: [Line 2660->1228/changeLanguage]: 	Section: GRID
+2018-03-08 22:11:53,306 appJar:WARNING: [Line 2660->1265/changeLanguage]: Invalid config section: GRID
+2018-03-08 22:11:53,307 appJar:TRACE: [Line 2660->1228/changeLanguage]: 	Section: PAGEDWINDOW
+2018-03-08 22:11:53,309 appJar:WARNING: [Line 2660->1491/changeLanguage]: Unsupported widget: PAGEDWINDOW
+2018-03-08 22:11:53,310 appJar:TRACE: [Line 2660->1228/changeLanguage]: 	Section: TOOLTIP-LABEL
+2018-03-08 22:11:53,312 appJar:TRACE: [Line 2660->1482/changeLanguage]: Parsing TOOLTIPs for: Label
+2018-03-08 22:11:53,315 appJar:TRACE: [Line 2660->2832/configureWidget]: Configuring: l1 of 0 with tooltip of new tooltip
+2018-03-08 22:11:53,318 appJar:TRACE: [Line 2660->2832/configureWidget]: Configuring: l2 of 0 with tooltip of new tooltip
+2018-03-08 22:11:53,320 appJar:WARNING: [Line 2660->1488/changeLanguage]: Invalid TOOLTIP for: Label, with key: l2
+2018-03-08 22:11:53,321 appJar:TRACE: [Line 2660->1228/changeLanguage]: 	Section: TOOLTIP-ENTRY
+2018-03-08 22:11:53,322 appJar:TRACE: [Line 2660->1482/changeLanguage]: Parsing TOOLTIPs for: Entry
+2018-03-08 22:11:53,325 appJar:TRACE: [Line 2660->2832/configureWidget]: Configuring: e1 of 2 with tooltip of new tooltip
+2018-03-08 22:11:53,328 appJar:TRACE: [Line 2660->2832/configureWidget]: Configuring: ne2 of 2 with tooltip of new tooltip
+2018-03-08 22:11:53,330 appJar:WARNING: [Line 2660->1488/changeLanguage]: Invalid TOOLTIP for: Entry, with key: ne2
+2018-03-08 22:11:53,333 appJar:TRACE: [Line 2660->2832/configureWidget]: Configuring: e3 of 2 with tooltip of new tooltip
+2018-03-08 22:11:53,334 appJar:WARNING: [Line 2660->1488/changeLanguage]: Invalid TOOLTIP for: Entry, with key: e3
+2018-03-08 22:11:53,336 appJar:TRACE: [Line 2660->1228/changeLanguage]: 	Section: IMAGE
+2018-03-08 22:11:53,337 appJar:TRACE: [Line 2660->1228/changeLanguage]: 	Section: SOUND
+2018-03-08 22:11:53,338 appJar:TRACE: [Line 2660->1244/changeLanguage]: 		erro1.wav: error2.wav
+2018-03-08 22:11:53,340 appJar:TRACE: [Line 2660->1244/changeLanguage]: 		error3.wav: error4.wav
+2018-03-08 22:11:53,341 appJar:TRACE: [Line 2660->1228/changeLanguage]: 	Section: MENUBAR
+2018-03-08 22:11:53,342 appJar:TRACE: [Line 2660->1249/changeLanguage]: 		['MEN2']: F_MEN2
+2018-03-08 22:11:53,344 appJar:WARNING: [Line 2660->1254/changeLanguage]: Invalid key
+2018-03-08 22:11:53,345 appJar:TRACE: [Line 2660->1249/changeLanguage]: 		['MEN2', 'MM2']: F_MM2
+2018-03-08 22:11:53,346 appJar:WARNING: [Line 2660->1259/changeLanguage]: Invalid key
+2018-03-08 22:11:53,347 appJar:TRACE: [Line 2660->1228/changeLanguage]: 	Section: EXTERNAL
+2018-03-08 22:11:53,349 appJar:TRACE: [Line 2660->1244/changeLanguage]: 		this: that
+2018-03-08 22:11:53,350 appJar:TRACE: [Line 2660->1228/changeLanguage]: 	Section: POPUP
+2018-03-08 22:11:53,351 appJar:TRACE: [Line 2660->1244/changeLanguage]: 		POP_NUM: ['Confirmation Popup', 'Press the button please.']
+2018-03-08 22:11:53,352 appJar:TRACE: [Line 2660->1244/changeLanguage]: 		POP_TEXT: ['Other Popup', 'Press cancel.']
+2018-03-08 22:11:53,373 appJar:TRACE: [Line 2727->2242/setLocation]: Setting location to: 300, 300
+2018-03-08 22:11:53,374 appJar:TRACE: [Line 2729->2229/setLocation]: Set location called with no params - CENTERING
+2018-03-08 22:11:53,459 appJar:TRACE: [Line 2729->315/CENTER]: Screen: 1280x800. Requested: 377x399. Location: 452, 190
+2018-03-08 22:11:53,550 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Frame - blue
+2018-03-08 22:11:53,552 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:11:53,553 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:11:53,555 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:11:53,556 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:11:53,558 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:11:53,559 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:11:53,561 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:11:53,562 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:11:53,563 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:11:53,565 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:11:53,566 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:11:53,568 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:11:53,569 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:11:53,570 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:11:53,572 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:11:53,573 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:11:53,575 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:11:53,576 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: SelectableLabel - blue
+2018-03-08 22:11:53,578 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:11:53,579 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:11:53,581 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: WidgetBox - blue
+2018-03-08 22:11:53,582 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:11:53,584 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:11:53,586 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:11:53,587 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:11:53,589 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:11:53,590 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:11:53,591 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:11:53,593 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:11:53,594 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:11:53,596 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:11:53,597 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:11:53,599 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:11:53,600 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:11:53,601 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:11:53,603 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:11:53,604 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Entry - blue
+2018-03-08 22:11:53,605 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Entry - blue
+2018-03-08 22:11:53,607 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Entry - blue
+2018-03-08 22:11:53,608 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: ButtonBox - blue
+2018-03-08 22:11:53,609 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Entry - blue
+2018-03-08 22:11:53,611 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Button - blue
+2018-03-08 22:11:53,612 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: ButtonBox - blue
+2018-03-08 22:11:53,614 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Entry - blue
+2018-03-08 22:11:53,615 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Button - blue
+2018-03-08 22:11:53,617 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: AutoCompleteEntry - blue
+2018-03-08 22:11:53,618 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Entry - blue
+2018-03-08 22:11:53,619 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: LabelBox - blue
+2018-03-08 22:11:53,621 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Entry - blue
+2018-03-08 22:11:53,622 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Entry - blue
+2018-03-08 22:11:53,623 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Entry - blue
+2018-03-08 22:11:53,624 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Entry - blue
+2018-03-08 22:11:53,626 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: LabelBox - blue
+2018-03-08 22:11:53,627 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:11:53,629 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Entry - blue
+2018-03-08 22:11:53,630 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: LabelBox - blue
+2018-03-08 22:11:53,631 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:11:53,633 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Entry - blue
+2018-03-08 22:11:53,634 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: LabelBox - blue
+2018-03-08 22:11:53,636 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:11:53,637 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Entry - blue
+2018-03-08 22:11:53,639 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: LabelBox - blue
+2018-03-08 22:11:53,640 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:11:53,642 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: AutoCompleteEntry - blue
+2018-03-08 22:11:53,643 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Button - blue
+2018-03-08 22:11:53,644 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Button - blue
+2018-03-08 22:11:53,645 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: WidgetBox - blue
+2018-03-08 22:11:53,647 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Button - blue
+2018-03-08 22:11:53,648 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Button - blue
+2018-03-08 22:11:53,650 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Button - blue
+2018-03-08 22:11:53,651 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Button - blue
+2018-03-08 22:11:53,653 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: WidgetBox - blue
+2018-03-08 22:11:53,654 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Button - blue
+2018-03-08 22:11:53,655 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Button - blue
+2018-03-08 22:11:53,657 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Button - blue
+2018-03-08 22:11:53,658 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Button - blue
+2018-03-08 22:11:53,660 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Button - blue
+2018-03-08 22:11:53,661 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Button - blue
+2018-03-08 22:11:53,662 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Button - blue
+2018-03-08 22:11:53,664 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Button - blue
+2018-03-08 22:11:53,665 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Button - blue
+2018-03-08 22:11:53,666 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Button - blue
+2018-03-08 22:11:53,668 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Button - blue
+2018-03-08 22:11:53,670 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Button - blue
+2018-03-08 22:11:53,672 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: WidgetBox - blue
+2018-03-08 22:11:53,674 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Button - blue
+2018-03-08 22:11:53,675 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Button - blue
+2018-03-08 22:11:53,677 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Button - blue
+2018-03-08 22:11:53,678 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Button - blue
+2018-03-08 22:11:53,680 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Button - blue
+2018-03-08 22:11:53,681 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Button - blue
+2018-03-08 22:11:53,682 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Button - blue
+2018-03-08 22:11:53,683 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Button - blue
+2018-03-08 22:11:53,685 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Radiobutton - blue
+2018-03-08 22:11:53,686 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Radiobutton - blue
+2018-03-08 22:11:53,687 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Radiobutton - blue
+2018-03-08 22:11:53,689 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Radiobutton - blue
+2018-03-08 22:11:53,690 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Radiobutton - blue
+2018-03-08 22:11:53,692 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Radiobutton - blue
+2018-03-08 22:11:53,693 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Radiobutton - blue
+2018-03-08 22:11:53,694 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Checkbutton - blue
+2018-03-08 22:11:53,696 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Checkbutton - blue
+2018-03-08 22:11:53,697 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Checkbutton - blue
+2018-03-08 22:11:53,699 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Checkbutton - blue
+2018-03-08 22:11:53,700 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Checkbutton - blue
+2018-03-08 22:11:53,701 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Checkbutton - blue
+2018-03-08 22:11:53,703 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: ajOption - blue
+2018-03-08 22:11:53,704 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: ajOption - blue
+2018-03-08 22:11:53,706 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: ajOption - blue
+2018-03-08 22:11:53,707 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: ajOption - blue
+2018-03-08 22:11:53,709 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: ajOption - blue
+2018-03-08 22:11:53,710 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Spinbox - blue
+2018-03-08 22:11:53,711 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Spinbox - blue
+2018-03-08 22:11:53,713 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Spinbox - blue
+2018-03-08 22:11:53,714 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Spinbox - blue
+2018-03-08 22:11:53,715 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: ListBoxContainer - blue
+2018-03-08 22:11:53,717 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: ListBoxContainer - blue
+2018-03-08 22:11:53,718 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: ListBoxContainer - blue
+2018-03-08 22:11:53,719 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: ListBoxContainer - blue
+2018-03-08 22:11:53,720 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: ListBoxContainer - blue
+2018-03-08 22:11:53,722 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: AjScale - blue
+2018-03-08 22:11:53,723 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: AjScale - blue
+2018-03-08 22:11:53,724 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: AjScale - blue
+2018-03-08 22:11:53,726 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: AjScale - blue
+2018-03-08 22:11:53,727 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Message - blue
+2018-03-08 22:11:53,729 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Message - blue
+2018-03-08 22:11:53,730 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Message - blue
+2018-03-08 22:11:53,732 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Message - blue
+2018-03-08 22:11:53,734 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Message - blue
+2018-03-08 22:11:53,736 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: AjText - blue
+2018-03-08 22:11:53,737 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: AjText - blue
+2018-03-08 22:11:53,739 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Frame - blue
+2018-03-08 22:11:53,740 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Scrollbar - blue
+2018-03-08 22:11:53,742 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: AjScrolledText - blue
+2018-03-08 22:11:53,743 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Frame - blue
+2018-03-08 22:11:53,745 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Scrollbar - blue
+2018-03-08 22:11:53,746 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: AjScrolledText - blue
+2018-03-08 22:11:53,747 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Meter - blue
+2018-03-08 22:11:53,752 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: SplitMeter - blue
+2018-03-08 22:11:53,760 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: DualMeter - blue
+2018-03-08 22:11:53,764 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: ToggleFrame - blue
+2018-03-08 22:11:53,766 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Properties - blue
+2018-03-08 22:11:53,768 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Properties - blue
+2018-03-08 22:11:53,770 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:11:53,771 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:11:53,772 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:11:53,774 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:11:53,775 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:11:53,776 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:11:53,777 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:11:53,779 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:11:53,780 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:11:53,781 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:11:53,782 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:11:53,784 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:11:53,785 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:11:53,786 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:11:53,788 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:11:53,790 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:11:53,791 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:11:53,793 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: SelectableLabel - blue
+2018-03-08 22:11:53,794 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:11:53,796 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:11:53,798 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: WidgetBox - blue
+2018-03-08 22:11:53,799 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:11:53,801 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:11:53,802 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:11:53,803 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:11:53,805 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:11:53,806 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:11:53,807 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:11:53,809 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:11:53,810 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:11:53,811 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:11:53,813 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:11:53,814 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:11:53,815 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:11:53,816 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:11:53,818 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:11:53,819 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Entry - blue
+2018-03-08 22:11:53,820 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Entry - blue
+2018-03-08 22:11:53,821 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Entry - blue
+2018-03-08 22:11:53,822 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: ButtonBox - blue
+2018-03-08 22:11:53,824 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Entry - blue
+2018-03-08 22:11:53,825 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Button - blue
+2018-03-08 22:11:53,826 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: ButtonBox - blue
+2018-03-08 22:11:53,827 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Entry - blue
+2018-03-08 22:11:53,829 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Button - blue
+2018-03-08 22:11:53,830 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: AutoCompleteEntry - blue
+2018-03-08 22:11:53,831 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Entry - blue
+2018-03-08 22:11:53,832 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: LabelBox - blue
+2018-03-08 22:11:53,834 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Entry - blue
+2018-03-08 22:11:53,835 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Entry - blue
+2018-03-08 22:11:53,836 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Entry - blue
+2018-03-08 22:11:53,837 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Entry - blue
+2018-03-08 22:11:53,838 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: LabelBox - blue
+2018-03-08 22:11:53,839 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:11:53,841 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Entry - blue
+2018-03-08 22:11:53,842 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: LabelBox - blue
+2018-03-08 22:11:53,843 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:11:53,845 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Entry - blue
+2018-03-08 22:11:53,846 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: LabelBox - blue
+2018-03-08 22:11:53,847 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:11:53,848 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Entry - blue
+2018-03-08 22:11:53,850 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: LabelBox - blue
+2018-03-08 22:11:53,851 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:11:53,852 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: AutoCompleteEntry - blue
+2018-03-08 22:11:53,853 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Button - blue
+2018-03-08 22:11:53,855 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Button - blue
+2018-03-08 22:11:53,856 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: WidgetBox - blue
+2018-03-08 22:11:53,857 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Button - blue
+2018-03-08 22:11:53,858 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Button - blue
+2018-03-08 22:11:53,860 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Button - blue
+2018-03-08 22:11:53,861 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Button - blue
+2018-03-08 22:11:53,862 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: WidgetBox - blue
+2018-03-08 22:11:53,863 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Button - blue
+2018-03-08 22:11:53,865 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Button - blue
+2018-03-08 22:11:53,866 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Button - blue
+2018-03-08 22:11:53,867 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Button - blue
+2018-03-08 22:11:53,868 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Button - blue
+2018-03-08 22:11:53,870 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Button - blue
+2018-03-08 22:11:53,872 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Button - blue
+2018-03-08 22:11:53,873 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Button - blue
+2018-03-08 22:11:53,874 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Button - blue
+2018-03-08 22:11:53,875 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Button - blue
+2018-03-08 22:11:53,877 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Button - blue
+2018-03-08 22:11:53,878 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Button - blue
+2018-03-08 22:11:53,879 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: WidgetBox - blue
+2018-03-08 22:11:53,880 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Button - blue
+2018-03-08 22:11:53,882 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Button - blue
+2018-03-08 22:11:53,883 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Button - blue
+2018-03-08 22:11:53,884 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Button - blue
+2018-03-08 22:11:53,885 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Button - blue
+2018-03-08 22:11:53,886 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Button - blue
+2018-03-08 22:11:53,887 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Button - blue
+2018-03-08 22:11:53,888 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Button - blue
+2018-03-08 22:11:53,890 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Radiobutton - blue
+2018-03-08 22:11:53,891 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Radiobutton - blue
+2018-03-08 22:11:53,892 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Radiobutton - blue
+2018-03-08 22:11:53,893 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Radiobutton - blue
+2018-03-08 22:11:53,895 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Radiobutton - blue
+2018-03-08 22:11:53,896 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Radiobutton - blue
+2018-03-08 22:11:53,898 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Radiobutton - blue
+2018-03-08 22:11:53,899 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Checkbutton - blue
+2018-03-08 22:11:53,901 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Checkbutton - blue
+2018-03-08 22:11:53,902 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Checkbutton - blue
+2018-03-08 22:11:53,903 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Checkbutton - blue
+2018-03-08 22:11:53,904 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Checkbutton - blue
+2018-03-08 22:11:53,905 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Checkbutton - blue
+2018-03-08 22:11:53,907 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: ajOption - blue
+2018-03-08 22:11:53,908 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: ajOption - blue
+2018-03-08 22:11:53,909 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: ajOption - blue
+2018-03-08 22:11:53,911 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: ajOption - blue
+2018-03-08 22:11:53,912 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: ajOption - blue
+2018-03-08 22:11:53,913 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Spinbox - blue
+2018-03-08 22:11:53,914 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Spinbox - blue
+2018-03-08 22:11:53,916 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Spinbox - blue
+2018-03-08 22:11:53,917 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Spinbox - blue
+2018-03-08 22:11:53,918 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: ListBoxContainer - blue
+2018-03-08 22:11:53,919 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: ListBoxContainer - blue
+2018-03-08 22:11:53,920 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: ListBoxContainer - blue
+2018-03-08 22:11:53,921 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: ListBoxContainer - blue
+2018-03-08 22:11:53,922 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: ListBoxContainer - blue
+2018-03-08 22:11:53,923 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: AjScale - blue
+2018-03-08 22:11:53,925 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: AjScale - blue
+2018-03-08 22:11:53,926 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: AjScale - blue
+2018-03-08 22:11:53,927 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: AjScale - blue
+2018-03-08 22:11:53,928 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Message - blue
+2018-03-08 22:11:53,930 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Message - blue
+2018-03-08 22:11:53,931 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Message - blue
+2018-03-08 22:11:53,932 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Message - blue
+2018-03-08 22:11:53,933 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Message - blue
+2018-03-08 22:11:53,935 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: AjText - blue
+2018-03-08 22:11:53,936 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: AjText - blue
+2018-03-08 22:11:53,937 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Frame - blue
+2018-03-08 22:11:53,938 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Scrollbar - blue
+2018-03-08 22:11:53,940 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: AjScrolledText - blue
+2018-03-08 22:11:53,941 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Frame - blue
+2018-03-08 22:11:53,942 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Scrollbar - blue
+2018-03-08 22:11:53,943 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: AjScrolledText - blue
+2018-03-08 22:11:53,944 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Meter - blue
+2018-03-08 22:11:53,950 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: SplitMeter - blue
+2018-03-08 22:11:53,959 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: DualMeter - blue
+2018-03-08 22:11:53,963 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Properties - blue
+2018-03-08 22:11:53,965 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Properties - blue
+2018-03-08 22:11:53,967 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Label BG to red
+2018-03-08 22:11:53,969 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Label BG to red
+2018-03-08 22:11:53,970 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Label BG to red
+2018-03-08 22:11:53,971 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Label BG to red
+2018-03-08 22:11:53,972 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Label BG to red
+2018-03-08 22:11:53,974 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Label BG to red
+2018-03-08 22:11:53,975 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Label BG to red
+2018-03-08 22:11:53,976 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Label BG to red
+2018-03-08 22:11:53,978 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Label BG to red
+2018-03-08 22:11:53,979 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Label BG to red
+2018-03-08 22:11:53,981 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Label BG to red
+2018-03-08 22:11:53,982 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Label BG to red
+2018-03-08 22:11:53,984 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Label BG to red
+2018-03-08 22:11:53,985 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Label BG to red
+2018-03-08 22:11:53,986 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Label BG to red
+2018-03-08 22:11:53,987 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Label BG to red
+2018-03-08 22:11:53,989 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Label BG to red
+2018-03-08 22:11:53,990 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config SelectableLabel BG to red
+2018-03-08 22:11:53,991 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Label BG to red
+2018-03-08 22:11:53,993 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Label BG to red
+2018-03-08 22:11:53,994 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config WidgetBox BG to red
+2018-03-08 22:11:53,996 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Label BG to red
+2018-03-08 22:11:53,997 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Label BG to red
+2018-03-08 22:11:53,999 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Label BG to red
+2018-03-08 22:11:54,001 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Label BG to red
+2018-03-08 22:11:54,003 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Label BG to red
+2018-03-08 22:11:54,004 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Label BG to red
+2018-03-08 22:11:54,006 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Label BG to red
+2018-03-08 22:11:54,007 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Label BG to red
+2018-03-08 22:11:54,009 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Label BG to red
+2018-03-08 22:11:54,010 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Label BG to red
+2018-03-08 22:11:54,011 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Label BG to red
+2018-03-08 22:11:54,013 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Label BG to red
+2018-03-08 22:11:54,014 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Label BG to red
+2018-03-08 22:11:54,015 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Label BG to red
+2018-03-08 22:11:54,016 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Label BG to red
+2018-03-08 22:11:54,018 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Label BG to red
+2018-03-08 22:11:54,019 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Label BG to red
+2018-03-08 22:11:54,020 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Label BG to red
+2018-03-08 22:11:54,022 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Label BG to red
+2018-03-08 22:11:54,023 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Label BG to red
+2018-03-08 22:11:54,024 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Entry BG to red
+2018-03-08 22:11:54,025 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Entry BG to red
+2018-03-08 22:11:54,027 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Entry BG to red
+2018-03-08 22:11:54,028 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config ButtonBox BG to red
+2018-03-08 22:11:54,029 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Entry BG to red
+2018-03-08 22:11:54,031 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Button BG to red
+2018-03-08 22:11:54,033 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Entry BG to red
+2018-03-08 22:11:54,034 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Button BG to red
+2018-03-08 22:11:54,035 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config ButtonBox BG to red
+2018-03-08 22:11:54,037 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Entry BG to red
+2018-03-08 22:11:54,038 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Button BG to red
+2018-03-08 22:11:54,040 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Entry BG to red
+2018-03-08 22:11:54,042 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Button BG to red
+2018-03-08 22:11:54,043 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config AutoCompleteEntry BG to red
+2018-03-08 22:11:54,044 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Entry BG to red
+2018-03-08 22:11:54,045 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config LabelBox BG to red
+2018-03-08 22:11:54,047 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Entry BG to red
+2018-03-08 22:11:54,049 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config ValidationLabel BG to red
+2018-03-08 22:11:54,050 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config ValidationLabel BG to red
+2018-03-08 22:11:54,052 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Entry BG to red
+2018-03-08 22:11:54,053 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Entry BG to red
+2018-03-08 22:11:54,054 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Entry BG to red
+2018-03-08 22:11:54,055 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Entry BG to red
+2018-03-08 22:11:54,057 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config LabelBox BG to red
+2018-03-08 22:11:54,059 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Label BG to red
+2018-03-08 22:11:54,060 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Entry BG to red
+2018-03-08 22:11:54,062 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Label BG to red
+2018-03-08 22:11:54,063 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Entry BG to red
+2018-03-08 22:11:54,064 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config LabelBox BG to red
+2018-03-08 22:11:54,066 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Label BG to red
+2018-03-08 22:11:54,068 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Entry BG to red
+2018-03-08 22:11:54,069 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Label BG to red
+2018-03-08 22:11:54,071 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Entry BG to red
+2018-03-08 22:11:54,072 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config LabelBox BG to red
+2018-03-08 22:11:54,074 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Label BG to red
+2018-03-08 22:11:54,075 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Entry BG to red
+2018-03-08 22:11:54,077 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Label BG to red
+2018-03-08 22:11:54,078 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Entry BG to red
+2018-03-08 22:11:54,080 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config LabelBox BG to red
+2018-03-08 22:11:54,082 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Label BG to red
+2018-03-08 22:11:54,083 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config AutoCompleteEntry BG to red
+2018-03-08 22:11:54,085 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Label BG to red
+2018-03-08 22:11:54,086 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config AutoCompleteEntry BG to red
+2018-03-08 22:11:54,087 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Button BG to red
+2018-03-08 22:11:54,089 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Button BG to red
+2018-03-08 22:11:54,090 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config WidgetBox BG to red
+2018-03-08 22:11:54,092 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Button BG to red
+2018-03-08 22:11:54,094 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Button BG to red
+2018-03-08 22:11:54,096 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Button BG to red
+2018-03-08 22:11:54,098 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Button BG to red
+2018-03-08 22:11:54,099 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Button BG to red
+2018-03-08 22:11:54,102 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Button BG to red
+2018-03-08 22:11:54,103 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Button BG to red
+2018-03-08 22:11:54,104 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Button BG to red
+2018-03-08 22:11:54,106 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config WidgetBox BG to red
+2018-03-08 22:11:54,107 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Button BG to red
+2018-03-08 22:11:54,109 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Button BG to red
+2018-03-08 22:11:54,111 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Button BG to red
+2018-03-08 22:11:54,112 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Button BG to red
+2018-03-08 22:11:54,115 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Button BG to red
+2018-03-08 22:11:54,116 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Button BG to red
+2018-03-08 22:11:54,118 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Button BG to red
+2018-03-08 22:11:54,120 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Button BG to red
+2018-03-08 22:11:54,121 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Button BG to red
+2018-03-08 22:11:54,123 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Button BG to red
+2018-03-08 22:11:54,124 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Button BG to red
+2018-03-08 22:11:54,126 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Button BG to red
+2018-03-08 22:11:54,127 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Button BG to red
+2018-03-08 22:11:54,129 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Button BG to red
+2018-03-08 22:11:54,130 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Button BG to red
+2018-03-08 22:11:54,132 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Button BG to red
+2018-03-08 22:11:54,133 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Button BG to red
+2018-03-08 22:11:54,135 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Button BG to red
+2018-03-08 22:11:54,136 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Button BG to red
+2018-03-08 22:11:54,138 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Button BG to red
+2018-03-08 22:11:54,140 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Button BG to red
+2018-03-08 22:11:54,141 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Button BG to red
+2018-03-08 22:11:54,143 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Button BG to red
+2018-03-08 22:11:54,145 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Button BG to red
+2018-03-08 22:11:54,146 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config WidgetBox BG to red
+2018-03-08 22:11:54,147 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Button BG to red
+2018-03-08 22:11:54,149 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Button BG to red
+2018-03-08 22:11:54,150 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Button BG to red
+2018-03-08 22:11:54,152 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Button BG to red
+2018-03-08 22:11:54,153 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Button BG to red
+2018-03-08 22:11:54,154 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Button BG to red
+2018-03-08 22:11:54,155 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Button BG to red
+2018-03-08 22:11:54,158 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Button BG to red
+2018-03-08 22:11:54,159 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Button BG to red
+2018-03-08 22:11:54,161 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Button BG to red
+2018-03-08 22:11:54,163 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Radiobutton BG to red
+2018-03-08 22:11:54,165 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Radiobutton BG to red
+2018-03-08 22:11:54,166 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Radiobutton BG to red
+2018-03-08 22:11:54,168 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Radiobutton BG to red
+2018-03-08 22:11:54,169 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Radiobutton BG to red
+2018-03-08 22:11:54,170 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Radiobutton BG to red
+2018-03-08 22:11:54,172 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Radiobutton BG to red
+2018-03-08 22:11:54,173 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Checkbutton BG to red
+2018-03-08 22:11:54,175 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Checkbutton BG to red
+2018-03-08 22:11:54,176 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Checkbutton BG to red
+2018-03-08 22:11:54,177 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Checkbutton BG to red
+2018-03-08 22:11:54,179 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Checkbutton BG to red
+2018-03-08 22:11:54,180 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Checkbutton BG to red
+2018-03-08 22:11:54,182 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config ajOption BG to red
+2018-03-08 22:11:54,183 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config ajOption BG to red
+2018-03-08 22:11:54,185 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config ajOption BG to red
+2018-03-08 22:11:54,186 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config ajOption BG to red
+2018-03-08 22:11:54,187 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config ajOption BG to red
+2018-03-08 22:11:54,189 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Spinbox BG to red
+2018-03-08 22:11:54,190 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Spinbox BG to red
+2018-03-08 22:11:54,191 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Spinbox BG to red
+2018-03-08 22:11:54,192 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Spinbox BG to red
+2018-03-08 22:11:54,193 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config ListBoxContainer BG to red
+2018-03-08 22:11:54,195 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Listbox BG to red
+2018-03-08 22:11:54,196 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config ListBoxContainer BG to red
+2018-03-08 22:11:54,198 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Listbox BG to red
+2018-03-08 22:11:54,199 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config ListBoxContainer BG to red
+2018-03-08 22:11:54,200 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Listbox BG to red
+2018-03-08 22:11:54,201 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config ListBoxContainer BG to red
+2018-03-08 22:11:54,203 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Listbox BG to red
+2018-03-08 22:11:54,204 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config ListBoxContainer BG to red
+2018-03-08 22:11:54,205 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Listbox BG to red
+2018-03-08 22:11:54,206 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config AjScale BG to red
+2018-03-08 22:11:54,207 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config AjScale BG to red
+2018-03-08 22:11:54,209 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config AjScale BG to red
+2018-03-08 22:11:54,210 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config AjScale BG to red
+2018-03-08 22:11:54,211 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Message BG to red
+2018-03-08 22:11:54,212 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Message BG to red
+2018-03-08 22:11:54,214 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Message BG to red
+2018-03-08 22:11:54,215 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Message BG to red
+2018-03-08 22:11:54,216 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Message BG to red
+2018-03-08 22:11:54,218 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config AjText BG to red
+2018-03-08 22:11:54,220 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config AjText BG to red
+2018-03-08 22:11:54,221 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config AjScrolledText BG to red
+2018-03-08 22:11:54,223 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config AjScrolledText BG to red
+2018-03-08 22:11:54,224 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Meter BG to red
+2018-03-08 22:11:54,225 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config SplitMeter BG to red
+2018-03-08 22:11:54,227 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config DualMeter BG to red
+2018-03-08 22:11:54,228 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Properties BG to red
+2018-03-08 22:11:54,230 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Checkbutton BG to red
+2018-03-08 22:11:54,233 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Checkbutton BG to red
+2018-03-08 22:11:54,235 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Checkbutton BG to red
+2018-03-08 22:11:54,236 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Properties BG to red
+2018-03-08 22:11:54,238 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Checkbutton BG to red
+2018-03-08 22:11:54,240 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Checkbutton BG to red
+2018-03-08 22:11:54,242 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Checkbutton BG to red
+2018-03-08 22:11:54,294 appJar:INFO: [Line 2819->1528/setLogLevel]: Log level changed to: debug
+2018-03-08 22:11:54,295 appJar:INFO: [Line 2821->1528/setLogLevel]: Log level changed to: trace
+2018-03-08 22:21:15,531 appJar:INFO: [Line 2660->1512/setLogFile]: Switched to logFile: aaa.txt
+2018-03-08 22:21:15,541 appJar:TRACE: [Line 2660->1197/changeLanguage]: Loading language file: FRENCH.ini
+2018-03-08 22:21:15,547 appJar:TRACE: [Line 2660->1220/changeLanguage]: Switching to: french
+2018-03-08 22:21:15,548 appJar:TRACE: [Line 2660->1228/changeLanguage]: 	Section: TITLE
+2018-03-08 22:21:15,550 appJar:WARNING: [Line 2660->1491/changeLanguage]: Unsupported widget: TITLE
+2018-03-08 22:21:15,551 appJar:TRACE: [Line 2660->1228/changeLanguage]: 	Section: LABEL
+2018-03-08 22:21:15,553 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		lay1: l_one_x
+2018-03-08 22:21:15,554 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		lay2: l_one_x
+2018-03-08 22:21:15,555 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		lay3: l_one_x
+2018-03-08 22:21:15,557 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		lay4: l_one_x
+2018-03-08 22:21:15,558 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		lay5: l_one_x
+2018-03-08 22:21:15,560 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		lay6: l_one_x
+2018-03-08 22:21:15,561 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		lay7: l_one_x
+2018-03-08 22:21:15,562 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		lay8: l_one_x
+2018-03-08 22:21:15,564 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		lay9: l_one_x
+2018-03-08 22:21:15,571 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		lay11: l_one_x
+2018-03-08 22:21:15,573 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		lay12: l_one_x
+2018-03-08 22:21:15,575 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		el1: bbb
+2018-03-08 22:21:15,576 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		l0: l_one_x
+2018-03-08 22:21:15,578 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		l1: aaa
+2018-03-08 22:21:15,580 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		rowl1: l_one_x
+2018-03-08 22:21:15,581 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		fl1: ccc
+2018-03-08 22:21:15,582 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		sl1: l_one_x
+2018-03-08 22:21:15,586 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		nl1: nl1
+2018-03-08 22:21:15,590 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		nl2: nl2
+2018-03-08 22:21:15,592 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		a: a
+2018-03-08 22:21:15,593 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		b: b
+2018-03-08 22:21:15,595 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		c: c
+2018-03-08 22:21:15,596 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		d: d
+2018-03-08 22:21:15,597 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		e: e
+2018-03-08 22:21:15,599 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		xx1: xx1
+2018-03-08 22:21:15,600 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		xx2: xx2
+2018-03-08 22:21:15,603 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		xx3: xx3
+2018-03-08 22:21:15,604 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		xx4: xx4
+2018-03-08 22:21:15,606 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		xx5: xx5
+2018-03-08 22:21:15,607 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		xx6: xx6
+2018-03-08 22:21:15,608 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		xx7: xx7
+2018-03-08 22:21:15,610 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		xx8: xx8
+2018-03-08 22:21:15,611 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		xx9: xx9
+2018-03-08 22:21:15,612 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		xx0: xx0
+2018-03-08 22:21:15,614 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		le1: le1
+2018-03-08 22:21:15,615 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		lne1: lne1
+2018-03-08 22:21:15,617 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		lse1: lse1
+2018-03-08 22:21:15,619 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		lae1: lae1
+2018-03-08 22:21:15,621 appJar:TRACE: [Line 2660->1228/changeLanguage]: 	Section: ENTRY
+2018-03-08 22:21:15,622 appJar:TRACE: [Line 2660->1426/changeLanguage]: 		e1: aaa
+2018-03-08 22:21:15,624 appJar:TRACE: [Line 2660->13906/__init__]: PauseCallFunction: callFunction=False, useVar=False
+2018-03-08 22:21:15,626 appJar:TRACE: [Line 2660->13911/__enter__]: callFunction paused
+2018-03-08 22:21:15,628 appJar:TRACE: [Line 2660->13916/__exit__]: callFunction resumed
+2018-03-08 22:21:15,630 appJar:TRACE: [Line 2660->1426/changeLanguage]: 		ne1: bbb
+2018-03-08 22:21:15,632 appJar:TRACE: [Line 2660->13906/__init__]: PauseCallFunction: callFunction=False, useVar=False
+2018-03-08 22:21:15,634 appJar:TRACE: [Line 2660->13911/__enter__]: callFunction paused
+2018-03-08 22:21:15,636 appJar:TRACE: [Line 2660->13916/__exit__]: callFunction resumed
+2018-03-08 22:21:15,637 appJar:TRACE: [Line 2660->1426/changeLanguage]: 		se1: l_one_z
+2018-03-08 22:21:15,639 appJar:TRACE: [Line 2660->13906/__init__]: PauseCallFunction: callFunction=False, useVar=False
+2018-03-08 22:21:15,640 appJar:TRACE: [Line 2660->1426/changeLanguage]: 		fe1: -- enter a filename --
+2018-03-08 22:21:15,642 appJar:TRACE: [Line 2660->13906/__init__]: PauseCallFunction: callFunction=False, useVar=False
+2018-03-08 22:21:15,644 appJar:TRACE: [Line 2660->1426/changeLanguage]: 		de1: -- enter a directory --
+2018-03-08 22:21:15,645 appJar:TRACE: [Line 2660->13906/__init__]: PauseCallFunction: callFunction=False, useVar=False
+2018-03-08 22:21:15,647 appJar:TRACE: [Line 2660->1426/changeLanguage]: 		ae1: l_one_a
+2018-03-08 22:21:15,649 appJar:TRACE: [Line 2660->13906/__init__]: PauseCallFunction: callFunction=False, useVar=False
+2018-03-08 22:21:15,651 appJar:TRACE: [Line 2660->1426/changeLanguage]: 		focusEnt: 
+2018-03-08 22:21:15,652 appJar:TRACE: [Line 2660->1426/changeLanguage]: 		ve1: 
+2018-03-08 22:21:15,654 appJar:TRACE: [Line 2660->1426/changeLanguage]: 		tester: l_one_y
+2018-03-08 22:21:15,656 appJar:TRACE: [Line 2660->13906/__init__]: PauseCallFunction: callFunction=False, useVar=False
+2018-03-08 22:21:15,657 appJar:TRACE: [Line 2660->1426/changeLanguage]: 		tester2: l_one_y
+2018-03-08 22:21:15,659 appJar:TRACE: [Line 2660->13906/__init__]: PauseCallFunction: callFunction=False, useVar=False
+2018-03-08 22:21:15,661 appJar:TRACE: [Line 2660->1426/changeLanguage]: 		tester3: l_one_z
+2018-03-08 22:21:15,663 appJar:TRACE: [Line 2660->13906/__init__]: PauseCallFunction: callFunction=False, useVar=False
+2018-03-08 22:21:15,664 appJar:TRACE: [Line 2660->1426/changeLanguage]: 		le1: l_one_y
+2018-03-08 22:21:15,666 appJar:TRACE: [Line 2660->13906/__init__]: PauseCallFunction: callFunction=False, useVar=False
+2018-03-08 22:21:15,668 appJar:TRACE: [Line 2660->1426/changeLanguage]: 		lne1: 33221
+2018-03-08 22:21:15,669 appJar:TRACE: [Line 2660->13906/__init__]: PauseCallFunction: callFunction=False, useVar=False
+2018-03-08 22:21:15,671 appJar:TRACE: [Line 2660->1426/changeLanguage]: 		lse1: l_one_z
+2018-03-08 22:21:15,673 appJar:TRACE: [Line 2660->13906/__init__]: PauseCallFunction: callFunction=False, useVar=False
+2018-03-08 22:21:15,674 appJar:TRACE: [Line 2660->1426/changeLanguage]: 		lae1: l_one_a
+2018-03-08 22:21:15,676 appJar:TRACE: [Line 2660->13906/__init__]: PauseCallFunction: callFunction=False, useVar=False
+2018-03-08 22:21:15,678 appJar:TRACE: [Line 2660->1228/changeLanguage]: 	Section: SCALE
+2018-03-08 22:21:15,679 appJar:WARNING: [Line 2660->1273/changeLanguage]: No text is displayed in SCALE. Maybe it has a Label?
+2018-03-08 22:21:15,680 appJar:TRACE: [Line 2660->1228/changeLanguage]: 	Section: TEXTAREA
+2018-03-08 22:21:15,681 appJar:WARNING: [Line 2660->1276/changeLanguage]: No text is displayed in TEXTAREA
+2018-03-08 22:21:15,683 appJar:TRACE: [Line 2660->1228/changeLanguage]: 	Section: METER
+2018-03-08 22:21:15,684 appJar:WARNING: [Line 2660->1276/changeLanguage]: No text is displayed in METER
+2018-03-08 22:21:15,685 appJar:TRACE: [Line 2660->1228/changeLanguage]: 	Section: SPINBOX
+2018-03-08 22:21:15,688 appJar:WARNING: [Line 2660->6728/changeSpinBox]: Can't convert s3 RangeSpinBox to SpinBox
+2018-03-08 22:21:15,690 appJar:WARNING: [Line 2660->6728/changeSpinBox]: Can't convert s4 RangeSpinBox to SpinBox
+2018-03-08 22:21:15,692 appJar:TRACE: [Line 2660->1228/changeLanguage]: 	Section: OPTIONBOX
+2018-03-08 22:21:15,694 appJar:WARNING: [Line 2660->6097/changeOptionBox]: The new options are wider then the old ones: 6 > 4
+2018-03-08 22:21:15,696 appJar:TRACE: [Line 2660->13906/__init__]: PauseCallFunction: callFunction=False, useVar=True
+2018-03-08 22:21:15,698 appJar:TRACE: [Line 2660->13911/__enter__]: callFunction paused
+2018-03-08 22:21:15,700 appJar:TRACE: [Line 2660->13916/__exit__]: callFunction resumed
+2018-03-08 22:21:15,702 appJar:TRACE: [Line 2660->6225/setOptionBox]: Updating regular optionBox: l1 at: None to: True
+2018-03-08 22:21:15,704 appJar:TRACE: [Line 2660->6240/setOptionBox]: --> index now: 0
+2018-03-08 22:21:15,705 appJar:TRACE: [Line 2660->6251/setOptionBox]: Updating: OptionBox: l1 to: 0
+2018-03-08 22:21:15,707 appJar:TRACE: [Line 2660->13906/__init__]: PauseCallFunction: callFunction=False, useVar=True
+2018-03-08 22:21:15,709 appJar:TRACE: [Line 2660->13911/__enter__]: callFunction paused
+2018-03-08 22:21:15,711 appJar:TRACE: [Line 2660->6262/setOptionBox]: Invoked item: 0
+2018-03-08 22:21:15,713 appJar:TRACE: [Line 2660->13916/__exit__]: callFunction resumed
+2018-03-08 22:21:15,714 appJar:WARNING: [Line 2660->6097/changeOptionBox]: The new options are wider then the old ones: 6 > 4
+2018-03-08 22:21:15,717 appJar:TRACE: [Line 2660->13906/__init__]: PauseCallFunction: callFunction=False, useVar=True
+2018-03-08 22:21:15,719 appJar:TRACE: [Line 2660->6225/setOptionBox]: Updating regular optionBox: l2 at: None to: True
+2018-03-08 22:21:15,720 appJar:TRACE: [Line 2660->6240/setOptionBox]: --> index now: 0
+2018-03-08 22:21:15,728 appJar:TRACE: [Line 2660->6251/setOptionBox]: Updating: OptionBox: l2 to: 0
+2018-03-08 22:21:15,730 appJar:TRACE: [Line 2660->13906/__init__]: PauseCallFunction: callFunction=False, useVar=True
+2018-03-08 22:21:15,735 appJar:TRACE: [Line 2660->6262/setOptionBox]: Invoked item: 0
+2018-03-08 22:21:15,738 appJar:TRACE: [Line 2660->6187/setOptionBox]: Updating tickOptionBox
+2018-03-08 22:21:15,740 appJar:TRACE: [Line 2660->6190/setOptionBox]: Index empty - nothing to update
+2018-03-08 22:21:15,746 appJar:TRACE: [Line 2660->6187/setOptionBox]: Updating tickOptionBox
+2018-03-08 22:21:15,748 appJar:TRACE: [Line 2660->6190/setOptionBox]: Index empty - nothing to update
+2018-03-08 22:21:15,751 appJar:TRACE: [Line 2660->13906/__init__]: PauseCallFunction: callFunction=False, useVar=True
+2018-03-08 22:21:15,754 appJar:TRACE: [Line 2660->6225/setOptionBox]: Updating regular optionBox: l3 at: None to: True
+2018-03-08 22:21:15,756 appJar:TRACE: [Line 2660->6240/setOptionBox]: --> index now: 0
+2018-03-08 22:21:15,757 appJar:TRACE: [Line 2660->6251/setOptionBox]: Updating: OptionBox: l3 to: 0
+2018-03-08 22:21:15,759 appJar:TRACE: [Line 2660->13906/__init__]: PauseCallFunction: callFunction=False, useVar=True
+2018-03-08 22:21:15,760 appJar:TRACE: [Line 2660->6255/setOptionBox]: Setting OptionBox: l3 to disabled option: 0
+2018-03-08 22:21:15,762 appJar:TRACE: [Line 2660->1228/changeLanguage]: 	Section: LISTBOX
+2018-03-08 22:21:15,764 appJar:TRACE: [Line 2660->1228/changeLanguage]: 	Section: RADIOBUTTON
+2018-03-08 22:21:15,766 appJar:TRACE: [Line 2660->1346/changeLanguage]: 		rb: aaa
+2018-03-08 22:21:15,767 appJar:WARNING: [Line 2660->1349/changeLanguage]: Invalid RADIOBUTTON key: rb
+2018-03-08 22:21:15,769 appJar:TRACE: [Line 2660->1228/changeLanguage]: 	Section: PIECHART
+2018-03-08 22:21:15,771 appJar:WARNING: [Line 2660->1276/changeLanguage]: No text is displayed in PIECHART
+2018-03-08 22:21:15,772 appJar:TRACE: [Line 2660->1228/changeLanguage]: 	Section: CHECKBOX
+2018-03-08 22:21:15,774 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		l_one_x: aaa
+2018-03-08 22:21:15,776 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		l_one_y: l_one_y
+2018-03-08 22:21:15,777 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		l_one_z: l_one_z
+2018-03-08 22:21:15,779 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		NCB1: l_one_y
+2018-03-08 22:21:15,780 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		NCB2: l_one_y
+2018-03-08 22:21:15,781 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		NCB3: l_one_y
+2018-03-08 22:21:15,783 appJar:TRACE: [Line 2660->1228/changeLanguage]: 	Section: MESSAGE
+2018-03-08 22:21:15,784 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		m1: l_one_x
+2018-03-08 22:21:15,786 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		m2: aaa
+2018-03-08 22:21:15,787 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		m3: 
+2018-03-08 22:21:15,788 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		m4: 
+2018-03-08 22:21:15,790 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		l_one_y: l_one_y
+2018-03-08 22:21:15,791 appJar:TRACE: [Line 2660->1228/changeLanguage]: 	Section: LINK
+2018-03-08 22:21:15,793 appJar:TRACE: [Line 2660->1228/changeLanguage]: 	Section: BUTTON
+2018-03-08 22:21:15,794 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		b1_func: b1_func
+2018-03-08 22:21:15,796 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		b1: bbb
+2018-03-08 22:21:15,800 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		bb1: bbb
+2018-03-08 22:21:15,805 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		bb2: bbb
+2018-03-08 22:21:15,807 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		bb3: bb3
+2018-03-08 22:21:15,809 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		bb4: bb4
+2018-03-08 22:21:15,811 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		a2b1: a2b1
+2018-03-08 22:21:15,812 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		a2b2: a2b2
+2018-03-08 22:21:15,814 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		a2b3: a2b3
+2018-03-08 22:21:15,815 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		a2b4: a2b4
+2018-03-08 22:21:15,817 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		b2b1: b2b1
+2018-03-08 22:21:15,818 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		b2b2: b2b2
+2018-03-08 22:21:15,823 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		b2b3: b2b3
+2018-03-08 22:21:15,824 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		b2b4: b2b4
+2018-03-08 22:21:15,826 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		c2b1: c2b1
+2018-03-08 22:21:15,827 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		c2b2: c2b2
+2018-03-08 22:21:15,829 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		c2b3: c2b3
+2018-03-08 22:21:15,830 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		c2b4: c2b4
+2018-03-08 22:21:15,832 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		bl1: bl1
+2018-03-08 22:21:15,833 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		bl2: bl2
+2018-03-08 22:21:15,835 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		NO PARAM: NO PARAM
+2018-03-08 22:21:15,837 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		nb1: butName
+2018-03-08 22:21:15,838 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		ib1: ib1
+2018-03-08 22:21:15,840 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		ib2: ib2
+2018-03-08 22:21:15,842 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		ib1a: ib1a
+2018-03-08 22:21:15,844 appJar:TRACE: [Line 2660->1460/changeLanguage]: 		ib2a: ib2a
+2018-03-08 22:21:15,846 appJar:TRACE: [Line 2660->1228/changeLanguage]: 	Section: LABELFRAME
+2018-03-08 22:21:15,847 appJar:TRACE: [Line 2660->1228/changeLanguage]: 	Section: UNKNOWN
+2018-03-08 22:21:15,849 appJar:WARNING: [Line 2660->1265/changeLanguage]: Invalid config section: UNKNOWN
+2018-03-08 22:21:15,850 appJar:TRACE: [Line 2660->1228/changeLanguage]: 	Section: RB
+2018-03-08 22:21:15,851 appJar:WARNING: [Line 2660->1265/changeLanguage]: Invalid config section: RB
+2018-03-08 22:21:15,853 appJar:TRACE: [Line 2660->1228/changeLanguage]: 	Section: TABBEDFRAME
+2018-03-08 22:21:15,854 appJar:TRACE: [Line 2660->1363/changeLanguage]: 		tbf1-tab1: new name 1
+2018-03-08 22:21:15,855 appJar:WARNING: [Line 2660->1371/changeLanguage]: Invalid TABBEDFRAME: tbf1 with TAB: tab1
+2018-03-08 22:21:15,857 appJar:TRACE: [Line 2660->1363/changeLanguage]: 		tbf1-tab2: new name 2
+2018-03-08 22:21:15,858 appJar:WARNING: [Line 2660->1371/changeLanguage]: Invalid TABBEDFRAME: tbf1 with TAB: tab2
+2018-03-08 22:21:15,859 appJar:TRACE: [Line 2660->1363/changeLanguage]: 		tbf1-tab3: new name 3
+2018-03-08 22:21:15,861 appJar:WARNING: [Line 2660->1371/changeLanguage]: Invalid TABBEDFRAME: tbf1 with TAB: tab3
+2018-03-08 22:21:15,862 appJar:TRACE: [Line 2660->1363/changeLanguage]: 		tbf1-tab4: new name 4
+2018-03-08 22:21:15,863 appJar:WARNING: [Line 2660->1371/changeLanguage]: Invalid TABBEDFRAME: tbf1 with TAB: tab4
+2018-03-08 22:21:15,864 appJar:TRACE: [Line 2660->1363/changeLanguage]: 		tbf1-tabx: new name 4
+2018-03-08 22:21:15,866 appJar:WARNING: [Line 2660->1371/changeLanguage]: Invalid TABBEDFRAME: tbf1 with TAB: tabx
+2018-03-08 22:21:15,867 appJar:TRACE: [Line 2660->1363/changeLanguage]: 		tbf7-tabx: new name 4
+2018-03-08 22:21:15,868 appJar:WARNING: [Line 2660->1371/changeLanguage]: Invalid TABBEDFRAME: tbf7 with TAB: tabx
+2018-03-08 22:21:15,870 appJar:TRACE: [Line 2660->1228/changeLanguage]: 	Section: PROPERTIES
+2018-03-08 22:21:15,871 appJar:TRACE: [Line 2660->1375/changeLanguage]: 		p1-a: aaa
+2018-03-08 22:21:15,873 appJar:TRACE: [Line 2660->1375/changeLanguage]: 		p1-b: bbb
+2018-03-08 22:21:15,874 appJar:TRACE: [Line 2660->1375/changeLanguage]: 		p1-c: ccc
+2018-03-08 22:21:15,875 appJar:TRACE: [Line 2660->1375/changeLanguage]: 		p1-xxx_unknown: ccc
+2018-03-08 22:21:15,877 appJar:WARNING: [Line 2660->11791/renameProperty]: Unknown property: xxx_unknown
+2018-03-08 22:21:15,878 appJar:TRACE: [Line 2660->1375/changeLanguage]: 		p7-k: nothing here
+2018-03-08 22:21:15,879 appJar:WARNING: [Line 2660->1383/changeLanguage]: Invalid PROPERTIES: p7
+2018-03-08 22:21:15,881 appJar:TRACE: [Line 2660->1228/changeLanguage]: 	Section: CONFIG
+2018-03-08 22:21:15,882 appJar:TRACE: [Line 2660->1233/changeLanguage]: 	Skipping CONFIG
+2018-03-08 22:21:15,883 appJar:TRACE: [Line 2660->1228/changeLanguage]: 	Section: TOOLBAR
+2018-03-08 22:21:15,885 appJar:TRACE: [Line 2660->1228/changeLanguage]: 	Section: GRID
+2018-03-08 22:21:15,886 appJar:WARNING: [Line 2660->1265/changeLanguage]: Invalid config section: GRID
+2018-03-08 22:21:15,887 appJar:TRACE: [Line 2660->1228/changeLanguage]: 	Section: PAGEDWINDOW
+2018-03-08 22:21:15,889 appJar:WARNING: [Line 2660->1491/changeLanguage]: Unsupported widget: PAGEDWINDOW
+2018-03-08 22:21:15,890 appJar:TRACE: [Line 2660->1228/changeLanguage]: 	Section: TOOLTIP-LABEL
+2018-03-08 22:21:15,892 appJar:TRACE: [Line 2660->1482/changeLanguage]: Parsing TOOLTIPs for: Label
+2018-03-08 22:21:15,895 appJar:TRACE: [Line 2660->2832/configureWidget]: Configuring: l1 of 0 with tooltip of new tooltip
+2018-03-08 22:21:15,898 appJar:TRACE: [Line 2660->2832/configureWidget]: Configuring: l2 of 0 with tooltip of new tooltip
+2018-03-08 22:21:15,899 appJar:WARNING: [Line 2660->1488/changeLanguage]: Invalid TOOLTIP for: Label, with key: l2
+2018-03-08 22:21:15,901 appJar:TRACE: [Line 2660->1228/changeLanguage]: 	Section: TOOLTIP-ENTRY
+2018-03-08 22:21:15,902 appJar:TRACE: [Line 2660->1482/changeLanguage]: Parsing TOOLTIPs for: Entry
+2018-03-08 22:21:15,906 appJar:TRACE: [Line 2660->2832/configureWidget]: Configuring: e1 of 2 with tooltip of new tooltip
+2018-03-08 22:21:15,909 appJar:TRACE: [Line 2660->2832/configureWidget]: Configuring: ne2 of 2 with tooltip of new tooltip
+2018-03-08 22:21:15,910 appJar:WARNING: [Line 2660->1488/changeLanguage]: Invalid TOOLTIP for: Entry, with key: ne2
+2018-03-08 22:21:15,913 appJar:TRACE: [Line 2660->2832/configureWidget]: Configuring: e3 of 2 with tooltip of new tooltip
+2018-03-08 22:21:15,914 appJar:WARNING: [Line 2660->1488/changeLanguage]: Invalid TOOLTIP for: Entry, with key: e3
+2018-03-08 22:21:15,916 appJar:TRACE: [Line 2660->1228/changeLanguage]: 	Section: IMAGE
+2018-03-08 22:21:15,917 appJar:TRACE: [Line 2660->1228/changeLanguage]: 	Section: SOUND
+2018-03-08 22:21:15,918 appJar:TRACE: [Line 2660->1244/changeLanguage]: 		erro1.wav: error2.wav
+2018-03-08 22:21:15,919 appJar:TRACE: [Line 2660->1244/changeLanguage]: 		error3.wav: error4.wav
+2018-03-08 22:21:15,921 appJar:TRACE: [Line 2660->1228/changeLanguage]: 	Section: MENUBAR
+2018-03-08 22:21:15,922 appJar:TRACE: [Line 2660->1249/changeLanguage]: 		['MEN2']: F_MEN2
+2018-03-08 22:21:15,923 appJar:WARNING: [Line 2660->1254/changeLanguage]: Invalid key
+2018-03-08 22:21:15,924 appJar:TRACE: [Line 2660->1249/changeLanguage]: 		['MEN2', 'MM2']: F_MM2
+2018-03-08 22:21:15,926 appJar:WARNING: [Line 2660->1259/changeLanguage]: Invalid key
+2018-03-08 22:21:15,927 appJar:TRACE: [Line 2660->1228/changeLanguage]: 	Section: EXTERNAL
+2018-03-08 22:21:15,928 appJar:TRACE: [Line 2660->1244/changeLanguage]: 		this: that
+2018-03-08 22:21:15,930 appJar:TRACE: [Line 2660->1228/changeLanguage]: 	Section: POPUP
+2018-03-08 22:21:15,931 appJar:TRACE: [Line 2660->1244/changeLanguage]: 		POP_NUM: ['Confirmation Popup', 'Press the button please.']
+2018-03-08 22:21:15,932 appJar:TRACE: [Line 2660->1244/changeLanguage]: 		POP_TEXT: ['Other Popup', 'Press cancel.']
+2018-03-08 22:21:15,954 appJar:TRACE: [Line 2727->2242/setLocation]: Setting location to: 300, 300
+2018-03-08 22:21:15,955 appJar:TRACE: [Line 2729->2229/setLocation]: Set location called with no params - CENTERING
+2018-03-08 22:21:16,042 appJar:TRACE: [Line 2729->315/CENTER]: Screen: 1280x800. Requested: 377x399. Location: 452, 190
+2018-03-08 22:21:16,131 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Frame - blue
+2018-03-08 22:21:16,134 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:21:16,136 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:21:16,137 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:21:16,139 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:21:16,140 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:21:16,142 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:21:16,143 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:21:16,145 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:21:16,146 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:21:16,147 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:21:16,149 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:21:16,150 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:21:16,152 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:21:16,153 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:21:16,154 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:21:16,156 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:21:16,157 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:21:16,159 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: SelectableLabel - blue
+2018-03-08 22:21:16,160 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:21:16,161 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:21:16,163 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: WidgetBox - blue
+2018-03-08 22:21:16,164 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:21:16,166 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:21:16,167 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:21:16,169 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:21:16,170 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:21:16,172 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:21:16,173 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:21:16,175 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:21:16,176 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:21:16,177 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:21:16,179 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:21:16,180 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:21:16,182 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:21:16,183 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:21:16,184 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:21:16,186 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Entry - blue
+2018-03-08 22:21:16,187 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Entry - blue
+2018-03-08 22:21:16,188 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Entry - blue
+2018-03-08 22:21:16,190 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: ButtonBox - blue
+2018-03-08 22:21:16,192 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Entry - blue
+2018-03-08 22:21:16,193 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Button - blue
+2018-03-08 22:21:16,195 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: ButtonBox - blue
+2018-03-08 22:21:16,197 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Entry - blue
+2018-03-08 22:21:16,199 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Button - blue
+2018-03-08 22:21:16,200 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: AutoCompleteEntry - blue
+2018-03-08 22:21:16,202 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Entry - blue
+2018-03-08 22:21:16,204 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: LabelBox - blue
+2018-03-08 22:21:16,205 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Entry - blue
+2018-03-08 22:21:16,207 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Entry - blue
+2018-03-08 22:21:16,208 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Entry - blue
+2018-03-08 22:21:16,209 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Entry - blue
+2018-03-08 22:21:16,210 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: LabelBox - blue
+2018-03-08 22:21:16,212 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:21:16,213 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Entry - blue
+2018-03-08 22:21:16,215 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: LabelBox - blue
+2018-03-08 22:21:16,216 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:21:16,218 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Entry - blue
+2018-03-08 22:21:16,219 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: LabelBox - blue
+2018-03-08 22:21:16,220 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:21:16,222 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Entry - blue
+2018-03-08 22:21:16,223 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: LabelBox - blue
+2018-03-08 22:21:16,225 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:21:16,226 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: AutoCompleteEntry - blue
+2018-03-08 22:21:16,228 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Button - blue
+2018-03-08 22:21:16,229 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Button - blue
+2018-03-08 22:21:16,230 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: WidgetBox - blue
+2018-03-08 22:21:16,232 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Button - blue
+2018-03-08 22:21:16,233 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Button - blue
+2018-03-08 22:21:16,235 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Button - blue
+2018-03-08 22:21:16,236 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Button - blue
+2018-03-08 22:21:16,237 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: WidgetBox - blue
+2018-03-08 22:21:16,239 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Button - blue
+2018-03-08 22:21:16,240 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Button - blue
+2018-03-08 22:21:16,242 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Button - blue
+2018-03-08 22:21:16,243 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Button - blue
+2018-03-08 22:21:16,244 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Button - blue
+2018-03-08 22:21:16,246 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Button - blue
+2018-03-08 22:21:16,247 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Button - blue
+2018-03-08 22:21:16,249 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Button - blue
+2018-03-08 22:21:16,250 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Button - blue
+2018-03-08 22:21:16,251 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Button - blue
+2018-03-08 22:21:16,253 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Button - blue
+2018-03-08 22:21:16,254 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Button - blue
+2018-03-08 22:21:16,256 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: WidgetBox - blue
+2018-03-08 22:21:16,257 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Button - blue
+2018-03-08 22:21:16,259 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Button - blue
+2018-03-08 22:21:16,260 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Button - blue
+2018-03-08 22:21:16,261 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Button - blue
+2018-03-08 22:21:16,262 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Button - blue
+2018-03-08 22:21:16,264 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Button - blue
+2018-03-08 22:21:16,265 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Button - blue
+2018-03-08 22:21:16,266 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Button - blue
+2018-03-08 22:21:16,268 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Radiobutton - blue
+2018-03-08 22:21:16,269 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Radiobutton - blue
+2018-03-08 22:21:16,271 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Radiobutton - blue
+2018-03-08 22:21:16,272 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Radiobutton - blue
+2018-03-08 22:21:16,273 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Radiobutton - blue
+2018-03-08 22:21:16,275 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Radiobutton - blue
+2018-03-08 22:21:16,276 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Radiobutton - blue
+2018-03-08 22:21:16,277 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Checkbutton - blue
+2018-03-08 22:21:16,279 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Checkbutton - blue
+2018-03-08 22:21:16,280 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Checkbutton - blue
+2018-03-08 22:21:16,282 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Checkbutton - blue
+2018-03-08 22:21:16,283 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Checkbutton - blue
+2018-03-08 22:21:16,284 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Checkbutton - blue
+2018-03-08 22:21:16,286 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: ajOption - blue
+2018-03-08 22:21:16,287 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: ajOption - blue
+2018-03-08 22:21:16,289 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: ajOption - blue
+2018-03-08 22:21:16,290 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: ajOption - blue
+2018-03-08 22:21:16,292 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: ajOption - blue
+2018-03-08 22:21:16,293 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Spinbox - blue
+2018-03-08 22:21:16,294 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Spinbox - blue
+2018-03-08 22:21:16,296 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Spinbox - blue
+2018-03-08 22:21:16,297 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Spinbox - blue
+2018-03-08 22:21:16,298 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: ListBoxContainer - blue
+2018-03-08 22:21:16,299 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: ListBoxContainer - blue
+2018-03-08 22:21:16,301 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: ListBoxContainer - blue
+2018-03-08 22:21:16,302 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: ListBoxContainer - blue
+2018-03-08 22:21:16,303 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: ListBoxContainer - blue
+2018-03-08 22:21:16,304 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: AjScale - blue
+2018-03-08 22:21:16,306 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: AjScale - blue
+2018-03-08 22:21:16,307 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: AjScale - blue
+2018-03-08 22:21:16,308 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: AjScale - blue
+2018-03-08 22:21:16,310 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Message - blue
+2018-03-08 22:21:16,311 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Message - blue
+2018-03-08 22:21:16,313 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Message - blue
+2018-03-08 22:21:16,314 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Message - blue
+2018-03-08 22:21:16,316 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Message - blue
+2018-03-08 22:21:16,318 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: AjText - blue
+2018-03-08 22:21:16,320 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: AjText - blue
+2018-03-08 22:21:16,321 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Frame - blue
+2018-03-08 22:21:16,323 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Scrollbar - blue
+2018-03-08 22:21:16,324 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: AjScrolledText - blue
+2018-03-08 22:21:16,326 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Frame - blue
+2018-03-08 22:21:16,327 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Scrollbar - blue
+2018-03-08 22:21:16,328 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: AjScrolledText - blue
+2018-03-08 22:21:16,330 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Meter - blue
+2018-03-08 22:21:16,336 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: SplitMeter - blue
+2018-03-08 22:21:16,344 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: DualMeter - blue
+2018-03-08 22:21:16,348 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: ToggleFrame - blue
+2018-03-08 22:21:16,349 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Properties - blue
+2018-03-08 22:21:16,351 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Properties - blue
+2018-03-08 22:21:16,353 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:21:16,355 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:21:16,356 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:21:16,357 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:21:16,358 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:21:16,360 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:21:16,361 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:21:16,362 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:21:16,364 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:21:16,365 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:21:16,366 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:21:16,367 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:21:16,369 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:21:16,370 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:21:16,371 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:21:16,372 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:21:16,374 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:21:16,375 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: SelectableLabel - blue
+2018-03-08 22:21:16,376 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:21:16,378 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:21:16,379 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: WidgetBox - blue
+2018-03-08 22:21:16,380 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:21:16,382 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:21:16,383 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:21:16,384 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:21:16,386 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:21:16,387 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:21:16,388 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:21:16,389 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:21:16,391 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:21:16,392 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:21:16,394 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:21:16,395 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:21:16,396 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:21:16,398 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:21:16,399 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:21:16,400 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Entry - blue
+2018-03-08 22:21:16,401 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Entry - blue
+2018-03-08 22:21:16,402 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Entry - blue
+2018-03-08 22:21:16,403 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: ButtonBox - blue
+2018-03-08 22:21:16,405 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Entry - blue
+2018-03-08 22:21:16,406 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Button - blue
+2018-03-08 22:21:16,407 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: ButtonBox - blue
+2018-03-08 22:21:16,408 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Entry - blue
+2018-03-08 22:21:16,410 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Button - blue
+2018-03-08 22:21:16,411 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: AutoCompleteEntry - blue
+2018-03-08 22:21:16,412 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Entry - blue
+2018-03-08 22:21:16,413 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: LabelBox - blue
+2018-03-08 22:21:16,414 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Entry - blue
+2018-03-08 22:21:16,416 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Entry - blue
+2018-03-08 22:21:16,417 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Entry - blue
+2018-03-08 22:21:16,418 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Entry - blue
+2018-03-08 22:21:16,419 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: LabelBox - blue
+2018-03-08 22:21:16,420 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:21:16,422 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Entry - blue
+2018-03-08 22:21:16,423 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: LabelBox - blue
+2018-03-08 22:21:16,424 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:21:16,426 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Entry - blue
+2018-03-08 22:21:16,427 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: LabelBox - blue
+2018-03-08 22:21:16,428 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:21:16,429 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Entry - blue
+2018-03-08 22:21:16,430 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: LabelBox - blue
+2018-03-08 22:21:16,432 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Label - blue
+2018-03-08 22:21:16,433 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: AutoCompleteEntry - blue
+2018-03-08 22:21:16,434 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Button - blue
+2018-03-08 22:21:16,435 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Button - blue
+2018-03-08 22:21:16,437 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: WidgetBox - blue
+2018-03-08 22:21:16,438 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Button - blue
+2018-03-08 22:21:16,439 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Button - blue
+2018-03-08 22:21:16,441 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Button - blue
+2018-03-08 22:21:16,442 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Button - blue
+2018-03-08 22:21:16,443 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: WidgetBox - blue
+2018-03-08 22:21:16,444 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Button - blue
+2018-03-08 22:21:16,445 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Button - blue
+2018-03-08 22:21:16,447 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Button - blue
+2018-03-08 22:21:16,448 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Button - blue
+2018-03-08 22:21:16,449 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Button - blue
+2018-03-08 22:21:16,451 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Button - blue
+2018-03-08 22:21:16,453 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Button - blue
+2018-03-08 22:21:16,454 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Button - blue
+2018-03-08 22:21:16,455 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Button - blue
+2018-03-08 22:21:16,456 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Button - blue
+2018-03-08 22:21:16,458 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Button - blue
+2018-03-08 22:21:16,459 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Button - blue
+2018-03-08 22:21:16,460 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: WidgetBox - blue
+2018-03-08 22:21:16,461 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Button - blue
+2018-03-08 22:21:16,463 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Button - blue
+2018-03-08 22:21:16,464 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Button - blue
+2018-03-08 22:21:16,465 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Button - blue
+2018-03-08 22:21:16,466 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Button - blue
+2018-03-08 22:21:16,467 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Button - blue
+2018-03-08 22:21:16,468 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Button - blue
+2018-03-08 22:21:16,470 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Button - blue
+2018-03-08 22:21:16,471 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Radiobutton - blue
+2018-03-08 22:21:16,473 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Radiobutton - blue
+2018-03-08 22:21:16,474 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Radiobutton - blue
+2018-03-08 22:21:16,476 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Radiobutton - blue
+2018-03-08 22:21:16,477 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Radiobutton - blue
+2018-03-08 22:21:16,479 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Radiobutton - blue
+2018-03-08 22:21:16,480 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Radiobutton - blue
+2018-03-08 22:21:16,481 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Checkbutton - blue
+2018-03-08 22:21:16,483 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Checkbutton - blue
+2018-03-08 22:21:16,484 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Checkbutton - blue
+2018-03-08 22:21:16,486 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Checkbutton - blue
+2018-03-08 22:21:16,487 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Checkbutton - blue
+2018-03-08 22:21:16,488 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Checkbutton - blue
+2018-03-08 22:21:16,489 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: ajOption - blue
+2018-03-08 22:21:16,491 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: ajOption - blue
+2018-03-08 22:21:16,492 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: ajOption - blue
+2018-03-08 22:21:16,493 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: ajOption - blue
+2018-03-08 22:21:16,495 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: ajOption - blue
+2018-03-08 22:21:16,496 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Spinbox - blue
+2018-03-08 22:21:16,497 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Spinbox - blue
+2018-03-08 22:21:16,498 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Spinbox - blue
+2018-03-08 22:21:16,499 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Spinbox - blue
+2018-03-08 22:21:16,500 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: ListBoxContainer - blue
+2018-03-08 22:21:16,502 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: ListBoxContainer - blue
+2018-03-08 22:21:16,503 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: ListBoxContainer - blue
+2018-03-08 22:21:16,504 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: ListBoxContainer - blue
+2018-03-08 22:21:16,505 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: ListBoxContainer - blue
+2018-03-08 22:21:16,506 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: AjScale - blue
+2018-03-08 22:21:16,507 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: AjScale - blue
+2018-03-08 22:21:16,508 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: AjScale - blue
+2018-03-08 22:21:16,510 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: AjScale - blue
+2018-03-08 22:21:16,511 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Message - blue
+2018-03-08 22:21:16,512 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Message - blue
+2018-03-08 22:21:16,514 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Message - blue
+2018-03-08 22:21:16,515 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Message - blue
+2018-03-08 22:21:16,516 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Message - blue
+2018-03-08 22:21:16,517 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: AjText - blue
+2018-03-08 22:21:16,518 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: AjText - blue
+2018-03-08 22:21:16,520 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Frame - blue
+2018-03-08 22:21:16,521 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Scrollbar - blue
+2018-03-08 22:21:16,522 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: AjScrolledText - blue
+2018-03-08 22:21:16,523 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Frame - blue
+2018-03-08 22:21:16,524 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Scrollbar - blue
+2018-03-08 22:21:16,526 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: AjScrolledText - blue
+2018-03-08 22:21:16,527 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Meter - blue
+2018-03-08 22:21:16,532 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: SplitMeter - blue
+2018-03-08 22:21:16,541 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: DualMeter - blue
+2018-03-08 22:21:16,545 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Properties - blue
+2018-03-08 22:21:16,546 appJar:TRACE: [Line 2767->3557/SET_WIDGET_FG]: SET_WIDGET_FG: Properties - blue
+2018-03-08 22:21:16,549 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Label BG to red
+2018-03-08 22:21:16,551 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Label BG to red
+2018-03-08 22:21:16,552 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Label BG to red
+2018-03-08 22:21:16,553 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Label BG to red
+2018-03-08 22:21:16,554 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Label BG to red
+2018-03-08 22:21:16,556 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Label BG to red
+2018-03-08 22:21:16,557 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Label BG to red
+2018-03-08 22:21:16,558 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Label BG to red
+2018-03-08 22:21:16,560 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Label BG to red
+2018-03-08 22:21:16,561 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Label BG to red
+2018-03-08 22:21:16,562 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Label BG to red
+2018-03-08 22:21:16,564 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Label BG to red
+2018-03-08 22:21:16,566 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Label BG to red
+2018-03-08 22:21:16,567 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Label BG to red
+2018-03-08 22:21:16,568 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Label BG to red
+2018-03-08 22:21:16,569 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Label BG to red
+2018-03-08 22:21:16,571 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Label BG to red
+2018-03-08 22:21:16,572 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config SelectableLabel BG to red
+2018-03-08 22:21:16,573 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Label BG to red
+2018-03-08 22:21:16,574 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Label BG to red
+2018-03-08 22:21:16,576 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config WidgetBox BG to red
+2018-03-08 22:21:16,577 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Label BG to red
+2018-03-08 22:21:16,579 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Label BG to red
+2018-03-08 22:21:16,581 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Label BG to red
+2018-03-08 22:21:16,583 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Label BG to red
+2018-03-08 22:21:16,585 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Label BG to red
+2018-03-08 22:21:16,586 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Label BG to red
+2018-03-08 22:21:16,587 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Label BG to red
+2018-03-08 22:21:16,589 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Label BG to red
+2018-03-08 22:21:16,590 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Label BG to red
+2018-03-08 22:21:16,592 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Label BG to red
+2018-03-08 22:21:16,593 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Label BG to red
+2018-03-08 22:21:16,595 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Label BG to red
+2018-03-08 22:21:16,596 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Label BG to red
+2018-03-08 22:21:16,598 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Label BG to red
+2018-03-08 22:21:16,599 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Label BG to red
+2018-03-08 22:21:16,600 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Label BG to red
+2018-03-08 22:21:16,602 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Label BG to red
+2018-03-08 22:21:16,603 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Label BG to red
+2018-03-08 22:21:16,604 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Label BG to red
+2018-03-08 22:21:16,606 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Label BG to red
+2018-03-08 22:21:16,607 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Entry BG to red
+2018-03-08 22:21:16,608 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Entry BG to red
+2018-03-08 22:21:16,609 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Entry BG to red
+2018-03-08 22:21:16,611 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config ButtonBox BG to red
+2018-03-08 22:21:16,612 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Entry BG to red
+2018-03-08 22:21:16,614 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Button BG to red
+2018-03-08 22:21:16,615 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Entry BG to red
+2018-03-08 22:21:16,617 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Button BG to red
+2018-03-08 22:21:16,618 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config ButtonBox BG to red
+2018-03-08 22:21:16,619 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Entry BG to red
+2018-03-08 22:21:16,621 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Button BG to red
+2018-03-08 22:21:16,623 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Entry BG to red
+2018-03-08 22:21:16,624 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Button BG to red
+2018-03-08 22:21:16,625 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config AutoCompleteEntry BG to red
+2018-03-08 22:21:16,626 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Entry BG to red
+2018-03-08 22:21:16,628 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config LabelBox BG to red
+2018-03-08 22:21:16,629 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Entry BG to red
+2018-03-08 22:21:16,631 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config ValidationLabel BG to red
+2018-03-08 22:21:16,632 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config ValidationLabel BG to red
+2018-03-08 22:21:16,634 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Entry BG to red
+2018-03-08 22:21:16,635 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Entry BG to red
+2018-03-08 22:21:16,636 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Entry BG to red
+2018-03-08 22:21:16,637 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Entry BG to red
+2018-03-08 22:21:16,639 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config LabelBox BG to red
+2018-03-08 22:21:16,640 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Label BG to red
+2018-03-08 22:21:16,642 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Entry BG to red
+2018-03-08 22:21:16,644 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Label BG to red
+2018-03-08 22:21:16,645 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Entry BG to red
+2018-03-08 22:21:16,646 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config LabelBox BG to red
+2018-03-08 22:21:16,648 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Label BG to red
+2018-03-08 22:21:16,650 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Entry BG to red
+2018-03-08 22:21:16,651 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Label BG to red
+2018-03-08 22:21:16,652 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Entry BG to red
+2018-03-08 22:21:16,654 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config LabelBox BG to red
+2018-03-08 22:21:16,655 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Label BG to red
+2018-03-08 22:21:16,657 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Entry BG to red
+2018-03-08 22:21:16,659 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Label BG to red
+2018-03-08 22:21:16,660 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Entry BG to red
+2018-03-08 22:21:16,661 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config LabelBox BG to red
+2018-03-08 22:21:16,663 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Label BG to red
+2018-03-08 22:21:16,665 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config AutoCompleteEntry BG to red
+2018-03-08 22:21:16,667 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Label BG to red
+2018-03-08 22:21:16,668 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config AutoCompleteEntry BG to red
+2018-03-08 22:21:16,669 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Button BG to red
+2018-03-08 22:21:16,670 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Button BG to red
+2018-03-08 22:21:16,672 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config WidgetBox BG to red
+2018-03-08 22:21:16,673 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Button BG to red
+2018-03-08 22:21:16,676 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Button BG to red
+2018-03-08 22:21:16,678 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Button BG to red
+2018-03-08 22:21:16,679 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Button BG to red
+2018-03-08 22:21:16,681 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Button BG to red
+2018-03-08 22:21:16,683 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Button BG to red
+2018-03-08 22:21:16,684 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Button BG to red
+2018-03-08 22:21:16,686 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Button BG to red
+2018-03-08 22:21:16,687 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config WidgetBox BG to red
+2018-03-08 22:21:16,689 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Button BG to red
+2018-03-08 22:21:16,690 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Button BG to red
+2018-03-08 22:21:16,692 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Button BG to red
+2018-03-08 22:21:16,694 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Button BG to red
+2018-03-08 22:21:16,696 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Button BG to red
+2018-03-08 22:21:16,698 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Button BG to red
+2018-03-08 22:21:16,699 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Button BG to red
+2018-03-08 22:21:16,701 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Button BG to red
+2018-03-08 22:21:16,703 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Button BG to red
+2018-03-08 22:21:16,704 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Button BG to red
+2018-03-08 22:21:16,706 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Button BG to red
+2018-03-08 22:21:16,708 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Button BG to red
+2018-03-08 22:21:16,709 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Button BG to red
+2018-03-08 22:21:16,710 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Button BG to red
+2018-03-08 22:21:16,712 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Button BG to red
+2018-03-08 22:21:16,713 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Button BG to red
+2018-03-08 22:21:16,714 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Button BG to red
+2018-03-08 22:21:16,716 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Button BG to red
+2018-03-08 22:21:16,717 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Button BG to red
+2018-03-08 22:21:16,719 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Button BG to red
+2018-03-08 22:21:16,720 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Button BG to red
+2018-03-08 22:21:16,721 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Button BG to red
+2018-03-08 22:21:16,723 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Button BG to red
+2018-03-08 22:21:16,724 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Button BG to red
+2018-03-08 22:21:16,725 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config WidgetBox BG to red
+2018-03-08 22:21:16,727 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Button BG to red
+2018-03-08 22:21:16,728 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Button BG to red
+2018-03-08 22:21:16,730 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Button BG to red
+2018-03-08 22:21:16,732 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Button BG to red
+2018-03-08 22:21:16,733 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Button BG to red
+2018-03-08 22:21:16,734 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Button BG to red
+2018-03-08 22:21:16,735 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Button BG to red
+2018-03-08 22:21:16,738 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Button BG to red
+2018-03-08 22:21:16,739 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Button BG to red
+2018-03-08 22:21:16,741 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Button BG to red
+2018-03-08 22:21:16,743 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Radiobutton BG to red
+2018-03-08 22:21:16,744 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Radiobutton BG to red
+2018-03-08 22:21:16,746 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Radiobutton BG to red
+2018-03-08 22:21:16,748 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Radiobutton BG to red
+2018-03-08 22:21:16,749 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Radiobutton BG to red
+2018-03-08 22:21:16,751 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Radiobutton BG to red
+2018-03-08 22:21:16,752 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Radiobutton BG to red
+2018-03-08 22:21:16,754 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Checkbutton BG to red
+2018-03-08 22:21:16,755 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Checkbutton BG to red
+2018-03-08 22:21:16,756 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Checkbutton BG to red
+2018-03-08 22:21:16,758 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Checkbutton BG to red
+2018-03-08 22:21:16,759 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Checkbutton BG to red
+2018-03-08 22:21:16,760 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Checkbutton BG to red
+2018-03-08 22:21:16,762 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config ajOption BG to red
+2018-03-08 22:21:16,763 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config ajOption BG to red
+2018-03-08 22:21:16,765 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config ajOption BG to red
+2018-03-08 22:21:16,766 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config ajOption BG to red
+2018-03-08 22:21:16,768 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config ajOption BG to red
+2018-03-08 22:21:16,769 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Spinbox BG to red
+2018-03-08 22:21:16,770 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Spinbox BG to red
+2018-03-08 22:21:16,771 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Spinbox BG to red
+2018-03-08 22:21:16,772 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Spinbox BG to red
+2018-03-08 22:21:16,773 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config ListBoxContainer BG to red
+2018-03-08 22:21:16,775 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Listbox BG to red
+2018-03-08 22:21:16,776 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config ListBoxContainer BG to red
+2018-03-08 22:21:16,777 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Listbox BG to red
+2018-03-08 22:21:16,779 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config ListBoxContainer BG to red
+2018-03-08 22:21:16,781 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Listbox BG to red
+2018-03-08 22:21:16,782 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config ListBoxContainer BG to red
+2018-03-08 22:21:16,783 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Listbox BG to red
+2018-03-08 22:21:16,785 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config ListBoxContainer BG to red
+2018-03-08 22:21:16,786 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Listbox BG to red
+2018-03-08 22:21:16,788 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config AjScale BG to red
+2018-03-08 22:21:16,789 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config AjScale BG to red
+2018-03-08 22:21:16,790 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config AjScale BG to red
+2018-03-08 22:21:16,792 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config AjScale BG to red
+2018-03-08 22:21:16,793 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Message BG to red
+2018-03-08 22:21:16,794 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Message BG to red
+2018-03-08 22:21:16,795 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Message BG to red
+2018-03-08 22:21:16,797 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Message BG to red
+2018-03-08 22:21:16,798 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Message BG to red
+2018-03-08 22:21:16,800 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config AjText BG to red
+2018-03-08 22:21:16,801 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config AjText BG to red
+2018-03-08 22:21:16,802 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config AjScrolledText BG to red
+2018-03-08 22:21:16,803 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config AjScrolledText BG to red
+2018-03-08 22:21:16,804 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Meter BG to red
+2018-03-08 22:21:16,806 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config SplitMeter BG to red
+2018-03-08 22:21:16,807 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config DualMeter BG to red
+2018-03-08 22:21:16,808 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Properties BG to red
+2018-03-08 22:21:16,810 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Checkbutton BG to red
+2018-03-08 22:21:16,812 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Checkbutton BG to red
+2018-03-08 22:21:16,815 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Checkbutton BG to red
+2018-03-08 22:21:16,816 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Properties BG to red
+2018-03-08 22:21:16,818 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Checkbutton BG to red
+2018-03-08 22:21:16,820 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Checkbutton BG to red
+2018-03-08 22:21:16,822 appJar:TRACE: [Line 2769->3649/SET_WIDGET_BG]: Config Checkbutton BG to red
+2018-03-08 22:21:16,859 appJar:INFO: [Line 2819->1528/setLogLevel]: Log level changed to: debug
+2018-03-08 22:21:16,860 appJar:INFO: [Line 2821->1528/setLogLevel]: Log level changed to: trace

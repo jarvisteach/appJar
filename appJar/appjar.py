@@ -81,7 +81,7 @@ __author__ = "Richard Jarvis"
 __copyright__ = "Copyright 2015-2018, Richard Jarvis"
 __credits__ = ["Graham Turner", "Sarah Murch"]
 __license__ = "Apache 2.0"
-__version__ = "0.91.0"
+__version__ = "0.92.0"
 __maintainer__ = "Richard Jarvis"
 __email__ = "info@appJar.info"
 __status__ = "Development"
@@ -480,10 +480,14 @@ class gui(object):
         self.topLevel = Tk()
         self.topLevel.bind('<Configure>', self._windowEvent)
 
+        def _setFocus(e):
+            try: e.widget.focus_set()
+            except: pass
+
         # these are specifically to make right-click menus disapear on linux
-        self.topLevel.bind('<Button-1>', lambda e: e.widget.focus_set())
-        self.topLevel.bind('<Button-2>', lambda e: e.widget.focus_set())
-        self.topLevel.bind('<Button-3>', lambda e: e.widget.focus_set())
+        self.topLevel.bind('<Button-1>', lambda e: _setFocus(e))
+        self.topLevel.bind('<Button-2>', lambda e: _setFocus(e))
+        self.topLevel.bind('<Button-3>', lambda e: _setFocus(e))
         # override close button
         self.topLevel.protocol("WM_DELETE_WINDOW", self.stop)
         # temporarily hide it
@@ -4711,9 +4715,9 @@ class gui(object):
             self.error("Unable to load DB data - can't load sqlite3")
             return
 
-        with sqlite3.connect(value) as conn:
+        with sqlite3.connect(grid.db) as conn:
             cursor = conn.cursor()
-            dataQuery = 'SELECT * from ' + table
+            dataQuery = 'SELECT * from ' + grid.dbTable
 
             # select all data
             cursor.execute(dataQuery)
@@ -5459,6 +5463,7 @@ class gui(object):
         for child in widget.winfo_children():
             self.cleanseWidgets(child)
 
+        widgType = gui.GET_WIDGET_TYPE(widget)
 
         if hasattr(widget, 'APPJAR_TYPE'):
             widgType = widget.APPJAR_TYPE
@@ -5468,7 +5473,9 @@ class gui(object):
                 if not self.widgetManager.destroyWidget(widgType, widget):
                     self.warn("Unable to destroy %s, during cleanse - destroy returned False", widgType)
             else:
-                self.warn("Skipped %s, cleansed by parent", widgType)
+                self.trace("Skipped %s, cleansed by parent", widgType)
+        elif widgType in ('CanvasDnd', 'ValidationLabel'):
+            self.trace("Skipped %s, cleansed by parent", widgType)
         else:
             self.warn("Unable to destroy %s, during cleanse - no match", gui.GET_WIDGET_TYPE(widget))
 
@@ -9196,7 +9203,11 @@ class gui(object):
         ent.isValidation = True
         ent.inContainer = True
 
-        lab = labelBase(vFrame)
+        class ValidationLabel(labelBase, object):
+            def __init__(self, parent, *args, **options):
+                super(ValidationLabel, self).__init__(parent, *args, **options)
+
+        lab = ValidationLabel(vFrame)
         lab.pack(side=RIGHT, fill=Y)
         lab.config(font=self._getContainerProperty('labelFont'))
         if not self.ttkFlag:
@@ -13153,10 +13164,10 @@ class SimpleTable(ScrollPane):
 
         # headings
         self.actionHeading = actionHeading
-        if isinstance(actionButton, str):
-            self.actionButton = [actionButton]
-        else:
+        if type(actionButton) in (list, tuple):
             self.actionButton = actionButton
+        else:
+            self.actionButton = [actionButton]
 
         self.addButton= addButton
 

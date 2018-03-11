@@ -51,7 +51,7 @@ def setup():
 
         c.execute(proj, ('Cool App with SQLite & Python', '2015-01-01', '2015-01-30'))
         project_id = c.lastrowid
-        for i in range(100):
+        for i in range(10):
             c.execute(task, ('Analyze the requirements of the app', 1, 1, project_id, '2015-01-01', '2015-01-02'))
             c.execute(task, ('Confirm with user about the top requirements', 1, 1, project_id, '2015-01-03', '2015-01-05'))
 
@@ -151,8 +151,8 @@ with gui("DB Demo", "800x600", stretch="column", bg="DarkOrange", log="trace", s
     app.label("title", "DB tester:", font=60, bg="orange", sticky="EW")
     app.setLabelRightClick("title", "demo")
     app.config(sticky="NEWS", stretch="both")
-    app.table("table", DB_NAME, "projects", kind='database', action=deleteRow, addRow=addRow, actionButton="Delete", showMenu=True, disabledEntries=[0])
-    app.setOptionBox("table", "projects", callFunction=False)
+    app.table("table", DB_NAME, "tasks", kind='database', action=deleteRow, addRow=addRow, actionButton="Delete", showMenu=True, disabledEntries=[0])
+    app.setOptionBox("table", "tasks", callFunction=False)
     app.button("NEW TABLE", showMakeTable, sticky="", stretch="column")
     app.label("PRESS ME", font={"size":40, "underline":True}, right="demo")
     app.addButtons(["EN", "DI"], edit)

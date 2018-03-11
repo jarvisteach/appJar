@@ -12,7 +12,7 @@ These are values that can be set when appJar is initially run.
     This will display the version of appJar, then exit.  
 
 * `-l [filename.ini]`  
-    This allows you to set the starting language, only useful if using [internationalisation](/pythoninternationalisation/).  
+    This allows you to set the starting language, only useful if using [internationalisation](/pythonInternationalisation/).  
     It will override any language configured in the `.go()` function call.  
 
 * `-c`, `-e`, `-w`, `-i`, `-d`, `t`  
