@@ -25,7 +25,8 @@ class appJarExplorer:
             menus = widg.index('end')
             if menus is not None:
                 for item in range(menus+1):
-                    print('\t\t', widg.entrycget(item, 'label'))
+                    try: print('\t\t', widg.entrycget(item, 'label'))
+                    except: print('error getting:')
 
         try: name = widg.cget('text')
         except: name = ''
@@ -76,14 +77,10 @@ def makeExplorer():
             if vals is not None and vals[1] == val:
                 global _currentId
                 _currentId = val
-                app.entry("text", props['text'])
-                app.entry("row", props['row'])
-                app.entry("column", props['column'])
-                app.entry("x", props['x'])
-                app.entry("y", props['y'])
-                app.entry("width", props['width'])
-                app.entry("height", props['height'])
-                app.entry("kind", props['kind'])
+                with app.labelFrame("Configure Widget", sticky='ew', stretch='column', font={'size':16}) as lf:
+                    for k in props.keys():
+                        app.label(k.capitalize() + ":", align='w')
+                        app.entry(k , props[k], width=5, pos=('p', 1))
         else:
             pass
 
@@ -93,7 +90,6 @@ def makeExplorer():
             widg = app.topLevel.nametowidget(_currentId)
             widg.config(text=app.entry('text'))
             widg.grid(row=int(app.entry("row")), column=int(app.entry("column")))
-        
 
     global _explorerMade
     if not _explorerMade:
@@ -109,26 +105,13 @@ def makeExplorer():
                 app.setTreeEditable("b", False)
                 app.setTreeBg('b', "#3b3f40")
                 app.setTreeFg('b', "#adadad")
-                with app.panedFrame("RIGHT", sticky="new"):
-                    app.config(sticky='new', stretch='column', bg="#3b3f40", fg="#adadad", font={'size':16})
-                    app.label("Configure Widget", colspan=2, fg='#ca753d', font={'size':20, 'weight':'bold'})
-                    app.label("Kind:", anchor='w')
-                    app.entry("kind", pos=('p', 1))
-                    app.label("Text:", anchor='w')
-                    app.entry("text", pos=('p', 1))
-                    app.label("Row:", anchor='w')
-                    app.entry("row", pos=('p', 1))
-                    app.label("Column:", anchor='w')
-                    app.entry("column", pos=('p', 1))
-                    app.label("X:", anchor='w')
-                    app.entry("x", pos=('p', 1))
-                    app.label("Y:", anchor='w')
-                    app.entry("y", pos=('p', 1))
-                    app.label("Width:", anchor='w')
-                    app.entry("width", pos=('p', 1))
-                    app.label("Height:", anchor='w')
-                    app.entry("height", pos=('p', 1))
-                    app.button("Update", press, column=1)
+                with app.panedFrame("RIGHT", sticky="new", width=200):
+                    app.config(sticky='new', stretch='column', font={'size':16})
+                    app.bg = "#3b3f40"
+                    with app.labelFrame("Configure Widget", sticky='ew', stretch='column', font={'size':16}) as lf:
+                        lf.config(fg='#ca753d')
+                        app.label('EMPTY')
+                    app.button("Update", press, pos=(1,0))
         app.generateTree("b")
     app.showSubWindow("appJar Explorer")
 
@@ -138,6 +121,8 @@ with gui("appJar Explorer") as app:
             app.label("Title Label", colspan=2)
             app.label("DETAILS", "")
             app.entry("DETAILS2")
+            app.entry("files", kind='file', label=True)
+            app.buttons(['a', 'b'], None)
             app.check("check")
             app.radio("radio", "r1")
             app.button("DETAILS", makeExplorer)
