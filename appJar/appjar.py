@@ -2911,9 +2911,17 @@ class gui(object):
                     item.config(height=value)
                 elif option == 'state':
                     # make entries readonly - can still copy/paste
-                    if value == "disabled" and kind == self.Widgets.Entry:
-                        value = "readonly"
+                    if kind == self.Widgets.Entry:
+                        if value == "disabled":
+                            if hasattr(item, 'but'):
+                                item.but.config(state=value)
+                                item.unbind("<Button-1>")
+                            value = "readonly"
+                        elif value == 'normal' and hasattr(item, 'but') and item.cget('state') != 'normal':
+                            item.bind("<Button-1>", item.click_command, "+")
+                            item.but.config(state=value)
                     item.config(state=value)
+
                 elif option == 'relief':
                     item.config(relief=value)
                 elif option == 'style':
@@ -9175,17 +9183,17 @@ class gui(object):
 
         if selectFile:
             command = self.MAKE_FUNC(self._getFileName, title)
-            click_command = self.MAKE_FUNC(self._checkFileName, title)
+            vFrame.theWidget.click_command = self.MAKE_FUNC(self._checkFileName, title)
             text = "File"
             default = "-- enter a filename --"
         else:
             command = self.MAKE_FUNC(self._getDirName, title)
-            click_command = self.MAKE_FUNC(self._checkDirName, title)
+            vFrame.theWidget.click_command = self.MAKE_FUNC(self._checkDirName, title)
             text = "Directory"
             default = "-- enter a directory --"
 
         self.setEntryDefault(title, default)
-        vFrame.theWidget.bind("<Button-1>", click_command, "+")
+        vFrame.theWidget.bind("<Button-1>", vFrame.theWidget.click_command, "+")
 
         if not self.ttkFlag:
             vFrame.theButton = Button(vFrame, font=self._getContainerProperty('buttonFont'))

@@ -3,13 +3,12 @@ sys.path.append("../../")
 
 from appJar import gui
 
-def press():
-    app.disableEntry('FILES')
+def press(but):
+    if but == 'DISABLE': app.disableEntry('FILES')
+    elif but == 'ENABLE': app.enableEntry('FILES')
     ent = app.getEntryWidget('FILES')
-    print(ent)
-    ent.theButton.config(state='disabled')
 
 with gui() as app:
     app.label('hello world')
     app.entry("FILES", kind='file')
-    app.button('DISABLE', press)
+    app.buttons(['DISABLE', 'ENABLE'], press)
