@@ -1,6 +1,11 @@
 #Change-Log
 ---
 
+## Version 0.93  
+
+* Issues Resolved:
+    * [#402](https://github.com/jarvisteach/appJar/issues/402) - Now possible to register a function to call once the GUI [starts up](/pythonEvents/#starting-the-gui)  
+
 ## Version 0.92  
 
 * Issues Resolved:

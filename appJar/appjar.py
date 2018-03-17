@@ -513,6 +513,7 @@ class gui(object):
         # configure the geometry of the window
         self.topLevel.escapeBindId = None  # used to exit fullscreen
         self.topLevel.stopFunction = None  # used to exit fullscreen
+        self.topLevel.startFunction = None
 
         # set the resize status - default to True
         self.topLevel.locationSet = False
@@ -1736,6 +1737,10 @@ class gui(object):
         self._poll()
         self._flash()
 
+        # register start-up function
+        if self.topLevel.startFunction is not None:
+            self.topLevel.after_idle(self.topLevel.startFunction)
+
         # start the main loop
         try:
             self.topLevel.mainloop()
@@ -1745,6 +1750,12 @@ class gui(object):
         except Exception as e:
             self.exception(e)
             self.stop()
+
+    def setStartFunction(self, func):
+        f = self.MAKE_FUNC(func, "start")
+        self.topLevel.startFunction = f
+
+    startFunction = property(fset=setStartFunction)
 
     def _macReveal(self):
         """ internal function to deiconify GUIs on mac """
@@ -2388,6 +2399,7 @@ class gui(object):
         editMenu = kwargs.pop("editMenu", None)
         # two possible names
         stopFunction = kwargs.pop("stop", kwargs.pop("stopFunction", None))
+        startFunction = kwargs.pop("start", kwargs.pop("startFunction", None))
         fastStop = kwargs.pop("fastStop", None)
         enterKey = kwargs.pop("enterKey", None)
         logLevel = kwargs.pop("log", kwargs.pop("logLevel", None))
@@ -2427,6 +2439,7 @@ class gui(object):
 
         if editMenu is not None: self.editMenu = editMenu
         if stopFunction is not None: self.stopFunction = stopFunction
+        if startFunction is not None: self.startFunction = startFunction
         if fastStop is not None: self.fastStop = fastStop
         if enterKey is not None: self.enterKey = enterKey
         if logLevel is not None: self.logLevel = logLevel
