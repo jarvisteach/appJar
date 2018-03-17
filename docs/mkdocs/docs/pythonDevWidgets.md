@@ -185,13 +185,26 @@ app.go()
 * `.addTree(title, xml_data)`  
     Create a tree from the specified XML data  
 
+* `.generateTree(title)`  
+    Load all the XML data into the tree.  
+    Gets called automatically when the GUI starts, but will need to be called manually, if a tree is created after the GUI has started.  
+
 #### Set Trees
+* `.setTreeClickFunction(title, func)`  
+    Register a function to call when an item is clicked.
+    Will receive the name of the tree, and an `id` attribute, if set in the XML.  
+
 * `.setTreeDoubleClickFunction(title, func)`  
     Register a function to call when an item is double-clicked  
+    Will receive the name of the tree, and an `id` attribute, if set in the XML.  
+
 * `.setTreeEditFunction(title, func)`  
     Register a function to call when an item is edited  
+    Will receive the name of the tree.  
+
 * `.setTreeEditable(title, value)`  
     Set whether the tree can be edited  
+
 * `.setTreeColours(title, fg, bg, fgH, bgH)`  
     Set the fg/bg/fg highlight/bg highlight colours of the tree  
 * `.setTreeBg(title, colour)`  

@@ -11399,7 +11399,7 @@ class gui(object):
                     return node.nodeValue
 
             def getAttribute(self, att='id'):
-                try: return self.node.attributes['id'].value
+                try: return self.node.attributes[att].value
                 except: return None
 
             def IsEditable(self):
@@ -11432,7 +11432,7 @@ class gui(object):
                     # TO DO: start editing this node...
                     pass
                 if self.dblClickFunc is not None:
-                    self.dblClickFunc(self.treeTitle, self.getAttributee())
+                    self.dblClickFunc(self.treeTitle, self.getAttribute())
 
         #  EXTRA FUNCTIONS
 
