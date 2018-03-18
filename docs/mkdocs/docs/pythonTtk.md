@@ -74,7 +74,7 @@ You'll need to pass a list, which contains tuples as a parameter.
 * To have multiple changes, you can have more than one tuple within the list.
 
 * The first item in the tuple should be the *state*.
-    In this case, it is 'active'. This means that something will be changed when the cursor is within the widget.
+    In this case, it is `active`. This means that something will be changed when the cursor is within the widget.
 
 * The second item will be the *value*.
     In this case, the button will have a blue background when the cursor is over it.
