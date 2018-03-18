@@ -315,7 +315,7 @@ Or `.setTabBg(title, tab, 'colour')` at other times.
 
 ### Notebook
 ---
-**NB.** This will only work with [ttk](pythonTtk) enabled.
+**NB.** This will only work with [ttk](pythonTtk) enabled.  
 **NB.** *Notes* have a different [stickiness](/pythonWidgetLayout/#widget-positioning) to the *appJar* GUI - they only stick widgets to the `w` (left) side.
 If you want your widgets to stretch across the *Note*, like the rest of *appJar*, you will need to call `app.setSticky("ew")` after starting the *Note*.
 
