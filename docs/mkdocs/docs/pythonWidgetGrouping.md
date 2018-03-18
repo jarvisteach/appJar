@@ -120,7 +120,7 @@ app.go()
     Used to start and stop a *LabelFrame*  
     The specified title will be used as the label for the frame.  
     Set `label` if you want to show a different label for the frame.  
-    Set `hideTitle` to be True or `label` to be an empty String if you don't want to show a title.
+    Set `hideTitle` to be True or `label` to be an empty String if you don't want to show a title.  
 
 * `.openLabelFrame(title)`  
     Used to reopen the named *LabelFrame*, for later modification.  
