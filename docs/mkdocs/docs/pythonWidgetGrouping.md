@@ -116,19 +116,20 @@ app.go()
 ```
 
 #### Start/Stop Label Frames  
-* `.startLabelFrame(name, hideTitle=False)` & `.stopLabelFrame()`  
+* `.startLabelFrame(title, hideTitle=False, label=None)` & `.stopLabelFrame()`  
     Used to start and stop a *LabelFrame*  
     The specified title will be used as the label for the frame.  
-    Set hideTitle to be True if you don;t want to show a title.  
+    Set `label` if you want to show a different label for the frame.  
+    Set `hideTitle` to be True or `label` to be an empty String if you don't want to show a title.
 
 * `.openLabelFrame(title)`  
     Used to reopen the named *LabelFrame*, for later modification.  
 
 #### Set Label Frames  
-* `.setLabelFrameTitle(name, newTitle)`  
+* `.setLabelFrameTitle(title, newTitle)`  
     Used to change the label displayed in the *LabelFrame*.  
 
-* `.setLabelFrameAnchor(name, position)`  
+* `.setLabelFrameAnchor(title, position)`  
     Used to change the position of the label on the *LabelFrame*.  
     Use compass coordinates, eg. `"ne"` or `"sw"`.  
 
@@ -147,7 +148,7 @@ Allows you to have more widgets than will fit on the screen, or have a smaller w
 ```python
 from appJar import gui 
 
-app=gui("SCROLLPABE DEMO", "150x150")
+app=gui("SCROLLABLE DEMO", "150x150")
 
 app.startScrollPane("PANE")
 for x in range(10):
