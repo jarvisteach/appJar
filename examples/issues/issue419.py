@@ -7,7 +7,7 @@ def press():
         app.label('g')
 
     app.openToggleFrame('tog2')
-    app.label('h')
+    app.addLabel('h', 'h')
     app.stopToggleFrame()
 
 with gui() as app:
