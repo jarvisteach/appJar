@@ -116,20 +116,19 @@ app.go()
 ```
 
 #### Start/Stop Label Frames  
-* `.startLabelFrame(title, hideTitle=False, label=None)` & `.stopLabelFrame()`  
+* `.startLabelFrame(name, hideTitle=False)` & `.stopLabelFrame()`  
     Used to start and stop a *LabelFrame*  
     The specified title will be used as the label for the frame.  
-    Set `label` if you want to show a different label for the frame.  
-    Set `hideTitle` to be True or `label` to be an empty String if you don't want to show a title.  
+    Set hideTitle to be True if you don;t want to show a title.  
 
 * `.openLabelFrame(title)`  
     Used to reopen the named *LabelFrame*, for later modification.  
 
 #### Set Label Frames  
-* `.setLabelFrameTitle(title, newTitle)`  
+* `.setLabelFrameTitle(name, newTitle)`  
     Used to change the label displayed in the *LabelFrame*.  
 
-* `.setLabelFrameAnchor(title, position)`  
+* `.setLabelFrameAnchor(name, position)`  
     Used to change the position of the label on the *LabelFrame*.  
     Use compass coordinates, eg. `"ne"` or `"sw"`.  
 
@@ -148,7 +147,7 @@ Allows you to have more widgets than will fit on the screen, or have a smaller w
 ```python
 from appJar import gui 
 
-app=gui("SCROLLABLE DEMO", "150x150")
+app=gui("SCROLLPABE DEMO", "150x150")
 
 app.startScrollPane("PANE")
 for x in range(10):
@@ -313,6 +312,63 @@ Or `.setTabBg(title, tab, 'colour')` at other times.
 #### Get TabbedFrame
 * `.getTabbedFrameSelectedTab(title)`  
     Gets the name of the currently selected tab, for the named TabFrame.  
+
+### Notebook
+---
+**NB.** This will only work with [ttk](pythonTtk) enabled.
+**NB.** *Notes* have a different [stickiness](/pythonWidgetLayout/#widget-positioning) to the *appJar* GUI - they only stick widgets to the `w` (left) side.
+If you want your widgets to stretch across the *Note*, like the rest of *appJar*, you will need to call `app.setSticky("ew")` after starting the *Note*.
+
+Similar to the [*Tabbed Frame*](/pythonWidgetGrouping/#tabbed-frame), it is a way of placing widgets in different tabs or 'notes'.
+Position the *Notebook* within the grid, start a *Note*, then position widgets inside the *Note*.
+
+![Notebook](img/layouts/1_notebook.png)
+
+```python
+from appJar import gui
+
+app = gui("Notebook", useTtk=True)
+
+app.setTtkTheme("clam")
+
+app.startNotebook("Notebook")
+
+app.startNote("Note 1")
+app.addLabel("l1", "Note 1")
+app.stopNote()
+
+app.startNote("Note 2")
+app.addLabel("l2", "Note 2")
+app.stopNote()
+
+app.startNote("Note 3")
+app.addLabel("l3", "Note 3")
+app.stopNote()
+
+app.stopNotebook()
+
+app.go()
+```
+
+#### Start/Stop Notebooks
+* `.startNotebook(name)` & `.stopNotebook()`  
+    Used to start & stop *Notebooks*, with the specified name.
+
+* `.startNote(name)` & `.stopNote()`  
+    Used to start & stop each of the notes in the *Notebook*.
+
+#### Set Notebooks
+* `.getNotebookWidget(name).select([index])`  
+    Change the currently selected note, by putting the *Notebook's* name in `name` and putting the index of the note as an integer in `index`.  
+    Eg. To change the selected note to Note 3, then the index would be 2 (as 0 is the first note).
+
+#### Styles & Colours
+* You will need to use a [ttk Style and Map](/pythonTtk/#styling-ttk-widgets) to change the colour of notebook widget or its tabs.
+
+* To change the style for the Notebook widget, use `TNotebook`.
+
+* To change the style for the Notebook Tabs, use `TNotebook.Tab`.
+
 
 ### Paned Frame
 ---

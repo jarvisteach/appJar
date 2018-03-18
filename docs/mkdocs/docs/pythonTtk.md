@@ -61,7 +61,28 @@ Your new style should inherit from the widget's style: `MyButton.TButton`
 app.ttkStyle.configure("MyButton.TButton", foreground="red")
 ```
 
-You then need to apply this style to the relevant widgets:
+You can also create dynamic appearance changes to the widgets, called 'maps'.
+These allow you to change the properties of the widget in response to certain events, such as changing the colour of a button when the cursor is over it.
+
+```python
+app.ttkStyle.map("MyButton.TButton", background=[("active", "blue")])
+```
+
+You'll need to pass a list, which contains tuples as a parameter.
+* Each tuple is responsible for changing one aspect of the widget in a particular state.
+
+* To have multiple changes, you can have more than one tuple within the list.
+
+* The first item in the tuple should be the *state*.
+    In this case, it is 'active'. This means that something will be changed when the cursor is within the widget.
+
+* The second item will be the *value*.
+    In this case, the button will have a blue background when the cursor is over it.
+
+* You can learn more about ttk maps [here](http://infohost.nmt.edu/tcc/help/pubs/tkinter/web/ttk-map.html).
+
+
+You then need to apply this style (which includes both `ttkStyle.configure` and `ttkStyle.map`) to the relevant widgets:
 
 * `.set XXX Style(style)`  
     This lets you specify the name of a style for a particular widget.  
