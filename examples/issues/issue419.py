@@ -4,7 +4,11 @@ from appJar import gui
 
 def press():
     with app.toggleFrame('tog1'):
-        app.label('d')
+        app.label('g')
+
+    app.openToggleFrame('tog2')
+    app.label('h')
+    app.stopToggleFrame()
 
 with gui() as app:
     with app.tabbedFrame("tabs"):
@@ -13,4 +17,8 @@ with gui() as app:
                 app.label('a')
                 app.label('b')
                 app.label('c')
+            with app.toggleFrame("tog2"):
+                app.label('d')
+                app.label('e')
+                app.label('f')
     app.button('press', press)
