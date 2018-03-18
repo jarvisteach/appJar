@@ -4381,6 +4381,7 @@ class gui(object):
                     tab.pack(side=LEFT, ipady=4, ipadx=4)
 
             def deleteTab(self, text):
+                gui.trace("Deleting tab: %s", text)
                 tab = self.widgetStore[text][0]
                 pane = self.widgetStore[text][1]
 
@@ -4608,7 +4609,10 @@ class gui(object):
 
     def setTabbedFrameSelectedTab(self, title, tab):
         nb = self.widgetManager.get(self.Widgets.TabbedFrame, title)
-        nb.changeTab(tab)
+        try:
+            nb.changeTab(tab)
+        except KeyError:
+            raise ItemLookupError("Invalid tab name: " + str(tab))
 
     def setTabbedFrameDisabledTab(self, title, tab, disabled=True):
         nb = self.widgetManager.get(self.Widgets.TabbedFrame, title)
@@ -4620,6 +4624,7 @@ class gui(object):
 
     def deleteTabbedFrameTab(self, title, tab):
         nb = self.widgetManager.get(self.Widgets.TabbedFrame, title)
+        self.cleanseWidgets(nb.getTab(tab))
         nb.deleteTab(tab)
 
     def showTabbedFrameTab(self, title, tab):
@@ -5038,7 +5043,6 @@ class gui(object):
     def startLabelFrame(self, title, row=None, column=0, colspan=0, rowspan=0, sticky=W, hideTitle=False, label=None, name=None):
         if label is not None: name = label
         if hideTitle: name = ''
-#            self.setLabelFrameTitle(title, "")
         lf = self.startContainer(self.Widgets.LabelFrame, title, row, column, colspan, rowspan, sticky, name)
         return lf
 
@@ -5494,7 +5498,7 @@ class gui(object):
                     self.warn("Unable to destroy %s, during cleanse - destroy returned False", widgType)
             else:
                 self.trace("Skipped %s, cleansed by parent", widgType)
-        elif widgType in ('CanvasDnd', 'ValidationLabel'):
+        elif widgType in ('CanvasDnd', 'ValidationLabel', 'TabPane'):
             self.trace("Skipped %s, cleansed by parent", widgType)
         else:
             self.warn("Unable to destroy %s, during cleanse - no match", gui.GET_WIDGET_TYPE(widget))
