@@ -2300,9 +2300,7 @@ class gui(object):
         if not container.isFullscreen:
             container.isFullscreen = True
             container.attributes('-fullscreen', True)
-            container.escapeBindId = container.bind(
-                '<Escape>', self.MAKE_FUNC(
-                    self.exitFullscreen, container), "+")
+            container.escapeBindId = container.bind('<Escape>', self.MAKE_FUNC(self.exitFullscreen, container), "+")
 
     def getFullscreen(self, title=None):
         if title is None:
@@ -5026,7 +5024,7 @@ class gui(object):
 
     @contextmanager
     def labelFrame(self, title, row=None, column=0, colspan=0, rowspan=0, sticky=W, hideTitle=False, **kwargs):
-        name = kwargs.pop("name", None)
+        name = kwargs.pop("label", kwargs.pop("name", None))
         try:
             lf = self.startLabelFrame(title, row, column, colspan, rowspan, sticky, hideTitle, name)
         except ItemLookupError:
@@ -5037,10 +5035,11 @@ class gui(object):
 
     # sticky is alignment inside frame
     # frame will be added as other widgets
-    def startLabelFrame(self, title, row=None, column=0, colspan=0, rowspan=0, sticky=W, hideTitle=False, name=None):
+    def startLabelFrame(self, title, row=None, column=0, colspan=0, rowspan=0, sticky=W, hideTitle=False, label=None, name=None):
+        if label is not None: name = label
+        if hideTitle: name = ''
+#            self.setLabelFrameTitle(title, "")
         lf = self.startContainer(self.Widgets.LabelFrame, title, row, column, colspan, rowspan, sticky, name)
-        if hideTitle:
-            self.setLabelFrameTitle(title, "")
         return lf
 
     def stopLabelFrame(self):
@@ -6615,10 +6614,10 @@ class gui(object):
         else: # new widget
             kwargs = self._parsePos(kwargs.pop("pos", []), kwargs)
             if endValue is not None:
-                if label: spinBox = self.addLabelSpinBoxRange(title, fromVal=value, toVal=endValue, *args, **kwargs)
+                if label: spinBox = self.addLabelSpinBoxRange(title, fromVal=value, toVal=endValue, *args, label=label, **kwargs)
                 else: spinBox = self.addSpinBoxRange(title, fromVal=value, toVal=endValue, *args, **kwargs)
             else:
-                if label: spinBox = self.addLabelSpinBox(title, value, *args, **kwargs)
+                if label: spinBox = self.addLabelSpinBox(title, value, *args, label=label, **kwargs)
                 else: spinBox = self.addSpinBox(title, value, *args, **kwargs)
 
         if pos is not None: self.setSpinBoxPos(title, pos)
@@ -6695,10 +6694,10 @@ class gui(object):
         spin.isRange = True
         return spin
 
-    def addLabelSpinBoxRange(self, title, fromVal, toVal, row=None, column=0, colspan=0, rowspan=0, **kwargs):
+    def addLabelSpinBoxRange(self, title, fromVal, toVal, row=None, column=0, colspan=0, rowspan=0, label=True, **kwargs):
         ''' adds a spinbox, with a range of whole numbers, and a label displaying the title '''
         vals = list(range(fromVal, toVal + 1))
-        spin = self.addLabelSpinBox(title, vals, row, column, colspan, rowspan)
+        spin = self.addLabelSpinBox(title, vals, row, column, colspan, rowspan, label=label)
         spin.isRange = True
         return spin
 
@@ -9036,56 +9035,56 @@ class gui(object):
         ''' adds an entry box for capturing text '''
         return self._entryMaker(title, row, column, colspan, rowspan, secret=secret, label=False, kind="standard")
 
-    def addLabelEntry(self, title, row=None, column=0, colspan=0, rowspan=0, secret=False):
+    def addLabelEntry(self, title, row=None, column=0, colspan=0, rowspan=0, secret=False, label=True):
         ''' adds an entry box for capturing text, with the title as a label '''
-        return self._entryMaker(title, row, column, colspan, rowspan, secret, label=True)
+        return self._entryMaker(title, row, column, colspan, rowspan, secret, label=label)
 
     def addSecretEntry(self, title, row=None, column=0, colspan=0, rowspan=0):
         ''' adds an entry box for capturing text, where the text is displayed as stars '''
         return self._entryMaker(title, row, column, colspan, rowspan, True)
 
-    def addLabelSecretEntry(self, title, row=None, column=0, colspan=0, rowspan=0):
+    def addLabelSecretEntry(self, title, row=None, column=0, colspan=0, rowspan=0, label=True):
         ''' adds an entry box for capturing text, where the text is displayed as stars, with the title as a label '''
-        return self._entryMaker(title, row, column, colspan, rowspan, secret=True, label=True)
+        return self._entryMaker(title, row, column, colspan, rowspan, secret=True, label=label)
 
-    def addSecretLabelEntry(self, title, row=None, column=0, colspan=0, rowspan=0):
+    def addSecretLabelEntry(self, title, row=None, column=0, colspan=0, rowspan=0, label=True):
         ''' adds an entry box for capturing text, where the text is displayed as stars, with the title as a label '''
-        return self._entryMaker(title, row, column, colspan, rowspan, secret=True, label=True)
+        return self._entryMaker(title, row, column, colspan, rowspan, secret=True, label=label)
 
     def addFileEntry(self, title, row=None, column=0, colspan=0, rowspan=0):
         ''' adds an entry box with a button, that pops-up a file dialog '''
         return self._entryMaker(title, row, column, colspan, rowspan, secret=False, label=False, kind="file")
 
-    def addLabelFileEntry(self, title, row=None, column=0, colspan=0, rowspan=0):
+    def addLabelFileEntry(self, title, row=None, column=0, colspan=0, rowspan=0, label=True):
         ''' adds an entry box with a button, that pops-up a file dialog, with a label that displays the title '''
-        return self._entryMaker(title, row, column, colspan, rowspan, secret=False, label=True, kind="file")
+        return self._entryMaker(title, row, column, colspan, rowspan, secret=False, label=label, kind="file")
 
     def addDirectoryEntry(self, title, row=None, column=0, colspan=0, rowspan=0):
         return self._entryMaker(title, row, column, colspan, rowspan, secret=False, label=False, kind="directory")
 
-    def addLabelDirectoryEntry(self, title, row=None, column=0, colspan=0, rowspan=0):
-        return self._entryMaker(title, row, column, colspan, rowspan, secret=False, label=True, kind="directory")
+    def addLabelDirectoryEntry(self, title, row=None, column=0, colspan=0, rowspan=0, label=True):
+        return self._entryMaker(title, row, column, colspan, rowspan, secret=False, label=label, kind="directory")
 
     def addValidationEntry(self, title, row=None, column=0, colspan=0, rowspan=0, secret=False):
         return self._entryMaker(title, row, column, colspan, rowspan, secret=False, label=False, kind="validation")
 
-    def addLabelValidationEntry(self, title, row=None, column=0, colspan=0, rowspan=0, secret=False):
-        return self._entryMaker(title, row, column, colspan, rowspan, secret=False, label=True, kind="validation")
+    def addLabelValidationEntry(self, title, row=None, column=0, colspan=0, rowspan=0, secret=False, label=True):
+        return self._entryMaker(title, row, column, colspan, rowspan, secret=False, label=label, kind="validation")
 
     def addAutoEntry(self, title, words, row=None, column=0, colspan=0, rowspan=0):
         return self._entryMaker(title, row, column, colspan, rowspan, secret=False, label=False, kind="auto", words=words)
 
-    def addLabelAutoEntry(self, title, words, row=None, column=0, colspan=0, rowspan=0, secret=False):
-        return self._entryMaker(title, row, column, colspan, rowspan, secret=False, label=True, kind="auto", words=words)
+    def addLabelAutoEntry(self, title, words, row=None, column=0, colspan=0, rowspan=0, secret=False, label=True):
+        return self._entryMaker(title, row, column, colspan, rowspan, secret=False, label=label, kind="auto", words=words)
 
     def addNumericEntry(self, title, row=None, column=0, colspan=0, rowspan=0, secret=False):
         return self._entryMaker(title, row, column, colspan, rowspan, secret=secret, label=False, kind="numeric")
 
-    def addLabelNumericEntry(self, title, row=None, column=0, colspan=0, rowspan=0, secret=False):
-        return self._entryMaker(title, row, column, colspan, rowspan, secret=secret, label=True, kind="numeric")
+    def addLabelNumericEntry(self, title, row=None, column=0, colspan=0, rowspan=0, secret=False, label=True):
+        return self._entryMaker(title, row, column, colspan, rowspan, secret=secret, label=label, kind="numeric")
 
-    def addNumericLabelEntry(self, title, row=None, column=0, colspan=0, rowspan=0, secret=False):
-        return self._entryMaker(title, row, column, colspan, rowspan, secret=secret, label=True, kind="numeric")
+    def addNumericLabelEntry(self, title, row=None, column=0, colspan=0, rowspan=0, secret=False, label=True):
+        return self._entryMaker(title, row, column, colspan, rowspan, secret=secret, label=label, kind="numeric")
 
     def _getDirName(self, title):
         self._getFileName(title, selectFile=False)

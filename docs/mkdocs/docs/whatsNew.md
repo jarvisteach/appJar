@@ -6,6 +6,7 @@
 * Issues Resolved:
     * [#415](https://github.com/jarvisteach/appJar/issues/415) - Disable Entry now disables all of a file/directory [entry](/inputWidgets/#entry)  
     * [#402](https://github.com/jarvisteach/appJar/issues/402) - Now possible to register a function to call once the GUI [starts up](/pythonEvents/#starting-the-gui)  
+    * [#377](https://github.com/jarvisteach/appJar/issues/377) - Label widgets are now configurable
 
 ## Version 0.92  
 
