@@ -2928,23 +2928,16 @@ class gui(object):
                         item.config(style=value)
                     else:
                         self.warn("Error configuring %s: can't set ttk style, not in ttk mode.", name)
-                elif option == 'align':
-                    if kind == self.Widgets.Entry:
-                        if value == W or value == LEFT:
-                            value = LEFT
-                        elif value == E or value == RIGHT:
-                            value = RIGHT
+                elif option in ['align', 'anchor']:
+                    if kind == self.Widgets.Entry or gui.GET_WIDGET_TYPE(item) == 'SelectableLabel':
+                        if value == W: value = LEFT
+                        elif value == E: value = RIGHT
                         item.config(justify=value)
-                    else:
-                        if value == LEFT:
-                            value = "w"
-                        elif value == RIGHT:
-                            value = "e"
-                        item.config(anchor=value)
-                elif option == 'anchor':
-                    if kind == self.Widgets.LabelFrame:
+                    elif kind == self.Widgets.LabelFrame:
                         item.config(labelanchor=value)
                     else:
+                        if value == LEFT: value = "w"
+                        elif value == RIGHT: value = "e"
                         item.config(anchor=value)
                 elif option == 'cursor':
                     item.config(cursor=value)
@@ -3464,7 +3457,7 @@ class gui(object):
                 self.widgetManager.remove(self.Widgets.FrameLabel, name)
                 labParent.grid_forget()
                 labParent.destroy()
-            # oteherwise destroy this container & a label if we have one
+            # otherwise destroy this container & a label if we have one
             else:
                 parent.grid_forget()
                 parent.destroy()
