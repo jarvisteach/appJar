@@ -24,3 +24,7 @@ with gui() as app:
     app.addSelectableLabel('d')
     app.setLabelAlign("d", "w" )
 
+    app.addSelectableLabel('y')
+    app.setLabelAnchor("y", "right" )
+    app.addSelectableLabel('z')
+    app.setLabelAnchor("z", "w" )
