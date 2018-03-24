@@ -513,6 +513,7 @@ class gui(object):
         # configure the geometry of the window
         self.topLevel.escapeBindId = None  # used to exit fullscreen
         self.topLevel.stopFunction = None  # used to exit fullscreen
+        self.topLevel.startFunction = None
 
         # set the resize status - default to True
         self.topLevel.locationSet = False
@@ -1736,6 +1737,10 @@ class gui(object):
         self._poll()
         self._flash()
 
+        # register start-up function
+        if self.topLevel.startFunction is not None:
+            self.topLevel.after_idle(self.topLevel.startFunction)
+
         # start the main loop
         try:
             self.topLevel.mainloop()
@@ -1745,6 +1750,12 @@ class gui(object):
         except Exception as e:
             self.exception(e)
             self.stop()
+
+    def setStartFunction(self, func):
+        f = self.MAKE_FUNC(func, "start")
+        self.topLevel.startFunction = f
+
+    startFunction = property(fset=setStartFunction)
 
     def _macReveal(self):
         """ internal function to deiconify GUIs on mac """
@@ -2289,9 +2300,7 @@ class gui(object):
         if not container.isFullscreen:
             container.isFullscreen = True
             container.attributes('-fullscreen', True)
-            container.escapeBindId = container.bind(
-                '<Escape>', self.MAKE_FUNC(
-                    self.exitFullscreen, container), "+")
+            container.escapeBindId = container.bind('<Escape>', self.MAKE_FUNC(self.exitFullscreen, container), "+")
 
     def getFullscreen(self, title=None):
         if title is None:
@@ -2388,6 +2397,7 @@ class gui(object):
         editMenu = kwargs.pop("editMenu", None)
         # two possible names
         stopFunction = kwargs.pop("stop", kwargs.pop("stopFunction", None))
+        startFunction = kwargs.pop("start", kwargs.pop("startFunction", None))
         fastStop = kwargs.pop("fastStop", None)
         enterKey = kwargs.pop("enterKey", None)
         logLevel = kwargs.pop("log", kwargs.pop("logLevel", None))
@@ -2427,6 +2437,7 @@ class gui(object):
 
         if editMenu is not None: self.editMenu = editMenu
         if stopFunction is not None: self.stopFunction = stopFunction
+        if startFunction is not None: self.startFunction = startFunction
         if fastStop is not None: self.fastStop = fastStop
         if enterKey is not None: self.enterKey = enterKey
         if logLevel is not None: self.logLevel = logLevel
@@ -2898,9 +2909,17 @@ class gui(object):
                     item.config(height=value)
                 elif option == 'state':
                     # make entries readonly - can still copy/paste
-                    if value == "disabled" and kind == self.Widgets.Entry:
-                        value = "readonly"
+                    if kind == self.Widgets.Entry:
+                        if value == "disabled":
+                            if hasattr(item, 'but'):
+                                item.but.config(state=value)
+                                item.unbind("<Button-1>")
+                            value = "readonly"
+                        elif value == 'normal' and hasattr(item, 'but') and item.cget('state') != 'normal':
+                            item.bind("<Button-1>", item.click_command, "+")
+                            item.but.config(state=value)
                     item.config(state=value)
+
                 elif option == 'relief':
                     item.config(relief=value)
                 elif option == 'style':
@@ -2909,23 +2928,16 @@ class gui(object):
                         item.config(style=value)
                     else:
                         self.warn("Error configuring %s: can't set ttk style, not in ttk mode.", name)
-                elif option == 'align':
-                    if kind == self.Widgets.Entry:
-                        if value == W or value == LEFT:
-                            value = LEFT
-                        elif value == E or value == RIGHT:
-                            value = RIGHT
+                elif option in ['align', 'anchor']:
+                    if kind == self.Widgets.Entry or gui.GET_WIDGET_TYPE(item) == 'SelectableLabel':
+                        if value == W: value = LEFT
+                        elif value == E: value = RIGHT
                         item.config(justify=value)
-                    else:
-                        if value == LEFT:
-                            value = "w"
-                        elif value == RIGHT:
-                            value = "e"
-                        item.config(anchor=value)
-                elif option == 'anchor':
-                    if kind == self.Widgets.LabelFrame:
+                    elif kind == self.Widgets.LabelFrame:
                         item.config(labelanchor=value)
                     else:
+                        if value == LEFT: value = "w"
+                        elif value == RIGHT: value = "e"
                         item.config(anchor=value)
                 elif option == 'cursor':
                     item.config(cursor=value)
@@ -3056,7 +3068,7 @@ class gui(object):
             if widget.kind == "ticks":
                 vals = self.widgetManager.get(self.Widgets.TickOptionBox, name, group=WidgetManager.VARS)
                 for o in vals:
-                    cmd = self.MAKE_FUNC(function, str(o))
+                    cmd = self.MAKE_FUNC(function, name)
                     vals[o].cmd_id = vals[o].trace('w', cmd)
                     vals[o].cmd = cmd
             else:
@@ -3445,7 +3457,7 @@ class gui(object):
                 self.widgetManager.remove(self.Widgets.FrameLabel, name)
                 labParent.grid_forget()
                 labParent.destroy()
-            # oteherwise destroy this container & a label if we have one
+            # otherwise destroy this container & a label if we have one
             else:
                 parent.grid_forget()
                 parent.destroy()
@@ -4362,6 +4374,7 @@ class gui(object):
                     tab.pack(side=LEFT, ipady=4, ipadx=4)
 
             def deleteTab(self, text):
+                gui.trace("Deleting tab: %s", text)
                 tab = self.widgetStore[text][0]
                 pane = self.widgetStore[text][1]
 
@@ -4589,7 +4602,10 @@ class gui(object):
 
     def setTabbedFrameSelectedTab(self, title, tab):
         nb = self.widgetManager.get(self.Widgets.TabbedFrame, title)
-        nb.changeTab(tab)
+        try:
+            nb.changeTab(tab)
+        except KeyError:
+            raise ItemLookupError("Invalid tab name: " + str(tab))
 
     def setTabbedFrameDisabledTab(self, title, tab, disabled=True):
         nb = self.widgetManager.get(self.Widgets.TabbedFrame, title)
@@ -4601,6 +4617,7 @@ class gui(object):
 
     def deleteTabbedFrameTab(self, title, tab):
         nb = self.widgetManager.get(self.Widgets.TabbedFrame, title)
+        self.cleanseWidgets(nb.getTab(tab))
         nb.deleteTab(tab)
 
     def showTabbedFrameTab(self, title, tab):
@@ -5005,7 +5022,7 @@ class gui(object):
 
     @contextmanager
     def labelFrame(self, title, row=None, column=0, colspan=0, rowspan=0, sticky=W, hideTitle=False, **kwargs):
-        name = kwargs.pop("name", None)
+        name = kwargs.pop("label", kwargs.pop("name", None))
         try:
             lf = self.startLabelFrame(title, row, column, colspan, rowspan, sticky, hideTitle, name)
         except ItemLookupError:
@@ -5016,10 +5033,10 @@ class gui(object):
 
     # sticky is alignment inside frame
     # frame will be added as other widgets
-    def startLabelFrame(self, title, row=None, column=0, colspan=0, rowspan=0, sticky=W, hideTitle=False, name=None):
+    def startLabelFrame(self, title, row=None, column=0, colspan=0, rowspan=0, sticky=W, hideTitle=False, label=None, name=None):
+        if label is not None: name = label
+        if hideTitle: name = ''
         lf = self.startContainer(self.Widgets.LabelFrame, title, row, column, colspan, rowspan, sticky, name)
-        if hideTitle:
-            self.setLabelFrameTitle(title, "")
         return lf
 
     def stopLabelFrame(self):
@@ -5474,7 +5491,7 @@ class gui(object):
                     self.warn("Unable to destroy %s, during cleanse - destroy returned False", widgType)
             else:
                 self.trace("Skipped %s, cleansed by parent", widgType)
-        elif widgType in ('CanvasDnd', 'ValidationLabel'):
+        elif widgType in ('CanvasDnd', 'ValidationLabel', 'TabPane'):
             self.trace("Skipped %s, cleansed by parent", widgType)
         else:
             self.warn("Unable to destroy %s, during cleanse - no match", gui.GET_WIDGET_TYPE(widget))
@@ -5950,8 +5967,7 @@ class gui(object):
         vals = {}
         for o in options:
             vals[o] = BooleanVar()
-            option['menu'].add_checkbutton(
-                label=o, onvalue=True, offvalue=False, variable=vals[o])
+            option['menu'].add_checkbutton( label=o, onvalue=True, offvalue=False, variable=vals[o])
         self.widgetManager.update(self.Widgets.TickOptionBox, title, vals, group=WidgetManager.VARS)
         option.kind = "ticks"
 
@@ -6594,10 +6610,10 @@ class gui(object):
         else: # new widget
             kwargs = self._parsePos(kwargs.pop("pos", []), kwargs)
             if endValue is not None:
-                if label: spinBox = self.addLabelSpinBoxRange(title, fromVal=value, toVal=endValue, *args, **kwargs)
+                if label: spinBox = self.addLabelSpinBoxRange(title, fromVal=value, toVal=endValue, *args, label=label, **kwargs)
                 else: spinBox = self.addSpinBoxRange(title, fromVal=value, toVal=endValue, *args, **kwargs)
             else:
-                if label: spinBox = self.addLabelSpinBox(title, value, *args, **kwargs)
+                if label: spinBox = self.addLabelSpinBox(title, value, *args, label=label, **kwargs)
                 else: spinBox = self.addSpinBox(title, value, *args, **kwargs)
 
         if pos is not None: self.setSpinBoxPos(title, pos)
@@ -6674,10 +6690,10 @@ class gui(object):
         spin.isRange = True
         return spin
 
-    def addLabelSpinBoxRange(self, title, fromVal, toVal, row=None, column=0, colspan=0, rowspan=0, **kwargs):
+    def addLabelSpinBoxRange(self, title, fromVal, toVal, row=None, column=0, colspan=0, rowspan=0, label=True, **kwargs):
         ''' adds a spinbox, with a range of whole numbers, and a label displaying the title '''
         vals = list(range(fromVal, toVal + 1))
-        spin = self.addLabelSpinBox(title, vals, row, column, colspan, rowspan)
+        spin = self.addLabelSpinBox(title, vals, row, column, colspan, rowspan, label=label)
         spin.isRange = True
         return spin
 
@@ -9015,56 +9031,56 @@ class gui(object):
         ''' adds an entry box for capturing text '''
         return self._entryMaker(title, row, column, colspan, rowspan, secret=secret, label=False, kind="standard")
 
-    def addLabelEntry(self, title, row=None, column=0, colspan=0, rowspan=0, secret=False):
+    def addLabelEntry(self, title, row=None, column=0, colspan=0, rowspan=0, secret=False, label=True):
         ''' adds an entry box for capturing text, with the title as a label '''
-        return self._entryMaker(title, row, column, colspan, rowspan, secret, label=True)
+        return self._entryMaker(title, row, column, colspan, rowspan, secret, label=label)
 
     def addSecretEntry(self, title, row=None, column=0, colspan=0, rowspan=0):
         ''' adds an entry box for capturing text, where the text is displayed as stars '''
         return self._entryMaker(title, row, column, colspan, rowspan, True)
 
-    def addLabelSecretEntry(self, title, row=None, column=0, colspan=0, rowspan=0):
+    def addLabelSecretEntry(self, title, row=None, column=0, colspan=0, rowspan=0, label=True):
         ''' adds an entry box for capturing text, where the text is displayed as stars, with the title as a label '''
-        return self._entryMaker(title, row, column, colspan, rowspan, secret=True, label=True)
+        return self._entryMaker(title, row, column, colspan, rowspan, secret=True, label=label)
 
-    def addSecretLabelEntry(self, title, row=None, column=0, colspan=0, rowspan=0):
+    def addSecretLabelEntry(self, title, row=None, column=0, colspan=0, rowspan=0, label=True):
         ''' adds an entry box for capturing text, where the text is displayed as stars, with the title as a label '''
-        return self._entryMaker(title, row, column, colspan, rowspan, secret=True, label=True)
+        return self._entryMaker(title, row, column, colspan, rowspan, secret=True, label=label)
 
     def addFileEntry(self, title, row=None, column=0, colspan=0, rowspan=0):
         ''' adds an entry box with a button, that pops-up a file dialog '''
         return self._entryMaker(title, row, column, colspan, rowspan, secret=False, label=False, kind="file")
 
-    def addLabelFileEntry(self, title, row=None, column=0, colspan=0, rowspan=0):
+    def addLabelFileEntry(self, title, row=None, column=0, colspan=0, rowspan=0, label=True):
         ''' adds an entry box with a button, that pops-up a file dialog, with a label that displays the title '''
-        return self._entryMaker(title, row, column, colspan, rowspan, secret=False, label=True, kind="file")
+        return self._entryMaker(title, row, column, colspan, rowspan, secret=False, label=label, kind="file")
 
     def addDirectoryEntry(self, title, row=None, column=0, colspan=0, rowspan=0):
         return self._entryMaker(title, row, column, colspan, rowspan, secret=False, label=False, kind="directory")
 
-    def addLabelDirectoryEntry(self, title, row=None, column=0, colspan=0, rowspan=0):
-        return self._entryMaker(title, row, column, colspan, rowspan, secret=False, label=True, kind="directory")
+    def addLabelDirectoryEntry(self, title, row=None, column=0, colspan=0, rowspan=0, label=True):
+        return self._entryMaker(title, row, column, colspan, rowspan, secret=False, label=label, kind="directory")
 
     def addValidationEntry(self, title, row=None, column=0, colspan=0, rowspan=0, secret=False):
         return self._entryMaker(title, row, column, colspan, rowspan, secret=False, label=False, kind="validation")
 
-    def addLabelValidationEntry(self, title, row=None, column=0, colspan=0, rowspan=0, secret=False):
-        return self._entryMaker(title, row, column, colspan, rowspan, secret=False, label=True, kind="validation")
+    def addLabelValidationEntry(self, title, row=None, column=0, colspan=0, rowspan=0, secret=False, label=True):
+        return self._entryMaker(title, row, column, colspan, rowspan, secret=False, label=label, kind="validation")
 
     def addAutoEntry(self, title, words, row=None, column=0, colspan=0, rowspan=0):
         return self._entryMaker(title, row, column, colspan, rowspan, secret=False, label=False, kind="auto", words=words)
 
-    def addLabelAutoEntry(self, title, words, row=None, column=0, colspan=0, rowspan=0, secret=False):
-        return self._entryMaker(title, row, column, colspan, rowspan, secret=False, label=True, kind="auto", words=words)
+    def addLabelAutoEntry(self, title, words, row=None, column=0, colspan=0, rowspan=0, secret=False, label=True):
+        return self._entryMaker(title, row, column, colspan, rowspan, secret=False, label=label, kind="auto", words=words)
 
     def addNumericEntry(self, title, row=None, column=0, colspan=0, rowspan=0, secret=False):
         return self._entryMaker(title, row, column, colspan, rowspan, secret=secret, label=False, kind="numeric")
 
-    def addLabelNumericEntry(self, title, row=None, column=0, colspan=0, rowspan=0, secret=False):
-        return self._entryMaker(title, row, column, colspan, rowspan, secret=secret, label=True, kind="numeric")
+    def addLabelNumericEntry(self, title, row=None, column=0, colspan=0, rowspan=0, secret=False, label=True):
+        return self._entryMaker(title, row, column, colspan, rowspan, secret=secret, label=label, kind="numeric")
 
-    def addNumericLabelEntry(self, title, row=None, column=0, colspan=0, rowspan=0, secret=False):
-        return self._entryMaker(title, row, column, colspan, rowspan, secret=secret, label=True, kind="numeric")
+    def addNumericLabelEntry(self, title, row=None, column=0, colspan=0, rowspan=0, secret=False, label=True):
+        return self._entryMaker(title, row, column, colspan, rowspan, secret=secret, label=label, kind="numeric")
 
     def _getDirName(self, title):
         self._getFileName(title, selectFile=False)
@@ -9162,17 +9178,17 @@ class gui(object):
 
         if selectFile:
             command = self.MAKE_FUNC(self._getFileName, title)
-            click_command = self.MAKE_FUNC(self._checkFileName, title)
+            vFrame.theWidget.click_command = self.MAKE_FUNC(self._checkFileName, title)
             text = "File"
             default = "-- enter a filename --"
         else:
             command = self.MAKE_FUNC(self._getDirName, title)
-            click_command = self.MAKE_FUNC(self._checkDirName, title)
+            vFrame.theWidget.click_command = self.MAKE_FUNC(self._checkDirName, title)
             text = "Directory"
             default = "-- enter a directory --"
 
         self.setEntryDefault(title, default)
-        vFrame.theWidget.bind("<Button-1>", click_command, "+")
+        vFrame.theWidget.bind("<Button-1>", vFrame.theWidget.click_command, "+")
 
         if not self.ttkFlag:
             vFrame.theButton = Button(vFrame, font=self._getContainerProperty('buttonFont'))
@@ -11399,7 +11415,7 @@ class gui(object):
                     return node.nodeValue
 
             def getAttribute(self, att='id'):
-                try: return self.node.attributes['id'].value
+                try: return self.node.attributes[att].value
                 except: return None
 
             def IsEditable(self):
@@ -11432,7 +11448,7 @@ class gui(object):
                     # TO DO: start editing this node...
                     pass
                 if self.dblClickFunc is not None:
-                    self.dblClickFunc(self.treeTitle, self.getAttributee())
+                    self.dblClickFunc(self.treeTitle, self.getAttribute())
 
         #  EXTRA FUNCTIONS
 

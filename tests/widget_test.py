@@ -2653,6 +2653,7 @@ def test_gui_properties():
         labelFont={'size':18, 'family':'helvetica'},
         editMenu=True,
         stopFunction=propFunc,
+        startFunction=propFunc,
         fastStop=False,
         enterKey=propFunc,
         logLevel='trace',
@@ -2804,6 +2805,7 @@ def test_gui_properties():
     assert app.editMenu is False
 
     app.stopFunction = propFunc
+    app.startFunction = propFunc
     app.stopFunction = False
     app.fastStop = True
     assert app.fastStop is True

@@ -79,8 +79,8 @@ def makeExplorer():
                 _currentId = val
                 with app.labelFrame("Configure Widget", sticky='ew', stretch='column', font={'size':16}) as lf:
                     for k in props.keys():
-                        app.label(k.capitalize() + ":", align='w')
-                        app.entry(k , props[k], width=5, pos=('p', 1))
+                        app.label(k.capitalize() + ":", anchor='e')
+                        app.entry(k , props[k], pos=('p', 1))
         else:
             pass
 
@@ -100,7 +100,7 @@ def makeExplorer():
             sw.configure(padx=5, pady=5)
             with app.panedFrame("LEFT"):
                 app.configure(sticky="news")
-                app.addTree("b", xml, row=1, column=1, rowspan=6)
+                app.tree("b", xml, row=1, column=1, rowspan=6)
                 app.setTreeClickFunction("b", updateConfigPane)
                 app.setTreeEditable("b", False)
                 app.setTreeBg('b', "#3b3f40")
@@ -110,6 +110,7 @@ def makeExplorer():
                     app.bg = "#3b3f40"
                     with app.labelFrame("Configure Widget", sticky='ew', stretch='column', font={'size':16}) as lf:
                         lf.config(fg='#ca753d')
+                        app.fg = "#adadad"
                         app.label('EMPTY')
                     app.button("Update", press, pos=(1,0))
         app.generateTree("b")

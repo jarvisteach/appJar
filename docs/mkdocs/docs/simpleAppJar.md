@@ -162,7 +162,7 @@ An interactive widget, for capturing user input in the GUI.
 
 | Parameter | Data type | Default | Description |
 | --------- | --------- | ------- | ------------|
-| label | boolean | False | Adds a Label before the widget. |
+| label | boolean/string | False | Adds a Label before the widget, either the label's title or the the text of this parameter. |
 | kind | string | `standard` | One of: `standard`, `file`, `directory`, `numeric`, `auto` or `validation`. |
 | secret | boolean | False | Configures the entry box to show stars instead of characters. |
 | default | string | None | Sets default text to display in an empty entry. |
@@ -243,6 +243,7 @@ When clicked, displays a drop-down of items, one of which can be selected.
 | --------- | --------- | ------- | ------------|
 | kind | string | `standard` | Set this to `ticks` if you want tickable options. |
 | selected | string/integer | None | Start with the specified item/position selected. |
+| label | boolean/string | False | Adds a Label before the widget, either the label's title or the the text of this parameter. |
 
 ## Spin  
 ---
@@ -258,6 +259,7 @@ Shows a single value, with arrows to scroll up or down, allowing the user to cha
 | endValue | integer | None | If specified, value & endValue should be integers, and will be used to generate a range. |
 | pos | integer | 0 | The position of an item to select. |
 | item | string | None | The name of an item to select. |
+| label | boolean/string | False | Adds a Label before the widget, either the label's title or the the text of this parameter. |
 
 ## Listbox
 ---
@@ -289,6 +291,7 @@ A draggable widget, where the user can select a number from a range.
 | show | boolean | False | Show the slider's value above the slider. |
 | increment | integer | 10 | Configures how much the slider jumps, when the trough is clicked. |
 | interval | integer | None | Configures the slider to show interval values, along its length. In steps of the value specified. |
+| label | boolean/string | False | Adds a Label before the widget, either the label's title or the the text of this parameter. |
 
 ## Meter  
 ---
