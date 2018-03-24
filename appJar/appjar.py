@@ -3068,7 +3068,7 @@ class gui(object):
             if widget.kind == "ticks":
                 vals = self.widgetManager.get(self.Widgets.TickOptionBox, name, group=WidgetManager.VARS)
                 for o in vals:
-                    cmd = self.MAKE_FUNC(function, str(o))
+                    cmd = self.MAKE_FUNC(function, name)
                     vals[o].cmd_id = vals[o].trace('w', cmd)
                     vals[o].cmd = cmd
             else:
@@ -5967,8 +5967,7 @@ class gui(object):
         vals = {}
         for o in options:
             vals[o] = BooleanVar()
-            option['menu'].add_checkbutton(
-                label=o, onvalue=True, offvalue=False, variable=vals[o])
+            option['menu'].add_checkbutton( label=o, onvalue=True, offvalue=False, variable=vals[o])
         self.widgetManager.update(self.Widgets.TickOptionBox, title, vals, group=WidgetManager.VARS)
         option.kind = "ticks"
 
