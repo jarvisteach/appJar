@@ -7934,7 +7934,9 @@ class gui(object):
         image = self._getImage(imgFile)
         # works on Mac & Windows :)
         if align == None:
-            but.config(image=image, compound=TOP, text="", justify=LEFT)
+            but.config(image=image, compound=TOP, text="")
+            if not self.ttk:
+                but.config(justify=LEFT)
         else:
             but.config(image=image, compound=align)
         # but.config(image=image, compound=None, text="") # works on Windows, not Mac
@@ -8394,9 +8396,11 @@ class gui(object):
 
             self.accessOrigFont = self.accessOrigBg = self.accessOrigFg = None
             with self.subWindow("access_access_subwindow", sticky = "news", title="Accessibility", resizable=False) as sw:
-                sw.config(padx=5, pady=1)
+                if not self.ttk:
+                    sw.config(padx=5, pady=1)
                 with self.labelFrame("access_font_labelframe", sticky="news", name="Font") as lf:
-                    lf.config(padx=5, pady=5, font=self._accessFont)
+                    if not self.ttk:
+                        lf.config(padx=5, pady=5, font=self._accessFont)
 
                     with self.frame("access_ticks_frame", colspan=2):
                         self.check("access_label_check", True, label="Labels", pos=(0,0), font=self._accessFont, tip="Set label fonts")
