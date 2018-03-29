@@ -10,6 +10,7 @@
     * [#402](https://github.com/jarvisteach/appJar/issues/402) - Now possible to register a function to call once the GUI [starts up](/pythonEvents/#starting-the-gui)  
     * [#377](https://github.com/jarvisteach/appJar/issues/377) - Label widgets are now configurable
     * [#339](https://github.com/jarvisteach/appJar/issues/339) - Functions to remove [toolbars](/pythonBars/#toolbar) and [statusbars](/pythonBars/#statusbar).  
+    * [#69](https://github.com/jarvisteach/appJar/issues/69) - Basic functions for [tagging](/inputWidgets/#tag-textareas) text areas  
 
 ## Version 0.92  
 
