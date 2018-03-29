@@ -157,6 +157,38 @@ app.go()
     This will clear the contents of all TextAreas in the app.  
     Set ```callFunction``` to be True, if you want to call any associated functions.  
 
+#### Tag TextAreas  
+
+A simple syntax highlighter:  
+
+```python
+from appJar import gui
+
+redWords = ("string", "integer", "boolean", "real")
+greenWords = ("print", "input")
+
+def highlightSyntax(param):
+    for w in redWords:
+        app.tagTextAreaPattern("ta", "red", w)
+    for w in greenWords:
+        app.tagTextAreaPattern("ta", "green", w)
+
+    with gui("Text Editor", "300x400") as app:
+        app.text("ta", focus=True, change=highlightSyntax)
+        app.tagTextArea("ta", "red", background="red", foreground="white")
+        app.tagTextArea("ta", "green", background="green", foreground="white")
+```
+
+* `.tagtextArea(title, **kwargs)`  
+    Create the named tag, with the specified arguments.  
+
+* `.tagTextAreaPattern(title, tag, pattern, regexp=False)`  
+    Apply a previously made tag to the specified pattern.  
+    Set `regexp` to True if you want to use a regular expression.  
+
+* `.tagTextAreaRange(title, tag, start, end)`  
+    Apply a previously made tag to the specified range.  
+
 ####Get TextAreas
 
 * `.getTextArea(title)`  

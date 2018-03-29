@@ -1048,6 +1048,10 @@ def test_text_areas():
     assert isinstance(app.addScrolledTextArea("st1"), AjScrolledText)
     app.addScrolledTextArea("st2")
 
+    app.tagTextArea("t2", "red", background="red", foreground="white")
+    app.tagTextArea("t2", "green", background="green", foreground="white")
+    app.tagTextAreaPattern("t2", "red", "this")
+
     assert app.getTextArea("t1") == EMPTY
     assert app.getTextArea("t2") == EMPTY
     assert app.getTextArea("st1") == EMPTY
@@ -1073,6 +1077,9 @@ def test_text_areas():
     app.setTextArea("t2", TEXT_TWO)
     app.setTextArea("st1", TEXT_THREE)
     app.setTextArea("st2", TEXT_FOUR)
+
+    app.tagTextAreaPattern("t2", "red", TEXT_TWO[2:4])
+    app.tagTextAreaRange("t2", "green", 1.0, 1.2)
 
     assert app.textAreaChanged("t1") is True
     assert app.textAreaChanged("t2") is True
