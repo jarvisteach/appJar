@@ -15,6 +15,7 @@ def highlightSyntax(param):
     app.tagTextAreaRange("ta", "red", 1.0, 1.4)
 
 with gui("Text Editor", "300x400") as app:
+    app.setSize(400,400)
     app.text("ta", focus=True, change=highlightSyntax)
     app.tagTextArea("ta", "red", background="red", foreground="white")
     app.tagTextArea("ta", "green", background="green", foreground="white")

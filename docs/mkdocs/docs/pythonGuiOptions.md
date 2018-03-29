@@ -27,11 +27,11 @@ Some basic configuration for the size, position, transparency, etc. of the GUI.
     You can have a menu or logon SubWindow that hides/shows the main window as necessary.  
     **NB.** hiding the window, effectively minimizes it, it is still there...
 
-* `.setGeometry(geom)` & `.setGeometry(width, height)`  
+* `.setSize(geom)` & `.setSize(width, height)`  
     Sets the height & width of the GUI:  
-    * Either as a single String `.setGeometry("200x100")` (widthxheight)  
-    * As two separate parameters `.setGeometry(200,100)`
-    * Or to go *Fullscreen* `.setGeometry("Fullscreen")`  
+    * Either as a single String `.setSize("200x100")` (widthxheight)  
+    * As two separate parameters `.setSize(200,100)`
+    * Or to go *Fullscreen* `.setSize("Fullscreen")`  
 
 * `.exitFullscreen()`  
     Leave fullscreen, if set in the geometry.    
@@ -43,7 +43,7 @@ Some basic configuration for the size, position, transparency, etc. of the GUI.
 if app.exitFullscreen():
     # do something
 else:
-    app.setGeometry("fullscreen")
+    app.setSize("fullscreen")
     # do something else
 ```   
 

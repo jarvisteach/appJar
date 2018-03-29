@@ -65,7 +65,7 @@ def press(btn):
         app.addLabel("newLab", "New Label")
 
 with gui() as app:
-    app.setGeometry(250, 300)
+    app.setSize(250, 300)
     with app.pagedWindow("pages"):
         with app.page():
             app.addLabel("l1", "Page One")

@@ -464,7 +464,7 @@ from appJar import gui
 app=gui()
 
 app.setBg("DarkKhaki")
-app.setGeometry(280,400)
+app.setSize(280,400)
 
 app.startPagedWindow("Main Title")
 app.startPage()

@@ -103,7 +103,7 @@ Simply call those functions after starting a *SubWindow*.
 ```python
 app.startSubWindow("one", modal=True)
 app.setBg("orange")
-app.setGeometry("400x400")
+app.setSize(400, 400)
 app.setTransparency(25)
 app.setStopFunction(checkDone)
 app.addLabel("l1", "In sub window")
