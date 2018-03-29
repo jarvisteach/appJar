@@ -248,9 +248,23 @@ app.go()
 
 ## Canvas
 ---
-This lets you embed a canvas in appJar
+This lets you embed a canvas in appJar.  
+Canvases are very powerful, appJar will never provide wrappers for all their functions.  
+So, if you're looking to truly harness a canvas, add it and save the widget as a variable: `canvas = app.addCanvas("c1")`. Then, you can call all the canvas functions as you would a tKinter canvas.
 
 ![Canvas](img/1_canvas.png)  
+
+```python
+from appJar import gui
+app=gui()
+app.addCanvas("c1")
+app.addCanvasOval("c1", 10, 10, 100, 100, fill="red", outline="blue", width=3)
+app.addCanvasLine("c1", 0, 0, 255, 255, width=5)
+app.addCanvasLine("c1", 0, 255, 255, 0, dash=123)
+app.go()
+```
+
+Or, as mentioned above, you can work directly with the canvas object:  
 
 ```python
 from appJar import gui
@@ -269,6 +283,14 @@ app.go()
     Gets the specified canvas widget.  
 
 #### Drawing on a Canvas  
+
+**NB.** each of these functions returns the object being created, so you can later change it:
+
+```python
+canvas = app.addCanvas("c1")
+rect = app.addCanvasRectangle("c1", x=40, y=80, w=100, h=100, fill='green')
+canvas.itemconfig(rect, fill='pink')
+```
 
 * `.addCanvasCircle(title, x, y, diameter, **kwargs)`  
     Draws a circle on the canvas.  
