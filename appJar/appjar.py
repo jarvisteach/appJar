@@ -8665,7 +8665,7 @@ class gui(object):
 
         return text
 
-    def addTextArea(self, title, row=None, column=0, colspan=0, rowspan=0):
+    def addTextArea(self, title, row=None, column=0, colspan=0, rowspan=0, text=None):
         """ Adds a TextArea with the specified title
         Simply calls internal _buildTextArea function before positioning the widget
 
@@ -8673,11 +8673,12 @@ class gui(object):
         :returns: the created TextArea
         :raises ItemLookupError: if the title is already in use
         """
-        text = self._buildTextArea(title, self.getContainer())
-        self._positionWidget(text, row, column, colspan, rowspan, N+E+S+W)
-        return text
+        txt = self._buildTextArea(title, self.getContainer())
+        self._positionWidget(txt, row, column, colspan, rowspan, N+E+S+W)
+        if text is not None: self.setTextArea(title, text, callFunction=False)
+        return txt
 
-    def addScrolledTextArea(self, title, row=None, column=0, colspan=0, rowspan=0):
+    def addScrolledTextArea(self, title, row=None, column=0, colspan=0, rowspan=0, text=None):
         """ Adds a Scrollable TextArea with the specified title
         Simply calls internal _buildTextArea functio, specifying a ScrollabelTextArea before positioning the widget
 
@@ -8685,9 +8686,10 @@ class gui(object):
         :returns: the created TextArea
         :raises ItemLookupError: if the title is already in use
         """
-        text = self._buildTextArea(title, self.getContainer(), True)
-        self._positionWidget(text, row, column, colspan, rowspan, N+E+S+W)
-        return text
+        txt = self._buildTextArea(title, self.getContainer(), True)
+        self._positionWidget(txt, row, column, colspan, rowspan, N+E+S+W)
+        if text is not None: self.setTextArea(title, text, callFunction=False)
+        return txt
 
     def getTextArea(self, title):
         """ Gets the text in the specified TextArea
@@ -8714,7 +8716,7 @@ class gui(object):
 
     def tagTextAreaPattern(self, title, tag, pattern, regexp=False):
         ta = self.widgetManager.get(self.Widgets.TextArea, title)
-        ta.highlight_pattern(pattern, tag, regexp=regexp)
+        ta.highlightPattern(pattern, tag, regexp=regexp)
 
     def tagTextAreaRange(self, title, tag, start, end):
         ta = self.widgetManager.get(self.Widgets.TextArea, title)
@@ -12618,13 +12620,7 @@ class TextParent(object):
 #        md5 = hashlib.md5(str.encode(text)).digest()
         return md5
 
-# uses multiple inheritance
-class AjText(Text, TextParent):
-    def __init__(self, parent, **opts):
-        super(AjText, self).__init__(parent, **opts)
-        self._init()    # call TextParent initialiser
-
-    def highlight_pattern(self, pattern, tag, start="1.0", end="end", regexp=False):
+    def highlightPattern(self, pattern, tag, start="1.0", end="end", regexp=False):
         '''Apply the given tag to all text that matches the given pattern
         If 'regexp' is set to True, pattern will be treated as a regular
         expression according to Tcl's regular expression syntax.
@@ -12645,6 +12641,11 @@ class AjText(Text, TextParent):
             self.mark_set("matchEnd", "%s+%sc" % (index, count.get()))
             self.tag_add(tag, "matchStart", "matchEnd")
 
+# uses multiple inheritance
+class AjText(Text, TextParent):
+    def __init__(self, parent, **opts):
+        super(AjText, self).__init__(parent, **opts)
+        self._init()    # call TextParent initialiser
 
 class AjScrolledText(scrolledtext.ScrolledText, TextParent):
     def __init__(self, parent, **opts):
