@@ -7,6 +7,7 @@ from appJar import gui
 COLOURS = ['black', 'red', 'orange', 'yellow', 'green', 'blue', 'purple', 'pink', 'white']
 currentRound = 1
 codePegs = [0, 0, 0, 0]
+bestScore = 9999
 
 pattern = [] # stores the pegs to guess
 while len(pattern) < 4:
@@ -21,7 +22,7 @@ def change(peg): # called when pressing a peg label
         app.setLabelBg(str(peg)+str(currentRound), COLOURS[codePegs[peg]])
 
 def guess(btn):
-    global currentRound
+    global currentRound, bestScore, codePegs
     rnd = int(btn[2:])
     guess = [COLOURS[codePegs[0]], COLOURS[codePegs[1]], COLOURS[codePegs[2]], COLOURS[codePegs[3]]]
 
@@ -33,6 +34,11 @@ def guess(btn):
             for res in range(4):
                 app.setLabelBg("p"+str(res)+str(currentRound), 'red')
             app.infoBox("WINNER", "You guessed in " + str(currentRound) + " rounds.")
+            if currentRound < bestScore:
+                bestScore = currentRound
+            currentRound = 1
+            codePegs = [0, 0, 0, 0]
+            app.removeAllWidgets()
         else:
             done = []
             for i in range(4):
@@ -44,17 +50,18 @@ def guess(btn):
 
             for i in range(len(done)):
                 app.setLabelBg("p"+str(i)+str(currentRound), done[i])
-
             currentRound += 1
-            newRow()
+        newRow()
 
 def newRow():
+    if currentRound == 1:
+        app.label("score", "Best score: " + str(bestScore))
     with app.labelFrame('Round ' + str(currentRound), row=currentRound, sticky='news', padding=(2,2)):
-        for i in range(4):
+        for i in range(4): # ad dthe four labels for player choices
             app.label(str(i)+str(currentRound), '', bg=COLOURS[codePegs[i]], pos=(currentRound, i), submit=change, width=6)
         app.addNamedButton('GO', 'GO'+str(currentRound), guess, row=currentRound, column=4)
         with app.frame('feedback'+str(currentRound), row=currentRound, column=5, sticky='news', padding=(2,2)):
-            for x in range(2):
+            for x in range(2): # add agrid of four labels for feedback
                 for y in range(2):
                     app.label('p' + str(x*2+y) + str(currentRound), '', bg='black', pos=(x, y), width=3)
 
