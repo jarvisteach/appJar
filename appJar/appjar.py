@@ -33,7 +33,6 @@ except ImportError:
     from tkinter import font as tkFont
     # used to check if functions have a parameter
     from inspect import getfullargspec as getArgs
-
     PYTHON2 = False
     PY_NAME = "python3"
 
@@ -71,6 +70,8 @@ ConfigParser = codecs = ParsingError = None # used to parse language files
 Thread = Queue = None
 sqlite3 = None
 turtle = None
+
+# to allow tkinter or ttk
 frameBase = Frame
 labelBase = Label
 scaleBase = Scale
@@ -193,17 +194,9 @@ class gui(object):
         kw = dict((k.lower().strip(), v) for k, v in kw.items())
         return kw
 
-    def RANDOM_COLOUR(self):
-        """ generates a random colour """
-        self._loadRandom()
-        de=("%02x"%random.randint(0,255))
-        re=("%02x"%random.randint(0,255))
-        we=("%02x"%random.randint(0,255))
-        return "#"+de+re+we
-
     @staticmethod
     def GET_PLATFORM():
-        """ returns class variables for platform """
+        """ returns one of the gui class's three static platform variables """
         if platform() in ["win32", "Windows"]:
             return gui.WINDOWS
         elif platform() == "Darwin":
@@ -211,11 +204,11 @@ class gui(object):
         elif platform() in ["Linux", "FreeBSD"]:
             return gui.LINUX
         else:
-            raise Exception("Unsupported platform: " + platform())
+            raise Exception("Unknown platform: " + platform())
 
     @staticmethod
     def SHOW_VERSION():
-        """ returns a string containing version information """
+        """ returns a printable string containing version information """
         verString = \
             "appJar: " + str(__version__) \
             + "\nPython: " + str(sys.version_info[0]) \
@@ -230,7 +223,7 @@ class gui(object):
 
     @staticmethod
     def SHOW_PATHS():
-        """ returns a string containing path to libraries, etc """
+        """ returns a printable string containing path to libraries, etc """
         pathString = \
             "File Name: " + (gui.exe_file if gui.exe_file is not None else "") \
             + "\nFile Location: " + (gui.exe_path if gui.exe_path is not None else "") \
@@ -269,11 +262,26 @@ class gui(object):
             dims["b_height"] = max(dims["r_height"], dims["w_height"])
             dims["b_width"] = max(dims["r_width"], dims["w_width"])
 
+        # GUI's corner - widget's corner
+        # widget's corner can be 0 on windows when size not set by user
+        dims["outerFrameWidth"] = 0 if container.winfo_x() == 0 else container.winfo_rootx() - container.winfo_x()
+        dims["titleBarHeight"] = 0 if container.winfo_rooty() == 0 else container.winfo_rooty() - container.winfo_y()
+
+        # add it all together
+        dims["actualWidth"] = dims["b_width"] + (dims["outerFrameWidth"] * 2)
+        dims["actualHeight"] = dims["b_height"] + dims["titleBarHeight"] + dims["outerFrameWidth"]
+
+        dims["x"] = (dims["s_width"] // 2) - (dims["actualWidth"] // 2)
+        dims["y"] = (dims["s_height"] // 2) - (dims["actualHeight"] // 2)
+
         return dims
 
     @staticmethod
     def SPLIT_GEOM(geom):
-        """ returns 2 lists made from the geom string """
+        """ returns 2 lists made from the geom string
+        :param geom: the geom string to parse
+        :returns: a tuple containing a width/heiht tuple & a x/y position tuple
+        """
         geom = geom.lower().split("x")
         width = int(float(geom[0]))
         height = int(float(geom[1].split("+")[0]))
@@ -296,39 +304,35 @@ class gui(object):
             win.attributes('-alpha', 0.0)
 
         win.update_idletasks()
-
-        # GUI's corner - widget's corner
-        # widget's corner can be 0 on windows when size not set by user
-        outer_frame_width = 0 if win.winfo_x() == 0 else win.winfo_rootx() - win.winfo_x()
-        titlebar_height = 0 if win.winfo_rooty() == 0 else win.winfo_rooty() - win.winfo_y()
-
         dims = gui.GET_DIMS(win)
-        actual_width = dims["b_width"] + (outer_frame_width * 2)
-        actual_height = dims["b_height"] + titlebar_height + outer_frame_width
-
-        x = (dims["s_width"] // 2) - (actual_width // 2)
-        y = (dims["s_height"] // 2) - (actual_height // 2)
 
         # move the window up a bit if requested
-        y = y - up if up < y else 0
+        dims["y"] = dims["y"] - up if up < dims["y"] else 0
 
-        gui.trace("Screen: %sx%s. Requested: %sx%s. Location: %s, %s", dims["s_width"], dims["s_height"], dims["b_width"], dims["b_height"], x, y)
-        win.geometry("+%d+%d" % (x, y))
+        gui.trace("Screen: %sx%s. Requested: %sx%s. Location: %s, %s",
+                    dims["s_width"], dims["s_height"], dims["b_width"],
+                    dims["b_height"], dims["x"], dims["y"])
+
+        win.geometry("+%d+%d" % (dims["x"], dims["y"]))
 
         if gui.GET_PLATFORM() != gui.LINUX:
             win.attributes('-alpha', trans)
 
-    # figure out where the cursor is with respect to a widget
     @staticmethod
     def MOUSE_POS_IN_WIDGET(widget, event, findRoot=True):
-        """ returns the mouse's relative position in a widget """
+        """ returns the mouse's relative position in a widget
+        :param widget: the widget to look in
+        :param event: the event containing the mouse coordinates
+        :param findRoot: if we should make this relative to the parent
+        """
 
         # first we have to get the real master
         master = widget
         while findRoot:
             if isinstance(master, (SubWindow, Tk)):
-                break
-            master = master.master
+                findRoot = False
+            else:
+                master = master.master
 
         # subtract the widget's top left corner from the root window's top corner
         x = event.x_root - master.winfo_rootx()
@@ -2248,17 +2252,19 @@ class gui(object):
         if ignoreSettings is not None:
             container.ignoreSettings = ignoreSettings
 
-        if x == "CENTER":
+        if x == "CENTER" and y is None:
             gui.trace("Set location called with no params - CENTERING")
             self.CENTER(container)
         else:
             x, y = self._parseTwoParams(x, y)
 
             # get the window's width & height
-            m_width = self.topLevel.winfo_screenwidth()
-            m_height = self.topLevel.winfo_screenheight()
+            dims = gui.GET_DIMS(container)
 
-            if x < 0 or x > m_width or y < 0 or y > m_height:
+            if isinstance(x, str) and x.lower() in ['c', 'center', 'centre']: x = dims["x"]
+            if isinstance(y, str) and y.lower() in ['c', 'center', 'centre']: y = dims["y"]
+
+            if x < 0 or x > dims['s_width'] or y < 0 or y > dims['s_height']:
                 self.warn( "Invalid location: %s, %s - ignoring", x, y)
                 return
 
@@ -2513,6 +2519,19 @@ class gui(object):
             self.containerStack[-1]['expand'] = "ALL"
 
     expand = property(getExpand, setExpand)
+
+    def RANDOM_COLOUR(self):
+        return self.getRandomColour()
+
+    def getRandomColour(self):
+        """ generates a random colour """
+        self._loadRandom()
+        de=("%02x"%random.randint(0,255))
+        re=("%02x"%random.randint(0,255))
+        we=("%02x"%random.randint(0,255))
+        return "#"+de+re+we
+
+    randomColour = property(getRandomColour)
 
     def getFonts(self):
         fonts = list(tkFont.families())
@@ -3852,7 +3871,6 @@ class gui(object):
 
 #        self._getContainerProperty('container').columnconfigure(0, weight=1)
 #        self._getContainerProperty('container').rowconfigure(0, weight=1)
-
 
 #####################################
 # FUNCTION to manage containers
