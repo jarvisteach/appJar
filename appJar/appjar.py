@@ -22,6 +22,7 @@ try:
     from inspect import getargspec as getArgs
     PYTHON2 = True
     PY_NAME = "Python"
+    STRING = basestring
 except ImportError:
     # for Python3
     from tkinter import *
@@ -35,13 +36,13 @@ except ImportError:
     from inspect import getfullargspec as getArgs
     PYTHON2 = False
     PY_NAME = "python3"
+    STRING = str
 
 # import other useful classes
 import os, sys, locale
 import re
 import imghdr   # images
 import time     # splashscreen
-import webbrowser   # links
 import calendar # datepicker
 import datetime # datepicker & image
 import logging  # python's logger
@@ -70,6 +71,7 @@ ConfigParser = codecs = ParsingError = None # used to parse language files
 Thread = Queue = None
 sqlite3 = None
 turtle = None
+webbrowser = None   # links
 
 # to allow tkinter or ttk
 frameBase = Frame
@@ -183,6 +185,51 @@ class gui(object):
 ###############################################
 
     @staticmethod
+    def CENTER(win, up=0):
+        gui.SET_LOCATION("CENTER", win=win, up=up)
+
+    @staticmethod
+    def SET_LOCATION(x, y=None, ignoreSettings=None, win=None, up=0):
+        if ignoreSettings is not None:
+            win.ignoreSettings = ignoreSettings
+
+        if gui.GET_PLATFORM() != gui.LINUX:
+            trans = win.attributes('-alpha')
+            win.attributes('-alpha', 0.0)
+
+        win.update_idletasks()
+
+        if isinstance(x, STRING) and x.lower() in ['c', 'center', 'centre'] and y is None:
+            x = y = 'c'
+        else:
+            x, y = gui.PARSE_TWO_PARAMS(x, y)
+        gui.trace("Set location called with %s, %s", x, y)
+
+        # get the window's dimensions
+        dims = gui.GET_DIMS(win)
+
+        # set any center positions
+        if isinstance(x, STRING) and x.lower() in ['c', 'center', 'centre']: x = dims["x"]
+        if isinstance(y, STRING) and y.lower() in ['c', 'center', 'centre']: y = dims["y"]
+
+        # move the window up a bit if requested
+        y = y - up if up < y else 0
+
+        # fix any out of bounds positions
+        if x < 0 or x > dims['s_width']: x = dims['x']
+        if y < 0 or y > dims['s_height']: y = dims['y']
+
+        gui.trace("Screen: %sx%s. Requested: %sx%s. Location: %s, %s",
+                    dims["s_width"], dims["s_height"], dims["b_width"],
+                    dims["b_height"], x, y)
+        win.geometry("+%d+%d" % (x, y))
+        win.locationSet = True
+
+        if gui.GET_PLATFORM() != gui.LINUX:
+            win.attributes('-alpha', trans)
+
+
+    @staticmethod
     def CLEAN_CONFIG_DICTIONARY(**kw):
         """ Used by all Classes to tidy up dictionaries passed into config functions
             Allows us to more quickly process the dictionaries when overriding config """
@@ -277,6 +324,18 @@ class gui(object):
         return dims
 
     @staticmethod
+    def PARSE_TWO_PARAMS(x, y):
+        """ used to convert different possible x/y params to a tuple
+        """
+        if y is not None:
+            return (x,y)
+        else:
+            if isinstance(x, (list, tuple)):
+                return (x[0], x[1])
+            else:
+                return (x, x)
+
+    @staticmethod
     def SPLIT_GEOM(geom):
         """ returns 2 lists made from the geom string
         :param geom: the geom string to parse
@@ -292,31 +351,6 @@ class gui(object):
             x = y = -1
 
         return (width, height), (x, y)
-
-    @staticmethod
-    def CENTER(win, up=0):
-        """ Centers a tkinter window
-        http://stackoverflow.com/questions/3352918/
-        :param win: the root or Toplevel window to center
-        """
-        if gui.GET_PLATFORM() != gui.LINUX:
-            trans = win.attributes('-alpha')
-            win.attributes('-alpha', 0.0)
-
-        win.update_idletasks()
-        dims = gui.GET_DIMS(win)
-
-        # move the window up a bit if requested
-        dims["y"] = dims["y"] - up if up < dims["y"] else 0
-
-        gui.trace("Screen: %sx%s. Requested: %sx%s. Location: %s, %s",
-                    dims["s_width"], dims["s_height"], dims["b_width"],
-                    dims["b_height"], dims["x"], dims["y"])
-
-        win.geometry("+%d+%d" % (dims["x"], dims["y"]))
-
-        if gui.GET_PLATFORM() != gui.LINUX:
-            win.attributes('-alpha', trans)
 
     @staticmethod
     def MOUSE_POS_IN_WIDGET(widget, event, findRoot=True):
@@ -961,6 +995,15 @@ class gui(object):
                 import sqlite3
             except:
                 sqlite3 = False
+
+    def _importWebBrowser(self):
+        """ loads webbrowser """
+        global webbrowser
+        if webbrowser is None:
+            try:
+                import webbrowser
+            except:
+                webbrowser = False
 
 #####################################
 # FUNCTIONS FOR UNIVERSAL DND
@@ -1708,7 +1751,7 @@ class gui(object):
 
         # check geom is set and set a minimum size, also positions the window if necessary
         if not self.topLevel.locationSet:
-            self.CENTER(self.topLevel)
+            self.setLocation('CENTER')
 
         if not hasattr(self.topLevel, 'ms'):
             self.setMinSize()
@@ -2246,31 +2289,11 @@ class gui(object):
         container.minsize(size[0], size[1])
         gui.trace("Minsize set to: %s", size)
 
-    def setLocation(self, x, y=None, ignoreSettings=None):
+    def setLocation(self, x, y=None, ignoreSettings=None, win=None, up=0):
         """ called to set the GUI's position on screen """
-        container = self._getTopLevel()
-        if ignoreSettings is not None:
-            container.ignoreSettings = ignoreSettings
-
-        if x == "CENTER" and y is None:
-            gui.trace("Set location called with no params - CENTERING")
-            self.CENTER(container)
-        else:
-            x, y = self._parseTwoParams(x, y)
-
-            # get the window's width & height
-            dims = gui.GET_DIMS(container)
-
-            if isinstance(x, str) and x.lower() in ['c', 'center', 'centre']: x = dims["x"]
-            if isinstance(y, str) and y.lower() in ['c', 'center', 'centre']: y = dims["y"]
-
-            if x < 0 or x > dims['s_width'] or y < 0 or y > dims['s_height']:
-                self.warn( "Invalid location: %s, %s - ignoring", x, y)
-                return
-
-            gui.trace("Setting location to: %s, %s", x, y)
-            container.geometry("+%d+%d" % (x, y))
-        container.locationSet = True
+        if win is None:
+            win = self._getTopLevel()
+        gui.SET_LOCATION(x, y, ignoreSettings, win, up)
 
     def getLocation(self):
         container = self._getTopLevel()
@@ -2324,7 +2347,7 @@ class gui(object):
 
     def exitFullscreen(self, container=None):
         """ turns off fullscreen mode for the specified window """
-        if container is None or isinstance(container, str):
+        if container is None or isinstance(container, STRING):
             try:
                 container = self.widgetManager.get(self.Widgets.SubWindow, container)
             except:
@@ -2349,18 +2372,9 @@ class gui(object):
         """ set the current container's external grid padding """
         self.containerStack[-1]['pady'] = y
 
-    def _parseTwoParams(self, x, y):
-        if y is not None:
-            return (x,y)
-        else:
-            if isinstance(x, list) or isinstance(x, tuple):
-                return (x[0], x[1])
-            else:
-                return (x, x)
-
     def setPadding(self, x, y=None):
         """ sets the padding around the border of the current container """
-        x, y = self._parseTwoParams(x, y)
+        x, y = gui.PARSE_TWO_PARAMS(x, y)
         self.containerStack[-1]['padx'] = x
         self.containerStack[-1]['pady'] = y
 
@@ -2452,7 +2466,7 @@ class gui(object):
 
     def setGuiPadding(self, x, y=None):
         """ sets the padding around the border of the GUI """
-        x, y = self._parseTwoParams(x, y)
+        x, y = gui.PARSE_TWO_PARAMS(x, y)
         self.containerStack[0]['container'].config(padx=x, pady=y)
 
     def getGuiPadding(self):
@@ -2477,7 +2491,7 @@ class gui(object):
         self.containerStack[-1]['ipady'] = y
 
     def setInPadding(self, x, y=None):
-        x, y = self._parseTwoParams(x, y)
+        x, y = gui.PARSE_TWO_PARAMS(x, y)
         self.containerStack[-1]['ipadx'] = x
         self.containerStack[-1]['ipady'] = y
 
@@ -2570,18 +2584,23 @@ class gui(object):
 
     font = property(getFont, setFont)
 
-    def setInputFont(self, *args, **kwargs):
+    def _fontHelper(self, font, *args, **kwargs):
         if len(args) > 0:
             if isinstance(args[0], int):
                 kwargs={'size':args[0]}
             elif isinstance(args[0], dict):
                 kwargs=args[0]
             elif isinstance(args[0], tkFont.Font):
-                gui.trace("InputFont set to new object")
-                self.containerStack[-1]['inputFont']=args[0]
-                return
+                gui.trace("%s set to new object", font)
+                self.containerStack[-1][font]=args[0]
+                return None
+        self._getContainerProperty(font).config(**kwargs)
+        if 'family' in kwargs and kwargs['family'] != self._getContainerProperty(font).actual()['family']:
+            gui.error("Failed to adjust %s to %s.", font, kwargs['family'])
+        return kwargs
 
-        self._getContainerProperty('inputFont').config(**kwargs)
+    def setInputFont(self, *args, **kwargs):
+        self._fontHelper('inputFont', *args, **kwargs)
 
     def getInputFont(self):
         return self._getContainerProperty('inputFont').actual()
@@ -2589,17 +2608,7 @@ class gui(object):
     inputFont = property(getInputFont, setInputFont)
 
     def setButtonFont(self, *args, **kwargs):
-        if len(args) > 0:
-            if isinstance(args[0], int):
-                kwargs={'size':args[0]}
-            elif isinstance(args[0], dict):
-                kwargs=args[0]
-            elif isinstance(args[0], tkFont.Font):
-                gui.trace("ButtonFont set to new object")
-                self.containerStack[-1]['buttonFont']=args[0]
-                return
-
-        self._getContainerProperty('buttonFont').config(**kwargs)
+        self._fontHelper('buttonFont', *args, **kwargs)
 
     def getButtonFont(self):
         return self._getContainerProperty('buttonFont').actual()
@@ -2607,27 +2616,18 @@ class gui(object):
     buttonFont = property(getButtonFont, setButtonFont)
 
     def setLabelFont(self, *args, **kwargs):
-        if len(args) > 0:
-            if isinstance(args[0], int):
-                kwargs={'size':args[0]}
-            elif isinstance(args[0], dict):
-                kwargs=args[0]
-            elif isinstance(args[0], tkFont.Font):
-                gui.trace("LabelFont set to new object")
-                self.containerStack[-1]['labelFont']=args[0]
-                return
+        kwargs = self._fontHelper('labelFont', *args, **kwargs)
+        if kwargs is not None:
+            self.tableFont.config(**kwargs)
 
-        self._getContainerProperty('labelFont').config(**kwargs)
-        self.tableFont.config(**kwargs)
+            # need better way to register font change events on tables
+            for k, v in self.widgetManager.group(self.Widgets.Table).items():
+                v.config(font=self.tableFont)
 
-        # need better way to register font change events on tables
-        for k, v in self.widgetManager.group(self.Widgets.Table).items():
-            v.config(font=self.tableFont)
-
-        linkArgs = kwargs.copy()
-        linkArgs['underline'] = True
-        linkArgs['weight'] = 'bold'
-        self._linkFont.config(**linkArgs)
+            linkArgs = kwargs.copy()
+            linkArgs['underline'] = True
+            linkArgs['weight'] = 'bold'
+            self._linkFont.config(**linkArgs)
 
     def getLabelFont(self):
         return self._getContainerProperty('labelFont').actual()
@@ -5427,7 +5427,7 @@ class gui(object):
         gui.trace("Showing subWindow %s", title)
         tl.shown = True
         if not tl.locationSet:
-            self.CENTER(tl)
+            self.setLocation("c", win=tl)
             tl.locationSet = True
         else:
             gui.trace("Using previous position")
@@ -7410,14 +7410,14 @@ class gui(object):
         self._loadWinsound()
         if self.platform == self.WINDOWS and winsound is not False:
             try:
-                if isinstance(note, str):
+                if isinstance(note, STRING):
                     freq = self.NOTES[note.lower()]
                 else:
                     freq = note
             except KeyError:
                 raise Exception("Error: cannot play note - " + note)
             try:
-                if isinstance(duration, str):
+                if isinstance(duration, STRING):
                     length = self.DURATIONS[duration.upper()]
                 else:
                     length = duration
@@ -8043,6 +8043,9 @@ class gui(object):
             return self.addLink(title, value, row, column, colspan, rowspan)
 
     def _buildLink(self, title):
+        self._importWebBrowser()
+        if not webbrowser:
+            self.error("Unable to load webbrowser - can't create links")
         link = self._makeLink()(self.getContainer(), useTtk=self.ttkFlag)
         link.config(text=title, font=self._linkFont)
         if not self.ttk:
@@ -8174,7 +8177,7 @@ class gui(object):
     def addCanvasImage(self, title, x, y, image=image, **kwargs):
         ''' adds an image to the specified canvas '''
         canv = self.widgetManager.get(self.Widgets.Canvas, title)
-        if isinstance(image, str):
+        if isinstance(image, STRING):
             image = self._getImage(image)
         canv.imageStore.append(image)
         return self.widgetManager.get(self.Widgets.Canvas, title).create_image(x, y, image=image, **kwargs)
@@ -12980,7 +12983,7 @@ class Dialog(Toplevel, object):
 
         # create the buttons
         self.buttonbox()
-        gui.CENTER(self, up=150)
+        gui.SET_LOCATION(x="CENTER", up=150, win=self)
 
         self.grab_set()
         if not self.initial_focus:
@@ -13281,7 +13284,6 @@ class SimpleTable(ScrollPane):
 
         if "font" in kw:
             font = kw.pop("font")
-            self.fonts["dataFont"].configure(family=font.actual("family"), size=font.actual("size"))
             self.fonts["headerFont"].configure(family=font.actual("family"), size=font.actual("size") + 2, weight="bold")
             updateCells = True
 
