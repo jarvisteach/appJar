@@ -119,7 +119,7 @@ Each of these will add the specified type of Entry, using the title provided.
     This will return the contents of all Entries in the app, as a dictionary.  
     NB. *numericEntries* always return a float.  
 
-##TextArea
+## TextArea
 ____
 Similar to an Entry, but allows you to type text over multiple lines.  
 
@@ -133,16 +133,16 @@ app.addTextArea("t1")
 app.go()
 ```
 
-####Add TextAreas
-* `.addTextArea(title)`  
+#### Add TextAreas
+* `.addTextArea(title, text=None)`  
     Adds an empty TextArea, with the specified title.  
 
-* `.addScrolledTextArea(title)`  
+* `.addScrolledTextArea(title, text=None)`  
     Adds a scrollable TextArea with the specified title.  
 
 ![ScrolledTextArea](img/2_textArea.png)  
 
-####Set TextAreas
+#### Set TextAreas
 * `.setTextArea(title, text, end=True, callFunction=True)`  
     Adds the supplied text to the specified TextArea.  
     By default, the text is added to the end.  
@@ -156,6 +156,10 @@ app.go()
 * `.clearAllTextAreas(callFunction=False)`  
     This will clear the contents of all TextAreas in the app.  
     Set ```callFunction``` to be True, if you want to call any associated functions.  
+
+* `.highlightTextArea(title, start, end=END)`  
+    Highlights all text from start position, to the end position.  
+    **NB.** positions should be a string in the format `LINE.CHAR`, eg. `1.4` wil start on the 1st line at the 4th character.  
 
 #### Tag TextAreas  
 
@@ -173,29 +177,64 @@ def highlightSyntax(param):
     for w in greenWords:
         app.tagTextAreaPattern("ta", "green", w)
 
-    with gui("Text Editor", "300x400") as app:
-        app.text("ta", focus=True, change=highlightSyntax)
-        app.tagTextArea("ta", "red", background="red", foreground="white")
-        app.tagTextArea("ta", "green", background="green", foreground="white")
+with gui("Text Editor", "300x400") as app:
+    app.text("ta", focus=True, change=highlightSyntax)
+    app.tagTextArea("ta", "red", background="red", foreground="white")
+    app.tagTextArea("ta", "green", background="green", foreground="white")
 ```
 
-* `.tagtextArea(title, **kwargs)`  
+* `.textAreaCreateTag(title, **kwargs)`  
     Create the named tag, with the specified arguments.  
 
-* `.tagTextAreaPattern(title, tag, pattern, regexp=False)`  
+* `.textAreaChangeTag(title, **kwargs)`  
+    Change the named tag, with the specified arguments.  
+
+* `.textAreaDeleteTag(title, *tags)`  
+    Delete the named tags.  
+
+* `.textAreaTagPattern(title, tag, pattern, regexp=False)`  
     Apply a previously made tag to the specified pattern.  
     Set `regexp` to True if you want to use a regular expression.  
 
-* `.tagTextAreaRange(title, tag, start, end)`  
+* `.textAreaTagRange(title, tag, start, end)`  
     Apply a previously made tag to the specified range.  
 
-####Get TextAreas
+* `.textAreaTagSelected(title, tag)`  
+    Apply a previously made tag to the currently selected text.  
+
+* `.textAreaUntagRange(title, tag, start, end)`  
+    Remove the named tag from the specified range.  
+
+* `.textAreaUntagSelected(title, tag)`  
+    Remove the named tag from the selected text.  
+
+* `.textAreaToggleTagRange(title, tag, start, end)`  
+    Invert the named tag on the specified range.  
+
+* `.textAreaToggleTagSelected(title, tag)`  
+    Invert the named tag on the selected text.  
+
+* `.getTextAreaTags(title)`  
+    Gets a list of all tags on the text area.  
+
+* `.getTextAreaTag(title)`  
+    Gets all details about the specified tag.  
+
+#### Get TextAreas
 
 * `.getTextArea(title)`  
     Gets the contents of the specified TextArea.  
 
 * `.getAllTextAreas()`  
     This will return the contents of all TextAreas in the app, as a dictionary.  
+
+#### Search TextAreas
+
+* `.searchTextArea(title, pattern, start=None, stop=None, nocase=True, backwards=False)`  
+    Will find, highlight and return the position of the specified pattern.  
+    If no `start` position is provided, appJar will start searching form the cursor's position.  
+    Set `nocase` to False, if you want the search to be case sensitive.  
+    Set `backwards` to True, if you want to search backwards.  
 
 ##Button
 ---

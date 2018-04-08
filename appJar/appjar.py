@@ -8731,17 +8731,81 @@ class gui(object):
             areas[k] = self.getTextArea(k)
         return areas
 
-    def tagTextArea(self, title, name, **kwargs):
+    def textAreaCreateTag(self, title, name, **kwargs):
+        """ creates a new tag on the specified text area """
         ta = self.widgetManager.get(self.Widgets.TextArea, title)
         ta.tag_config(name, **kwargs)
 
-    def tagTextAreaPattern(self, title, tag, pattern, regexp=False):
+    def textAreaChangeTag(self, title, name, **kwargs):
+        """ changes a tag on the specified text area """
+        ta = self.widgetManager.get(self.Widgets.TextArea, title)
+        ta.tag_config(name, **kwargs)
+
+    def textAreaDeleteTag(self, title, *tags):
+        """ deletes the specified tag """
+        ta = self.widgetManager.get(self.Widgets.TextArea, title)
+        ta.tag_delete(*tags)
+
+    def textAreaTagPattern(self, title, tag, pattern, regexp=False):
+        """ applies the tag to the specified text """
         ta = self.widgetManager.get(self.Widgets.TextArea, title)
         ta.highlightPattern(pattern, tag, regexp=regexp)
 
-    def tagTextAreaRange(self, title, tag, start, end):
+    def textAreaTagRange(self, title, tag, start, end=END):
+        """ applies the tag to the specified range """
         ta = self.widgetManager.get(self.Widgets.TextArea, title)
         ta.tag_add(tag, start, end)
+
+    def textAreaTagSelected(self, title, tag):
+        if self.widgetManager.get(self.Widgets.TextArea, title).tag_ranges(SEL):
+            self.textAreaTagRange(title, tag, SEL_FIRST, SEL_LAST)
+        self.widgetManager.get(self.Widgets.TextArea, title).focus_set()
+
+    def textAreaUntagRange(self, title, tag, start, end=END):
+        """removes the tag from the specified range """
+        ta = self.widgetManager.get(self.Widgets.TextArea, title)
+        ta.tag_remove(tag, start, end)
+
+    def textAreaUntagSelected(self, title, tag):
+        if self.widgetManager.get(self.Widgets.TextArea, title).tag_ranges(SEL):
+            self.textAreaUntagRange(title, tag, SEL_FIRST, SEL_LAST)
+        self.widgetManager.get(self.Widgets.TextArea, title).focus_set()
+
+    def textAreaToggleTagRange(self, title, tag, start, end=END):
+        """ will toggle the tag at the specified range """
+        ta = self.widgetManager.get(self.Widgets.TextArea, title)
+        if tag in ta.tag_names(start): self.textAreaUntagRange(title, tag, start, end)
+        else: self.textAreaTagRange(title, tag, start, end)
+
+    def textAreaToggleTagSelected(self, title, tag):
+        if self.widgetManager.get(self.Widgets.TextArea, title).tag_ranges(SEL):
+            self.textAreaToggleRange(title, tag, SEL_FIRST, SEL_LAST)
+        self.widgetManager.get(self.Widgets.TextArea, title).focus_set()
+
+    def searchTextArea(self, title, pattern, start=None, stop=None, nocase=True, backwards=False):
+        """ will find and highlight the specified text, returning the position """
+        ta = self.widgetManager.get(self.Widgets.TextArea, title)
+        if start is None: start = ta.index(INSERT)
+        pos = ta.search(pattern, start, stopindex=stop, nocase=nocase, backwards=backwards)
+        ta.focus_set()
+        if pos == "":
+            return None
+        else:
+            end = str(pos) + " + " + str(len(pattern)) + " c"
+            ta.see(pos)
+            ta.tag_add(SEL, pos, end)
+            ta.mark_set("insert", pos)
+            return pos
+
+    def getTextAreaTag(self, title, tag):
+        """ returns all details about the specified tag """
+        ta = self.widgetManager.get(self.Widgets.TextArea, title)
+        return ta.tag_config(tag)
+
+    def getTextAreaTags(self, title):
+        """ returns a list of all tags in the text area """
+        ta = self.widgetManager.get(self.Widgets.TextArea, title)
+        return ta.tag_names()
 
     def setTextArea(self, title, text, end=True, callFunction=True):
         """ Add the supplied text to the specified TextArea
@@ -8784,6 +8848,11 @@ class gui(object):
         """
         for ta in self.widgetManager.group(self.Widgets.TextArea):
             self.clearTextArea(ta, callFunction=callFunction)
+
+    def highlightTextArea(self, title, start, end=END):
+        """ selects text in the specified range """
+        ta = self.widgetManager.get(self.Widgets.TextArea, title)
+        ta.tag_add(SEL, start, end)
 
     def logTextArea(self, title):
         """ Creates an md5 hash - can be used later to check if the TextArea has changed

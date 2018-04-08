@@ -1048,9 +1048,16 @@ def test_text_areas():
     assert isinstance(app.addScrolledTextArea("st1"), AjScrolledText)
     app.addScrolledTextArea("st2")
 
-    app.tagTextArea("t2", "red", background="red", foreground="white")
-    app.tagTextArea("t2", "green", background="green", foreground="white")
-    app.tagTextAreaPattern("t2", "red", "this")
+    app.textAreaCreateTag("t2", "red", background="red", foreground="white")
+    app.textAreaChangeTag("t2", "red", background="red", foreground="white")
+    assert "red" in app.getTextAreaTags("t2")
+    app.textAreaDeleteTag("t2", "red")
+    assert "red" not in app.getTextAreaTags("t2")
+    app.textAreaCreateTag("t2", "red", background="red", foreground="white")
+    assert "red" in app.getTextAreaTags("t2")
+    app.getTextAreaTag("t2", "red")
+    app.textAreaCreateTag("t2", "green", background="green", foreground="white")
+    app.textAreaTagPattern("t2", "red", "this")
 
     assert app.getTextArea("t1") == EMPTY
     assert app.getTextArea("t2") == EMPTY
@@ -1078,8 +1085,23 @@ def test_text_areas():
     app.setTextArea("st1", TEXT_THREE)
     app.setTextArea("st2", TEXT_FOUR)
 
-    app.tagTextAreaPattern("t2", "red", TEXT_TWO[2:4])
-    app.tagTextAreaRange("t2", "green", 1.0, 1.2)
+    # nothing selected - so these have no effect
+    app.textAreaTagSelected("t2", "red")
+    app.textAreaUntagSelected("t2", "red")
+    app.textAreaToggleTagSelected("t2", "red")
+    app.highlightTextArea("t2", "1.0", "1.3")
+    app.textAreaTagSelected("t2", "red")
+    app.textAreaUntagSelected("t2", "red")
+    app.textAreaToggleTagSelected("t2", "red")
+    app.textAreaToggleTagSelected("t2", "red")
+    app.textAreaToggleTagSelected("t2", "red")
+
+    app.textAreaTagPattern("t2", "red", TEXT_TWO[2:4])
+    app.textAreaTagRange("t2", "green", 1.0, 1.2)
+    app.textAreaUntagRange("t2", "green", 1.0, 1.2)
+
+    app.textAreaToggleTagRange("t2", "green", 1.0, 1.2)
+    app.textAreaToggleTagRange("t2", "green", 1.0, 1.2)
 
     assert app.textAreaChanged("t1") is True
     assert app.textAreaChanged("t2") is True
@@ -1113,6 +1135,9 @@ def test_text_areas():
     assert app.getTextArea("t2") == EMPTY
     assert app.getTextArea("st1") == EMPTY
     assert app.getTextArea("st2") == TEXT_FOUR
+
+    print(app.searchTextArea("t1", TEXT_ONE, "1.0"))
+    assert app.searchTextArea("t1", TEXT_ONE, "1.0") == "1.0"
 
     # call generic setter functions
     test_setters("TextArea", "t1")
