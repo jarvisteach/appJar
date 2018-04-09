@@ -85,6 +85,98 @@ with gui("FRAME DEMO", "250x150", bg='yellow') as app:
 * `.openFrame(title)`  
     Used to reopen the named *Frame*.  
 
+### Frame Stack
+---
+
+A way of having mutiple frames on top of each other, with all but one hidden.  
+Each frame is created and added to the stack. Then they can be navigated through, using `first`, `next`, `prev` and `last`.  
+
+```python
+from appJar import gui
+
+def press(btn):
+    if btn == "FIRST": app.firstFrame("Pages")
+    elif btn == "NEXT": app.nextFrame("Pages")
+    elif btn == "PREV": app.prevFrame("Pages")
+    elif btn == "LAST": app.lastFrame("Pages")
+
+app=gui("FRAME STACK")
+
+app.startFrameStack("Pages")
+
+app.startFrame()
+for i in range(5):
+    app.addLabel("Text: " + str(i))
+app.stopFrame()
+
+app.startFrame()
+for i in range(5):
+    app.addEntry("e" + str(i))
+app.stopFrame()
+
+app.startFrame()
+for i in range(5):
+    app.addButton(str(i), None)
+app.stopFrame()
+
+app.stopFrameStack()
+
+app.addButtons(["FIRST", "PREV", "NEXT", "LAST"], press)
+app.go()
+```
+Or in v1.0:  
+
+```python
+from appJar import gui 
+
+def press(btn):
+    if btn == "FIRST": app.firstFrame("Pages")
+    elif btn == "NEXT": app.nextFrame("Pages")
+    elif btn == "PREV": app.prevFrame("Pages")
+    elif btn == "LAST": app.lastFrame("Pages")
+
+with gui("FRAME STACK") as app:
+    with app.frameStack("Pages"):
+        with app.frame():
+            for i in range(5):
+                app.label("Text: " + str(i))
+        with app.frame():
+            for i in range(5):
+                app.entry("e" + str(i))
+        with app.frame():
+            for i in range(5):
+                app.button(str(i), None)
+
+    app.buttons(["FIRST", "PREV", "NEXT", "LAST"], press)
+```
+
+#### Start/Stop Frame Stacks  
+* `.startFrameStack(title)` & `.stopFrameStack()`  
+    Used to start & stop a *FrameStack*  
+    Multiple *Frames* should be added to the *FrameStack* and can then be navigated through.  
+
+* `.openFrameStack(title)`  
+    Used to reopen the named *FrameStack*, for later modification.  
+
+#### Navigating Frame Stacks  
+* `.nextFrame(title)`  
+    Display the next frame in the stack.  
+
+* `.prevFrame(title)`  
+    Display the previous frame in the stack.  
+
+* `.firstFrame(title)`  
+    Display the first frame in the stack.  
+
+* `.lastFrame(title)`  
+    Display the last frame in the stack.  
+
+* `.selectFrame(title, num)`  
+    Display the frame ay the specified position in the stack (starting at 0).  
+
+* `.countFrames(title)`  
+    Returns the number of frames in the stack.  
+
 ### Label Frame
 ---
 

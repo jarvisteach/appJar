@@ -84,7 +84,7 @@ __author__ = "Richard Jarvis"
 __copyright__ = "Copyright 2015-2018, Richard Jarvis"
 __credits__ = ["Graham Turner", "Sarah Murch"]
 __license__ = "Apache 2.0"
-__version__ = "0.92.0"
+__version__ = "0.93.0"
 __maintainer__ = "Richard Jarvis"
 __email__ = "info@appJar.info"
 __status__ = "Development"
@@ -431,7 +431,7 @@ class gui(object):
                 "Map", "PieChart", "Properties", "Table", "Plot", "MicroBit",
                 "DatePicker", "Separator", "Turtle", "Canvas",
                 "LabelFrame", "Frame", "TabbedFrame", "PanedFrame", "ToggleFrame",
-                "FrameSet", "SubFrame", "FrameBox", "FrameLabel", "ContainerLog", "FlashLabel",
+                "FrameStack", "SubFrame", "FrameBox", "FrameLabel", "ContainerLog", "FlashLabel",
                 "AnimationID", "ImageCache", "Menu",
                 "SubWindow", "ScrollPane", "PagedWindow", "Notebook", "Tree",
                 "Widget", "Window", "Toolbar", "RootPage",
@@ -3900,8 +3900,8 @@ class gui(object):
         containerData = self._prepContainer(cTitle, cType, container, row, col, sticky)
         self.containerStack.append(containerData)
 
-    def openFrameSet(self, title):
-        self._openContainer(self.Widgets.FrameSet, title)
+    def openFrameStack(self, title):
+        self._openContainer(self.Widgets.FrameStack, title)
 
     def openSubFrame(self, frameTitle, frameNumber):
         self._openContainer(self.Widgets.SubFrame, frameTitle+"__"+str(frameNumber))
@@ -3913,7 +3913,8 @@ class gui(object):
         self._openContainer(self.Widgets.LabelFrame, title)
 
     def openFrame(self, title):
-        self._openContainer(self.Widgets.Frame, title)
+        try: self._openContainer(self.Widgets.Frame, title)
+        except: self._openContainer(self.Widgets.SubFrame, title)
 
     def openToggleFrame(self, title):
         self._openContainer(self.Widgets.ToggleFrame, title)
@@ -3950,7 +3951,6 @@ class gui(object):
 
     # function to reload the specified container
     def _openContainer(self, kind, title):
-
         # get the cached container config for this container
         kind = self.Widgets.name(kind)
         cName = kind + "__" + title
@@ -4024,20 +4024,6 @@ class gui(object):
 
             # now, add to top of stack
             self._addContainer(title, self.Widgets.Canvas, container, 0, 1, "")
-            return container
-        elif fType == self.Widgets.Frame:
-            # first, make a Frame, and position it correctly
-            self.widgetManager.verify(self.Widgets.Frame, title)
-            container = self._makeAjFrame()(self.getContainer())
-            container.isContainer = True
-#            container.config(background=self._getContainerBg(), relief="groove")
-            container.config(background=self._getContainerBg())
-            self._positionWidget(
-                container, row, column, colspan, rowspan, "nsew")
-            self.widgetManager.add(self.Widgets.Frame, title, container)
-
-            # now, add to top of stack
-            self._addContainer(title, self.Widgets.Frame, container, 0, 1, sticky)
             return container
         elif fType == self.Widgets.TabbedFrame:
             self.widgetManager.verify(self.Widgets.TabbedFrame, title)
@@ -4178,19 +4164,32 @@ class gui(object):
             self._addContainer(title, self.Widgets.Page, page, 0, 1, sticky)
             self.containerStack[-1]['expand'] = "None"
             return page
-        elif fType == self.Widgets.FrameSet:
+        elif fType == self.Widgets.FrameStack:
             # create the paged window
-            frameSet = FrameSet(self.getContainer(), bg=self._getContainerBg())
-            self.widgetManager.add(self.Widgets.FrameSet, title, frameSet)
+            frameStack = FrameStack(self.getContainer(), bg=self._getContainerBg())
+            self.widgetManager.add(self.Widgets.FrameStack, title, frameStack)
             # register it as a container
-            frameSet.isContainer = True
-            self._positionWidget(frameSet, row, column, colspan, rowspan, sticky=sticky)
-            self._addContainer(title, self.Widgets.FrameSet, frameSet, 0, 1, "news")
-            return frameSet
+            frameStack.isContainer = True
+            self._positionWidget(frameStack, row, column, colspan, rowspan, sticky=sticky)
+            self._addContainer(title, self.Widgets.FrameStack, frameStack, 0, 1, "news")
+            return frameStack
+        elif fType == self.Widgets.Frame:
+            # first, make a Frame, and position it correctly
+            self.widgetManager.verify(self.Widgets.Frame, title)
+            container = self._makeAjFrame()(self.getContainer())
+            container.isContainer = True
+            container.config(background=self._getContainerBg())
+            self._positionWidget( container, row, column, colspan, rowspan, "nsew")
+            self.widgetManager.add(self.Widgets.Frame, title, container)
+
+            # now, add to top of stack
+            self._addContainer(title, self.Widgets.Frame, container, 0, 1, sticky)
+            return container
         elif fType == self.Widgets.SubFrame:
             subFrame = self._getContainerProperty('container').addFrame()
             subFrame.isContainer = True
             self._addContainer(title, self.Widgets.SubFrame, subFrame, 0, 1, "news")
+            self.widgetManager.add(self.Widgets.Frame, title, subFrame)
             return subFrame
         else:
             raise Exception("Unknown container: " + fType)
@@ -5254,20 +5253,39 @@ class gui(object):
 #####################################
 
     @contextmanager
-    def frame(self, title, row=None, column=0, colspan=0, rowspan=0, sticky="NSEW", **kwargs):
-        try:
+    def frame(self, title=None, row=None, column=0, colspan=0, rowspan=0, sticky="NSEW", **kwargs):
+        if title is None: # new subFrame
             fr = self.startFrame(title, row, column, colspan, rowspan, sticky)
-        except ItemLookupError:
-            fr = self.openFrame(title)
+        else:
+            frameNumber = kwargs.pop('frameNumber', None)
+            try:
+                if frameNumber is not None: fr = self.openSubFrame(title, frameNumber)
+                else: fr = self.openFrame(title)
+            except: # no widget
+                fr = self.startFrame(title, row, column, colspan, rowspan, sticky)
         self.configure(**kwargs)
         try: yield fr
         finally: self.stopFrame()
 
-    def startFrame(self, title, row=None, column=0, colspan=0, rowspan=0, sticky="NSEW"):
-        return self.startContainer(self.Widgets.Frame, title, row, column, colspan, rowspan, sticky)
+    def startFrame(self, title=None, row=None, column=0, colspan=0, rowspan=0, sticky="NSEW"):
+        frameType = self.Widgets.Frame
+        if self._getContainerProperty('type') == self.Widgets.FrameStack:
+            # generate a frame title
+            frameNum = self._getContainerProperty('container').getNumFrames()
+            title = self._getContainerProperty('title') + "__" + str(frameNum)
+            gui.trace("Adding new subFrame: %s", title)
+
+            self.containerStack[-1]['widgets'] = True
+            frameType = self.Widgets.SubFrame
+        else:
+            if title is None:
+                raise Exception("All frames must have a title")
+            gui.trace("Adding new frame: %s", title)
+
+        return self.startContainer(frameType, title, row, column, colspan, rowspan, sticky)
 
     def stopFrame(self):
-        if self._getContainerProperty('type') != self.Widgets.Frame:
+        if self._getContainerProperty('type') not in [self.Widgets.Frame, self.Widgets.SubFrame]:
             raise Exception("Can't stop a FRAME, currently in:",
                             self._getContainerProperty('type'))
         self.stopContainer()
@@ -5278,81 +5296,43 @@ class gui(object):
         self.widgetManager.get(self.Widgets.Frame, title).lift()
 
 #####################################
-# FrameSet
+# FrameStack
 #####################################
 
     @contextmanager
-    def frameSet(self, title, row=None, column=0, colspan=0, rowspan=0, sticky="NSEW", **kwargs):
+    def frameStack(self, title, row=None, column=0, colspan=0, rowspan=0, sticky="NSEW", **kwargs):
         try:
-            fr = self.startFrameSet(title, row, column, colspan, rowspan, sticky)
+            fr = self.startFrameStack(title, row, column, colspan, rowspan, sticky)
         except ItemLookupError:
-            fr = self.openFrameSet(title)
+            fr = self.openFrameStack(title)
         self.configure(**kwargs)
         try: yield fr
         finally:
-            self.stopFrameSet()
+            self.stopFrameStack()
 
-    def startFrameSet(self, title, row=None, column=0, colspan=0, rowspan=0, sticky="news"):
-        return self.startContainer(self.Widgets.FrameSet, title, row, column, colspan, rowspan, sticky)
+    def startFrameStack(self, title, row=None, column=0, colspan=0, rowspan=0, sticky="news"):
+        return self.startContainer(self.Widgets.FrameStack, title, row, column, colspan, rowspan, sticky)
 
-    def stopFrameSet(self):
-        if self._getContainerProperty('type') != self.Widgets.FrameSet:
-            raise Exception("Can't stop a FRAMESET, currently in:",
+    def stopFrameStack(self):
+        if self._getContainerProperty('type') != self.Widgets.FrameStack:
+            raise Exception("Can't stop a FRAMESTACK, currently in:",
                             self._getContainerProperty('type'))
         self.stopContainer()
 
-    @contextmanager
-    def subFrame(self, frameTitle=None, frameNumber=None, **kwargs):
-        if frameTitle is None:
-            fr = self.startSubFrame()
-        else:
-            fr = self.openSubFrame(frameTitle, frameNumber)
-        self.configure(**kwargs)
-        try: yield fr
-        finally:
-            self.stopSubFrame()
-
-
-    def startSubFrame(self):
-        if self._getContainerProperty('type') == self.Widgets.SubFrame:
-            self.warn("You didn't STOP the previous SUBFRAME")
-            self.stopSubFrame()
-        elif self._getContainerProperty('type') != self.Widgets.FrameSet:
-            raise Exception("Can't start a SUBFRAME, currently in:",
-                            self._getContainerProperty('type'))
-
-        self.containerStack[-1]['widgets'] = True
-
-        # generate a frame title
-        frameNum = self._getContainerProperty('container').getNumFrames()
-        frameTitle = self._getContainerProperty('title') + "__" + str(frameNum)
-
-        self.startContainer(self.Widgets.SubFrame, frameTitle, row=None, column=None, colspan=None, rowspan=None, sticky="news")
-
-    def stopSubFrame(self):
-        # get a handle on the page object
-        subFrame = self._getContainerProperty('container')
-
-        if self._getContainerProperty('type') == self.Widgets.SubFrame:
-            self.stopContainer()
-        else:
-            raise Exception("Can't stop SUBFRAME, currently in:",
-                            self._getContainerProperty('type'))
-
-    def nextSubFrame(self, title):
-        self.widgetManager.get(self.Widgets.FrameSet, title).showNextFrame()
-    def prevSubFrame(self, title):
-        self.widgetManager.get(self.Widgets.FrameSet, title).showPrevFrame()
-    def firstSubFrame(self, title):
-        self.widgetManager.get(self.Widgets.FrameSet, title).showFirstFrame()
-    def lastSubFrame(self, title):
-        self.widgetManager.get(self.Widgets.FrameSet, title).showLastFrame()
-    def selectSubFrame(self, title, num):
+    def nextFrame(self, title):
+        self.widgetManager.get(self.Widgets.FrameStack, title).showNextFrame()
+    def prevFrame(self, title):
+        self.widgetManager.get(self.Widgets.FrameStack, title).showPrevFrame()
+    def firstFrame(self, title):
+        self.widgetManager.get(self.Widgets.FrameStack, title).showFirstFrame()
+    def lastFrame(self, title):
+        self.widgetManager.get(self.Widgets.FrameStack, title).showLastFrame()
+    def selectFrame(self, title, num):
         if type(num) in (list, tuple): num = num[0]
         num = int(num)
-        self.widgetManager.get(self.Widgets.FrameSet, title).showFrame(num)
-    def countSubFrame(self, title):
-        return self.widgetManager.get(self.Widgets.FrameSet, title).getNumFrames()
+        self.widgetManager.get(self.Widgets.FrameStack, title).showFrame(num)
+    def countFrames(self, title):
+        return self.widgetManager.get(self.Widgets.FrameStack, title).getNumFrames()
 
 #####################################
 # SubWindows
@@ -12238,10 +12218,10 @@ class ToggleFrame(Frame, object):
 # Frame Stack
 #####################################
 
-class FrameSet(Frame, object):
+class FrameStack(Frame, object):
 
     def __init__(self, parent, beep=True, **opts):
-        super(FrameSet, self).__init__(parent, **opts)
+        super(FrameStack, self).__init__(parent, **opts)
         # the list of frames
         self._frames = []
         self._currentFrame = 0
