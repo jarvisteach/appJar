@@ -4,6 +4,7 @@
 ## Version 0.93  
 
 * Issues Resolved:
+    * [#425](https://github.com/jarvisteach/appJar/issues/425) - Updated docs on [geometry](/pythonGuiOptions/#size-location)  
     * [#422](https://github.com/jarvisteach/appJar/issues/422) - TickOptionBoxes now return their name when changed  
     * [#421](https://github.com/jarvisteach/appJar/issues/421) - SelectableLabels now allow alignment setting  
     * [#415](https://github.com/jarvisteach/appJar/issues/415) - Disable Entry now disables all of a file/directory [entry](/inputWidgets/#entry)  
