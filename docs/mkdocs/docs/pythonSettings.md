@@ -8,30 +8,30 @@ appJar will store the following settings:
 
 ```sh
 [GEOM]
-    # geometry = string - size, location
-    # fullscreen = True/False
-    # minsize = string - x,y
-    # state = string - withdrawn/zoomed
+    # geometry = string: size, location
+    # fullscreen = boolean: True/False
+    # minsize = string: x,y
+    # state = string: withdrawn/zoomed
 [TOOLBAR]
-    # pinned = True/False
+    # pinned = boolean: True/False
 
 [TOGGLES]
-    # name = True/False
+    # name = boolean: True/False
 [TABS]
-    # name = selected tab
+    # name = string: selected tab
 [PAGES]
-    # name = selected page
+    # name = string: selected page
 
 [SUBWINDOWS]
-    # name = True/False
+    # name = boolean: True/False
 [SUBWINDOW_NAME]
-    # geometry = string - size, location
-    # fullscreen = True/False
-    # minsize = string - x,y
-    # state = string - withdrawn/zoomed
+    # geometry = string: size, location
+    # fullscreen = boolean: True/False
+    # minsize = string: x,y
+    # state = string: withdrawn/zoomed
 
 [EXTERNAL]
-    # name = value
+    # name = string: value
 ```
 
 ## Usage  

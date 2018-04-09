@@ -28,14 +28,14 @@ Some basic configuration for the size, position, transparency, etc. of the GUI.
     You can have a menu or logon SubWindow that hides/shows the main window as necessary.  
     **NB.** hiding the window, effectively minimizes it, it is still there...
 
-* `.setSize(geom)` & `.setSize(width, height)`  
+* `.setSize(size)` & `.setSize(width, height)`  
     Sets the height & width of the GUI:  
     * Either as a single String `.setSize("200x100")` (widthxheight)  
     * As two separate parameters `.setSize(200,100)`  
     * Or to go *Fullscreen* `.setSize("Fullscreen")`  
 
 * `.exitFullscreen()`  
-    Leave fullscreen, if set in the geometry.    
+    Leave fullscreen, if set in the above.  
     Returns True/False - if the app was able to leave fullscreen.  
     Can be called safely, even if app is not in fullscreen:  
     `<Escape>` will call this automatically, while in fullscreen.  
