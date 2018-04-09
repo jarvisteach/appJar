@@ -11,7 +11,7 @@ def press(btn):
 
 app=gui("FRAME STACK")
 
-app.startFrameStack("Pages")
+app.startFrameStack("Pages", start=1)
 
 app.startFrame()
 for i in range(5):

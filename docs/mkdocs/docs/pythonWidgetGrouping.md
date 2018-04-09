@@ -136,7 +136,7 @@ def press(btn):
     elif btn == "LAST": app.lastFrame("Pages")
 
 with gui("FRAME STACK") as app:
-    with app.frameStack("Pages"):
+    with app.frameStack("Pages", start=0):
         with app.frame():
             for i in range(5):
                 app.label("Text: " + str(i))
@@ -151,31 +151,44 @@ with gui("FRAME STACK") as app:
 ```
 
 #### Start/Stop Frame Stacks  
-* `.startFrameStack(title)` & `.stopFrameStack()`  
+* `.startFrameStack(title, change=None, start=-1)` & `.stopFrameStack()`  
     Used to start & stop a *FrameStack*  
     Multiple *Frames* should be added to the *FrameStack* and can then be navigated through.  
+    Set `start` to the frame you want initially displayed. Defaults to the last frame added.  
+    Set `change` to a function to call when the *FrameStack* is changed.  
 
 * `.openFrameStack(title)`  
     Used to reopen the named *FrameStack*, for later modification.  
 
+* `.setChangeFunction(title, function)`  
+    Sets a function to call whenever the *FrameStack* is changed.  
+    If this function returns `False`, then the frame won't change (if it returns nothing, then it will change).  
+    Useful when used in conjunction with `.getPreviousFrame(title)` as checks can be run before allowing the user to progress.  
+
+* `.setStartFrame(title, num)`  
+    Sets the frame that will be displayed when the GUI starts.  
+
 #### Navigating Frame Stacks  
-* `.nextFrame(title)`  
+* `.nextFrame(title, callFunction=True)`  
     Display the next frame in the stack.  
 
-* `.prevFrame(title)`  
+* `.prevFrame(title, callFunction=True)`  
     Display the previous frame in the stack.  
 
-* `.firstFrame(title)`  
+* `.firstFrame(title, callFunction=True)`  
     Display the first frame in the stack.  
 
-* `.lastFrame(title)`  
+* `.lastFrame(title, callFunction=True)`  
     Display the last frame in the stack.  
 
-* `.selectFrame(title, num)`  
+* `.selectFrame(title, num, callFunction=True)`  
     Display the frame ay the specified position in the stack (starting at 0).  
 
 * `.countFrames(title)`  
     Returns the number of frames in the stack.  
+
+* `.getPreviousFrame(title)` & `.getCurrentFrame(title)`  
+    Returns the frame number of the previously shown and currently show frame.  
 
 ### Label Frame
 ---

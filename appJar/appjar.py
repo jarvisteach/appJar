@@ -3162,6 +3162,9 @@ class gui(object):
         elif kind == self.Widgets.Properties:
             cmd = self.MAKE_FUNC(function, name)
             widget.setChangeFunction(cmd)
+        elif kind == self.Widgets.FrameStack:
+            cmd = self.MAKE_FUNC(function, name)
+            widget.setChangeFunction(cmd)
         else:
             if kind not in [self.Widgets.SpinBox, self.Widgets.CheckBox]:
                 self.warn("Unmanaged binding of %s to %s", eventType, name)
@@ -5301,8 +5304,10 @@ class gui(object):
 
     @contextmanager
     def frameStack(self, title, row=None, column=0, colspan=0, rowspan=0, sticky="NSEW", **kwargs):
+        change = kwargs.pop("change", None)
+        start = kwargs.pop("start", -1)
         try:
-            fr = self.startFrameStack(title, row, column, colspan, rowspan, sticky)
+            fr = self.startFrameStack(title, row, column, colspan, rowspan, sticky, change=change, start=start)
         except ItemLookupError:
             fr = self.openFrameStack(title)
         self.configure(**kwargs)
@@ -5310,8 +5315,11 @@ class gui(object):
         finally:
             self.stopFrameStack()
 
-    def startFrameStack(self, title, row=None, column=0, colspan=0, rowspan=0, sticky="news"):
-        return self.startContainer(self.Widgets.FrameStack, title, row, column, colspan, rowspan, sticky)
+    def startFrameStack(self, title, row=None, column=0, colspan=0, rowspan=0, sticky="news", change=None, start=-1):
+        fs = self.startContainer(self.Widgets.FrameStack, title, row, column, colspan, rowspan, sticky)
+        fs.setChangeFunction(change)
+        fs.setStartFrame(start)
+        return fs
 
     def stopFrameStack(self):
         if self._getContainerProperty('type') != self.Widgets.FrameStack:
@@ -5319,20 +5327,24 @@ class gui(object):
                             self._getContainerProperty('type'))
         self.stopContainer()
 
-    def nextFrame(self, title):
-        self.widgetManager.get(self.Widgets.FrameStack, title).showNextFrame()
-    def prevFrame(self, title):
-        self.widgetManager.get(self.Widgets.FrameStack, title).showPrevFrame()
-    def firstFrame(self, title):
-        self.widgetManager.get(self.Widgets.FrameStack, title).showFirstFrame()
-    def lastFrame(self, title):
-        self.widgetManager.get(self.Widgets.FrameStack, title).showLastFrame()
-    def selectFrame(self, title, num):
+    def nextFrame(self, title, callFunction=True):
+        self.widgetManager.get(self.Widgets.FrameStack, title).showNextFrame(callFunction)
+    def prevFrame(self, title, callFunction=True):
+        self.widgetManager.get(self.Widgets.FrameStack, title).showPrevFrame(callFunction)
+    def firstFrame(self, title, callFunction=True):
+        self.widgetManager.get(self.Widgets.FrameStack, title).showFirstFrame(callFunction)
+    def lastFrame(self, title, callFunction=True):
+        self.widgetManager.get(self.Widgets.FrameStack, title).showLastFrame(callFunction)
+    def selectFrame(self, title, num, callFunction=True):
         if type(num) in (list, tuple): num = num[0]
         num = int(num)
-        self.widgetManager.get(self.Widgets.FrameStack, title).showFrame(num)
+        self.widgetManager.get(self.Widgets.FrameStack, title).showFrame(num, callFunction)
     def countFrames(self, title):
         return self.widgetManager.get(self.Widgets.FrameStack, title).getNumFrames()
+    def getCurrentFrame(self, title):
+        return self.widgetManager.get(self.Widgets.FrameStack, title).getCurrentFrame()
+    def getPreviousFrame(self, title):
+        return self.widgetManager.get(self.Widgets.FrameStack, title).getPreviousFrame()
 
 #####################################
 # SubWindows
@@ -12221,59 +12233,83 @@ class ToggleFrame(Frame, object):
 class FrameStack(Frame, object):
 
     def __init__(self, parent, beep=True, **opts):
+        self._change = opts.pop("change", None)
+        self._start = opts.pop("start", -1)
         super(FrameStack, self).__init__(parent, **opts)
         # the list of frames
         self._frames = []
-        self._currentFrame = 0
+        self._prevframe = -1
+        self._currFrame = -1
         self._beep = beep
 
         Grid.rowconfigure(self, 0, weight=1)
         Grid.columnconfigure(self, 0, weight=1)
 
-    def showFrame(self, num):
-        self._frames[num].lift()
-        self._currentFrame = num
+    def showFrame(self, num, callFunction=True):
+        tmp = self._prevFrame
+        self._prevFrame = self._currFrame
+        self._currFrame = num
+        if callFunction and self._change is not None:
+            if self._change() is False:
+                self._currFrame = self._prevFrame
+                self._prevFrame = tmp
+                return
+        self._frames[self._currFrame].lift()
 
-    def showNextFrame(self):
-        if self._currentFrame < len(self._frames) - 1:
-            self.showFrame(self._currentFrame + 1)
+    def setStartFrame(self, num):
+        self._start = num
+
+    def setChangeFunction(self, func):
+        self._change = func
+
+    def showNextFrame(self, callFunction=True):
+        if self._currFrame < len(self._frames) - 1:
+            self.showFrame(self._currFrame + 1, callFunction)
         else:
             if self._beep: self.bell()
 
-    def showPrevFrame(self):
-        if self._currentFrame > 0:
-            self.showFrame(self._currentFrame - 1)
+    def showPrevFrame(self, callFunction=True):
+        if self._currFrame > 0:
+            self.showFrame(self._currFrame - 1, callFunction)
         else:
             if self._beep: self.bell()
 
-    def showFirstFrame(self):
-        if self._currentFrame == 0:
+    def showFirstFrame(self, callFunction=True):
+        if self._currFrame == 0:
             if self._beep: self.bell()
         else:
-            self.showFrame(0)
+            self.showFrame(0, callFunction)
 
-    def showLastFrame(self):
-        if self._currentFrame == len(self._frames)-1:
+    def showLastFrame(self, callFunction=True):
+        if self._currFrame == len(self._frames)-1:
             if self._beep: self.bell()
         else:
-            self.showFrame(len(self._frames) - 1)
+            self.showFrame(len(self._frames) - 1, callFunction)
 
     def addFrame(self):
         self._frames.append(frameBase(self))
         self._frames[-1].grid(row=0, column=0, sticky=N+S+E+W, padx=0, pady=0)
-        self.showFrame(0)
+        self._prevFrame = self._currFrame
+        self._currFrame += 1
+
+        if self._start > -1 and self._start < len(self._frames):
+            tmp = self._beep
+            self._beep = False
+            self.showFrame(self._start, callFunction=False)
+            self._beep = tmp
+
         return self._frames[-1]
 
     def getFrame(self, num=None):
-        if num is None: num = self._currentFrame
+        if num is None: num = self._currFrame
         return self._frames[num]
 
     def getNumFrames(self):
         return len(self._frames)
-
     def getCurrentFrame(self):
-        return self._currentFrame
-
+        return self._currFrame
+    def getPreviousFrame(self):
+        return self._prevFrame
 
 #####################################
 # Paged Window
