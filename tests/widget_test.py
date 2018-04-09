@@ -2174,6 +2174,7 @@ def test_sets():
 def test_containers():
     print("\tTesting containers")
 
+    ## LABEL FRAMES
     lf = app.startLabelFrame("lf1")
     app.setLabelFrameAnchor("lf1", "east")
     app.addLabel("lf1_l1", TEXT_ONE)
@@ -2193,6 +2194,8 @@ def test_containers():
 
     with pytest.raises(Exception) :
         app.openLabelFrame("crash here")
+
+    ## TOGGLE FRAMES
 
     tog = app.startToggleFrame("tf1")
     app.addLabel("tf1_l1", TEXT_ONE)
@@ -2220,6 +2223,8 @@ def test_containers():
     app.enableToggleFrame("tf1")
     app.enableToggleFrame("tf1")
     app.disableToggleFrame("tf1")
+
+    ## TABBED FRAMES
 
     app.startTabbedFrame("tbf1")
     app.startTab("tab1")
@@ -2279,6 +2284,8 @@ def test_containers():
     app.setTabbedFrameSelectedTab("tbf1", "tab3")
     assert app.getTabbedFrameSelectedTab("tbf1") == "tab3"
 
+    ## PANED FRAMES
+
     app.startPanedFrame("p1")
     app.addLabel("p1_l1", TEXT_ONE)
     app.startPanedFrame("p2")
@@ -2292,6 +2299,8 @@ def test_containers():
     app.openPanedFrame("p1")
     app.addLabel("p1_l11", TEXT_ONE)
     app.stopPanedFrame()
+
+    ## PAGED WINDOWS
 
     app.startPagedWindow("pg1")
     app.startPage()
@@ -2362,6 +2371,8 @@ def test_containers():
     pw.showNext()
     pw.showPrev()
 
+    ## SUB WINDOWS
+
 # breaks under python2.7
     app.startSubWindow("sb1", modal=False, transient=False, blocking=False, grouped=False)
     app.addLabel("sb1_l", TEXT_ONE)
@@ -2399,6 +2410,7 @@ def test_containers():
 #    app.showSubWindow("sb2")
 #    app.hideSubWindow("sb2")
 
+    ## FRAMES
 
     app.startFrame("fr1")
     app.addLabel("fr1_l", TEXT_ONE)
@@ -2429,7 +2441,153 @@ def test_containers():
 
             testScrollPaneScrolling(sp)
 
+    ## FRAME STACKS
+    app.startFrameStack("stack")
+    app.startFrame()
+    app.addLabel("stack-1", "stack-1")
+    app.stopFrame()
+    app.startFrame()
+    app.addLabel("stack-2", "stack-2")
+    app.stopFrame()
+    app.startFrame()
+    app.addLabel("stack-3", "stack-3")
+    app.stopFrame()
+    app.stopFrameStack()
 
+    assert app.countFrames("stack") == 3
+    assert app.getCurrentFrame("stack") == 2
+    assert app.getPreviousFrame("stack") == 1
+
+    app.firstFrame("stack")
+    assert app.getCurrentFrame("stack") == 0
+    assert app.getPreviousFrame("stack") == 2
+
+    app.lastFrame("stack")
+    assert app.getCurrentFrame("stack") == 2
+    assert app.getPreviousFrame("stack") == 0
+
+    app.prevFrame("stack")
+    assert app.getCurrentFrame("stack") == 1
+    assert app.getPreviousFrame("stack") == 2
+
+    app.prevFrame("stack")
+    assert app.getCurrentFrame("stack") == 0
+    assert app.getPreviousFrame("stack") == 1
+
+    app.prevFrame("stack")
+    assert app.getCurrentFrame("stack") == 0
+    assert app.getPreviousFrame("stack") == 1
+
+    app.nextFrame("stack")
+    assert app.getCurrentFrame("stack") == 1
+    assert app.getPreviousFrame("stack") == 0
+
+    app.nextFrame("stack")
+    assert app.getCurrentFrame("stack") == 2
+    assert app.getPreviousFrame("stack") == 1
+
+    app.nextFrame("stack")
+    assert app.getCurrentFrame("stack") == 2
+    assert app.getPreviousFrame("stack") == 1
+
+    app.selectFrame("stack", 1)
+    assert app.getCurrentFrame("stack") == 1
+    assert app.getPreviousFrame("stack") == 2
+
+    with pytest.raises(Exception) :
+        app.selectFrame("stack", 3)
+    assert app.getCurrentFrame("stack") == 1
+    assert app.getPreviousFrame("stack") == 2
+
+    app.openFrameStack('stack')
+    app.startFrame()
+    app.addLabel("stack-4", "stack-4")
+    app.stopFrame()
+    app.stopFrameStack()
+
+    assert app.countFrames("stack") == 4
+    assert app.getCurrentFrame("stack") == 3
+    assert app.getPreviousFrame("stack") == 1
+
+    app.selectFrame("stack", 0)
+    assert app.getCurrentFrame("stack") == 0
+    assert app.getPreviousFrame("stack") == 3
+
+    app.selectFrame("stack", 3)
+    assert app.getCurrentFrame("stack") == 3
+    assert app.getPreviousFrame("stack") == 0
+
+    app.prevFrame("stack")
+    assert app.getCurrentFrame("stack") == 2
+    assert app.getPreviousFrame("stack") == 3
+
+    app.prevFrame("stack")
+    assert app.getCurrentFrame("stack") == 1
+    assert app.getPreviousFrame("stack") == 2
+
+    app.prevFrame("stack")
+    assert app.getCurrentFrame("stack") == 0
+    assert app.getPreviousFrame("stack") == 1
+
+    app.prevFrame("stack")
+    assert app.getCurrentFrame("stack") == 0
+    assert app.getPreviousFrame("stack") == 1
+
+    def changer(): print("changed")
+    def noChange(): return False
+
+    app.startFrameStack("sstack", start=1, change=changer)
+    app.startFrame()
+    app.addLabel("sstack-1", "stack-1")
+    app.stopFrame()
+    app.startFrame()
+    app.addLabel("sstack-2", "stack-2")
+    app.stopFrame()
+    app.startFrame()
+    app.addLabel("sstack-3", "stack-3")
+    app.stopFrame()
+    app.stopFrameStack()
+
+    assert app.countFrames("sstack") == 3
+    assert app.getCurrentFrame("sstack") == 1
+    assert app.getPreviousFrame("sstack") == 2
+
+    app.selectFrame("sstack", 2)
+    assert app.getCurrentFrame("sstack") == 2
+    assert app.getPreviousFrame("sstack") == 1
+
+    app.selectFrame("sstack", 0, callFunction = False)
+    assert app.getCurrentFrame("sstack") == 0
+    assert app.getPreviousFrame("sstack") == 2
+
+    app.setFrameStackChangeFunction('sstack', noChange)
+
+    app.selectFrame("sstack", 2)
+    assert app.getCurrentFrame("sstack") == 0
+    assert app.getPreviousFrame("sstack") == 2
+
+    app.selectFrame("sstack", 2, callFunction = False)
+    assert app.getCurrentFrame("sstack") == 2
+    assert app.getPreviousFrame("sstack") == 0
+
+    print("Making final stack - start with 1")
+    app.startFrameStack("fstack")
+    app.setStartFrame("fstack", 1)
+    app.startFrame()
+    app.addLabel("fstack-1", "stack-1")
+    app.stopFrame()
+    app.startFrame()
+    app.addLabel("fstack-2", "stack-2")
+    app.stopFrame()
+    app.startFrame()
+    app.addLabel("fstack-3", "stack-3")
+    app.stopFrame()
+    app.stopFrameStack()
+    print( "DONE - Curr:", app.getCurrentFrame("fstack"), "Prev", app.getPreviousFrame("fstack") )
+
+    assert app.countFrames("fstack") == 3
+    assert app.getCurrentFrame("fstack") == 1
+    assert app.getPreviousFrame("fstack") == 2
 
 def testScrollPaneScrolling(sp):
     event = Event()
@@ -3053,6 +3211,16 @@ with gui(debug=True) as app3:
                 app3.addLabel("l5", "label")
             with app3.scrollPane("sf1"):
                 app3.addLabel("l6", "label")
+
+        with app3.tab("t5"):
+            with app3.frameStack("stacks", start=2, change=cbB):
+                with app3.frame():
+                    app3.label("stacks-1")
+                with app3.frame():
+                    app3.label("stacks-2")
+                with app3.frame():
+                    app3.label("stacks-3")
+
     with app3.subWindow("s1"):
         app3.addLabel("l7", "label")
 

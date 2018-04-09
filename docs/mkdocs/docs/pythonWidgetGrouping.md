@@ -160,7 +160,7 @@ with gui("FRAME STACK") as app:
 * `.openFrameStack(title)`  
     Used to reopen the named *FrameStack*, for later modification.  
 
-* `.setChangeFunction(title, function)`  
+* `.setFrameStackChangeFunction(title, function)`  
     Sets a function to call whenever the *FrameStack* is changed.  
     If this function returns `False`, then the frame won't change (if it returns nothing, then it will change).  
     Useful when used in conjunction with `.getPreviousFrame(title)` as checks can be run before allowing the user to progress.  
@@ -184,11 +184,11 @@ with gui("FRAME STACK") as app:
 * `.selectFrame(title, num, callFunction=True)`  
     Display the frame ay the specified position in the stack (starting at 0).  
 
-* `.countFrames(title)`  
-    Returns the number of frames in the stack.  
-
 * `.getPreviousFrame(title)` & `.getCurrentFrame(title)`  
     Returns the frame number of the previously shown and currently show frame.  
+
+* `.countFrames(title)`  
+    Returns the number of frames in the stack.  
 
 ### Label Frame
 ---

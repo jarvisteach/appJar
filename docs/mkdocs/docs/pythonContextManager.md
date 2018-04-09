@@ -1,4 +1,4 @@
-# The Power of WITH  
+# The power of WITH  
 *Using ContextManagers to make GUIs even easier.*  
 
 ---
@@ -79,10 +79,11 @@ with gui() as app:
 The following can all be used in the same format to *start* or *open* a container:  
 Have a look on the [containers page](/pythonWidgetGrouping) for usage information.  
 
+* `.frame(title)`  
+* `.frameStack(title)`  
 * `.labelFrame(title, hideTitle=False)`  
 * `.toggleFrame(title)`  
 * `.scrollPane(title)`  
-* `.frame(title)`  
 * `.tabbedFrame(title)`  
 * `.tab(title, tabTitle=None)`  
 * `.panedFrame(title)`  

@@ -5327,6 +5327,9 @@ class gui(object):
                             self._getContainerProperty('type'))
         self.stopContainer()
 
+    def setStartFrame(self, title, num):
+        self.widgetManager.get(self.Widgets.FrameStack, title).setStartFrame(num)
+
     def nextFrame(self, title, callFunction=True):
         self.widgetManager.get(self.Widgets.FrameStack, title).showNextFrame(callFunction)
     def prevFrame(self, title, callFunction=True):
@@ -5339,6 +5342,7 @@ class gui(object):
         if type(num) in (list, tuple): num = num[0]
         num = int(num)
         self.widgetManager.get(self.Widgets.FrameStack, title).showFrame(num, callFunction)
+
     def countFrames(self, title):
         return self.widgetManager.get(self.Widgets.FrameStack, title).getNumFrames()
     def getCurrentFrame(self, title):
@@ -12246,9 +12250,12 @@ class FrameStack(Frame, object):
         Grid.columnconfigure(self, 0, weight=1)
 
     def showFrame(self, num, callFunction=True):
+        if num < 0 or num >= len(self._frames):
+            raise IndexError("The selected frame does not exist")
         tmp = self._prevFrame
         self._prevFrame = self._currFrame
         self._currFrame = num
+
         if callFunction and self._change is not None:
             if self._change() is False:
                 self._currFrame = self._prevFrame
@@ -12288,9 +12295,9 @@ class FrameStack(Frame, object):
 
     def addFrame(self):
         self._frames.append(frameBase(self))
-        self._frames[-1].grid(row=0, column=0, sticky=N+S+E+W, padx=0, pady=0)
         self._prevFrame = self._currFrame
-        self._currFrame += 1
+        self._currFrame = len(self._frames) - 1
+        self._frames[self._currFrame].grid(row=0, column=0, sticky=N+S+E+W, padx=0, pady=0)
 
         if self._start > -1 and self._start < len(self._frames):
             tmp = self._beep
@@ -12298,7 +12305,7 @@ class FrameStack(Frame, object):
             self.showFrame(self._start, callFunction=False)
             self._beep = tmp
 
-        return self._frames[-1]
+        return self._frames[self._currFrame]
 
     def getFrame(self, num=None):
         if num is None: num = self._currFrame
