@@ -5184,27 +5184,17 @@ class gui(object):
         self.containerStack[-1]['widgets'] = True
 
         # generate a page title
-        pageNum = len(self._getContainerProperty('container').frames) + 1
+        pageNum = self._getContainerProperty('container').frameStack.getNumFrames() + 1
         pageTitle = self._getContainerProperty('title') + "__" + str(pageNum)
 
         self.startContainer(self.Widgets.Page, pageTitle, row=None, column=None, colspan=None, rowspan=None, sticky=sticky)
 
     def stopPage(self):
-        # get a handle on the page object
-        page = self._getContainerProperty('container')
-
         if self._getContainerProperty('type') == self.Widgets.Page:
             self.stopContainer()
         else:
             raise Exception("Can't stop PAGE, currently in:",
                             self._getContainerProperty('type'))
-
-        # call the stopPage function on the paged window
-        if self._getContainerProperty('type') == self.Widgets.PagedWindow:
-            self._getContainerProperty('container').stopPage()
-        else:
-            # we need to find the container and call stopPage
-            page.container.stopPage()
 
     def stopPagedWindow(self):
         if self._getContainerProperty('type') == self.Widgets.Page:
@@ -5214,6 +5204,8 @@ class gui(object):
         if self._getContainerProperty('type') != self.Widgets.PagedWindow:
             raise Exception("Can't stop a PAGEDWINDOW, currently in:",
                             self._getContainerProperty('type'))
+
+        self._getContainerProperty('container').stopPagedWindow()
         self.stopContainer()
 
 #####################################
@@ -12334,15 +12326,11 @@ class PagedWindow(Frame, object):
         self.config(width=300, height=400)
 
         # globals to hold list of frames(pages) and current page
-        self.currentPage = -1
-        self.frames = []
+        self.frameStack = FrameStack(self)
         self.shouldShowPageNumber = True
         self.shouldShowTitle = True
         self.title = title
         self.navPos = 1
-        self.maxX = 0
-        self.maxY = 0
-        self.pageChangeEvent = None
 
         # create the 3 components, including a default container frame
         self.titleLabel = Label(self, font=titleFont)
@@ -12360,6 +12348,7 @@ class PagedWindow(Frame, object):
         self.grid_columnconfigure(2, weight=1)
 
         # grid the navigation components
+        self.frameStack.grid(row=int(not self.navPos) + 1, column=0, columnspan=3, sticky=N + S + E + W, padx=5, pady=5)
         self.prevButton.grid(row=self.navPos + 1, column=0, sticky=N + S + W, padx=5, pady=(0, 5))
         self.posLabel.grid(row=self.navPos + 1, column=1, sticky=N + S + E + W, padx=5, pady=(0, 5))
         self.nextButton.grid(row=self.navPos + 1, column=2, sticky=N + S + E, padx=5, pady=(0, 5))
@@ -12406,10 +12395,9 @@ class PagedWindow(Frame, object):
             self._updatePageNumber()
 
         if "command" in kw:
-            self.pageChangeEvent = kw.pop("command")
+            self.registerPageChangeEvent(kw.pop("command"))
 
         super(PagedWindow, self).config(cnf, **kw)
-
 
     # functions to change the labels of the two buttons
     def setPrevButton(self, title):
@@ -12421,10 +12409,8 @@ class PagedWindow(Frame, object):
     def setNavPositionTop(self, top=True):
         oldNavPos = self.navPos
         pady = (0, 5)
-        if top:
-            self.navPos = 0
-        else:
-            self.navPos = 1
+        if top: self.navPos = 0
+        else: self.navPos = 1
         if oldNavPos != self.navPos:
             if self.navPos == 0:
                 self.grid_rowconfigure(1, weight=0)
@@ -12434,36 +12420,15 @@ class PagedWindow(Frame, object):
                 self.grid_rowconfigure(1, weight=1)
                 self.grid_rowconfigure(2, weight=0)
             # grid the navigation components
-            self.frames[self.currentPage].grid_remove()
+            self.frameStack.grid_remove()
             self.prevButton.grid_remove()
             self.posLabel.grid_remove()
             self.nextButton.grid_remove()
 
-            self.frames[self.currentPage].grid(
-                row=int(not self.navPos) + 1,
-                column=0,
-                columnspan=3,
-                sticky=N + S + E + W,
-                padx=5,
-                pady=5)
-            self.prevButton.grid(
-                row=self.navPos + 1,
-                column=0,
-                sticky=S + W,
-                padx=5,
-                pady=pady)
-            self.posLabel.grid(
-                row=self.navPos + 1,
-                column=1,
-                sticky=S + E + W,
-                padx=5,
-                pady=pady)
-            self.nextButton.grid(
-                row=self.navPos + 1,
-                column=2,
-                sticky=S + E,
-                padx=5,
-                pady=pady)
+            self.frameStack.grid(row=int(not self.navPos) + 1, column=0, columnspan=3, sticky=N + S + E + W, padx=5, pady=5)
+            self.prevButton.grid( row=self.navPos + 1, column=0, sticky=S + W, padx=5, pady=pady)
+            self.posLabel.grid( row=self.navPos + 1, column=1, sticky=S + E + W, padx=5, pady=pady)
+            self.nextButton.grid( row=self.navPos + 1, column=2, sticky=S + E, padx=5, pady=pady)
 
     # whether to showPageNumber
     def showPageNumber(self, val=True):
@@ -12478,8 +12443,7 @@ class PagedWindow(Frame, object):
         self.shouldShowTitle = val
         if self.title is not None and self.shouldShowTitle:
             self.titleLabel.config(text=self.title, font="-weight bold")
-            self.titleLabel.grid(
-                row=0, column=0, columnspan=3, sticky=N + W + E)
+            self.titleLabel.grid(row=0, column=0, columnspan=3, sticky=N + W + E)
         else:
             self.titleLabel.grid_remove()
 
@@ -12487,137 +12451,66 @@ class PagedWindow(Frame, object):
     def _updatePageNumber(self):
         if self.shouldShowPageNumber:
             self.posLabel.config(
-                text=str(self.currentPage + 1) + "/" + str(len(self.frames)))
+                text=str(self.frameStack.getCurrentFrame() + 1) + "/" + str(self.frameStack.getNumFrames()))
         else:
             self.posLabel.config(text="")
 
-    # get the current frame being shown - for adding widgets
-    def getPage(self, page=None):
-        if page == None: page = self.currentPage
-        return self.frames[page]
-
-#    # get the named frame - for adding widgets
-#    def getPage(self, num):
-#        return self.frames[num]
+        # update the buttons
+        if self.frameStack.getNumFrames() == 1:   # only 1 page - no buttons
+            self.prevButton.config(state="disabled")
+            self.nextButton.config(state="disabled")
+        elif self.frameStack.getCurrentFrame() == 0:
+            self.prevButton.config(state="disabled")
+            self.nextButton.config(state="normal")
+        elif self.frameStack.getCurrentFrame() == self.frameStack.getNumFrames() - 1:
+            self.prevButton.config(state="normal")
+            self.nextButton.config(state="disabled")
+        else:
+            self.prevButton.config(state="normal")
+            self.nextButton.config(state="normal")
 
     # get current page number
     def getPageNumber(self):
-        return self.currentPage + 1
+        return self.frameStack.getCurrentFrame() + 1
 
     # register a function to call when the page changes
     def registerPageChangeEvent(self, event):
-        self.pageChangeEvent = event
+        self.frameStack.setChangeFunction(event)
 
     # adds a new page, making it visible
     def addPage(self):
-        # if we're showing a page, remove it
-        if self.currentPage >= 0:
-            self._updateMaxSize()
-            self.frames[self.currentPage].grid_forget()
+        f = self.frameStack.addFrame()
+        return f
 
-        # add a new page
-        self.frames.append(Page(self))
-        self.frames[-1].grid(row=int(not self.navPos) + 1,
-                             column=0,
-                             columnspan=3,
-                             sticky=N + S + E + W,
-                             padx=5,
-                             pady=5)
-
-        self.currentPage = len(self.frames) - 1
-
-        # update the buttons & labels
-        if self.currentPage > 0:
-            self.prevButton.config(state="normal")
-        self._updatePageNumber()
-        return self.frames[-1]
-
-    def stopPage(self):
-        self._updateMaxSize()
+    def stopPagedWindow(self):
         self.showPage(1)
 
-    def _updateMaxSize(self):
-        self.frames[self.currentPage].update_idletasks()
-        x = self.frames[self.currentPage].winfo_reqwidth()
-        y = self.frames[self.currentPage].winfo_reqheight()
-        if x > self.maxX:
-            self.maxX = x
-        if y > self.maxY:
-            self.maxY = y
 
     # function to display the specified page
-    # will re-grid, and disable/enable buttons
-    # also updates label
     def showPage(self, page):
-        if page < 1 or page > len(self.frames):
-            raise Exception("Invalid page number: " + str(page) +
-                            ". Must be between 1 and " + str(len(self.frames)))
-
-        self.frames[self.currentPage].grid_forget()
-        self.currentPage = page - 1
-        self.frames[self.currentPage].grid_propagate(False)
-        self.frames[
-            self.currentPage].grid(
-            row=int(
-                not self.navPos) + 1,
-            column=0,
-            columnspan=3,
-            sticky=N + S + E + W,
-            padx=5,
-            pady=5)
-        self.frames[self.currentPage].grid_columnconfigure(0, weight=1)
-        self.frames[self.currentPage].config(width=self.maxX, height=self.maxY)
-        self._updatePageNumber()
-
-        # update the buttons
-        if len(self.frames) == 1:   # only 1 page - no buttons
-            self.prevButton.config(state="disabled")
-            self.nextButton.config(state="disabled")
-        elif self.currentPage == 0:
-            self.prevButton.config(state="disabled")
-            self.nextButton.config(state="normal")
-        elif self.currentPage == len(self.frames) - 1:
-            self.prevButton.config(state="normal")
-            self.nextButton.config(state="disabled")
-        else:
-            self.prevButton.config(state="normal")
-            self.nextButton.config(state="normal")
+        try:
+            self.frameStack.showFrame(page-1)
+            self._updatePageNumber()
+        except:
+            raise Exception("Invalid page number: " + str(page) + ". Must be between 1 and " + str(self.frameStack.getNumFrames()))
 
     def showFirst(self, event=None):
-        if self.currentPage == 0:
-            self.bell()
-        else:
-            self.showPage(1)
-            if self.pageChangeEvent is not None:
-                self.pageChangeEvent()
+        self.frameStack.showFirstFrame()
+        self._updatePageNumber()
 
     def showLast(self, event=None):
-        if self.currentPage == len(self.frames) - 1:
-            self.bell()
-        else:
-            self.showPage(len(self.frames))
-            if self.pageChangeEvent is not None:
-                self.pageChangeEvent()
+        self.frameStack.showLastFrame()
+        self._updatePageNumber()
 
     def showPrev(self, event=None):
-        if self.currentPage > 0:
-            self.showPage(self.currentPage)
-            if self.pageChangeEvent is not None:
-                self.pageChangeEvent()
-        else:
-            self.bell()
+        self.frameStack.showPrevFrame()
+        self._updatePageNumber()
 
     def showNext(self, event=None):
-        if self.currentPage < len(self.frames) - 1:
-            self.showPage(self.currentPage + 2)
-            if self.pageChangeEvent is not None:
-                self.pageChangeEvent()
-        else:
-            self.bell()
-
+        self.frameStack.showNextFrame()
+        self._updatePageNumber()
 
 class Page(Frame, object):
-
     def __init__(self, parent, **opts):
         super(Page, self).__init__(parent)
         self.config(relief=RIDGE, borderwidth=2)

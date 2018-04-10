@@ -158,8 +158,24 @@ app.go()
     Set ```callFunction``` to be True, if you want to call any associated functions.  
 
 * `.highlightTextArea(title, start, end=END)`  
-    Highlights all text from start position, to the end position.  
+    Highlights all text from start position, to the end position (defaults to the end of the text area).  
     **NB.** positions should be a string in the format `LINE.CHAR`, eg. `1.4` wil start on the 1st line at the 4th character.  
+
+#### Get TextAreas
+
+* `.getTextArea(title)`  
+    Gets the contents of the specified TextArea.  
+
+* `.getAllTextAreas()`  
+    This will return the contents of all TextAreas in the app, as a dictionary.  
+
+#### Search TextAreas
+
+* `.searchTextArea(title, pattern, start=None, stop=None, nocase=True, backwards=False)`  
+    Will find, highlight and return the position of the specified pattern.  
+    If no `start` position is provided, appJar will start searching form the cursor's position.  
+    Set `nocase` to False, if you want the search to be case sensitive.  
+    Set `backwards` to True, if you want to search backwards.  
 
 #### Tag TextAreas  
 
@@ -219,22 +235,6 @@ with gui("Text Editor", "300x400") as app:
 
 * `.getTextAreaTag(title)`  
     Gets all details about the specified tag.  
-
-#### Get TextAreas
-
-* `.getTextArea(title)`  
-    Gets the contents of the specified TextArea.  
-
-* `.getAllTextAreas()`  
-    This will return the contents of all TextAreas in the app, as a dictionary.  
-
-#### Search TextAreas
-
-* `.searchTextArea(title, pattern, start=None, stop=None, nocase=True, backwards=False)`  
-    Will find, highlight and return the position of the specified pattern.  
-    If no `start` position is provided, appJar will start searching form the cursor's position.  
-    Set `nocase` to False, if you want the search to be case sensitive.  
-    Set `backwards` to True, if you want to search backwards.  
 
 ##Button
 ---
