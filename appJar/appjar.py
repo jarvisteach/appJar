@@ -12305,7 +12305,7 @@ class FrameStack(Frame, object):
             self.showFrame(self._start, callFunction=False)
             self._beep = tmp
 
-        return self._frames[self._currFrame]
+        return self._frames[-1]
 
     def getFrame(self, num=None):
         if num is None: num = self._currFrame
