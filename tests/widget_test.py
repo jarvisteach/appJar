@@ -1149,8 +1149,27 @@ def test_text_areas():
     assert app.getTextArea("st1") == EMPTY
     assert app.getTextArea("st2") == EMPTY
 
-    print("\t >> all tests complete")
+    app.setTextAreaFont("t1", size=20, family='Verdana')
+    app.setTextArea("t1", TEXT_ONE)
+    app.highlightTextArea("t1", "1.0")
 
+    app.textAreaToggleFontSelected("t1", "BOLD")
+    app.textAreaToggleFontSelected("t1", "BOLD")
+    app.textAreaApplyFontSelected("t1", "BOLD")
+
+    app.textAreaToggleFontSelected("t1", "ITALIC")
+    app.textAreaToggleFontSelected("t1", "ITALIC")
+    app.textAreaApplyFontSelected("t1", "ITALIC")
+
+    app.textAreaToggleFontSelected("t1", "UNDERLINE")
+    app.textAreaToggleFontSelected("t1", "UNDERLINE")
+    app.textAreaApplyFontSelected("t1", "UNDERLINE")
+
+    app.textAreaToggleFontSelected("t1", "BOLD_ITALIC")
+    app.textAreaToggleFontSelected("t1", "BOLD_ITALIC")
+    app.textAreaApplyFontSelected("t1", "BOLD_ITALIC")
+
+    print("\t >> all tests complete")
 
 def test_meters():
     print("\tTesting meters")
