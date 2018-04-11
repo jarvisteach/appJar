@@ -8595,7 +8595,7 @@ class gui(object):
             text = AjScrolledText(frame)
         else:
             text = AjText(frame)
-        text.config(font=self._getContainerProperty('inputFont'), width=20, height=10, undo=True, wrap=WORD)
+        text.config(width=20, height=10, undo=True, wrap=WORD)
 
         if not self.ttkFlag:
             if self.platform in [self.MAC, self.LINUX]:
@@ -8693,6 +8693,36 @@ class gui(object):
         ta = self.widgetManager.get(self.Widgets.TextArea, title)
         ta.tag_remove(tag, start, end)
 
+    def textAreaToggleFontRange(self, title, tag, start, end=END):
+        """ will toggle the tag at the specified range """
+        ta = self.widgetManager.get(self.Widgets.TextArea, title)
+        tag = ta.verifyFontTag(tag)
+
+        if tag in ta.tag_names(start):
+            ta.tag_remove("AJ_"+tag, start, end)
+        else:
+            self.textAreaApplyFontRange(title, tag, start, end)
+
+    def textAreaToggleFontSelected(self, title, tag):
+        if self.widgetManager.get(self.Widgets.TextArea, title).tag_ranges(SEL):
+            self.textAreaToggleFontRange(title, tag, SEL_FIRST, SEL_LAST)
+        self.widgetManager.get(self.Widgets.TextArea, title).focus_set()
+
+    def textAreaApplyFontSelected(self, title, tag):
+        if self.widgetManager.get(self.Widgets.TextArea, title).tag_ranges(SEL):
+            self.textAreaApplyFontRange(title, tag, SEL_FIRST, SEL_LAST)
+        self.widgetManager.get(self.Widgets.TextArea, title).focus_set()
+
+    def textAreaApplyFontRange(self, title, tag, start, end=END):
+        """removes the tag from the specified range """
+        ta = self.widgetManager.get(self.Widgets.TextArea, title)
+        tag = ta.verifyFontTag(tag)
+        if tag != "UNDERLINE":
+            ta.tag_remove("AJ_BOLD", start, end)
+            ta.tag_remove("AJ_ITALIC", start, end)
+            ta.tag_remove("AJ_BOLD_ITALIC", start, end)
+        ta.tag_add("AJ_" + tag, start, end)
+
     def textAreaUntagSelected(self, title, tag):
         if self.widgetManager.get(self.Widgets.TextArea, title).tag_ranges(SEL):
             self.textAreaUntagRange(title, tag, SEL_FIRST, SEL_LAST)
@@ -8706,7 +8736,7 @@ class gui(object):
 
     def textAreaToggleTagSelected(self, title, tag):
         if self.widgetManager.get(self.Widgets.TextArea, title).tag_ranges(SEL):
-            self.textAreaToggleRange(title, tag, SEL_FIRST, SEL_LAST)
+            self.textAreaToggleTagRange(title, tag, SEL_FIRST, SEL_LAST)
         self.widgetManager.get(self.Widgets.TextArea, title).focus_set()
 
     def searchTextArea(self, title, pattern, start=None, stop=None, nocase=True, backwards=False):
@@ -8733,6 +8763,10 @@ class gui(object):
         """ returns a list of all tags in the text area """
         ta = self.widgetManager.get(self.Widgets.TextArea, title)
         return ta.tag_names()
+
+    def setTextAreaFont(self, title, **kwargs):
+        """ changes the font of a text area """
+        self.widgetManager.get(self.Widgets.TextArea, title).setFont(**kwargs)
 
     def setTextArea(self, title, text, end=True, callFunction=True):
         """ Add the supplied text to the specified TextArea
@@ -12521,6 +12555,33 @@ class TextParent(object):
         self.__hash = None
         self.callFunction = True
         self.oldCallFunction = True
+        self.TAGS = ["UNDERLINE", "BOLD", "ITALIC", "BOLD_ITALIC"]
+
+        # create default fonts, and assign to tags
+        self._normalFont = tkFont.Font(family="Helvetica", size=12, slant="roman", weight="normal")
+        self._boldFont = tkFont.Font(family="Helvetica", size=12, weight="bold")
+        self._italicFont = tkFont.Font(family="Helvetica", size=12, slant="italic")
+        self._boldItalicFont = tkFont.Font(family="Helvetica", size=12, weight="bold", slant="italic")
+        self.tag_config("AJ_BOLD", font=self._boldFont)
+        self.tag_config("AJ_ITALIC", font=self._italicFont)
+        self.tag_config("AJ_BOLD_ITALIC", font=self._boldItalicFont)
+        self.tag_config("AJ_UNDERLINE", underline=True)
+
+        self.configure(font=self._normalFont)
+
+    def verifyFontTag(self, tag):
+        tag = tag.upper().strip()
+        if tag not in self.TAGS:
+            raise Exception("Invalid tag: " + tag + ". Must be one of: " + str(self.TAGS))
+        else:
+            return tag
+
+    def setFont(self, **kwargs):
+        """ only looking for size & family params """
+        self._normalFont.config(**kwargs)
+        self._boldFont.config(**kwargs)
+        self._italicFont.config(**kwargs)
+        self._boldItalicFont.config(**kwargs)
 
     def pauseCallFunction(self, callFunction=False):
         self.oldCallFunction = self.callFunction
