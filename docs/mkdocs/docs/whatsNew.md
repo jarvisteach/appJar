@@ -13,6 +13,7 @@
     * [#377](https://github.com/jarvisteach/appJar/issues/377) - Label widgets are now configurable  
     * [#345](https://github.com/jarvisteach/appJar/issues/345) - New container: [FrameStack](/pythonWidgetGrouping/#frame-stack)  
     * [#339](https://github.com/jarvisteach/appJar/issues/339) - Functions to remove [toolbars](/pythonBars/#toolbar) and [statusbars](/pythonBars/#statusbar)  
+    * [#333](https://github.com/jarvisteach/appJar/issues/333) - can now fully hide/show/delete [tabs](/pythonWidgetGrouping/#tabbed-frame)  
     * [#69](https://github.com/jarvisteach/appJar/issues/69) - Basic functions for [tagging](/inputWidgets/#tag-textareas) & [searching](/inputWidgets/#search-textareas) text areas  
 
 ## Version 0.92  
