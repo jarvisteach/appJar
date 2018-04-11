@@ -177,6 +177,29 @@ app.go()
     Set `nocase` to False, if you want the search to be case sensitive.  
     Set `backwards` to True, if you want to search backwards.  
 
+#### TextArea Fonts  
+
+Fonts are tricky on TextAreas, it's currently not possible to have differetn font sizes & families on different parts of a TextArea.  
+However, it is possible to make parts of the TextArea **bold**, **italic** or **underlined**.  
+
+* `.setTextAreaFont(title, **kwargs)` 
+    Used to change the family and size of the named TextArea's font.  
+    Pass `font` with a number to change the size of all text in the TextArea.  
+    Pass `family` with a strinf to change the font-family of all text in the TextArea.  
+
+* `.textAreaApplyFontRange(title, tag, start, end=END)`  
+    Apply the specified font styling to the specified range.  
+    The tag can be one of **BOLD**, **ITALIC**, **BOLD_ITALIC** & **UNDERLINE**.  
+
+* `.textAreaApplyFontSelected(title, tag)`  
+    Apply the specified font styling to the currently selected text.  
+
+* `.textAreaToggleFontRange(title, tag, start, end=END)`  
+    Invert the named tag on the specified range.  
+
+* `.textAreaToggleFontSelected(title, tag)`  
+    Invert the named tag on the selected text.  
+
 #### Tag TextAreas  
 
 A simple syntax highlighter:  
