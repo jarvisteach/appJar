@@ -4332,23 +4332,34 @@ class gui(object):
                 if self.fill: self.tabContainer.grid(row=0, sticky=W + E)
                 else: self.tabContainer.grid(row=0, sticky=W)
                 self.panes.grid(row=1, sticky="NESW")
+                self.EMPTY_PANE = self.panes.addFrame()
 
                 # nain store dictionary: name = [tab, pane]
                 self.widgetStore = OrderedDict()
 
                 # looks
                 self.tabFont = font
+                if gui.GET_PLATFORM() == gui.MAC: self.inactiveCursor="pointinghand"
+                elif gui.GET_PLATFORM() in [gui.WINDOWS, gui.LINUX]: self.inactiveCursor="hand2"
                 # selected tab & all panes
                 self.activeFg = "#000000"
                 self.activeBg = "#F6F6F6"
                 # other tabs
-                self.inactiveFg = "#F6F6F6"
+                self.inactiveFg = "#000000"
                 self.inactiveBg = "#DADADA"
                 # disabled tabs
                 self.disabledFg = "gray"
                 self.disabledBg = "darkGray"
-                self.EMPTY_PANE = self.panes.addFrame()
-                self.EMPTY_PANE.config(bg=self.disabledBg)
+
+                if useTtk:
+                    self.ttkStyle = ttk.Style()
+                    self.ttkStyle.configure("ActiveTab.TLabel", foreground=self.activeFg, background=self.activeBg)
+                    self.ttkStyle.configure("InactiveTab.TLabel", foreground=self.inactiveFg, background=self.inactiveBg)
+                    self.ttkStyle.configure("DisabledTab.TLabel", foreground=self.disabledFg, background=self.disabledBg)
+                    self.ttkStyle.configure("DisabledTab.TFrame", background=self.disabledBg)
+                    self.EMPTY_PANE.config(style="DisabledTab.TFrame")
+                else:
+                    self.EMPTY_PANE.config(bg=self.disabledBg)
 
             def config(self, cnf=None, **kw):
                 self.configure(cnf, **kw)
@@ -4367,7 +4378,13 @@ class gui(object):
                 if "command" in kw: self.changeEvent = kw.pop("command")
 
                 # just in case
-                self.EMPTY_PANE.config(bg=self.disabledBg)
+                if not useTtk:
+                    self.EMPTY_PANE.config(bg=self.disabledBg)
+                else:
+                    self.ttkStyle.configure("ActiveTab.TLabel", foreground=self.activeFg, background=self.activeBg)
+                    self.ttkStyle.configure("InactiveTab.TLabel", foreground=self.inactiveFg, background=self.inactiveBg)
+                    self.ttkStyle.configure("DisabledTab.TLabel", foreground=self.disabledFg, background=self.disabledBg)
+                    self.ttkStyle.configure("DisabledTab.TFrame", background=self.disabledBg)
 
                 # update tabs if we have any
                 self._configTabs()
@@ -4499,16 +4516,22 @@ class gui(object):
             def _configTabs(self):
                 for key in list(self.widgetStore.keys()):
                     if self.widgetStore[key][0].disabled:
-                        self.widgetStore[key][0].config(bg=self.disabledBg, fg=self.disabledFg, cursor='')
+                        if not useTtk:
+                            self.widgetStore[key][0].config(bg=self.disabledBg, fg=self.disabledFg, cursor="")
+                        else:
+                            self.widgetStore[key][0].config(style="DisabledTab.TLabel", cursor="")
                     else:
                         if key == self.selectedTab:
-                            bg = self.widgetStore[key][1].cget('bg')
-                            self.widgetStore[key][0].config(bg=bg, fg=self.activeFg, cursor='')
+                            if not useTtk:
+                                self.widgetStore[key][0].config(bg=self.widgetStore[key][1].cget('bg'), fg=self.activeFg, cursor="")
+                            else:
+                                self.widgetStore[key][0].config(style="SelectedTab.TLabel", cursor="")
                             self.widgetStore[key][1].lift()
                         else:
-                            if gui.GET_PLATFORM() == gui.MAC: cursor="pointinghand"
-                            elif gui.GET_PLATFORM() in [gui.WINDOWS, gui.LINUX]: cursor="hand2"
-                            self.widgetStore[key][0].config(bg=self.inactiveBg, fg=self.inactiveFg, cursor=cursor)
+                            if not useTtk:
+                                self.widgetStore[key][0].config(bg=self.inactiveBg, fg=self.inactiveFg, cursor=self.inactiveCursor)
+                            else:
+                                self.widgetStore[key][0].config(style="InactiveTab.TLabel", cursor=self.inactiveCursor)
 
         return TabbedFrame(master, **kwargs)
 
