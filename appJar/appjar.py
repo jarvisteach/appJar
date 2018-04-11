@@ -4449,13 +4449,19 @@ class gui(object):
                 for tab in self.widgetStore.keys():
                     self.disableTab(tab, disabled, refresh=False)
                 self._configTabs()
-                if disabled: self.EMPTY_PANE.lift()
+                if disabled:
+                    self.EMPTY_PANE.lift()
+                    self.selectedTab = None
 
             def disableTab(self, tabName, disabled=True, refresh=True):
                 if tabName not in self.widgetStore.keys():
                     raise ItemLookupError("Invalid tab name: " + tabName)
 
                 self.widgetStore[tabName][0].disabled = disabled
+
+                if not disabled and self.selectedTab is None:
+                    self.selectedTab = tabName
+
                 if refresh:
                     self._findNewTab(tabName)
                     self._configTabs()
@@ -4482,19 +4488,18 @@ class gui(object):
                             self.changeTab(key)
                             return
 
-                 # if we're here - all tabs are disabled
+                # if we're here - all tabs are disabled
+                self.selectedTab = None
                 self.EMPTY_PANE.lift()
 
             def _configTabs(self):
                 for key in list(self.widgetStore.keys()):
                     if self.widgetStore[key][0].disabled:
-                        self.widgetStore[key][0].config(bg=self.disabledBg, fg=self.disabledFg, cursor='X_cursor')
-                        self.widgetStore[key][0].border.config(cursor='X_cursor')
+                        self.widgetStore[key][0].config(bg=self.disabledBg, fg=self.disabledFg, cursor='')
                     else:
                         if key == self.selectedTab:
                             bg = self.widgetStore[key][1].cget('bg')
                             self.widgetStore[key][0].config(bg=bg, fg=self.activeFg, cursor='')
-                            self.widgetStore[key][0].border.config(cursor='')
                             self.widgetStore[key][1].lift()
                         else:
                             if gui.GET_PLATFORM() == gui.MAC: cursor="pointinghand"
