@@ -179,7 +179,7 @@ app.go()
 
 #### TextArea Fonts  
 
-Fonts are tricky on TextAreas, it's currently not possible to have differetn font sizes & families on different parts of a TextArea.  
+Fonts are tricky on TextAreas, it's currently not possible to have different font sizes & families on different parts of a TextArea.  
 However, it is possible to make parts of the TextArea **bold**, **italic** or **underlined**.  
 
 * `.setTextAreaFont(title, **kwargs)` 
@@ -189,7 +189,8 @@ However, it is possible to make parts of the TextArea **bold**, **italic** or **
 
 * `.textAreaApplyFontRange(title, tag, start, end=END)`  
     Apply the specified font styling to the specified range.  
-    The tag can be one of **BOLD**, **ITALIC**, **BOLD_ITALIC** & **UNDERLINE**.  
+    The tag should be one of **BOLD**, **ITALIC** or **BOLD_ITALIC** - it will replace the previous font tag.  
+    Additionally, the **UNDERLINE** tag can be used alongside the above.  
 
 * `.textAreaApplyFontSelected(title, tag)`  
     Apply the specified font styling to the currently selected text.  
