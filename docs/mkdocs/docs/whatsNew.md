@@ -4,7 +4,7 @@
 ## Version 0.93  
 
 * Issues Resolved:
-    * [#429](https://github.com/jarvisteach/appJar/issues/429) - [PagedWindows](/pythonWidgetGrouping/#paged-window] now use [FrameStacks](/pythonWidgetGrouping/#frame-stack)  
+    * [#429](https://github.com/jarvisteach/appJar/issues/429) - [TabbedFrames](/pythonWidgetGrouping/#tabbed-frame) & [PagedWindows](/pythonWidgetGrouping/#paged-window] now use [FrameStacks](/pythonWidgetGrouping/#frame-stack)  
     * [#425](https://github.com/jarvisteach/appJar/issues/425) - Updated docs on [geometry](/pythonGuiOptions/#size-location)  
     * [#422](https://github.com/jarvisteach/appJar/issues/422) - TickOptionBoxes now return their name when changed  
     * [#421](https://github.com/jarvisteach/appJar/issues/421) - SelectableLabels now allow alignment setting  
