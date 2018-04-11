@@ -55,6 +55,7 @@ pages:
     - Packaging: packaging.md
     - License: License.md
     - Support: Support.md
+    - Limitations: appJarLimitations.md
     - Acknowledgements: Thanks.md
     - Advertising: advertising.md
     - Contributing: contributing.md
