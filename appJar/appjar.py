@@ -4377,20 +4377,16 @@ class gui(object):
 
             def hideTab(self, title):
                 if title not in self.widgetStore.keys(): raise ItemLookupError("Invalid tab name: " + title)
-                tab = self.widgetStore[title][0]
-                tab.hide()
-                self._findNewTab(title)
+                self.widgetStore[title][0].hide()
+                if self.selectedTab == title:
+                    self.selectedTab = None
+                    self._findNewTab()
                 self._configTabs()
 
-            def showTab(self, title):
-                if title not in self.widgetStore.keys(): raise ItemLookupError("Invalid tab name: " + title)
-                self.widgetStore[title][0].hidden = False
-                self.expandTabs(self.fill)
-
             def deleteTab(self, title):
-                if title not in self.widgetStore.keys(): raise ItemLookupError("Invalid tab name: " + title)
+                self.hideTab(title)
+
                 tab = self.widgetStore[title][0]
-                tab.hide()
                 tab.border.destroy()
                 tab.destroy()
 
@@ -4399,8 +4395,36 @@ class gui(object):
                 pane.destroy()
 
                 del self.widgetStore[title]
-                self._findNewTab(title)
+
+            def showTab(self, title):
+                if title not in self.widgetStore.keys(): raise ItemLookupError("Invalid tab name: " + title)
+                self.widgetStore[title][0].hidden = False
+                self.expandTabs(self.fill)
+                if self.selectedTab == None:
+                    self.changeTab(title)
+
+            def disableAllTabs(self, disabled=True):
+                for tab in self.widgetStore.keys():
+                    self.disableTab(tab, disabled, refresh=False)
                 self._configTabs()
+                if disabled:
+                    self.selectedTab = None
+                    self.EMPTY_PANE.lift()
+
+            def disableTab(self, tabName, disabled=True, refresh=True):
+                if tabName not in self.widgetStore.keys(): raise ItemLookupError("Invalid tab name: " + tabName)
+
+                tab = self.widgetStore[tabName][0]
+                tab.disabled = disabled
+
+                if not disabled and not tab.hidden and self.selectedTab is None:
+                    self.selectedTab = tabName
+                elif disabled and self.selectedTab == tabName:
+                    self.selectedTab = None
+                    if refresh: self._findNewTab()
+
+                if refresh:
+                    self._configTabs()
 
             def addTab(self, text, **kwargs):
                 # check for duplicates
@@ -4415,7 +4439,8 @@ class gui(object):
                     pane.config(bg=self.activeBg)
 
                 # log the first tab as the selected tab
-                if self.selectedTab is None: self.selectedTab = text
+                if self.selectedTab is None:
+                    self.selectedTab = text
 
                 # log the widgets
                 self.widgetStore[text] = [tab, pane]
@@ -4445,31 +4470,11 @@ class gui(object):
 
                 self.widgetStore[tabName][0].rename(newName)
 
-            def disableAllTabs(self, disabled=True):
-                for tab in self.widgetStore.keys():
-                    self.disableTab(tab, disabled, refresh=False)
-                self._configTabs()
-                if disabled:
-                    self.EMPTY_PANE.lift()
-                    self.selectedTab = None
-
-            def disableTab(self, tabName, disabled=True, refresh=True):
-                if tabName not in self.widgetStore.keys():
-                    raise ItemLookupError("Invalid tab name: " + tabName)
-
-                self.widgetStore[tabName][0].disabled = disabled
-
-                if not disabled and self.selectedTab is None:
-                    self.selectedTab = tabName
-
-                if refresh:
-                    self._findNewTab(tabName)
-                    self._configTabs()
-
             def changeTab(self, tabName):
                 if tabName not in self.widgetStore.keys(): raise ItemLookupError("Invalid tab name: " + tabName)
                 # stop if already selected or disabled
-                if self.selectedTab == tabName or self.widgetStore[tabName][0].disabled: return
+                if self.selectedTab == tabName or self.widgetStore[tabName][0].disabled or self.widgetStore[tabName][0].hidden:
+                    return
 
                 self.selectedTab = tabName
                 self._configTabs()
@@ -4481,12 +4486,11 @@ class gui(object):
             def setFont(self, **kwargs):
                 self.tabFont.config(**kwargs)
 
-            def _findNewTab(self, text):
-                if text == self.selectedTab:
-                    for key in list(self.widgetStore.keys()):
-                        if not self.widgetStore[key][0].disabled:
-                            self.changeTab(key)
-                            return
+            def _findNewTab(self):
+                for key in list(self.widgetStore.keys()):
+                    if not self.widgetStore[key][0].disabled and not self.widgetStore[key][0].hidden:
+                        self.changeTab(key)
+                        return
 
                 # if we're here - all tabs are disabled
                 self.selectedTab = None
