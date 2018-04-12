@@ -146,10 +146,16 @@ Labels can receive `drop` data.
 
 ## Message 
 A widget for displaying multi-line text in the GUI.  
+Will automatically wrap the text, based on either the `aspect` or `width` settings, defaulting to 50% wider than tall.  
 
 * `.message(title, value=None)`  
     The `value` will be the text to show in the message.  
     Messages can receive `drop` data.  
+
+| Parameter | Data type | Default | Description |
+| --------- | --------- | ------- | ------------|
+| aspect | integer | 150 | Set the ratio between the width & height. |
+| width | integer| None |  Set the number of characters per line. If None, then the aspect is used to calculate the width. |
 
 ## Entry  
 ---

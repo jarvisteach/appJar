@@ -101,7 +101,9 @@ See the relevant section for a description of what the widget does.
 
 ## Message
 ____
-Similar to a Label, except it will wrap the text over multiple lines.  
+Very similar to a Label, except it will wrap the text over multiple lines.  
+By default the text is laid out 50% wider than it is high.  
+This can be changed by setting a specific `width` or by changing the `aspect` ratio.  
 
 ![Message](img/1_mess.png)  
 
@@ -130,6 +132,15 @@ app.go()
 
 * `.setMessage(title, text)`  
     Sets the contents of the specified Message widget, to the specified text.  
+
+* `.setMessageAspect(title, aspect)`  
+    Sets the aspect ratio at which text is wrapped.
+    The default is 150, which means the text will be 50% wider than it is high.  
+    Ignored if a `width` has been set.  
+
+* `.setMessageWidth(title, width)`  
+    Sets the number of characters per line for the widget.
+    If not set, width is calculated using the default aspect ratio.  
 
 ## Meter  
 ---

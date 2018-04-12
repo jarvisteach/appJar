@@ -9019,6 +9019,11 @@ class gui(object):
         mess = self.widgetManager.get(self.Widgets.Message, title)
         mess.config(text=text)
 
+    def setMessageAspect(self, title, aspect):
+        """ set a new aspect ratio for the text in this widget """
+        mess = self.widgetManager.get(self.Widgets.Message, title)
+        mess.config(aspect=aspect)
+
     def clearMessage(self, title):
         self.setMessage(title, "")
 

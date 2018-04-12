@@ -1024,6 +1024,9 @@ def test_message_boxes():
     assert app.getMessage("m4") == EMPTY
     assert app.getMessage(TEXT_TWO) == TEXT_THREE
 
+    app.setMessageAspect("m1", 200)
+    app.setMessageWidth("m2", 40)
+
     app.clearMessage("m2")
     app.clearMessage("m3")
     app.clearMessage(TEXT_TWO)
