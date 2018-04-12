@@ -2495,6 +2495,19 @@ def test_containers():
 
             testScrollPaneScrolling(sp)
 
+
+    # JUGGLING FRAMES
+    with app.frame("a_frame", 1, 1):
+        app.label("a_frame a")
+    with app.frame("b_frame", 1, 1):
+        app.label("b_frame a")
+    with app.frame("c_frame", 1, 1):
+        app.label("c_frame a")
+
+    app.raiseFrame("a_frame")
+    app.raiseFrame("b_frame")
+    app.raiseFrame("c_frame")
+
     ## FRAME STACKS
     app.startFrameStack("stack")
     app.startFrame()

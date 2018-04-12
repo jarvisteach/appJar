@@ -85,6 +85,12 @@ with gui("FRAME DEMO", "250x150", bg='yellow') as app:
 * `.openFrame(title)`  
     Used to reopen the named *Frame*.  
 
+#### Juggling Frames  
+* `.raiseFrame(name)`  
+    Lifts the named frame to the top of the grid stack.  
+    If two frames are placed in the same grid square, this is used to determine which is on top.  
+    By default, the last frame added is on top.  
+
 ### Frame Stack
 ---
 
