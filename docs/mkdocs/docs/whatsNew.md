@@ -60,6 +60,7 @@
 * More [ttk](/pythonTtk) improvements - grouped widgets now work, introduced external themes.  
 
 * Issues Resolved:
+    * [#356](https://github.com/jarvisteach/appJar/issues/356) - Updated documentation - widgets page split into [input](/inputWidgets) & [output](/outputWidgets) pages  
     * [#344](https://github.com/jarvisteach/appJar/issues/344) - [labels](/outputWidgets/#add-labels) now display the title when no text is provided, instead of an empty label.  
     * [#343](https://github.com/jarvisteach/appJar/issues/343) - new parameter for appJar constructor: `showIcon` allows the icon to be ignored when running Windows
     * [#340](https://github.com/jarvisteach/appJar/issues/340) - introduced [GUI properties](/simpleAppJar) for most settings  
