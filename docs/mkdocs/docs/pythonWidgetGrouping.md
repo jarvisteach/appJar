@@ -91,6 +91,18 @@ with gui("FRAME DEMO", "250x150", bg='yellow') as app:
     If two frames are placed in the same grid square, this is used to determine which is on top.  
     By default, the last frame added is on top.  
 
+```python
+from appJar import gui 
+
+with gui() as app:
+    with app.frame("ONE", 0,0):
+        app.label("In frame one")
+    with app.frame("TWO", 0,0):
+        app.label("In frame two")
+
+    app.buttons(["ONE", "TWO"], app.raiseFrame)
+```
+
 ### Frame Stack
 ---
 

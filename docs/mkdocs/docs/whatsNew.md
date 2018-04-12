@@ -6,17 +6,17 @@
 * Issues Resolved:
     * [#436](https://github.com/jarvisteach/appJar/issues/436) - [TextAreas](/inputWidgets/#textarea) can now be programmatically cleared and set while disabled  
     * [#435](https://github.com/jarvisteach/appJar/issues/435) - [Messages](/outputWidgets/#message) have better documentation and a function to set the aspect ratio  
-    * [#429](https://github.com/jarvisteach/appJar/issues/429) - [TabbedFrames](/pythonWidgetGrouping/#tabbed-frame) & [PagedWindows](/pythonWidgetGrouping/#paged-window] now use [FrameStacks](/pythonWidgetGrouping/#frame-stack)  
+    * [#429](https://github.com/jarvisteach/appJar/issues/429) - [TabbedFrames](/pythonWidgetGrouping/#tabbed-frame) & [PagedWindows](/pythonWidgetGrouping/#paged-window) now use [FrameStacks](/pythonWidgetGrouping/#frame-stack)  
     * [#425](https://github.com/jarvisteach/appJar/issues/425) - Updated docs on [geometry](/pythonGuiOptions/#size-location)  
-    * [#422](https://github.com/jarvisteach/appJar/issues/422) - TickOptionBoxes now return their name when changed  
-    * [#421](https://github.com/jarvisteach/appJar/issues/421) - SelectableLabels now allow alignment setting  
+    * [#422](https://github.com/jarvisteach/appJar/issues/422) - [TickOptionBoxes](/inputWidgets/#add-optionboxes) now return their name when changed  
+    * [#421](https://github.com/jarvisteach/appJar/issues/421) - [SelectableLabels](/outputWidgets/#add-labels) now allow alignment setting  
     * [#415](https://github.com/jarvisteach/appJar/issues/415) - Disable Entry now disables all of a file/directory [entry](/inputWidgets/#entry)  
     * [#402](https://github.com/jarvisteach/appJar/issues/402) - Now possible to register a function to call once the GUI [starts up](/pythonEvents/#starting-the-gui)  
-    * [#377](https://github.com/jarvisteach/appJar/issues/377) - Label widgets are now configurable  
+    * [#377](https://github.com/jarvisteach/appJar/issues/377) - [Auto-Labelled Widgets](/inputWidgets/#auto-labelled-widgets) now have configurable labels  
     * [#345](https://github.com/jarvisteach/appJar/issues/345) - New container: [FrameStack](/pythonWidgetGrouping/#frame-stack)  
     * [#339](https://github.com/jarvisteach/appJar/issues/339) - Functions to remove [toolbars](/pythonBars/#toolbar) and [statusbars](/pythonBars/#statusbar)  
-    * [#333](https://github.com/jarvisteach/appJar/issues/333) - can now fully hide/show/delete [tabs](/pythonWidgetGrouping/#tabbed-frame)  
-    * [#69](https://github.com/jarvisteach/appJar/issues/69) - Basic functions for [tagging](/inputWidgets/#tag-textareas), [searching](/inputWidgets/#search-textareas) and changing [fonts](/inputWidgets/#textarea-fonts) text areas  
+    * [#333](https://github.com/jarvisteach/appJar/issues/333) - Can now fully hide/show/delete [tabs](/pythonWidgetGrouping/#tabbed-frame)  
+    * [#69](https://github.com/jarvisteach/appJar/issues/69) - Basic functions for [tagging](/inputWidgets/#tag-textareas), [searching](/inputWidgets/#search-textareas) and changing [fonts](/inputWidgets/#textarea-fonts) in text areas  
 
 ## Version 0.92  
 

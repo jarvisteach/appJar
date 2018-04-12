@@ -134,12 +134,12 @@ app.go()
     Sets the contents of the specified Message widget, to the specified text.  
 
 * `.setMessageAspect(title, aspect)`  
-    Sets the aspect ratio at which text is wrapped.
+    Sets the aspect ratio at which text is wrapped.  
     The default is 150, which means the text will be 50% wider than it is high.  
     Ignored if a `width` has been set.  
 
 * `.setMessageWidth(title, width)`  
-    Sets the number of characters per line for the widget.
+    Sets the number of characters per line for the widget.  
     If not set, width is calculated using the default aspect ratio.  
 
 ## Meter  
