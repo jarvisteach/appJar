@@ -8768,7 +8768,7 @@ class gui(object):
         """ changes the font of a text area """
         self.widgetManager.get(self.Widgets.TextArea, title).setFont(**kwargs)
 
-    def setTextArea(self, title, text, end=True, callFunction=True):
+    def setTextArea(self, title, text, end=True, callFunction=True, override=True):
         """ Add the supplied text to the specified TextArea
 
         :param title: the TextArea to change
@@ -8781,10 +8781,18 @@ class gui(object):
         ta = self.widgetManager.get(self.Widgets.TextArea, title)
 
         ta.pauseCallFunction(callFunction)
+
+        if override:
+            _state = ta.cget('state')
+            ta.config(state='normal')
+
         if end:
             ta.insert(END, text)
         else:
             ta.insert('1.0', text)
+
+        if override: ta.config(state=_state)
+
         ta.resumeCallFunction()
 
     def clearTextArea(self, title, callFunction=True):
