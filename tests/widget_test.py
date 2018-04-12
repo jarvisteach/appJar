@@ -1046,7 +1046,7 @@ def test_message_boxes():
 def test_text_areas():
     print("\tTesting text areas")
     assert isinstance(app.addTextArea("t1"), AjText)
-    app.addTextArea("t2")
+    ta2 = app.addTextArea("t2")
     with pytest.raises(Exception) :
         app.addTextArea("t2")
     assert isinstance(app.addScrolledTextArea("st1"), AjScrolledText)
@@ -1088,6 +1088,37 @@ def test_text_areas():
     app.setTextArea("t2", TEXT_TWO)
     app.setTextArea("st1", TEXT_THREE)
     app.setTextArea("st2", TEXT_FOUR)
+
+    assert app.getTextArea("t1") == TEXT_ONE
+    assert app.getTextArea("t2") == TEXT_TWO
+    assert app.getTextArea("st1") == TEXT_THREE
+    assert app.getTextArea("st2") == TEXT_FOUR
+
+    # test disabled overriding
+    ta2.config(state='disabled')
+    assert ta2.cget('state') == 'disabled'
+    app.setTextArea("t2", TEXT_ONE)
+    assert app.getTextArea("t2") == TEXT_TWO+TEXT_ONE
+    app.clearTextArea("t2")
+    assert app.getTextArea("t2") == ""
+    app.setTextArea("t2", TEXT_TWO)
+    assert app.getTextArea("t2") == TEXT_TWO
+    assert ta2.cget('state') == 'disabled'
+    ta2.config(state='normal')
+    assert ta2.cget('state') == 'normal'
+
+    # test end flag
+    app.setTextArea("t2", TEXT_TWO, end=True)
+    assert app.getTextArea("t2") == TEXT_TWO+TEXT_TWO
+    app.setTextArea("t2", TEXT_ONE, end=False)
+    assert app.getTextArea("t2") == TEXT_ONE+TEXT_TWO+TEXT_TWO
+
+    app.clearTextArea("t2")
+    assert app.getTextArea("t2") == ""
+    app.setTextArea("t2", TEXT_TWO)
+    assert app.getTextArea("t2") == TEXT_TWO
+
+
 
     # nothing selected - so these have no effect
     app.textAreaTagSelected("t2", "red")
