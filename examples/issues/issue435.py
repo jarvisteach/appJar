@@ -5,6 +5,9 @@ from appJar import gui
 
 app = gui("Login Form")
 
+def align(btn):
+    app.setMessageAlign("Message", btn.lower())
+
 mess = app.addMessage("Message","Veuillez entrer les parametres de votre système d\'équation.", 0, 0, colspan=2)
 #mess.config(aspect=600)
 app.setMessageWidth("Message", 200)
@@ -17,4 +20,5 @@ app.addLabel("nbrUnknowns", "Nombre d\'inconnues:", 2, 0)
 app.addNumericEntry("passEnt", 2, 1)
 
 app.addButtons(["Create", "Cancel"], None, colspan=3)
+app.addButtons(["Left", "Right", "Center"], align, colspan=3)
 app.go()
