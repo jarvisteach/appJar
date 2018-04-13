@@ -2,21 +2,26 @@
 ---
 
 A common question is how to have different *pages* of widgets in the same GUI.  
-There are lots of ways to acheive this...
+There are lots of ways to acheive this.  
 
-## Updating Labels  
----
-
-The simplest option is to update the contents of existing widgets.  
+All of the below are using a 2D list of data:  
 ```python
 data = [["Homer", "Simpson", "America", 40],
         ["Marge", "Simpson", "America", 38],
         ["Lisa", "Simpson", "America", 12],
-        ["Maggie", "Simpson", "America", 4],
+        ["Maggie", "Simpson", "America", 4], 
         ["Bart", "Simpson", "America", 14]]
+```
+
+## Updating Labels  
+---
+
+One option is to reuse the existing widgets, and change their contents. This involves creating a single set of widgets, and then calling a function to change their contents:  
+
+```python
 pos = -1
 
-def press(btn):
+def changeCharacter(btn):
     global pos 
     if btn == "Next": pos += 1
     elif btn == "Previous": pos -= 1
@@ -39,26 +44,16 @@ with gui("Updating Labels") as app:
     app.entry("Last Name", label=True)
     app.entry("Country", label=True)
     app.entry("Age", kind='numeric', label=True)
-    app.buttons(["Previous", "Next"], press)
-    press("Next")
+    app.buttons(["Previous", "Next"], changeCharacter)
+    changeCharacter("Next")
 ```
-
-## SubWindows  
----
-
-Create multiple [SubWindows](/pythonSubWindows) and hide/show them as required.  
 
 ## PagedWindow  
 ---
 
-Create a [PagedWindow](/pythonWidgetGrouping/#paged-window) and navigate back and forth between each page.  
-```python
-data = [["Homer", "Simpson", "America", 40],
-        ["Marge", "Simpson", "America", 38],
-        ["Lisa", "Simpson", "America", 12],
-        ["Maggie", "Simpson", "America", 4], 
-        ["Bart", "Simpson", "America", 14]]
+[PagedWindow](/pythonWidgetGrouping/#paged-window) were introduced to allow easy navigation through multiple *pages* of similar data - think address books or music collections. They provide navigation buttons, a title and a page number:  
 
+```python
 with gui("Updating Labels") as app:
     with app.pagedWindow("Address Book"):
         for pos in range(len(data)):
@@ -72,18 +67,13 @@ with gui("Updating Labels") as app:
 ## TabbedFrames  
 ---
 
-Create a [TabbedFrame](/pythonWidgetGrouping/#tabbed-frame) and have each set of widgets under a different tab.  
-```python
-data = [["Homer", "Simpson", "America", 40],
-        ["Marge", "Simpson", "America", 38],
-        ["Lisa", "Simpson", "America", 12],
-        ["Maggie", "Simpson", "America", 4], 
-        ["Bart", "Simpson", "America", 14]]
+[TabbedFrames](/pythonWidgetGrouping/#tabbed-frame) are another common way of presenting multiple pages of data in a single widget:  
 
+```python
 with gui("Updating Labels") as app:
     with app.tabbedFrame("Address Book"):
         for pos in range(len(data)):
-            with app.tab(str(pos)):
+            with app.tab(data[pos][0]):
                 app.entry(str(pos)+"fName", data[pos][0], label="First Name")
                 app.entry(str(pos)+"lName", data[pos][1], label="Last Name")
                 app.entry(str(pos)+"country", data[pos][2], label="Country")
@@ -93,17 +83,13 @@ with gui("Updating Labels") as app:
 ## Overlayed Frames  
 ---
 
-Create a number of [Frames](/pythonWidgetGrouping/#frame) in the same grid position and `raise()` the required Frame.  
-```python
-data = [["Homer", "Simpson", "America", 40],
-        ["Marge", "Simpson", "America", 38],
-        ["Lisa", "Simpson", "America", 12],
-        ["Maggie", "Simpson", "America", 4], 
-        ["Bart", "Simpson", "America", 14]]
+A clever trick for solving this problem is to group your widgets in a [Frames](/pythonWidgetGrouping/#frame), and then have multiple frames in the same place. Frames are not transparent, so only the last added frame will be visible.  
+It's possible to then *raise* another frame on top. This works well, but requires keeping track of the frame:
 
+```python
 pos = -1
 
-def press(btn):
+def changeCharacter(btn):
     global pos 
     if btn == "Next": pos += 1
     elif btn == "Previous": pos -= 1
@@ -120,29 +106,24 @@ def press(btn):
 
 with gui("Updating Labels") as app:
     for loop in range(len(data)):
-        with app.frame(str(loop), 0, 0): 
+        with app.frame(str(loop), 0, 0):  # put all the frames in grid pos 0,0
             app.entry(str(loop)+"fName", data[loop][0], label="First Name")
             app.entry(str(loop)+"lName", data[loop][1], label="Last Name")
             app.entry(str(loop)+"country", data[loop][2], label="Country")
             app.entry(str(loop)+"age", data[loop][3], kind='numeric', label="Age")
 
-    app.buttons(["Previous", "Next"], press)
-    press("Next")
+    app.buttons(["Previous", "Next"], changeCharacter)
+    changeCharacter("Next")
 ```
 
 ## FrameStacks  
 ---
 
-Works the same as overlayed frames, but provides extra navigation methods, and automatic placement.  
+To take away some of the work from the above option, we created [FrameStacks](/pythonWidgetGrouping/#frame-stack).  
+They provide extra functions for navigating, and checking which *Frame* is being displayed:  
+
 ```python
-data = [["Homer", "Simpson", "America", 40],
-        ["Marge", "Simpson", "America", 38],
-        ["Lisa", "Simpson", "America", 12],
-        ["Maggie", "Simpson", "America", 4], 
-        ["Bart", "Simpson", "America", 14]]
-
-
-def press(btn):
+def changeCharacter(btn):
     if btn == "Next": app.nextFrame("address book")
     elif btn == "Previous": app.prevFrame("address book")
 
@@ -163,16 +144,74 @@ with gui("Updating Labels") as app:
                 app.entry(str(loop)+"country", data[loop][2], label="Country")
                 app.entry(str(loop)+"age", data[loop][3], kind='numeric', label="Age")
 
-    app.buttons(["Previous", "Next"], press)
+    app.buttons(["Previous", "Next"], changeCharacter)
     app.disableButton("Previous")
 ```
 
 ## Hiding/Showing  
 ---
 
-You can [manipulate widgets](/pythonWidgetOptions/#widget-manipulation) using `hide()` & `show()` to temporarily hide them.  
+Instead of putting multiple frames in the same grid cell, you can have them in different rows, and [hide them](/pythonWidgetOptions/#widget-manipulation):  
+```python
+def showCharacter(btn):
+    for pos in range(len(data)):
+        if data[pos][0] == btn:
+            app.showFrame(str(pos))
+        else:
+            app.hideFrame(str(pos))
+                
+with gui("Updating Labels") as app:
+    for loop in range(len(data)):
+        with app.frame(str(loop)):
+            app.entry(str(loop)+"fName", data[loop][0], label="First Name")
+            app.entry(str(loop)+"lName", data[loop][1], label="Last Name")
+            app.entry(str(loop)+"country", data[loop][2], label="Country")
+            app.entry(str(loop)+"age", data[loop][3], kind='numeric', label="Age")
+            app.hideFrame(str(loop))
+
+    app.buttons([d[0] for d in data], showCharacter)
+    showCharacter("Homer")
+```
 
 ## Destroying/Recreating
 ---
 
-You can also [manipulate widgets](/pythonWidgetOptions/#widget-manipulation) using `remove()` or `removeAllWidgets()` and then creating new widgets.  
+The final option is to be a bit more aggresive and [*destroy* & *recreate*](/pythonWidgetOptions/#widget-manipulation) your widgets each time.  
+This can be less efficient in terms of time, but more efficient in terms of memory...  
+```python
+def showCharacter(btn):
+    for pos in range(len(data)):
+        if data[pos][0] == btn:
+            app.removeAllWidgets()
+            makeCharacter(pos)
+
+def makeCharacter(pos):
+    with app.frame("character", 0, 0): 
+        app.entry("fName", data[pos][0], label="First Name")
+        app.entry("lName", data[pos][1], label="Last Name")
+        app.entry("country", data[pos][2], label="Country")
+        app.entry("age", data[pos][3], kind='numeric', label="Age")
+    app.buttons([d[0] for d in data], showCharacter)
+        
+with gui("Updating Labels") as app:
+    makeCharacter(0)
+```
+
+## SubWindows  
+---
+
+Finally, you could try creating [SubWindows](/pythonSubWindows) for each set of widgets.  
+
+```python
+with gui("Updating Labels") as app:
+    for pos in range(len(data)): # create the hidden subWindows
+        with app.subWindow(data[pos][0]):
+            app.entry(str(pos)+"fName", data[pos][0], label="First Name")
+            app.entry(str(pos)+"lName", data[pos][1], label="Last Name")
+            app.entry(str(pos)+"country", data[pos][2], label="Country")
+            app.entry(str(pos)+"age", data[pos][3], kind='numeric', label="Age")
+
+    # this is in the main GUI
+    app.label("Pick a Character")
+    app.buttons([d[0] for d in data], app.showSubWindow)
+```
