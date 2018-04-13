@@ -5281,6 +5281,11 @@ class gui(object):
     def getPreviousFrame(self, title):
         return self.widgetManager.get(self.Widgets.FrameStack, title).getPreviousFrame()
 
+    def frameStackAtStart(self, title):
+        return self.widgetManager.get(self.Widgets.FrameStack, title).atStart()
+    def frameStackAtEnd(self, title):
+        return self.widgetManager.get(self.Widgets.FrameStack, title).atEnd()
+
 #####################################
 # SubWindows
 #####################################
@@ -9412,11 +9417,11 @@ class gui(object):
 
     def _validateNumericEntry(self, action, index, value_if_allowed, prior_value, text, validation_type, trigger_type, widget_name):
         if action == "1":
-            if text in '0123456789.-+':
+            if str(text) in '0123456789.-+':
                 try:
-                    if len(str(value_if_allowed)) == 1 and value_if_allowed in '.-':
+                    if len(str(value_if_allowed)) == 1 and str(value_if_allowed) in '.-':
                         return True
-                    elif len(str(value_if_allowed)) == 2 and value_if_allowed == '-.':
+                    elif len(str(value_if_allowed)) == 2 and str(value_if_allowed) == '-.':
                         return True
                     else:
                         float(value_if_allowed)
@@ -12252,6 +12257,12 @@ class FrameStack(Frame, object):
                 self._prevFrame = tmp
                 return
         self._frames[self._currFrame].lift()
+
+    def atStart(self):
+        return self._currFrame == 0
+
+    def atEnd(self):
+        return self._currFrame == len(self._frames)-1
 
     def setStartFrame(self, num):
         self._start = num

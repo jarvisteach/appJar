@@ -187,6 +187,9 @@ with gui("FRAME STACK") as app:
     Sets the frame that will be displayed when the GUI starts.  
 
 #### Navigating Frame Stacks  
+* `.frameStackAtStart(title)` & `.frameStackAtEnd(title)`  
+    Returns True/False if the FrameStack is showing the first/last Frame.  
+
 * `.nextFrame(title, callFunction=True)`  
     Display the next frame in the stack.  
 

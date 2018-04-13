@@ -2528,10 +2528,14 @@ def test_containers():
 
     app.firstFrame("stack")
     assert app.getCurrentFrame("stack") == 0
+    assert app.frameStackAtStart("stack")
+    assert not app.frameStackAtEnd("stack")
     assert app.getPreviousFrame("stack") == 2
 
     app.lastFrame("stack")
     assert app.getCurrentFrame("stack") == 2
+    assert not app.frameStackAtStart("stack")
+    assert app.frameStackAtEnd("stack")
     assert app.getPreviousFrame("stack") == 0
 
     app.prevFrame("stack")
