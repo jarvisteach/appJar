@@ -51,7 +51,7 @@ with gui("Updating Labels") as app:
 ## PagedWindow  
 ---
 
-[PagedWindow](/pythonWidgetGrouping/#paged-window) were introduced to allow easy navigation through multiple *pages* of similar data - think address books or music collections. They provide navigation buttons, a title and a page number:  
+[PagedWindows](/pythonWidgetGrouping/#paged-window) were introduced to allow easy navigation through multiple *pages* of similar data - think address books or music collections. They provide navigation buttons, a title and a page number:  
 
 ```python
 with gui("Updating Labels") as app:
@@ -83,8 +83,8 @@ with gui("Updating Labels") as app:
 ## Overlayed Frames  
 ---
 
-A clever trick for solving this problem is to group your widgets in a [Frames](/pythonWidgetGrouping/#frame), and then have multiple frames in the same place. Frames are not transparent, so only the last added frame will be visible.  
-It's possible to then *raise* another frame on top. This works well, but requires keeping track of the frame:
+A clever trick for solving this problem is to group your widgets in a [Frame](/pythonWidgetGrouping/#frame), and then have multiple frames in the same place. Frames are not transparent, so only the last added frame will be visible.  
+It's possible to then *raise* another frame to the top. This works well, but requires keeping track of the frame:
 
 ```python
 pos = -1
@@ -167,7 +167,7 @@ with gui("Updating Labels") as app:
             app.entry(str(loop)+"lName", data[loop][1], label="Last Name")
             app.entry(str(loop)+"country", data[loop][2], label="Country")
             app.entry(str(loop)+"age", data[loop][3], kind='numeric', label="Age")
-            app.hideFrame(str(loop))
+        app.hideFrame(str(loop))
 
     app.buttons([d[0] for d in data], showCharacter)
     showCharacter("Homer")
@@ -176,7 +176,7 @@ with gui("Updating Labels") as app:
 ## Destroying/Recreating
 ---
 
-The final option is to be a bit more aggresive and [*destroy* & *recreate*](/pythonWidgetOptions/#widget-manipulation) your widgets each time.  
+An alternative to the above is to be a bit more aggresive and [*destroy* & *recreate*](/pythonWidgetOptions/#widget-manipulation) your widgets each time.  
 This can be less efficient in terms of time, but more efficient in terms of memory...  
 ```python
 def showCharacter(btn):
@@ -193,6 +193,7 @@ def makeCharacter(pos):
         app.entry("age", data[pos][3], kind='numeric', label="Age")
     app.buttons([d[0] for d in data], showCharacter)
         
+# just call the function to make the widgets in the main GUI
 with gui("Updating Labels") as app:
     makeCharacter(0)
 ```
