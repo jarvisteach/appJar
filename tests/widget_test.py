@@ -169,6 +169,7 @@ def test_entries():
     app.setEntryValid("ve1")
     app.setEntryInvalid("ve1")
     app.setEntryWaitingValidation("ve1")
+    app.setValidationEntryLabelBg("ve1", "pink")
 
     # should fail with warning
     app.setEntryValid("e1")
@@ -3407,7 +3408,7 @@ with gui("Simple Demo") as app4:
 
     app4.entry("data", colspan=3, kind="directory")
     app4.entry("data2", value="lots of data", colspan=3, focus=True, case="upper", limit=15)
-    app4.entry("data3", colspan=3, default="france", kind="validation")
+    app4.entry("data3", colspan=3, default="france", kind="validation", labBg='orange')
     app4.entry("data4", value=["a", "aa", "aba", "abc", "abd"], colspan=3, kind="auto", rows=4)
 
     app4.entry("se1", row=0, column=1, default="standard", submit=changer, change=changer, limit=5, case="lower", rows=3)

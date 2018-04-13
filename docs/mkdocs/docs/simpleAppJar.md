@@ -174,6 +174,7 @@ An interactive widget, for capturing user input in the GUI.
 | default | string | None | Sets default text to display in an empty entry. |
 | focus | boolean | False | Should the entry box be given focus? |
 | rows | integer | 10 | If the kind is `auto` this will set the number of rows to show. |
+| labBg | string | None | Special parameter to change the BG of the validation label in a validaiton entry. |
 
 There are also some validation settings that can be applied:  
 

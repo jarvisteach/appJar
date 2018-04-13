@@ -9046,6 +9046,7 @@ class gui(object):
         rows = kwargs.pop("rows", None)
         secret = kwargs.pop("secret", False)
         kind = kwargs.pop("kind", "standard").lower().strip()
+        labBg = kwargs.pop("labBg", None)
 
         try: self.widgetManager.verify(self.Widgets.Entry, title)
         except: # widget exists
@@ -9072,9 +9073,18 @@ class gui(object):
         else:
             if rows is not None: self.setAutoEntryNumRows(title, rows)
 
+        if labBg is not None and self.widgetManager.get(self.Widgets.Entry, title).isValidation:
+            self.setValidationEntryLabelBg(title, labBg)
+
         if len(kwargs) > 0:
             self._configWidget(title, widgKind, **kwargs)
         return ent
+
+    def setValidationEntryLabelBg(self, title, bg):
+        ent = self.widgetManager.get(self.Widgets.Entry, title)
+        if not ent.isValidation:
+            raise Exception("You can only set label BGs on validation entries")
+        ent.lab.config(bg=bg)
 
     def _entryMaker(self, title, row=None, column=0, colspan=0, rowspan=0, secret=False, label=False, kind="standard", words=None, **kwargs):
         if not label:

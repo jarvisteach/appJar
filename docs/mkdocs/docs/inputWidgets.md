@@ -85,6 +85,9 @@ Each of these will add the specified type of Entry, using the title provided.
 * `.setValidationEntry(title, state="valid")`  
     Same as above, set flag to one of `valid`, `invalid` or `wait`.  
 
+* `.setValidationEntryLabelBg(title, bg)`  
+    This allows you to change the colour of the validation label, in a validation entry.  
+
 * `.setAutoEntryNumRows(title, rows)`  
     This will set the number of rows to display in an AutoEntry.  
     NB. this is limited to the depth of the GUI - if there is no space, then no rows will be displayed. 
