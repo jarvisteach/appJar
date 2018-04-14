@@ -10254,6 +10254,11 @@ class gui(object):
                 self.enableMenuItem("EDIT", "Undo")
             if self.copyAndPaste.canRedo:
                 self.enableMenuItem("EDIT", "Redo")
+            if self.copyAndPaste.canFont:
+                self.enableMenuItem("EDIT", "Bold")
+                self.enableMenuItem("EDIT", "Italic")
+                self.enableMenuItem("EDIT", "Bold & Italic")
+                self.enableMenuItem("EDIT", "Underline")
             return True
         else:
             return False
@@ -10276,6 +10281,8 @@ class gui(object):
             self.copyAndPaste.undo()
         elif menu == "Redo":
             self.copyAndPaste.redo()
+        elif menu in ["BOLD", "ITALIC", "UNDERLINE", "BOLD_ITALIC"]:
+            self.copyAndPaste.font("AJ_"+menu)
 
     # add a single entry for a menu
     def addSubMenu(self, menu, subMenu):
@@ -10477,7 +10484,7 @@ class gui(object):
             ('Copy', lambda e: self._copyAndPasteHelper("Copy"), "C", False),
             ('Paste', lambda e: self._copyAndPasteHelper("Paste"), "V", False),
             ('Select All', lambda e: self._copyAndPasteHelper("Select All"), "A", True if gui.GET_PLATFORM() == gui.MAC else False),
-            ('Clear Clipboard', lambda e: self._copyAndPasteHelper("Clear Clipboard"), "B", True)
+            ('Clear Clipboard', lambda e: self._copyAndPasteHelper("Clear Clipboard"), "", False)
             ]
 
         for (txt, cmd, sc, bind) in eList:
@@ -10491,6 +10498,13 @@ class gui(object):
         self.addMenuSeparator("EDIT")
         self.addMenuItem("EDIT", 'Undo', lambda e: self._copyAndPasteHelper("Undo"), shortcut=shortcut + "Z", createBinding=False)
         self.addMenuItem("EDIT", 'Redo', lambda e: self._copyAndPasteHelper( "Redo"), shortcut="Shift-" + shortcut + "Z", createBinding=True)
+
+        self.addMenuSeparator("EDIT")
+        self.addMenuItem("EDIT", "Bold", lambda e: self._copyAndPasteHelper("BOLD"), shortcut=shortcut+"B")
+        self.addMenuItem("EDIT", "Italic", lambda e: self._copyAndPasteHelper("ITALIC"), shortcut=shortcut+"I")
+        self.addMenuItem("EDIT", "Underline", lambda e: self._copyAndPasteHelper("UNDERLINE"), shortcut=shortcut+"U")
+        self.addMenuItem("EDIT", "Bold & Italic", lambda e: self._copyAndPasteHelper("BOLD_ITALIC"), shortcut="Shift-" + shortcut + "B")
+
         self.disableMenu("EDIT")
 
     def _editMenuSetter(self, enabled=True):
@@ -13941,6 +13955,7 @@ class CopyAndPaste():
         self.canSelect = False
         self.canUndo = False
         self.canRedo = False
+        self.canFont = False
 
         try:
             self.canPaste = len(self.topLevel.clipboard_get()) > 0
@@ -13956,6 +13971,7 @@ class CopyAndPaste():
             elif self.widgetType in ["ScrolledText", "Text", "AjText", "AjScrolledText"]:
                 if widget.tag_ranges("sel"):
                     self.canCut = self.canCopy = True
+                    self.canFont = True
                 if widget.index("end-1c") != "1.0":
                     self.canSelect = True
 #                if widget.edit_modified():
@@ -13999,6 +14015,12 @@ class CopyAndPaste():
 
     def clearClipboard(self):
         self.topLevel.clipboard_clear()
+
+    def font(self, tag):
+        if tag in self.widget.tag_names(SEL_FIRST):
+            self.widget.tag_remove(tag, SEL_FIRST, SEL_LAST)
+        else:
+            self.widget.tag_add(tag, SEL_FIRST, SEL_LAST)
 
     def clearText(self):
         try:

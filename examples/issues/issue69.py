@@ -38,6 +38,8 @@ def fontSize():
     app.setTextAreaFont("ta", size=size)
 
 with gui("Text Editor", "300x400") as app:
+    app.addMenuEdit(inMenuBar=True)
+
     app.setSize(400,400)
     app.addToolbar(["BOLD", "ITALIC", "UNDERLINE"], tagSelected)
 
