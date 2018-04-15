@@ -9809,7 +9809,20 @@ class gui(object):
     def addToolbarButton(self, name, func, findIcon=False):
         self.addToolbar([name], func, findIcon)
 
-    def addToolbar(self, names, funcs, findIcon=False):
+    def toolbar(self, names, funcs, **kwargs):
+        """ simpleGUI - shortener for toolbar """
+        icons = kwargs.pop('icons', kwargs.pop('findIcon', False))
+        pinned = kwargs.pop('pinned', None)
+        disabled = kwargs.pop('disabled', None)
+        hidden = kwargs.pop('hidden', None)
+
+        self.addToolbar(names, funcs, findIcon=icons)
+
+        if pinned is not None: self.setToolbarPinned(pinned=pinned)
+        if disabled is not None: self.setToolbarDisabled(disabled=disabled)
+        if hidden is True: self.hideToolbar()
+
+    def addToolbar(self, names, funcs, findIcon=False, **kwargs):
         # hide the tbm bar
         if self.tbMinMade:
             self.tbm.pack_forget()

@@ -400,3 +400,19 @@ Displays a popUp.
     Or, update the statusbar if one does exist:  
     * `text` text to put in the field.  
     * `field` the field numberis applicable.  
+
+## Toolbar  
+---
+
+Displays the toolbar.  
+
+* `.toolbar(names, funcs, **kwargs)`
+    `names` should be th elist of button names to display on the toolbar.  
+    `funcs` should contain either a single function, that all buttons will be linked to, or a list of functions for each button.
+
+| Parameter | Data type | Default | Description |
+| --------- | --------- | ------- | ------------|
+| icons | boolean | False | Determines if appJar should try to find icons for each menu item. |
+| pinned | boolean | None | If set, the toolbar will be pinnable. Setting to `True` wil start pinned, `False` not pinned. |
+| disabled | boolean | False | Determines if the toolbar should start disabed or not. | 
+| hidden | boolean | False | Determines if the toolbar should start hidden or not. When hidden it is completley removed from the GUI. | 
