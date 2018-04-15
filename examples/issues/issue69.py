@@ -5,6 +5,10 @@ from appJar import gui
 redWords = ("string", "integer", "boolean", "real")
 greenWords = ("print", "input")
 
+def enb(btn):
+    if btn == "DISABLE": app.disableTextArea("ta")
+    else: app.enableTextArea("ta")
+
 def tagSelected(tag):
     tag=tag.lower().strip()
     if tag == "bold": app.textAreaToggleFontSelected("ta", "BOLD")
@@ -58,3 +62,4 @@ with gui("Text Editor", "300x400") as app:
         app.entry("search", pos=(0, 0))
         app.button("SEARCH", search, 0, 1)
     app.button("SHOW", show)
+    app.buttons(["DISABLE", "ENABLE"], enb)
