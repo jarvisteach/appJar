@@ -440,6 +440,63 @@ Or `.setTabBg(title, tab, 'colour')` at other times.
 * `.getTabbedFrameSelectedTab(title)`  
     Gets the name of the currently selected tab, for the named TabFrame.  
 
+### Notebook
+---
+**NB.** This will only work with [ttk](pythonTtk) enabled.  
+**NB.** *Notes* have a different [stickiness](/pythonWidgetLayout/#widget-positioning) to the *appJar* GUI - they only stick widgets to the `w` (left) side.
+If you want your widgets to stretch across the *Note*, like the rest of *appJar*, you will need to call `app.setSticky("ew")` after starting the *Note*.
+
+Similar to the [*Tabbed Frame*](/pythonWidgetGrouping/#tabbed-frame), it is a way of placing widgets in different tabs or 'notes'.
+Position the *Notebook* within the grid, start a *Note*, then position widgets inside the *Note*.
+
+![Notebook](img/layouts/1_notebook.png)
+
+```python
+from appJar import gui
+
+app = gui("Notebook", useTtk=True)
+
+app.setTtkTheme("clam")
+
+app.startNotebook("Notebook")
+
+app.startNote("Note 1")
+app.addLabel("l1", "Note 1")
+app.stopNote()
+
+app.startNote("Note 2")
+app.addLabel("l2", "Note 2")
+app.stopNote()
+
+app.startNote("Note 3")
+app.addLabel("l3", "Note 3")
+app.stopNote()
+
+app.stopNotebook()
+
+app.go()
+```
+
+#### Start/Stop Notebooks
+* `.startNotebook(name)` & `.stopNotebook()`  
+    Used to start & stop *Notebooks*, with the specified name.
+
+* `.startNote(name)` & `.stopNote()`  
+    Used to start & stop each of the notes in the *Notebook*.
+
+#### Set Notebooks
+* `.getNotebookWidget(name).select([index])`  
+    Change the currently selected note, by putting the *Notebook's* name in `name` and putting the index of the note as an integer in `index`.  
+    Eg. To change the selected note to Note 3, then the index would be 2 (as 0 is the first note).
+
+#### Styles & Colours
+* You will need to use a [ttk Style and Map](/pythonTtk/#styling-ttk-widgets) to change the colour of notebook widget or its tabs.
+
+* To change the style for the Notebook widget, use `TNotebook`.
+
+* To change the style for the Notebook Tabs, use `TNotebook.Tab`.
+
+
 ### Paned Frame
 ---
 A way to present re-sizable panes, separated by drag-bars.  
