@@ -2,8 +2,6 @@ import sys
 sys.path.append("../")
 from appJar import gui
 
-alreadyDone = False
-
 # funciton to handle the button presses
 def btnPress(btnName):
     if btnName == "Reset":
@@ -59,13 +57,6 @@ def loadRGB(RGB):
 
 # funciton to update widgets
 def updateRGB(name):
-    # this stops the changes in slider/spin from constantly calling each other
-    global alreadyDone
-    if alreadyDone:
-        alreadyDone = False
-        return
-    else:
-        alreadyDone = True
 
     # split the widget's name into the type & colour
     colour = name[0:3]
@@ -77,10 +68,10 @@ def updateRGB(name):
     # depending on the type, get & set...
     if widg == "Scale":
         value = app.getScale(name)
-        app.setSpinBox(colour+"Spin", value)
+        app.setSpinBox(colour+"Spin", value, callFunction = False)
     elif widg == "Spin":
         value = app.getSpinBox(name)
-        app.setScale(colour+"Scale", value)
+        app.setScale(colour+"Scale", value, callFunction = False)
 
     # update the label
     app.setLabelBg("colBox", RGB)
