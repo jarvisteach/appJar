@@ -3167,9 +3167,8 @@ class gui(object):
             cmd = self.MAKE_FUNC(function, name)
             widget.setChangeFunction(cmd)
         elif kind == self.Widgets.SpinBox:
-            cmd = self.MAKE_FUNC(function, name)
-            widget.cmd_id = widget.var.trace("w", cmd)
-            widget.cmd = cmd
+            widget.cmd = self.MAKE_FUNC(function, name)
+            widget.cmd_id = widget.var.trace("w", widget.cmd)
         else:
             if kind not in [self.Widgets.CheckBox]:
                 self.warn("Unmanaged binding of %s to %s", eventType, name)
