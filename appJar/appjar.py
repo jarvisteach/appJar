@@ -3166,8 +3166,12 @@ class gui(object):
         elif kind == self.Widgets.FrameStack:
             cmd = self.MAKE_FUNC(function, name)
             widget.setChangeFunction(cmd)
+        elif kind == self.Widgets.SpinBox:
+            cmd = self.MAKE_FUNC(function, name)
+            widget.cmd_id = widget.var.trace("w", cmd)
+            widget.cmd = cmd
         else:
-            if kind not in [self.Widgets.SpinBox, self.Widgets.CheckBox]:
+            if kind not in [self.Widgets.CheckBox]:
                 self.warn("Unmanaged binding of %s to %s", eventType, name)
             cmd = self.MAKE_FUNC(function, name)
             widget.config(command=cmd)
@@ -6580,6 +6584,8 @@ class gui(object):
             raise Exception("Can't create SpinBox " + title + ". Invalid values: " + str(vals))
 
         spin = Spinbox(frame)
+        spin.var = StringVar(self.topLevel)
+        spin.config(textvariable=spin.var)
         spin.inContainer = False
         spin.isRange = False
         spin.config(font=self._getContainerProperty('inputFont'), highlightthickness=0)
@@ -6672,13 +6678,9 @@ class gui(object):
 
     # expects a valid spin box widget, and a valid value
     def _setSpinBoxVal(self, spin, val, callFunction=True):
-        var = StringVar(self.topLevel)
-        var.set(val)
-        spin.config(textvariable=var)
         # now call function
-        if callFunction:
-            if hasattr(spin, 'cmd'):
-                spin.cmd()
+        with PauseCallFunction(callFunction, spin):
+            spin.var.set(val)
 
     # is it going to be a hash or list??
     def _getSpinBoxValsAsList(self, vals):
