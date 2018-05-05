@@ -7574,26 +7574,45 @@ class gui(object):
 
     # select the specified item in the list
     def selectListItem(self, title, item, callFunction=True):
+        lb = self.widgetManager.get(self.Widgets.ListBox, title)
         positions = self._getListPositions(title, item)
-        if len(positions) > 0:
-            self.selectListItemAtPos(title, positions[0], callFunction)
+        if len(positions) > 1 and lb.cget("selectmode") == EXTENDED:
+            allOk = True
+            for pos in positions:
+                if not self.selectListItemAtPos(title, pos, callFunction):
+                    allOk = False
+            return allOk
+        elif len(positions) > 1:
+            gui.warn("Unable to select multiple items for list: %s. Selecting first item: %s", title, item[0])
+            return self.selectListItemAtPos(title, positions[0], callFunction)
+        elif len(positions) == 1:
+            return self.selectListItemAtPos(title, positions[0], callFunction)
+        else:
+            gui.warn("Invalid list item(s): %s for list: %s", item, title)
+            return False
 
     def selectListItemAtPos(self, title, pos, callFunction=False):
         lb = self.widgetManager.get(self.Widgets.ListBox, title)
+        if lb.size() == 0:
+            gui.warn("No items in list: %s, unable to select item at pos: %s", title, pos)
+            return False
+        if pos < 0 or pos > lb.size() - 1:
+            gui.warn("Invalid list position: %s for list: %s (max: %s)", pos, title, lb.size()-1)
+            return False
 
         # clear previous selection if we're not multi
         if lb.cget("selectmode") != EXTENDED:
             lb.selection_clear(0, END)
 
         # show & select this item
-        if pos >= 0:
-            lb.see(pos)
-            lb.activate(pos)
-            lb.selection_set(pos)
-            # now call function
-            if callFunction and hasattr(lb, 'cmd'):
-                lb.cmd()
-            self.topLevel.update_idletasks()
+        lb.see(pos)
+        lb.activate(pos)
+        lb.selection_set(pos)
+        # now call function
+        if callFunction and hasattr(lb, 'cmd'):
+            lb.cmd()
+        self.topLevel.update_idletasks()
+        return True
 
     # replace the list items in the list box
     def updateListBox(self, title, items, select=False, callFunction=True):
