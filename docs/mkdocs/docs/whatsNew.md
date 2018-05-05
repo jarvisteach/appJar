@@ -5,6 +5,7 @@
 
 * Issues Resolved:
     * [#449](https://github.com/jarvisteach/appJar/issues/449) - [updateListBox](/inputWidgets/#set-listboxes) now has a callFunction flag
+    * [#446](https://github.com/jarvisteach/appJar/issues/446) - [Setting listboxes](/inputWidgets/#set-listboxes) now has better error checking  
     * [#442](https://github.com/jarvisteach/appJar/issues/442) - [SpinBoxes](inputWidgets/#spinbox) now call changeFucntion when changed manually  
     * [#437](https://github.com/jarvisteach/appJar/issues/437) - Page discussing [multiple pages](/multiplePages)  
     * [#436](https://github.com/jarvisteach/appJar/issues/436) - [TextAreas](/inputWidgets/#textarea) can now be programmatically cleared and set while disabled  

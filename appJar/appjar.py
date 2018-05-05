@@ -5554,6 +5554,10 @@ class gui(object):
 # FUNCTION for check boxes
 #####################################
 
+    def tick(self, title, value=None, *args, **kwargs):
+        """ simpleGUI - shortner for checkBox() """
+        return self.checkBox(title, value, *args, **kwargs)
+
     def check(self, title, value=None, *args, **kwargs):
         """ simpleGUI - shortner for checkBox() """
         return self.checkBox(title, value, *args, **kwargs)
@@ -7752,7 +7756,7 @@ class gui(object):
         widgKind = self.Widgets.Button
         image = kwargs.pop("image", None)
         icon = kwargs.pop("icon", None)
-        name = kwargs.pop("name", None)
+        name = kwargs.pop("label", kwargs.pop("name", None))
 
         try: self.widgetManager.verify(self.Widgets.Button, title)
         except: # widget exists

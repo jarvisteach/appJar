@@ -3332,6 +3332,7 @@ def press(btn):
         app4.button("Clap"),
         app4.radio("happy"),
         app4.check("Clap"),
+        app4.tick("tClap"),
         app4.option("feelings"),
         app4.spin("feelings"),
         app4.listbox("feelings"),
@@ -3361,6 +3362,7 @@ def updateApp4(btn=None):
     app4.button("Clap", test_gui4)
     app4.radio("happy", "Miserable")
     app4.check("Clap", True)
+    app4.tick("tClap", True)
     app4.option("feelings", 1)
     app4.spin("feelings", 2)
     app4.listbox("feelings", 3)
@@ -3430,6 +3432,10 @@ with gui("Simple Demo") as app4:
     app4.check("Clap", row=2, column=1)
     app4.check("Cheer", True, row=3, column=1)
     app4.check("Cry", row=4, column=1, change=changer)
+
+    app4.tick("tClap", row=2, column=1)
+    app4.tick("tCheer", True, row=3, column=1)
+    app4.tick("tCry", row=4, column=1, change=changer)
 
     app4.entry("data", colspan=3, kind="directory")
     app4.entry("data2", value="lots of data", colspan=3, focus=True, case="upper", limit=15)
