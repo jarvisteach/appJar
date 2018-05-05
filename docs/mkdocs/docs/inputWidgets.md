@@ -662,9 +662,10 @@ app.go()
     This will remove all items from all ListBoxes in the app.  
     Set ```callFunction``` to be True, if you want to call any associated functions.  
 
-* `.updateListBox(title, items, select=False)`  
+* `.updateListBox(title, items, select=False, callFunction=True)`  
     Replace the contents of the specified ListBox with the new values.  
     If you set `select` to be True, the last item in the list will be selected.  
+    Set ```callFunction``` to be False, if you don't want to call any associated functions.  
 
 ```python
 from appJar import gui

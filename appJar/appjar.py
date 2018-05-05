@@ -7596,8 +7596,8 @@ class gui(object):
             self.topLevel.update_idletasks()
 
     # replace the list items in the list box
-    def updateListBox(self, title, items, select=False):
-        self.clearListBox(title)
+    def updateListBox(self, title, items, select=False, callFunction=True):
+        self.clearListBox(title, callFunction=callFunction)
         self.addListItems(title, items, select=select)
 
     def addListItems(self, title, items, select=True):

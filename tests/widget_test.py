@@ -40,6 +40,20 @@ LIST_THREE = ["", "v", "- d -", "s", "t", "z"]
 HASH_ONE = {"a": True, "b": False, "c": True}
 HASH_TWO = {"x": False, "y": True, "z": False}
 
+# used for checking change function has been called...
+CHANGE_FUNCTION_VAR=False
+
+def CHANGE_FUNCTION():
+    global CHANGE_FUNCTION_VAR
+    CHANGE_FUNCTION_VAR = True
+
+def CHECK_CHANGE_FUNCTION(value=True):
+    global CHANGE_FUNCTION_VAR
+    time.sleep(0.1)
+    assert CHANGE_FUNCTION_VAR is value
+    CHANGE_FUNCTION_VAR = False
+
+
 def tester_function(btn=None):
     print(btn)
     return True
@@ -761,12 +775,12 @@ def test_spins():
 
     print("\t>> all tests complete")
 
-
 def test_lists():
     print("\tTesting lists")
 
     assert isinstance(app.addListBox("l1", LIST_ONE), Listbox)
     app.addListBox("l2", LIST_TWO)
+    app.setListBoxChangeFunction("l2", CHANGE_FUNCTION)
     with pytest.raises(Exception) :
         app.addListBox("l2", LIST_TWO)
     app.setListBoxSubmitFunction("l1", tester_function)
@@ -827,6 +841,7 @@ def test_lists():
     assert app.getListBox("l2") == ["new item"]
 
     app.addListBox("cl1", LIST_ONE)
+    app.setListBoxChangeFunction("cl1", CHANGE_FUNCTION)
     app.setListItemAtPos("cl1", 0, "new_word")
     assert app.getAllListItems("cl1")[0] == "new_word"
     app.setListItem("cl1", "new_word", "newer_word")
@@ -834,7 +849,10 @@ def test_lists():
     app.setListItem("cl1", "newer_word", "newest_word", first=True)
     assert app.getAllListItems("cl1")[0] == "newest_word"
 
-    app.updateListBox("l2", LIST_TWO, True)
+    app.updateListBox("l2", LIST_TWO, True, callFunction=True)
+    CHECK_CHANGE_FUNCTION(True)
+    app.updateListBox("l2", LIST_TWO, True, callFunction=False)
+    CHECK_CHANGE_FUNCTION(False)
     app.removeListItem("l2", LIST_TWO[1])
     tmp_list = LIST_TWO
     tmp_list.remove(tmp_list[1])
@@ -853,7 +871,9 @@ def test_lists():
     test_setters("ListBox", "l1")
 
     app.addListBox("g1", LIST_ONE)
+    app.setListBoxChangeFunction("g1", CHANGE_FUNCTION)
     app.addListBox("g2", LIST_TWO)
+    app.setListBoxChangeFunction("g2", CHANGE_FUNCTION)
 
     app.selectListItemAtPos("g1", 1)
     assert app.getListBox("g1") == [LIST_ONE[1]]
