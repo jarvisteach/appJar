@@ -2994,6 +2994,11 @@ def test_gui_properties():
     app.visible = True
     assert app.visible is True
 
+    app.top = True
+    assert app.top is True
+    app.top = False
+    assert app.top is False
+
     app.padding = (20,21)
     assert app.padding == (20,21)
     app.padding = 5

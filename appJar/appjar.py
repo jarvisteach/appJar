@@ -334,6 +334,10 @@ class gui(object):
             if isinstance(x, (list, tuple)):
                 return (x[0], x[1])
             else:
+                if isinstance(x, str):
+                    x=x.strip()
+                    if "," in x:
+                        return [int(w.strip()) for w in x.split(",")]
                 return (x, x)
 
     @staticmethod
@@ -2305,13 +2309,18 @@ class gui(object):
 
     def _bringToFront(self, win=None):
         """ called to make sure this window is on top of other windows """
-        if win is None: win = self.topLevel
+        if win is None:
+            win = self.topLevel
+            top = self.top
+        else:
+            top = win.attributes('-topmost')
+
         if self.platform == self.MAC:
             import subprocess
             tmpl = 'tell application "System Events" to set frontmost of every process whose unix id is {0} to true'
             script = tmpl.format(os.getpid())
             subprocess.check_call(['/usr/bin/osascript', '-e', script])
-            win.after( 0, lambda: win.attributes("-topmost", False))
+            win.after( 0, lambda: win.attributes("-topmost", top))
 #            val=os.system('''/usr/bin/osascript -e 'tell app "Finder" to set frontmost of process "''' + PY_NAME + '''" to true' ''')
             win.lift()
         elif self.platform == self.WINDOWS:
@@ -2339,6 +2348,15 @@ class gui(object):
             container = self.widgetManager.get(self.Widgets.SubWindow, title)
 
         return container.isFullscreen
+
+    def setOnTop(self, stay=True):
+        self._getTopLevel().attributes("-topmost", stay)
+        gui.trace("Staying on top set to: %s", stay)
+
+    def getOnTop(self):
+        return self._getTopLevel().attributes("-topmost") == 1
+
+    top = property(getOnTop, setOnTop)
 
     def _changeFullscreen(self, flag):
         if flag: self.setFullscreen()
@@ -2392,6 +2410,7 @@ class gui(object):
         icon = kwargs.pop("icon", None)
         transparency = kwargs.pop("transparency", None)
         visible = kwargs.pop("visible", None)
+        top = kwargs.pop("top", None)
 
         padding = kwargs.pop("padding", None)
         inPadding = kwargs.pop("inPadding", None)
@@ -2432,6 +2451,7 @@ class gui(object):
         if icon is not None: self.icon = icon
         if transparency is not None: self.transparency = transparency
         if visible is not None: self.visible = visible
+        if top is not None: self.top = top
 
         if padding is not None: self.padding = padding
         if inPadding is not None: self.inPadding = inPadding
@@ -5295,45 +5315,32 @@ class gui(object):
 
     @contextmanager
     def subWindow(self, name, title=None, modal=False, blocking=False, transient=False, grouped=True, **kwargs):
+        visible = kwargs.pop("visible", None)
         try:
             sw = self.startSubWindow(name, title, modal, blocking, transient, grouped)
         except ItemLookupError:
             sw = self.openSubWindow(name)
-        self.configure(**kwargs)
-        try: yield sw
-        finally: self.stopSubWindow()
+
+        try:
+            yield sw
+        finally:
+            self.configure(**kwargs)
+            self.stopSubWindow()
+        if visible is True: self.showSubWindow(name)
 
     def startSubWindow(self, name, title=None, modal=False, blocking=False, transient=False, grouped=True):
         self.widgetManager.verify(self.Widgets.SubWindow, name)
         gui.trace("Starting subWindow %s", name)
-        if title is None:
-            title = name
-        top = SubWindow()
-        top.withdraw()
-        top.shown = False
-        top.locationSet = False
-        top.modal = modal
-        top.blocking = blocking
-        top.isFullscreen = False
-        top.title(title)
-        top.protocol("WM_DELETE_WINDOW", self.MAKE_FUNC(self.confirmHideSubWindow, name))
-        top.win = self
 
-        # have this respond to topLevel window style events
-        if transient:
-            top.transient(self.topLevel)
-
-        # group this with the topLevel window
-        if grouped:
-            top.group(self.topLevel)
-
-        if blocking:
-            top.killLab = None
+        top = SubWindow(self, self.topLevel, name, title=title, stopFunc = self.confirmHideSubWindow,
+                        modal=modal, blocking=blocking, transient=transient, grouped=grouped)
 
         self.widgetManager.add(self.Widgets.SubWindow, name, top)
 
         # now, add to top of stack
         self._addContainer(name, self.Widgets.SubWindow, top, 0, 1, "")
+
+        # add an icon if required
         if self.winIcon is not None:
             self.setIcon(self.winIcon)
 
@@ -5350,9 +5357,11 @@ class gui(object):
                             self._getContainerProperty('type'))
 
     def setSubWindowLocation(self, title, x, y):
-        tl = self.widgetManager.get(self.Widgets.SubWindow, title)
-        tl.geometry("+%d+%d" % (x, y))
-        tl.locationSet = True
+        self.widgetManager.get(self.Widgets.SubWindow, title).setLocation(x, y)
+
+    def showAllSubWindows(self):
+        for sub in self.widgetManager.group(self.Widgets.SubWindow):
+            self.showSubWindow(sub)
 
     # functions to show/hide/destroy SubWindows
     def showSubWindow(self, title, hide=False, follow=False):
@@ -5360,28 +5369,10 @@ class gui(object):
         if hide:
             self.hideAllSubWindows()
         gui.trace("Showing subWindow %s", title)
-        tl.shown = True
-        if not tl.locationSet:
-            self.setLocation("c", win=tl)
-            tl.locationSet = True
-        else:
-            gui.trace("Using previous position")
-        tl.deiconify()
-        tl.config(takefocus=True)
 
-        # stop other windows receiving events
-        if tl.modal:
-            tl.grab_set()
-            gui.trace("%s set to MODAL", title)
-
-        tl.focus_set()
+        tl.show()
         self._bringToFront(tl)
-
-        # block here - wait for the subwindow to close
-        if tl.blocking and tl.killLab is None:
-            gui.trace("%s set to BLOCK", title)
-            tl.killLab = Label(tl)
-            self.topLevel.wait_window(tl.killLab)
+        tl.block()
 
         return tl
 
@@ -5390,37 +5381,16 @@ class gui(object):
             self.hideSubWindow(sub, useStopFunction)
 
     def hideSubWindow(self, title, useStopFunction=False):
-        tl = self.widgetManager.get(self.Widgets.SubWindow, title)
-        theFunc = tl.stopFunction
-
-        if useStopFunction:
-            if theFunc is not None and not theFunc():
-                return
-
-        tl.withdraw()
-        if tl.blocking and tl.killLab is not None:
-            tl.killLab.destroy()
-            tl.killLab = None
-        if tl.modal:
-            tl.grab_release()
-            self.topLevel.focus_set()
+        self.widgetManager.get(self.Widgets.SubWindow, title).hide(useStopFunction)
 
     def confirmHideSubWindow(self, title):
         self.hideSubWindow(title, True)
 
     def destroySubWindow(self, title):
         tl = self.widgetManager.get(self.Widgets.SubWindow, title)
-        theFunc = tl.stopFunction
-        if theFunc is None or theFunc():
-            if tl.blocking and tl.killLab is not None:
-                tl.killLab.destroy()
-                tl.killLab = None
-            tl.withdraw()
-            tl.grab_release()
-            self.topLevel.focus_set()
-
-            # get rid of all the kids!
-            self.cleanseWidgets(tl)
+        tl.prepDestroy()
+        # get rid of all the kids!
+        self.cleanseWidgets(tl)
 
 #####################################
 # END containers
@@ -5451,12 +5421,12 @@ class gui(object):
 
     # functions to hide & show the main window
     def hide(self, btn=None):
-        self.topLevel.displayed = False
-        self.topLevel.withdraw()
+        self._getTopLevel().displayed = False
+        self._getTopLevel().withdraw()
 
     def show(self, btn=None):
-        self.topLevel.displayed = True
-        self.topLevel.deiconify()
+        self._getTopLevel().displayed = True
+        self._getTopLevel().deiconify()
 
     def setVisible(self, visible=True):
         if visible: self.show()
@@ -13187,16 +13157,84 @@ class NumDialog(SimpleEntryDialog):
 #####################################
 
 class SubWindow(Toplevel, object):
-
-    def __init__(self):
+    def __init__(self, win, parent, name, title=None, stopFunc=None, modal=False, blocking=False, transient=False, grouped=True):
         super(SubWindow, self).__init__()
+        if title is None: title = name
+        self.win = self
+        self.title(title)
+        self._parent = parent
+        self.withdraw()
         self.escapeBindId = None  # used to exit fullscreen
         self.stopFunction = None  # used to stop
-        self.modal = False
-        self.blocking = False
+        self.shown = False
+        self.locationSet = False
+        self.isFullscreen = False
+        self.modal = modal
+        self.protocol("WM_DELETE_WINDOW", gui.MAKE_FUNC(stopFunc, name))
+
+        # have this respond to topLevel window style events
+        if transient: self.transient(self._parent)
+
+        # group this with the topLevel window
+        if grouped: self.group(self._parent)
+
+        self.blocking = blocking
+        if self.blocking: self.killLab = None
+
         self.canvasPane = CanvasDnd(self)
         self.canvasPane.pack(fill=BOTH, expand=True)
 
+    def setLocation(self, x, y):
+        x, y = gui.PARSE_TWO_PARAMS(x, y)
+        self.geometry("+%d+%d" % (x, y))
+        self.locationSet = True
+
+    def hide(self, useStopFunction=False):
+        if useStopFunction:
+            if self.stopFunction is not None and not self.stopFunction():
+                return
+
+        self.withdraw()
+        if self.blocking and self.killLab is not None:
+            self.killLab.destroy()
+            self.killLab = None
+        if self.modal:
+            self.grab_release()
+            self._parent.focus_set()
+
+    def prepDestroy(self):
+        if self.stopFunction is None or self.stopFunction():
+            if self.blocking and self.killLab is not None:
+                self.killLab.destroy()
+                self.killLab = None
+            self.withdraw()
+            self.grab_release()
+            self._parent.focus_set()
+
+    def show(self):
+        self.shown = True
+        if not self.locationSet:
+            gui.SET_LOCATION('c', win=self)
+            self.locationSet = True
+        else:
+            gui.trace("Using previous position")
+
+        self.deiconify()
+        self.config(takefocus=True)
+
+        # stop other windows receiving events
+        if self.modal:
+            self.grab_set()
+            gui.trace("%s set to MODAL", self.title)
+
+        self.focus_set()
+
+    def block(self):
+        # block here - wait for the subwindow to close
+        if self.blocking and self.killLab is None:
+            gui.trace("%s set to BLOCK", self.title)
+            self.killLab = Label(self)
+            self.parent.wait_window(self.killLab)
 
 #####################################
 # SimpleTable Stuff

@@ -20,6 +20,9 @@ Some basic configuration for the size, position, transparency, etc. of the GUI.
     Sets how transparent the GUI is.  
     Between 0 and 100%.  
 
+* `.setOnTop(stay=True)`  
+    Configure the GUI to always stay on top of other windows.  
+
 ###Size & Location
 
 * `.hide()` & `.show()`  
