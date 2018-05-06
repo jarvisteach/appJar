@@ -2,7 +2,7 @@
 """ appJar.py: Provides a GUI class, for making simple tkinter GUIs. """
 # Nearly everything I learnt came from: http://effbot.org/tkinterbook/
 # with help from: http://infohost.nmt.edu/tcc/help/pubs/tkinter/web/index.html
-# with snippets from stackexchange.com
+# with snippets from stackexchange.com
 
 # make print & unicode backwards compatible
 from __future__ import print_function
@@ -39,39 +39,42 @@ except ImportError:
     STRING = str
 
 # import other useful classes
-import os, sys, locale
+import os
+import sys
+import locale
 import re
-import imghdr   # images
-import time     # splashscreen
-import calendar # datepicker
-import datetime # datepicker & image
+import imghdr  # images
+import time  # splashscreen
+import calendar  # datepicker
+import datetime  # datepicker & image
 import logging  # python's logger
 import inspect  # for logging
-import argparse # argument parser
-from contextlib import contextmanager # generators
+import argparse   # argument parser
+from contextlib import contextmanager  # generators
 
 import __main__ as theMain
 from platform import system as platform
 
-# we need to import these too
+# we need to import these too
 # but will only import them when needed
 random = None
 ttk = ThemedStyle = None
 hashlib = None
 ToolTip = None
-nanojpeg = PngImageTk = array = None # extra image support
+nanojpeg = PngImageTk = array = None  # extra image support
 EXTERNAL_DND = None
 INTERNAL_DND = None
 types = None            # used to register dnd functions
 winsound = None
-FigureCanvasTkAgg = Figure = None # matplotlib
-parseString = TreeItem = TreeNode = None # AjTree
-base64 = urlencode = urlopen = urlretrieve = quote_plus = json = None # GoogleMap
-ConfigParser = codecs = ParsingError = None # used to parse language files
+FigureCanvasTkAgg = Figure = None  # matplotlib
+parseString = TreeItem = TreeNode = None  # AjTree
+# GoogleMap
+base64 = urlencode = urlopen = urlretrieve = quote_plus = json = None
+ConfigParser = codecs = ParsingError = None  # used to parse language files
 Thread = Queue = None
 sqlite3 = None
 turtle = None
-webbrowser = None   # links
+webbrowser = None  # links
 OrderedDict = None  # tabbedFrames
 
 # to allow tkinter or ttk
@@ -94,6 +97,7 @@ try:
     __locale__ = locale.getdefaultlocale()[0]
 except ValueError:
     __locale__ = None
+
 
 ####################################################
 # The main GUI class - this provides all functions
@@ -142,14 +146,20 @@ class gui(object):
     FLAT = FLAT
 
     ###################################
-    # Constants for music stuff
+    # Constants for music stuff
     ###################################
-    BASIC_NOTES = {"A": 440, "B": 493, "C": 261,
-                    "D": 293, "E": 329, "F": 349, "G": 392
+    BASIC_NOTES = {
+        "A": 440,
+        "B": 493,
+        "C": 261,
+        "D": 293,
+        "E": 329,
+        "F": 349,
+        "G": 392,
     }
 
     NOTES = {'f8': 5587, 'c#6': 1108, 'f4': 349, 'c7': 2093,
-            'd#2': 77, 'g8': 6271, 'd4': 293, 'd7': 2349,
+             'd#2': 77, 'g8': 6271, 'd4': 293, 'd7': 2349,
             'd#7': 2489, 'g#4': 415, 'e7': 2637, 'd9': 9397,
             'b8': 7902, 'a#4': 466, 'b5': 987, 'b2': 123,
             'g#9': 13289, 'g9': 12543, 'f#2': 92, 'c4': 261,
