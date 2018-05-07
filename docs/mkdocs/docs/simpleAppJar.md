@@ -380,10 +380,14 @@ Displays a simple date picker widget.
 
 ## Canvas  
 ---
-Displays a the canvas widget.  
+Displays a canvas widget.  
 
 * `.canvas(title)`
     Adds a canvas with the specified title. 
+
+| Parameter | Data type | Default | Description |
+| --------- | --------- | ------- | ------------|
+| map | dictionary| None | A dictionary of name:coordinates to use as a canvas map. `submit` must also be set. |
 
 ## PopUp  
 ---

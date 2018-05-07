@@ -2089,19 +2089,19 @@ class gui(object):
 
     def after(self, delay_ms, callback=None, *args):
         """ wrapper for topLevel after function
-            schedules the callback funciton to happen in x seconds
+            schedules the callback function to happen in x seconds
             returns an ID, allowing the event to be cancelled """
         return self.topLevel.after(delay_ms, callback, *args)
 
     def afterIdle(self, callback, *args):
         """ wrapper for topLevel after_idle function
-            schedules the callback funciton to happen in x seconds
+            schedules the callback function to happen in x seconds
             returns an ID, allowing the event to be cancelled """
         return self.after_idle(callback, *args)
 
     def after_idle(self, callback, *args):
         """ wrapper for topLevel after_idle function
-            schedules the callback funciton to happen in x seconds
+            schedules the callback function to happen in x seconds
             returns an ID, allowing the event to be cancelled """
         return self.topLevel.after_idle(callback, *args)
 
@@ -6754,7 +6754,7 @@ class gui(object):
             if _map is not None: self.setImageMap(title, submit, _map)
             else: self.setImageSubmitFunction(title, submit)
         elif submit is None and _map is not None:
-            gui.warn("Must specify a submit funciton when setting an image map: %s", title)
+            gui.warn("Must specify a submit function when setting an image map: %s", title)
         if drop is not None: self.setImageDropTarget(title, drop)
 
         if len(kwargs) > 0:
@@ -7080,27 +7080,29 @@ class gui(object):
 
     # function to configure an image map
     def setImageMap(self, name, func, coords):
-        img = self.widgetManager.get(self.Widgets.Image, name)
+        self._setWidgetMap(name, self.Widgets.Image, func, coords)
 
+    def _setWidgetMap(self, name, _type, func, coords):
+        widget = self.widgetManager.get(_type, name)
         rectangles = []
         if len(coords) > 0:
             for k, v in coords.items():
-                rect = AJRectangle(k, Point(v[0], v[1]), v[2]-v[0], v[3]-v[1])
+                rect = AjRectangle(k, AjPoint(v[0], v[1]), v[2]-v[0], v[3]-v[1])
                 rectangles.append(rect)
 
-        img.MAP_COORDS = rectangles
-        img.MAP_FUNC = func
-        img.bind("<Button-1>", lambda e: self._imageMap(name, e), add="+")
+        widget.MAP_COORDS = rectangles
+        widget.MAP_FUNC = func
+        widget.bind("<Button-1>", lambda e: self._widgetMap(_type, name, e), add="+")
 
     # function called when an image map is clicked
-    def _imageMap(self, name, event):
-        img = self.widgetManager.get(self.Widgets.Image, name)
-        for rect in img.MAP_COORDS:
-            if rect.contains(Point(event.x, event.y)):
-                img.MAP_FUNC(rect.name)
+    def _widgetMap(self, _type, name, event):
+        widget = self.widgetManager.get(_type, name)
+        for rect in widget.MAP_COORDS:
+            if rect.contains(AjPoint(event.x, event.y)):
+                widget.MAP_FUNC(rect.name)
                 return
 
-        img.MAP_FUNC("UNKNOWN: " + str(event.x) + ", " + str(event.y))
+        widget.MAP_FUNC("UNKNOWN: " + str(event.x) + ", " + str(event.y))
 
     def addImage(self, name, imageFile, row=None, column=0, colspan=0, rowspan=0, compound=None):
         ''' Adds an image at the specified position '''
@@ -8090,6 +8092,10 @@ class gui(object):
     def clearCanvas(self, title):
         self.widgetManager.get(self.Widgets.Canvas, title).delete("all")
 
+    # function to configure a canvas map
+    def setCanvasMap(self, name, func, coords):
+        self._setWidgetMap(name, self.Widgets.Canvas, func, coords)
+
     def addCanvasCircle(self, title, x, y, diameter, **kwargs):
         ''' adds a circle to the specified canvas '''
         return self.addCanvasOval(title, x, y, diameter, diameter, **kwargs)
@@ -8128,6 +8134,8 @@ class gui(object):
     def canvas(self, title, *args, **kwargs):
         """ simpleGUI - adds, sets & gets canases all in one go """
         widgKind = self.Widgets.Canvas
+        submit = kwargs.pop("submit", None)
+        _map = kwargs.pop("map", None)
 
         try: self.widgetManager.verify(widgKind, title)
         except: # widget exists
@@ -8136,6 +8144,11 @@ class gui(object):
         else: # new widget
             kwargs = self._parsePos(kwargs.pop("pos", []), kwargs)
             canvas = self._canvasMaker(title, *args, **kwargs)
+
+        if submit is not None and _map is not None:
+            self.setCanvasMap(title, submit, _map)
+        else:
+            gui.warn("Must specify a submit function when setting a canvas map: %s", title)
 
         if len(kwargs) > 0:
             self._configWidget(title, widgKind, **kwargs)
@@ -14178,7 +14191,7 @@ class PauseCallFunction():
 #####################################
 # classes to work with image maps
 #####################################
-class Point(object):
+class AjPoint(object):
     def __init__(self, x=0, y=0):
         self.x = x
         self.y = y
@@ -14186,7 +14199,7 @@ class Point(object):
     def __str__(self):
         return "({},{})".format(self.x, self.y)
 
-class AJRectangle(object):
+class AjRectangle(object):
     def __init__(self, name, posn, w, h):
         self.name = name
         self.corner = posn

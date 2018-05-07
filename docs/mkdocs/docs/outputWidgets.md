@@ -293,6 +293,15 @@ app.go()
 * `.getCanvas(title)`  
     Gets the specified canvas widget.  
 
+#### Setting a Canvas  
+
+* `.setCanvasMap(title, func, coords)`  
+    It is possible to set up a simple CanvasMap - a clickable canvas, with names linked to different areas.
+    When one of those areas is clicked, a function will be called, passing the name of the area as a parameter.
+    `coords` must contain a dictionary of areas on the map.
+    When a position on the canavs is clicked, in one of the areas, the named function will be called, passing in the area's name.
+    When an unknown position on the canavs is clicked, UNKNOWN will be passed to the function, along with the coordinates.
+
 #### Drawing on a Canvas  
 
 **NB.** each of these functions returns the object being created, so you can later change it:
