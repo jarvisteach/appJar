@@ -8883,9 +8883,12 @@ class gui(object):
 
     def tree(self, title, value=None, *args, **kwargs):
         """ simpleGUI - adds, sets & gets trees all in one go """
-        widgKind = self.Widgets.Label
-#        kind = kwargs.pop("kind", "standard").lower().strip()
-# lots to do here...
+        widgKind = self.Widgets.Tree
+
+        click = kwargs.pop("click", None)
+        dblClick = kwargs.pop("dbl", None)
+        edit = kwargs.pop("edit", None)
+        editable = kwargs.pop("editable", None)
 
         try: self.widgetManager.verify(widgKind, title)
         except: # widget exists
@@ -8896,6 +8899,11 @@ class gui(object):
 
         if len(kwargs) > 0:
             self._configWidget(title, widgKind, **kwargs)
+
+        if click is not None: self.setTreeClickFunction(title, click)
+        if edit is not None: self.setTreeEditFunction(title, edit)
+        if dblClick is not None: self.setTreeDoubleClickFunction(title, dblClick)
+        if editable is not None: self.setTreeEditable(title, editable)
         return tree
 
     def addTree(self, title, data, row=None, column=0, colspan=0, rowspan=0):

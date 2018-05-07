@@ -100,9 +100,7 @@ def makeExplorer():
             sw.configure(padx=5, pady=5)
             with app.panedFrame("LEFT"):
                 app.configure(sticky="news")
-                app.tree("b", xml, row=1, column=1, rowspan=6)
-                app.setTreeClickFunction("b", updateConfigPane)
-                app.setTreeEditable("b", False)
+                app.tree("b", xml, row=1, column=1, rowspan=6, click=updateConfigPane, editable=False)
                 app.setTreeBg('b', "#3b3f40")
                 app.setTreeFg('b', "#adadad")
                 with app.panedFrame("RIGHT", sticky="new", width=200):
