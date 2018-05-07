@@ -1,14 +1,14 @@
 #Changing Widgets  
 ----
-There are a lot of things that can be change in a widget.  
+There are a lot of things that can be changed in a widget.  
 There is a pattern to how this works, you simply specify the widget type and the parameter, eg:
 
 * `.setLabelBg(name, value)`
 * `.setButtonFg(name, value)`
 * `.setListBoxState(name, value)`
 
-The list of widgets is defined in `gui.WIDGETS`, it contains:
-Label, Message, Button, Entry, Scale, SpinBox, OptionBox, TextArea, Link, Meter, Image, RadioButton, CheckBox, ListBox, LabelFrame, PanedWindow, NoteBook
+This should work for most widgets & containers.  
+Some widgets have different types, eg. TextArea & ScrolledTextArea, all types can be configured with the main widget name.  
 
 ###Basic  Looks
 ----
@@ -65,8 +65,23 @@ app.getLabelWidget("l5").config(font="Verdana 20 overstrike")
 app.getLabelWidget("l6").config(font="Courier 20")
 ```
 
-###Advanced Looks  
+---
+<div style='text-align: center;'>
+*Advertisement&nbsp;<sup><a href="/advertising">why?</a></sup>*
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+    style="display:block"
+    data-ad-format="fluid"
+    data-ad-layout-key="-gw-13-4l+6+pt"
+    data-ad-client="ca-pub-6185596049817878"
+    data-ad-slot="5627392164"></ins>
+<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
 ----
+
+###Advanced Looks  
+---
+
 The following are supported by most widgets:
 
 * `.set XXX Align(name, value)`  
@@ -108,8 +123,23 @@ The following are supported by most widgets:
 * `.set XXX Focus(name)`  
     Gives focus to the specified widget. This is the widget where the user will be able to start typing.
 
-###Widget Manipulation
+---
+<div style='text-align: center;'>
+*Advertisement&nbsp;<sup><a href="/advertising">why?</a></sup>*
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+    style="display:block"
+    data-ad-format="fluid"
+    data-ad-layout-key="-gw-13-4l+6+pt"
+    data-ad-client="ca-pub-6185596049817878"
+    data-ad-slot="5627392164"></ins>
+<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
 ----
+
+###Widget Manipulation
+---
+
 The following allow widgets to be manipulated on screen:
 
 * `.disable XXX (name)`  
@@ -144,6 +174,7 @@ The following are convenience functions, for modifying a group of widgets:
 ----
 It's also possible to request a widget, and modify it directly:  
 
-* `.get XXX Widget(name)`  
+* `.get XXX Widget(name, value=None)`  
     This will get the named widget of the specified type.  
     Any standard tkinter options can then be changed.  
+    If it's a RadioButton, you also need to specify a `value` - the text displayed in the widget.  

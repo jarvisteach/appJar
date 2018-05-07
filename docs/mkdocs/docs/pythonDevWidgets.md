@@ -1,144 +1,167 @@
 #Beta Widgets  
 ----
-The following widgets are in [beta](https://en.wikipedia.org/wiki/Software_release_life_cycle#BETA).  
-They're available and in use, they're just not quite complete, and not fully tested...  
+The following widgets are in [beta](https://en.wikipedia.org/wiki/Software_release_life_cycle#BETA) - they're available and being used, they're just not quite finished...  
 
-### ttk
+## Accessibility
 ---
-If you want access to the [Tk themed widget set](https://docs.python.org/3/library/tkinter.ttk.html) then you'll need to tell appJar to use it:
-```python
-from appJar import gui
-app = gui("ttk Demo")
-app.useTtk()
-app.addButton("Press Me", None)
-app.go()
-```
 
-At the moment, this simply imports ttk, so the standard widget set will be replaced with a ttk widget set.  
+A pop-up to configure GUI settings.  
 
-###MicroBit Emulator  
----  
-Widget to emulate a [MicroBit](http://microbit.org)
-
-![MicroBit Emulator](img/mb.png)
+![Accessibility](img/accessibility.png)
 
 ```python
 from appJar import gui
 
-app = gui()
-app.addMicroBit("mb1")
-app.setMicroBitImage("mb1", "09090:90909:90009:09090:00900")
-app.go()
+with gui("Demo Access") as app:
+    app.button('Accessibility', app.showAccess, icon='ACCESS')
 ```
 
-####Add MicroBits
-* ```.addMicroBit(title)```  
-    Will create a 5x5 grid emulating the MicroBit LEDs.  
+It allows you to configure:  
 
-####Set MicroBits
-* ```.setMicroBitImage(title, image)```  
-    This sets each pixel to the specified brightness (0 to 9).  
-    Each set of 5 digits represents a row of pixels, from top to bottom.  
+* Font Family
+* Font Size
+* Bold True/False
+* Normal/Italic
+* Underline True/False
+* Overstrike True/False
+* Foreground Colour
+* Background Colour
 
-* ```.setMicroBitPixel(title, x, y, brightness)```  
-    Will set the brightness of the specified pixel.  
-    ```x``` & ```y``` should be between 0 & 4.  
-    ```brightness``` should be a value between 0 & 9 to represent how **bright** to make the pixel.  
-
-* ```.clearMicroBit(title)```  
-    Will turn off all of the pixels - setting their brightness to 0.  
-
-###GoogleMaps
+## Table
 ---
-A self-contained GoogleMaps widget.  
-It provides useful functionality for finding somewhere on Earth.  
-All requests for map data are performed in the background, so the UI shouldn't become unresponsive.  
+Used to create a spreadsheet like interface.  
+The Table has mouse interactivity, with mouse-over highlighting, and mouse-click highlighting.  
+It is possible to include buttons at the end of each row, and an additional row of entry boxes, with their own button.  
 
-![GoogleMaps](img/gMap_2.png)
-
-```python
-from appjar import gui
-
-app = gui()
-app.addGoogleMap("m1")
-app.setGoogleMapSize("m1", "300x500")
-app.go()
-```
-
-#### Add GoogleMaps  
-
-* `.addGoogleMap(title)`  
-    Creates a GoogleMap widget.  
-    Displays a map image, and provides functionality to search, zoom, and change terrain, as well as a link to the original image.  
-
-#### Set GoogleMaps  
-
-* `.searchGoogleMap(title, location)`  
-    Update the named GoogleMap widget to show the specified locaiton.  
-
-* `.zoomGoogleMap(title, mod)`  
-    Change the zoom level of the named GoogleMap.  
-    Providing a **+** or **-** will cause the map to zoom in or out one level.  
-    Otherwise, a digit between 0 and 22 should be provided, to set the zoom level.  
-
-* `.setGoogleMapTerrain(title, terrain)`  
-
-* `.setGoogleMapSize(title, size)`  
-    Set the size of the GoogleMap. Should be in the format `"300x300"`.  
-    Note, if you set it too small, the control widgets won't look good...  
-
-* `.setGoogleMapMarker(title, location)`  
-    Will drop a marker on the specified location.  
-    The marker will only be visible if the current `location` & `zoom level` permit.  
-    If an empty `location` is provided, all markers will be removed.  
-
-#### Get GoogleMaps  
-
-* `.getGoogleMapLocation(title)`  
-    Returns the current displayed location.  
-    Will return an empty String, if the user clicked the **H** button.  
-
-* `.getGoogleMapZoom(title)`  
-    Returns the current zoom level of the map tile.  
-
-* `.getGoogleMapTerrain(title)`  
-    Returns the current terrain setting for the map tile.  
-
-* `.getGoogleMapSize(title)`  
-    Returns the current size of the map tile.  
-
-#### Save GoogleMaps  
-
-* `.saveGoogleMap(title, fileName)`  
-    Saves the currently displayed map to the named location.  
-    By default, all map tiles are GIFs.  
-
-###PieChart
----
-Widget to depict a Pie Chart.  
-It will automatically calculate percentages, and draw a pie chart, given a dictionary of items and their amount.  
-The PieChart is purely for display purposes, and is not interactive, other than a simple mouse-over effect with a tooltip.  
-![PieChart](img/dev/pie.png)  
+![Table](img/dev/grid.png)  
 
 ```python
 from appJar import gui
 
 app = gui()
-app.addPieChart("p1", {"apples":50, "oranges":200, "grapes":75,
-                        "beef":300, "turkey":150})
+app.setFont(20)
+app.addTable("g1",
+    [["Name", "Age", "Gender"],
+    ["Fred", 45, "Male"],
+    ["Tina", 37, "Female"],
+    ["Clive", 28, "Male"],
+    ["Betty", 51, "Female"]])
 app.go()
 ```
 
-####Add PieCharts  
-* `.addPieChart(title, values)`  
-    Takes a dictionary of names and values, which will be converted to percentages, and plotted on the chart.  
-    The names will be used as part of tooltips that appear over each wedge of the PieChart.  
+#### Add Tables  
 
-####Set PieCharts  
-* `.setPieChart(title, name, value)`  
-    Will update the PieChart, by either changing an existing value, adding a new value, or removing a value if it's set to 0.  
+* `.addTable(title, data, action=None, addRow=None)`  
+    Receives a (jagged) 2D list of values. The first list should be the headers for the Table, the rest will contain each row of values.  
 
-###Tree
+    If `action` is set, a button will be created, at the end of each row, calling the specified function. It will pass the row number (starting at 0).  
+
+    ![Table](img/dev/grid_2.png)   
+
+    If `addRow` is set, then an additional row will appear at the end of the Table, with entry boxes and a button to call the specified function.  
+    The button will pass the string `newRow` to the specified function.  
+
+    ![Table](img/dev/grid_3.png)   
+
+    If both parameters are set to a function, then both buttons at the end of each row and a row of Entry boxes will be shown:  
+
+    ![Table](img/dev/grid_4.png)   
+
+    It's also possible to set the following parameters:  
+        * `actionHeading` - set the title of the right column  
+        * `actionButton` - set the button text for each row  
+        * `addButton` - set the button text for the Entry row  
+        * `showMenu` - boolean to show a right-click menu  
+        * `disabledEntries` - pass a list of numbers, to disable entry boxes in those positions  
+        * `border` - the style of the cell border: `sunken`, `solid`, etc
+
+    ![Table](img/dev/1_gridMenu.png)   
+
+#### Connecting to Databases
+
+* `.addDbTable(title, db, table)`  
+    Will connect to the specified database, and show all rows in the specified table.  
+    appJar will query the table to detect the PrimaryKey, and use this as the key when selecting the row.
+
+* `.replaceDBTable(title, db, table)`  
+    Will replace the currently shown data in the Table, with the data found in the specified database/table.  
+
+* `.refreshDBTable(title)`  
+    Will refresh the specified DB Table.  
+
+* `.addDbOptionBox(title, db, change=None)`  
+    Will create an OptionBox, containing a list of all the tables available in the specified database.  
+
+* `.refreshDbOptionBox(title)`  
+    Will reload the list of tables displayed in the specified DB OptionBox.  
+
+#### Get Tables  
+
+* `.getTableRow(title, rowNumber)`  
+    Returns a list of values representing the specified row.  
+
+* `.getTableRowCount(title)`  
+    Returns a count of how many rows are in the Table (not including the header row).  
+
+* `.getTableSelectedCells(title)`  
+    Gets a dictionary of booleans, indicating the status of each cell.  
+    True indicates the cell is selected, False indicates the cell is not selected.  
+    The name of each entry on the dictionary will be in the format ROW-COLUMN, eg. 0-2  
+
+* `.getTableEntries(title)`  
+    If `addRow` was set when the *Table* was created, this function will get the contents of the entry boxes.  
+    They will be returned as a list, in the same order as the entry boxes.  
+
+#### Set Tables  
+
+* `.addTableRow(title, data)`  
+    Adds a new row of data to the end of the existing Table.  
+    It will be positioned at the bottom of the Table, above the entry boxes if present.  
+
+To have the **Press** button on the entries row add a new row of data, try the following:  
+```python
+    def press(btn):
+        if btn == "addRow":     # the button on the entries row
+            data = app.getTableEntries("g1")
+            app.addTableRow("g1", data)
+``` 
+
+* `.addTableRows(title, data)`  
+    Adds the new rows of data to the end of the existing Table.  
+
+* `.replaceTableRow(title, rowNum, data)`  
+    Replace the values in the specified row with the new data.  
+    If the new data has fewer items, the remaining cells will be emptied.  
+
+* `.replaceAllTableRows(title, rowNum, data)`  
+    Removes all existing rows, before adding the new rows.  
+
+* `.setTableHeaders(title, data)`  
+    Replace the values in the header row.  
+    If the new data has fewer items, the remaining header cells will be emptied.  
+
+* `.deleteTableRow(title, rowNum)`  
+    Delete the specified row from the specified Table.
+
+* `.deleteAllTableRows(title)`  
+    Delete all rows from the specified Table (except the header row).  
+
+* `.addTableColumn(title, columnNumber, data)`  
+    Add the column of data to the named Table, in the specified position.  
+
+* `.deleteTableColumn(title, columnNumber)`  
+    Delete the specified column from the named Table.  
+    
+* `.selectTableRow(title, row, highlight=None)` & `.selectTableColumn(title, col, highlight=None)`  
+    These will either select or highlight the specified row or column in the named Table.  
+    If you leave `highlight=None` the row/column will be toggled between selected & deselected.  
+    If you set `highlight=True` the row/column will be highlighted (like a mouse over). 
+    If you set `highlight=False` the row/column will be un-highlighted (like a mouse over). 
+
+* `.disableTableEntry(title, entryPos, disabled=True)`  
+    Will disable the specified entry box (starting at 0) if entries are being displayed.  
+
+## Tree
 ---
 Takes an arbitrary XML string, and converts it into a tree structure.  
 
@@ -158,17 +181,30 @@ app.addTree("t1",
 app.go()
 ```
 
-####Add Trees
+#### Add Trees
 * `.addTree(title, xml_data)`  
     Create a tree from the specified XML data  
 
-####Set Trees
+* `.generateTree(title)`  
+    Load all the XML data into the tree.  
+    Gets called automatically when the GUI starts, but will need to be called manually, if a tree is created after the GUI has started.  
+
+#### Set Trees
+* `.setTreeClickFunction(title, func)`  
+    Register a function to call when an item is clicked.
+    Will receive the name of the tree, and an `id` attribute, if set in the XML.  
+
 * `.setTreeDoubleClickFunction(title, func)`  
     Register a function to call when an item is double-clicked  
+    Will receive the name of the tree, and an `id` attribute, if set in the XML.  
+
 * `.setTreeEditFunction(title, func)`  
     Register a function to call when an item is edited  
+    Will receive the name of the tree.  
+
 * `.setTreeEditable(title, value)`  
     Set whether the tree can be edited  
+
 * `.setTreeColours(title, fg, bg, fgH, bgH)`  
     Set the fg/bg/fg highlight/bg highlight colours of the tree  
 * `.setTreeBg(title, colour)`  
@@ -180,7 +216,7 @@ app.go()
 * `.setTreeHighlightFg(title, colour)`  
     Set the foreground colour of the highlighted node  
 
-####Get Trees  
+#### Get Trees  
 * `.getTreeXML(title)`  
     Return the tree as XML  
 * `.getTreeSelected(title)`  
@@ -188,97 +224,3 @@ app.go()
 * `.getTreeSelectedXML(title)`  
     Return the selected node (and any children) as XML
 
-
-###Grid
----
-Used to create a spreadsheet like interface.  
-The grid has mouse interactivity, with mouse-over highlighting, and mouse-click highlighting.  
-It is possible to include buttons at the end of each row, and an additional row of entry boxes, with their own button.  
-
-![Grid](img/dev/grid.png)  
-
-```python
-from appJar import gui
-
-app = gui()
-app.setFont(20)
-app.addGrid("g1",
-    [["Name", "Age", "Gender"],
-    ["Fred", 45, "Male"],
-    ["Tina", 37, "Female"],
-    ["Clive", 28, "Male"],
-    ["Betty", 51, "Female"]])
-app.go()
-```
-
-####Add Grids  
-
-* `.addGrid(title, data, action=None, addRow=None)`  
-    Receives a (jagged) 2D list of values. The first list should be the headers for the grid, the rest will contain each row of values.  
-
-    If `action` is set, a button will be created, at the end of each row, calling the specified function. It will pass a list of values, representing the selected row.   
-
-    ![Grid](img/dev/grid_2.png)   
-
-    If `addRow` is set, then an additional row will appear at the end of the grid, with entry boxes and a button to call the specified function.  
-
-    ![Grid](img/dev/grid_3.png)   
-
-    If both parameters are set to a function, then both buttons at the end of each rowm and a row of Entry boxes will be shown:  
-
-    ![Grid](img/dev/grid_4.png)   
-
-
-####Get Grids  
-
-* `.getGridEntries(title)`  
-    If `addRow` was set when the *Grid* was created, this function will get the contents of the entry boxes.  
-    They will be returned as a list, in the same order as the entry boxes.  
-
-* `.getGridSelectedCells(title)`  
-    Gets a dictionary of booleans, indicating the status of each cell.  
-    True indicates the cell is selected, False indicates the cell is not selected.  
-    The name of each entry on the dictionary will be in the format ROW-COLUMN, eg. 0-2  
-
-####Set Grids  
-
-* `.addGridRow(title, data)`  
-    Adds a new row of data to the end of the existing grid.  
-    It will be positioned at the bottom of the grid, above the entry boxes if present.  
-
-To have the **Press** button on the entries row add a new row of data, try the following:  
-```python
-    def press(btn):
-        if btn == "Press":     # the button on the entries row
-            data = app.getGridEntries("g1")
-            app.addGridRow("g1", data)
-``` 
-
-###MatPlotLib
----
-
-Support for embedding very basic [MatPlotLib](http://matplotlib.org) plots.  
-
-![Plot](img/1_plot.png)  
-```python
-from numpy import sin, pi, arange
-from appJar import gui
-
-x = arange(0.0, 3.0, 0.01)
-y = sin(2*pi*x)
-
-app = gui()
-axes = app.addPlot("p1", x, y)
-axes.legend(['key data'])
-app.go()
-```
-
-* `.addPlot(title, x, y)`  
-    Create a plot with the specified x and y values.  
-    Returns the plot object, to allow further customisation.  
-
-* `.updatePlot(title, x, y)`  
-    Update the specified plot with the specified x and y values.
-
-* `.refreshPlot(title)`  
-    Redraw the plot, call after changing the axes object...  

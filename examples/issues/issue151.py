@@ -4,11 +4,19 @@ from appJar import gui
 
 def press(*args):
     if args[0]=="newRow":
-        app.addGridRow('airflow_data_raw', app.getGridEntries('airflow_data_raw'))
+        app.addGridRow('c', ['Nozzle Diameter', 'Number of Nozzles', 'Differential Pressure', 'Static Pressure', 'Voltage', 'Current', 'Frequency']
+)
     else:
         print(args)
 
+def show(btn):
+    print(btn)
+    app.addGridRow('b', ['Nozzle Diameter', 'Number of Nozzles', 'Differential Pressure', 'Static Pressure', 'Voltage', 'Current', 'Frequency'])
+
+
 app=gui("GridTest")
+
+app.setBg("red")
 
 
 app.startLabelFrame("Standard Conditions", 0, 0)
@@ -37,23 +45,19 @@ app.addEntry("size", 1, 1)
 app.stopLabelFrame()
 
 app.addGrid(
-    'a',
-    [
-        ['Nozzle Diameter', 'Number of Nozzles', 'Differential Pressure', 'Static Pressure', 'Voltage', 'Current', 'Frequency'],
-    ],
-    row=1,
-    column=0,
-    colspan=3,
-)
-app.addGrid(
     'b',
     [
+        ['Nozzle Diameter', 'Number of Nozzles', 'Differential Pressure', 'Static Pressure', 'Voltage', 'Current', 'Frequency'],
+        ['Nozzle Diameter', 'Number of Nozzles', 'Differential Pressure', 'Static Pressure', 'Voltage', 'Current', 'Frequency'],
+        ['Nozzle Diameter', 'Number of Nozzles', 'Differential Pressure', 'Static Pressure', 'Voltage', 'Current', 'Frequency'],
+        ['Nozzle Diameter', 'Number of Nozzles', 'Differential Pressure', 'Static Pressure', 'Voltage', 'Current', 'Frequency'],
+        ['Nozzle Diameter', 'Number of Nozzles', 'Differential Pressure', 'Static Pressure', 'Voltage', 'Current', 'Frequency'],
         ['Nozzle Diameter', 'Number of Nozzles', 'Differential Pressure', 'Static Pressure', 'Voltage', 'Current', 'Frequency'],
     ],
     row=2,
     column=0,
     colspan=3,
-    action=press,
+    action=show,
 )
 app.addGrid(
     'c',
@@ -63,7 +67,9 @@ app.addGrid(
     row=3,
     column=0,
     colspan=3,
-    addRow=True
+    addRow=press
 )
+
+app.addButton("b1", show)
 
 app.go()

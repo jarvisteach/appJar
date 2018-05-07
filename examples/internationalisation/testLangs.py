@@ -24,10 +24,12 @@ app.addCheckBox("b1")
 app.addCheckBox("b2")
 app.addCheckBox("b3")
 
+app.startLabelFrame("Names")
 app.addRadioButton("name", "b1")
 app.addRadioButton("name", "b2")
 app.addRadioButton("name", "b3")
 app.addRadioButton("name", "b4")
+app.stopLabelFrame()
 
 app.addRadioButton("age", "b1")
 app.addRadioButton("age", "b2")

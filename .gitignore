@@ -4,6 +4,11 @@ old_resources/*
 dev_*
 *.docx
 
+# testing bits
+tests/*.ini
+tests/*.map
+examples/issues/*.db
+
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

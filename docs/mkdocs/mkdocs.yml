@@ -6,45 +6,66 @@ repo_url: https://github.com/jarvisteach/appJar
 google_analytics: ['UA-79206647-1', 'appjar.info']
 theme: united
 theme_dir: custom_united
-copyright: <p>Richard Jarvis, 2016-2017</p>
-site_description: Python library for building simple tkinter GUIs
+copyright: <p><a href='/License'>&#169; Richard Jarvis, 2015-2018</a></p>
+site_description: The easiest way to build tkinter GUIs in Python.
 site_author: Richard Jarvis
 extra_css: [extra.css]
 strict: true
 pages:
 - Welcome: index.md
 - Fillings:
-    - Widgets: pythonWidgets.md
-    - Images: pythonImages.md
-    - Sounds: pythonSound.md
+    - Widgets:
+        - Output Widgets: outputWidgets.md
+        - Input Widgets: inputWidgets.md
+        - Images: pythonImages.md
+        - Containers: pythonWidgetGrouping.md
+        - Beta Widgets: pythonDevWidgets.md
+        - (v1.0 Naming): simpleAppJar.md
     - Bars: pythonBars.md
     - Pop-ups: pythonDialogs.md
+    - Sounds: pythonSound.md
+    - Grouping Widgets: pythonWidgetGrouping.md
+    - Multiple Windows: pythonSubWindows.md
+    - Multiple Pages: multiplePages.md
     - Splashscreen: splash.md
     - Special Characters: specialCharacters.md
-    - Beta Widgets...: pythonDevWidgets.md
 - Configuration:
-    - Arranging widgets: pythonWidgetLayout.md
-    - Grouping widgets: pythonWidgetGrouping.md
-    - Changing widgets: pythonWidgetOptions.md
     - GUI Options: pythonGuiOptions.md
-    - GUI Events: pythonEvents.md
-    - Drag'n Drop: pythonDnD.md
+    - Widgets:
+        - Layout: pythonWidgetLayout.md
+        - Configuration: pythonWidgetOptions.md
+        - The power of WITH: pythonContextManager.md
+    - Events:
+        - Events: pythonEvents.md
+        - Loops & Sleeps: pythonLoopsAndSleeps.md
+        - Threads: pythonThreads.md
+        - Drag'n Drop: pythonDnD.md
     - Internationalisation: pythonInternationalisation.md
+    - Saving Settings: pythonSettings.md
     - Logging: pythonLogging.md
-- Examples:
-    - Raspberry Pi Minecraft: examples/minecraft.md
-    - Simple Layout: examples/simple.md
+    - Command Line Arguments: pythonCommandLine.md
+    - ttk (BETA): pythonTtk.md
+    - Clipboard: clipboard.md
+    - (v1.0 Properties): simpleProperties.md
 - Help:
     - Guidance: guidance.md
+    - Examples:
+        - Raspberry Pi Minecraft: examples/minecraft.md
+        - Simple Layout: examples/simple.md
     - Installation: Install.md
-    - Python: pythonBasics.md
-    - Algorithms: algorithms.md
-    - Git: gitGuide.md
     - Packaging: packaging.md
-    - Change-Log: whatsNew.md
     - License: License.md
     - Support: Support.md
-    - Contributing: contributing.md
+    - Limitations: appJarLimitations.md
     - Acknowledgements: Thanks.md
+    - Advertising: advertising.md
+    - Contributing: contributing.md
+    - Change-Log: whatsNew.md
+    - Old Documentation: oldDocs.md
+    - Other Help:
+        - Python: pythonBasics.md
+        - Algorithms: algorithms.md
+        - Git & PyPi: gitGuide.md
 extra:
     theme_inverse: false
+

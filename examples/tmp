@@ -1,0 +1,22 @@
+def updatePlot(self, title, t, s, keepLabels=True):
+    axes = self.__verifyItem(self.n_plots, title).axes
+
+    if keepLabels:
+        xLab = axes.get_xlabel()
+        yLab = axes.get_ylabel()
+        pTitle = axes.get_title()
+        handles, legends = axes.get_legend_handles_labels()
+        print(handles, legends)
+
+    axes.clear()
+    axes.plot(t, s)
+
+    if keepLabels:
+        axes.set_xlabel(xLab)
+        axes.set_ylabel(yLab)
+        axes.set_title(pTitle)
+        axes.legend(handles, legends)
+
+    self.refreshPlot(title)
+    return axes
+

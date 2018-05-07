@@ -22,8 +22,23 @@ app.addEmptyLabel("l2")
 app.go()
 ```
 
+---
+<div style='text-align: center;'>
+*Advertisement&nbsp;<sup><a href="/advertising">why?</a></sup>*
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+    style="display:block"
+    data-ad-format="fluid"
+    data-ad-layout-key="-gw-13-4l+6+pt"
+    data-ad-client="ca-pub-6185596049817878"
+    data-ad-slot="5627392164"></ins>
+<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
+---
+
 ###Grid Layout
 ---
+
 If, however, you want a bit more control, then you can treat your GUI like a **GRID**.  
 Think of it just like a spreadsheet, and position your widgets in whichever cell you want.  
 
@@ -97,6 +112,7 @@ Note, the parameters are read from left to right, so:
 * And, if you're specifying a column-span, you must first specify a row, column & column-span  
 
 ###Layout Tricks  
+---
 There are a few tricks you can employ, to make life a bit easier...
 
 ####Named Arguments  
@@ -104,10 +120,11 @@ It can be annoying having to specify all of the positional parameters each time,
 For example: `app.addLabel("l1", "text here", colspan=2)`, will set the `colspan` parameter, without having to set the preceding ones.   
 
 ####Row Helpers
-If you combine that with having appJar telling you the row you're on, things get even easier.  
+
+appJar tracks the next available row.:
 
 * `.getRow()` or `.gr()`  
-    Returns the row number currently being used.  
+    Returns the next free row.  
     Useful if you're mainly adding things sequentially, but want to modify one line out of sequence.  
 
 ![Grid Layout](img/layouts/grid3.png)
@@ -138,11 +155,38 @@ for loop in range(3, 6):
 app.go()
 ```
 
+Instead of calling `.getRow()`, you can specify the string "previous" or "p" to use the the previous row:  
+
+```python
+from appJar import gui 
+with gui("LABS", "400x400", sticky="news") as app:
+    app.label("0-0", bg="red")
+    app.label("0-1", bg="orange", row="previous", column=1)
+    app.label("0-2", bg="yellow", row="previous", column=2)
+    app.label("1-0", bg="green")
+    app.label("1-1-2", bg="blue", row="previous", column=1, colspan=2)
+```
+
+---
+<div style='text-align: center;'>
+*Advertisement&nbsp;<sup><a href="/advertising">why?</a></sup>*
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+    style="display:block"
+    data-ad-format="fluid"
+    data-ad-layout-key="-gw-13-4l+6+pt"
+    data-ad-client="ca-pub-6185596049817878"
+    data-ad-slot="5627392164"></ins>
+<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
+---
 
 ## Widget Positioning
-----
+---
 
 Once you've laid out your widgets, the next most important thing is how they line up in their rows and columns.  
+
+**NB.** These only take affect from the point they are added, so include them before adding the widgets.  
 
 There are two things you can configure:    
 

@@ -9,6 +9,7 @@ Simple tKinter GUIs in Python
 [![Test Coverage][coveralls-image]][coveralls-link]
 [![Code Health][landscape-image]][landscape-link]
 [![Code Climate][climate-image]][climate-link]
+[![irc][irc-image]][irc-link]
 
 [pypi-v-image]: https://img.shields.io/pypi/v/appJar.png
 [pypi-v-link]: https://pypi.python.org/pypi/appJar
@@ -20,6 +21,8 @@ Simple tKinter GUIs in Python
 [landscape-link]: https://landscape.io/github/jarvisteach/appJar/appJar
 [coveralls-image]: https://coveralls.io/repos/github/jarvisteach/appJar/badge.svg
 [coveralls-link]: https://coveralls.io/github/jarvisteach/appJar
+[irc-image]:https://img.shields.io/badge/irc-%23appJar-lightgrey.svg
+[irc-link]:http://webchat.freenode.net/?channels=appJar&nick=appJarGuest
 
 Download Here: https://github.com/jarvisteach/appJar/raw/appJar/releases/appJar.zip
 
@@ -44,6 +47,23 @@ app = gui("Example")
 app.addLabel("label1", "Hello World")  
 app.go()  
 ```
+
+or (using context managers):  
+
+```
+from appJar import gui  
+with gui("Example") as app:
+    app.addLabel("label1", "Hello World")  
+```
+
+or (using simple naming):  
+
+```
+from appJar import gui  
+with gui("Example") as app:
+    app.label("Hello World")  
+```
+
 ### Reasoning:
  - Designed to be as easy as possible, yet still provide a lot of tkinter functionality
  - Provides 3 functions for most widgets:
@@ -60,7 +80,8 @@ app.go()
    - Some of this was from the excellent resources @ http://effbot.org
    - Some of this was from slashdot examples of how to solve common problems
    - Some of this has been incorporated from other people's modules:
-     - Michael Lange's ToolTip
-     - Johann C. Rocholl's tkinter_png support
-     - Martin J. Fiedler's NanoJPEG library
+     - ToolTip support form Michael Lange  
+     - png support using James Wright's tkinter-png and Johann C. Rocholl's png.py libraries  
+     - jpeg support using NanoJPEG from Martin J. Fiedler  
+
  - I've tried to get as much functionality into this library as possible, without requiring any other modules

@@ -46,6 +46,10 @@ app.startLabelFrame("Image Data", 0, 0)
 app.addImageData("imgdata", photo)
 app.stopLabelFrame()
 
+app.startLabelFrame("Compound Image", 1, 0)
+app.addImage("cimage", "balloons.gif", compound="top")
+app.stopLabelFrame()
+
 def imgMap(pos):
     print(pos)
 
@@ -62,7 +66,7 @@ app.stopLabelFrame()
 
 app.startLabelFrame("Click Me", 0, 3)
 app.addImage("clickme", "balloons.gif")
-app.setImageFunction("clickme", changePic)
+app.setImageSubmitFunction("clickme", changePic)
 app.stopLabelFrame()
 
 app.startLabelFrame("Zoom", 0, 4)
@@ -72,10 +76,10 @@ app.startScrollPane("sp")
 app.addImage("Zoom", "balloons.gif")
 w, h = app.getImageDimensions("simple")
 app.stopScrollPane()
-app.setScrollPaneWidth("sp", 150)
+#app.setScrollPaneWidth("sp", 150)
 app.addLabelSpinBox("Zoom", [20,5, 4, 3, 2, 1, -2, -3, -4, -5, -6, -7, -8, -9])
 app.setSpinBox("Zoom", 1)
-app.setSpinBoxFunction("Zoom", changePic)
+app.setSpinBoxChangeFunction("Zoom", changePic)
 app.stopLabelFrame()
 
 app.startLabelFrame("No reload", 1, 1)
@@ -97,7 +101,7 @@ app.addLabelScale("Speed")
 app.showScaleValue("Speed")
 app.showScaleIntervals("Speed", 50)
 app.setScaleRange("Speed", 1, 200, 50)
-app.setScaleFunction("Speed", changePic)
+app.setScaleChangeFunction("Speed", changePic)
 app.addButton("Stop", changePic)
 app.stopLabelFrame()
 

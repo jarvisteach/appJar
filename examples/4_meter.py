@@ -52,6 +52,6 @@ app.setMeterFg("p2", "grey")
 app.setMeterFg("p3", "lightblue")
 
 app.registerEvent(update)
-#app.registerEvent(show)
+app.registerEvent(show)
 
 app.go()

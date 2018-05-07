@@ -1,7 +1,10 @@
 doc-warnings: false
 test-warnings: false
 strictness: medium
-max-line-length: 
+max-line-length: 160
+ignore-paths:
+ - examples
+ - appJar/__init__.py
 python-targets:
     - 2
     - 3
@@ -9,3 +12,4 @@ pylint:
     disable:
         - unused-argument
         - too-many-arguments
+        - bare-except

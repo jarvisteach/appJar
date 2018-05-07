@@ -5,25 +5,46 @@ Sound is only supported in Windows, using the Winsound API.
 Therefore, only ```.WAV``` files will work.
 
 ###Playing Sound Files
-___
+---
 
 * `.playSound(sound, wait=False)`  
     Play the named sound file.  
-    By default, the sound is played asynchronously, meaning the function will return immediately, even though the sound hasn't finished playing.  
-    It is possible to override this, by setting wait to True. This is not recommended though, as the GUI will become unresponsive.
+    By default, the sound plays in the background (asynchronously), meaning the function will return immediately.  
+    If you set `wait=True` the GUI will wait for the sound to finish - *not recommended*, as the GUI will become unresponsive.  
+
+* If you want to *wait* for a sound to finish, use a [thread](/pythonThreads). **NB.** this causes a few *issues*:  
+    * Threaded sounds queue up and only start when the previous threaded sound finishes.  
+    * Trying to play a non-threaded sound does nothing, and returns immediately.  
+    * Trying to stop a threaded sound won't work, but **WILL** cause the GUI to hang, until the sound (and any queued sounds) finishes.  
+
+```
+from appJar import gui
+
+# this function only returns once the sound finishes 
+def blockingSound():
+    app.playSound("sound.wav", wait=True)
+    app.infoBox("Sound", "Finished sound")
+
+# play the sound in a thread
+def playSound():
+    app.thread(blockingSound)
+
+with gui("SOUND") as app:
+    app.button("PLAY", playSound)
+```  
 
 * `.stopSound()`  
     This will stop whatever sound is currently being played.
 
 * `.loopSound(sound)`  
-    This will play the named sound in a loop.
+    This will play the named sound in a loop, in the background.
 
 * `.setSoundLocation(location)`  
     Set a folder for the sound files.  
     This will be put before the names of any sound files used.  
 
 ###Playing Built-In Sounds
-___
+---
 
 * `.bell()`  
     This will work on all platforms, playing a bell sound.  

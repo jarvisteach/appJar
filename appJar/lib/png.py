@@ -75,7 +75,7 @@ each letter abbreviates a single channel: *L* is for Luminance or Luma
 or Lightness which is the channel used in greyscale images; *R*, *G*,
 *B* stand for Red, Green, Blue, the components of a colour image; *A*
 stands for Alpha, the opacity channel (used for transparency effects,
-but higher values are more opaque, so it makes sense to call it 
+but higher values are more opaque, so it makes sense to call it
 opacity).
 
 A note on formats
@@ -629,7 +629,7 @@ class Writer:
 
         Most users are expected to find the :meth:`write` or
         :meth:`write_array` method more convenient.
-        
+
         The rows should be given to this method in the order that
         they appear in the output file.  For straightlaced images,
         this is the usual top to bottom ordering, but for interlaced
@@ -663,7 +663,7 @@ class Writer:
             write_chunk(outfile, b'sBIT',
                 struct.pack('%dB' % self.planes,
                             *[self.rescale[0]]*self.planes))
-        
+
         # :chunk:order: Without a palette (PLTE chunk), ordering is
         # relatively relaxed.  With one, gAMA chunk must precede PLTE
         # chunk which must precede tRNS and bKGD.
@@ -1111,7 +1111,7 @@ def from_array(a, mode=None, info={}):
     metadata (in the same style as the arguments to the
     :class:`png.Writer` class).  For this function the keys that are
     useful are:
-    
+
     height
       overrides the height derived from the array dimensions and allows
       *a* to be an iterable.
@@ -1248,10 +1248,10 @@ class Image:
     def __init__(self, rows, info):
         """
         .. note ::
-        
+
           The constructor is not public.  Please do not call it.
         """
-        
+
         self.rows = rows
         self.info = info
 
@@ -2118,7 +2118,7 @@ class Reader:
         (*width*, *height*, *pixels*, *metadata*).
         *width*, *height*, *metadata* are as per the
         :meth:`read` method.
-        
+
         *pixels* is the pixel data in boxed row flat pixel format.
         """
 
@@ -2346,7 +2346,7 @@ def read_pam_header(infile):
     immediately after the initial 'P7' line (at the beginning of the
     second line).  Returns are as for `read_pnm_header`.
     """
-    
+
     # Unlike PBM, PGM, and PPM, we can read the header a line at a time.
     header = dict()
     while True:
@@ -2587,7 +2587,7 @@ def _main(argv):
         # Encode PNG to PPM
         png = Reader(file=infile)
         width,height,pixels,meta = png.asDirect()
-        write_pnm(outfile, width, height, pixels, meta) 
+        write_pnm(outfile, width, height, pixels, meta)
     else:
         # Encode PNM to PNG
         format, width, height, depth, maxval = \

@@ -2,17 +2,12 @@
 ---
 
 ##Navigating the Docs  
-The onine documentation aims to be as consistant as possible.  
+The online documentation aims to be as consistant as possible.  
 
 There are two main sections:  
 
 * **Fillings** - these are things you can add to the GUI  
 * **Configuration** - these are ways of changing how the GUI looks or operates  
-
-Plus some extras:  
-
-* **Examples** - this will slowly become a source of sample applications  
-* **Help** - more general Python guidance, with a couple of useful extras, and information about appjar  
 
 ###Fillings  
 These are things you can add to the GUI:  
@@ -22,26 +17,41 @@ These are things you can add to the GUI:
 * **Sounds** - a section on how to get your GUI to make some noise  
 * **Bars** - menubars, statusbars & toolbars that can be added to your GUI  
 * **Pop-ups** - the different pop-ups that can be shown  
+* **Multiple Windows** - information on creating separate windows  
 * **Splashscreen** - a splashscreen to show at loadtime  
 * **Special Characters** - guidance on how to include special characters  
 * **Beta widgets** - some other available widgets, just not quite finished  
 
+---
+<div style='text-align: center;'>
+*Advertisement&nbsp;<sup><a href="/advertising">why?</a></sup>*
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+    style="display:block"
+    data-ad-format="fluid"
+    data-ad-layout-key="-gw-13-4l+6+pt"
+    data-ad-client="ca-pub-6185596049817878"
+    data-ad-slot="5627392164"></ins>
+<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
+---
+
 ###Configuration  
 These are ways of changing how the GUI looks or operates:  
 
-* **Arranging Widgets** - guidance on how to change the way widgets are laid out in the GUI  
-* **Grouping Widgets**a - various containers for grouping widgets together in a GUI  
-* **Changing Widgets** - how to change the way widgets look & act  
-* **GUI Options** - how to change the general appearance/set-up of the entire GUI  
-* **GUI Events** - how to get the GUI to respond to various user interactions or repeat things in the background   
-* **Drag'n Drop** - how to implement drag and drop functionality  
+* **GUI Options** - options for configuring general GUI settings  
+* **Widgets** - options for configuring the layout and look & feel of widgets  
+* **Events** - options for delaying actions, making them repeat or run in the background  
 * **Internationalisation** - how to support multiple languages in your GUI  
+* **Logging** - how to turn on/off appJar's logging capabilities  
+* **Command Line Arguments** - hw t use various command line arguments  
+* **ttk** - how to enable ttk support  
 
 ##Understanding the Docs  
 
 When I first started appJar, I didn't really know any Python. I grew up on Pascal & Java, followed by JavaScript & PHP - appjar is therefore all in [CamelCase](https://en.wikipedia.org/wiki/Camel_case).
 
-Also, because of this, the concept of [named parameters](https://en.wikipedia.org/wiki/Named_parameter) is also not really used (except in the more recent parts). Again, I learnt programming without this concept, and generally teach programming without this concept. You'll therefore find that sometimes you have to make two-or-three function calls, to acheive something that could be done with one - if I had more named parameters.
+Also, because of this, the concept of [named parameters](https://en.wikipedia.org/wiki/Named_parameter) is also not really used (except in the more recent parts). Again, I learnt programming without this concept, and generally teach programming without this concept. You'll therefore find that sometimes you have to make two-or-three function calls, to achieve something that could be done with one - if I had more named parameters.
 
 I've tried to keep function names standardised:
 
@@ -50,7 +60,7 @@ I've tried to keep function names standardised:
 * `.set XXX YYY()` - to change some property of something in the GUI  
 * `.get XXX()` - to get something from the GUI
 
-When the docs list the parameters available on a function, any with an `=` means they are optional, with the dafault being shown.  
+When the docs list the parameters available on a function, any with an `=` means they are optional, with the default being shown.  
 
 For example:  
 
@@ -74,6 +84,6 @@ Some functions have now been [deprecated](https://en.wikipedia.org/wiki/Deprecat
 
 ##Beta Code
 
-Some elements of appjar are in [beta](https://en.wikipedia.org/wiki/Software_release_life_cycle#BETA). This means you can use them, and they *generally* work - but you may come across issues or they may change in the future. Generally, the beta code works pretty well - it wouldn't be included if it didn't. But, equally, we know its not perfect - [drag'n drop](/pythonDnD) will keep growing & improving, and the [grid](/pythonDevWidgets/#grid) needs some work.  
+Some elements of appjar are in [beta](https://en.wikipedia.org/wiki/Software_release_life_cycle#BETA). This means you can use them, and they *generally* work - but you may come across issues or they may change in the future. Generally, the beta code works pretty well - it wouldn't be included if it didn't. But, equally, we know its not perfect - [drag'n drop](/pythonDnD) will keep growing & improving, and the [table](/pythonDevWidgets/#table) needs some work.  
 
 So, please use them, and let us know any issues or improvements you'd like...  
