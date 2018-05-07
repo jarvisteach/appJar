@@ -64,7 +64,7 @@ ToolTip = None
 nanojpeg = PngImageTk = array = None  # extra image support
 EXTERNAL_DND = None
 INTERNAL_DND = None
-types = None            # used to register dnd functions
+types = None  # used to register dnd functions
 winsound = None
 FigureCanvasTkAgg = Figure = None  # matplotlib
 parseString = TreeItem = TreeNode = None  # AjTree

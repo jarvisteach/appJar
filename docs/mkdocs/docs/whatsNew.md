@@ -11,7 +11,7 @@
     * [#446](https://github.com/jarvisteach/appJar/issues/446) - [Setting listboxes](/inputWidgets/#set-listboxes) now has better error checking  
     * [#445](https://github.com/jarvisteach/appJar/issues/445) - Ability to keep windows on [top](/pythonGuiOptions/#look-feel)  
     * [#442](https://github.com/jarvisteach/appJar/issues/442) - [SpinBoxes](inputWidgets/#spinbox) now call changeFucntion when changed manually  
-    * [#437](https://github.com/jarvisteach/appJar/issues/437) - Page discussing [multiple pages](/multiplePages)  
+    * [#437](https://github.com/jarvisteach/appJar/issues/437) - Page discussing how to manage [multiple pages](/multiplePages)  
     * [#436](https://github.com/jarvisteach/appJar/issues/436) - [TextAreas](/inputWidgets/#textarea) can now be programmatically cleared and set while disabled  
     * [#435](https://github.com/jarvisteach/appJar/issues/435) - [Messages](/outputWidgets/#message) have better documentation and a function to set the aspect ratio  
     * [#433](https://github.com/jarvisteach/appJar/issues/433) - Resolved issue with setting [properties](/simpleProperties) in Python2  
@@ -25,7 +25,7 @@
     * [#345](https://github.com/jarvisteach/appJar/issues/345) - New container: [FrameStack](/pythonWidgetGrouping/#frame-stack)  
     * [#339](https://github.com/jarvisteach/appJar/issues/339) - Functions to remove [toolbars](/pythonBars/#toolbar) and [statusbars](/pythonBars/#statusbar)  
     * [#333](https://github.com/jarvisteach/appJar/issues/333) - Can now fully hide/show/delete [tabs](/pythonWidgetGrouping/#tabbed-frame)  
-    * [#295](https://github.com/jarvisteach/appJar/issues/295) - New funciton to [set the BG](/inputWidgets/#set-entries) of the label in a validationEntry  
+    * [#295](https://github.com/jarvisteach/appJar/issues/295) - New function to [set the BG](/inputWidgets/#set-entries) of the label in a validationEntry  
     * [#69](https://github.com/jarvisteach/appJar/issues/69) - Basic functions for [tagging](/inputWidgets/#tag-textareas), [searching](/inputWidgets/#search-textareas) and changing [fonts](/inputWidgets/#textarea-fonts) in text areas  
 
 ## Version 0.92  
