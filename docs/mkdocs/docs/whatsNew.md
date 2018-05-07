@@ -5,6 +5,7 @@
 
 * Issues Resolved:
     * [#453](https://github.com/jarvisteach/appJar/issues/453) - [SubWindows](/pythonSubWindows) refactored 
+    * [#450](https://github.com/jarvisteach/appJar/issues/450) - Can now set the character used to [disable options](/inputWidgets/#set-optionboxes) in OptionBoxes  
     * [#449](https://github.com/jarvisteach/appJar/issues/449) - [updateListBox](/inputWidgets/#set-listboxes) now has a callFunction flag
     * [#447](https://github.com/jarvisteach/appJar/issues/447) - [Canvases](/outputWidgets/#canvas) now support clickable maps  
     * [#446](https://github.com/jarvisteach/appJar/issues/446) - [Setting listboxes](/inputWidgets/#set-listboxes) now has better error checking  

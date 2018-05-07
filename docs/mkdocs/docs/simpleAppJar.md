@@ -257,6 +257,7 @@ Setting this widget won't change the values, but change which one is selected.
 | selected | string/integer | None | Start with the specified item/position selected. |
 | checked | boolean | True | When setting the widget, this determines what to do to the specified value. None will delete the value. |
 | label | boolean/string | False | Adds a Label before the widget, either the label's title or the the text of this parameter. |
+| disabled | string | - | Sets the character used to indicate disabled menu options. |
 
 ## Spin  
 ---

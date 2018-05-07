@@ -708,6 +708,8 @@ def test_options():
     assert app.getOptionBox("l3") != LIST_THREE[1]
     assert app.getOptionBox("l3") is None
 
+    app.setOptionBoxDisabledChar("l3", "*")
+
     # call generic setter functions
     test_setters("OptionBox", "l1")
     test_setters("OptionBox", "tl1")
@@ -3497,7 +3499,7 @@ with gui("Simple Demo", transparency=50, padding=5, location="CENTER", bg="red")
 
 
     row=app4.gr()
-    app4.option("feelings", ["happy", "bored", "angry"], column=0, row=row, change=press)
+    app4.option("feelings", ["happy", "bored", "angry"], column=0, row=row, change=press, disabled="$")
     app4.option("feelings2", ["happy", "bored", "angry"], kind="ticks", column=0, row=row, change=press)
     app4.option("feelings3", ["happy", "bored", "angry"], column=0, row=row, change=press)
     app4.spin("feelings", ["happy", "bored", "angry"], change=changer, column=1, row=row, item="angry")

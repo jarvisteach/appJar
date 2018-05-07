@@ -5791,6 +5791,7 @@ class gui(object):
         override = kwargs.pop("override", False)
         checked = kwargs.pop("checked", True)
         selected = kwargs.pop("selected", None)
+        disabled = kwargs.pop("disabled", "-")
 
         try: self.widgetManager.verify(self.Widgets.OptionBox, title)
         except: # widget exists
@@ -5799,11 +5800,11 @@ class gui(object):
         else: # new widget
             kwargs = self._parsePos(kwargs.pop("pos", []), kwargs)
             if kind == "ticks":
-                if label: opt = self.addLabelTickOptionBox(title, value, *args, label=label, **kwargs)
-                else: opt = self.addTickOptionBox(title, value, *args, **kwargs)
+                if label: opt = self.addLabelTickOptionBox(title, value, *args, label=label, disabled=disabled, **kwargs)
+                else: opt = self.addTickOptionBox(title, value, *args, disabled=disabled, **kwargs)
             else:
-                if label: opt = self.addLabelOptionBox(title, value, *args, label=label, **kwargs)
-                else: opt = self.addOptionBox(title, value, *args, **kwargs)
+                if label: opt = self.addLabelOptionBox(title, value, *args, label=label, disabled=disabled, **kwargs)
+                else: opt = self.addOptionBox(title, value, *args, disabled=disabled, **kwargs)
                 if selected is not None: self.setOptionBox(title, selected)
 
         if len(kwargs) > 0:
@@ -5818,7 +5819,7 @@ class gui(object):
         opt.db = db
         return opt
 
-    def _buildOptionBox(self, frame, title, options, kind="normal"):
+    def _buildOptionBox(self, frame, title, options, kind="normal", disabled='-'):
         """ Internal wrapper, used for building OptionBoxes.
         It will use the kind to choose either a standard OptionBox or a TickOptionBox.
         ref: http://stackoverflow.com/questions/29019760/how-to-create-a-combobox-that-includes-checkbox-for-each-item
@@ -5865,6 +5866,7 @@ class gui(object):
         option.maxSize = maxSize
         option.inContainer = False
         option.options = options
+        option.disabled = disabled
 
         option.DEFAULT_TEXT=""
         if options is not None:
@@ -5908,7 +5910,7 @@ class gui(object):
         self.widgetManager.update(self.Widgets.TickOptionBox, title, vals, group=WidgetManager.VARS)
         option.kind = "ticks"
 
-    def addOptionBox(self, title, options, row=None, column=0, colspan=0, rowspan=0, **kwargs):
+    def addOptionBox(self, title, options, row=None, column=0, colspan=0, rowspan=0, disabled='-', **kwargs):
         """ Adds a new standard OptionBox.
         Simply calls internal function _buildOptionBox.
 
@@ -5917,11 +5919,11 @@ class gui(object):
         :returns: the created OptionBox
         :raises ItemLookupError: if the title is already in use
         """
-        option = self._buildOptionBox(self.getContainer(), title, options)
+        option = self._buildOptionBox(self.getContainer(), title, options, disabled=disabled)
         self._positionWidget(option, row, column, colspan, rowspan)
         return option
 
-    def addLabelOptionBox(self, title, options, row=None, column=0, colspan=0, rowspan=0, **kwargs):
+    def addLabelOptionBox(self, title, options, row=None, column=0, colspan=0, rowspan=0, disabled="-", **kwargs):
         """ Adds a new standard OptionBox, with a Label before it.
         Simply calls internal function _buildOptionBox, placing it in a LabelBox.
 
@@ -5931,12 +5933,12 @@ class gui(object):
         :raises ItemLookupError: if the title is already in use
         """
         frame = self._getLabelBox(title, **kwargs)
-        option = self._buildOptionBox(frame, title, options)
+        option = self._buildOptionBox(frame, title, options, disabled=disabled)
         self._packLabelBox(frame, option)
         self._positionWidget(frame, row, column, colspan, rowspan)
         return option
 
-    def addTickOptionBox(self, title, options, row=None, column=0, colspan=0, rowspan=0, **kwargs):
+    def addTickOptionBox(self, title, options, row=None, column=0, colspan=0, rowspan=0, disabled="-", **kwargs):
         """ Adds a new TickOptionBox.
         Simply calls internal function _buildOptionBox.
 
@@ -5945,11 +5947,11 @@ class gui(object):
         :returns: the created TickOptionBox
         :raises ItemLookupError: if the title is already in use
         """
-        tick = self._buildOptionBox(self.getContainer(), title, options, "ticks")
+        tick = self._buildOptionBox(self.getContainer(), title, options, kind="ticks", disabled=disabled)
         self._positionWidget(tick, row, column, colspan, rowspan)
         return tick
 
-    def addLabelTickOptionBox(self, title, options, row=None, column=0, colspan=0, rowspan=0, **kwargs):
+    def addLabelTickOptionBox(self, title, options, row=None, column=0, colspan=0, rowspan=0, disabled="-", **kwargs):
         """ Adds a new TickOptionBox, with a Label before it
         Simply calls internal function _buildOptionBox, placing it in a LabelBox
 
@@ -5959,7 +5961,7 @@ class gui(object):
         :raises ItemLookupError: if the title is already in use
         """
         frame = self._getLabelBox(title, **kwargs)
-        tick = self._buildOptionBox(frame, title, options, "ticks")
+        tick = self._buildOptionBox(frame, title, options, kind="ticks", disabled=disabled)
         self._packLabelBox(frame, tick)
         self._positionWidget(frame, row, column, colspan, rowspan)
         return tick
@@ -6004,7 +6006,7 @@ class gui(object):
         :returns: None
         """
         for pos, item in enumerate(box.options):
-            if item.startswith("-"):
+            if item.startswith(box.disabled):
                 box["menu"].entryconfigure(pos, state="disabled")
             else:
                 box["menu"].entryconfigure(pos, state="normal")
@@ -6150,6 +6152,11 @@ class gui(object):
         """
         for k in self.widgetManager.group(self.Widgets.OptionBox):
             self.clearOptionBox(k, callFunction)
+
+    def setOptionBoxDisabledChar(self, title, disabled="-"):
+        box = self.widgetManager.get(self.Widgets.OptionBox, title)
+        box.disabled = disabled
+        self._disableOptionBoxSeparators(box)
 
     def setOptionBox(self, title, index, value=True, callFunction=True, override=False):
         """ Main purpose is to select/deselect the item at the specified position

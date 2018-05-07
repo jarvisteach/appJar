@@ -1,3 +1,5 @@
+import sys
+sys.path.append("../")
 from appJar import gui
 options=["Blur", "Queen", "Oasis", "One Direction"]
 app=gui("OptionBox Demo", "200x200")
