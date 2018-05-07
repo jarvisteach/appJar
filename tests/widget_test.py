@@ -3420,7 +3420,7 @@ def test_gui4(btn=None):
 def changer(btn=None):
     print(btn)
 
-with gui("Simple Demo") as app4:
+with gui("Simple Demo", transparency=50, padding=5, location="CENTER", bg="red") as app4:
     app4.toolbar(["a", "b", "file", "open"], changer, findIcon=True, pinned=False, hidden=False, disabled=True)
 
     app4.status(header="header", fields=3, side="RIGHT", bg='red', fg='green', width=40)

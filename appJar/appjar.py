@@ -647,13 +647,13 @@ class gui(object):
         # an array to hold any threaded events....
         self.events = []
         self.pollTime = 250
-        self.built = True
         self._fastStop = False
-
         self.configure(**kwargs)
 
         # special bindings
         self._globalBindings()
+
+        self.built = True
 
     def _globalBindings(self):
         def _selectEntry(event):

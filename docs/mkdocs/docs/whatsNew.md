@@ -13,6 +13,7 @@
     * [#437](https://github.com/jarvisteach/appJar/issues/437) - Page discussing [multiple pages](/multiplePages)  
     * [#436](https://github.com/jarvisteach/appJar/issues/436) - [TextAreas](/inputWidgets/#textarea) can now be programmatically cleared and set while disabled  
     * [#435](https://github.com/jarvisteach/appJar/issues/435) - [Messages](/outputWidgets/#message) have better documentation and a function to set the aspect ratio  
+    * [#433](https://github.com/jarvisteach/appJar/issues/433) - Resolved issue with setting [properties](/simpleProperties) in Python2  
     * [#429](https://github.com/jarvisteach/appJar/issues/429) - [TabbedFrames](/pythonWidgetGrouping/#tabbed-frame) & [PagedWindows](/pythonWidgetGrouping/#paged-window) now use [FrameStacks](/pythonWidgetGrouping/#frame-stack)  
     * [#425](https://github.com/jarvisteach/appJar/issues/425) - Updated docs on [geometry](/pythonGuiOptions/#size-location)  
     * [#422](https://github.com/jarvisteach/appJar/issues/422) - [TickOptionBoxes](/inputWidgets/#add-optionboxes) now return their name when changed  
