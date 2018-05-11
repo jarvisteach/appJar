@@ -85,6 +85,132 @@ with gui("FRAME DEMO", "250x150", bg='yellow') as app:
 * `.openFrame(title)`  
     Used to reopen the named *Frame*.  
 
+#### Juggling Frames  
+* `.raiseFrame(name)`  
+    Lifts the named frame to the top of the grid stack.  
+    If two frames are placed in the same grid square, this is used to determine which is on top.  
+    By default, the last frame added is on top.  
+
+```python
+from appJar import gui 
+
+with gui() as app:
+    with app.frame("ONE", 0,0):
+        app.label("In frame one")
+    with app.frame("TWO", 0,0):
+        app.label("In frame two")
+
+    app.buttons(["ONE", "TWO"], app.raiseFrame)
+```
+
+### Frame Stack
+---
+
+A way of having mutiple frames on top of each other, with all but one hidden.  
+Each frame is created and added to the stack. Then they can be navigated through, using `first`, `next`, `prev` and `last`.  
+
+```python
+from appJar import gui
+
+def press(btn):
+    if btn == "FIRST": app.firstFrame("Pages")
+    elif btn == "NEXT": app.nextFrame("Pages")
+    elif btn == "PREV": app.prevFrame("Pages")
+    elif btn == "LAST": app.lastFrame("Pages")
+
+app=gui("FRAME STACK")
+
+app.startFrameStack("Pages")
+
+app.startFrame()
+for i in range(5):
+    app.addLabel("Text: " + str(i))
+app.stopFrame()
+
+app.startFrame()
+for i in range(5):
+    app.addEntry("e" + str(i))
+app.stopFrame()
+
+app.startFrame()
+for i in range(5):
+    app.addButton(str(i), None)
+app.stopFrame()
+
+app.stopFrameStack()
+
+app.addButtons(["FIRST", "PREV", "NEXT", "LAST"], press)
+app.go()
+```
+Or in v1.0:  
+
+```python
+from appJar import gui 
+
+def press(btn):
+    if btn == "FIRST": app.firstFrame("Pages")
+    elif btn == "NEXT": app.nextFrame("Pages")
+    elif btn == "PREV": app.prevFrame("Pages")
+    elif btn == "LAST": app.lastFrame("Pages")
+
+with gui("FRAME STACK") as app:
+    with app.frameStack("Pages", start=0):
+        with app.frame():
+            for i in range(5):
+                app.label("Text: " + str(i))
+        with app.frame():
+            for i in range(5):
+                app.entry("e" + str(i))
+        with app.frame():
+            for i in range(5):
+                app.button(str(i), None)
+
+    app.buttons(["FIRST", "PREV", "NEXT", "LAST"], press)
+```
+
+#### Start/Stop Frame Stacks  
+* `.startFrameStack(title, change=None, start=-1)` & `.stopFrameStack()`  
+    Used to start & stop a *FrameStack*  
+    Multiple *Frames* should be added to the *FrameStack* and can then be navigated through.  
+    Set `start` to the frame you want initially displayed. Defaults to the last frame added.  
+    Set `change` to a function to call when the *FrameStack* is changed.  
+
+* `.openFrameStack(title)`  
+    Used to reopen the named *FrameStack*, for later modification.  
+
+* `.setFrameStackChangeFunction(title, function)`  
+    Sets a function to call whenever the *FrameStack* is changed.  
+    If this function returns `False`, then the frame won't change (if it returns nothing, then it will change).  
+    Useful when used in conjunction with `.getPreviousFrame(title)` as checks can be run before allowing the user to progress.  
+
+* `.setStartFrame(title, num)`  
+    Sets the frame that will be displayed when the GUI starts.  
+
+#### Navigating Frame Stacks  
+* `.frameStackAtStart(title)` & `.frameStackAtEnd(title)`  
+    Returns True/False if the FrameStack is showing the first/last Frame.  
+
+* `.nextFrame(title, callFunction=True)`  
+    Display the next frame in the stack.  
+
+* `.prevFrame(title, callFunction=True)`  
+    Display the previous frame in the stack.  
+
+* `.firstFrame(title, callFunction=True)`  
+    Display the first frame in the stack.  
+
+* `.lastFrame(title, callFunction=True)`  
+    Display the last frame in the stack.  
+
+* `.selectFrame(title, num, callFunction=True)`  
+    Display the frame ay the specified position in the stack (starting at 0).  
+
+* `.getPreviousFrame(title)` & `.getCurrentFrame(title)`  
+    Returns the frame number of the previously shown and currently show frame.  
+
+* `.countFrames(title)`  
+    Returns the number of frames in the stack.  
+
 ### Label Frame
 ---
 
@@ -116,19 +242,20 @@ app.go()
 ```
 
 #### Start/Stop Label Frames  
-* `.startLabelFrame(name, hideTitle=False)` & `.stopLabelFrame()`  
+* `.startLabelFrame(title, hideTitle=False, label=None)` & `.stopLabelFrame()`  
     Used to start and stop a *LabelFrame*  
     The specified title will be used as the label for the frame.  
-    Set hideTitle to be True if you don;t want to show a title.  
+    Set `label` if you want to show a different label for the frame.  
+    Set `hideTitle` to be True or `label` to be an empty String if you don't want to show a title.  
 
 * `.openLabelFrame(title)`  
     Used to reopen the named *LabelFrame*, for later modification.  
 
 #### Set Label Frames  
-* `.setLabelFrameTitle(name, newTitle)`  
+* `.setLabelFrameTitle(title, newTitle)`  
     Used to change the label displayed in the *LabelFrame*.  
 
-* `.setLabelFrameAnchor(name, position)`  
+* `.setLabelFrameAnchor(title, position)`  
     Used to change the position of the label on the *LabelFrame*.  
     Use compass coordinates, eg. `"ne"` or `"sw"`.  
 
@@ -147,7 +274,7 @@ Allows you to have more widgets than will fit on the screen, or have a smaller w
 ```python
 from appJar import gui 
 
-app=gui("SCROLLPABE DEMO", "150x150")
+app=gui("SCROLLABLE DEMO", "150x150")
 
 app.startScrollPane("PANE")
 for x in range(10):
@@ -313,6 +440,63 @@ Or `.setTabBg(title, tab, 'colour')` at other times.
 * `.getTabbedFrameSelectedTab(title)`  
     Gets the name of the currently selected tab, for the named TabFrame.  
 
+### Notebook
+---
+**NB.** This will only work with [ttk](pythonTtk) enabled.  
+**NB.** *Notes* have a different [stickiness](/pythonWidgetLayout/#widget-positioning) to the *appJar* GUI - they only stick widgets to the `w` (left) side.
+If you want your widgets to stretch across the *Note*, like the rest of *appJar*, you will need to call `app.setSticky("ew")` after starting the *Note*.
+
+Similar to the [*Tabbed Frame*](/pythonWidgetGrouping/#tabbed-frame), it is a way of placing widgets in different tabs or 'notes'.
+Position the *Notebook* within the grid, start a *Note*, then position widgets inside the *Note*.
+
+![Notebook](img/layouts/1_notebook.png)
+
+```python
+from appJar import gui
+
+app = gui("Notebook", useTtk=True)
+
+app.setTtkTheme("clam")
+
+app.startNotebook("Notebook")
+
+app.startNote("Note 1")
+app.addLabel("l1", "Note 1")
+app.stopNote()
+
+app.startNote("Note 2")
+app.addLabel("l2", "Note 2")
+app.stopNote()
+
+app.startNote("Note 3")
+app.addLabel("l3", "Note 3")
+app.stopNote()
+
+app.stopNotebook()
+
+app.go()
+```
+
+#### Start/Stop Notebooks
+* `.startNotebook(name)` & `.stopNotebook()`  
+    Used to start & stop *Notebooks*, with the specified name.
+
+* `.startNote(name)` & `.stopNote()`  
+    Used to start & stop each of the notes in the *Notebook*.
+
+#### Set Notebooks
+* `.getNotebookWidget(name).select([index])`  
+    Change the currently selected note, by putting the *Notebook's* name in `name` and putting the index of the note as an integer in `index`.  
+    Eg. To change the selected note to Note 3, then the index would be 2 (as 0 is the first note).
+
+#### Styles & Colours
+* You will need to use a [ttk Style and Map](/pythonTtk/#styling-ttk-widgets) to change the colour of notebook widget or its tabs.
+
+* To change the style for the Notebook widget, use `TNotebook`.
+
+* To change the style for the Notebook Tabs, use `TNotebook.Tab`.
+
+
 ### Paned Frame
 ---
 A way to present re-sizable panes, separated by drag-bars.  
@@ -463,7 +647,7 @@ from appJar import gui
 app=gui()
 
 app.setBg("DarkKhaki")
-app.setGeometry(280,400)
+app.setSize(280,400)
 
 app.startPagedWindow("Main Title")
 app.startPage()

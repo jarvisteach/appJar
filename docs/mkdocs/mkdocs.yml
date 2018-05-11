@@ -26,6 +26,7 @@ pages:
     - Sounds: pythonSound.md
     - Grouping Widgets: pythonWidgetGrouping.md
     - Multiple Windows: pythonSubWindows.md
+    - Multiple Pages: multiplePages.md
     - Splashscreen: splash.md
     - Special Characters: specialCharacters.md
 - Configuration:
@@ -55,6 +56,7 @@ pages:
     - Packaging: packaging.md
     - License: License.md
     - Support: Support.md
+    - Limitations: appJarLimitations.md
     - Acknowledgements: Thanks.md
     - Advertising: advertising.md
     - Contributing: contributing.md

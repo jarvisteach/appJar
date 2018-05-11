@@ -156,6 +156,14 @@ Unlink the specified key from any functions bound to it.
 * `.unbindKeys(keys)`  
 Unlink the specified keys from any functions bound to them.
 
+## Starting the GUI
+---
+
+If you want to call a function once the GUI starts, you can register it with the following call:  
+
+* `.setStartFunction(function)`  
+    Set a function to call when the GUI starts up.  
+
 ## Stopping the GUI
 ---
 Usually the user just presses the **close icon** to stop the GUI.  

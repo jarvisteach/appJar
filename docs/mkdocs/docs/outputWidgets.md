@@ -101,7 +101,9 @@ See the relevant section for a description of what the widget does.
 
 ## Message
 ____
-Similar to a Label, except it will wrap the text over multiple lines.  
+Very similar to a Label, except it will wrap the text over multiple lines.  
+By default the text is laid out 50% wider than it is high.  
+This can be changed by setting a specific `width` or by changing the `aspect` ratio.  
 
 ![Message](img/1_mess.png)  
 
@@ -130,6 +132,15 @@ app.go()
 
 * `.setMessage(title, text)`  
     Sets the contents of the specified Message widget, to the specified text.  
+
+* `.setMessageAspect(title, aspect)`  
+    Sets the aspect ratio at which text is wrapped.  
+    The default is 150, which means the text will be 50% wider than it is high.  
+    Ignored if a `width` has been set.  
+
+* `.setMessageWidth(title, width)`  
+    Sets the number of characters per line for the widget.  
+    If not set, width is calculated using the default aspect ratio.  
 
 ## Meter  
 ---
@@ -248,9 +259,23 @@ app.go()
 
 ## Canvas
 ---
-This lets you embed a canvas in appJar
+This lets you embed a canvas in appJar.  
+Canvases are very powerful, appJar will never provide wrappers for all their functions.  
+So, if you're looking to truly harness a canvas, add it and save the widget as a variable: `canvas = app.addCanvas("c1")`. Then, you can call all the canvas functions as you would a tKinter canvas.
 
 ![Canvas](img/1_canvas.png)  
+
+```python
+from appJar import gui
+app=gui()
+app.addCanvas("c1")
+app.addCanvasOval("c1", 10, 10, 100, 100, fill="red", outline="blue", width=3)
+app.addCanvasLine("c1", 0, 0, 255, 255, width=5)
+app.addCanvasLine("c1", 0, 255, 255, 0, dash=123)
+app.go()
+```
+
+Or, as mentioned above, you can work directly with the canvas object:  
 
 ```python
 from appJar import gui
@@ -268,7 +293,24 @@ app.go()
 * `.getCanvas(title)`  
     Gets the specified canvas widget.  
 
+#### Setting a Canvas  
+
+* `.setCanvasMap(title, func, coords)`  
+    It is possible to set up a simple CanvasMap - a clickable canvas, with names linked to different areas.
+    When one of those areas is clicked, a function will be called, passing the name of the area as a parameter.
+    `coords` must contain a dictionary of areas on the map.
+    When a position on the canavs is clicked, in one of the areas, the named function will be called, passing in the area's name.
+    When an unknown position on the canavs is clicked, UNKNOWN will be passed to the function, along with the coordinates.
+
 #### Drawing on a Canvas  
+
+**NB.** each of these functions returns the object being created, so you can later change it:
+
+```python
+canvas = app.addCanvas("c1")
+rect = app.addCanvasRectangle("c1", x=40, y=80, w=100, h=100, fill='green')
+canvas.itemconfig(rect, fill='pink')
+```
 
 * `.addCanvasCircle(title, x, y, diameter, **kwargs)`  
     Draws a circle on the canvas.  

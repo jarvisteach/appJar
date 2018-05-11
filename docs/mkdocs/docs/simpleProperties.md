@@ -34,7 +34,8 @@ app.label('transLab', app.transparency)
 | title | string | Pass a string to display in the title bar of the GUI |
 | icon | string | Pass the path to an icon file, to display in the title bar - only works on Windows. |
 | transparency | integer | Pass a percentage (between 0 & 100) to set the transparency, of the GUI (not on Linux). |
-| visible | boolean | Pass either a boolean to hide or show the GUI. |
+| visible | boolean | Pass a boolean to hide or show the GUI. |
+| top | boolean | Pass a boolean to keep the GUI on top or not. |
 | | | | |
 
 ### Padding
@@ -89,6 +90,7 @@ app.label('transLab', app.transparency)
 | --------- | --------- | ------------|
 | editMenu | Boolean | Enables and disables the right-click edit menu for text based widgets. |
 | stopFunction | function | (no GETTER) Sets a function to call when the GUI is closed. |
+| startFunction | function | (no GETTER) Sets a function to call when the GUI starts up. |
 | fastStop | Boolean | Set this to True if you have a **LOT** of widgets, and stopping appJar has gotten slow (doesn't work from IDLE). |
 | enterKey | function | (no GETTER) Sets or disables (pass None) a function bound to the enter key. |
 | logLevel | string | Sets the logging level. |

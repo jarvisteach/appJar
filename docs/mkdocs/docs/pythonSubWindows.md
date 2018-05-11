@@ -70,6 +70,9 @@ app.go(startWindow="Login")
     If it is set as *modal* the parent window will become uninteractive until the *SubWindow* is closed.  
     If `hide` is set to True, all other *SubWindows* will be hidden.  
 
+* `.showAllSubWindows()`  
+    Will show all *SubWindows*.  
+
 * `.hideSubWindow(title, useStopFunction=False)` & `.confirmHideSubWindow(title)`  
     Used to hide the specified *SubWindow*.  
     This will not destroy the *SubWindow*, so it can be shown again later.  
@@ -103,7 +106,7 @@ Simply call those functions after starting a *SubWindow*.
 ```python
 app.startSubWindow("one", modal=True)
 app.setBg("orange")
-app.setGeometry("400x400")
+app.setSize(400, 400)
 app.setTransparency(25)
 app.setStopFunction(checkDone)
 app.addLabel("l1", "In sub window")

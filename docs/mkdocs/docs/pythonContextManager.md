@@ -1,4 +1,4 @@
-# The Power of WITH  
+# The power of WITH  
 *Using ContextManagers to make GUIs even easier.*  
 
 ---
@@ -40,20 +40,6 @@ The old start/stop functions all still exist, so there is no need to use the `wi
 
 An added bonus, is that the same syntax works for starting a container or opening a container!
 
----
-<div style='text-align: center;'>
-*Advertisement&nbsp;<sup><a href="/advertising">why?</a></sup>*
-<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-<ins class="adsbygoogle"
-    style="display:block"
-    data-ad-format="fluid"
-    data-ad-layout-key="-gw-13-4l+6+pt"
-    data-ad-client="ca-pub-6185596049817878"
-    data-ad-slot="5627392164"></ins>
-<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-</div>
----
-
 ## Available Containers
 ---
 
@@ -65,7 +51,7 @@ def press(btn):
         app.addLabel("newLab", "New Label")
 
 with gui() as app:
-    app.setGeometry(250, 300)
+    app.setSize(250, 300)
     with app.pagedWindow("pages"):
         with app.page():
             app.addLabel("l1", "Page One")
@@ -79,10 +65,11 @@ with gui() as app:
 The following can all be used in the same format to *start* or *open* a container:  
 Have a look on the [containers page](/pythonWidgetGrouping) for usage information.  
 
+* `.frame(title)`  
+* `.frameStack(title)`  
 * `.labelFrame(title, hideTitle=False)`  
 * `.toggleFrame(title)`  
 * `.scrollPane(title)`  
-* `.frame(title)`  
 * `.tabbedFrame(title)`  
 * `.tab(title, tabTitle=None)`  
 * `.panedFrame(title)`  

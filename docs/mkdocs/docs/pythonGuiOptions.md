@@ -13,11 +13,15 @@ Some basic configuration for the size, position, transparency, etc. of the GUI.
     Sets the title of the GUI. By default, it is the name of the script.
 
 * `.setIcon(fileName)`  
-    Sets an icon for the GUI.
-    If you want to disable the icon, set the `showIcon` flag to True, when you call appJar's constructor.  
+    Sets an icon for the GUI.  
+    If you want to disable the icon, set the `showIcon` flag to False, when you call appJar's constructor.  
 
 * `.setTransparency(percentage)`  
-    Sets how transparent the GUI is. Between 0 and 100%.
+    Sets how transparent the GUI is.  
+    Between 0 and 100%.  
+
+* `.setOnTop(stay=True)`  
+    Configure the GUI to always stay on top of other windows.  
 
 ###Size & Location
 
@@ -27,23 +31,23 @@ Some basic configuration for the size, position, transparency, etc. of the GUI.
     You can have a menu or logon SubWindow that hides/shows the main window as necessary.  
     **NB.** hiding the window, effectively minimizes it, it is still there...
 
-* `.setGeometry(geom)` & `.setGeometry(width, height)`  
+* `.setSize(size)` & `.setSize(width, height)`  
     Sets the height & width of the GUI:  
-    * Either as a single String `.setGeometry("200x100")` (widthxheight)  
-    * As two separate parameters `.setGeometry(200,100)`
-    * Or to go *Fullscreen* `.setGeometry("Fullscreen")`  
+    * Either as a single String `.setSize("200x100")` (widthxheight)  
+    * As two separate parameters `.setSize(200,100)`  
+    * Or to go *Fullscreen* `.setSize("Fullscreen")`  
 
 * `.exitFullscreen()`  
-    Leave fullscreen, if set in the geometry.    
-    Returns True/False - if the app was able to leave fullscreen.
-    Can be called safely, even if app is not in fullscreen:
+    Leave fullscreen, if set in the above.  
+    Returns True/False - if the app was able to leave fullscreen.  
+    Can be called safely, even if app is not in fullscreen:  
     `<Escape>` will call this automatically, while in fullscreen.  
 
 ```python
 if app.exitFullscreen():
     # do something
 else:
-    app.setGeometry("fullscreen")
+    app.setSize("fullscreen")
     # do something else
 ```   
 

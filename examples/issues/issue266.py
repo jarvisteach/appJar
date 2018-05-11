@@ -6,7 +6,7 @@ DB_NAME = "issue266.db"
 types = ["NULL", "INTEGER", "REAL", "TEXT", "BLOB"]
 
 def press(btn):
-#    print(app.getTableSelectedCells("table"))
+    print(app.getTableSelectedCells("table"))
     if btn == 'REFRESH':
         app.refreshDbTable('table')
 

@@ -1,6 +1,33 @@
 #Change-Log
 ---
 
+## Version 0.93  
+
+* Issues Resolved:
+    * [#453](https://github.com/jarvisteach/appJar/issues/453) - [SubWindows](/pythonSubWindows) refactored 
+    * [#450](https://github.com/jarvisteach/appJar/issues/450) - Can now set the character used to [disable options](/inputWidgets/#set-optionboxes) in OptionBoxes  
+    * [#449](https://github.com/jarvisteach/appJar/issues/449) - [updateListBox](/inputWidgets/#set-listboxes) now has a callFunction flag
+    * [#447](https://github.com/jarvisteach/appJar/issues/447) - [Canvases](/outputWidgets/#canvas) now support clickable maps  
+    * [#446](https://github.com/jarvisteach/appJar/issues/446) - [Setting listboxes](/inputWidgets/#set-listboxes) now has better error checking  
+    * [#445](https://github.com/jarvisteach/appJar/issues/445) - Ability to keep windows on [top](/pythonGuiOptions/#look-feel)  
+    * [#442](https://github.com/jarvisteach/appJar/issues/442) - [SpinBoxes](inputWidgets/#spinbox) now call changeFucntion when changed manually  
+    * [#437](https://github.com/jarvisteach/appJar/issues/437) - Page discussing how to manage [multiple pages](/multiplePages)  
+    * [#436](https://github.com/jarvisteach/appJar/issues/436) - [TextAreas](/inputWidgets/#textarea) can now be programmatically cleared and set while disabled  
+    * [#435](https://github.com/jarvisteach/appJar/issues/435) - [Messages](/outputWidgets/#message) have better documentation and a function to set the aspect ratio  
+    * [#433](https://github.com/jarvisteach/appJar/issues/433) - Resolved issue with setting [properties](/simpleProperties) in Python2  
+    * [#429](https://github.com/jarvisteach/appJar/issues/429) - [TabbedFrames](/pythonWidgetGrouping/#tabbed-frame) & [PagedWindows](/pythonWidgetGrouping/#paged-window) now use [FrameStacks](/pythonWidgetGrouping/#frame-stack)  
+    * [#425](https://github.com/jarvisteach/appJar/issues/425) - Updated docs on [geometry](/pythonGuiOptions/#size-location)  
+    * [#422](https://github.com/jarvisteach/appJar/issues/422) - [TickOptionBoxes](/inputWidgets/#add-optionboxes) now return their name when changed  
+    * [#421](https://github.com/jarvisteach/appJar/issues/421) - [SelectableLabels](/outputWidgets/#add-labels) now allow alignment setting  
+    * [#415](https://github.com/jarvisteach/appJar/issues/415) - Disable Entry now disables all of a file/directory [entry](/inputWidgets/#entry)  
+    * [#402](https://github.com/jarvisteach/appJar/issues/402) - Now possible to register a function to call once the GUI [starts up](/pythonEvents/#starting-the-gui)  
+    * [#377](https://github.com/jarvisteach/appJar/issues/377) - [Auto-Labelled Widgets](/inputWidgets/#auto-labelled-widgets) now have configurable labels  
+    * [#345](https://github.com/jarvisteach/appJar/issues/345) - New container: [FrameStack](/pythonWidgetGrouping/#frame-stack)  
+    * [#339](https://github.com/jarvisteach/appJar/issues/339) - Functions to remove [toolbars](/pythonBars/#toolbar) and [statusbars](/pythonBars/#statusbar)  
+    * [#333](https://github.com/jarvisteach/appJar/issues/333) - Can now fully hide/show/delete [tabs](/pythonWidgetGrouping/#tabbed-frame)  
+    * [#295](https://github.com/jarvisteach/appJar/issues/295) - New function to [set the BG](/inputWidgets/#set-entries) of the label in a validationEntry  
+    * [#69](https://github.com/jarvisteach/appJar/issues/69) - Basic functions for [tagging](/inputWidgets/#tag-textareas), [searching](/inputWidgets/#search-textareas) and changing [fonts](/inputWidgets/#textarea-fonts) in text areas  
+
 ## Version 0.92  
 
 * Issues Resolved:
@@ -43,6 +70,7 @@
 * More [ttk](/pythonTtk) improvements - grouped widgets now work, introduced external themes.  
 
 * Issues Resolved:
+    * [#356](https://github.com/jarvisteach/appJar/issues/356) - Updated documentation - widgets page split into [input](/inputWidgets) & [output](/outputWidgets) pages  
     * [#344](https://github.com/jarvisteach/appJar/issues/344) - [labels](/outputWidgets/#add-labels) now display the title when no text is provided, instead of an empty label.  
     * [#343](https://github.com/jarvisteach/appJar/issues/343) - new parameter for appJar constructor: `showIcon` allows the icon to be ignored when running Windows
     * [#340](https://github.com/jarvisteach/appJar/issues/340) - introduced [GUI properties](/simpleAppJar) for most settings  

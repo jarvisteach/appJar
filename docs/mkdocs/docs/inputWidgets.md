@@ -85,6 +85,9 @@ Each of these will add the specified type of Entry, using the title provided.
 * `.setValidationEntry(title, state="valid")`  
     Same as above, set flag to one of `valid`, `invalid` or `wait`.  
 
+* `.setValidationEntryLabelBg(title, bg)`  
+    This allows you to change the colour of the validation label, in a validation entry.  
+
 * `.setAutoEntryNumRows(title, rows)`  
     This will set the number of rows to display in an AutoEntry.  
     NB. this is limited to the depth of the GUI - if there is no space, then no rows will be displayed. 
@@ -119,7 +122,7 @@ Each of these will add the specified type of Entry, using the title provided.
     This will return the contents of all Entries in the app, as a dictionary.  
     NB. *numericEntries* always return a float.  
 
-##TextArea
+## TextArea
 ____
 Similar to an Entry, but allows you to type text over multiple lines.  
 
@@ -133,16 +136,16 @@ app.addTextArea("t1")
 app.go()
 ```
 
-####Add TextAreas
-* `.addTextArea(title)`  
+#### Add TextAreas
+* `.addTextArea(title, text=None)`  
     Adds an empty TextArea, with the specified title.  
 
-* `.addScrolledTextArea(title)`  
+* `.addScrolledTextArea(title, text=None)`  
     Adds a scrollable TextArea with the specified title.  
 
 ![ScrolledTextArea](img/2_textArea.png)  
 
-####Set TextAreas
+#### Set TextAreas
 * `.setTextArea(title, text, end=True, callFunction=True)`  
     Adds the supplied text to the specified TextArea.  
     By default, the text is added to the end.  
@@ -157,13 +160,108 @@ app.go()
     This will clear the contents of all TextAreas in the app.  
     Set ```callFunction``` to be True, if you want to call any associated functions.  
 
-####Get TextAreas
+* `.highlightTextArea(title, start, end=END)`  
+    Highlights all text from start position, to the end position (defaults to the end of the text area).  
+    **NB.** positions should be a string in the format `LINE.CHAR`, eg. `1.4` wil start on the 1st line at the 4th character.  
+
+#### Get TextAreas
 
 * `.getTextArea(title)`  
     Gets the contents of the specified TextArea.  
 
 * `.getAllTextAreas()`  
     This will return the contents of all TextAreas in the app, as a dictionary.  
+
+#### Search TextAreas
+
+* `.searchTextArea(title, pattern, start=None, stop=None, nocase=True, backwards=False)`  
+    Will find, highlight and return the position of the specified pattern.  
+    If no `start` position is provided, appJar will start searching form the cursor's position.  
+    Set `nocase` to False, if you want the search to be case sensitive.  
+    Set `backwards` to True, if you want to search backwards.  
+
+#### TextArea Fonts  
+
+Fonts are tricky on TextAreas, it's currently not possible to have different font sizes & families on different parts of a TextArea.  
+However, it is possible to make parts of the TextArea **bold**, **italic** or **underlined**.  
+
+* `.setTextAreaFont(title, **kwargs)` 
+    Used to change the family and size of the named TextArea's font.  
+    Pass `font` with a number to change the size of all text in the TextArea.  
+    Pass `family` with a strinf to change the font-family of all text in the TextArea.  
+
+* `.textAreaApplyFontRange(title, tag, start, end=END)`  
+    Apply the specified font styling to the specified range.  
+    The tag should be one of **BOLD**, **ITALIC** or **BOLD_ITALIC** - it will replace the previous font tag.  
+    Additionally, the **UNDERLINE** tag can be used alongside the above.  
+
+* `.textAreaApplyFontSelected(title, tag)`  
+    Apply the specified font styling to the currently selected text.  
+
+* `.textAreaToggleFontRange(title, tag, start, end=END)`  
+    Invert the named tag on the specified range.  
+
+* `.textAreaToggleFontSelected(title, tag)`  
+    Invert the named tag on the selected text.  
+
+#### Tag TextAreas  
+
+A simple syntax highlighter:  
+
+```python
+from appJar import gui
+
+redWords = ("string", "integer", "boolean", "real")
+greenWords = ("print", "input")
+
+def highlightSyntax(param):
+    for w in redWords:
+        app.tagTextAreaPattern("ta", "red", w)
+    for w in greenWords:
+        app.tagTextAreaPattern("ta", "green", w)
+
+with gui("Text Editor", "300x400") as app:
+    app.text("ta", focus=True, change=highlightSyntax)
+    app.tagTextArea("ta", "red", background="red", foreground="white")
+    app.tagTextArea("ta", "green", background="green", foreground="white")
+```
+
+* `.textAreaCreateTag(title, **kwargs)`  
+    Create the named tag, with the specified arguments.  
+
+* `.textAreaChangeTag(title, **kwargs)`  
+    Change the named tag, with the specified arguments.  
+
+* `.textAreaDeleteTag(title, *tags)`  
+    Delete the named tags.  
+
+* `.textAreaTagPattern(title, tag, pattern, regexp=False)`  
+    Apply a previously made tag to the specified pattern.  
+    Set `regexp` to True if you want to use a regular expression.  
+
+* `.textAreaTagRange(title, tag, start, end)`  
+    Apply a previously made tag to the specified range.  
+
+* `.textAreaTagSelected(title, tag)`  
+    Apply a previously made tag to the currently selected text.  
+
+* `.textAreaUntagRange(title, tag, start, end)`  
+    Remove the named tag from the specified range.  
+
+* `.textAreaUntagSelected(title, tag)`  
+    Remove the named tag from the selected text.  
+
+* `.textAreaToggleTagRange(title, tag, start, end)`  
+    Invert the named tag on the specified range.  
+
+* `.textAreaToggleTagSelected(title, tag)`  
+    Invert the named tag on the selected text.  
+
+* `.getTextAreaTags(title)`  
+    Gets a list of all tags on the text area.  
+
+* `.getTextAreaTag(title)`  
+    Gets all details about the specified tag.  
 
 ##Button
 ---
@@ -436,6 +534,9 @@ app.go()
     Set ```callFunction``` to be False, if you don't want to call any associated functions.  
     By default, you can't select a disabled item. You can change this by setting `override` to be True.  
 
+* `.setOptionBoxDisabledChar(title, disabled="-")`  
+    Set the character used to indicate disabled options.  
+
 * `.renameOptionBoxItem(title, item, newName, callFunction=False)`  
     This will rename the specified item in the named OptionBox.  
     Set ```callFunction``` to be True, if you want to call any associated `change` functions.  
@@ -564,9 +665,10 @@ app.go()
     This will remove all items from all ListBoxes in the app.  
     Set ```callFunction``` to be True, if you want to call any associated functions.  
 
-* `.updateListBox(title, items, select=False)`  
+* `.updateListBox(title, items, select=False, callFunction=True)`  
     Replace the contents of the specified ListBox with the new values.  
     If you set `select` to be True, the last item in the list will be selected.  
+    Set ```callFunction``` to be False, if you don't want to call any associated functions.  
 
 ```python
 from appJar import gui

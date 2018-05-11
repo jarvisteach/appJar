@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import sys
 import time
 import datetime
@@ -38,6 +39,20 @@ LIST_THREE = ["", "v", "- d -", "s", "t", "z"]
 
 HASH_ONE = {"a": True, "b": False, "c": True}
 HASH_TWO = {"x": False, "y": True, "z": False}
+
+# used for checking change function has been called...
+CHANGE_FUNCTION_VAR=False
+
+def CHANGE_FUNCTION():
+    global CHANGE_FUNCTION_VAR
+    CHANGE_FUNCTION_VAR = True
+
+def CHECK_CHANGE_FUNCTION(value=True):
+    global CHANGE_FUNCTION_VAR
+    time.sleep(0.1)
+    assert CHANGE_FUNCTION_VAR is value
+    CHANGE_FUNCTION_VAR = False
+
 
 def tester_function(btn=None):
     print(btn)
@@ -168,6 +183,7 @@ def test_entries():
     app.setEntryValid("ve1")
     app.setEntryInvalid("ve1")
     app.setEntryWaitingValidation("ve1")
+    app.setValidationEntryLabelBg("ve1", "pink")
 
     # should fail with warning
     app.setEntryValid("e1")
@@ -692,6 +708,8 @@ def test_options():
     assert app.getOptionBox("l3") != LIST_THREE[1]
     assert app.getOptionBox("l3") is None
 
+    app.setOptionBoxDisabledChar("l3", "*")
+
     # call generic setter functions
     test_setters("OptionBox", "l1")
     test_setters("OptionBox", "tl1")
@@ -759,12 +777,12 @@ def test_spins():
 
     print("\t>> all tests complete")
 
-
 def test_lists():
     print("\tTesting lists")
 
     assert isinstance(app.addListBox("l1", LIST_ONE), Listbox)
     app.addListBox("l2", LIST_TWO)
+    app.setListBoxChangeFunction("l2", CHANGE_FUNCTION)
     with pytest.raises(Exception) :
         app.addListBox("l2", LIST_TWO)
     app.setListBoxSubmitFunction("l1", tester_function)
@@ -825,6 +843,7 @@ def test_lists():
     assert app.getListBox("l2") == ["new item"]
 
     app.addListBox("cl1", LIST_ONE)
+    app.setListBoxChangeFunction("cl1", CHANGE_FUNCTION)
     app.setListItemAtPos("cl1", 0, "new_word")
     assert app.getAllListItems("cl1")[0] == "new_word"
     app.setListItem("cl1", "new_word", "newer_word")
@@ -832,7 +851,10 @@ def test_lists():
     app.setListItem("cl1", "newer_word", "newest_word", first=True)
     assert app.getAllListItems("cl1")[0] == "newest_word"
 
-    app.updateListBox("l2", LIST_TWO, True)
+    app.updateListBox("l2", LIST_TWO, True, callFunction=True)
+    CHECK_CHANGE_FUNCTION(True)
+    app.updateListBox("l2", LIST_TWO, True, callFunction=False)
+    CHECK_CHANGE_FUNCTION(False)
     app.removeListItem("l2", LIST_TWO[1])
     tmp_list = LIST_TWO
     tmp_list.remove(tmp_list[1])
@@ -851,7 +873,9 @@ def test_lists():
     test_setters("ListBox", "l1")
 
     app.addListBox("g1", LIST_ONE)
+    app.setListBoxChangeFunction("g1", CHANGE_FUNCTION)
     app.addListBox("g2", LIST_TWO)
+    app.setListBoxChangeFunction("g2", CHANGE_FUNCTION)
 
     app.selectListItemAtPos("g1", 1)
     assert app.getListBox("g1") == [LIST_ONE[1]]
@@ -1023,6 +1047,9 @@ def test_message_boxes():
     assert app.getMessage("m4") == EMPTY
     assert app.getMessage(TEXT_TWO) == TEXT_THREE
 
+    app.setMessageAspect("m1", 200)
+    app.setMessageWidth("m2", 40)
+
     app.clearMessage("m2")
     app.clearMessage("m3")
     app.clearMessage(TEXT_TWO)
@@ -1042,11 +1069,22 @@ def test_message_boxes():
 def test_text_areas():
     print("\tTesting text areas")
     assert isinstance(app.addTextArea("t1"), AjText)
-    app.addTextArea("t2")
+    ta2 = app.addTextArea("t2")
     with pytest.raises(Exception) :
         app.addTextArea("t2")
     assert isinstance(app.addScrolledTextArea("st1"), AjScrolledText)
     app.addScrolledTextArea("st2")
+
+    app.textAreaCreateTag("t2", "red", background="red", foreground="white")
+    app.textAreaChangeTag("t2", "red", background="red", foreground="white")
+    assert "red" in app.getTextAreaTags("t2")
+    app.textAreaDeleteTag("t2", "red")
+    assert "red" not in app.getTextAreaTags("t2")
+    app.textAreaCreateTag("t2", "red", background="red", foreground="white")
+    assert "red" in app.getTextAreaTags("t2")
+    app.getTextAreaTag("t2", "red")
+    app.textAreaCreateTag("t2", "green", background="green", foreground="white")
+    app.textAreaTagPattern("t2", "red", "this")
 
     assert app.getTextArea("t1") == EMPTY
     assert app.getTextArea("t2") == EMPTY
@@ -1073,6 +1111,55 @@ def test_text_areas():
     app.setTextArea("t2", TEXT_TWO)
     app.setTextArea("st1", TEXT_THREE)
     app.setTextArea("st2", TEXT_FOUR)
+
+    assert app.getTextArea("t1") == TEXT_ONE
+    assert app.getTextArea("t2") == TEXT_TWO
+    assert app.getTextArea("st1") == TEXT_THREE
+    assert app.getTextArea("st2") == TEXT_FOUR
+
+    # test disabled overriding
+    ta2.config(state='disabled')
+    assert ta2.cget('state') == 'disabled'
+    app.setTextArea("t2", TEXT_ONE)
+    assert app.getTextArea("t2") == TEXT_TWO+TEXT_ONE
+    app.clearTextArea("t2")
+    assert app.getTextArea("t2") == ""
+    app.setTextArea("t2", TEXT_TWO)
+    assert app.getTextArea("t2") == TEXT_TWO
+    assert ta2.cget('state') == 'disabled'
+    ta2.config(state='normal')
+    assert ta2.cget('state') == 'normal'
+
+    # test end flag
+    app.setTextArea("t2", TEXT_TWO, end=True)
+    assert app.getTextArea("t2") == TEXT_TWO+TEXT_TWO
+    app.setTextArea("t2", TEXT_ONE, end=False)
+    assert app.getTextArea("t2") == TEXT_ONE+TEXT_TWO+TEXT_TWO
+
+    app.clearTextArea("t2")
+    assert app.getTextArea("t2") == ""
+    app.setTextArea("t2", TEXT_TWO)
+    assert app.getTextArea("t2") == TEXT_TWO
+
+
+
+    # nothing selected - so these have no effect
+    app.textAreaTagSelected("t2", "red")
+    app.textAreaUntagSelected("t2", "red")
+    app.textAreaToggleTagSelected("t2", "red")
+    app.highlightTextArea("t2", "1.0", "1.3")
+    app.textAreaTagSelected("t2", "red")
+    app.textAreaUntagSelected("t2", "red")
+    app.textAreaToggleTagSelected("t2", "red")
+    app.textAreaToggleTagSelected("t2", "red")
+    app.textAreaToggleTagSelected("t2", "red")
+
+    app.textAreaTagPattern("t2", "red", TEXT_TWO[2:4])
+    app.textAreaTagRange("t2", "green", 1.0, 1.2)
+    app.textAreaUntagRange("t2", "green", 1.0, 1.2)
+
+    app.textAreaToggleTagRange("t2", "green", 1.0, 1.2)
+    app.textAreaToggleTagRange("t2", "green", 1.0, 1.2)
 
     assert app.textAreaChanged("t1") is True
     assert app.textAreaChanged("t2") is True
@@ -1107,6 +1194,9 @@ def test_text_areas():
     assert app.getTextArea("st1") == EMPTY
     assert app.getTextArea("st2") == TEXT_FOUR
 
+    print(app.searchTextArea("t1", TEXT_ONE, "1.0"))
+    assert app.searchTextArea("t1", TEXT_ONE, "1.0") == "1.0"
+
     # call generic setter functions
     test_setters("TextArea", "t1")
 
@@ -1116,8 +1206,27 @@ def test_text_areas():
     assert app.getTextArea("st1") == EMPTY
     assert app.getTextArea("st2") == EMPTY
 
-    print("\t >> all tests complete")
+    app.setTextAreaFont("t1", size=20, family='Verdana')
+    app.setTextArea("t1", TEXT_ONE)
+    app.highlightTextArea("t1", "1.0")
 
+    app.textAreaToggleFontSelected("t1", "BOLD")
+    app.textAreaToggleFontSelected("t1", "BOLD")
+    app.textAreaApplyFontSelected("t1", "BOLD")
+
+    app.textAreaToggleFontSelected("t1", "ITALIC")
+    app.textAreaToggleFontSelected("t1", "ITALIC")
+    app.textAreaApplyFontSelected("t1", "ITALIC")
+
+    app.textAreaToggleFontSelected("t1", "UNDERLINE")
+    app.textAreaToggleFontSelected("t1", "UNDERLINE")
+    app.textAreaApplyFontSelected("t1", "UNDERLINE")
+
+    app.textAreaToggleFontSelected("t1", "BOLD_ITALIC")
+    app.textAreaToggleFontSelected("t1", "BOLD_ITALIC")
+    app.textAreaApplyFontSelected("t1", "BOLD_ITALIC")
+
+    print("\t >> all tests complete")
 
 def test_meters():
     print("\tTesting meters")
@@ -2142,6 +2251,7 @@ def test_sets():
 def test_containers():
     print("\tTesting containers")
 
+    ## LABEL FRAMES
     lf = app.startLabelFrame("lf1")
     app.setLabelFrameAnchor("lf1", "east")
     app.addLabel("lf1_l1", TEXT_ONE)
@@ -2161,6 +2271,8 @@ def test_containers():
 
     with pytest.raises(Exception) :
         app.openLabelFrame("crash here")
+
+    ## TOGGLE FRAMES
 
     tog = app.startToggleFrame("tf1")
     app.addLabel("tf1_l1", TEXT_ONE)
@@ -2188,6 +2300,8 @@ def test_containers():
     app.enableToggleFrame("tf1")
     app.enableToggleFrame("tf1")
     app.disableToggleFrame("tf1")
+
+    ## TABBED FRAMES
 
     app.startTabbedFrame("tbf1")
     app.startTab("tab1")
@@ -2247,6 +2361,8 @@ def test_containers():
     app.setTabbedFrameSelectedTab("tbf1", "tab3")
     assert app.getTabbedFrameSelectedTab("tbf1") == "tab3"
 
+    ## PANED FRAMES
+
     app.startPanedFrame("p1")
     app.addLabel("p1_l1", TEXT_ONE)
     app.startPanedFrame("p2")
@@ -2260,6 +2376,8 @@ def test_containers():
     app.openPanedFrame("p1")
     app.addLabel("p1_l11", TEXT_ONE)
     app.stopPanedFrame()
+
+    ## PAGED WINDOWS
 
     app.startPagedWindow("pg1")
     app.startPage()
@@ -2330,6 +2448,8 @@ def test_containers():
     pw.showNext()
     pw.showPrev()
 
+    ## SUB WINDOWS
+
 # breaks under python2.7
     app.startSubWindow("sb1", modal=False, transient=False, blocking=False, grouped=False)
     app.addLabel("sb1_l", TEXT_ONE)
@@ -2367,6 +2487,7 @@ def test_containers():
 #    app.showSubWindow("sb2")
 #    app.hideSubWindow("sb2")
 
+    ## FRAMES
 
     app.startFrame("fr1")
     app.addLabel("fr1_l", TEXT_ONE)
@@ -2398,6 +2519,169 @@ def test_containers():
             testScrollPaneScrolling(sp)
 
 
+    # JUGGLING FRAMES
+    with app.frame("a_frame", 1, 1):
+        app.label("a_frame a")
+    with app.frame("b_frame", 1, 1):
+        app.label("b_frame a")
+    with app.frame("c_frame", 1, 1):
+        app.label("c_frame a")
+
+    app.raiseFrame("a_frame")
+    app.raiseFrame("b_frame")
+    app.raiseFrame("c_frame")
+
+    ## FRAME STACKS
+    app.startFrameStack("stack")
+    app.startFrame()
+    app.addLabel("stack-1", "stack-1")
+    app.stopFrame()
+    app.startFrame()
+    app.addLabel("stack-2", "stack-2")
+    app.stopFrame()
+    app.startFrame()
+    app.addLabel("stack-3", "stack-3")
+    app.stopFrame()
+    app.stopFrameStack()
+
+    assert app.countFrames("stack") == 3
+    assert app.getCurrentFrame("stack") == 2
+    assert app.getPreviousFrame("stack") == 1
+
+    app.firstFrame("stack")
+    assert app.getCurrentFrame("stack") == 0
+    assert app.frameStackAtStart("stack")
+    assert not app.frameStackAtEnd("stack")
+    assert app.getPreviousFrame("stack") == 2
+
+    app.lastFrame("stack")
+    assert app.getCurrentFrame("stack") == 2
+    assert not app.frameStackAtStart("stack")
+    assert app.frameStackAtEnd("stack")
+    assert app.getPreviousFrame("stack") == 0
+
+    app.prevFrame("stack")
+    assert app.getCurrentFrame("stack") == 1
+    assert app.getPreviousFrame("stack") == 2
+
+    app.prevFrame("stack")
+    assert app.getCurrentFrame("stack") == 0
+    assert app.getPreviousFrame("stack") == 1
+
+    app.prevFrame("stack")
+    assert app.getCurrentFrame("stack") == 0
+    assert app.getPreviousFrame("stack") == 1
+
+    app.nextFrame("stack")
+    assert app.getCurrentFrame("stack") == 1
+    assert app.getPreviousFrame("stack") == 0
+
+    app.nextFrame("stack")
+    assert app.getCurrentFrame("stack") == 2
+    assert app.getPreviousFrame("stack") == 1
+
+    app.nextFrame("stack")
+    assert app.getCurrentFrame("stack") == 2
+    assert app.getPreviousFrame("stack") == 1
+
+    app.selectFrame("stack", 1)
+    assert app.getCurrentFrame("stack") == 1
+    assert app.getPreviousFrame("stack") == 2
+
+    with pytest.raises(Exception) :
+        app.selectFrame("stack", 3)
+    assert app.getCurrentFrame("stack") == 1
+    assert app.getPreviousFrame("stack") == 2
+
+    app.openFrameStack('stack')
+    app.startFrame()
+    app.addLabel("stack-4", "stack-4")
+    app.stopFrame()
+    app.stopFrameStack()
+
+    assert app.countFrames("stack") == 4
+    assert app.getCurrentFrame("stack") == 3
+    assert app.getPreviousFrame("stack") == 1
+
+    app.selectFrame("stack", 0)
+    assert app.getCurrentFrame("stack") == 0
+    assert app.getPreviousFrame("stack") == 3
+
+    app.selectFrame("stack", 3)
+    assert app.getCurrentFrame("stack") == 3
+    assert app.getPreviousFrame("stack") == 0
+
+    app.prevFrame("stack")
+    assert app.getCurrentFrame("stack") == 2
+    assert app.getPreviousFrame("stack") == 3
+
+    app.prevFrame("stack")
+    assert app.getCurrentFrame("stack") == 1
+    assert app.getPreviousFrame("stack") == 2
+
+    app.prevFrame("stack")
+    assert app.getCurrentFrame("stack") == 0
+    assert app.getPreviousFrame("stack") == 1
+
+    app.prevFrame("stack")
+    assert app.getCurrentFrame("stack") == 0
+    assert app.getPreviousFrame("stack") == 1
+
+    def changer(): print("changed")
+    def noChange(): return False
+
+    app.startFrameStack("sstack", start=1, change=changer)
+    app.startFrame()
+    app.addLabel("sstack-1", "stack-1")
+    app.stopFrame()
+    app.startFrame()
+    app.addLabel("sstack-2", "stack-2")
+    app.stopFrame()
+    app.startFrame()
+    app.addLabel("sstack-3", "stack-3")
+    app.stopFrame()
+    app.stopFrameStack()
+
+    assert app.countFrames("sstack") == 3
+    assert app.getCurrentFrame("sstack") == 1
+    assert app.getPreviousFrame("sstack") == 2
+
+    app.selectFrame("sstack", 2)
+    assert app.getCurrentFrame("sstack") == 2
+    assert app.getPreviousFrame("sstack") == 1
+
+    app.selectFrame("sstack", 0, callFunction = False)
+    assert app.getCurrentFrame("sstack") == 0
+    assert app.getPreviousFrame("sstack") == 2
+
+    app.setFrameStackChangeFunction('sstack', noChange)
+
+    app.selectFrame("sstack", 2)
+    assert app.getCurrentFrame("sstack") == 0
+    assert app.getPreviousFrame("sstack") == 2
+
+    app.selectFrame("sstack", 2, callFunction = False)
+    assert app.getCurrentFrame("sstack") == 2
+    assert app.getPreviousFrame("sstack") == 0
+
+    print("Making final stack - start with 1")
+    app.startFrameStack("fstack")
+    app.setStartFrame("fstack", 1)
+    app.startFrame()
+    app.addLabel("fstack-1", "stack-1")
+    app.stopFrame()
+    app.startFrame()
+    app.addLabel("fstack-2", "stack-2")
+    app.stopFrame()
+    app.startFrame()
+    app.addLabel("fstack-3", "stack-3")
+    app.stopFrame()
+    app.stopFrameStack()
+    print( "DONE - Curr:", app.getCurrentFrame("fstack"), "Prev", app.getPreviousFrame("fstack") )
+
+    assert app.countFrames("fstack") == 3
+    assert app.getCurrentFrame("fstack") == 1
+    assert app.getPreviousFrame("fstack") == 2
 
 def testScrollPaneScrolling(sp):
     event = Event()
@@ -2550,6 +2834,21 @@ def test_canvas():
     app.addCanvasImage("c1", 10, 10, "1_checks.png")
     app.clearCanvas("c1")
 
+    coords = {
+        "America":[32, 17, 242, 167],
+        "South America":[126, 170, 226, 292],
+    }
+
+    def click(area):
+        print(area)
+
+    app.setCanvasMap("c1", click, coords)
+    event = Event()
+    event.widget = c
+    event.x = 100
+    event.y = 100
+    app._imageMap("c1", event)
+
     print(" >> not implemented...")
     #print("\t >> all tests complete")
 
@@ -2653,6 +2952,7 @@ def test_gui_properties():
         labelFont={'size':18, 'family':'helvetica'},
         editMenu=True,
         stopFunction=propFunc,
+        startFunction=propFunc,
         fastStop=False,
         enterKey=propFunc,
         logLevel='trace',
@@ -2710,6 +3010,13 @@ def test_gui_properties():
     assert app.visible is False
     app.visible = True
     assert app.visible is True
+
+    # fails under Travis
+    app.top
+    app.top = True
+#    assert app.top is True
+    app.top = False
+#    assert app.top is False
 
     app.padding = (20,21)
     assert app.padding == (20,21)
@@ -2769,9 +3076,10 @@ def test_gui_properties():
     app.bg = "red"
     assert app.bg == "red"
 
-    myFont = str(app.fonts[0])
-    myFont1 = str(app.fonts[1])
-    myFont2 = str(app.fonts[2])
+    myFont = str(app.fonts[11])
+    myFont1 = str(app.fonts[12])
+    myFont2 = str(app.fonts[13])
+    print(myFont, myFont1, myFont2)
 
     app.font = 30
     assert app.font['size'] == 30
@@ -2794,8 +3102,6 @@ def test_gui_properties():
     assert app.labelFont['size'] == 21
     assert app.labelFont['family'] == myFont2
 
-    print(app.fonts)
-
     app.editMenu = False
     assert app.editMenu is False
     app.editMenu = True
@@ -2804,6 +3110,7 @@ def test_gui_properties():
     assert app.editMenu is False
 
     app.stopFunction = propFunc
+    app.startFunction = propFunc
     app.stopFunction = False
     app.fastStop = True
     assert app.fastStop is True
@@ -3020,6 +3327,16 @@ with gui(debug=True) as app3:
                 app3.addLabel("l5", "label")
             with app3.scrollPane("sf1"):
                 app3.addLabel("l6", "label")
+
+        with app3.tab("t5"):
+            with app3.frameStack("stacks", start=2, change=cbB):
+                with app3.frame():
+                    app3.label("stacks-1")
+                with app3.frame():
+                    app3.label("stacks-2")
+                with app3.frame():
+                    app3.label("stacks-3")
+
     with app3.subWindow("s1"):
         app3.addLabel("l7", "label")
 
@@ -3039,6 +3356,7 @@ def press(btn):
         app4.button("Clap"),
         app4.radio("happy"),
         app4.check("Clap"),
+        app4.tick("tClap"),
         app4.option("feelings"),
         app4.spin("feelings"),
         app4.listbox("feelings"),
@@ -3068,6 +3386,7 @@ def updateApp4(btn=None):
     app4.button("Clap", test_gui4)
     app4.radio("happy", "Miserable")
     app4.check("Clap", True)
+    app4.tick("tClap", True)
     app4.option("feelings", 1)
     app4.spin("feelings", 2)
     app4.listbox("feelings", 3)
@@ -3103,7 +3422,8 @@ def test_gui4(btn=None):
 def changer(btn=None):
     print(btn)
 
-with gui("Simple Demo") as app4:
+with gui("Simple Demo", transparency=50, padding=5, location="CENTER", bg="red") as app4:
+    app4.toolbar(["a", "b", "file", "open"], changer, findIcon=True, pinned=False, hidden=False, disabled=True)
 
     app4.status(header="header", fields=3, side="RIGHT", bg='red', fg='green', width=40)
     app4.statusbar(text="a", field=1)
@@ -3133,13 +3453,19 @@ with gui("Simple Demo") as app4:
     app4.image("img4", "1_entries.gif", over="1_flash.gif", row=2, column=3, rowspan=7, compound="top")
     app4.image("img2", "OPEN", row=2, column=4, rowspan=3, kind="icon")
 
+    app4.canvas("cnv1", row=2, column=3, rowspan=7, map={"A":[1,1,5,5]}, submit=changer)
+
     app4.check("Clap", row=2, column=1)
     app4.check("Cheer", True, row=3, column=1)
     app4.check("Cry", row=4, column=1, change=changer)
 
+    app4.tick("tClap", row=2, column=1)
+    app4.tick("tCheer", True, row=3, column=1)
+    app4.tick("tCry", row=4, column=1, change=changer)
+
     app4.entry("data", colspan=3, kind="directory")
     app4.entry("data2", value="lots of data", colspan=3, focus=True, case="upper", limit=15)
-    app4.entry("data3", colspan=3, default="france", kind="validation")
+    app4.entry("data3", colspan=3, default="france", kind="validation", labBg='orange')
     app4.entry("data4", value=["a", "aa", "aba", "abc", "abd"], colspan=3, kind="auto", rows=4)
 
     app4.entry("se1", row=0, column=1, default="standard", submit=changer, change=changer, limit=5, case="lower", rows=3)
@@ -3173,7 +3499,7 @@ with gui("Simple Demo") as app4:
 
 
     row=app4.gr()
-    app4.option("feelings", ["happy", "bored", "angry"], column=0, row=row, change=press)
+    app4.option("feelings", ["happy", "bored", "angry"], column=0, row=row, change=press, disabled="$")
     app4.option("feelings2", ["happy", "bored", "angry"], kind="ticks", column=0, row=row, change=press)
     app4.option("feelings3", ["happy", "bored", "angry"], column=0, row=row, change=press)
     app4.spin("feelings", ["happy", "bored", "angry"], change=changer, column=1, row=row, item="angry")
