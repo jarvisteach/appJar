@@ -5793,9 +5793,38 @@ class gui(object):
         selected = kwargs.pop("selected", None)
         disabled = kwargs.pop("disabled", "-")
 
+        # select=set, replace=change, rename=rename, clear=clear, delete=delete
+        mode = kwargs.pop("mode", "select")
+        index = kwargs.pop("index", None)
+        newName = kwargs.pop("newName", None)
+
         try: self.widgetManager.verify(self.Widgets.OptionBox, title)
         except: # widget exists
-            if value is not None: self.setOptionBox(title, index=value, value=checked, callFunction=callFunction, override=override)
+            if mode == "select":
+                if value is not None: self.setOptionBox(title, index=value, value=True, callFunction=callFunction, override=override)
+                else: gui.error("No item specified to select in optionBox: %s", title)
+            elif mode == "deselect":
+                if value is not None: self.setOptionBox(title, index=value, value=False, callFunction=callFunction, override=override)
+                else:
+                    self.clearOptionBox(title, callFunction=callFunction)
+                    gui.info("optionBox set back to its original state: %s", title)
+            elif mode == "toggle":
+                gui.error("Toggling optionboxes not supported: %s", title)
+            elif mode == "clear":
+                if value is not None: gui.error("No value should be specified wen clearing optionBox: %s", title)
+                else: self.clearOptionBox(title, callFunction=callFunction)
+            elif mode == "rename":
+                if value is not None: self.renameOptionBox(title, item=value, newName=newName, callFunction=callFunction)
+                else: gui.error("No item specified to rename in optionBox: %s", title)
+            elif mode == "replace":
+                if value is not None: self.changeOptionBox(title, newOptions=value, index=index, callFunction=callFunction)
+                else: gui.error("No values specified to replace in optionBox: %s", title)
+            elif mode == "delete":
+                if value is not None: self.deleteOptionBox(title, position=value)
+                else: gui.error("No item specified to delete in optionBox: %s", title)
+            else:
+                gui.error("Invalid mode (%s) specified in optionBox: %s", mode, title)
+
             opt =  self.getOptionBox(title)
         else: # new widget
             kwargs = self._parsePos(kwargs.pop("pos", []), kwargs)
@@ -6547,9 +6576,29 @@ class gui(object):
         item = kwargs.pop("item", None)
         label = kwargs.pop("label", False)
 
+        # select=select, deselect=<RESET>, toggle=<NONE>, clear=??, rename=set, replace=update, delete=remov
+        mode = kwargs.pop("mode", "select") # select, set, remove, clear, update
+
         try: self.widgetManager.verify(widgKind, title)
         except: # widget exists
-            if value is not None: self.setSpinBoxPos(title, value, *args, **kwargs)
+            if mode == "select":
+                if value is not None: self.setSpinBoxPos(title, value, *args, **kwargs)
+                else: gui.error("No item specified to select in spinbox: %s", title)
+            elif mode == "deselect":
+                gui.error("% not implemented yet in spinbox: %s", mode, title)
+            elif mode == "toggle":
+                gui.error("% not implemented yet in spinbox: %s", mode, title)
+            elif mode == "clear":
+                gui.error("% not implemented yet in spinbox: %s", mode, title)
+            elif mode == "rename":
+                gui.error("% not implemented yet in spinbox: %s", mode, title)
+            elif mode == "replace":
+                gui.error("% not implemented yet in spinbox: %s", mode, title)
+            elif mode == "delete":
+                gui.error("% not implemented yet in spinbox: %s", mode, title)
+            else:
+                gui.error("Invalid mode (%s) specified in spinbox: %s", mode, title)
+
             spinBox =  self.getSpinBox(title)
         else: # new widget
             kwargs = self._parsePos(kwargs.pop("pos", []), kwargs)
@@ -7488,10 +7537,31 @@ class gui(object):
         multi = kwargs.pop("multi", False)
         group = kwargs.pop("group", False)
         selected = kwargs.pop("selected", None)
+        first = kwargs.pop("first", False)
+
+        # select=select, deselect=??, toggle=??, clear=??, rename=set, replace=update, delete=remove
+        mode = kwargs.pop("mode", "select") # select, set, remove, clear, update
 
         try: self.widgetManager.verify(widgKind, title)
         except: # widget exists
-            if value is not None: self.selectListItem(title, value, *args, **kwargs)
+            if mode == "select":
+                if value is not None: self.selectListItem(title, value, *args, **kwargs)
+                else: gui.error("No item specified to select in listbox: %s", title)
+            elif mode == "deselect":
+                gui.error("% not implemented yet in listbox: %s", mode, title)
+            elif mode == "toggle":
+                gui.error("% not implemented yet in listbox: %s", mode, title)
+            elif mode == "clear":
+                gui.error("% not implemented yet in listbox: %s", mode, title)
+            elif mode == "rename":
+                gui.error("% not implemented yet in listbox: %s", mode, title)
+            elif mode == "replace":
+                gui.error("% not implemented yet in listbox: %s", mode, title)
+            elif mode == "delete":
+                gui.error("% not implemented yet in listbox: %s", mode, title)
+            else:
+                gui.error("Invalid mode (%s) specified in listbox: %s", mode, title)
+
             listBox = self.getListBox(title)
         else: # new widget
             kwargs = self._parsePos(kwargs.pop("pos", []), kwargs)
