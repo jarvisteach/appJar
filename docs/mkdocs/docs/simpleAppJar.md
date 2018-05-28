@@ -283,7 +283,7 @@ Setting this widget won't change the values, but change which one is selected.
 | Parameter | Data type | Default | Description |
 | --------- | --------- | ------- | ------------|
 | endValue | integer | None | If specified, value & endValue should be integers, and will be used to generate a range. |
-| pos | integer | 0 | The position of an item to select. |
+| selected | integer | 0 | The position of an item to select. |
 | item | string | None | The name of an item to select. |
 
 ## Listbox
@@ -310,9 +310,11 @@ Different modes can be used when *setting* the widget:
 * `select` - default, select the specified item(s) or all  
 * `deselect` - deselect the specified item(s), or all  
 * `toggle` - toggle the specified item(s), or all  
+* `clear` - clear any selected items
 * `rename` - rename the specified item  
-* `delete` - delete the specified item, or all
 * `replace` - replace all items  
+* `add` - add the specified item(s)
+* `delete` - delete the specified item, or all
 
 ## Slider  
 ---

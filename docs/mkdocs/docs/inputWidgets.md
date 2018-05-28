@@ -607,6 +607,14 @@ app.go()
     This will select the value at the specified position in the SpinBox.  
     Set ```callFunction``` to be False, if you don't want to call any associated functions.  
 
+* `.changeSpinBox(title, vals, reverse=True)`  
+    Replaces the contents of the specified SpinBox with the new `vals`.  
+    Set `reverse` to `False` if you don;t ant to reverse the values.  
+
+* `.clearSpinBox(callFunction=False)`  
+    This will set the specified SpinBox back to its initial value.  
+    Set ```callFunction``` to be True, if you want to call any associated functions.  
+
 * `.clearAllSpinBoxes(callFunction=False)`  
     This will set all SpinBoxes in the app to their first value.  
     Set ```callFunction``` to be True, if you want to call any associated functions.  
@@ -688,6 +696,14 @@ app.go()
     `.selectListItemAtPos(title, pos, callFunction=False)`  
     Selects the specified item in the specified ListBox.  
     Set ```callFunction``` to be False, if you don't want to call any associated functions.  
+
+* `.deselectListItemAtPos(title, pos, callFunction=False)`  
+    Seselects the item at the specified position.  
+    Set ```callFunction``` to be True, if you want to call any associated functions.  
+
+* `.deselectAllListItems(title, callFunction=False)`  
+    Deselects all items in the specified listbox.  
+    Set ```callFunction``` to be True, if you want to call any associated functions.  
 
 * `.setListBoxRows(title, rows)`  
     Sets how many rows to display in the specified ListBox.  

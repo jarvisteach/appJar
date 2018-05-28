@@ -4801,20 +4801,21 @@ class gui(object):
                 actionHeading="Action", actionButton="Press", addButton="Add", showMenu=False, border="solid", **kwargs):
         ''' creates a new table, displaying the specified data '''
         self.widgetManager.verify(self.Widgets.Table, title)
+        wrap=kwargs.pop('wrap', 250)
         if not self.ttkFlag:
             grid = SimpleTable(self.getContainer(), title, data,
                         action, addRow,
                         actionHeading, actionButton, addButton,
                         showMenu, buttonFont=self._getContainerProperty('buttonFont'),
                         font=self.tableFont, background=self._getContainerBg(),
-                        queueFunction=self.queueFunction, border=border
+                        queueFunction=self.queueFunction, border=border, wrap=wrap
                     )
         else:
             grid = SimpleTable(self.getContainer(), title, data,
                         action, addRow,
                         actionHeading, actionButton, addButton,
                         showMenu, buttonFont=self._getContainerProperty('buttonFont'),
-                        queueFunction=self.queueFunction, border=border
+                        queueFunction=self.queueFunction, border=border, wrap=wrap
                     )
         self._positionWidget(grid, row, column, colspan, rowspan, N+E+S+W)
         self.widgetManager.add(self.Widgets.Table, title, grid)
@@ -5782,6 +5783,10 @@ class gui(object):
         """ simpleGUI - shortner for optionBox() """
         return self.optionBox(title, value, *args, **kwargs)
 
+    def optionbox(self, title, value=None, *args, **kwargs):
+        """ simpleGUI - shortner for optionBox() """
+        return self.optionBox(title, value, *args, **kwargs)
+
     def optionBox(self, title, value=None, *args, **kwargs):
         """ simpleGUI - adds, sets & gets optionBoxes all in one go """
         widgKind = self.Widgets.OptionBox
@@ -5817,10 +5822,10 @@ class gui(object):
                 if value is not None: self.renameOptionBox(title, item=value, newName=newName, callFunction=callFunction)
                 else: gui.error("No item specified to rename in optionBox: %s", title)
             elif mode == "replace":
-                if value is not None: self.changeOptionBox(title, newOptions=value, index=index, callFunction=callFunction)
+                if value is not None: self.changeOptionBox(title, options=value, index=index, callFunction=callFunction)
                 else: gui.error("No values specified to replace in optionBox: %s", title)
             elif mode == "delete":
-                if value is not None: self.deleteOptionBox(title, position=value)
+                if value is not None: self.deleteOptionBox(title, index=value)
                 else: gui.error("No item specified to delete in optionBox: %s", title)
             else:
                 gui.error("Invalid mode (%s) specified in optionBox: %s", mode, title)
@@ -6567,35 +6572,39 @@ class gui(object):
         """ simpleGUI - shortner for spinBox() """
         return self.spinBox(title, value, *args, **kwargs)
 
+    def spinbox(self, title, value=None, *args, **kwargs):
+        """ simpleGUI - shortner for spinBox() """
+        return self.spinBox(title, value, *args, **kwargs)
+
     def spinBox(self, title, value=None, *args, **kwargs):
         """ simpleGUI - adds, sets & gets spinBoxes all in one go """
         widgKind = self.Widgets.SpinBox
 
         endValue = kwargs.pop("endValue", None)
-        pos = kwargs.pop("pos", None)
+        selected = kwargs.pop("selected", None)
         item = kwargs.pop("item", None)
         label = kwargs.pop("label", False)
 
         # select=select, deselect=<RESET>, toggle=<NONE>, clear=??, rename=set, replace=update, delete=remov
         mode = kwargs.pop("mode", "select") # select, set, remove, clear, update
+        callFunction = kwargs.pop("callFunction", True)
 
         try: self.widgetManager.verify(widgKind, title)
         except: # widget exists
             if mode == "select":
                 if value is not None: self.setSpinBoxPos(title, value, *args, **kwargs)
                 else: gui.error("No item specified to select in spinbox: %s", title)
-            elif mode == "deselect":
-                gui.error("% not implemented yet in spinbox: %s", mode, title)
             elif mode == "toggle":
-                gui.error("% not implemented yet in spinbox: %s", mode, title)
-            elif mode == "clear":
-                gui.error("% not implemented yet in spinbox: %s", mode, title)
+                gui.error("%s not available on spinbox: %s", mode, title)
+            elif mode in["clear", "deselect"]:
+                self.clearSpinBox(title)
             elif mode == "rename":
-                gui.error("% not implemented yet in spinbox: %s", mode, title)
+                gui.error("%s not implemented yet in spinbox: %s", mode, title)
             elif mode == "replace":
-                gui.error("% not implemented yet in spinbox: %s", mode, title)
+                if value is not None: self.changeSpinBox(title, vals=value)
+                else: gui.error("No values specified to replace in spinbox: %s", title)
             elif mode == "delete":
-                gui.error("% not implemented yet in spinbox: %s", mode, title)
+                gui.error("%s not implemented yet in spinbox: %s", mode, title)
             else:
                 gui.error("Invalid mode (%s) specified in spinbox: %s", mode, title)
 
@@ -6609,7 +6618,7 @@ class gui(object):
                 if label: spinBox = self.addLabelSpinBox(title, value, *args, label=label, **kwargs)
                 else: spinBox = self.addSpinBox(title, value, *args, **kwargs)
 
-        if pos is not None: self.setSpinBoxPos(title, pos)
+        if selected is not None: self.setSpinBoxPos(title, selected)
         if item is not None: self.setSpinBox(title, item)
 
         if len(kwargs) > 0:
@@ -6641,12 +6650,7 @@ class gui(object):
         if vals is not None:
             spin.DEFAULT_TEXT='\n'.join(str(x) for x in vals)
 
-        # make sure it's a list
-        # reverse it, so the spin box functions properly
-        vals = list(vals)
-        vals.reverse()
-        vals = tuple(vals)
-        spin.config(values=vals)
+        self._populateSpinBox(spin, vals)
 
         # prevent invalid entries
         if self.validateSpinBox is None:
@@ -6658,6 +6662,15 @@ class gui(object):
 
         self.widgetManager.add(self.Widgets.SpinBox, title, spin)
         return spin
+
+    def _populateSpinBox(self, spin, vals, reverse=True):
+        # make sure it's a list
+        # reverse it, so the spin box functions properly
+        if reverse:
+            vals = list(vals)
+            vals.reverse()
+        vals = tuple(vals)
+        spin.config(values=vals)
 
     def _addSpinBox(self, title, values, row=None, column=0, colspan=0, rowspan=0):
         spin = self._buildSpinBox(self.getContainer(), title, values)
@@ -6742,6 +6755,9 @@ class gui(object):
                         title + "=" + str(vals))
         self._setSpinBoxVal(spin, val, callFunction)
 
+    def clearSpinBox(self, title, callFunction=False):
+        self.setSpinBoxPos(title, 0, callFunction=callFunction)
+
     def clearAllSpinBoxes(self, callFunction=False):
         for sb in self.widgetManager.group(self.Widgets.SpinBox):
             self.setSpinBoxPos(sb, 0, callFunction=callFunction)
@@ -6758,15 +6774,12 @@ class gui(object):
         val = vals[pos]
         self._setSpinBoxVal(spin, val, callFunction)
 
-    def changeSpinBox(self, title, vals):
+    def changeSpinBox(self, title, vals, reverse=True):
         spin = self.widgetManager.get(self.Widgets.SpinBox, title)
         if spin.isRange:
             self.warn("Can't convert %s RangeSpinBox to SpinBox", title)
         else:
-            vals = list(vals)
-            vals.reverse()
-            vals = tuple(vals)
-            spin.config(values=vals)
+            self._populateSpinBox(spin, vals, reverse)
             self.setSpinBoxPos(title, 0)
 
 #####################################
@@ -7538,6 +7551,7 @@ class gui(object):
         group = kwargs.pop("group", False)
         selected = kwargs.pop("selected", None)
         first = kwargs.pop("first", False)
+        callFunction = kwargs.pop("callFunction", True)
 
         # select=select, deselect=??, toggle=??, clear=??, rename=set, replace=update, delete=remove
         mode = kwargs.pop("mode", "select") # select, set, remove, clear, update
@@ -7545,20 +7559,43 @@ class gui(object):
         try: self.widgetManager.verify(widgKind, title)
         except: # widget exists
             if mode == "select":
-                if value is not None: self.selectListItem(title, value, *args, **kwargs)
+                if value is not None:
+                    if isinstance(value, int):
+                        self.selectListItemAtPos(title, value, *args, **kwargs)
+                    else:
+                        self.selectListItem(title, value, *args, **kwargs)
                 else: gui.error("No item specified to select in listbox: %s", title)
             elif mode == "deselect":
-                gui.error("% not implemented yet in listbox: %s", mode, title)
+                if value is not None:
+                    if isinstance(value, int):
+                        self.deselectListItemAtPos(title, value, *args, **kwargs)
+                    else:
+                        self.deselectListItem(title, value, *args, **kwargs)
+                else: gui.error("No item specified to deselect in listbox: %s", title)
             elif mode == "toggle":
-                gui.error("% not implemented yet in listbox: %s", mode, title)
+                gui.error("%s not implemented yet in listbox: %s", mode, title)
             elif mode == "clear":
-                gui.error("% not implemented yet in listbox: %s", mode, title)
+                self.deselectAllListItems(title)
             elif mode == "rename":
-                gui.error("% not implemented yet in listbox: %s", mode, title)
+                gui.error("%s not implemented yet in listbox: %s", mode, title)
             elif mode == "replace":
-                gui.error("% not implemented yet in listbox: %s", mode, title)
+                if value is not None: self.updateListBox(title, items=value, callFunction=callFunction)
+                else: gui.error("No values specified to replace in listbox: %s", title)
             elif mode == "delete":
-                gui.error("% not implemented yet in listbox: %s", mode, title)
+                if value is not None:
+                    if isinstance(value, int):
+                        self.removeListItemAtPos(title, value)
+                    else:
+                        self.removeListItem(title, value)
+                else: gui.error("No value specified to delete in listbox: %s", title)
+            elif mode == "add":
+                if value is not None:
+                    select = True if selected is None else selected
+                    if type(value) in (list, tuple):
+                        self.addListItems(title, items=value, select=select)
+                    else:
+                        self.addListItem(title, item=value, select=select)
+                else: gui.error("No value specified to add in listbox: %s", title)
             else:
                 gui.error("Invalid mode (%s) specified in listbox: %s", mode, title)
 
@@ -7654,6 +7691,21 @@ class gui(object):
             gui.warn("Invalid list item(s): %s for list: %s", item, title)
             return False
 
+    def deselectListItemAtPos(self, title, pos, callFunction=False):
+        lb = self.widgetManager.get(self.Widgets.ListBox, title)
+        if lb.size() == 0:
+            gui.warn("No items in list: %s, unable to deselect item at pos: %s", title, pos)
+            return False
+        if pos < 0 or pos > lb.size() - 1:
+            gui.warn("Invalid list position: %s for list: %s (max: %s)", pos, title, lb.size()-1)
+            return False
+
+        lb.selection_clear(pos)
+        if callFunction and hasattr(lb, 'cmd'):
+            lb.cmd()
+        self.topLevel.update_idletasks()
+        return True
+
     def selectListItemAtPos(self, title, pos, callFunction=False):
         lb = self.widgetManager.get(self.Widgets.ListBox, title)
         if lb.size() == 0:
@@ -7703,6 +7755,13 @@ class gui(object):
 
             self.selectListItemAtPos(title, lb.size() - 1)
 
+    def deselectAllListItems(self, title, callFunction=False):
+        lb = self.widgetManager.get(self.Widgets.ListBox, title)
+        lb.selection_clear(0, END)
+
+        if callFunction and hasattr(lb, 'cmd'):
+            lb.cmd()
+
     # returns a list containing 0 or more elements
     # all that are in the selected range
     def getListBox(self, title):
@@ -7735,7 +7794,7 @@ class gui(object):
         lb = self.widgetManager.get(self.Widgets.ListBox, title)
         items = lb.get(0, END)
         if pos >= len(items):
-            raise Exception("Invalid position: " + str(pos))
+            raise Exception("Invalid position: " + str(pos) + " must be between 0 and " + str(len(items)-1))
         lb.delete(pos)
 
         # show & select this item
@@ -13349,11 +13408,11 @@ class SubWindow(Toplevel, object):
 #####################################
 
 class GridCell(Label, object):
-    def __init__(self, parent, fonts, isHeader=False, **opts):
+    def __init__(self, parent, fonts, isHeader=False, wrap=0, **opts):
         super(GridCell, self).__init__(parent, **opts)
         self.selected = False
         self.isHeader = isHeader
-        self.config(borderwidth=1, highlightthickness=0, padx=0, pady=0)
+        self.config(borderwidth=1, highlightthickness=0, padx=0, pady=0, wraplength=wrap)
         self.updateFonts(fonts)
 
         if not self.isHeader:
@@ -13439,6 +13498,9 @@ class SimpleTable(ScrollPane):
         # database stuff
         self.db = None
         self.dbTable = None
+
+        # to wrap text in cells
+        self.wrap = opts.pop("wrap", 0)
 
         self.config(**opts)
 
@@ -13715,7 +13777,7 @@ class SimpleTable(ScrollPane):
             lab.gridPos = ''.join(["h-", str(cellNum)])
             lab.bind("<Button-1>", self._selectColumn)
         else:
-            lab = GridCell(self.interior, self.fonts, text=val)
+            lab = GridCell(self.interior, self.fonts, text=val, wrap=self.wrap)
             lab.gridPos = ''.join([str(rowNum - 1), "-", str(cellNum)])
 
         if self.showMenu:
