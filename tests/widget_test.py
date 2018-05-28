@@ -1556,7 +1556,8 @@ def test_tables():
         ["Clive", 28, "Male"],
         ["Betty", 51, "Female"]],
         action=tester_function,
-        addRow=tester_function)
+        addRow=tester_function,
+        wrap=200)
 
     with pytest.raises(Exception) :
         app.addTable("g1", [])

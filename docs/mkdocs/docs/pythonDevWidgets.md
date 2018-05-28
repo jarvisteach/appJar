@@ -74,6 +74,7 @@ app.go()
         * `showMenu` - boolean to show a right-click menu  
         * `disabledEntries` - pass a list of numbers, to disable entry boxes in those positions  
         * `border` - the style of the cell border: `sunken`, `solid`, etc
+        * `wrap` - The maximum number of pixels to show per line in a cell, defaults to 250 pixels  
 
     ![Table](img/dev/1_gridMenu.png)   
 
