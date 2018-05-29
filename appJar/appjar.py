@@ -9043,7 +9043,7 @@ class gui(object):
         return tree
 
     def addTree(self, title, data, row=None, column=0, colspan=0, rowspan=0):
-        ''' adds a navigatable tree, displaying the specified xml '''
+        ''' adds a navigatable tree, displaying the specified xml text '''
         self.widgetManager.verify(self.Widgets.Tree, title)
 
         self._importAjtree()
@@ -9052,6 +9052,21 @@ class gui(object):
             return
 
         xmlDoc = parseString(data)
+        return self._buildTree(title, xmlDoc, row, column, colspan, rowspan)
+
+    def addTreeObject(self, title, data, row=None, column=0, colspan=0, rowspan=0):
+        ''' adds a navigatable tree, displaying the specified xml object '''
+        self.widgetManager.verify(self.Widgets.Tree, title)
+
+        self._importAjtree()
+        if parseString is False:
+            self.warn("Unable to parse xml files. .addTree() not available")
+            return
+
+        return self._buildTree(title, data, row, column, colspan, rowspan)
+
+    def _buildTree(self, title, xmlDoc, row=None, column=0, colspan=0, rowspan=0):
+        self.widgetManager.verify(self.Widgets.Tree, title)
 
         frame = ScrollPane(
             self.getContainer(),
