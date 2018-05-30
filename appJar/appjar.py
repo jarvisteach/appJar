@@ -2626,7 +2626,7 @@ class gui(object):
                 self.containerStack[-1][font]=args[0]
                 return None
         self._getContainerProperty(font).config(**kwargs)
-        if 'family' in kwargs and kwargs['family'] != self._getContainerProperty(font).actual()['family']:
+        if 'family' in kwargs and kwargs['family'].lower() != self._getContainerProperty(font).actual()['family'].lower():
             gui.error("Failed to adjust %s to %s.", font, kwargs['family'])
         return kwargs
 
@@ -10921,8 +10921,13 @@ class gui(object):
 # FUNCTIONS to show pop-up dialogs
 #####################################
 
-    def popUp(self, title, message, kind="info", parent=None):
+    def popUp(self, title, message=None, kind="info", parent=None):
         """ simpleGUI - shortener for the various popUps """
+
+        if message is None:
+            message = title
+            title = kind.capitalize() + " Dialog"
+
         if kind == "info": return self.infoBox(title, message, parent)
         elif kind == "error": return self.errorBox(title, message, parent)
         elif kind == "warning": return self.warningBox(title, message, parent)
@@ -10951,7 +10956,8 @@ class gui(object):
             if self.topLevel.displayed:
                 self._bringToFront()
         else:
-            opts = {"parent": self.widgetManager.get(self.Widgets.SubWindow, parent)}
+            parent = self.widgetManager.get(self.Widgets.SubWindow, parent)
+            opts = {"parent": parent}
             MessageBox.showinfo(title, message, **opts)
             self._bringToFront(parent)
 
@@ -10963,7 +10969,8 @@ class gui(object):
             if self.topLevel.displayed:
                 self._bringToFront()
         else:
-            opts = {"parent": self.widgetManager.get(self.Widgets.SubWindow, parent)}
+            parent = self.widgetManager.get(self.Widgets.SubWindow, parent)
+            opts = {"parent": parent}
             MessageBox.showerror(title, message, **opts)
             self._bringToFront(parent)
 
@@ -10974,7 +10981,8 @@ class gui(object):
             if self.topLevel.displayed:
                 self._bringToFront()
         else:
-            opts = {"parent": self.widgetManager.get(self.Widgets.SubWindow, parent)}
+            parent = self.widgetManager.get(self.Widgets.SubWindow, parent)
+            opts = {"parent": parent}
             MessageBox.showwarning(title, message, **opts)
             self._bringToFront(parent)
 
@@ -10983,7 +10991,8 @@ class gui(object):
         if parent is None:
             return MessageBox.askyesno(title, message)
         else:
-            opts = {"parent": self.widgetManager.get(self.Widgets.SubWindow, parent)}
+            parent = self.widgetManager.get(self.Widgets.SubWindow, parent)
+            opts = {"parent": parent}
             return MessageBox.askyesno(title=title, message=message, **opts)
 
     def stringBox(self, title, message, parent=None):
@@ -10991,7 +11000,8 @@ class gui(object):
         if parent is None:
             return SimpleDialog.askstring(title, message)
         else:
-            opts = {"parent": self.widgetManager.get(self.Widgets.SubWindow, parent)}
+            parent = self.widgetManager.get(self.Widgets.SubWindow, parent)
+            opts = {"parent": parent}
             return SimpleDialog.askstring(title=title, message=message, **opts)
 
     def integerBox(self, title, message, parent=None):
@@ -10999,7 +11009,8 @@ class gui(object):
         if parent is None:
             return SimpleDialog.askinteger(title, message)
         else:
-            opts = {"parent": self.widgetManager.get(self.Widgets.SubWindow, parent)}
+            parent = self.widgetManager.get(self.Widgets.SubWindow, parent)
+            opts = {"parent": parent}
             return SimpleDialog.askinteger(title=title, message=message, **opts)
 
     def floatBox(self, title, message, parent=None):
@@ -11007,7 +11018,8 @@ class gui(object):
         if parent is None:
             return SimpleDialog.askfloat(title, message)
         else:
-            opts = {"parent": self.widgetManager.get(self.Widgets.SubWindow, parent)}
+            parent = self.widgetManager.get(self.Widgets.SubWindow, parent)
+            opts = {"parent": parent}
             return SimpleDialog.askfloat(title=title, message=message, **opts)
 
     def questionBox(self, title, message, parent=None):
@@ -11015,7 +11027,8 @@ class gui(object):
         if parent is None:
             return True if MessageBox.askquestion(title, message).lower() == "yes" else False
         else:
-            opts = {"parent": self.widgetManager.get(self.Widgets.SubWindow, parent)}
+            parent = self.widgetManager.get(self.Widgets.SubWindow, parent)
+            opts = {"parent": parent}
             return True if MessageBox.askquestion(title, message, **opts).lower() == "yes" else False
 
     def okBox(self, title, message, parent=None):
@@ -11024,7 +11037,8 @@ class gui(object):
         if parent is None:
             return MessageBox.askokcancel(title, message)
         else:
-            opts = {"parent": self.widgetManager.get(self.Widgets.SubWindow, parent)}
+            parent = self.widgetManager.get(self.Widgets.SubWindow, parent)
+            opts = {"parent": parent}
             return MessageBox.askokcancel(title, message, **opts)
 
     def retryBox(self, title, message, parent=None):
@@ -11032,7 +11046,8 @@ class gui(object):
         if parent is None:
             return MessageBox.askretrycancel(title, message)
         else:
-            opts = {"parent": self.widgetManager.get(self.Widgets.SubWindow, parent)}
+            parent = self.widgetManager.get(self.Widgets.SubWindow, parent)
+            opts = {"parent": parent}
             return MessageBox.askretrycancel(title, message, **opts)
 
     def openBox(self, title=None, dirName=None, fileTypes=None, asFile=False, parent=None):
@@ -11099,7 +11114,8 @@ class gui(object):
         if parent is None:
             col = askcolor(colour)
         else:
-            opts = {"parent": self.widgetManager.get(self.Widgets.SubWindow, parent)}
+            parent = self.widgetManager.get(self.Widgets.SubWindow, parent)
+            opts = {"parent": parent}
             col = askcolor(colour, **opts)
 
         if col[1] is None:
