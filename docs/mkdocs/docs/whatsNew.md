@@ -4,6 +4,7 @@
 ## Version 0.94  
 
 * Issues Resolved:
+    * [#461](https://github.com/jarvisteach/appJar/issues/461) - Fixed issue with setting `parent` of [message boxes](/pythonDialogs/#message-boxes)  
     * [#457](https://github.com/jarvisteach/appJar/issues/457) - Can now create [trees](/pythonDevWidgets/#tree) with xml objects  
     * [#458](https://github.com/jarvisteach/appJar/issues/458) - Ability to set `wrap` parameter on [Tables](/pythonDevWidgets/#table)  
 

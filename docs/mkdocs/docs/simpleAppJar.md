@@ -415,10 +415,11 @@ Displays a canvas widget.
 
 Displays a popUp.  
 
-* `.popUp(title, message, kind="info", parent=None)`  
+* `.popUp(title, message=None, kind="info", parent=None)`  
     This will show any of the available popUps.  
     `title`  will be displayed in the title bar.
     `message` will be displayed as the text of the popUp.  
+    If no `message` is set, `message` will be set to `title` and `title` will be set to `kind`  
     `kind` defaults to `info`, but can be any of: `error`, `warning`, `yesno`, `question`, `ok`, `retry`, `string`, `integer`, `float`, `text` or `number`.  
     `parent` allows you to link this popUp to a named SubWindow, instead of the main window.  
 
