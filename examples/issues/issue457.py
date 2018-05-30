@@ -24,25 +24,26 @@ def add():
 
 with gui() as app:
     app.label('hello world')
-    app.tree("t1",xml)
+    app.tree("t1", xml, fg="white", bg="blue", fgH="blue", bgH="white")
+
     data = parseString(xml)
 
-    node = data.createElement("person")
-
-    element = data.createElement('name')
-    element.appendChild(data.createTextNode("meee"))
-    node.appendChild(element)
-
-    element = data.createElement('age')
-    element.appendChild(data.createTextNode("44"))
-    node.appendChild(element)
-
-    element = data.createElement('gender')
-    element.appendChild(data.createTextNode("other"))
-    node.appendChild(element)
-
+    node = data.createElement("human")
     data.documentElement.appendChild(node)
-    app.addTreeObject("t2", data)
+
+    name = data.createElement('name')
+    age = data.createElement('age')
+    gen = data.createElement('gender')
+
+    name.appendChild(data.createTextNode("meee"))
+    age.appendChild(data.createTextNode("44"))
+    gen.appendChild(data.createTextNode("other"))
+
+    node.appendChild(name)
+    node.appendChild(age)
+    node.appendChild(gen)
+
+    app.tree("t2", data, fg="yellow", bg="red", bgH="yellow", fgH="red")
 
     app.button("SHOW", press)
     app.button("ADD", add)

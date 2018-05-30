@@ -54,7 +54,7 @@ def CHECK_CHANGE_FUNCTION(value=True):
     CHANGE_FUNCTION_VAR = False
 
 
-def tester_function(btn=None):
+def tester_function(btn=None, val1=None, val2=None):
     print(btn)
     return True
 
@@ -1516,16 +1516,17 @@ def test_pies():
 
 def test_trees():
     print("\tTesting Trees")
-    app.addTree("t1",
-        """<people>
+    xml_str = """<people>
         <person><name>Fred</name><age>45</age><gender>Male</gender></person>
         <person><name>Tina</name><age>37</age><gender>Female</gender></person>
         <person><name>CLive</name><age>28</age><gender>Male</gender></person>
         <person><name>Betty</name><age>51</age><gender>Female</gender></person>
-        </people>""")
+        </people>"""
+
+    app.addTree("t1", xml_str)
 
     with pytest.raises(Exception) :
-        app.addTree("t1", "")
+        app.addTree("t1", xml_str)
 
     app.setTreeDoubleClickFunction("t1", tester_function)
     app.setTreeEditFunction("t1", tester_function)
@@ -1535,11 +1536,17 @@ def test_trees():
     app.setTreeFg("t1", "yellow")
     app.setTreeHighlightBg("t1", "orange")
     app.setTreeHighlightFg("t1", "pink")
+    
     app.getTreeXML("t1")
     app.getTreeSelected("t1")
     app.getTreeSelectedXML("t1")
 
     app.setTreeColours("t1", "red", "yellow", "yellow", "red")
+
+    from xml.dom.minidom import parseString
+
+    app.tree("t2", parseString(xml_str), click=tester_function, dbl=tester_function, edit=tester_function, editable=True,
+                fg="green", bg="yellow", fgH="pink", bgH="blue")
 
     # call generic setter functions
 #    test_setters("Tree", "t1")

@@ -4,6 +4,7 @@
 ## Version 0.94  
 
 * Issues Resolved:
+    * [#457](https://github.com/jarvisteach/appJar/issues/457) - Can now create [trees](/pythonDevWidgets/#tree) with xml objects  
     * [#458](https://github.com/jarvisteach/appJar/issues/458) - Ability to set `wrap` parameter on [Tables](/pythonDevWidgets/#table)  
 
 ## Version 0.93  

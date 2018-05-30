@@ -452,3 +452,23 @@ Displays the toolbar.
 | pinned | boolean | None | If set, the toolbar will be pinnable. Setting to `True` wil start pinned, `False` not pinned. |
 | disabled | boolean | False | Determines if the toolbar should start disabed or not. | 
 | hidden | boolean | False | Determines if the toolbar should start hidden or not. When hidden it is completley removed from the GUI. | 
+
+## Tree  
+---
+
+Displays the tree widget.  
+
+* `.tree(title, value, **kwargs)`
+    The `value` should either by an XML string, or XML `Document` object  
+
+| Parameter | Data type | Default | Description |
+| --------- | --------- | ------- | ------------|
+| click | function | None | A function to call when a node is clicked. | 
+| dbl | function | None | A function to call when a node is double-clicked. | 
+| edit | function | None | A function to call when a node is edited. | 
+| editable | boolean | None | Determines if nodes are editable or not. | 
+| fg | string | None | The foreground colour of the widget. | 
+| bg | string | None | The background colour of the widget. | 
+| fgH | string | None | The foreground colour of a selected node. | 
+| bgH | string | None | The background colour of a selected node. | 
+

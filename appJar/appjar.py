@@ -22,7 +22,7 @@ try:
     from inspect import getargspec as getArgs
     PYTHON2 = True
     PY_NAME = "Python"
-    STRING = basestring
+    UNIVERSAL_STRING = basestring
 except ImportError:
     # for Python3
     from tkinter import *
@@ -36,7 +36,7 @@ except ImportError:
     from inspect import getfullargspec as getArgs
     PYTHON2 = False
     PY_NAME = "python3"
-    STRING = str
+    UNIVERSAL_STRING = str
 
 # import other useful classes
 import os
@@ -210,7 +210,7 @@ class gui(object):
 
         win.update_idletasks()
 
-        if isinstance(x, STRING) and x.lower() in ['c', 'center', 'centre'] and y is None:
+        if isinstance(x, UNIVERSAL_STRING) and x.lower() in ['c', 'center', 'centre'] and y is None:
             x = y = 'c'
         else:
             x, y = gui.PARSE_TWO_PARAMS(x, y)
@@ -220,8 +220,8 @@ class gui(object):
         dims = gui.GET_DIMS(win)
 
         # set any center positions
-        if isinstance(x, STRING) and x.lower() in ['c', 'center', 'centre']: x = dims["x"]
-        if isinstance(y, STRING) and y.lower() in ['c', 'center', 'centre']: y = dims["y"]
+        if isinstance(x, UNIVERSAL_STRING) and x.lower() in ['c', 'center', 'centre']: x = dims["x"]
+        if isinstance(y, UNIVERSAL_STRING) and y.lower() in ['c', 'center', 'centre']: y = dims["y"]
 
         # move the window up a bit if requested
         y = y - up if up < y else 0
@@ -344,7 +344,7 @@ class gui(object):
             if isinstance(x, (list, tuple)):
                 return (x[0], x[1])
             else:
-                if isinstance(x, str):
+                if isinstance(x, UNIVERSAL_STRING):
                     x=x.strip()
                     if "," in x:
                         return [int(w.strip()) for w in x.split(",")]
@@ -2376,7 +2376,7 @@ class gui(object):
 
     def exitFullscreen(self, container=None):
         """ turns off fullscreen mode for the specified window """
-        if container is None or isinstance(container, STRING):
+        if container is None or isinstance(container, UNIVERSAL_STRING):
             try:
                 container = self.widgetManager.get(self.Widgets.SubWindow, container)
             except:
@@ -7398,14 +7398,14 @@ class gui(object):
         self._loadWinsound()
         if self.platform == self.WINDOWS and winsound is not False:
             try:
-                if isinstance(note, STRING):
+                if isinstance(note, UNIVERSAL_STRING):
                     freq = self.NOTES[note.lower()]
                 else:
                     freq = note
             except KeyError:
                 raise Exception("Error: cannot play note - " + note)
             try:
-                if isinstance(duration, STRING):
+                if isinstance(duration, UNIVERSAL_STRING):
                     length = self.DURATIONS[duration.upper()]
                 else:
                     length = duration
@@ -8255,7 +8255,7 @@ class gui(object):
     def addCanvasImage(self, title, x, y, image=image, **kwargs):
         ''' adds an image to the specified canvas '''
         canv = self.widgetManager.get(self.Widgets.Canvas, title)
-        if isinstance(image, STRING):
+        if isinstance(image, UNIVERSAL_STRING):
             image = self._getImage(image)
         canv.imageStore.append(image)
         return self.widgetManager.get(self.Widgets.Canvas, title).create_image(x, y, image=image, **kwargs)
@@ -9026,6 +9026,11 @@ class gui(object):
         edit = kwargs.pop("edit", None)
         editable = kwargs.pop("editable", None)
 
+        fg = kwargs.pop("fg", None)
+        bg = kwargs.pop("bg", None)
+        fgH = kwargs.pop("fgH", None)
+        bgH = kwargs.pop("bgH", None)
+
         try: self.widgetManager.verify(widgKind, title)
         except: # widget exists
             tree = self.getTree(title)
@@ -9035,6 +9040,8 @@ class gui(object):
 
         if len(kwargs) > 0:
             self._configWidget(title, widgKind, **kwargs)
+
+        self.setTreeColours(title, fg, bg, fgH, bgH)
 
         if click is not None: self.setTreeClickFunction(title, click)
         if edit is not None: self.setTreeEditFunction(title, edit)
@@ -9051,18 +9058,11 @@ class gui(object):
             self.warn("Unable to parse xml files. .addTree() not available")
             return
 
-        xmlDoc = parseString(data)
-        return self._buildTree(title, xmlDoc, row, column, colspan, rowspan)
-
-    def addTreeObject(self, title, data, row=None, column=0, colspan=0, rowspan=0):
-        ''' adds a navigatable tree, displaying the specified xml object '''
-        self.widgetManager.verify(self.Widgets.Tree, title)
-
-        self._importAjtree()
-        if parseString is False:
-            self.warn("Unable to parse xml files. .addTree() not available")
-            return
-
+        if isinstance(data, UNIVERSAL_STRING):
+            data = parseString(data)
+        else:
+            pass # assume xml object
+            
         return self._buildTree(title, data, row, column, colspan, rowspan)
 
     def _buildTree(self, title, xmlDoc, row=None, column=0, colspan=0, rowspan=0):
@@ -9103,7 +9103,7 @@ class gui(object):
         tree = self.widgetManager.get(self.Widgets.Tree, title)
         tree.setFgHColour(colour)
 
-    def setTreeColours(self, title, fg, bg, fgH, bgH):
+    def setTreeColours(self, title, fg=None, bg=None, fgH=None, bgH=None):
         tree = self.widgetManager.get(self.Widgets.Tree, title)
         tree.setAllColours(bg, fg, bgH, fgH)
 
@@ -11635,12 +11635,13 @@ class gui(object):
                 self.fgHColour = colour
                 self._doUpdateColour()
 
-            def setAllColours(self, bg, fg, bgH, fgH):
-                self.canvas.config(background=bg)
-                self.bgColour = bg
-                self.fgColour = fg
-                self.bgHColour = bgH
-                self.fgHColour = fgH
+            def setAllColours(self, bg=None, fg=None, bgH=None, fgH=None):
+                if bg is not None:
+                    self.canvas.config(background=bg)
+                    self.bgColour = bg
+                if fg is not None: self.fgColour = fg
+                if bgH is not None: self.bgHColour = bgH
+                if fgH is not None: self.fgHColour = fgH
                 self._doUpdateColour()
 
             def _doUpdateColour(self):
