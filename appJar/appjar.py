@@ -9025,6 +9025,8 @@ class gui(object):
         dblClick = kwargs.pop("dbl", None)
         edit = kwargs.pop("edit", None)
         editable = kwargs.pop("editable", None)
+        showAttr = kwargs.pop("attributes", None)
+        showMenu = kwargs.pop("menu", None)
 
         fg = kwargs.pop("fg", None)
         bg = kwargs.pop("bg", None)
@@ -9047,12 +9049,13 @@ class gui(object):
         if edit is not None: self.setTreeEditFunction(title, edit)
         if dblClick is not None: self.setTreeDoubleClickFunction(title, dblClick)
         if editable is not None: self.setTreeEditable(title, editable)
+        if showAttr is not None: self.showTreeAttributes(title, showAttr)
+        if showMenu is not None: self.showTreeMenu(title, showMenu)
         return tree
 
     def addTree(self, title, data, row=None, column=0, colspan=0, rowspan=0):
         ''' adds a navigatable tree, displaying the specified xml text '''
         self.widgetManager.verify(self.Widgets.Tree, title)
-
         self._importAjtree()
         if parseString is False:
             self.warn("Unable to parse xml files. .addTree() not available")
@@ -9077,11 +9080,39 @@ class gui(object):
             takefocus=1)
         self._positionWidget(frame, row, column, colspan, rowspan, "NSEW")
 
-        item = self._makeAjTreeData()(xmlDoc.documentElement)
-        node = self._makeAjTreeNode()(frame.getPane(), None, item)
-        self.widgetManager.add(self.Widgets.Tree, title, node)
+        treeData = self._makeAjTreeData()(xmlDoc)
+        gui.trace("TreeData populated: %s", title)
+
+        treeNode = self._makeAjTreeNode()(frame.getPane(), None, treeData)
+        gui.trace("TreeNode created: %s", title)
+
+        self.widgetManager.add(self.Widgets.Tree, title, treeNode)
         # update() & expand() called in go() function
-        return node
+        return treeNode
+
+    # not complete yet...
+    def clearTree(self, title):
+        tree = self.widgetManager.get(self.Widgets.Tree, title)
+        tree.destroy()
+        tree.update()
+
+    def showTreeAttributes(self, title, show=True):
+        tree = self.widgetManager.get(self.Widgets.Tree, title)
+        self._loadTooltip()
+        tree.showAttributes(show)
+
+    # not complete yet...
+    def showTreeMenu(self, title, show=True):
+        tree = self.widgetManager.get(self.Widgets.Tree, title)
+        tree.showMenu(show)
+
+    # not complete yet...
+    def addTreeChild(self, title, data):
+        tree = self.widgetManager.get(self.Widgets.Tree, title)
+        if isinstance(data, UNIVERSAL_STRING):
+            data = parseString(data)
+        treeData = self._makeAjTreeData()(data)
+        tree.addChild(treeData)
 
     def setTreeEditable(self, title, value=True):
         tree = self.widgetManager.get(self.Widgets.Tree, title)
@@ -9145,8 +9176,11 @@ class gui(object):
     def generateTree(self, title):
         """ displays data inside tree """
         tree = self.widgetManager.get(self.Widgets.Tree, title)
+        gui.trace("Generating Tree: %s", title)
         tree.update()
+        gui.trace("Tree updated: %s", title)
         tree.expand()
+        gui.trace("Tree expanded: %s", title)
 
 #####################################
 # FUNCTIONS to add Message Box
@@ -11591,15 +11625,17 @@ class gui(object):
     # Tree Widget Class
     # https://www.safaribooksonline.com/library/view/python-cookbook-2nd/0596007973/ch11s11.html
     # idlelib -> TreeWidget.py
+    # https://svn.python.org/projects/python/trunk/Lib/idlelib/TreeWidget.py
     # modify minidom - https://wiki.python.org/moin/MiniDom
     #####################################
     def _makeAjTreeNode(self):
         class AjTreeNode(TreeNode, object):
 
             def __init__(self, canvas, parent, item):
-
                 super(AjTreeNode, self).__init__(canvas, parent, item)
 
+                self.hasAttr = False
+                self.showAttr = False
                 self.bgColour = None
                 self.fgColour = None
                 self.bgHColour = None
@@ -11613,6 +11649,14 @@ class gui(object):
                     self.bgHColour = self.parent.bgHColour
                     self.fgHColour = self.parent.fgHColour
                     self.editEvent = self.parent.editEvent
+                    self.showAttr = self.parent.showAttr
+                else:
+                    # set this once, in parent
+                    self.canvas.menu = None
+                    self.canvas.lastSelected = None
+
+                self.menuBound = False
+
             # customised config setters
             def config(self, cnf=None, **kw):
                 self.configure(cnf, **kw)
@@ -11626,13 +11670,36 @@ class gui(object):
                 if "fg" in kw:
                     self.setFgColour(kw.pop("fg"))
 
-#                        # propagate anything left
-#                        super(AjTreeNode, self).config(cnf, **kw)
+#                # propagate anything left
+#                super(AjTreeNode, self).config(cnf, **kw)
+
+            # NOT COMPLETE
+            def addChild(self, child):
+                child = self.__class__(self.canvas, self, child)
+                self.children.append(child)
+                self.update()
 
             def registerEditEvent(self, func):
                 self.editEvent = func
                 for c in self.children:
                     c.registerEditEvent(func)
+
+            def showAttributes(self, show):
+                self.showAttr = show
+                for c in self.children:
+                    c.showAttributes(show)
+                self.update()
+
+            def showMenu(self, show):
+                if show:
+                    if self.canvas.menu is None:
+                        self.canvas.menu = Menu(self.canvas, tearoff=0)
+                        self.canvas.menu.add_command(label="delete", command=self._delete)
+                        self.canvas.menu.bind("<FocusOut>", lambda e: self.canvas.menu.unpost())
+                    self._bindMenu()
+                else:
+                    # need to go through and unbind...
+                    pass
 
             def setBgColour(self, colour):
                 self.canvas.config(background=colour)
@@ -11672,10 +11739,57 @@ class gui(object):
                 for c in self.children:
                     c._updateColours(bgCol, bgHCol, fgCol, fgHCol)
 
+            def draw(self, x, y):
+                cy = super(AjTreeNode, self).draw(x, y)
+                self._bindMenu()
+                return cy
+
             # override parent function, so that we can change the label's background colour
             def drawtext(self):
+                attr=self.item.node.attributes
+                self.hasAttr = self.showAttr and attr is not None and len(attr) > 0
+
+                if self.hasAttr:
+                    self.attrId = self.canvas.create_text(self.x+20-1, self.y-1, anchor="nw", text='*')
+                    self.x += 7
                 super(AjTreeNode, self).drawtext()
+                if self.hasAttr: self.x -= 7
                 self.colourLabels()
+
+                # add a tooltip for attributes
+                if ToolTip is not False and self.hasAttr:
+                    text = "Attributes\n"
+                    for key, val in attr.items():
+                        text += "  " + key + ":" + val + "\n"
+                    text = text[:-1]
+                    ToolTip(self.label, text, delay=500, follow_mouse=1)
+                    ToolTip(self.canvas, text, specId=self.attrId, delay=500, follow_mouse=1)
+
+            def _bindMenu(self):
+                if self.canvas.menu is not None and not self.menuBound:
+                    self.menuBound = True
+                    if gui.GET_PLATFORM() in [gui.WINDOWS, gui.LINUX]:
+                        self.canvas.tag_bind(self.image_id, "<Button-3>", self._showMenu)
+                        if self.hasAttr: self.canvas.tag_bind(self.attrId, "<Button-3>", self._showMenu)
+                        self.label.bind("<Button-3>", self._showMenu)
+                    else:
+                        self.canvas.tag_bind(self.image_id, "<Button-2>", self._showMenu)
+                        if self.hasAttr: self.canvas.tag_bind(self.attrId, "<Button-2>", self._showMenu)
+                        self.label.bind("<Button-2>", self._showMenu)
+
+            # override parent function, so that we can change the label's background colour
+            def drawicon(self):
+                super(AjTreeNode, self).drawicon()
+
+            def _showMenu(self, event=None):
+                self.canvas.lastSelected = event.widget
+                self.canvas.menu.focus_set()
+                self.canvas.menu.post(event.x_root - 10, event.y_root - 10)
+                return "break"
+
+            def _delete(self):
+                self.update()
+                self.canvas.lastSelected.destroy()
 
             # override parent function, so that we can generate an event on finish editing
             def edit_finish(self, event=None):
@@ -11684,6 +11798,8 @@ class gui(object):
                     self.editEvent()
 
             def colourLabels(self):
+                if self.showAttr and self.hasAttr:
+                    self.canvas.itemconfigure(self.attrId, fill=self.fgColour)
                 try:
                     if not self.selected:
                         self.label.config(background=self.bgColour, fg=self.fgColour)
@@ -11716,8 +11832,11 @@ class gui(object):
         # functions implemented as specified in skeleton
         class AjTreeData(TreeItem, object):
 
-            def __init__(self, node):
-                self.node = node
+            def __init__(self, document):
+                # handle root node
+                try: self.node = document.documentElement
+                except AttributeError: self.node = document
+
                 self.dblClickFunc = None
                 self.clickFunc = None
                 self.treeTitle = None

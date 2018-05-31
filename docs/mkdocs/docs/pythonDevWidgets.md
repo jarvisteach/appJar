@@ -204,8 +204,9 @@ app.go()
     Register a function to call when an item is edited  
     Will receive the name of the tree.  
 
-* `.setTreeEditable(title, value)`  
-    Set whether the tree can be edited  
+* `.showTreeAttributes(title, show=True)`  
+    Call this to enable indication of attributes on a tree.  
+    Will draw a star & provide a tooltip.  
 
 * `.setTreeColours(title, fg, bg, fgH, bgH)`  
     Set the fg/bg/fg highlight/bg highlight colours of the tree  

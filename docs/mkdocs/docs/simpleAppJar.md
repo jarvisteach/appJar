@@ -468,6 +468,7 @@ Displays the tree widget.
 | dbl | function | None | A function to call when a node is double-clicked. | 
 | edit | function | None | A function to call when a node is edited. | 
 | editable | boolean | None | Determines if nodes are editable or not. | 
+| attributes | boolean | None | Determines if attributes should be shown in the tree. |
 | fg | string | None | The foreground colour of the widget. | 
 | bg | string | None | The background colour of the widget. | 
 | fgH | string | None | The foreground colour of a selected node. | 

@@ -1518,9 +1518,9 @@ def test_trees():
     print("\tTesting Trees")
     xml_str = """<people>
         <person><name>Fred</name><age>45</age><gender>Male</gender></person>
-        <person><name>Tina</name><age>37</age><gender>Female</gender></person>
+        <person a="aaa"><name>Tina</name><age>37</age><gender>Female</gender></person>
         <person><name>CLive</name><age>28</age><gender>Male</gender></person>
-        <person><name>Betty</name><age>51</age><gender>Female</gender></person>
+        <person><name>Betty</name><age>51</age><gender b='bbb'>Female</gender></person>
         </people>"""
 
     app.addTree("t1", xml_str)
@@ -1531,6 +1531,7 @@ def test_trees():
     app.setTreeDoubleClickFunction("t1", tester_function)
     app.setTreeEditFunction("t1", tester_function)
     app.setTreeEditable("t1", True)
+    app.showTreeAttributes("t1")
     app.setTreeEditable("t1", False)
     app.setTreeBg("t1", "red")
     app.setTreeFg("t1", "yellow")
@@ -1545,7 +1546,7 @@ def test_trees():
 
     from xml.dom.minidom import parseString
 
-    app.tree("t2", parseString(xml_str), click=tester_function, dbl=tester_function, edit=tester_function, editable=True,
+    app.tree("t2", parseString(xml_str), attributes=True, click=tester_function, dbl=tester_function, edit=tester_function, editable=True,
                 fg="green", bg="yellow", fgH="pink", bgH="blue")
 
     # call generic setter functions
