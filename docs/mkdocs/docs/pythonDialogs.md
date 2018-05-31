@@ -17,20 +17,6 @@ A number of pop-ups (aka dialogs) are available, to add a different user experie
     These will enable or disable the named tooltip.  
     When disabled, it will not show-up.  
 
----
-<div style='text-align: center;'>
-*Advertisement&nbsp;<sup><a href="/advertising">why?</a></sup>*
-<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-<ins class="adsbygoogle"
-    style="display:block"
-    data-ad-format="fluid"
-    data-ad-layout-key="-gw-13-4l+6+pt"
-    data-ad-client="ca-pub-6185596049817878"
-    data-ad-slot="5627392164"></ins>
-<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-</div>
----
-
 ### Message Boxes
 ---
 * `.infoBox(title, message, parent=None)`  
