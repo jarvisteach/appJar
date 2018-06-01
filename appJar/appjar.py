@@ -3526,10 +3526,7 @@ class gui(object):
         else:
             gui.trace("Remove widget: %s", name)
             item.grid_forget()
-            item.destroy()
-
-        # finally remove the widget - this will also remove the variable
-        self.widgetManager.remove(kind, name)
+            self.cleanseWidgets(item)
 
     def removeAllWidgets(self, current=False):
         if current: containerData = self.containerStack[-1]
@@ -5016,11 +5013,13 @@ class gui(object):
     @contextmanager
     def labelFrame(self, title, row=None, column=0, colspan=0, rowspan=0, sticky=W, hideTitle=False, **kwargs):
         name = kwargs.pop("label", kwargs.pop("name", None))
+        labelFg = kwargs.pop("labelFg", self.fg)
         try:
             lf = self.startLabelFrame(title, row, column, colspan, rowspan, sticky, hideTitle, name)
         except ItemLookupError:
             lf = self.openLabelFrame(title)
         self.configure(**kwargs)
+        lf.config(fg=labelFg)
         try: yield lf
         finally: self.stopLabelFrame()
 
@@ -5331,11 +5330,11 @@ class gui(object):
             sw = self.startSubWindow(name, title, modal, blocking, transient, grouped)
         except ItemLookupError:
             sw = self.openSubWindow(name)
+        self.configure(**kwargs)
 
         try:
             yield sw
         finally:
-            self.configure(**kwargs)
             self.stopSubWindow()
         if visible is True: self.showSubWindow(name)
 
