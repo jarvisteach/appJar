@@ -2959,16 +2959,23 @@ class gui(object):
                     item.config(height=value)
                 elif option == 'state':
                     # make entries readonly - can still copy/paste
+                    but = None
                     if kind == self.Widgets.Entry:
-                        if value == "disabled":
-                            if hasattr(item, 'but'):
-                                item.but.config(state=value)
-                                item.unbind("<Button-1>")
+                        if value == "disabled" and hasattr(item, 'but'):
+                            but = item.but
+                            item.unbind("<Button-1>")
                             value = "readonly"
                         elif value == 'normal' and hasattr(item, 'but') and item.cget('state') != 'normal':
+                            but = item.but
                             item.bind("<Button-1>", item.click_command, "+")
-                            item.but.config(state=value)
-                    item.config(state=value)
+
+                    if self.ttkFlag:
+                        gui.trace("%s configured with ttk state %s", name, value)
+                        item.state([value])
+                        if but is not None: but.state([value])
+                    else:
+                        item.config(state=value)
+                        if but is not None: but.config(state=value)
 
                 elif option == 'relief':
                     item.config(relief=value)
@@ -5647,13 +5654,14 @@ class gui(object):
         show = kwargs.pop("show", False)
         _range = kwargs.pop("range", None)
         callFunction = kwargs.pop("callFunction", True)
+        label = kwargs.pop("label", False)
 
         try: self.widgetManager.verify(widgKind, title)
         except: # widget exists
             scale = self.getScale(title)
         else: # new widget
             kwargs = self._parsePos(kwargs.pop("pos", []), kwargs)
-            scale = self._scaleMaker(title, *args, **kwargs)
+            scale = self._scaleMaker(title, label, *args, **kwargs)
 
         if _range is not None: self.setScaleRange(title, _range[0], _range[1])
         if vert: self.setScaleVertical(title)
@@ -5682,8 +5690,9 @@ class gui(object):
         self.widgetManager.add(self.Widgets.Scale, title, scale)
         return scale
 
-    def _scaleMaker(self, title, row=None, column=0, colspan=0, rowspan=0, **kwargs):
-        return self.addScale(title, row, column, colspan, rowspan)
+    def _scaleMaker(self, title, label, row=None, column=0, colspan=0, rowspan=0, **kwargs):
+        if label: return self.addLabelScale(title, row, column, colspan, rowspan, label)
+        else: return self.addScale(title, row, column, colspan, rowspan)
 
     def addScale(self, title, row=None, column=0, colspan=0, rowspan=0):
         ''' adds a slidable scale at the specified position '''

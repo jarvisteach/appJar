@@ -331,6 +331,7 @@ A draggable widget, where the user can select a number from a range.
 | show | boolean | False | Show the slider's value above the slider. |
 | increment | integer | 10 | Configures how much the slider jumps, when the trough is clicked. |
 | interval | integer | None | Configures the slider to show values, along its length, in steps of the value specified. |
+| range | list/tuple | () | Sets a start value and end value for the slider. | 
 
 ## Meter  
 ---
@@ -444,7 +445,7 @@ Displays a popUp.
 Displays the toolbar.  
 
 * `.toolbar(names, funcs, **kwargs)`
-    `names` should be th elist of button names to display on the toolbar.  
+    `names` should be the list of button names to display on the toolbar.  
     `funcs` should contain either a single function, that all buttons will be linked to, or a list of functions for each button.
 
 | Parameter | Data type | Default | Description |
