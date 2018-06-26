@@ -198,6 +198,7 @@ An interactive widget, for capturing multi-line user input in the GUI.
 | Parameter | Data type | Default | Description |
 | --------- | --------- | ------- | ------------|
 | scroll | boolean | False | Will configure this as a scrollable text area. |
+| replace | boolean | False | Will replace any existing text in the text area when updating. |
 
 ## Button  
 ---

@@ -8727,6 +8727,7 @@ class gui(object):
         widgKind = self.Widgets.TextArea
         scroll = kwargs.pop("scroll", False)
         end = kwargs.pop("end", True)
+        replace = kwargs.pop("replace", False)
         callFunction = kwargs.pop("callFunction", True)
 
         try: self.widgetManager.verify(self.Widgets.TextArea, title)
@@ -8738,6 +8739,7 @@ class gui(object):
             else: text = self._textMaker(title, "text", *args, **kwargs)
             callFunction = False
 
+        if replace: self.clearTextArea(title)
         if value is not None: self.setTextArea(title, value, end=end, callFunction=callFunction)
         if len(kwargs) > 0:
             self._configWidget(title, widgKind, **kwargs)

@@ -3402,6 +3402,8 @@ def updateApp4(btn=None):
     app4.scale("happiness", 50)
     app4.message("mess", "aaa")
     app4.text("mess2", "aaa")
+    app4.text("mess2", "aaa", replace=False)
+    app4.text("mess2", "aaa", replace=True)
     app4.meter("Cry", 50)
     app4.link("Cry", "http://www.google.com")
     app4.link("Shout", updateApp4)
