@@ -386,9 +386,10 @@ app.go()
 * `.startTabbedFrame(name)` & `.stopTabbedFrame()`  
     Used to start & stop a *TabbedFrame*, with the specified name.  
 
-* `.startTab(name)` & `.stopTab()`  
+* `.startTab(name, beforeTab=None, afterTab=None)` & `.stopTab()`  
     Used to start and stop each of the tabs in the *TabbedFrame*.  
     The title for the tab will be the specified *name*.  
+    If `beforeTab`/`afterTab` are populated, the tab will be positioned appropriately.  
 
 * `.openTabbedFrame(title)` & `.openTab(frameTitle, tabTitle)`  
     Used to reopen the named *TabbedFrame* or named *Tab*.  
