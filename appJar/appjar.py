@@ -2900,32 +2900,37 @@ class gui(object):
         self._positionWidget(widg, row, column, colspan, rowspan)
         self.widgetManager.add(self.Widgets.Widget, title, widg)
 
-    def configureWidget(self, kind, name, option, value, key=None, deprecated=False):
-
-        gui.trace("Configuring: %s of %s with %s of %s", name, kind, option, value)
-
-        # warn about deprecated functions
-        if deprecated:
-            self.warn("Deprecated config function (%s) used for %s -> %s use %s deprecated", option, self.Widgets.name(kind), name, deprecated)
-
+    def _getWidgetList(self, kind, name, limit):
+        # gets a list of items of this type
+        # limit is used to only get a single radio button - for events
         if kind == self.Widgets.RadioButton:
             items = self.widgetManager.group(kind)
             new_items = []
             for k, v in items.items():
                 if k.startswith(name+"-"):
                     new_items.append(v)
-            if len(new_items) > 0:
-                items = new_items
-                # stops multipl events...
-                if option in ['change', 'command']:
-                    items = [items[0]]
-            else:
+
+            if len(new_items) == 0:
                 raise Exception("No RadioButtons found with that name " + name)
+            else:
+                items = new_items
+                # stops multiple events...
+                if limit: items = [items[0]]
         else:
-            # get the list of items for this type, and validate the widget is in the  list
+            # get the list of items for this type, and validate the widget is in the list
             self.widgetManager.check(kind, name)
             items = self.widgetManager.group(kind)
             items = [items[name]]
+        return items
+
+    def configureWidget(self, kind, name, option, value, key=None, deprecated=False):
+        gui.trace("Configuring: %s of %s with %s of %s", name, kind, option, value)
+        # warn about deprecated functions
+        if deprecated:
+            self.warn("Deprecated config function (%s) used for %s -> %s use %s deprecated", option, self.Widgets.name(kind), name, deprecated)
+
+        # will return multiple items if radio button...
+        items = self._getWidgetList(kind, name, limit=option in ['change', 'command'])
 
         # loop through each item, and try to reconfigure it
         # this will often fail - widgets have varied config options
@@ -3446,54 +3451,60 @@ class gui(object):
             return False
 
     def hideWidgetType(self, kind, name):
-        item = self.widgetManager.get(kind, name)
+        items = self._getWidgetList(kind, name, limit=False)
 
-        if self._widgetHasContainer(kind, item):
-            gui.trace("Hiding widget in container: %s", name)
-            widget = item.master
-            if hasattr(widget, "inContainer") and widget.inContainer:
-                gui.trace("Have container in container")
-                widget = widget.master
-            try: self.widgetManager.get(self.Widgets.FrameLabel, name).hidden = True
-            except: pass
-        else:
-            gui.trace("Hiding widget: %s", name)
-            if kind in [self.Widgets.RadioButton]:
-                for rb in item:
-                    if rb.text == name:
-                        widget = rb
-            widget = item
+        for item in items:
+            if self._widgetHasContainer(kind, item):
+                gui.trace("Hiding widget in container: %s", name)
+                widget = item.master
+                if hasattr(widget, "inContainer") and widget.inContainer:
+                    gui.trace("Have container in container")
+                    widget = widget.master
+                try: self.widgetManager.get(self.Widgets.FrameLabel, name).hidden = True
+                except: pass
+            else:
+                gui.trace("Hiding widget: %s", name)
+#                if kind in [self.Widgets.RadioButton]:
+#                    for rb in item:
+#                        if rb.text == name:
+#                            widget = rb
+                widget = item
 
-        if "in" in widget.grid_info():
-            gui.trace("Widget hidden: %s", name)
-            widget.grid_remove()
-        else:
-            gui.trace("Hiding failed - %s not showing", name)
+            if "in" in widget.grid_info():
+                gui.trace("Widget hidden: %s", name)
+                widget.grid_remove()
+            else:
+                gui.trace("Hiding failed - %s not showing", name)
 
     def showWidgetType(self, kind, name):
-        item = self.widgetManager.get(kind, name)
+        items = self._getWidgetList(kind, name, limit=False)
 
-        if self._widgetHasContainer(kind, item):
-            gui.trace("Showing widget in container: %s", name)
-            widget = item.master
-            if hasattr(widget, "inContainer") and widget.inContainer:
-                gui.trace("Have container in container")
-                widget = widget.master
-            try: self.widgetManager.get(self.Widgets.FrameLabel, name).hidden = False
-            except: pass
-        else:
-            msg = "Showing widget"
-            widget = item
+        for item in items:
+            if self._widgetHasContainer(kind, item):
+                gui.trace("Showing widget in container: %s", name)
+                widget = item.master
+                if hasattr(widget, "inContainer") and widget.inContainer:
+                    gui.trace("Have container in container")
+                    widget = widget.master
+                try: self.widgetManager.get(self.Widgets.FrameLabel, name).hidden = False
+                except: pass
+            else:
+                msg = "Showing widget"
+                widget = item
 
-        # only show the widget, if it's not already showing
-        if "in" not in widget.grid_info():
-            gui.trace("Widget shown: %s", name)
-            widget.grid()
-#            self._updateLabelBoxes(name, widget.grid_info()['column'])
-        else:
-            gui.trace("Showing failed - %s already showing", name)
+            # only show the widget, if it's not already showing
+            if "in" not in widget.grid_info():
+                gui.trace("Widget shown: %s", name)
+                widget.grid()
+    #            self._updateLabelBoxes(name, widget.grid_info()['column'])
+            else:
+                gui.trace("Showing failed - %s already showing", name)
 
     def removeWidgetType(self, kind, name):
+        if kind == self.Widgets.RadioButton:
+            gui.error("Can't remove widget %s - %s", kind, name)
+            return
+            
         item = self.widgetManager.get(kind, name)
 
         # if it's a flasher, remove it
@@ -4340,13 +4351,13 @@ class gui(object):
                 self.border.pack_forget()
                 self.pack_forget()
 
-            def display(self, fill=False):
+            def display(self, fill=False, beforeTab=None, afterTab=None):
                 self.border.pack_forget()
                 self.pack_forget()
                 if not self.hidden:
-                    if fill: self.pack(side=LEFT, ipady=4, ipadx=4, expand=True, fill=BOTH)
-                    else: self.pack(side=LEFT, ipady=4, ipadx=4)
-                    self.border.pack(side=LEFT, fill=Y, expand=0)
+                    if fill: self.pack(side=LEFT, ipady=4, ipadx=4, expand=True, fill=BOTH, before=beforeTab, after=afterTab)
+                    else: self.pack(side=LEFT, ipady=4, ipadx=4, before=beforeTab, after=afterTab)
+                    self.border.pack(side=LEFT, fill=Y, expand=0, before=beforeTab, after=afterTab)
 
         class TabbedFrame(frameBase, object):
             def __init__(self, master, fill=False, changeOnFocus=True, font=None, **kwargs):
@@ -4356,6 +4367,8 @@ class gui(object):
                 self.selectedTab = None
                 self.changeOnFocus = changeOnFocus
                 self.changeEvent = None
+                self.beforeTab = None
+                self.afterTab = None
 
                 # layout the grid
                 Grid.columnconfigure(self, 0, weight=1)
@@ -4400,6 +4413,18 @@ class gui(object):
 
             def config(self, cnf=None, **kw):
                 self.configure(cnf, **kw)
+
+            def setBeforeTab(self, tab=None):
+                if tab is not None:
+                    self.beforeTab = self.widgetStore[tab][0]
+                else:
+                    self.beforeTab = None
+
+            def setAfterTab(self, tab=None):
+                if tab is not None:
+                    self.afterTab = self.widgetStore[tab][0]
+                else:
+                    self.afterTab = None
 
             def configure(self, cnf=None, **kw):
                 kw = gui.CLEAN_CONFIG_DICTIONARY(**kw)
@@ -4485,7 +4510,7 @@ class gui(object):
                 if text in self.widgetStore: raise ItemLookupError("Duplicate tabName: " + text)
 
                 tab = Tab(self.tabContainer, text=text, func=self.changeTab, font=self.tabFont, **kwargs)
-                tab.display(self.fill)
+                tab.display(self.fill, beforeTab=self.beforeTab, afterTab=self.afterTab)
 
                 # create the pane
                 pane = self.panes.addFrame()
@@ -4643,9 +4668,11 @@ class gui(object):
 
     @contextmanager
     def tab(self, title, tabTitle=None, **kwargs):
+        beforeTab = kwargs.pop("beforeTab", None)
+        afterTab = kwargs.pop("afterTab", None)
         if tabTitle is None:
             try:
-                tab = self.startTab(title)
+                tab = self.startTab(title, beforeTab, afterTab)
             except ItemLookupError:
                 if self._getContainerProperty('type') != self.Widgets.TabbedFrame:
                     raise Exception("Can't open a Tab in the current container: ", self._getContainerProperty('type'))
@@ -4658,14 +4685,25 @@ class gui(object):
         try: yield tab
         finally: self.stopTab()
 
-    def startTab(self, title):
+    def startTab(self, title, beforeTab=None, afterTab=None):
+
+        if beforeTab is not None and afterTab is not None:
+            self.warn("You can't specify a before and after value for tab: %s", title)
+            beforeTab = afterTab = None
+
         # auto close the previous TAB - keep it?
         if self._getContainerProperty('type') == self.Widgets.Tab:
             self.warn("You didn't STOP the previous TAB")
             self.stopContainer()
         elif self._getContainerProperty('type') != self.Widgets.TabbedFrame:
             raise Exception("Can't add a Tab to the current container: ", self._getContainerProperty('type'))
+
+        tf = self.widgetManager.get(self.Widgets.TabbedFrame, self._getContainerProperty("title"))
+        tf.setBeforeTab(beforeTab)
+        tf.setAfterTab(afterTab)
         self.startContainer(self.Widgets.Tab, title)
+        tf.setBeforeTab()
+        tf.setAfterTab()
 
     def getTabbedFrameSelectedTab(self, title):
         nb = self.widgetManager.get(self.Widgets.TabbedFrame, title)

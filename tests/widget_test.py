@@ -580,9 +580,6 @@ def test_checks():
     assert cbs["NCB2"] is True
     assert cbs["NCB3"] is False
 
-    # call generic setter functions
-    test_setters("CheckBox", TEXT_ONE)
-
     app.clearAllCheckBoxes()
     assert app.getCheckBox(TEXT_ONE) is False
     assert app.getCheckBox(TEXT_TWO) is False
@@ -590,6 +587,10 @@ def test_checks():
     assert app.getCheckBox("NCB1") is False
     assert app.getCheckBox("NCB2") is False
     assert app.getCheckBox("NCB3") is False
+
+    # call generic setter functions
+    test_setters("CheckBox", TEXT_ONE)
+
 
     print("\t >> all tests complete")
 
@@ -766,14 +767,14 @@ def test_spins():
     assert sbs["s3"] == "200"
     assert sbs["s4"] == "150"
 
-    # call generic setter functions
-    test_setters("SpinBox", "s1")
-
     app.clearAllSpinBoxes()
     assert app.getSpinBox("s1") == "a"
     assert app.getSpinBox("s2") == "a"
     assert app.getSpinBox("s3") == "5"
     assert app.getSpinBox("s4") == "25"
+
+    # call generic setter functions
+    test_setters("SpinBox", "s1")
 
     print("\t>> all tests complete")
 
@@ -869,9 +870,6 @@ def test_lists():
     tmp_list.remove(tmp_list[1])
     assert app.getAllListItems("l2") == tmp_list
 
-    # call generic setter functions
-    test_setters("ListBox", "l1")
-
     app.addListBox("g1", LIST_ONE)
     app.setListBoxChangeFunction("g1", CHANGE_FUNCTION)
     app.addListBox("g2", LIST_TWO)
@@ -918,6 +916,9 @@ def test_lists():
     app.clearAllListBoxes()
     assert app.getListBox("g1") == []
     assert app.getListBox("g2") == []
+
+    # call generic setter functions
+    test_setters("ListBox", "l1")
 
     print("\t>> all tests complete")
 
@@ -1004,16 +1005,15 @@ def test_scales():
     sc._jump("trough1")
     sc._jump("trough2")
 
-
-    # call generic setter functions
-    test_setters("Scale", "s1")
-
     app.clearAllScales()
     print( app.getScale("s1"))
     assert app.getScale("s1") == 44
     assert app.getScale("s2") == 22
     assert app.getScale("s3") == 0
     assert app.getScale("s4") == 0
+
+    # call generic setter functions
+    test_setters("Scale", "s1")
 
     print("\t >> all tests complete")
 
@@ -1197,9 +1197,6 @@ def test_text_areas():
     print(app.searchTextArea("t1", TEXT_ONE, "1.0"))
     assert app.searchTextArea("t1", TEXT_ONE, "1.0") == "1.0"
 
-    # call generic setter functions
-    test_setters("TextArea", "t1")
-
     app.clearAllTextAreas()
     assert app.getTextArea("t1") == EMPTY
     assert app.getTextArea("t2") == EMPTY
@@ -1225,6 +1222,9 @@ def test_text_areas():
     app.textAreaToggleFontSelected("t1", "BOLD_ITALIC")
     app.textAreaToggleFontSelected("t1", "BOLD_ITALIC")
     app.textAreaApplyFontSelected("t1", "BOLD_ITALIC")
+
+    # call generic setter functions
+    test_setters("TextArea", "t1")
 
     print("\t >> all tests complete")
 
@@ -2076,20 +2076,25 @@ def test_langs():
 
 def test_tooltips():
     print("\tTesting tooltip")
-    app.setLabelTooltip("l1", "message")
-    app.setLabelTooltip("l1", "")
-    app.setLabelTooltip("l1", "updated message")
-    app.disableLabelTooltip("l1")
-    app.enableLabelTooltip("l1")
-    lab = app.getLabelWidget("l1")
+    app.addLabel("TestLabelTooltip")
+    app.addEntry("EntryTooltip")
+    app.addNumericEntry("NumericEntryTooltip")
+    app.addSecretEntry("SecretEntryTooltip")
+
+    app.setLabelTooltip("TestLabelTooltip", "message")
+    app.setLabelTooltip("TestLabelTooltip", "")
+    app.setLabelTooltip("TestLabelTooltip", "updated message")
+    app.disableLabelTooltip("TestLabelTooltip")
+    app.enableLabelTooltip("TestLabelTooltip")
+    lab = app.getLabelWidget("TestLabelTooltip")
     tip = lab.tooltip
     tip.enter()
     tip.leave()
     tip.motion()
 
-    app.setEntryTooltip("e1", "tooltip text")
-    app.setEntryTooltip("ne1", "tooltip text")
-    app.setEntryTooltip("se1", "tooltip text")
+    app.setEntryTooltip("EntryTooltip", "tooltip text")
+    app.setEntryTooltip("NumericEntryTooltip", "tooltip text")
+    app.setEntryTooltip("SecretEntryTooltip", "tooltip text")
 
     print(" >> not implemented...")
     #print("\t >> all tests complete")
@@ -2227,26 +2232,26 @@ def test_setters(widg_type, widg_id, widg_val=None):
     else:
         exec('app.get'+widg_type+'Widget("'+widg_id+'")')
 
-#    exec("app.show" + widg_type+ "(\""+widg_id +"\")")
-#    exec("app.hide" + widg_type+ "(\""+widg_id +"\")")
-#    exec("app.enable" + widg_type+ "(\""+widg_id +"\")")
-#    exec("app.disable" + widg_type+ "(\""+widg_id +"\")")
-#    exec("app.remove" + widg_type+ "(\""+widg_id +"\")")
+    exec("app.hide" + widg_type+ "(\""+widg_id +"\")")
+    exec("app.show" + widg_type+ "(\""+widg_id +"\")")
+    exec("app.disable" + widg_type+ "(\""+widg_id +"\")")
+    exec("app.enable" + widg_type+ "(\""+widg_id +"\")")
+    exec("app.remove" + widg_type+ "(\""+widg_id +"\")")
     print(" >> not implemented...")
     #print("\t >> all tests complete")
 
 
 def test_sets():
     print("\tTesting setters")
-    app.setLabelBg("l1", COL_ONE)
-    app.setLabelFg("l1", COL_TWO)
-    app.setLabelDisabledFg("l1", COL_THREE)
-    app.setLabelWidth("l1", 77)
-    app.setLabelHeight("l1", 33)
-    app.setLabelRelief("l1", "sunken")
-    app.setLabelState("l1", "disabled")
+    app.setLabelBg("xx1", COL_ONE)
+    app.setLabelFg("xx1", COL_TWO)
+    app.setLabelDisabledFg("xx1", COL_THREE)
+    app.setLabelWidth("xx1", 77)
+    app.setLabelHeight("xx1", 33)
+    app.setLabelRelief("xx1", "sunken")
+    app.setLabelState("xx1", "disabled")
 
-    lab = app.getLabelWidget("l1")
+    lab = app.getLabelWidget("xx1")
 
     assert lab.cget("bg") == COL_ONE
     assert lab.cget("fg") == COL_TWO
@@ -2313,12 +2318,12 @@ def test_containers():
     ## TABBED FRAMES
 
     app.startTabbedFrame("tbf1")
-    app.startTab("tab1")
+    app.startTab("tab1", beforeTab='a', afterTab='a')
     app.addLabel("tbf1_l1", TEXT_ONE)
-    app.startTab("tab2")
+    app.startTab("tab2", beforeTab="tab1")
     app.addLabel("tbf2_l1", TEXT_ONE)
     app.stopTab()
-    app.startTab("tab3")
+    app.startTab("tab3", afterTab="tab1")
     # empty tab
     app.stopTab()
     app.stopTabbedFrame()
@@ -2833,7 +2838,6 @@ def test_canvas():
     assert isinstance(app.addCanvas("c1"), Canvas)
     c = app.getCanvas("c1")
     c.create_line(0, 0, 255, 244, width=5)
-    test_setters("Canvas", "c1")
 
     app.addCanvasCircle("c1", 10, 10, 10)
     app.addCanvasOval("c1", 10, 10, 10, 10)
@@ -2857,6 +2861,8 @@ def test_canvas():
     event.x = 100
     event.y = 100
     app._imageMap("c1", event)
+
+    test_setters("Canvas", "c1")
 
     print(" >> not implemented...")
     #print("\t >> all tests complete")
@@ -3249,7 +3255,7 @@ data = app.getAllInputs(extra='something', extra2=True, extra3=4)
 assert data['extra'] == 'something'
 assert data['ae1'] == TEXT_ONE
 assert data['rb'] == TEXT_ONE
-assert data['e1'] == TEXT_ONE
+assert data["ae1"] == TEXT_ONE
 
 app.showAccess()
 app.hideSubWindow('access_access_subwindow')
@@ -3276,7 +3282,7 @@ def test_gui(btn=None):
     if doStop == 0:
         test_pop_ups()
         app.thread(run_events, "a", bbb="bbb")
-        app.setEntryFocus("e1")
+        app.setEntryFocus("fe1")
         app.threadCallback(cbA, cbB, "text")
         app.callback(cbA, cbB, "text2")
         app.thread(dismissEditMenu)
@@ -3321,17 +3327,17 @@ with gui(debug=True) as app3:
                 app3.addLabel("l1", "label")
             with app3.toggleFrame("tf1"):
                 app3.addCheckBox("cb1")
-        with app3.tab("t2"):
+        with app3.tab("t2", afterTab='t1'):
             with app3.panedFrame("pf1"):
                 with app3.panedFrameVertical("vpf1"):
                     app3.addLabel("l2", "label")
-        with app3.tab("t3"):
+        with app3.tab("t3", beforeTab='t2'):
             with app3.pagedWindow("pages"):
                 with app3.page():
                     app3.addLabel("l3", "label")
                 with app3.page():
                     app3.addLabel("l4", "label")
-        with app3.tab("t4"):
+        with app3.tab("t4", afterTab='a', beforeTab='a'):
             with app3.frame("f1"):
                 app3.addLabel("l5", "label")
             with app3.scrollPane("sf1"):
