@@ -1449,6 +1449,8 @@ def test_date_pickers():
 
     app.setDatePickerFg("d1", "green")
 
+    print(app.getDatePicker("d1"))
+    print(datetime.date.today())
     assert app.getDatePicker("d1") == datetime.date.today()
     assert app.getDatePicker("d2") == datetime.date(1980, 5, 5)
     assert app.getDatePicker("d3") == datetime.date(1990, 10, 10)
