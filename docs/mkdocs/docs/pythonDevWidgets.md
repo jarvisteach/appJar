@@ -69,12 +69,13 @@ app.go()
 
     It's also possible to set the following parameters:  
         * `actionHeading` - set the title of the right column  
-        * `actionButton` - set the button text for each row  
+        * `actionButton` - set the button text for each row (can be a list of button names)   
         * `addButton` - set the button text for the Entry row  
         * `showMenu` - boolean to show a right-click menu  
         * `disabledEntries` - pass a list of numbers, to disable entry boxes in those positions  
         * `border` - the style of the cell border: `sunken`, `solid`, etc
         * `wrap` - The maximum number of pixels to show per line in a cell, defaults to 250 pixels  
+        * `horizontal` - boolean to align action buttons horizontally (default) or vertically  
 
     ![Table](img/dev/1_gridMenu.png)   
 

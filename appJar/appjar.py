@@ -4792,6 +4792,7 @@ class gui(object):
         actionButton=kwargs.pop('actionButton', "Press")
         addButton=kwargs.pop('addButton', "Add")
         showMenu=kwargs.pop('showMenu', False)
+        horiz=kwargs.pop('horizontal', True)
 
         try: self.widgetManager.verify(widgKind, title)
         except: # widget exists
@@ -4802,12 +4803,12 @@ class gui(object):
             if kind == 'normal':
                 table = self.addTable(title, value, *args,
                             action=action, addRow=addRow, actionHeading=actionHeading, actionButton=actionButton,
-                            addButton=addButton, showMenu=showMenu, **kwargs
+                            addButton=addButton, showMenu=showMenu, horizontal=horiz, **kwargs
                         )
             else:
                 table = self.addDbTable(title, value, *args,
                             action=action, addRow=addRow, actionHeading=actionHeading, actionButton=actionButton,
-                            addButton=addButton, showMenu=showMenu, **kwargs
+                            addButton=addButton, showMenu=showMenu, horizontal=horiz, **kwargs
                         )
 
         if len(kwargs) > 0:
@@ -4818,6 +4819,8 @@ class gui(object):
                 action=None, addRow=None, actionHeading="Action", actionButton="Press",
                 addButton="Add", showMenu=False, border="solid", **kwargs):
         ''' creates a new Table, displaying the specified database & table '''
+
+        horiz=kwargs.pop('horizontal', True)
 
         self._importSqlite3()
         if not sqlite3:
@@ -4833,7 +4836,7 @@ class gui(object):
 
             grid = self.addTable(title, cursor, row, column, colspan, rowspan,
                         action, addRow, actionHeading, actionButton,
-                        addButton, showMenu, border=border
+                        addButton, showMenu, border=border, horizontal=horiz
                     )
         grid.db = value
         grid.dbTable = table
@@ -4844,20 +4847,21 @@ class gui(object):
         ''' creates a new table, displaying the specified data '''
         self.widgetManager.verify(self.Widgets.Table, title)
         wrap=kwargs.pop('wrap', 250)
+        horiz=kwargs.pop('horizontal', True)
         if not self.ttkFlag:
             grid = SimpleTable(self.getContainer(), title, data,
                         action, addRow,
                         actionHeading, actionButton, addButton,
                         showMenu, buttonFont=self._getContainerProperty('buttonFont'),
                         font=self.tableFont, background=self._getContainerBg(),
-                        queueFunction=self.queueFunction, border=border, wrap=wrap
+                        queueFunction=self.queueFunction, border=border, wrap=wrap, horizontal=horiz
                     )
         else:
             grid = SimpleTable(self.getContainer(), title, data,
                         action, addRow,
                         actionHeading, actionButton, addButton,
                         showMenu, buttonFont=self._getContainerProperty('buttonFont'),
-                        queueFunction=self.queueFunction, border=border, wrap=wrap
+                        queueFunction=self.queueFunction, border=border, wrap=wrap, horizontal=horiz
                     )
         self._positionWidget(grid, row, column, colspan, rowspan, N+E+S+W)
         self.widgetManager.add(self.Widgets.Table, title, grid)
@@ -13700,6 +13704,8 @@ class SimpleTable(ScrollPane):
 
         # to wrap text in cells
         self.wrap = opts.pop("wrap", 0)
+        # how do we align buttons in the action box?
+        self.horizontalButtons = opts.pop("horizontal", True)
 
         self.config(**opts)
 
@@ -13960,7 +13966,12 @@ class SimpleTable(ScrollPane):
 
                         if gui.GET_PLATFORM() in [gui.MAC, gui.LINUX]:
                             but.config(highlightbackground=widg.cget("bg"))
-                        but.grid(row=row, sticky=N+E+S+W, pady=1)
+                        if self.horizontalButtons:
+                            but.grid(row=0, column=row, sticky=N+E+S+W, pady=1)
+                            widg.grid_columnconfigure(row, weight=1)
+                        else:
+                            but.grid(column=0, row=row, sticky=N+E+S+W, pady=1)
+                            widg.grid_columnconfigure(0, weight=1)
                         widg.but.append(but)
                 self.rightColumn.append(widg)
                 widg.grid(row=rowNum, column=cellNum + 1, sticky=N+E+S+W)

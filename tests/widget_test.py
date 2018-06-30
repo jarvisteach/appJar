@@ -1566,6 +1566,8 @@ def test_tables():
         ["Clive", 28, "Male"],
         ["Betty", 51, "Female"]],
         action=tester_function,
+        actionButton=["aaa", "bbb"],
+        horizontal=False,
         addRow=tester_function,
         wrap=200)
 
@@ -1579,7 +1581,10 @@ def test_tables():
     # call generic setter functions
     test_setters("Table", "g1")
 
-    app.addDbTable('db1', 'test.db', 'projects')
+    app.addDbTable('db1', 'test.db',
+        table='projects',
+        actionButton=["aaa", "bbb"],
+        horizontal=True)
     app.addReplaceDbTable('db1', 'test.db', 'projects')
     app.addRefreshDbTable('db1')
 

@@ -151,7 +151,7 @@ with gui("DB Demo", "800x600", stretch="column", bg="DarkOrange", log="trace", s
     app.label("title", "DB tester:", font=60, bg="orange", sticky="EW")
     app.setLabelRightClick("title", "demo")
     app.config(sticky="NEWS", stretch="both")
-    app.table("table", DB_NAME, "tasks", kind='database', action=deleteRow, addRow=addRow, actionButton="Delete", showMenu=True, disabledEntries=[0])
+    app.table("table", DB_NAME, "tasks", kind='database', action=deleteRow, addRow=addRow, actionButton=["Delete", 'aaa', 'bbb'], showMenu=True, disabledEntries=[0], actionHeading='xxxxxx xxxxxxxxxx')
     app.setOptionBox("table", "tasks", callFunction=False)
     app.button("NEW TABLE", showMakeTable, sticky="", stretch="column")
     app.label("PRESS ME", font={"size":40, "underline":True}, right="demo")
