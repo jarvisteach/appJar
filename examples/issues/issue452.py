@@ -4,7 +4,7 @@ sys.path.append("../../")
 data1 = ['a', 'b', 'c', 'd']
 data2 = ['e', 'f', 'g', 'h']
 data3 = ['i', 'j', 'k', 'l']
-btns = ["select", "deselect", "toggle", "clear", "rename", "replace", "add", "delete"]
+btns = ["get", "select", "deselect", "toggle", "clear", "rename", "replace", "add", "delete"]
 
 from appJar import gui
 
@@ -26,6 +26,10 @@ def press(btn):
         app.listbox("box", "zz", mode=btn)
         app.spinbox("box", "zz", mode=btn)
         app.optionbox("box", "zz", mode=btn)
+    elif btn == "get":
+        print(app.listbox("box"))
+        print(app.spinbox("box"))
+        print(app.optionbox("box"))
 
 with gui(sticky="new", bg="green") as app:
     app.label('hello world', colspan=3)
