@@ -5,5 +5,9 @@ from appJar import gui
 
 with gui() as app:
     app.label('hello world')
-    app._statusFont = tkFont.Font(family="Helvetica", size=20)
+    print(app.statusFont)
+    app.statusFont = tkFont.Font(family="Helvetica", size=20)
+    print(app.getStatusFont())
+    app.setStatusFont(40)
+    print(app.statusFont)
     app.status(text="hello world", bg='red')

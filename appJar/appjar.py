@@ -2442,6 +2442,7 @@ class gui(object):
         buttonFont = kwargs.pop("buttonFont", None)
         labelFont = kwargs.pop("labelFont", None)
         inputFont = kwargs.pop("inputFont", None)
+        statusFont = kwargs.pop("statusFont", None)
         ttkTheme = kwargs.pop("ttkTheme", None)
 
         editMenu = kwargs.pop("editMenu", None)
@@ -2484,6 +2485,7 @@ class gui(object):
         if labelFont is not None: self.labelFont = labelFont
         if buttonFont is not None: self.buttonFont = buttonFont
         if inputFont is not None: self.inputFont = inputFont
+        if statusFont is not None: self.statusFont = statusFont
         if ttkTheme is not None: self.ttkTheme = ttkTheme
 
         if editMenu is not None: self.editMenu = editMenu
@@ -2623,10 +2625,17 @@ class gui(object):
                 kwargs=args[0]
             elif isinstance(args[0], tkFont.Font):
                 gui.trace("%s set to new object", font)
-                self.containerStack[-1][font]=args[0]
+                if font != "statusFont": self.containerStack[-1][font]=args[0]
+                else: self._statusFont=args[0]
                 return None
-        self._getContainerProperty(font).config(**kwargs)
-        if 'family' in kwargs and kwargs['family'].lower() != self._getContainerProperty(font).actual()['family'].lower():
+        if font != "statusFont":
+            self._getContainerProperty(font).config(**kwargs)
+            f = self._getContainerProperty(font).actual()['family'].lower()
+        else:
+            self._statusFont.config(**kwargs)
+            f = self._statusFont.actual()['family'].lower()
+
+        if 'family' in kwargs and kwargs['family'].lower() != f:
             gui.error("Failed to adjust %s to %s.", font, kwargs['family'])
         return kwargs
 
@@ -2637,6 +2646,14 @@ class gui(object):
         return self._getContainerProperty('inputFont').actual()
 
     inputFont = property(getInputFont, setInputFont)
+
+    def setStatusFont(self, *args, **kwargs):
+        self._fontHelper('statusFont', *args, **kwargs)
+
+    def getStatusFont(self):
+        return self._statusFont.actual()
+
+    statusFont = property(getStatusFont, setStatusFont)
 
     def setButtonFont(self, *args, **kwargs):
         self._fontHelper('buttonFont', *args, **kwargs)
@@ -4326,11 +4343,16 @@ class gui(object):
         if OrderedDict is None:
             from collections import OrderedDict
 
+        class TabBorder(Frame, object):
+            def __init__(self, master, **kwargs):
+                super(TabBorder, self).__init__(master, **kwargs)
+                self.config(borderwidth=0, highlightthickness=0, bg='darkGray')
+
         class TabContainer(frameBase, object):
             def __init__(self, master, **kwargs):
                 super(TabContainer, self).__init__(master, **kwargs)
-                Frame(self, borderwidth=0, height=2, highlightthickness=0, bg='darkGray').pack(side=TOP, expand=True, fill=X)
-                Frame(self, borderwidth=0, width=2, highlightthickness=0, bg='darkGray').pack(side=LEFT, fill=Y, expand=0)
+                TabBorder(self, height=2).pack(side=TOP, expand=True, fill=X)
+                TabBorder(self, width=2).pack(side=LEFT, fill=Y, expand=0)
 
         class Tab(labelBase, object):
             def __init__(self, master, func, text, **kwargs):
@@ -4339,7 +4361,7 @@ class gui(object):
                 self.DEFAULT_TEXT = text
                 self.hidden = False
                 self.bind("<Button-1>", lambda *args: func(text))
-                self.border = Frame(master, borderwidth=0, width=2, highlightthickness=0, bg='darkGray')
+                self.border = TabBorder(master, width=2)
 
             def rename(self, newName):
                 # use the DEFAULT_TEXT if necessary

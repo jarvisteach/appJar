@@ -1681,6 +1681,7 @@ def test_gui_options():
     app.setButtonFont(20)
     app.increaseButtonFont()
     app.decreaseButtonFont()
+    app.setStatusFont(9)
 
     app.setBgImage("1_entries.gif")
     app.resizeBgImage()
@@ -2972,6 +2973,7 @@ def test_gui_properties():
         font={'size':20, 'family':'helvetica'},
         buttonFont={'size':19, 'family':'helvetica'},
         labelFont={'size':18, 'family':'helvetica'},
+        statusFont={'size':15, 'family':'helvetica'},
         editMenu=True,
         stopFunction=propFunc,
         startFunction=propFunc,
@@ -3010,6 +3012,7 @@ def test_gui_properties():
     assert app.font['size'] == 18
     assert app.buttonFont['size'] == 19
     assert app.labelFont['size'] == 18
+    assert app.statusFont['size'] == 15
     assert app.editMenu is True
 #    assert app.stopFunction == propFunc
 #    assert app.enterKey == propFunc
@@ -3112,6 +3115,9 @@ def test_gui_properties():
 
     app.buttonFont = 24
     assert app.buttonFont['size'] == 24
+
+    app.statusFont = 17
+    assert app.statusFont['size'] == 17
 
     app.buttonFont = {'size':23, 'family':myFont1}
     assert app.buttonFont['size'] == 23
