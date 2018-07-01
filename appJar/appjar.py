@@ -4579,7 +4579,7 @@ class gui(object):
 
                 self.selectedTab = tabName
                 self._configTabs()
-                if self.changeEvent is not None: self.changeEvent()
+                if self.changeEvent is not None: self.changeEvent(tabName)
 
             def getSelectedTab(self):
                 return self.selectedTab
@@ -4837,7 +4837,7 @@ class gui(object):
             self._configWidget(title, widgKind, **kwargs)
         return table
 
-    def addDbTable(self, title, value, table=table, row=None, column=0, colspan=0, rowspan=0,
+    def addDbTable(self, title, value, table, row=None, column=0, colspan=0, rowspan=0,
                 action=None, addRow=None, actionHeading="Action", actionButton="Press",
                 addButton="Add", showMenu=False, border="solid", **kwargs):
         ''' creates a new Table, displaying the specified database & table '''
@@ -4959,7 +4959,7 @@ class gui(object):
 
     def replaceAllTableRows(self, title, data):
         grid = self.widgetManager.get(self.Widgets.Table, title)
-        grid.deleteAllRows()
+        grid.deleteAllRows(deleteHeader=True)
         grid.addRows(data, scroll=False)
 
     # temporary deprecated functions
@@ -5871,7 +5871,9 @@ class gui(object):
         disabled = kwargs.pop("disabled", "-")
 
         # select=set, replace=change, rename=rename, clear=clear, delete=delete
-        mode = kwargs.pop("mode", "select")
+        if value is None: mode = 'get'
+        else: mode = 'select'
+        mode = kwargs.pop("mode", mode)
         index = kwargs.pop("index", None)
         newName = kwargs.pop("newName", None)
 
@@ -5899,6 +5901,8 @@ class gui(object):
             elif mode == "delete":
                 if value is not None: self.deleteOptionBox(title, index=value)
                 else: gui.error("No item specified to delete in optionBox: %s", title)
+            elif mode == "get":
+                pass
             else:
                 gui.error("Invalid mode (%s) specified in optionBox: %s", mode, title)
 
@@ -6658,7 +6662,9 @@ class gui(object):
         label = kwargs.pop("label", False)
 
         # select=select, deselect=<RESET>, toggle=<NONE>, clear=??, rename=set, replace=update, delete=remov
-        mode = kwargs.pop("mode", "select") # select, set, remove, clear, update
+        if value is None: mode = 'get'
+        else: mode = 'select'
+        mode = kwargs.pop("mode", mode)
         callFunction = kwargs.pop("callFunction", True)
 
         try: self.widgetManager.verify(widgKind, title)
@@ -6677,6 +6683,8 @@ class gui(object):
                 else: gui.error("No values specified to replace in spinbox: %s", title)
             elif mode == "delete":
                 gui.error("%s not implemented yet in spinbox: %s", mode, title)
+            elif mode == "get":
+                pass
             else:
                 gui.error("Invalid mode (%s) specified in spinbox: %s", mode, title)
 
@@ -7626,7 +7634,9 @@ class gui(object):
         callFunction = kwargs.pop("callFunction", True)
 
         # select=select, deselect=??, toggle=??, clear=??, rename=set, replace=update, delete=remove
-        mode = kwargs.pop("mode", "select") # select, set, remove, clear, update
+        if value is None: mode = 'get'
+        else: mode = 'select'
+        mode = kwargs.pop("mode", mode)
 
         try: self.widgetManager.verify(widgKind, title)
         except: # widget exists
@@ -7668,6 +7678,8 @@ class gui(object):
                     else:
                         self.addListItem(title, item=value, select=select)
                 else: gui.error("No value specified to add in listbox: %s", title)
+            elif mode == "get":
+                pass
             else:
                 gui.error("Invalid mode (%s) specified in listbox: %s", mode, title)
 
@@ -9019,8 +9031,10 @@ class gui(object):
 
         if end:
             ta.insert(END, text)
+            ta.see(END)
         else:
             ta.insert('1.0', text)
+            ta.see('1.0')
 
         ta.config(state=_state)
         ta.resumeCallFunction()
@@ -13839,6 +13853,8 @@ class SimpleTable(ScrollPane):
     def addRows(self, data, scroll=True):
         self._hideEntryBoxes()
         if sqlite3 is not None and sqlite3 is not False and isinstance(data, sqlite3.Cursor):
+            if self.numColumns == -1:
+                self.numColumns = len([description[0] for description in data.description])
             self._addRow([description[0] for description in data.description])
         list(map(self._addRow, data))
         gui.trace("Added all rows in addRows()")
@@ -13896,10 +13912,13 @@ class SimpleTable(ScrollPane):
                     cell.clear()
             self.canvas.event_generate("<Configure>")
 
-    def deleteAllRows(self):
-        list(map(self._quickDeleteRow, range(len(self.cells)-2, -1, -1)))
+    def deleteAllRows(self, deleteHeader=False):
+        if deleteHeader: end = -2
+        else: end = -1
+        list(map(self._quickDeleteRow, range(len(self.cells)-2, end, -1)))
         self.canvas.event_generate("<Configure>")
         self._deleteEntryBoxes()
+        self.numColumns = -1
 
     def _quickDeleteRow(self, position):
         self.deleteRow(position, True)
