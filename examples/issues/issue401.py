@@ -13,8 +13,9 @@ class appJarExplorer:
             sw.configure(padx=5, pady=5)
             with self._app.frame("LEFT", 0, 0, sticky='news'):
                 self._app.tree("b", self.getXml(), row=1, column=1, rowspan=6, click=self.updateConfigPane, editable=False, bg="#3b3f40", fg="#adadad")
-            with self._app.frame("RIGHT", 0, 1, sticky='news', stretch='column', font={'size':16}):
-                with self._app.labelFrame("Configure Widget", sticky='new', stretch='column', font={'size':16}, labelFg='#ca753d'):
+            with self._app.frame("RIGHT", 0, 1, sticky='news', stretch='column'):
+                app.font={'size':16}
+                with self._app.labelFrame("Configure Widget", sticky='new', stretch='column', labelFg='#ca753d'):
                     self._app.label('EMPTY')
                 self._app.button("Update", self.updatePressed, pos=(1,0))
         self._app.generateTree("b")
@@ -155,6 +156,7 @@ def makeExplorer():
 # make a dummy GUI
 with gui("appJar Explorer") as app:
     with app.tabbedFrame("tf"):
+        app.setTabbedFrameActiveBg("tf", 'pink')
         with app.tab("a"):
             app.label("Title Label", colspan=2)
             app.label("DETAILS", "")
@@ -165,6 +167,10 @@ with gui("appJar Explorer") as app:
             app.radio("radio", "r1")
             # pressing the button creates the explorer
             app.button("DETAILS", makeExplorer)
+        for t in ['b', 'c', 'd', 'e', 'f']:
+            with app.tab(t):
+                app.label(t)
+        app.setTabBg('tf', 'c', 'green')
 
     with app.subWindow("sub"):
         app.label("in sub")
@@ -178,6 +184,8 @@ with gui("appJar Explorer") as app:
         app.addMenuSeparator('MY MEN')
     app.addSubMenu("MY MEN", "SUB")
     app.addMenuItem('SUB', "subber")
+    app.addSubMenu("SUB", "SUB_SUB")
+    app.addMenuItem('SUB_SUB', "super_sub")
     app.addMenuItem('MAC_APP', "map_app")
     app.addMenuPreferences(makeExplorer)
     app.addMenuHelp(makeExplorer)
