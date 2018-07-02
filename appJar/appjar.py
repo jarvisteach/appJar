@@ -4571,7 +4571,7 @@ class gui(object):
 
                 self.widgetStore[tabName][0].rename(newName)
 
-            def changeTab(self, tabName):
+            def changeTab(self, tabName, callFunction=True):
                 if tabName not in self.widgetStore.keys(): raise ItemLookupError("Invalid tab name: " + tabName)
                 # stop if already selected or disabled
                 if self.selectedTab == tabName or self.widgetStore[tabName][0].disabled or self.widgetStore[tabName][0].hidden:
@@ -4579,7 +4579,7 @@ class gui(object):
 
                 self.selectedTab = tabName
                 self._configTabs()
-                if self.changeEvent is not None: self.changeEvent(tabName)
+                if self.changeEvent is not None and callFunction: self.changeEvent(tabName)
 
             def getSelectedTab(self):
                 return self.selectedTab
@@ -4625,6 +4625,8 @@ class gui(object):
             tabs = self.startTabbedFrame(title, row, column, colspan, rowspan, sticky)
         except ItemLookupError:
             tabs = self.openTabbedFrame(title)
+        command = kwargs.pop("change", None)
+        if command is not None: self.setTabbedFrameChangeCommand(title, command)
         self.configure(**kwargs)
         try: yield tabs
         finally: self.stopTabbedFrame()
@@ -4639,14 +4641,19 @@ class gui(object):
             self.stopContainer()
         self.stopContainer()
 
+    def setTabbedFrameChangeCommand(self, title, func):
+        nb = self.widgetManager.get(self.Widgets.TabbedFrame, title)
+        command = self.MAKE_FUNC(func, title)
+        nb.config(command=command)
+
     def setTabbedFrameTabExpand(self, title, expand=True):
         nb = self.widgetManager.get(self.Widgets.TabbedFrame, title)
         nb.expandTabs(expand)
 
-    def setTabbedFrameSelectedTab(self, title, tab):
+    def setTabbedFrameSelectedTab(self, title, tab, callFunction=True):
         nb = self.widgetManager.get(self.Widgets.TabbedFrame, title)
         try:
-            nb.changeTab(tab)
+            nb.changeTab(tab, callFunction)
         except KeyError:
             raise ItemLookupError("Invalid tab name: " + str(tab))
 
@@ -8125,16 +8132,17 @@ class gui(object):
     def buttons(self, names, funcs, **kwargs):
         kwargs = self._parsePos(kwargs.pop("pos", []), kwargs)
         self._addButtons(names, funcs, **kwargs)
+        kwargs.pop('fill', False)
         if not isinstance(names[0], list):
             names = [names]
         for row in names:
             for title in row:
                 self._configWidget(title, self.Widgets.Button, **kwargs)
 
-    def _addButtons(self, names, funcs, row=None, column=0, colspan=0, rowspan=0, **kwargs):
-        self.addButtons(names, funcs, row, column, colspan, rowspan)
+    def _addButtons(self, names, funcs, row=None, column=0, colspan=0, rowspan=0, fill=False, **kwargs):
+        self.addButtons(names, funcs, row, column, colspan, rowspan, fill)
 
-    def addButtons(self, names, funcs, row=None, column=0, colspan=0, rowspan=0):
+    def addButtons(self, names, funcs, row=None, column=0, colspan=0, rowspan=0, fill=False):
         ''' adds a 1D/2D list of buttons '''
         if not isinstance(names, list):
             raise Exception(
@@ -8155,6 +8163,9 @@ class gui(object):
             if funcs is not None:
                 funcs = [funcs]
 
+        sticky = None
+        if fill: sticky=E+W
+
         for bRow in range(len(names)):
             for i in range(len(names[bRow])):
                 t = names[bRow][i]
@@ -8166,7 +8177,7 @@ class gui(object):
                     tempFunc = singleFunc
                 but = self._buildButton(t, tempFunc, frame)
 
-                but.grid(row=bRow, column=i)
+                but.grid(row=bRow, column=i, sticky=sticky)
                 Grid.columnconfigure(frame, i, weight=1)
                 Grid.rowconfigure(frame, bRow, weight=1)
                 frame.theWidgets.append(but)
@@ -8805,6 +8816,8 @@ class gui(object):
         end = kwargs.pop("end", True)
         replace = kwargs.pop("replace", False)
         callFunction = kwargs.pop("callFunction", True)
+        disabled = kwargs.pop("disabled", False)
+        tag = kwargs.pop("tag", None)
 
         try: self.widgetManager.verify(self.Widgets.TextArea, title)
         except: # widget exists
@@ -8816,7 +8829,8 @@ class gui(object):
             callFunction = False
 
         if replace: self.clearTextArea(title)
-        if value is not None: self.setTextArea(title, value, end=end, callFunction=callFunction)
+        if value is not None: self.setTextArea(title, value, end=end, callFunction=callFunction, tag=tag)
+        if disabled: self.disableTextArea(title)
         if len(kwargs) > 0:
             self._configWidget(title, widgKind, **kwargs)
         return text
@@ -9012,7 +9026,7 @@ class gui(object):
         """ changes the font of a text area """
         self.widgetManager.get(self.Widgets.TextArea, title).setFont(**kwargs)
 
-    def setTextArea(self, title, text, end=True, callFunction=True):
+    def setTextArea(self, title, text, end=True, callFunction=True, tag=None):
         """ Add the supplied text to the specified TextArea
 
         :param title: the TextArea to change
@@ -9030,11 +9044,14 @@ class gui(object):
         ta.config(state='normal')
 
         if end:
+            pos = ta.index('end -1c linestart')
             ta.insert(END, text)
             ta.see(END)
+#            if tag is not None: self.textAreaTagRange(title, tag, pos)
         else:
             ta.insert('1.0', text)
             ta.see('1.0')
+#            if tag is not None: ta.textAreaTagPattern(title, tag, text)
 
         ta.config(state=_state)
         ta.resumeCallFunction()

@@ -405,8 +405,12 @@ app.go()
     Set this to True, to have the tabs fill the entire row.  
 ![TabbedFrame](img/layouts/2_tabbedFrame.png)  
 
-* `.setTabbedFrameSelectedTab(title, tab)`  
+* `.setTabbedFrameSelectedTab(title, tab, callFunction=True)`  
     Select the specified tab in the TabbedFrame.  
+    Set `callFunction` to be False, if you don't want to call any associated functions.
+
+* `.setTabbedFrameChangeCommand(title, func)`  
+    Set a function to call when the tab is changed.  
 
 * `.setTabbedFrameDisabledTab(title, tab, disabled=True)`  
     Disable the specified tab in the TabbedFrame.  
