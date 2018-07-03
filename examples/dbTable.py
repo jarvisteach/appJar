@@ -28,6 +28,9 @@ def setFocus(tf):
 def updateTable(tbl):
     app.replaceDbTable(LABS['view'], DB, app.option(LABS['view']))
 
+def tableModified(ppp=None):
+    print("Changed", ppp)
+
 def log(msg):
     d = time.strftime('%a %H:%M:%S') + ": "
     app.text(LABS['log'], d + msg+"\n")
@@ -80,7 +83,7 @@ with gui("DB Editor", '400x400', bg='red') as app:
         with app.tab(LABS['view']):
             app.addDbOptionBox(LABS['view'], DB, sticky='ne', stretch='column', change=updateTable)
             app.sticky='news'
-            app.addDbTable(LABS['view'], DB, app.option(LABS['view']), sticky='news', stretch='both')
+            app.table(LABS['view'], DB, app.option(LABS['view']), kind='db', sticky='news', stretch='both', showMenu=True, change=tableModified)
 
         with app.tab(LABS['run']):
             app.label(LABS['run'], sticky='new', stretch='column')

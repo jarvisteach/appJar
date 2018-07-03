@@ -3219,10 +3219,7 @@ class gui(object):
 
             var.cmd_id = var.trace('w', cmd)
             var.cmd = cmd
-        elif kind == self.Widgets.Properties:
-            cmd = self.MAKE_FUNC(function, name)
-            widget.setChangeFunction(cmd)
-        elif kind == self.Widgets.FrameStack:
+        elif kind in [self.Widgets.Properties, self.Widgets.FrameStack, self.Widgets.Table]:
             cmd = self.MAKE_FUNC(function, name)
             widget.setChangeFunction(cmd)
         elif kind == self.Widgets.SpinBox:
@@ -4822,6 +4819,7 @@ class gui(object):
         addButton=kwargs.pop('addButton', "Add")
         showMenu=kwargs.pop('showMenu', False)
         horiz=kwargs.pop('horizontal', True)
+        change=kwargs.pop('change', None)
 
         try: self.widgetManager.verify(widgKind, title)
         except: # widget exists
@@ -4839,6 +4837,8 @@ class gui(object):
                             action=action, addRow=addRow, actionHeading=actionHeading, actionButton=actionButton,
                             addButton=addButton, showMenu=showMenu, horizontal=horiz, **kwargs
                         )
+        if change is not None:
+            self.setTableChangeFunction(title, change)
 
         if len(kwargs) > 0:
             self._configWidget(title, widgKind, **kwargs)
@@ -13744,6 +13744,7 @@ class SimpleTable(ScrollPane):
         self.addRowEntries = addRow
         self.action = action
         self.queueFunction = queueFunction
+        self.changeFunction = opts.pop("change", None)
 
         # lists to store the data in
         self.cells = []
@@ -13801,6 +13802,9 @@ class SimpleTable(ScrollPane):
             entries = kw.pop("disabledentries")
             list(map(self.disableEntry, entries))
 
+        if "change" in kw:
+            self.changeFunction = kw.pop("change")
+
         if "bg" in kw:
             bg = kw.pop("bg")
             self.canvas.config(bg=bg)
@@ -13851,6 +13855,9 @@ class SimpleTable(ScrollPane):
             self.ent_but.config(text=self.addButton)
 
         super(SimpleTable, self).configure(**kw)
+
+    def setChangeFunction(self, func):
+        self.changeFunction = func
 
     def _configCells(self):
         gui.trace("Config all cells")
@@ -13940,7 +13947,7 @@ class SimpleTable(ScrollPane):
     def _quickDeleteRow(self, position):
         self.deleteRow(position, True)
 
-    def deleteRow(self, position, pauseUpdate=False):
+    def deleteRow(self, position, pauseUpdate=False, callFunction=False):
         if 0 > position >= len(self.cells):
             raise Exception("Invalid row number.")
         else:
@@ -13978,6 +13985,8 @@ class SimpleTable(ScrollPane):
             self.rightColumn = self.rightColumn[:-1]
             self._updateButtons(position)
             if not pauseUpdate: self.canvas.event_generate("<Configure>")
+            if self.changeFunction is not None and callFunction:
+                self.changeFunction()
 
     def _addRow(self, rowData):
         if self.numColumns == 0:
@@ -14146,13 +14155,13 @@ class SimpleTable(ScrollPane):
         gui.trace('Table Menu Helper: %s-%s', action, vals)
 
         if action == "dc":
-            self.deleteColumn(int(vals[1]))
+            self.deleteColumn(int(vals[1]), callFunction=True)
         elif action == "dr" and vals[0] != "h":
-            self.deleteRow(int(vals[0]))
+            self.deleteRow(int(vals[0]), callFunction=True)
         elif action == "cb":
-            self.addColumn(int(vals[1]), [])
+            self.addColumn(int(vals[1]), [], callFunction=True)
         elif action == "ca":
-            self.addColumn(int(vals[1])+1, [])
+            self.addColumn(int(vals[1])+1, [], callFunction=True)
         elif action == "select" and vals[0] != "h":
             self.lastSelected.toggleSelection()
         elif action == "selectRow":
@@ -14168,10 +14177,13 @@ class SimpleTable(ScrollPane):
             self.clipboard_clear()
             self.clipboard_append(val)
         elif action == "paste":
-            try: self.lastSelected.config(text=self.clipboard_get())
+            try:
+                self.lastSelected.config(text=self.clipboard_get())
+                if self.changeFunction is not None: self.changeFunction()
             except: pass
         elif action == "clear":
             self.lastSelected.config(text="")
+            if self.changeFunction is not None: self.changeFunction()
         elif action == "edit":
             val=self.lastSelected.cget("text")
             defaultVar = StringVar(self)
@@ -14179,8 +14191,9 @@ class SimpleTable(ScrollPane):
             newText =  TextDialog(self, "Edit", "Enter the new text", defaultVar=defaultVar).result
             if newText is not None:
                 self.lastSelected.config(text=newText)
+                if self.changeFunction is not None: self.changeFunction()
 
-    def addColumn(self, columnNumber, data):
+    def addColumn(self, columnNumber, data, callFunction=False):
         if columnNumber < 0 or columnNumber > self.numColumns:
             raise Exception("Invalid column number.")
         else:
@@ -14194,6 +14207,7 @@ class SimpleTable(ScrollPane):
                 for rowPos in range(cellCount):
                     self.rightColumn[rowPos].grid_forget()
                     self.rightColumn[rowPos].grid(row=rowPos, column=self.numColumns+1, sticky=N+E+S+W)
+                    self.interior.grid_columnconfigure(self.numColumns+1, weight=1)
 
                 # move the button
                 self.ent_but.lab.grid_forget()
@@ -14206,14 +14220,16 @@ class SimpleTable(ScrollPane):
 
             # move all columns including this position right one
             for colPos in range(self.numColumns-1, columnNumber-1, -1):
+                gui.trace("Moving col %s right with %s cells", colPos, cellCount)
                 for rowPos in range(cellCount):
                     cell = self.cells[rowPos][colPos]
                     cell.grid_forget()
                     cell.grid(row=rowPos, column=colPos+1, sticky=N+E+S+W)
+                    self.interior.grid_columnconfigure(colPos+1, weight=1)
                     val = rowPos-1
                     if val == -1: val ='h'
                     else: val = str(val)
-                    cell.gridPos = ''.join(val, "-", str(colPos+1))
+                    cell.gridPos = ''.join([val, "-", str(colPos+1)])
 
             # then add this column
             dataLen = len(data)
@@ -14228,8 +14244,10 @@ class SimpleTable(ScrollPane):
             self.numColumns += 1
             self._showEntryBoxes()
             self.canvas.event_generate("<Configure>")
+            if self.changeFunction is not None and callFunction:
+                self.changeFunction()
 
-    def deleteColumn(self, columnNumber):
+    def deleteColumn(self, columnNumber, callFunction=False):
 
         if columnNumber < 0 or columnNumber >= self.numColumns:
             raise Exception("Invalid column number: %s.", columnNumber)
@@ -14261,7 +14279,7 @@ class SimpleTable(ScrollPane):
                     val = rowCount -1
                     if val == -1: val = 'h'
                     else: val = str(val)
-                    cell.gridPos = ''.join(val, "-", str(colCount))
+                    cell.gridPos = ''.join([val, "-", str(colCount)])
 
             # move the buttons
             if self.action is not None:
@@ -14273,6 +14291,8 @@ class SimpleTable(ScrollPane):
             # show the entry boxes
             self._showEntryBoxes()
             self.canvas.event_generate("<Configure>")
+            if self.changeFunction is not None and callFunction:
+                self.changeFunction()
 
     def sort(self, columnNumber, descending=False):
         order = self._getSortedData(columnNumber, descending)
