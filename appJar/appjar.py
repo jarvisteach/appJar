@@ -8818,6 +8818,7 @@ class gui(object):
         callFunction = kwargs.pop("callFunction", True)
         disabled = kwargs.pop("disabled", False)
         tag = kwargs.pop("tag", None)
+        tags = kwargs.pop("tags", [])
 
         try: self.widgetManager.verify(self.Widgets.TextArea, title)
         except: # widget exists
@@ -8827,6 +8828,10 @@ class gui(object):
             if scroll: text = self._textMaker(title, "scroll", *args, **kwargs)
             else: text = self._textMaker(title, "text", *args, **kwargs)
             callFunction = False
+
+        # create any tags
+        for _tag in tags:
+            self.textAreaCreateTag(title, _tag[0], **_tag[1])
 
         if replace: self.clearTextArea(title)
         if value is not None: self.setTextArea(title, value, end=end, callFunction=callFunction, tag=tag)
@@ -15321,6 +15326,8 @@ class WidgetManager(object):
             self.group(widgetType, group)[widgetName] = widget
         except KeyError:
             raise ItemLookupError("Invalid widgetName: '" + widgetName)
+
+        widget.APPJAR_TYPE = widgetType
 
     def check(self, widgetType, widgetName, group=None):
         """ used for arrays - checks if the item is in the array """
