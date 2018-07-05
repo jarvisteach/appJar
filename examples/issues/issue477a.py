@@ -3,20 +3,24 @@ sys.path.append("../../")
 
 from appJar import gui
 
-bPos = 0
-cPos = 0
+bPos = cPos = 0
 
-def press(btn):
-    if btn == "NEW":
-        with app.frame("A"):
-            l = app.popUp("New Task", "Enter the new task", "string")
-            if l is not None:
-                app.label(l, bg=app.getRandomColour(), font=20, submit=removeA, width=8, height=2)
+def press():
+    with app.frame("A"):
+        text = app.popUp("New Task", "Enter the new task", "string")
+        if text is not None:
+            app.label(text, bg=app.getRandomColour(), font=20, submit=removeA)
 
 def clone(widget, newParent):
     clone = widget.__class__(newParent)
     for key in widget.configure():
         clone.configure({key: widget.cget(key)})
+
+    origProps = widget.__dict__
+    for x in origProps:
+        if x not in ['_w', '_tclCommands', '_name', 'master', 'tk']:
+            setattr(clone, x, origProps[x])
+
     return clone
 
 def removeA(label):
@@ -26,42 +30,40 @@ def removeA(label):
 
 def removeB(label):
     global cPos
-    remove(label, "C", cPos, None)
+    remove(label, "C", cPos, removeC)
     cPos += 1
 
+def removeC(label):
+    remove(label, None, None, None)
+
 def remove(label, parent, row, func):
-    """ remove the item from the grid, add it to the stack """
     l = app.getLabelWidget(label)
     info = l.grid_info()
     l.master.grid_rowconfigure(info["row"], minsize=0, weight=0)
-    l.grid_forget()
-    newL = clone(l, app.getFrameWidget(parent))
-    app.widgetManager.update(app.Widgets.Label, label, newL)
 
-    app.label(label, submit=func)
-    newL.grid(row=row, column=0, sticky='N')
-    newL.master.grid_rowconfigure(row, weight=0)
+    if parent is None:
+        app.removeLabel(label)
+    else:
+        app.hideLabel(label)
+        newL = clone(l, app.getFrameWidget(parent))                 # create the clone
+        app.widgetManager.update(app.Widgets.Label, label, newL)    # update widget store
 
-with gui("Grid", bg='grey') as app:
-#    app.config(stretch='row', sticky='n')
-#
-#    app.label("TO DO", row=0,column=0, font=20, bg='grey', width=12)
-#    app.label("IN PROGRESS", row=0,column=1, font=20, bg='grey', width=12)
-#    app.label("DONE", row=0,column=2, font=20, bg='grey', width=12)
+        app.label(label, submit=func)                               # replace function
+        newL.grid(row=row, column=0, sticky='NEW')
+        newL.master.grid_columnconfigure(0, weight=1)
 
-    app.config(stretch='column', sticky='ns')
-    with app.frame("A",1,0):
-        app.config(sticky='n', stretch='column')
+with gui("Grid", bg='grey', sticky='new', stretch='column') as app:
+    app.label("TO DO", row=0,column=0, font=20, bg='grey', width=12)
+    app.label("IN PROGRESS", row=0,column=1, font=20, bg='grey', width=12)
+    app.label("DONE", row=0,column=2, font=20, bg='grey', width=12)
+
+    app.config(sticky='new', stretch='both')
+
+    with app.frame("A",1,0, stretch=None, sticky='new'):
         for i in range(10):
-            app.label(str(i), bg=app.getRandomColour(), font=20, submit=removeA, width=8, height=2)
+            app.label(str(i), bg=app.getRandomColour(), font=20, submit=removeA)
 
-    app.config(stretch='both', sticky='news')
-    with app.frame("B",1,1):
-        app.config(sticky='n', stretch='column')
+    with app.frame("B",1,1, sticky='new'): pass
+    with app.frame("C",1,2, sticky='new'): pass
 
-    app.config(stretch='both', sticky='news')
-    with app.frame("C",1,2):
-        app.config(sticky='n', stretch='column')
-
-    app.config(stretch='column', sticky='s')
-    app.buttons(["NEW"], press, colspan=3)
+    app.buttons(["NEW"], press, colspan=3, sticky='s', stretch='column')
