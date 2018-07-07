@@ -3402,13 +3402,17 @@ class gui(object):
                 str(k) + ", name)")
             exec("gui.show" + v + "=show" + v)
             exec( "def hide" + v +
-                "(self, name): self.hideWidgetType(" +
-                str(k) + ", name)")
+                "(self, name, collapse=False): self.hideWidgetType(" +
+                str(k) + ", name, collapse)")
             exec("gui.hide" + v + "=hide" + v)
             exec( "def remove" + v +
-                "(self, name): self.removeWidgetType(" +
-                str(k) + ", name)")
+                "(self, name, collapse=False): self.removeWidgetType(" +
+                str(k) + ", name, collapse)")
             exec("gui.remove" + v + "=remove" + v)
+            exec( "def move" + v +
+                "(self, name, row, column=0, colspan=0, rowspan=0, sticky=W+E): self.moveWidgetType(" +
+                str(k) + ", name, row, column, colspan, rowspan, sticky)")
+            exec("gui.move" + v + "=move" + v)
 
             # convenience functions for enable/disable
             # might not all be necessary, could make exclusion list
@@ -3464,7 +3468,33 @@ class gui(object):
         else:
             return False
 
-    def hideWidgetType(self, kind, name):
+    def _cloneWidget(self, widget, parent):
+        clone = widget.__class__(parent)
+        for key in widget.configure():
+            clone.configure({key: widget.cget(key)})
+
+        origProps = widget.__dict__
+        for x in origProps:
+            if x not in ['_w', '_tclCommands', '_name', 'master', 'tk']:
+                print(x)
+                setattr(clone, x, origProps[x])
+
+        return clone
+
+    def moveWidgetType(self, kind, name, row, column=0, colspan=0, rowspan=0, sticky=W+E):
+        self.hideWidgetType(kind, name, collapse=True)
+        widget = self.widgetManager.get(kind, name)
+
+        container = self.getContainer()
+        if container != widget.master:
+            widget = self._cloneWidget(widget, container)
+            self.widgetManager.update(kind, name, widget)
+
+        self._positionWidget(widget, row, column, colspan, rowspan, sticky, updateBg=False)
+        return widget
+
+
+    def hideWidgetType(self, kind, name, collapse=False):
         items = self._getWidgetList(kind, name, limit=False)
 
         for item in items:
@@ -3486,7 +3516,11 @@ class gui(object):
 
             if "in" in widget.grid_info():
                 gui.trace("Widget hidden: %s", name)
+                info = widget.grid_info()
                 widget.grid_remove()
+
+                if collapse:
+                    widget.master.grid_rowconfigure(info["row"], minsize=0, weight=0)
             else:
                 gui.trace("Hiding failed - %s not showing", name)
 
@@ -3514,7 +3548,7 @@ class gui(object):
             else:
                 gui.trace("Showing failed - %s already showing", name)
 
-    def removeWidgetType(self, kind, name):
+    def removeWidgetType(self, kind, name, collapse=False):
         if kind == self.Widgets.RadioButton:
             gui.error("Can't remove widget %s - %s", kind, name)
             return
@@ -3862,10 +3896,10 @@ class gui(object):
     # two important things here:
     # grid - sticky: position of widget in its space (side or fill)
     # row/columns configure - weight: how to grow with GUI
-    def _positionWidget( self, widget, row, column=0, colspan=0, rowspan=0, sticky=W + E):
+    def _positionWidget( self, widget, row, column=0, colspan=0, rowspan=0, sticky=W+E, updateBg=True):
         # allow item to be added to container
         container = self.getContainer()
-        if not self.ttkFlag:
+        if updateBg and not self.ttkFlag:
             gui.SET_WIDGET_FG(widget, self._getContainerFg())
             gui.SET_WIDGET_BG(widget, self._getContainerBg())
 
@@ -15326,8 +15360,6 @@ class WidgetManager(object):
             self.group(widgetType, group)[widgetName] = widget
         except KeyError:
             raise ItemLookupError("Invalid widgetName: '" + widgetName)
-
-        widget.APPJAR_TYPE = widgetType
 
     def check(self, widgetType, widgetName, group=None):
         """ used for arrays - checks if the item is in the array """
