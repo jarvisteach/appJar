@@ -4001,53 +4001,53 @@ class gui(object):
         self.containerStack.append(containerData)
 
     def openFrameStack(self, title):
-        self._openContainer(self.Widgets.FrameStack, title)
+        return self._openContainer(self.Widgets.FrameStack, title)
 
     def openSubFrame(self, frameTitle, frameNumber):
-        self._openContainer(self.Widgets.SubFrame, frameTitle+"__"+str(frameNumber))
+        return self._openContainer(self.Widgets.SubFrame, frameTitle+"__"+str(frameNumber))
 
     def openRootPage(self, title):
-        self._openContainer(self.Widgets.RootPage, title)
+        return self._openContainer(self.Widgets.RootPage, title)
 
     def openLabelFrame(self, title):
-        self._openContainer(self.Widgets.LabelFrame, title)
+        return self._openContainer(self.Widgets.LabelFrame, title)
 
     def openFrame(self, title):
-        try: self._openContainer(self.Widgets.Frame, title)
-        except: self._openContainer(self.Widgets.SubFrame, title)
+        try: return self._openContainer(self.Widgets.Frame, title)
+        except: return self._openContainer(self.Widgets.SubFrame, title)
 
     def openToggleFrame(self, title):
-        self._openContainer(self.Widgets.ToggleFrame, title)
+        return self._openContainer(self.Widgets.ToggleFrame, title)
 
     def openPagedWindow(self, title):
-        self._openContainer(self.Widgets.PagedWindow, title)
+        return self._openContainer(self.Widgets.PagedWindow, title)
 
     def openPage(self, windowTitle, pageNumber):
-        self._openContainer(self.Widgets.Page, windowTitle+"__"+str(pageNumber))
+        return self._openContainer(self.Widgets.Page, windowTitle+"__"+str(pageNumber))
 
     def openTabbedFrame(self, title):
-        self._openContainer(self.Widgets.TabbedFrame, title)
+        return self._openContainer(self.Widgets.TabbedFrame, title)
 
     def openTab(self, frameTitle, tabTitle):
-        self._openContainer(self.Widgets.Tab, frameTitle+"__"+tabTitle)
+        return self._openContainer(self.Widgets.Tab, frameTitle+"__"+tabTitle)
 
     def openNotebook(self, title):
-        self._openContainer(self.Widgets.Notebook, title)
+        return self._openContainer(self.Widgets.Notebook, title)
 
     def openNote(self, frameTitle, tabTitle):
-        self._openContainer(self.Widgets.Notebook, frameTitle+"__"+tabTitle)
+        return self._openContainer(self.Widgets.Notebook, frameTitle+"__"+tabTitle)
 
     def openPanedFrame(self, title):
-        self._openContainer(self.Widgets.PanedFrame, title)
+        return self._openContainer(self.Widgets.PanedFrame, title)
 
     def openPane(self, title):
-        self._openContainer(self.Widgets.Pane, title)
+        return self._openContainer(self.Widgets.Pane, title)
 
     def openSubWindow(self, title):
-        self._openContainer(self.Widgets.SubWindow, title)
+        return self._openContainer(self.Widgets.SubWindow, title)
 
     def openScrollPane(self, title):
-        self._openContainer(self.Widgets.ScrollPane, title)
+        return self._openContainer(self.Widgets.ScrollPane, title)
 
     # function to reload the specified container
     def _openContainer(self, kind, title):
@@ -4060,6 +4060,7 @@ class gui(object):
             raise Exception("Attempted to open invalid " + kind + ": " + str(title))
 
         self.containerStack.append(cConf)
+        return cConf['container']
 
     # returns the current working container
     def getContainer(self):
@@ -4323,7 +4324,7 @@ class gui(object):
         if tabTitle is None:
             note = self.startNote(title)
         else:
-            self.openNote(title, tabTitle)
+            note = self.openNote(title, tabTitle)
         self.configure(**kwargs)
         try: yield note
         finally: self.stopNote()

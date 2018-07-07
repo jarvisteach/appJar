@@ -2275,6 +2275,7 @@ def test_containers():
 
     ## LABEL FRAMES
     lf = app.startLabelFrame("lf1")
+    assert lf is not None
     app.setLabelFrameAnchor("lf1", "east")
     app.addLabel("lf1_l1", TEXT_ONE)
     app.stopLabelFrame()
@@ -2282,7 +2283,8 @@ def test_containers():
     with pytest.raises(Exception) :
         app.stopLabelFrame()
 
-    app.openLabelFrame("lf1")
+    container = app.openLabelFrame("lf1")
+    assert container is not None
     app.addLabel("lf1_l2", TEXT_ONE)
     app.stopLabelFrame()
 
@@ -2313,7 +2315,8 @@ def test_containers():
     app.toggleToggleFrame("tf1")
     assert app.getToggleFrameState("tf1") is False
 
-    app.openToggleFrame("tf1")
+    container = app.openToggleFrame("tf1")
+    assert container is not None
     app.addLabel("tf1_l2", TEXT_ONE)
     app.stopToggleFrame()
 
@@ -2354,7 +2357,8 @@ def test_containers():
     app.setTabbedFrameSelectedTab("tbf1", "tab2")
     assert app.getTabbedFrameSelectedTab("tbf1") == "tab2"
 
-    app.openTabbedFrame("tbf1")
+    container = app.openTabbedFrame("tbf1")
+    assert container is not None
     app.startTab("tab4")
     app.addLabel("tbf4_l1", TEXT_ONE)
     app.stopTabbedFrame()
@@ -2362,7 +2366,8 @@ def test_containers():
     app.setTabbedFrameInactiveFg("tbf1", "red")
     app.setTabbedFrameInactiveBg("tbf1", "red")
 
-    app.openTab("tbf1", "tab4")
+    container = app.openTab("tbf1", "tab4")
+    assert container is not None
     app.addLabel("tbf4_l2", TEXT_ONE)
     app.stopTab()
 
@@ -2395,7 +2400,8 @@ def test_containers():
     app.stopPanedFrame()
     app.stopAllPanedFrames()
 
-    app.openPanedFrame("p1")
+    container = app.openPanedFrame("p1")
+    assert container is not None
     app.addLabel("p1_l11", TEXT_ONE)
     app.stopPanedFrame()
 
@@ -2450,13 +2456,15 @@ def test_containers():
     app.showPagedWindowTitle("pg1", False)
     app.showPagedWindowTitle("pg1", True)
 
-    app.openPagedWindow("pg1")
+    container = app.openPagedWindow("pg1")
+    assert container is not None
     app.startPage()
     app.addLabel("pg4_l1", TEXT_ONE)
     app.stopPage()
     app.stopPagedWindow()
 
-    app.openPage("pg1", 2)
+    container = app.openPage("pg1", 2)
+    assert container is not None
     app.addLabel("pg2_np", TEXT_ONE)
     app.stopPage()
 
@@ -2480,7 +2488,8 @@ def test_containers():
     with pytest.raises(Exception) :
         app.stopSubWindow()
 
-    app.openSubWindow("sb1")
+    container = app.openSubWindow("sb1")
+    assert container is not None
     app.addLabel("sb1_l2", TEXT_ONE)
     app.stopSubWindow()
 
@@ -2514,7 +2523,8 @@ def test_containers():
     app.startFrame("fr1")
     app.addLabel("fr1_l", TEXT_ONE)
     app.stopFrame()
-    app.openFrame("fr1")
+    container = app.openFrame("fr1")
+    assert container is not None
     app.addLabel("fr1_l2", TEXT_ONE)
     app.stopFrame()
 
@@ -2524,7 +2534,8 @@ def test_containers():
     app.startScrollPane("sp1")
     app.addLabel("sp_l", TEXT_ONE)
     app.stopScrollPane()
-    app.openScrollPane("sp1")
+    container = app.openScrollPane("sp1")
+    assert container is not None
     app.addLabel("sp_l2", TEXT_ONE)
     app.stopScrollPane()
     with pytest.raises(Exception) :
@@ -2615,7 +2626,8 @@ def test_containers():
     assert app.getCurrentFrame("stack") == 1
     assert app.getPreviousFrame("stack") == 2
 
-    app.openFrameStack('stack')
+    container = app.openFrameStack('stack')
+    assert container is not None
     app.startFrame()
     app.addLabel("stack-4", "stack-4")
     app.stopFrame()
