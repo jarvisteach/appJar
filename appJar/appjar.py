@@ -10303,7 +10303,7 @@ class gui(object):
         imgFile = os.path.join(self.icon_path, icon.lower() + ".png")
         with PauseLogger():
             self.setToolbarImage(name, imgFile)
-        self.widgetManager.get(self.Widgets.Toolbar, name).tt_var.set(icon)
+#        self.widgetManager.get(self.Widgets.Toolbar, name).tt_var.set(icon)
 
     def setToolbarImage(self, name, imgFile):
         if (name not in self.widgetManager.group(self.Widgets.Toolbar)):
@@ -10937,21 +10937,26 @@ class gui(object):
 
     def statusbar(self, *args, **kwargs):
         """ simpleGUI - shortener for statusbar """
-        header = kwargs.pop('header', None)
         bg = kwargs.pop('bg', None)
         fg = kwargs.pop('fg', None)
         width = kwargs.pop('width', None)
+
         text = kwargs.pop('text', "")
+        header = kwargs.pop('header', None)
+        fields = kwargs.pop('fields', 1)
+        field = kwargs.pop('field', 0)
+        side = kwargs.pop('side', None)
 
         if not self.hasStatus:
-            self.addStatusbar(header=kwargs.pop('header', ""), fields=kwargs.pop('fields', 1), side=kwargs.pop('side', None))
+            self.addStatusbar(header=header, fields=fields, side=side)
             self.setStatusbar(text=text)
         else:
             if len(args) > 0: text = args[0]
-            field = 0 if len(args) < 2 else args[1]
-            self.setStatusbar(text=kwargs.pop('text', text), field=kwargs.pop('field', field))
+            if len(args) > 1: field = args[1]
 
-        if header is not None: self.setStatusbarHeader(header)
+            if header is not None: self.setStatusbarHeader(header)
+            self.setStatusbar(text=text, field=field)
+
         if bg is not None: self.setStatusbarBg(bg)
         if fg is not None: self.setStatusbarFg(fg)
         if width is not None: self.setStatusbarWidth(width)
@@ -11052,7 +11057,7 @@ class gui(object):
         text = str(text)
         if len(text) == 0:
             return ""
-        elif len(self.header) == 0:
+        elif self.header is None or len(self.header) == 0:
             return text
         else:
             return self.header + ": " + text

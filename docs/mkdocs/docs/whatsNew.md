@@ -4,6 +4,7 @@
 ## Version 0.94  
 
 * Issues Resolved:
+    * [#477](https://github.com/jarvisteach/appJar/issues/477) - Function to [move](/pythonWidgetOptions/#widget-manipulation) widgets
     * [#475](https://github.com/jarvisteach/appJar/issues/475) - Ability to add multiple action buttons and align horizontal/vertical in [Tables](/pythonDevWidgets/#table)  
     * [#473](https://github.com/jarvisteach/appJar/issues/473) - Can now add [tabs](/pythonWidgetGrouping/#tabbed-frame) before/after existing tabs  
     * [#472](https://github.com/jarvisteach/appJar/issues/472) - When updating a [textArea](/simpleAppJar/#text) you can now configure it to replace any existing text.  

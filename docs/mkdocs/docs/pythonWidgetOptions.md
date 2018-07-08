@@ -154,6 +154,10 @@ The following allow widgets to be manipulated on screen:
 * `.show XXX (name)`  
     Show the widget, if it was already hidden.
 
+* `.move XXX (name, row, column=0, colspan=0, rowspan=0, sticky='EW')`  
+    Move a widget to a new grid position.
+    If called while inside a different container, the widget will be cloned into that container.  
+
 * `.remove XXX (name)`  
     Permanently remove the widget (deletes it).
 
