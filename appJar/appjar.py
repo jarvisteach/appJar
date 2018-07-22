@@ -14003,6 +14003,7 @@ class SimpleTable(ScrollPane):
                 self.rightColumn[position+1].grid_forget()
 
             # loop through all rows after, forget them, move them, grid them
+            butCount = len(self.actionButton)
             for loop in range(position+1, len(self.cells)-1):
                 # forget the next row
                 for cell in self.cells[loop+1]:
@@ -14019,7 +14020,12 @@ class SimpleTable(ScrollPane):
 
                 # update its button
                 for but in self.rightColumn[loop].but:
-                    but.config(command=lambda name=but.cget['text'], row=loop, *args: self.action(name, row))
+                    if butCount == 1:
+                        command=lambda row=loop, *args: self.action(row)
+                    else:
+                        command=lambda name=but.cget['text'], row=loop, *args: self.action(name, row)
+
+                    but.config(command=command)
 
                 # re-grid them
                 for cellNum in range(len(self.cells[loop])):
@@ -14089,9 +14095,15 @@ class SimpleTable(ScrollPane):
                 widg.grid(row=rowNum, column=cellNum + 1, sticky=N+E+S+W)
 
     def _updateButtons(self, position=0):
+        butCount = len(self.actionButton)
         for pos in range(position+1, len(self.rightColumn)):
             for but in self.rightColumn[pos].but:
-                but.config(command=lambda name=but.cget['text'], row=pos-1, *args: self.action(name, row))
+                if butCount == 1:
+                    command=lambda row=pos-1, *args: self.action(row)
+                else:
+                    command=lambda name=but.cget['text'], row=pos-1, *args: self.action(name, row)
+
+                but.config(command=command)
 
     def _createCell(self, rowNum, cellNum, val):
         if rowNum == 0: # adding title row
@@ -14121,7 +14133,11 @@ class SimpleTable(ScrollPane):
         if columnNumber < 0 or columnNumber >= self.numColumns:
             raise Exception("Invalid column number.")
         else:
-            selected = self.cells[1][columnNumber].selected
+            try:
+                selected = self.cells[1][columnNumber].selected
+            except IndexError:
+                # no rows to select
+                return
             for rowCount in range(1, len(self.cells)):
                 if highlight is None:
                     if selected:
