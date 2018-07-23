@@ -2556,7 +2556,7 @@ class gui(object):
         return self._getContainerProperty('expand')
 
     def setExpand(self, exp):
-        if exp.lower() == "none":
+        if exp is None or exp.lower() == "none":
             self.containerStack[-1]['expand'] = "NONE"
         elif exp.lower() == "row":
             self.containerStack[-1]['expand'] = "ROW"
@@ -5535,8 +5535,15 @@ class gui(object):
             if widgType not in [self.Widgets.Tab, self.Widgets.Page]:
                 if not self.widgetManager.destroyWidget(widgType, widget):
                     self.warn("Unable to destroy %s, during cleanse - destroy returned False", widgType)
+
+                # must clear the frameLabel's label as well
+                if widgType == self.Widgets.FrameLabel:
+                    gui.trace("Also Cleansing: %s", self.Widgets.name(self.Widgets.Label))
+                    if not self.widgetManager.destroyWidget(self.Widgets.Label, widget):
+                        self.warn("Unable to destroy %s, during cleanse - destroy returned False", self.Widgets.Label)
             else:
                 self.trace("Skipped %s, cleansed by parent", widgType)
+
         elif widgType in ('CanvasDnd', 'ValidationLabel'):
             self.trace("Skipped %s, cleansed by parent", widgType)
         else:
@@ -10746,7 +10753,7 @@ class gui(object):
                     theMenu.entryconfigure(item, state=state)
                 except:
                     pass  # separator
-        # also diable the toplevel menu that matches this one
+        # also disable the toplevel menu that matches this one
         try:
             self.menuBar.entryconfig(self.menuBar.index(title), state=state)
         except TclError:
@@ -15377,7 +15384,7 @@ class WidgetManager(object):
             raise ItemLookupError("Invalid widgetName: " + widgetName)
 
     def update(self, widgetType, widgetName, widget, group=None):
-        """ gets the specified item """
+        """ replaces the specified item """
         try:
             self.group(widgetType, group)[widgetName] = widget
         except KeyError:
@@ -15416,6 +15423,7 @@ class WidgetManager(object):
         widgets = self.widgets[widgType]
         # just a list, remove matching obj - no vars
         if type(widgets) in (list, tuple):
+            gui.trace('Removing widget: %s, %s', widgType, widget)
             for obj in widgets:
                 if widget == obj:
                     obj.destroy()
@@ -15423,6 +15431,7 @@ class WidgetManager(object):
                     gui.trace("Matched and removed")
                     return True
         else:
+            gui.trace('Destroying widget: %s, %s', widgType, widget)
             for name, obj in widgets.items():
                 if type(obj) in (list, tuple):
                     if self.destroyWidget(widget, obj):
@@ -15438,6 +15447,7 @@ class WidgetManager(object):
                     except: pass # no var
                     gui.trace("Matched and destroyed")
                     return True
+
         gui.trace("Failed to destory widget")
         return False
 
