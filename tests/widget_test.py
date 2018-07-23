@@ -88,6 +88,7 @@ def test_remover():
     app.stopPage()
     app.stopPagedWindow()
     app.stopLabelFrame()
+    app.addLabelEntry("removeMe4")
     app.removeAllWidgets()
 
 def test_labels():
@@ -3222,6 +3223,7 @@ app.showSplash()
 print("NEXT...")
 
 print("<<<Starting Widget Test Suite>>>")
+test_remover()
 test_remover()
 test_gui_options()
 test_widget_arranging()
