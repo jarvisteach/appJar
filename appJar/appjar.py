@@ -11241,7 +11241,7 @@ class gui(object):
             opts = {"parent": parent}
             return MessageBox.askretrycancel(title, message, **opts)
 
-    def openBox(self, title=None, dirName=None, fileTypes=None, asFile=False, parent=None):
+    def openBox(self, title=None, dirName=None, fileTypes=None, asFile=False, parent=None, multiple=False, mode='r'):
 
         self.topLevel.update_idletasks()
 
@@ -11258,10 +11258,17 @@ class gui(object):
             options["parent"] = self.widgetManager.get(self.Widgets.SubWindow, parent)
 
         if asFile:
-            return filedialog.askopenfile(mode="r", **options)
+            options["mode"] = mode
+            if multiple: files = list(filedialog.askopenfiles(**options))
+            else: files = filedialog.askopenfile(**options)
+
+            return files
         # will return "" if cancelled
         else:
-            return filedialog.askopenfilename(**options)
+            if multiple: files = list(self.topLevel.tk.splitlist(filedialog.askopenfilenames(**options)))
+            else: files = filedialog.askopenfilename(**options)
+
+            return files
 
     def saveBox( self, title=None, fileName=None, dirName=None, fileExt=".txt",
             fileTypes=None, asFile=False, parent=None):

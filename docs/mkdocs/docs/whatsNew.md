@@ -6,6 +6,7 @@
 * Issues Resolved:
     * [#489](https://github.com/jarvisteach/appJar/issues/489) - Fixed bug where Labelled widgets weren't [destroyed](/pythonWidgetOptions/#widget-manipulation) properly.  
     * [#482](https://github.com/jarvisteach/appJar/issues/482) - Fixed isue with deleting rows on [tables](/pythonDevWidgets/#table)  
+    * [#479](https://github.com/jarvisteach/appJar/issues/479) - Multiple files allowed in [open file boxes](/pythonDialogs/#file-boxes)
     * [#478](https://github.com/jarvisteach/appJar/issues/478) - Fixed issue where [opening containers](/pythonWidgetGrouping/#reopening-containers) was not returning the container  
     * [#477](https://github.com/jarvisteach/appJar/issues/477) - Function to [move](/pythonWidgetOptions/#widget-manipulation) widgets
     * [#475](https://github.com/jarvisteach/appJar/issues/475) - Ability to add multiple action buttons and align horizontal/vertical in [Tables](/pythonDevWidgets/#table)  

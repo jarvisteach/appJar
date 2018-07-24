@@ -86,7 +86,7 @@ A number of pop-ups (aka dialogs) are available, to add a different user experie
 
 ### File Boxes
 ---
-* `.openBox(title=None, dirName=None, fileTypes=None, asFile=False, parent=None)`  
+* `.openBox(title=None, dirName=None, fileTypes=None, asFile=False, parent=None, multiple=False, mode='r')`  
     Shows an open file dialog.  
     If this dialog is being launched from a [subWindow](/pythonWidgetGrouping/#sub-window) set `parent` to be the name of the subWindow.  
 
@@ -99,6 +99,8 @@ A number of pop-ups (aka dialogs) are available, to add a different user experie
     * `fileTypes=[('images', '*.png'), ('images', '*.jpg')]`  
     This will set the allowed file extensions, it should be a list of tuples. They will be grouped by the name.  
     * `asFile` this will determine whether a path or actual Python file object is returned, defaults to filename   
+    * `multiple` if set to `True`, this will allow the user to select more than one file, defaults to `False`  
+    * `mode` if `asFile` is `True`, this determines what mode to open the file in, one of: r, w, a or U  
 
 <br>
 
