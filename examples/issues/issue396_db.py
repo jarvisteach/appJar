@@ -2,7 +2,7 @@ import sys
 sys.path.append("../../")
 
 LABS = {'view':'Table View', 'run':'Run SQL', 'log':'Log'}
-DB = 'demoDb.sqlite'
+DB = 'issue396.sqlite'
 
 import time, sqlite3
 from appJar import gui
