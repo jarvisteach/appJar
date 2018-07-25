@@ -1,5 +1,5 @@
 import sys
-sys.path.append("../")
+sys.path.append("../../")
 
 LABS = {'view':'Table View', 'run':'Run SQL', 'log':'Log'}
 DB = 'demoDb.sqlite'
