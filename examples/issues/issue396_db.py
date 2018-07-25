@@ -24,7 +24,7 @@ def toolbar(btn):
     elif btn == "COMMIT":
         if numChanges != conn.total_changes:
             conn.commit()
-            log(str(conn.total_changes) + " changes commited")
+            log(str(conn.total_changes - numChanges) + " changes commited")
             sqlUpdate = True
             numChanges = conn.total_changes
             updateStatus()
@@ -35,7 +35,7 @@ def toolbar(btn):
     elif btn == "ROLLBACK":
         if numChanges != conn.total_changes:
             conn.rollback()
-            log(str(conn.total_changes) + " changes rolled back")
+            log(str(conn.total_changes - numChanges) + " changes rolled back")
             numChanges = conn.total_changes
             updateStatus()
             app.setToolbarButtonDisabled("ROLLBACK")
@@ -134,7 +134,7 @@ def runSql(sql):
         log(str(e))
 
 conn = sqlite3.connect(DB)
-with gui("DB Editor", '500x400') as app:
+with gui("DB Editor", '750x400') as app:
     app.toolbar(['HOME', 'COMMIT', 'ROLLBACK', 'LOG'], toolbar, icons=['database', 'database-upload', 'database-reload', 'list-unordered'], status=[1, 0, 0, 1])
     app.status(header="Data Changes:", text='0')
 
