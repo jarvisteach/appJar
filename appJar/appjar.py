@@ -4855,6 +4855,7 @@ class gui(object):
         showMenu=kwargs.pop('showMenu', False)
         horiz=kwargs.pop('horizontal', True)
         change=kwargs.pop('change', None)
+        edit=kwargs.pop('edit', None)
 
         try: self.widgetManager.verify(widgKind, title)
         except: # widget exists
@@ -4872,8 +4873,8 @@ class gui(object):
                             action=action, addRow=addRow, actionHeading=actionHeading, actionButton=actionButton,
                             addButton=addButton, showMenu=showMenu, horizontal=horiz, **kwargs
                         )
-        if change is not None:
-            self.setTableChangeFunction(title, change)
+        if change is not None: self.setTableChangeFunction(title, change)
+        if edit is not None: self.setTableEditFunction(title, edit)
 
         if len(kwargs) > 0:
             self._configWidget(title, widgKind, **kwargs)
@@ -4934,12 +4935,20 @@ class gui(object):
     def getTableEntries(self, title):
         return self.widgetManager.get(self.Widgets.Table, title).getEntries()
 
+    def getTableLastChange(self, title):
+        return self.widgetManager.get(self.Widgets.Table, title).getLastChange()
+
     def getTableSelectedCells(self, title):
         return self.widgetManager.get(self.Widgets.Table, title).getSelectedCells()
 
     def selectTableRow(self, title, row, highlight=None):
         grid = self.widgetManager.get(self.Widgets.Table, title)
         grid.selectRow(row, highlight)
+
+    def setTableEditFunction(self, title, func):
+        grid = self.widgetManager.get(self.Widgets.Table, title)
+        cmd = self.MAKE_FUNC(func, title)
+        grid.config(edit=cmd)
 
     def selectTableColumn(self, title, col, highlight=None):
         grid = self.widgetManager.get(self.Widgets.Table, title)
@@ -13782,6 +13791,7 @@ class SimpleTable(ScrollPane):
                     actionHeading="Action", actionButton="Press",
                     addButton="Add", showMenu=False, queueFunction=None, border='solid', **opts):
 
+        self.title = title
         self.fonts = {
             "dataFont": tkFont.Font(family="Arial", size=11),
             "headerFont": tkFont.Font(family="Arial", size=13, weight='bold'),
@@ -13804,6 +13814,7 @@ class SimpleTable(ScrollPane):
         self.action = action
         self.queueFunction = queueFunction
         self.changeFunction = opts.pop("change", None)
+        self.editFunction = opts.pop("edit", None)
 
         # lists to store the data in
         self.cells = []
@@ -13825,6 +13836,8 @@ class SimpleTable(ScrollPane):
         # menu stuff
         self.showMenu = showMenu
         self.lastSelected = None
+        self.lastAction = None
+        self.newText = None
         if self.showMenu: self._buildMenu()
 
         # how many rows & columns
@@ -13863,6 +13876,9 @@ class SimpleTable(ScrollPane):
 
         if "change" in kw:
             self.changeFunction = kw.pop("change")
+
+        if "edit" in kw:
+            self.editFunction = kw.pop("edit")
 
         if "bg" in kw:
             bg = kw.pop("bg")
@@ -13917,6 +13933,9 @@ class SimpleTable(ScrollPane):
 
     def setChangeFunction(self, func):
         self.changeFunction = func
+
+    def setEditFunction(self, func):
+        self.editFunction = func
 
     def _configCells(self):
         gui.trace("Config all cells")
@@ -14192,16 +14211,16 @@ class SimpleTable(ScrollPane):
         self.menu.add_command(label="Edit", command=lambda: self._menuHelper("edit"))
         self.menu.add_command(label="Clear", command=lambda: self._menuHelper("clear"))
         self.menu.add_separator()
-        self.menu.add_command(label="Delete Column", command=lambda: self._menuHelper("dc"))
-        self.menu.add_command(label="Delete Row", command=lambda: self._menuHelper("dr"))
+        self.menu.add_command(label="Delete Column", command=lambda: self._menuHelper("deleteColumn"))
+        self.menu.add_command(label="Delete Row", command=lambda: self._menuHelper("deleteRow"))
         self.menu.add_separator()
-        self.menu.add_command(label="Sort Ascending", command=lambda: self._menuHelper("sa"))
-        self.menu.add_command(label="Sort Descending", command=lambda: self._menuHelper("sd"))
+        self.menu.add_command(label="Sort Ascending", command=lambda: self._menuHelper("sortAscending"))
+        self.menu.add_command(label="Sort Descending", command=lambda: self._menuHelper("sortDescending"))
         self.menu.add_separator()
-        self.menu.add_command(label="Insert Before", command=lambda: self._menuHelper("cb"))
-        self.menu.add_command(label="Insert After", command=lambda: self._menuHelper("ca"))
+        self.menu.add_command(label="Insert Before", command=lambda: self._menuHelper("columnBefore"))
+        self.menu.add_command(label="Insert After", command=lambda: self._menuHelper("columnAfter"))
         self.menu.add_separator()
-        self.menu.add_command(label="Select Cell", command=lambda: self._menuHelper("select"))
+        self.menu.add_command(label="Select Cell", command=lambda: self._menuHelper("selectCell"))
         self.menu.add_command(label="Select Row", command=lambda: self._menuHelper("selectRow"))
         self.menu.add_command(label="Select Column", command=lambda: self._menuHelper("selectColumn"))
         self.menu.bind("<FocusOut>", lambda e: self.menu.unpost())
@@ -14224,48 +14243,76 @@ class SimpleTable(ScrollPane):
         self.menu.post(event.x_root - 10, event.y_root - 10)
         return "break"
 
+    def getLastChange(self):
+        data = {
+            'title':self.title,
+            'gridPos':self.lastSelected.gridPos,
+            'action':self.lastAction,
+            'cellText':self.lastSelected.cget("text"),
+            'newText':self.newText,
+            'widget':self.lastSelected,
+        }
+        return data
+
     def _menuHelper(self, action):
         self.update_idletasks()
+        self.lastAction = action
         vals=self.lastSelected.gridPos.split("-")
         gui.trace('Table Menu Helper: %s-%s', action, vals)
 
-        if action == "dc":
-            self.deleteColumn(int(vals[1]), callFunction=True)
-        elif action == "dr" and vals[0] != "h":
-            self.deleteRow(int(vals[0]), callFunction=True)
-        elif action == "cb":
-            self.addColumn(int(vals[1]), [], callFunction=True)
-        elif action == "ca":
-            self.addColumn(int(vals[1])+1, [], callFunction=True)
-        elif action == "select" and vals[0] != "h":
+        if action == "deleteColumn":
+            if self.editFunction is not None: self.editFunction()
+            else: self.deleteColumn(int(vals[1]), callFunction=True)
+        elif action == "deleteRow" and vals[0] != "h":
+            if self.editFunction is not None: self.editFunction()
+            else: self.deleteRow(int(vals[0]), callFunction=True)
+        elif action == "columnBefore":
+            if self.editFunction is not None: self.editFunction()
+            else: self.addColumn(int(vals[1]), [], callFunction=True)
+        elif action == "columnAfter":
+            if self.editFunction is not None: self.editFunction()
+            else: self.addColumn(int(vals[1])+1, [], callFunction=True)
+        elif action == "selectCell" and vals[0] != "h":
             self.lastSelected.toggleSelection()
         elif action == "selectRow":
             self.selectRow(int(vals[0]))
         elif action == "selectColumn":
             self.selectColumn(int(vals[1]))
-        if action == "sa":
-            self.sort(int(vals[1]))
-        if action == "sd":
-            self.sort(int(vals[1]), descending=True)
+        if action == "sortAscending":
+            if self.editFunction is not None:
+                self.editFunction()
+            else:
+                self.sort(int(vals[1]))
+        if action == "sortDescending":
+            if self.editFunction is not None:
+                self.editFunction()
+            else:
+                self.sort(int(vals[1]), descending=True)
         elif action == "copy":
             val=self.lastSelected.cget("text")
             self.clipboard_clear()
             self.clipboard_append(val)
         elif action == "paste":
-            try:
-                self.lastSelected.config(text=self.clipboard_get())
-                if self.changeFunction is not None: self.changeFunction()
+            self.newText = None
+            try: self.newText = self.clipboard_get()
             except: pass
+            self._updateCell()
         elif action == "clear":
-            self.lastSelected.config(text="")
-            if self.changeFunction is not None: self.changeFunction()
+            self.newText = ""
+            self._updateCell()
         elif action == "edit":
             val=self.lastSelected.cget("text")
             defaultVar = StringVar(self)
             defaultVar.set(val)
-            newText =  TextDialog(self, "Edit", "Enter the new text", defaultVar=defaultVar).result
-            if newText is not None:
-                self.lastSelected.config(text=newText)
+            self.newText =  TextDialog(self, "Edit", "Enter the new text", defaultVar=defaultVar).result
+            self._updateCell()
+
+    def _updateCell(self):
+        if self.newText is not None:
+            if self.editFunction is not None:
+                self.editFunction()
+            else:
+                self.lastSelected.config(text=self.newText)
                 if self.changeFunction is not None: self.changeFunction()
 
     def addColumn(self, columnNumber, data, callFunction=False):

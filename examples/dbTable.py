@@ -19,13 +19,12 @@ def checkUpdates():
 
 def toolbar(btn):
     global numChanges, sqlUpdate
-    if btn == 'HOME':
-        app.setTabbedFrameSelectedTab('tabs', LABS['view'])
-    elif btn == 'LOG':
-        app.setTabbedFrameSelectedTab('tabs', LABS['log'])
+    if btn == 'HOME': app.setTabbedFrameSelectedTab('tabs', LABS['view'])
+    elif btn == 'LOG': app.setTabbedFrameSelectedTab('tabs', LABS['log'])
     elif btn == "COMMIT":
         if numChanges != conn.total_changes:
             conn.commit()
+            log(str(conn.total_changes) + " changes commited")
             sqlUpdate = True
             numChanges = conn.total_changes
             app.status(conn.total_changes - numChanges)
@@ -36,6 +35,7 @@ def toolbar(btn):
     elif btn == "ROLLBACK":
         if numChanges != conn.total_changes:
             conn.rollback()
+            log(str(conn.total_changes) + " changes rolled back")
             numChanges = conn.total_changes
             app.status(conn.total_changes - numChanges)
             app.setToolbarButtonDisabled("ROLLBACK")
@@ -61,8 +61,17 @@ def setFocus(tf):
 def updateTable(tbl):
     app.replaceDbTable(LABS['view'], DB, app.option(LABS['view']))
 
-def tableModified(ppp=None):
-    print("Changed", ppp)
+def action(val):
+    if val == 'newRow':
+        vals = app.getTableEntries(LABS['view'])
+        sql = "INSERT INTO " + app.option(LABS['view']) + " VALUES (" + ', '.join('"{0}"'.format(v) for v in vals) + ")"
+        runSql(sql)
+    elif val == 'change':
+        print(app.getTableLastChange(LABS['view']))
+    else:
+        print('delete row:', val)
+
+def tableModified(ppp=None): action('change')
 
 def log(msg):
     d = time.strftime('%a %H:%M:%S') + ": "
@@ -81,7 +90,7 @@ def loadSQL(btn):
     elif btn == "Select":
         app.text(LABS['run'], "SELECT * FROM " + app.option(LABS['view']), replace=True, focus=True)
 
-def runSQL(action):
+def runButtons(action):
     global sqlUpdate
     if action == "Clear":
         app.text(LABS['run'], replace=True)
@@ -91,32 +100,35 @@ def runSQL(action):
         app.message(LABS['run'], "")
         sql = app.text(LABS['run']).strip()
         if len(sql) > 0:
-            try:
-                cur = conn.cursor()
-                success = cur.execute(sql)
-                log("Run SQL - " + sql)
-                data = cur.fetchall()
-                if not success:
-                    app.message(LABS['run'], "Query failed", bg='red')
-                else:
-                    if len(data) == 0:
-                        app.message(LABS['run'], "No rows returned", bg='orange')
-                    else:
-                        app.message(LABS['run'], data, bg='green')
-                    sqlUpdate = True
-                app.status(conn.total_changes - numChanges)
-                app.setToolbarButtonDisabled("ROLLBACK", False)
-                app.setToolbarButtonDisabled("COMMIT", False)
-            except sqlite3.OperationalError as e:
-                app.bell()
-                app.message(LABS['run'], str(e), bg='red')
-                log(str(e))
+            runSql(sql)
         else:
             app.message(LABS['run'], '', bg='grey')
     app.text(LABS['run'], focus=True)
 
+def runSql(sql):
+    try:
+        cur = conn.cursor()
+        success = cur.execute(sql)
+        log("Run SQL - " + sql)
+        data = cur.fetchall()
+        if not success:
+            app.message(LABS['run'], "Query failed", bg='red')
+        else:
+            if len(data) == 0:
+                app.message(LABS['run'], "No rows returned", bg='orange')
+            else:
+                app.message(LABS['run'], data, bg='green')
+            sqlUpdate = True
+        app.status(conn.total_changes - numChanges)
+        app.setToolbarButtonDisabled("ROLLBACK", False)
+        app.setToolbarButtonDisabled("COMMIT", False)
+    except sqlite3.OperationalError as e:
+        app.bell()
+        app.message(LABS['run'], str(e), bg='red')
+        log(str(e))
+
 conn = sqlite3.connect(DB)
-with gui("DB Editor", '400x400', bg='red') as app:
+with gui("DB Editor", '500x400', bg='red') as app:
     # set up toolbar
     app.toolbar(['HOME', 'COMMIT', 'ROLLBACK', 'LOG'], toolbar, icons=True)
     app.setToolbarIcon("ROLLBACK", 'database-reload')
@@ -131,14 +143,14 @@ with gui("DB Editor", '400x400', bg='red') as app:
     with app.tabbedFrame("tabs", change=setFocus):
         with app.tab(LABS['view']):
             app.addDbOptionBox(LABS['view'], DB, sticky='ne', stretch='column', change=updateTable)
-            app.table(LABS['view'], DB, app.option(LABS['view']), kind='db', sticky='news', stretch='both', showMenu=True, change=tableModified)
+            app.table(LABS['view'], DB, app.option(LABS['view']), kind='db', sticky='news', stretch='both', showMenu=True, edit=tableModified, change=tableModified, action=action, actionHeading='Delete', actionButton='NOW', addRow=action)
 
         with app.tab(LABS['run']):
             app.label(LABS['run'], sticky='new', stretch='column')
             app.text(LABS['run'], sticky='news', stretch='both')
             app.message(LABS['run'], '', bg='grey', border=2, width=400)
             app.buttons(["Create", "Update", "Insert", "Delete", "Select"], loadSQL, stretch='column', sticky='sew', fill=True)
-            app.buttons(["Run", "Clear"], runSQL, fill=True)
+            app.buttons(["Run", "Clear"], runButtons, fill=True)
 
         with app.tab(LABS['log']):
             app.text(LABS['log'], disabled=True, tags=[['date', {'foreground':'blue', 'background':'yellow'}]])

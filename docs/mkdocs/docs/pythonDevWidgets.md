@@ -114,6 +114,11 @@ app.go()
     If `addRow` was set when the *Table* was created, this function will get the contents of the entry boxes.  
     They will be returned as a list, in the same order as the entry boxes.  
 
+* `.getTableLastChange(title)`  
+    Get a dictionary of the last change performed on the table.  
+    Containing: title, gridPos, action, cellText, newText, widget  
+    Action types: edit, clear, paste, deleteColumn, deleteRow, columnBefore, columnAfter, sortAscending, sortDescending
+
 #### Set Tables  
 
 * `.addTableRow(title, data)`  
@@ -127,6 +132,10 @@ To have the **Press** button on the entries row add a new row of data, try the f
             data = app.getTableEntries("g1")
             app.addTableRow("g1", data)
 ``` 
+
+* `.setTableEditFunction(title, func)`  
+    Set a function to call, when one of the menu options is clicked.  
+    Useful to use `.getTableLastChange(title)` to find out what changed.  
 
 * `.addTableRows(title, data)`  
     Adds the new rows of data to the end of the existing Table.  
