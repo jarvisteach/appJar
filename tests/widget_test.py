@@ -3347,6 +3347,7 @@ del app
 
 print("<<<Starting app3>>>")
 with gui(debug=True) as app3:
+    app3.toolbar(["a", "b", "file", "open"], tester_function, icons=['a', 'b', 'file', 'open'], status=[1, 0, False, True])
     app3.addStatusbar(TEXT_ONE, 1, "LEFT")
     with app3.tabbedFrame("tf"):
         with app3.tab("t1"):
