@@ -10,8 +10,9 @@ def refillFrame():
 
 def fillFrame():
     with app.frame('one'):
-        for x in 'abcdefghijklmnopqrstuvwxyz':
-            app.label('hello'+x, bg=app.RANDOM_COLOUR())
+        with app.labelFrame("labels"):
+            for x in 'abcdefghijklmnopqrstuvwxyz':
+                app.label('hello'+x, bg=app.RANDOM_COLOUR())
 
 with gui() as app:
     with app.tabbedFrame('tabs'):
