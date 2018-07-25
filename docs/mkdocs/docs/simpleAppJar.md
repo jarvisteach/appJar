@@ -453,7 +453,8 @@ Displays the toolbar.
 
 | Parameter | Data type | Default | Description |
 | --------- | --------- | ------- | ------------|
-| icons | boolean | False | Determines if appJar should try to find icons for each menu item. |
+| icons | boolean/list | False | Determines if appJar should try to find icons for each menu item (`True`) or a list of icon names. |
+| status | list | [] | The enabled status of each button (`False` to disable). |  
 | pinned | boolean | None | If set, the toolbar will be pinnable. Setting to `True` wil start pinned, `False` not pinned. |
 | disabled | boolean | False | Determines if the toolbar should start disabed or not. | 
 | hidden | boolean | False | Determines if the toolbar should start hidden or not. When hidden it is completley removed from the GUI. | 

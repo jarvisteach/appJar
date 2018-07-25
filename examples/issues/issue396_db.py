@@ -27,7 +27,7 @@ def toolbar(btn):
             log(str(conn.total_changes) + " changes commited")
             sqlUpdate = True
             numChanges = conn.total_changes
-            app.status(conn.total_changes - numChanges)
+            updateStatus()
             app.setToolbarButtonDisabled("ROLLBACK")
             app.setToolbarButtonDisabled("COMMIT")
         else:
@@ -37,11 +37,17 @@ def toolbar(btn):
             conn.rollback()
             log(str(conn.total_changes) + " changes rolled back")
             numChanges = conn.total_changes
-            app.status(conn.total_changes - numChanges)
+            updateStatus()
             app.setToolbarButtonDisabled("ROLLBACK")
             app.setToolbarButtonDisabled("COMMIT")
         else:
             app.bell()
+
+def updateStatus():
+    count = conn.total_changes - numChanges
+    if count > 0: app.status(count, bg='red')
+    else: app.status(count, bg='white')
+
 
 def checkChanges():
     if numChanges != conn.total_changes:
@@ -119,7 +125,7 @@ def runSql(sql):
             else:
                 app.message(LABS['run'], data, bg='green')
             sqlUpdate = True
-        app.status(conn.total_changes - numChanges)
+        updateStatus()
         app.setToolbarButtonDisabled("ROLLBACK", False)
         app.setToolbarButtonDisabled("COMMIT", False)
     except sqlite3.OperationalError as e:
@@ -128,22 +134,18 @@ def runSql(sql):
         log(str(e))
 
 conn = sqlite3.connect(DB)
-with gui("DB Editor", '500x400', bg='red') as app:
-    # set up toolbar
-    app.toolbar(['HOME', 'COMMIT', 'ROLLBACK', 'LOG'], toolbar, icons=True)
-    app.setToolbarIcon("ROLLBACK", 'database-reload')
-    app.setToolbarIcon("COMMIT", 'database-upload')
-    app.setToolbarIcon("HOME", 'database')
-    app.setToolbarIcon("LOG", 'list-unordered')
-    app.setToolbarButtonDisabled("ROLLBACK")
-    app.setToolbarButtonDisabled("COMMIT")
-    # set up statusbar
+with gui("DB Editor", '500x400') as app:
+    app.toolbar(['HOME', 'COMMIT', 'ROLLBACK', 'LOG'], toolbar, icons=['database', 'database-upload', 'database-reload', 'list-unordered'], status=[1, 0, 0, 1])
     app.status(header="Data Changes:", text='0')
 
     with app.tabbedFrame("tabs", change=setFocus):
         with app.tab(LABS['view']):
             app.addDbOptionBox(LABS['view'], DB, sticky='ne', stretch='column', change=updateTable)
-            app.table(LABS['view'], DB, app.option(LABS['view']), kind='db', sticky='news', stretch='both', showMenu=True, edit=tableModified, change=tableModified, action=action, actionHeading='Delete', actionButton='NOW', addRow=action)
+            app.table(
+                LABS['view'], DB, app.option(LABS['view']), kind='db', sticky='news', stretch='both',
+                showMenu=True, edit=tableModified, change=tableModified, action=action,
+                actionHeading='Delete', actionButton='NOW', addRow=action
+            )
 
         with app.tab(LABS['run']):
             app.label(LABS['run'], sticky='new', stretch='column')

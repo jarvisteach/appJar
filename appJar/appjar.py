@@ -10186,8 +10186,18 @@ class gui(object):
         pinned = kwargs.pop('pinned', None)
         disabled = kwargs.pop('disabled', None)
         hidden = kwargs.pop('hidden', None)
+        status = kwargs.pop('status', None)
 
-        self.addToolbar(names, funcs, findIcon=icons)
+        self.addToolbar(names, funcs, findIcon=icons is not False)
+
+        # allow status and icon name to be passed in a list
+        for x, n in enumerate(names):
+            if icons is not None:
+                try: self.setToolbarIcon(n, icons[x])
+                except: pass
+            if status is not None:
+                try: self.setToolbarButtonDisabled(n, not status[x])
+                except: pass
 
         if pinned is not None: self.setToolbarPinned(pinned=pinned)
         if disabled is not None: self.setToolbarDisabled(disabled=disabled)
