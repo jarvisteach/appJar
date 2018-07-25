@@ -439,18 +439,17 @@ class gui(object):
 
         # init the widget enum
         self.Widgets = Enum(
-            widgets=["Label", "Message", "Entry", "TextArea", "Button",
-                "FileEntry", "DirectoryEntry", "Scale", "Link", "Meter", "Image",
-                "CheckBox", "RadioButton", "ListBox", "SpinBox", "OptionBox",
-                "TickOptionBox", "Accelerators",
+            widgets=["Label", "Message", "Entry", "TextArea", "Button", "FileEntry",
+                "DirectoryEntry", "Scale", "Link", "Meter", "Image", "CheckBox",
+                "RadioButton", "ListBox", "SpinBox", "OptionBox", "TickOptionBox",
                 "Map", "PieChart", "Properties", "Table", "Plot", "MicroBit",
-                "DatePicker", "Separator", "Turtle", "Canvas",
+                "Tree", "DatePicker", "Separator", "Turtle", "Canvas",
+                "Menu", "Toolbar", "FlashLabel", "Widget", "RootPage",
+                "ContainerLog", "AnimationID", "ImageCache", "Accelerators"],
+            containers=[
                 "LabelFrame", "Frame", "TabbedFrame", "PanedFrame", "ToggleFrame",
-                "FrameStack", "SubFrame", "FrameBox", "FrameLabel", "ContainerLog", "FlashLabel",
-                "AnimationID", "ImageCache", "Menu",
-                "SubWindow", "ScrollPane", "PagedWindow", "Notebook", "Tree",
-                "Widget", "Window", "Toolbar", "RootPage",
-                "Note", "Tab", "Page", "Pane"],
+                "FrameStack", "SubFrame", "FrameBox", "FrameLabel", "SubWindow", "Window",
+                "ScrollPane", "PagedWindow", "Notebook", "Note", "Tab", "Page", "Pane"],
             excluded=["DatePicker", "SubWindow", "Window", "Toolbar",
                 "Note", "Tab", "Page", "Pane", "RootPage", "FlashLabel",
                 "AnimationID", "ImageCache", "TickOptionBox", "Accelerators",
@@ -5539,7 +5538,8 @@ class gui(object):
 
         if hasattr(widget, 'APPJAR_TYPE'):
             widgType = widget.APPJAR_TYPE
-            gui.trace("Cleansing: %s", self.Widgets.name(widgType))
+            widgName = self.Widgets.name(widgType)
+            gui.trace("Cleansing: %s", widgName)
 
             if widgType not in [self.Widgets.Tab, self.Widgets.Page]:
                 if not self.widgetManager.destroyWidget(widgType, widget):
@@ -5552,6 +5552,11 @@ class gui(object):
                         self.warn("Unable to destroy %s, during cleanse - destroy returned False", self.Widgets.Label)
             else:
                 self.trace("Skipped %s, cleansed by parent", widgType)
+
+            # need to remove if a container
+            if widgName in self.Widgets.containers:
+                self.trace("Destroying container: %s", widgType)
+                self.widgetManager.destroyContainer(self.Widgets.ContainerLog, widget)
 
         elif widgType in ('CanvasDnd', 'ValidationLabel'):
             self.trace("Skipped %s, cleansed by parent", widgType)
@@ -15482,6 +15487,16 @@ class WidgetManager(object):
         else:
             container[widgetType] = []
 
+    def destroyContainer(self, widgType, widget):
+        widgets = self.widgets[widgType]
+        for name, obj in widgets.items():
+            if widget == obj['container']:
+                obj['container'].destroy()
+                del widgets[name]
+                gui.trace('Matched and destroyed')
+                return
+        gui.trace('Failed to match and destroy - not a container?')
+
     # function to loop through a config dict/list and remove matching object
     def destroyWidget(self, widgType, widget):
         widgets = self.widgets[widgType]
@@ -15520,8 +15535,9 @@ class Enum(object):
         also provides some extra functions """
 
     __initialized = False
-    def __init__(self, widgets, excluded, keepers):
-        self.widgets = widgets
+    def __init__(self, widgets, containers, excluded, keepers):
+        self.widgets = widgets + containers
+        self.containers = containers
         self.excluded = excluded
         self.keepers = []
         for k in keepers:
