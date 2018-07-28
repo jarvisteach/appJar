@@ -70,6 +70,9 @@ app.go(startWindow="Login")
     If it is set as *modal* the parent window will become uninteractive until the *SubWindow* is closed.  
     If `hide` is set to True, all other *SubWindows* will be hidden.  
 
+* `.showAllSubWindows()`  
+    Will show all *SubWindows*.  
+
 * `.hideSubWindow(title, useStopFunction=False)` & `.confirmHideSubWindow(title)`  
     Used to hide the specified *SubWindow*.  
     This will not destroy the *SubWindow*, so it can be shown again later.  

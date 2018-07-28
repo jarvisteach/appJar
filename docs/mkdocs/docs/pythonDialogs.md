@@ -17,20 +17,6 @@ A number of pop-ups (aka dialogs) are available, to add a different user experie
     These will enable or disable the named tooltip.  
     When disabled, it will not show-up.  
 
----
-<div style='text-align: center;'>
-*Advertisement&nbsp;<sup><a href="/advertising">why?</a></sup>*
-<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-<ins class="adsbygoogle"
-    style="display:block"
-    data-ad-format="fluid"
-    data-ad-layout-key="-gw-13-4l+6+pt"
-    data-ad-client="ca-pub-6185596049817878"
-    data-ad-slot="5627392164"></ins>
-<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-</div>
----
-
 ### Message Boxes
 ---
 * `.infoBox(title, message, parent=None)`  
@@ -100,7 +86,7 @@ A number of pop-ups (aka dialogs) are available, to add a different user experie
 
 ### File Boxes
 ---
-* `.openBox(title=None, dirName=None, fileTypes=None, asFile=False, parent=None)`  
+* `.openBox(title=None, dirName=None, fileTypes=None, asFile=False, parent=None, multiple=False, mode='r')`  
     Shows an open file dialog.  
     If this dialog is being launched from a [subWindow](/pythonWidgetGrouping/#sub-window) set `parent` to be the name of the subWindow.  
 
@@ -113,6 +99,8 @@ A number of pop-ups (aka dialogs) are available, to add a different user experie
     * `fileTypes=[('images', '*.png'), ('images', '*.jpg')]`  
     This will set the allowed file extensions, it should be a list of tuples. They will be grouped by the name.  
     * `asFile` this will determine whether a path or actual Python file object is returned, defaults to filename   
+    * `multiple` if set to `True`, this will allow the user to select more than one file, defaults to `False`  
+    * `mode` if `asFile` is `True`, this determines what mode to open the file in, one of: r, w, a or U  
 
 <br>
 

@@ -534,6 +534,9 @@ app.go()
     Set ```callFunction``` to be False, if you don't want to call any associated functions.  
     By default, you can't select a disabled item. You can change this by setting `override` to be True.  
 
+* `.setOptionBoxDisabledChar(title, disabled="-")`  
+    Set the character used to indicate disabled options.  
+
 * `.renameOptionBoxItem(title, item, newName, callFunction=False)`  
     This will rename the specified item in the named OptionBox.  
     Set ```callFunction``` to be True, if you want to call any associated `change` functions.  
@@ -604,6 +607,14 @@ app.go()
     This will select the value at the specified position in the SpinBox.  
     Set ```callFunction``` to be False, if you don't want to call any associated functions.  
 
+* `.changeSpinBox(title, vals, reverse=True)`  
+    Replaces the contents of the specified SpinBox with the new `vals`.  
+    Set `reverse` to `False` if you don;t ant to reverse the values.  
+
+* `.clearSpinBox(callFunction=False)`  
+    This will set the specified SpinBox back to its initial value.  
+    Set ```callFunction``` to be True, if you want to call any associated functions.  
+
 * `.clearAllSpinBoxes(callFunction=False)`  
     This will set all SpinBoxes in the app to their first value.  
     Set ```callFunction``` to be True, if you want to call any associated functions.  
@@ -662,9 +673,10 @@ app.go()
     This will remove all items from all ListBoxes in the app.  
     Set ```callFunction``` to be True, if you want to call any associated functions.  
 
-* `.updateListBox(title, items, select=False)`  
+* `.updateListBox(title, items, select=False, callFunction=True)`  
     Replace the contents of the specified ListBox with the new values.  
     If you set `select` to be True, the last item in the list will be selected.  
+    Set ```callFunction``` to be False, if you don't want to call any associated functions.  
 
 ```python
 from appJar import gui
@@ -684,6 +696,14 @@ app.go()
     `.selectListItemAtPos(title, pos, callFunction=False)`  
     Selects the specified item in the specified ListBox.  
     Set ```callFunction``` to be False, if you don't want to call any associated functions.  
+
+* `.deselectListItemAtPos(title, pos, callFunction=False)`  
+    Seselects the item at the specified position.  
+    Set ```callFunction``` to be True, if you want to call any associated functions.  
+
+* `.deselectAllListItems(title, callFunction=False)`  
+    Deselects all items in the specified listbox.  
+    Set ```callFunction``` to be True, if you want to call any associated functions.  
 
 * `.setListBoxRows(title, rows)`  
     Sets how many rows to display in the specified ListBox.  

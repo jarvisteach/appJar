@@ -16,7 +16,8 @@ data = [["Homer", "Simpson", "America", 40],
 ## Updating Labels  
 ---
 
-One option is to reuse the existing widgets, and change their contents. This involves creating a single set of widgets, and then calling a function to change their contents:  
+One option is to reuse the existing widgets, and change their contents.  
+This involves creating a single set of widgets, and then calling a function to change their contents:  
 
 ```python
 pos = -1
@@ -83,7 +84,8 @@ with gui("Updating Labels") as app:
 ## Overlayed Frames  
 ---
 
-A clever trick for solving this problem is to group your widgets in a [Frame](/pythonWidgetGrouping/#frame), and then have multiple frames in the same place. Frames are not transparent, so only the last added frame will be visible.  
+A clever trick for solving this problem is to group your widgets in a [Frame](/pythonWidgetGrouping/#frame), and then have multiple frames in the same place.  
+Frames are not transparent, so only the last added frame will be visible.  
 It's possible to then *raise* another frame to the top. This works well, but requires keeping track of the frame:
 
 ```python

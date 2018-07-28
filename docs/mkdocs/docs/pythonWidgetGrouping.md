@@ -386,9 +386,10 @@ app.go()
 * `.startTabbedFrame(name)` & `.stopTabbedFrame()`  
     Used to start & stop a *TabbedFrame*, with the specified name.  
 
-* `.startTab(name)` & `.stopTab()`  
+* `.startTab(name, beforeTab=None, afterTab=None)` & `.stopTab()`  
     Used to start and stop each of the tabs in the *TabbedFrame*.  
     The title for the tab will be the specified *name*.  
+    If `beforeTab`/`afterTab` are populated, the tab will be positioned appropriately.  
 
 * `.openTabbedFrame(title)` & `.openTab(frameTitle, tabTitle)`  
     Used to reopen the named *TabbedFrame* or named *Tab*.  
@@ -404,8 +405,12 @@ app.go()
     Set this to True, to have the tabs fill the entire row.  
 ![TabbedFrame](img/layouts/2_tabbedFrame.png)  
 
-* `.setTabbedFrameSelectedTab(title, tab)`  
+* `.setTabbedFrameSelectedTab(title, tab, callFunction=True)`  
     Select the specified tab in the TabbedFrame.  
+    Set `callFunction` to be False, if you don't want to call any associated functions.
+
+* `.setTabbedFrameChangeCommand(title, func)`  
+    Set a function to call when the tab is changed.  
 
 * `.setTabbedFrameDisabledTab(title, tab, disabled=True)`  
     Disable the specified tab in the TabbedFrame.  

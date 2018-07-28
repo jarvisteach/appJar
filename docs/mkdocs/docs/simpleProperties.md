@@ -34,7 +34,8 @@ app.label('transLab', app.transparency)
 | title | string | Pass a string to display in the title bar of the GUI |
 | icon | string | Pass the path to an icon file, to display in the title bar - only works on Windows. |
 | transparency | integer | Pass a percentage (between 0 & 100) to set the transparency, of the GUI (not on Linux). |
-| visible | boolean | Pass either a boolean to hide or show the GUI. |
+| visible | boolean | Pass a boolean to hide or show the GUI. |
+| top | boolean | Pass a boolean to keep the GUI on top or not. |
 | | | | |
 
 ### Padding
@@ -78,6 +79,7 @@ app.label('transLab', app.transparency)
 | font | integer/dict | Pass either a font size, or a dictionary of font properties to use for all widgets. |
 | buttonFont | integer/dict | Pass either a font size, or dicitonary of font properties to use for all button style widgets. |
 | labelFont | integer/dict | Pass either a font size, or a dictionary of font properties to use for all label style widgets. |
+| statusFont | integer/dict | Pass either a font size, or a dictionary of font properties to use for the statusbar. |
 | ttkTheme | string | Only available in ttk mode - pass the name of the ttk theme you want to use. |
 | fonts | string (list) | (no SETTER) Returns a list of all available fonts. |
 | | | | |

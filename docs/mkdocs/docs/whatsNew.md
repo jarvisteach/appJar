@@ -1,13 +1,37 @@
 #Change-Log
 ---
 
+## Version 0.94  
+
+* Issues Resolved:
+    * [#489](https://github.com/jarvisteach/appJar/issues/489) - Fixed bug where Labelled widgets weren't [destroyed](/pythonWidgetOptions/#widget-manipulation) properly.  
+    * [#482](https://github.com/jarvisteach/appJar/issues/482) - Fixed isue with deleting rows on [tables](/pythonDevWidgets/#table)  
+    * [#479](https://github.com/jarvisteach/appJar/issues/479) - Multiple files allowed in [open file boxes](/pythonDialogs/#file-boxes)
+    * [#478](https://github.com/jarvisteach/appJar/issues/478) - Fixed issue where [opening containers](/pythonWidgetGrouping/#reopening-containers) was not returning the container  
+    * [#477](https://github.com/jarvisteach/appJar/issues/477) - Function to [move](/pythonWidgetOptions/#widget-manipulation) widgets
+    * [#475](https://github.com/jarvisteach/appJar/issues/475) - Ability to add multiple action buttons and align horizontal/vertical in [Tables](/pythonDevWidgets/#table)  
+    * [#473](https://github.com/jarvisteach/appJar/issues/473) - Can now add [tabs](/pythonWidgetGrouping/#tabbed-frame) before/after existing tabs  
+    * [#472](https://github.com/jarvisteach/appJar/issues/472) - When updating a [textArea](/simpleAppJar/#text) you can now configure it to replace any existing text.  
+    * [#465](https://github.com/jarvisteach/appJar/issues/465) - [Scales](/inputWidgets/#scale) and other widgets can now have their state changed when in [ttk](/pythonTtk/) mode.  
+    * [#463](https://github.com/jarvisteach/appJar/issues/463) - New [property](/simpleProperties/#looks) to change the statusbar font  
+    * [#461](https://github.com/jarvisteach/appJar/issues/461) - Fixed issue with setting `parent` of [message boxes](/pythonDialogs/#message-boxes)  
+    * [#457](https://github.com/jarvisteach/appJar/issues/457) - Can now create [trees](/pythonDevWidgets/#tree) with xml objects and show attributes  
+    * [#458](https://github.com/jarvisteach/appJar/issues/458) - Ability to set `wrap` parameter on [Tables](/pythonDevWidgets/#table)  
+
 ## Version 0.93  
 
 * Issues Resolved:
+    * [#453](https://github.com/jarvisteach/appJar/issues/453) - [SubWindows](/pythonSubWindows) refactored 
+    * [#450](https://github.com/jarvisteach/appJar/issues/450) - Can now set the character used to [disable options](/inputWidgets/#set-optionboxes) in OptionBoxes  
+    * [#449](https://github.com/jarvisteach/appJar/issues/449) - [updateListBox](/inputWidgets/#set-listboxes) now has a callFunction flag
+    * [#447](https://github.com/jarvisteach/appJar/issues/447) - [Canvases](/outputWidgets/#canvas) now support clickable maps  
+    * [#446](https://github.com/jarvisteach/appJar/issues/446) - [Setting listboxes](/inputWidgets/#set-listboxes) now has better error checking  
+    * [#445](https://github.com/jarvisteach/appJar/issues/445) - Ability to keep windows on [top](/pythonGuiOptions/#look-feel)  
     * [#442](https://github.com/jarvisteach/appJar/issues/442) - [SpinBoxes](inputWidgets/#spinbox) now call changeFucntion when changed manually  
-    * [#437](https://github.com/jarvisteach/appJar/issues/437) - Page discussing [multiple pages](/multiplePages)  
+    * [#437](https://github.com/jarvisteach/appJar/issues/437) - Page discussing how to manage [multiple pages](/multiplePages)  
     * [#436](https://github.com/jarvisteach/appJar/issues/436) - [TextAreas](/inputWidgets/#textarea) can now be programmatically cleared and set while disabled  
     * [#435](https://github.com/jarvisteach/appJar/issues/435) - [Messages](/outputWidgets/#message) have better documentation and a function to set the aspect ratio  
+    * [#433](https://github.com/jarvisteach/appJar/issues/433) - Resolved issue with setting [properties](/simpleProperties) in Python2  
     * [#429](https://github.com/jarvisteach/appJar/issues/429) - [TabbedFrames](/pythonWidgetGrouping/#tabbed-frame) & [PagedWindows](/pythonWidgetGrouping/#paged-window) now use [FrameStacks](/pythonWidgetGrouping/#frame-stack)  
     * [#425](https://github.com/jarvisteach/appJar/issues/425) - Updated docs on [geometry](/pythonGuiOptions/#size-location)  
     * [#422](https://github.com/jarvisteach/appJar/issues/422) - [TickOptionBoxes](/inputWidgets/#add-optionboxes) now return their name when changed  
@@ -18,7 +42,7 @@
     * [#345](https://github.com/jarvisteach/appJar/issues/345) - New container: [FrameStack](/pythonWidgetGrouping/#frame-stack)  
     * [#339](https://github.com/jarvisteach/appJar/issues/339) - Functions to remove [toolbars](/pythonBars/#toolbar) and [statusbars](/pythonBars/#statusbar)  
     * [#333](https://github.com/jarvisteach/appJar/issues/333) - Can now fully hide/show/delete [tabs](/pythonWidgetGrouping/#tabbed-frame)  
-    * [#295](https://github.com/jarvisteach/appJar/issues/295) - New funciton to [set the BG](/inputWidgets/#set-entries) of the label in a validationEntry  
+    * [#295](https://github.com/jarvisteach/appJar/issues/295) - New function to [set the BG](/inputWidgets/#set-entries) of the label in a validationEntry  
     * [#69](https://github.com/jarvisteach/appJar/issues/69) - Basic functions for [tagging](/inputWidgets/#tag-textareas), [searching](/inputWidgets/#search-textareas) and changing [fonts](/inputWidgets/#textarea-fonts) in text areas  
 
 ## Version 0.92  
