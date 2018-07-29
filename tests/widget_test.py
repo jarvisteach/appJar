@@ -3560,8 +3560,8 @@ with gui("Simple Demo", transparency=50, padding=5, location="CENTER", bg="red")
         app4.link("Cry", "http://www.google.com")
         app4.link("Shout", press)
         app4.separator(row=0, column=1, rowspan=2, direction="vertical")
-        app4.slider("happiness again", 45, row=0, rowspan=2, direction="horizontal", show=True, column=2, interval=5, change=press)
-        app4.scale("Hhappiness again", 45, row=0, rowspan=2, direction="vertical", column=2, interval=25, change=press)
+        app4.slider("happiness again", value=45, row=0, rowspan=2, direction="horizontal", show=True, column=2, interval=5, change=press)
+        app4.scale("Hhappiness again", value=45, row=0, rowspan=2, direction="vertical", column=2, interval=25, change=press)
 
     #    app4.grip(row=row, column=2)
     toppings={"Cheese":False, "Tomato":False, "Bacon":False, "Corn":False, "Mushroom":False}

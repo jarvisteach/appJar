@@ -4,7 +4,7 @@ sys.path.append("../../")
 from appJar import gui 
 import myStyle as style
 
-with gui("appjar font problem", "400x400", font=style.helv) as app:
+with gui('appJar font problem', **style.body) as app:
     app.label("l1", "Label 1")
     app.label("l2", "Label 2")
     app.label("l3", "Label 3", **style.t1)

@@ -1,4 +1,9 @@
-helv = {'size':33, 'family':"helvetica", 'weight':'normal', 'underline':False, 'slant':"roman", 'overstrike':False}
+body = {
+    'geom':'400x400', 
+    'font':{'size':33, 'family':"helvetica", 'weight':'normal', 'underline':False, 'slant':"roman", 'overstrike':False},
+    'bg':'yellow',
+    'fg':'red'
+}
 
 t1 = {
     'font':{'size':16, 'family':"times", 'weight':'normal', 'underline':False, 'slant':"italic", 'overstrike':True},
