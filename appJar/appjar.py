@@ -5767,16 +5767,17 @@ class gui(object):
 # FUNCTION for scales
 #####################################
 
-    def slider(self, title, value=None, *args, **kwargs):
+    def slider(self, title, *args, **kwargs):
         """ simpleGUI - alternative for scale() """
-        return self.scale(title, value, *args, **kwargs)
+        return self.scale(title, *args, **kwargs)
 
-    def scale(self, title, value=None, *args, **kwargs):
+    def scale(self, title, *args, **kwargs):
         """ simpleGUI - adds, sets & gets scales all in one go """
         widgKind = self.Widgets.Scale
 
         vert = kwargs.pop("direction", "horizontal").lower() == "vertical"
         increment = kwargs.pop("increment", None)
+        value = kwargs.pop("value", None)
         interval = kwargs.pop("interval", None)
         show = kwargs.pop("show", False)
         _range = kwargs.pop("range", None)
@@ -6755,8 +6756,8 @@ class gui(object):
         else: # new widget
             kwargs = self._parsePos(kwargs.pop("pos", []), kwargs)
             if endValue is not None:
-                if label: spinBox = self.addLabelSpinBoxRange(title, fromVal=value, toVal=endValue, *args, label=label, **kwargs)
-                else: spinBox = self.addSpinBoxRange(title, fromVal=value, toVal=endValue, *args, **kwargs)
+                if label: spinBox = self.addLabelSpinBoxRange(title, value, endValue, *args, label=label, **kwargs)
+                else: spinBox = self.addSpinBoxRange(title, value, endValue, *args, **kwargs)
             else:
                 if label: spinBox = self.addLabelSpinBox(title, value, *args, label=label, **kwargs)
                 else: spinBox = self.addSpinBox(title, value, *args, **kwargs)

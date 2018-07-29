@@ -10,6 +10,7 @@ def shiftmenu2(): print('shiftmenu2')
 
 with gui() as app:
     app.label('hello world')
+    app.label("Control - 1 - 2")
     app.bindKey('1', menu1)
     app.bindKey('<Control-Key-1>', shiftmenu1)
     app.addMenuItem('test', 'test', menu2, shortcut='2')

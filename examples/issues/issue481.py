@@ -2,16 +2,13 @@ import sys
 sys.path.append("../../")
 
 from appJar import gui 
+import myStyle as style
 
-app = gui("appjar font problem", "400x400")
-app.setFont(size=16, family="Times", underline=True, slant="italic")
-
-app.addLabel("l1", "Times")
-app.addLabel("l2", "Comic Sans")
-app.label("l3", "Helvetica", font={'family':'helvetica', 'size':44}, fg='blue')
-app.addLabel("l4", "Sans Serif")
-app.addLabel("l5", "Verdana")
-app.addLabel("l6", "Courier")
-app.addLabel("texas", "Texas")
-
-app.go()
+with gui("appjar font problem", "400x400", font=style.helv) as app:
+    app.label("l1", "Label 1")
+    app.label("l2", "Label 2")
+    app.label("l3", "Label 3", **style.t1)
+    app.label("l4", "Label 4", **style.t2)
+    app.label("l5", "Label 5", **style.t3)
+    app.label("l6", "Label 6", **style.t4)
+    app.label("l7", "Label 7")
