@@ -72,6 +72,7 @@ app.go()
         * `actionButton` - set the button text for each row (can be a list of button names)   
         * `addButton` - set the button text for the Entry row  
         * `showMenu` - boolean to show a right-click menu  
+        * `edit` - function to call when right-click menu pressed
         * `disabledEntries` - pass a list of numbers, to disable entry boxes in those positions  
         * `border` - the style of the cell border: `sunken`, `solid`, etc
         * `wrap` - The maximum number of pixels to show per line in a cell, defaults to 250 pixels  
@@ -135,7 +136,8 @@ To have the **Press** button on the entries row add a new row of data, try the f
 
 * `.setTableEditFunction(title, func)`  
     Set a function to call, when one of the menu options is clicked.  
-    Useful to use `.getTableLastChange(title)` to find out what changed.  
+    Will pass the name of the table being clicked.  
+    Use `.getTableLastChange(title)` to find out what action has been performed.  
 
 * `.addTableRows(title, data)`  
     Adds the new rows of data to the end of the existing Table.  
