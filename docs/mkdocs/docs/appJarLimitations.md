@@ -15,16 +15,17 @@ appJar has been designed to work the same on the three major platforms: Windows,
 However, not all features are available on all platforms.  
 
 ### Linux:  
-* **Transparency** isn't supported on Linux  
-* **app Icons** aren't available on Linux  
-* **Audio** doesn't work on Linux  
+* **Transparency** isn't supported  
+* **app Icons** aren't available  
+* **Audio** doesn't work - relies on WinSound  
 
 ### Mac:  
-* **Pasting some special characters** will crash appJar on Mac  
+* **app Icons** aren't supported on Mac  
+* **Audio** doesn't work on Mac - relies on WinSound  
+* **Buttons** don't support background colours and changing the height  
 * **Tickable Menus & OptionBoxes** don't work on Mac  
-* **Buttons** don't support background colours and changing the height on Mac  
-* **app Icons** aren't available on Mac  
-* **Audio** doesn't work on Mac  
+* **Pasting some special characters** can [crash](https://bugs.python.org/issue22566) appJar  
+* **Inertial scrolling** can [crash](https://stackoverflow.com/questions/16995969/inertial-scrolling-in-mac-os-x-with-tkinter-and-python) appJar  
 
 ### Windows:  
 * n/a  
