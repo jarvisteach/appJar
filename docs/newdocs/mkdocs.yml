@@ -12,15 +12,23 @@ strict: true
 markdown_extensions:
 - admonition
 
+extra_css:
+- css/extra.css
+
 theme:
     name: united
 
 pages:
 - Tutorials:
-  - gettingStarted.md
+  - Getting Started: gettingStarted.md
 - How-To:
   - index.md
 - Reference:
-  - index.md
+  - Widget Basics: widgetBasics.md
+  - Input Widgets: inputWidgets.md
+  - Output Widgets: outputWidgets.md
+  - Compound Widgets: compoundWidgets.md
+  - Bars &amp; Popups: barsPopups.md
+  - Properties: properties.md
 - Explanation:
   - index.md
