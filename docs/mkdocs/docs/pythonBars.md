@@ -188,9 +188,17 @@ for i in range(5):
 ####Extra Features:  
 
 * `shortcut` These are keyboard shortcuts to call a menu-item.  
-    These should always be a combination of *special keys* and a *regular key*, separated by dashes.  
+    They should always be a combination of *special keys* and a *regular key*, separated by dashes.  
     e.g. `"Control-s"` or `"Control-Shift-z"`  
+    **NB.** don't include angle brackets `<>` around the shortcut.  
     The following *special keys* are available: `Control`, `Option`, `Alt`, `Shift`, `Command`, `Meta`  
+    There are some special cases:  
+
+    * If you want to use numbers, you need to use the format: `Control-Key-3`  
+    * If you want some of the special characters, you may need to use their name: `Control-slash`, `Control-Up`  
+
+    **NB.** Lookout for clashes with regular [key bindings](/pythonEvents/#binding-keys)  
+<br>  
 
 * `underline` If set to an Integer, the corresponding character will be underlined.  
 

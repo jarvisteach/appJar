@@ -123,8 +123,7 @@ Link a function to the ```<Enter>``` key
 * `.disableEnter()`  
 Unlink a function from the ```<Enter>```  key
 
-You may also want to bind other keys to events.  
-See [here](http://effbot.org/tkinterbook/tkinter-events-and-bindings.htm) for a detailed list of the *Event Formats*.  
+You may also want to bind other keys to events:  
 
 ```python
 from appJar import gui
@@ -143,6 +142,9 @@ app.bindKey("<Down>", keyPress)
 app.bindKey("<F1>", keyPress)
 app.go()
 ```
+
+**NB.** You must use the full tkinter [event format](http://effbot.org/tkinterbook/tkinter-events-and-bindings.htm) for events with these bindings, including the angle brackets `<>`.  
+This is different to how [menu shortcuts](/pythonBars/#extra-features) are defined.  
 
 * `.bindKey(key, function)`  
 Link the specified key to the specified function.
