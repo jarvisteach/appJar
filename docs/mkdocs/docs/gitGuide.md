@@ -136,3 +136,9 @@ This can then be used with the following code:
 import sys
 sys.path.append("appJar-0.93-py3.6.egg")
 ```
+
+### Egg files with Mu
+Using egg files makes it easy to use appJar with Mu.  
+Put the egg file in your `mu_code` folder, click the configuration cog (bottom left), and under `Python3 Environment`, set a variable `PYTHONPATH=appJar-0.93-py3.6.egg`.  
+
+![mu](/img/mu.png)  
