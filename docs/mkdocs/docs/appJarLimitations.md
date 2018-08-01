@@ -29,3 +29,26 @@ However, not all features are available on all platforms.
 
 ### Windows:  
 * n/a  
+
+## Third Party Limitations  
+
+* **MatPlotLib** does work with appJar, but can be fiddly. If you want to use 3rd party libraries with MatPlotLib, you should import them after the appJar GUI has been created:
+
+```python
+from numpy import sin, pi, arange
+import random
+from appJar import gui 
+
+with gui() as app:
+    x = arange(0.0, 3.0, 0.01)
+    y = sin(random.randint(1,10) * pi * x)
+    axes = app.addPlot("p1", x, y)
+    axes.set_title("Click somewhere on a line.\nRight-click to deselect.")
+    axes.legend(['The curve'])
+    axes.set_xlabel("X Axes")
+    axes.set_ylabel("Y Axes")
+
+    # only import this library once the GUI has been created
+    import mplcursors
+    mplcursors.cursor(axes)
+```
