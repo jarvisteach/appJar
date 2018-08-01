@@ -13741,7 +13741,7 @@ class SubWindow(Toplevel, object):
         if self.blocking and self.killLab is None:
             gui.trace("%s set to BLOCK", self.title)
             self.killLab = Label(self)
-            self.parent.wait_window(self.killLab)
+            self._parent.wait_window(self.killLab)
 
 #####################################
 # SimpleTable Stuff

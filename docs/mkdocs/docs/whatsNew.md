@@ -4,6 +4,7 @@
 ## Version 0.94  
 
 * Issues Resolved:
+    * [#491](https://github.com/jarvisteach/appJar/issues/491) - Fixed issue where [blocking subwindows](/pythonSubWindows/#startstop-sub-windows) wouldn't work  
     * [#489](https://github.com/jarvisteach/appJar/issues/489) - Fixed bug where Labelled widgets weren't [destroyed](/pythonWidgetOptions/#widget-manipulation) properly.  
     * [#482](https://github.com/jarvisteach/appJar/issues/482) - Fixed isue with deleting rows on [tables](/pythonDevWidgets/#table)  
     * [#479](https://github.com/jarvisteach/appJar/issues/479) - Multiple files allowed in [open file boxes](/pythonDialogs/#file-boxes)
