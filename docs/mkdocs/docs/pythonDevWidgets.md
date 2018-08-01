@@ -146,8 +146,9 @@ To have the **Press** button on the entries row add a new row of data, try the f
     Replace the values in the specified row with the new data.  
     If the new data has fewer items, the remaining cells will be emptied.  
 
-* `.replaceAllTableRows(title, rowNum, data)`  
+* `.replaceAllTableRows(title, data, deleteHeader=True)`  
     Removes all existing rows, before adding the new rows.  
+    Set `deleteHeader` to `False` if you don't want to replace the new header row.  
 
 * `.setTableHeaders(title, data)`  
     Replace the values in the header row.  

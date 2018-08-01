@@ -5007,9 +5007,9 @@ class gui(object):
         grid = self.widgetManager.get(self.Widgets.Table, title)
         grid.replaceRow(rowNum, data)
 
-    def replaceAllTableRows(self, title, data):
+    def replaceAllTableRows(self, title, data, deleteHeader=True):
         grid = self.widgetManager.get(self.Widgets.Table, title)
-        grid.deleteAllRows(deleteHeader=True)
+        grid.deleteAllRows(deleteHeader=deleteHeader)
         grid.addRows(data, scroll=False)
 
     # temporary deprecated functions
@@ -13970,12 +13970,18 @@ class SimpleTable(ScrollPane):
 
     def addRows(self, data, scroll=True):
         self._hideEntryBoxes()
-        if sqlite3 is not None and sqlite3 is not False and isinstance(data, sqlite3.Cursor):
-            if self.numColumns == -1:
+        if self.numColumns == -1:
+            if sqlite3 is not None and sqlite3 is not False and isinstance(data, sqlite3.Cursor):
+                gui.trace('No header exists, using cursor description as header')
                 self.numColumns = len([description[0] for description in data.description])
-            self._addRow([description[0] for description in data.description])
+                self._addRow([description[0] for description in data.description])
+            else:
+                gui.trace('No header exists, using first row of data as header')
+                self.numColumns = len(data[0])
+
+        try: gui.trace("Adding %s rows in addRows()", len(data))
+        except: gui.trace("Adding cursor in addRows()")
         list(map(self._addRow, data))
-        gui.trace("Added all rows in addRows()")
         self._showEntryBoxes()
         self.canvas.event_generate("<Configure>")
         if scroll:
@@ -14031,8 +14037,12 @@ class SimpleTable(ScrollPane):
             self.canvas.event_generate("<Configure>")
 
     def deleteAllRows(self, deleteHeader=False):
-        if deleteHeader: end = -2
-        else: end = -1
+        if deleteHeader:
+            end = -2
+            gui.trace('Deleting %s rows', len(self.cells))
+        else:
+            end = -1
+            gui.trace('Deleting %s rows', len(self.cells)-1)
         list(map(self._quickDeleteRow, range(len(self.cells)-2, end, -1)))
         self.canvas.event_generate("<Configure>")
         self._deleteEntryBoxes()
@@ -14096,6 +14106,8 @@ class SimpleTable(ScrollPane):
             rowNum = len(self.cells)
             numCols = len(rowData)
             newRow = []
+            if numCols > self.numColumns:
+                gui.warn("New data has more columns (%s) than the table (%s), some columns will be discarded.", numCols, self.numColumns)
             for cellNum in range(self.numColumns):
 
                 # get a val ("" if no val)
