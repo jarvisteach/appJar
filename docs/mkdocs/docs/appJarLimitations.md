@@ -16,14 +16,14 @@ However, not all features are available on all platforms.
 
 ### Linux:  
 * **Transparency** isn't supported  
-* **app Icons** aren't available  
+* **app Icons** aren't supported  
 * **Audio** doesn't work - relies on WinSound  
 
 ### Mac:  
-* **app Icons** aren't supported on Mac  
-* **Audio** doesn't work on Mac - relies on WinSound  
+* **app Icons** aren't supported  
+* **Audio** doesn't work - relies on WinSound  
 * **Buttons** don't support background colours and changing the height  
-* **Tickable Menus & OptionBoxes** don't work on Mac  
+* **Tickable Menus & OptionBoxes** don't work   
 * **Pasting some special characters** can [crash](https://bugs.python.org/issue22566) appJar  
 * **Inertial scrolling** can [crash](https://stackoverflow.com/questions/16995969/inertial-scrolling-in-mac-os-x-with-tkinter-and-python) appJar  
 
