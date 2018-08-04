@@ -87,6 +87,9 @@ app.go(startWindow="Login")
     This will hide and permanently destroy the specified *SubWindow*.  
     It cannot be shown again.  
 
+* `.destroyAllSubWindows()`  
+    This will hide and permanently destroy all *SubWindows*.  
+
 It's useful to be able to create a button that stops a SubWindow:  
 If you define a button, that calls `.hideSubWindow()` or `.destroySubWindow()`, and give it the same name as the *SubWindow*, then it will hide/destroy the *SubWindow*, and call any associated `.stopFunction()`.  
 
@@ -105,6 +108,30 @@ Simply call those functions after starting a *SubWindow*.
 
 ```python
 app.startSubWindow("one", modal=True)
+app.setBg("orange")
+app.setSize(400, 400)
+app.setTransparency(25)
+app.setStopFunction(checkDone)
+app.addLabel("l1", "In sub window")
+app.stopSubWindow()
+```
+
+### Empty Sub Windows
+---
+If you want to remove all widgets from a *SubWindow* and repopulate it, you can use the `empty` function.  
+
+* `.emptySubWindow(name)`
+    This will empty (delete all widgets) the named *SubWindow*  
+
+Or, you can empty the *SubWindow* whilst it's open:
+
+* `.emptyCurrentContainer()`
+    This will empty (delete all widgets) the current container.  
+
+``` python
+app.startSubWindow("one", modal=True)
+# first, delete any widgets in this SubWindow
+app.emptyCurrentContainer()
 app.setBg("orange")
 app.setSize(400, 400)
 app.setTransparency(25)

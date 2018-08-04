@@ -158,6 +158,12 @@ The following allow widgets to be manipulated on screen:
     Move a widget to a new grid position.
     If called while inside a different container, the widget will be cloned into that container.  
 
+* `.empty XXX(name)`  
+    Will destroy all widgets in the named container.  
+
+* `.emptyCurrentContainer()`  
+    Will destroy all widgets in the current container.  
+
 * `.remove XXX (name)`  
     Permanently remove the widget (deletes it).
 

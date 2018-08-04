@@ -175,6 +175,41 @@ with gui("Updating Labels") as app:
     showCharacter("Homer")
 ```
 
+## Emptying Containers
+---
+It's possible to quickly delete all widgets in a container, and then recreate them:
+```python
+def press(btn):
+    if btn == 'SHOW': app.showSubWindow('Info')
+    elif btn == 'EMPTY': app.emptySubWindow('Info')
+    elif btn == 'POPULATE': makeSub()
+
+def makeSub():
+    with app.subWindow('Info'):
+        app.addLabel('This will crash if not empty')
+
+with gui('Emptying Containers') as app:
+    app.label('Try emptying a container')
+    app.buttons(['SHOW', 'EMPTY', 'POPULATE'], press)
+    makeSub()
+```
+
+Alternatively, empty the container as it is populated:
+```python
+def reload():
+    showInfo({'Score':50, 'Name':'Omega', 'Occupation':'Nothing'})
+
+def showInfo(data):
+    with app.labelFrame('Info'):
+        app.emptyCurrentContainer() # delete all widgets
+        for name, value in data.items():
+            app.entry(name, value, label=True)
+
+with gui('Show Dict') as app:
+    showInfo({'Score':100, 'Name':'Vida', 'Occupation':'Other'})
+    app.button('RELOAD', reload)
+```
+
 ## Destroying/Recreating
 ---
 
