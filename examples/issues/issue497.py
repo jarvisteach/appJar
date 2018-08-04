@@ -6,6 +6,7 @@ from appJar import gui
 
 def doGUI():
     app.removeAllWidgets(sub=True)
+    app.button('Accessibility', app.showAccess, icon='ACCESS')
     app.label('hello world')
     app.button('PRESS', doGUI)
     with app.labelFrame('lf1'):

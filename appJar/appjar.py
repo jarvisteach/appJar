@@ -501,7 +501,19 @@ class gui(object):
         self.containerStack = []
         self.translations = {"POPUP":{}, "SOUND":{}, "EXTERNAL":{}}
         # first up, set up all the data stores
-        self._initVars()
+        self.widgetManager = WidgetManager()
+        self.accessMade = False # accessibility subWindow
+        self.splashConfig = None # splash screen?
+        self.dnd = None # the dnd manager
+        self.doFlash = False # set up flash variable
+        self.hasTitleBar = True # used to hide/show title bar
+        self.winIcon = None # store the path to any icon
+
+        # validate function callbacks - used by numeric texts
+        # created first time a widget is used
+        self.validateNumeric = None
+        self.validateSpinBox = None
+
         # dynamically create lots of functions for configuring stuff
         self._buildConfigFuncs()
         # language parser
@@ -1200,27 +1212,6 @@ class gui(object):
             else:
                 self.warn("Unable to receive drop events: %s", widgType)
 
-#####################################
-# set the arrays we use to store everything
-#####################################
-    def _initVars(self, reset=False):
-        # validate function callbacks - used by numeric texts
-        # created first time a widget is used
-        self.validateNumeric = None
-        self.validateSpinBox = None
-
-        self.labWidth = {} # minimum label width for label combos
-        self.doFlash = False # set up flash variable
-        self.hasTitleBar = True # used to hide/show title bar
-        self.splashConfig = None # splash screen?
-        self.winIcon = None # store the path to any icon
-        self.dnd = None # the dnd manager
-
-        self.accessMade = False # accessibility subWindow
-
-        # collections of widgets, widget name is key
-        if not reset: self.widgetManager = WidgetManager()
-        else: self.widgetManager.reset(self.Widgets.keepers)
 
 #####################################
 # Language/Translation functions
@@ -3596,9 +3587,7 @@ class gui(object):
             containerData = self._prepContainer(containerData["title"], containerData["type"], containerData["container"], 0, 1)
             self.containerStack[0] = containerData
 
-# need to redo - move these settings into container dict
-#            self._initVars(reset=True)
-# does nothing?
+#            self.widgetManager.reset(self.Widgets.keepers)
 #            self.setSize(None)
 
     def _emptyContainerObj(self, container):
@@ -5577,6 +5566,7 @@ class gui(object):
         for na, wi in self.widgetManager.group(self.Widgets.SubWindow).items():
             gui.trace("Destroying SubWindow: %s", na)
             self.cleanseWidgets(wi)
+        self.accessMade = False
 
 #####################################
 # END containers
@@ -5712,14 +5702,14 @@ class gui(object):
     # not using this for two reasons:
     # - doesn't really work when font size changes
     # - breaks when things in containers
-    def _updateLabelBoxes(self, title, column):
-        if len(title) >= self.labWidth.get(column, -1):
-            self.labWidth[column] = len(title)
-            # loop through other labels and resize
-            for na, wi in self.widgetManager.group(self.Widgets.FrameLabel).items():
-                col = wi.master.grid_info().get("column", wi.master.master.grid_info().get("column", -1))
-                if int(col) == column:
-                    wi.config(width=self.labWidth[column])
+#    def _updateLabelBoxes(self, title, column):
+#        if len(title) >= self.labWidth.get(column, -1):
+#            self.labWidth[column] = len(title)
+#            # loop through other labels and resize
+#            for na, wi in self.widgetManager.group(self.Widgets.FrameLabel).items():
+#                col = wi.master.grid_info().get("column", wi.master.master.grid_info().get("column", -1))
+#                if int(col) == column:
+#                    wi.config(width=self.labWidth[column])
 
 #####################################
 # FUNCTION for check boxes
@@ -15465,6 +15455,8 @@ class WidgetManager(object):
     def reset(self, keepers):
         newWidg = {}
         newVar = {}
+
+        gui.trace('Resetting WidgetManager')
 
         for key in keepers:
             if key in self.widgets:
