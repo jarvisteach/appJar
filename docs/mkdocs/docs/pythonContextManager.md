@@ -72,8 +72,7 @@ Have a look on the [containers page](/pythonWidgetGrouping) for usage informatio
 * `.scrollPane(title)`  
 * `.tabbedFrame(title)`  
 * `.tab(title, tabTitle=None)`  
-* `.panedFrame(title)`  
-* `.panedFrameVertical(title)`  
+* `.panedFrame(title, vertical=False)`  
 * `.pagedWindow(title)`  
 * `.page(windowTitle, pageNumber)` - **NB.** only provide the named parameters if *opening* a page  
 * `.subWindow(name, title=None, modal=False, blocking=False, transient=False, grouped=True)`  

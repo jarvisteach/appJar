@@ -518,6 +518,14 @@ This can be changed by setting the pane to vertical, then they'll be placed unde
 * `.openPanedFrame(title)`  
     Used to reopen the named *PanedFrame*.  
 
+#### Set Paned Frames
+* `.setPaneSashPosition(pos, pane=None)`  
+    Used to set the starting position of the sash (divider) between two panes (as a percentage) - defaults to 50%.  
+    This property can only be set once the next pane has been added, otherwise the sash won't exist yet.  
+    So, it should only be called after `.stopPanedFrame()` has been called, or during an `.openPanedFrame()`.  
+    If called during an `.openPanedFrame()` the `pane` property doesn't need to be set.  
+    **NB.** The final pane doesn't have a sash after it.  
+
 #### Horizontal Pane Layout  
 ![Horizontal Panes](img/layouts/pane1.png)  
 

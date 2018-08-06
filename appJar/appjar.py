@@ -5113,12 +5113,15 @@ class gui(object):
 
     @contextmanager
     def panedFrame(self, title, row=None, column=0, colspan=0, rowspan=0, sticky="NSEW", **kwargs):
+        vertical = kwargs.pop("vertical", False)
+        sash = kwargs.pop("sash", 50)
         reOpen = False
         try:
             pane = self.startPanedFrame(title, row, column, colspan, rowspan, sticky)
         except ItemLookupError:
             reOpen = True
             pane = self.openPane(title)
+        if vertical: self.setPanedFrameVertical(title)
         self.configure(**kwargs)
         try: yield pane
         finally:
@@ -5126,21 +5129,13 @@ class gui(object):
                 self.stopContainer()
             else:
                 self.stopPanedFrame()
-
-    def startPanedFrame(self, title, row=None, column=0, colspan=0, rowspan=0, sticky="NSEW"):
-        self.startContainer(self.Widgets.PanedFrame, title, row, column, colspan, rowspan, sticky)
-
-    def stopPanedFrame(self):
-        if self._getContainerProperty('type') == self.Widgets.Pane:
-            self.stopContainer()
-        if self._getContainerProperty('type') != self.Widgets.PanedFrame:
-            raise Exception("Can't stop a PANEDFRAME, currently in:",
-                            self._getContainerProperty('type'))
-        self.stopContainer()
+                self.setPaneSashPosition(sash, pane)
 
     @contextmanager
     def panedFrameVertical(self, title, row=None, column=0, colspan=0, rowspan=0, sticky="NSEW", **kwargs):
+        gui.warn('Setting panedFrameVertical(%s) is deprecated, please use panedFrame(vertical=True)', title)
         reOpen = False
+        sash = kwargs.pop("sash", 50)
         try:
             pane = self.startPanedFrameVertical(title, row, column, colspan, rowspan, sticky)
         except ItemLookupError:
@@ -5153,16 +5148,63 @@ class gui(object):
                 self.stopContainer()
             else:
                 self.stopPanedFrame()
+                self.setPaneSashPosition(sash, pane)
+
+    def startPanedFrame(self, title, row=None, column=0, colspan=0, rowspan=0, sticky="NSEW"):
+        p = self.startContainer(self.Widgets.PanedFrame, title, row, column, colspan, rowspan, sticky)
+        return p
 
     def startPanedFrameVertical( self, title, row=None, column=0, colspan=0, rowspan=0, sticky="NSEW"):
-        self.startPanedFrame(title, row, column, colspan, rowspan, sticky)
+        p = self.startPanedFrame(title, row, column, colspan, rowspan, sticky)
         self.setPanedFrameVertical(title)
+        return p
+
+    def stopPanedFrame(self):
+        if self._getContainerProperty('type') == self.Widgets.Pane:
+            self.stopContainer()
+        if self._getContainerProperty('type') != self.Widgets.PanedFrame:
+            raise Exception("Can't stop a PANEDFRAME, currently in:",
+                            self._getContainerProperty('type'))
+        self.stopContainer()
 
     # make a PanedFrame align vertically
     def setPanedFrameVertical(self, window):
         pane = self.widgetManager.get(self.Widgets.PanedFrame, window)
         pane.config(orient=VERTICAL)
 
+    def setPaneSashPosition(self, pos, pane=None):
+        # convert to a percentage if needed
+        if pos > 1: pos = pos / 100.0
+
+        if pane is None:
+            if self._getContainerProperty('type') == self.Widgets.PanedFrame:
+                pane = self._getContainerProperty('container')
+            elif self.containerStack[-2]['type'] == self.Widgets.PanedFrame:
+                pane = self.containerStack[-2]['container']
+            elif self._getContainerProperty('type') == self.Widgets.Pane:
+                pane = self._getContainerProperty('container').parent
+            else:
+                print('can;t get pane')
+                return
+        elif type(pane) == str:
+            pane = self.widgetManager.get(self.Widgets.PanedFrame, pane)
+
+        if pane.cget('orient') == 'horizontal':
+            w = int(pane.winfo_width() * pos)
+            try:
+                pane.sash_place(0, w, 0)
+                gui.trace('Set horizontal pane: %s to position: %s', pane, pos)
+            except TclError as e:
+                # no sash to configure - last pane
+                pass
+        else:
+            h = int(pane.winfo_height() * pos)
+            try:
+                pane.sash_place(0, 0, h)
+                gui.trace('Set vertical pane: %s to position: %s', pane, pos)
+            except TclError as e:
+                # no sash to configure - last pane
+                pass
 
 #####################################
 # Label Frames
@@ -12720,7 +12762,7 @@ class ToggleFrame(Frame, object):
     def __init__(self, parent, title="", *args, **options):
         super(ToggleFrame, self).__init__(parent, *args, **options)
 
-        self.config(relief="raised", borderwidth=2, padx=5, pady=5)
+        self.config(relief="raised", borderwidth=2, padx=2, pady=2)
         self.showing = True
 
         self.titleFrame = Frame(self)
@@ -13108,6 +13150,7 @@ class Pane(Frame, object):
 
     def __init__(self, parent, **opts):
         super(Pane, self).__init__(parent)
+        self.parent = parent
 
 #####################################
 # scrollable frame...

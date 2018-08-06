@@ -4,13 +4,46 @@ from random import randint
 
 from appJar import gui
 
+def fsBut(btn):
+    if btn == "PREV": app.prevFrame('fs')
+    elif btn == "NEXT": app.nextFrame('fs')
+
+def sash():
+    pos = app.integerBox('Sash Pos', 'Enter a sash position')
+    if pos is not None:
+        app.setPaneSashPosition(pos, 'left')
+        with app.panedFrame('tr'):
+            app.setPaneSashPosition(90)
+
 def doGUI():
     app.removeAllWidgets(sub=True)
     app.button('Accessibility', app.showAccess, icon='ACCESS')
     app.label('hello world')
-    app.button('PRESS', doGUI)
-    with app.labelFrame('lf1'):
-        app.label(str(randint(0, 100)))
+    with app.scrollPane('sp'):
+        app.buttons(['PRESS', 'SASH'], [doGUI, sash])
+        with app.labelFrame('lf1'):
+            app.label(str(randint(0, 100)))
+
+        with app.panedFrame('left', sash=50) as p:
+            with app.frameStack('fs'):
+                for c in 'abcdefghijkl':
+                    with app.frame(c):
+                        app.label(c)
+
+            with app.panedFrameVertical('tr', sash=20) as tr:
+                with app.scrollPane("PANE"):
+                    for x in range(10):
+                        for y in range(10):
+                            name = str(x) + "-" + str(y)
+                            app.label(name, row=x, column=y, bg=app.RANDOM_COLOUR())
+
+                with app.panedFrame('br'):
+                    with app.toggleFrame("Options"):
+                        app.tick("Show this")
+                        app.tick("Show that")
+                        app.tick("Show the other")
+
+    app.buttons(['PREV', 'NEXT'], fsBut)
     doTabs()
     soSub()
 

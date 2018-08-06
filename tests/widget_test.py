@@ -2396,12 +2396,15 @@ def test_containers():
     app.startPanedFrame("p2")
     app.addLabel("p2_l1", TEXT_ONE)
     app.stopPanedFrame()
+    app.setPaneSashPosition(0.3, 'p2')
     app.startPanedFrameVertical("p3")
     app.addLabel("p3_l1", TEXT_ONE)
     app.stopPanedFrame()
+    app.setPaneSashPosition(88, 'p3')
     app.stopAllPanedFrames()
 
     container = app.openPanedFrame("p1")
+    app.setPaneSashPosition(40)
     assert container is not None
     app.addLabel("p1_l11", TEXT_ONE)
     app.stopPanedFrame()
@@ -3356,8 +3359,8 @@ with gui(debug=True) as app3:
             with app3.toggleFrame("tf1"):
                 app3.addCheckBox("cb1")
         with app3.tab("t2", afterTab='t1'):
-            with app3.panedFrame("pf1"):
-                with app3.panedFrameVertical("vpf1"):
+            with app3.panedFrame("pf1", sash=50):
+                with app3.panedFrame("vpf1", vertical=True):
                     app3.addLabel("l2", "label")
         with app3.tab("t3", beforeTab='t2'):
             with app3.pagedWindow("pages"):

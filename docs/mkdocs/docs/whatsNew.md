@@ -4,6 +4,7 @@
 ## Version 0.94  
 
 * NEW:
+    * [#504](https://github.com/jarvisteach/appJar/issues/504) - Can now set the [sash position](/pythonWidgetGrouping/#set-paned-frames) on PanedFrames  
     * [#479](https://github.com/jarvisteach/appJar/issues/479) - Multiple files allowed in [open file boxes](/pythonDialogs/#file-boxes)
     * [#477](https://github.com/jarvisteach/appJar/issues/477) - Function to [move](/pythonWidgetOptions/#widget-manipulation) widgets
     * [#475](https://github.com/jarvisteach/appJar/issues/475) - Ability to add multiple action buttons and align horizontal/vertical in [Tables](/pythonDevWidgets/#table)  
