@@ -4466,6 +4466,7 @@ class gui(object):
                 # create two containers
                 self.tabContainer = TabContainer(self, **kwargs)
                 self.panes = FrameStack(self)
+                self.panes.SKIP_CLEANSE = True
 
                 # now grid minimised or stretched
                 if self.fill: self.tabContainer.grid(row=0, sticky=W + E)
@@ -5604,8 +5605,10 @@ class gui(object):
 
     def destroyAllSubWindows(self):
         gui.trace("Destroying all SubWindows")
-        for na, wi in self.widgetManager.group(self.Widgets.SubWindow).items():
-            gui.trace("Destroying SubWindow: %s", na)
+        keys = list(self.widgetManager.group(self.Widgets.SubWindow).keys())
+        for k in keys:
+            gui.trace("Destroying SubWindow: %s", k)
+            wi = self.widgetManager.get(self.Widgets.SubWindow, k)
             self.cleanseWidgets(wi)
         self.accessMade = False
 
@@ -5646,8 +5649,9 @@ class gui(object):
                 self.trace("Destroying container: %s", widgName)
                 self.widgetManager.destroyContainer(self.Widgets.ContainerLog, widget)
 
-        elif widgType in ('CanvasDnd', 'ValidationLabel', 'TabBorder', 'TabContainer', 'TabText', 'BgLabel'):
-            self.trace("Skipped %s, cleansed by parent", widgType)
+#        elif widgType in ('CanvasDnd', 'ValidationLabel', 'TabBorder', 'TabContainer', 'TabText', 'BgLabel') or hasattr(widget, 'SKIP_CLEANSE'):
+        elif widgType in ('CanvasDnd', 'ValidationLabel', 'TabBorder', 'TabContainer', 'TabText', 'BgLabel') or widget.__dict__.get('SKIP_CLEANSE', False):
+            pass # not logged in WidgetManager
         else:
             self.warn("Unable to destroy %s, during cleanse - NO APPJAR TYPE", gui.GET_WIDGET_TYPE(widget))
 
@@ -8343,6 +8347,9 @@ class gui(object):
             if value is not None: self.setLink(title, value)
             link = self.getLink(title)
         else: # new widget
+            if value is None:
+                gui.warn("Can't create link: %s, with no value", title)
+                return None
             kwargs = self._parsePos(kwargs.pop("pos", []), kwargs)
             link = self._linkMaker(title, value, *args, **kwargs)
 
@@ -9526,6 +9533,7 @@ class gui(object):
             kwargs = self._parsePos(kwargs.pop("pos", []), kwargs)
             # create the entry widget
             if kind == "auto":
+                if value is None: value = []
                 ent = self._entryMaker(title, *args, secret=secret, kind=kind, words=value, **kwargs)
             else:
                 ent = self._entryMaker(title, *args, secret=secret, kind=kind, **kwargs)
@@ -9763,6 +9771,7 @@ class gui(object):
         vFrame.theButton.config(command=command)
         vFrame.theButton.pack(side=RIGHT, fill=X)
         vFrame.theButton.inContainer = True
+        vFrame.theButton.SKIP_CLEANSE = True
         vFrame.theWidget.but = vFrame.theButton
 
         if not self.ttkFlag and self.platform in [self.MAC, self.LINUX]:
@@ -12240,6 +12249,7 @@ class Meter(Frame, object):
             width=self['width'], height=self['height'],
             highlightthickness=0, relief='flat', bd=0)
         self._canv.pack(fill='both', expand=1)
+        self._canv.SKIP_CLEANSE = True
 
         # create the text
         width, height = self.getWH(self._canv)
@@ -12766,14 +12776,18 @@ class ToggleFrame(Frame, object):
 
         self.titleFrame = Frame(self)
         self.titleFrame.config(bg="DarkGray")
+        self.titleFrame.SKIP_CLEANSE = True
 
         self.titleLabel = Label(self.titleFrame, text=title)
         self.DEFAULT_TEXT = title
         self.titleLabel.config(font="-weight bold")
+        self.titleLabel.SKIP_CLEANSE = True
 
         self.toggleButton = Button(self.titleFrame, width=2, text='-', command=self.toggle)
+        self.toggleButton.SKIP_CLEANSE = True
 
         self.subFrame = Frame(self, relief="sunken", borderwidth=2)
+        self.subFrame.SKIP_CLEANSE = True
 
         self.configure(bg="DarkGray")
 
@@ -12844,7 +12858,6 @@ class ToggleFrame(Frame, object):
 #####################################
 # Frame Stack
 #####################################
-
 class FrameStack(Frame, object):
 
     def __init__(self, parent, beep=True, **opts):
@@ -12911,7 +12924,9 @@ class FrameStack(Frame, object):
             self.showFrame(len(self._frames) - 1, callFunction)
 
     def addFrame(self):
-        self._frames.append(frameBase(self))
+        frame = frameBase(self)
+        frame.SKIP_CLEANSE = True
+        self._frames.append(frame)
         self._prevFrame = self._currFrame
         self._currFrame = len(self._frames) - 1
         self._frames[self._currFrame].grid(row=0, column=0, sticky=N+S+E+W, padx=0, pady=0)
@@ -12964,6 +12979,13 @@ class PagedWindow(Frame, object):
         self.prevButton.bind("<Control-Button-1>", self.showFirst)
         self.nextButton.bind("<Control-Button-1>", self.showLast)
         self.posLabel = Label(self, width=8, font=titleFont)
+
+        # to hide warnings on cleanse
+        self.frameStack.SKIP_CLEANSE = True
+        self.titleLabel.SKIP_CLEANSE = True
+        self.prevButton.SKIP_CLEANSE = True
+        self.nextButton.SKIP_CLEANSE = True
+        self.posLabel.SKIP_CLEANSE = True
 
         self.grid_rowconfigure(0, weight=0)
         self.grid_rowconfigure(1, weight=1)
@@ -13367,15 +13389,18 @@ class ScrollPane(frameBase, object):
             self.vscrollbar = AutoScrollbar(self)
             opts['yscrollcommand'] = self.vscrollbar.set
             self.vscrollbar.grid(row=0, column=1, sticky=N + S + E)
+            self.vscrollbar.SKIP_CLEANSE = True
 
         if not self.hDisabled:
             self.hscrollbar = AutoScrollbar(self, orient=HORIZONTAL)
             opts['xscrollcommand'] = self.hscrollbar.set
             self.hscrollbar.grid(row=1, column=0, sticky=E + W + S)
+            self.hscrollbar.SKIP_CLEANSE = True
 
         self.canvas = Canvas(self, **opts)
         self.canvas.config(highlightthickness=0, bd=0)
         self.canvas.grid(row=0, column=0, sticky=N + S + E + W)
+        self.canvas.SKIP_CLEANSE = True
 
         if not self.vDisabled:
             self.vscrollbar.config(command=self.canvas.yview)
@@ -13390,6 +13415,7 @@ class ScrollPane(frameBase, object):
 
         self.interior = frameBase(self.canvas)
         self.interior_id = self.canvas.create_window(0, 0, window=self.interior, anchor=NW)
+        self.interior.SKIP_CLEANSE = True
 
         if self.resize:
             self.canvas.bind('<Configure>', self._updateWidth)

@@ -1,6 +1,7 @@
 import sys
 sys.path.append("../../")
 from random import randint
+from timeit import Timer as T
 
 from appJar import gui
 
@@ -17,8 +18,9 @@ def sash():
 
 def doGUI():
     app.removeAllWidgets(sub=True)
-    app.button('Accessibility', app.showAccess, icon='ACCESS')
-    app.label('hello world')
+    with app.frame('top'):
+        app.button('Accessibility', app.showAccess, icon='ACCESS')
+        app.label('hello world')
     with app.scrollPane('sp'):
         app.buttons(['PRESS', 'SASH'], [doGUI, sash])
         with app.labelFrame('lf1'):
@@ -60,8 +62,22 @@ def soSub():
 
 def doTabs():
     with app.tabbedFrame('tabs'):
+        with app.tab('pages'):
+            with app.pagedWindow('pages'):
+                for t in range(30):
+                    with app.page(): app.label('p'+str(t))
         for t in range(randint(3,7)):
             with app.tab('t'+str(t)): app.label('t'+str(t))
+        with app.tab('tt'):
+            app.link('here')
+            app.entry('e1', kind='file')
+            app.entry('e2', kind='directory')
+            app.entry('e3', kind='numeric')
+            app.entry('e4', kind='auto')
+            app.entry('e5', kind='validation')
+            app.meter('m1')
+            app.grip()
+            app.separator('s1')
 
 with gui(location='200,200') as app:
     app.bg='red'

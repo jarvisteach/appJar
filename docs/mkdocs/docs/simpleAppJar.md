@@ -354,19 +354,18 @@ Various styles of progress meter.
 ---
 Displays a draggable icon, which allows the GUI to be moved.  
 
-* `.grip(title, value=None)`  
-    A `value` is not required.  
+* `.grip()`  
 
 ## Separator  
 ---
 Displays a line, giving visual separation in the GUI.  
 
-* `.separator(title, value=None)`  
-    A `value` is not required.  
+* `.separator()`  
 
 | Parameter | Data type | Default | Description |
 | --------- | --------- | ------- | ------------|
 | direction | string | horizontal | Set the orientation of the separator: `horizontal` or `vertical`. |
+| colour | string | None | Set a colour for the separator. |
 
 ## Image  
 ---
