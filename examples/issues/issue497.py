@@ -30,7 +30,7 @@ def doGUI():
                     with app.frame(c):
                         app.label(c)
 
-            with app.panedFrameVertical('tr', sash=20) as tr:
+            with app.panedFrame('tr', vertical=True, sash=20) as tr:
                 with app.scrollPane("PANE"):
                     for x in range(10):
                         for y in range(10):

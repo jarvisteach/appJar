@@ -3471,7 +3471,6 @@ class gui(object):
         origProps = widget.__dict__
         for x in origProps:
             if x not in ['_w', '_tclCommands', '_name', 'master', 'tk']:
-                print(x)
                 setattr(clone, x, origProps[x])
 
         return clone
@@ -5184,7 +5183,7 @@ class gui(object):
             elif self._getContainerProperty('type') == self.Widgets.Pane:
                 pane = self._getContainerProperty('container').parent
             else:
-                print('can;t get pane')
+                gui.error("Unable to set sash position - can't find a pane")
                 return
         elif type(pane) == str:
             pane = self.widgetManager.get(self.Widgets.PanedFrame, pane)
