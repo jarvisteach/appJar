@@ -13,7 +13,8 @@ photo="R0lGODlhPQBEAPeoAJosM//AwO/AwHVYZ/z595kzAP/s7P+goOXMv8+fhw/v739/f+8PD98fH
 
 
 sys.path.append("../")
-from appJar import gui, SelectableLabel, AjText, AjScrolledText, Meter, Properties, PieChart, DraggableWidget
+from appJar import gui
+from appJar.appjar import Meter, Properties, PieChart, DraggableWidget, AjText, AjRectangle, AjPoint, AjScrolledText, SelectableLabel
 
 PY_VER = str(sys.version_info[0]) + "." + str(sys.version_info[1])
 
