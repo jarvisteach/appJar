@@ -4302,7 +4302,6 @@ class gui(object):
         elif fType == self.Widgets.FrameStack:
             # create the paged window
             frameStack = FrameStack(self.getContainer(), bg=self._getContainerBg())
-            frameStack.APPJAR_TYPE = 'FrameStack'
             self.widgetManager.add(self.Widgets.FrameStack, title, frameStack)
             # register it as a container
             frameStack.isContainer = True
@@ -5650,7 +5649,9 @@ class gui(object):
                 self.widgetManager.destroyContainer(self.Widgets.ContainerLog, widget)
 
 #        elif widgType in ('CanvasDnd', 'ValidationLabel', 'TabBorder', 'TabContainer', 'TabText', 'BgLabel') or hasattr(widget, 'SKIP_CLEANSE'):
-        elif widgType in ('CanvasDnd', 'ValidationLabel', 'TabBorder', 'TabContainer', 'TabText', 'BgLabel') or widget.__dict__.get('SKIP_CLEANSE', False):
+        elif widgType in ('CanvasDnd', 'ValidationLabel', 'Grip',
+                            'TabBorder', 'TabContainer', 'TabText', 'BgLabel') \
+                            or widget.__dict__.get('SKIP_CLEANSE', False):
             pass # not logged in WidgetManager
         else:
             self.warn("Unable to destroy %s, during cleanse - NO APPJAR TYPE", gui.GET_WIDGET_TYPE(widget))
@@ -11557,6 +11558,7 @@ class gui(object):
             def __init__(self, parent, orient="horizontal", *args, **options):
                 super(Separator, self).__init__(parent, *args, **options)
                 self.line = frameBase(self)
+                self.line.SKIP_CLEANSE = True
                 if orient == "horizontal":
                     self.line.config(relief="ridge", height=2, width=100, borderwidth=1)
                     self.line.pack(padx=5, pady=5, fill="x", expand=1)
