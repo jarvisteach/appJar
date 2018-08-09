@@ -47,10 +47,11 @@ CHANGE_FUNCTION_VAR=False
 def CHANGE_FUNCTION():
     global CHANGE_FUNCTION_VAR
     CHANGE_FUNCTION_VAR = True
+    print("CHANGE FUNCTION CALLED")
 
 def CHECK_CHANGE_FUNCTION(value=True):
     global CHANGE_FUNCTION_VAR
-    time.sleep(0.1)
+    time.sleep(0.01)
     assert CHANGE_FUNCTION_VAR is value
     CHANGE_FUNCTION_VAR = False
 
@@ -593,6 +594,18 @@ def test_checks():
     # call generic setter functions
     test_setters("CheckBox", TEXT_ONE)
 
+    app.setCheckBox(TEXT_TWO, ticked=True)
+    app.setCheckBoxChangeFunction(TEXT_TWO, CHANGE_FUNCTION)
+    app.setCheckBox(TEXT_TWO, ticked=False)
+    CHECK_CHANGE_FUNCTION(True)
+    app.setCheckBox(TEXT_TWO, ticked=True, callFunction=False)
+    CHECK_CHANGE_FUNCTION(False)
+
+    app.clearAllCheckBoxes(callFunction=True)
+    CHECK_CHANGE_FUNCTION(True)
+    app.setCheckBox(TEXT_TWO, ticked=True, callFunction=False)
+    app.clearAllCheckBoxes(callFunction=False)
+    CHECK_CHANGE_FUNCTION(False)
 
     print("\t >> all tests complete")
 
@@ -716,6 +729,18 @@ def test_options():
     # call generic setter functions
     test_setters("OptionBox", "l1")
     test_setters("OptionBox", "tl1")
+
+    app.setOptionBoxChangeFunction("l3", CHANGE_FUNCTION)
+    app.setOptionBox("l3", LIST_THREE[2])
+    CHECK_CHANGE_FUNCTION(True)
+    app.setOptionBox("l3", LIST_THREE[1], callFunction=False)
+    CHECK_CHANGE_FUNCTION(False)
+
+    app.clearAllOptionBoxes(callFunction=True)
+    CHECK_CHANGE_FUNCTION(True)
+    app.setOptionBox("l3", LIST_THREE[2], callFunction=False)
+    app.clearAllOptionBoxes(callFunction=False)
+    CHECK_CHANGE_FUNCTION(False)
 
     print("\t>> all tests complete")
 
@@ -1016,6 +1041,18 @@ def test_scales():
 
     # call generic setter functions
     test_setters("Scale", "s1")
+
+    app.setScaleChangeFunction("s2", CHANGE_FUNCTION)
+    app.setScale("s2", 22)
+    CHECK_CHANGE_FUNCTION(True)
+    app.setScale("s2", 88, callFunction=False)
+    CHECK_CHANGE_FUNCTION(False)
+
+    app.clearAllScales(callFunction=True)
+    CHECK_CHANGE_FUNCTION(True)
+    app.setScale("s2", 33, callFunction=False)
+    app.clearAllScales(callFunction=False)
+    CHECK_CHANGE_FUNCTION(False)
 
     print("\t >> all tests complete")
 
@@ -2355,8 +2392,20 @@ def test_containers():
 
     app.setTabBg("tbf1", "tab2", "red")
 
+
     assert app.getTabbedFrameSelectedTab("tbf1") == "tab1"
+
     app.setTabbedFrameSelectedTab("tbf1", "tab2")
+    assert app.getTabbedFrameSelectedTab("tbf1") == "tab2"
+
+    app.setTabbedFrameChangeFunction('tbf1', CHANGE_FUNCTION)
+
+    app.setTabbedFrameSelectedTab("tbf1", "tab1")
+    CHECK_CHANGE_FUNCTION(True)
+    assert app.getTabbedFrameSelectedTab("tbf1") == "tab1"
+
+    app.setTabbedFrameSelectedTab("tbf1", "tab2", callFunction=False)
+    CHECK_CHANGE_FUNCTION(False)
     assert app.getTabbedFrameSelectedTab("tbf1") == "tab2"
 
     container = app.openTabbedFrame("tbf1")
@@ -2570,7 +2619,7 @@ def test_containers():
     app.raiseFrame("c_frame")
 
     ## FRAME STACKS
-    app.startFrameStack("stack")
+    fStack = app.startFrameStack("stack")
     app.startFrame()
     app.addLabel("stack-1", "stack-1")
     app.stopFrame()
@@ -2622,9 +2671,39 @@ def test_containers():
     assert app.getCurrentFrame("stack") == 2
     assert app.getPreviousFrame("stack") == 1
 
+    fStack.setChangeFunction(CHANGE_FUNCTION)
     app.selectFrame("stack", 1)
+    CHECK_CHANGE_FUNCTION(True)
     assert app.getCurrentFrame("stack") == 1
     assert app.getPreviousFrame("stack") == 2
+
+    app.selectFrame("stack", 2, callFunction=False)
+    CHECK_CHANGE_FUNCTION(False)
+    assert app.getCurrentFrame("stack") == 2
+    assert app.getPreviousFrame("stack") == 1
+
+    app.prevFrame("stack")
+    CHECK_CHANGE_FUNCTION(True)
+    app.nextFrame("stack")
+    CHECK_CHANGE_FUNCTION(True)
+
+    app.prevFrame("stack", callFunction=False)
+    CHECK_CHANGE_FUNCTION(False)
+    app.nextFrame("stack", callFunction=False)
+    CHECK_CHANGE_FUNCTION(False)
+
+    app.firstFrame("stack", callFunction=True)
+    CHECK_CHANGE_FUNCTION(True)
+    app.lastFrame("stack", callFunction=True)
+    CHECK_CHANGE_FUNCTION(True)
+
+    app.firstFrame("stack", callFunction=False)
+    CHECK_CHANGE_FUNCTION(False)
+    app.lastFrame("stack", callFunction=False)
+    CHECK_CHANGE_FUNCTION(False)
+
+    app.selectFrame("stack", 2, callFunction=False)
+    app.selectFrame("stack", 1, callFunction=False)
 
     with pytest.raises(Exception) :
         app.selectFrame("stack", 3)
