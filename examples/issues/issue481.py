@@ -1,8 +1,10 @@
-import sys
+import sys, imp
 sys.path.append("../../")
 
 from appJar import gui 
 import myStyle as style
+#style = imp.load_source('style', 'style.css')
+
 
 with gui('appJar font problem', **style.body) as app:
     app.label("l1", "Label 1")
