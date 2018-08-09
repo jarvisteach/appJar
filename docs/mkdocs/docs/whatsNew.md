@@ -16,6 +16,7 @@
     * [#458](https://github.com/jarvisteach/appJar/issues/458) - Ability to set `wrap` parameter on [Tables](/pythonDevWidgets/#table)  
 
 * FIXED:
+    * [#505](https://github.com/jarvisteach/appJar/issues/505) - Removed imports from `__init__.py` file.  
     * [#491](https://github.com/jarvisteach/appJar/issues/491) - Fixed issue where [blocking subwindows](/pythonSubWindows/#startstop-sub-windows) wouldn't work  
     * [#489](https://github.com/jarvisteach/appJar/issues/489) - Fixed bug where Labelled widgets weren't [destroyed](/pythonWidgetOptions/#widget-manipulation) properly.  
     * [#482](https://github.com/jarvisteach/appJar/issues/482) - Fixed isue with deleting rows on [tables](/pythonDevWidgets/#table)  
