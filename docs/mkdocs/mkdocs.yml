@@ -57,6 +57,7 @@ pages:
     - Examples:
         - Raspberry Pi Minecraft: examples/minecraft.md
         - Simple Layout: examples/simple.md
+        - Stylesheets: examples/stylesheets.md
     - Installation: Install.md
     - Packaging: packaging.md
     - License: License.md
