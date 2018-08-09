@@ -3,26 +3,25 @@
 
 ## Version 0.94  
 
-* NEW:
-    * [#504](https://github.com/jarvisteach/appJar/issues/504) - Can now set the [sash position](/pythonWidgetGrouping/#set-paned-frames) on PanedFrames  
-    * [#481](https://github.com/jarvisteach/appJar/issues/481) - Example of how to create a [stylesheet](/examples/stylesheets/)  
-    * [#479](https://github.com/jarvisteach/appJar/issues/479) - Multiple files allowed in [open file boxes](/pythonDialogs/#file-boxes)
-    * [#477](https://github.com/jarvisteach/appJar/issues/477) - Function to [move](/pythonWidgetOptions/#widget-manipulation) widgets
-    * [#475](https://github.com/jarvisteach/appJar/issues/475) - Ability to add multiple action buttons and align horizontally/vertically in [Tables](/pythonDevWidgets/#table)  
-    * [#473](https://github.com/jarvisteach/appJar/issues/473) - Can now add [tabs](/pythonWidgetGrouping/#tabbed-frame) before/after existing tabs  
-    * [#472](https://github.com/jarvisteach/appJar/issues/472) - When updating a [textArea](/simpleAppJar/#text) you can now configure it to replace any existing text  
-    * [#465](https://github.com/jarvisteach/appJar/issues/465) - [Scales](/inputWidgets/#scale) and other widgets can now have their state changed when in [ttk](/pythonTtk/) mode  
-    * [#463](https://github.com/jarvisteach/appJar/issues/463) - New [property](/simpleProperties/#looks) to change the statusbar font  
-    * [#457](https://github.com/jarvisteach/appJar/issues/457) - Can now create [trees](/pythonDevWidgets/#tree) with xml objects and show attributes  
-    * [#458](https://github.com/jarvisteach/appJar/issues/458) - Ability to set `wrap` parameter on [Tables](/pythonDevWidgets/#table)  
-
-* FIXED:
-    * [#505](https://github.com/jarvisteach/appJar/issues/505) - Removed imports from `__init__.py` file  
-    * [#491](https://github.com/jarvisteach/appJar/issues/491) - Fixed issue where [blocking subwindows](/pythonSubWindows/#startstop-sub-windows) wouldn't work  
-    * [#489](https://github.com/jarvisteach/appJar/issues/489) - Fixed bug where Labelled widgets weren't [destroyed](/pythonWidgetOptions/#widget-manipulation) properly  
-    * [#482](https://github.com/jarvisteach/appJar/issues/482) - Fixed isue with deleting rows on [tables](/pythonDevWidgets/#table)  
-    * [#478](https://github.com/jarvisteach/appJar/issues/478) - Fixed issue where [opening containers](/pythonWidgetGrouping/#reopening-containers) was not returning the container  
-    * [#461](https://github.com/jarvisteach/appJar/issues/461) - Fixed issue with setting `parent` of [message boxes](/pythonDialogs/#message-boxes)  
+* <div class="change-badge change-badge-new">New</div> Example of how to create a [stylesheet](/examples/stylesheets/) - [#481](https://github.com/jarvisteach/appJar/issues/481)
+* <div class="change-badge change-badge-new">New</div> Function to [move](/pythonWidgetOptions/#widget-manipulation) widgets - [#477](https://github.com/jarvisteach/appJar/issues/477)
+* <div class="change-badge change-badge-added">Added</div> Can now set the [sash position](/pythonWidgetGrouping/#set-paned-frames) on PanedFrames - [#504](https://github.com/jarvisteach/appJar/issues/504)
+* <div class="change-badge change-badge-added">Added</div> Multiple files allowed in [open file boxes](/pythonDialogs/#file-boxes) - [#479](https://github.com/jarvisteach/appJar/issues/479)
+* <div class="change-badge change-badge-added">Added</div> Option to add multiple action buttons and align horizontally/vertically in [Tables](/pythonDevWidgets/#table) - [#475](https://github.com/jarvisteach/appJar/issues/475)
+* <div class="change-badge change-badge-added">Added</div> Can now add [tabs](/pythonWidgetGrouping/#tabbed-frame) before/after existing tabs - [#473](https://github.com/jarvisteach/appJar/issues/473)
+* <div class="change-badge change-badge-added">Added</div> When updating a [textArea](/simpleAppJar/#text) you can now configure it to replace any existing text - [#472](https://github.com/jarvisteach/appJar/issues/472)
+* <div class="change-badge change-badge-added">Added</div> New [property](/simpleProperties/#looks) to change the statusbar font - [#463](https://github.com/jarvisteach/appJar/issues/463)
+* <div class="change-badge change-badge-added">Added</div> Can now create [trees](/pythonDevWidgets/#tree) with xml objects and show attributes - [#457](https://github.com/jarvisteach/appJar/issues/457)
+* <div class="change-badge change-badge-added">Added</div> Option to set `wrap` parameter on [Tables](/pythonDevWidgets/#table) - [#458](https://github.com/jarvisteach/appJar/issues/458)
+* <div class="change-badge change-badge-improved">Improved</div>Removed imports from `__init__.py` file - [#505](https://github.com/jarvisteach/appJar/issues/505)
+* <div class="change-badge change-badge-improved">Improved</div> [Scales](/inputWidgets/#scale) and other widgets can now have their state changed when in [ttk](/pythonTtk/) mode - [#465](https://github.com/jarvisteach/appJar/issues/465)
+* <div class="change-badge change-badge-improved">Improved</div>Better change log? - [#219](https://github.com/jarvisteach/appJar/issues/219)
+* <div class="change-badge change-badge-fixed">Fixed</div>Issue where [blocking subwindows](/pythonSubWindows/#startstop-sub-windows) wouldn't work - [#491](https://github.com/jarvisteach/appJar/issues/491)
+* <div class="change-badge change-badge-fixed">Fixed</div>Bug where Labelled widgets weren't [destroyed](/pythonWidgetOptions/#widget-manipulation) properly - [#489](https://github.com/jarvisteach/appJar/issues/489)
+* <div class="change-badge change-badge-fixed">Fixed</div>Issue with deleting rows on [tables](/pythonDevWidgets/#table) - [#482](https://github.com/jarvisteach/appJar/issues/482)
+* <div class="change-badge change-badge-fixed">Fixed</div>Issue where [opening containers](/pythonWidgetGrouping/#reopening-containers) was not returning the container - [#478](https://github.com/jarvisteach/appJar/issues/478)
+* <div class="change-badge change-badge-fixed">Fixed</div>Issue with setting `parent` of [message boxes](/pythonDialogs/#message-boxes) - [#461](https://github.com/jarvisteach/appJar/issues/461)
+* <div class="change-badge change-badge-removed">Removed</div>Deprecated `.panedFrameVertical()`, you should now call `.panedFrame(vertical=True)` - [#504](https://github.com/jarvisteach/appJar/issues/504)
 
 ## Version 0.93  
 
@@ -87,7 +86,7 @@
 
 ## Version 0.9  
 
-* Introduction of alternative [widget access functions](/simpleAppJar) ([#235](https://github.com/jarvisteach/appJar/issues/235))  - now possible to **ADD**, **SET** & **GET** widgets by just using their name  
+* Introduction of alternative [widget access functions](/simpleAppJar) ([#235](https://github.com/jarvisteach/appJar/issues/235)) - now possible to **ADD**, **SET** & **GET** widgets by just using their name  
 * Introduction of alternative [GUI properties](/simpleAppJar) ([#340](https://github.com/jarvisteach/appJar/issues/340)) - now possible to GET/SET properties with special property functions  
 * Introduction of appJar [settings](/pythonSettings/) - can now save/load GUI state to/from file  
 * Big improvements to [grids](/pythonDevWidgets/#table) - can add/remove/replace rows/columns, can sort data, can access a right-click menu, can connect to an sqlite database  
