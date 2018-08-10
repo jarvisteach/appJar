@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{%- block extrahead %}
+    <meta name="keywords" content="Python, GUI, widgets, tkinter, appJar, label, button">
+    <meta name="title" content="Python library for building GUIs, using tkinter toolkit">
+{% endblock %}
+
+{%- block footer %}
+<!-- Google Ads -->
+    <hr>
+    <div style='text-align: center;'>
+    <em>Advertisement&nbsp;<sup><a href="/advertising">why?</a></sup></em>
+    <br>
+    <br>
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <!-- Footer -->
+        <ins class="adsbygoogle"
+            style="display:inline-block;width:728px;height:90px"
+            data-ad-client="ca-pub-6185596049817878"
+            data-ad-slot="2795191172"></ins>
+        <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
+
+    <hr>
+    {%- if config.copyright %}
+        <p>{{ config.copyright }}</p>
+    {%- endif %}
+{%- endblock %}
