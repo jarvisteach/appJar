@@ -23,7 +23,7 @@ However, not all features are available on all platforms.
 * **app Icons** aren't supported  
 * **Audio** doesn't work - relies on WinSound  
 * **Buttons** don't support background colours and changing the height  
-* **Tickable Menus & OptionBoxes** don't work   
+* **Tickable OptionBoxes** don't work   
 * **Pasting some special characters** can [crash](https://bugs.python.org/issue22566) appJar  
 * **Inertial scrolling** can [crash](https://stackoverflow.com/questions/16995969/inertial-scrolling-in-mac-os-x-with-tkinter-and-python) appJar  
 
