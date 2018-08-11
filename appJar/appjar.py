@@ -10669,7 +10669,10 @@ class gui(object):
             self.widgetManager.log(self.Widgets.Accelerators, a)
             if u is not None and createBinding:
                 gui.trace("Binding: %s to %s", b, u)
-                self.topLevel.bind_all(b, u)
+                if kind == 'cb':
+                    self.topLevel.bind_all(b, lambda e: self._menuCheckButtonBind(title, item, u))
+                else:
+                    self.topLevel.bind_all(b, u)
 
         if item == "-" or kind == "separator":
             theMenu.add_separator()
@@ -10694,9 +10697,10 @@ class gui(object):
         elif kind == "cb":
             varName = title + "cb" + item
             self.widgetManager.verify(self.Widgets.Menu, varName, group=WidgetManager.VARS)
-            var = StringVar(self.topLevel)
+            var = BooleanVar(self.topLevel)
+            var.set(False)
             self.widgetManager.add(self.Widgets.Menu, varName, var, group=WidgetManager.VARS)
-            theMenu.add_checkbutton(label=item, command=u, variable=var, onvalue=1, offvalue=0, accelerator=a, underline=underline)
+            theMenu.add_checkbutton(label=item, command=u, variable=var, onvalue=True, offvalue=False, accelerator=a, underline=underline)
         elif kind == "sub":
             self.widgetManager.verify(self.Widgets.Menu, item)
             subMenu = Menu(theMenu, tearoff=False)
@@ -10704,6 +10708,11 @@ class gui(object):
             theMenu.add_cascade(menu=subMenu, label=item)
         else:
             theMenu.add_command(label=item, command=u, accelerator=a, underline=underline)
+
+    # used to wrap check button bindings, so can also toggle
+    def _menuCheckButtonBind(self, title, item, func):
+        self.setMenuCheckBox(title, item)
+        func(item)
 
     #################
     # wrappers for other menu types
@@ -10807,15 +10816,10 @@ class gui(object):
         if kind == "rb":
             var.set(value)
         elif kind == "cb":
-            if value is True:
-                var.set("1")
-            elif value is False:
-                var.set("0")
+            if value is None:
+                var.set(not var.get())
             else:
-                if var.get() == "1":
-                    var.set("0")
-                else:
-                    var.set("1")
+                var.set(value)
 
     def setMenuCheckBox(self, menu, name, value=None):
         self._setMenu(menu, name, value, "cb")
@@ -10905,13 +10909,7 @@ class gui(object):
     def _getMenu(self, menu, title, kind):
         title = menu + kind + title
         var = self.widgetManager.get(self.Widgets.Menu, title, group=WidgetManager.VARS)
-        if kind == "rb":
-            return var.get()
-        elif kind == "cb":
-            if var.get() == "1":
-                return True
-            else:
-                return False
+        return var.get()
 
     def getMenuCheckBox(self, menu, title):
         return self._getMenu(menu, title, "cb")
