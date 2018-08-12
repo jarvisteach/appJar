@@ -1726,6 +1726,15 @@ def test_gui_options():
     app.resizeBgImage()
     app.removeBgImage()
 
+    app.setRowspan(4)
+    assert app.getRowspan() == 4
+    app.setRowspan(0)
+    assert app.getRowspan() == 0
+    app.setColspan(4)
+    assert app.getColspan() == 4
+    app.setColspan(0)
+    assert app.getColspan() == 0
+
     print(" >> not implemented...")
     #print("\t >> all tests complete")
 
@@ -3077,7 +3086,9 @@ def test_gui_properties():
         enterKey=propFunc,
         logLevel='trace',
         logFile='aaa.txt',
-        language='french'
+        language='french',
+        rowspan=1,
+        colspan=1,
     )
 
     assert app.title == 'aaa'
@@ -3103,6 +3114,8 @@ def test_gui_properties():
     assert app.stretch.lower() == 'column'
     assert app.expand.lower() == 'column'
     assert app.row == 5
+    assert app.rowspan == 1
+    assert app.colspan == 1
     assert app.fg == 'red'
     assert app.bg == 'green'
     assert app.font['size'] == 18
@@ -3191,6 +3204,16 @@ def test_gui_properties():
 
     app.row = 5
     assert app.row == 5
+
+    app.rowspan = 5
+    assert app.rowspan == 5
+    app.colspan = 4
+    assert app.colspan == 4
+
+    app.rowspan = 0
+    assert app.rowspan == 0
+    app.colspan = 0
+    assert app.colspan == 0
 
     app.fg = "blue"
     assert app.fg == "blue"

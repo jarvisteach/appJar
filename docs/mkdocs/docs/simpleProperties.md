@@ -67,6 +67,8 @@ app.label('transLab', app.transparency)
 | sticky | string | Pass a string describing which sides widegts should stick to (news). |
 | stretch | string | Pass a string describing if rows/columns should stretch, to fill the entire GUI. |
 | row | integer | Gets or sets the next row number to be used. |
+| rowspan | integer | Gets or sets the rowspan for the current container. |
+| colspan | integer | Gets or sets the colspan for the current container. |
 | | | | |
 
 ### Looks

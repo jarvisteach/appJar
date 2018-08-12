@@ -155,8 +155,9 @@ The following allow widgets to be manipulated on screen:
     Show the widget, if it was already hidden.
 
 * `.move XXX (name, row, column=0, colspan=0, rowspan=0, sticky='EW')`  
-    Move a widget to a new grid position.
+    Move a widget to a new grid position.  
     If called while inside a different container, the widget will be cloned into that container.  
+    **NB.** Cloning widgtes is *very* rudimentary, it won't work for compound widgets.  
 
 * `.empty XXX(name)`  
     Will destroy all widgets in the named container.  

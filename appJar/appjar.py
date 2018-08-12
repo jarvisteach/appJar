@@ -2425,6 +2425,8 @@ class gui(object):
         stretch = kwargs.pop("stretch", None)
         expand = kwargs.pop("expand", None)
         row = kwargs.pop("row", None)
+        colspan = kwargs.pop("colspan", None)
+        rowspan = kwargs.pop("rowspan", None)
 
         fg = kwargs.pop("fg", None)
         bg = kwargs.pop("bg", None)
@@ -2467,6 +2469,8 @@ class gui(object):
         if expand is not None: self.expand = expand
         if stretch is not None: self.stretch = stretch
         if row is not None: self.row = row
+        if rowspan is not None: self.rowspan = rowspan
+        if colspan is not None: self.colspan = colspan
 
         if fg is not None: self.fg = fg
         if bg is not None: self.bg = bg
@@ -3683,6 +3687,24 @@ class gui(object):
 #####################################
 # FUNCTIONS to position a widget
 #####################################
+
+    # properties for setting container's default rowspan/colspan
+    def setColspan(self, colspan):
+        self.containerStack[-1]['colspan'] = colspan
+
+    def getColspan(self):
+        return self.containerStack[-1]['colspan']
+
+    colspan = property(getColspan, setColspan)
+
+    def setRowspan(self, rowspan):
+        self.containerStack[-1]['rowspan'] = rowspan
+
+    def getRowspan(self):
+        return self.containerStack[-1]['rowspan']
+
+    rowspan = property(getRowspan, setRowspan)
+
     def getRow(self):
         return self._getContainerProperty('emptyRow')
 
@@ -3959,12 +3981,15 @@ class gui(object):
             "padx": cX,
             "pady": cY}
 
-        # if we have a column span, apply it
-        if colspan != 0:
-            params["columnspan"] = colspan
-        # if we have a rowspan, apply it
-        if rowspan != 0:
-            params["rowspan"] = rowspan
+        # sort out rowspan & colspan
+        cColspan = self._getContainerProperty("colspan")
+        cRowspan = self._getContainerProperty("rowspan")
+
+        if colspan != 0: params["columnspan"] = colspan
+        elif cColspan != 0: params["columnspan"] = cColspan
+
+        if rowspan != 0: params["rowspan"] = rowspan
+        elif cRowspan != 0: params["rowspan"] = cRowspan
 
         # 1) if param has sticky, use that
         # 2) if container has sticky - override
@@ -4026,7 +4051,10 @@ class gui(object):
                     'inputFont': self._inputFont,
                     'labelFont': self._labelFont,
                     'buttonFont': self._buttonFont,
-                    "fg": self._getContainerFg()}
+                    "fg": self._getContainerFg(),
+                    "colspan":0,
+                    "rowspan":0,
+                    }
         return containerData
 
     # adds the container to the container stack - makes this the current working container
