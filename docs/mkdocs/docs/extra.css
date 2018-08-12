@@ -18,7 +18,7 @@
     box-shadow: 0 0 3px rgba(0,0,0,.3);
 }
 
-.change-badge {
+.cb {
     background-color: #0366d6;
     display: inline;
     flex: 0 0 65px;
@@ -31,16 +31,16 @@
     text-align: center
 }
 
-.change-badge-new, .change-badge-added {
+.cb-new, .cb-add {
     background-color: green;
     color: white;
 }
 
-.change-badge-fixed, .change-badge-improved {
+.cb-fix, .cb-imp {
     background-color: #FFBF00;
 }
 
-.change-badge-removed {
+.cb-rem {
     background-color: red;
     color: white;
 }
