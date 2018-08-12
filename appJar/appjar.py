@@ -3400,7 +3400,7 @@ class gui(object):
                 str(k) + ", name, collapse)")
             exec("gui.remove" + v + "=remove" + v)
             exec( "def move" + v +
-                "(self, name, row, column=0, colspan=0, rowspan=0, sticky=W+E): self.moveWidgetType(" +
+                "(self, name, row=None, column=0, colspan=0, rowspan=0, sticky=W+E): self.moveWidgetType(" +
                 str(k) + ", name, row, column, colspan, rowspan, sticky)")
             exec("gui.move" + v + "=move" + v)
 
@@ -3475,7 +3475,7 @@ class gui(object):
 
         return clone
 
-    def moveWidgetType(self, kind, name, row, column=0, colspan=0, rowspan=0, sticky=W+E):
+    def moveWidgetType(self, kind, name, row=None, column=0, colspan=0, rowspan=0, sticky=W+E):
         self.hideWidgetType(kind, name, collapse=True)
         widget = self.widgetManager.get(kind, name)
 

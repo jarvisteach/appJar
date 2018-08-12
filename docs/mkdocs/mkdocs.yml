@@ -58,6 +58,7 @@ pages:
         - Raspberry Pi Minecraft: examples/minecraft.md
         - Simple Layout: examples/simple.md
         - Stylesheets: examples/stylesheets.md
+        - Kanban/To Do: examples/kanban.md
     - Installation: Install.md
     - Packaging: packaging.md
     - License: License.md

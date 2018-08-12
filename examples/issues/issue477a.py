@@ -2,49 +2,33 @@ import sys
 sys.path.append("../../")
 
 from appJar import gui
+from random import choice
 
-pos = {'a':0, 'b':0, 'c':0}
+ttl = ('Backlog', 'In Progress', 'Done')
 
-def press():
-    text = app.popUp("New Task", "Enter the new task", "string")
-    if text is not None:
-        with app.frame("a"):
-            app.label(text, bg=app.getRandomColour(), font=20, submit=labelA)
+def genNewLbl():
+    with app.frame(ttl[0]):
+        text = ''.join(choice('ABCDEFGHIJKLMNOPQRSTUVWXYZ') for c in range(8))
+        app.label(text, bg=app.getRandomColour(), submit=move1)
 
-def buttonA(title): move(title, 'button', "b",  buttonB)
-def buttonB(title): move(title, 'button', "c",  buttonC)
-def labelA(title):  move(title, 'label',  "b",  labelB)
-def labelB(title):  move(title, 'label',  "c",  labelC)
-def buttonC(title): move(title, 'button', None, None)
-def labelC(title):  move(title, 'label',  None, None)
+def move1(lblName): move(lblName, 1)
+def move2(lblName): move(lblName, 2)
+def trash(lblName): app.removeLabel(lblName)#, collapse=True)
 
-def move(title, kind, parent, func):
-    if parent is None:
-        if kind == 'button': app.removeButton(title, collapse=True)
-        elif kind == 'label': app.removeLabel(title, collapse=True)
-    else:
-        with app.frame(parent):
-            if kind == 'button':
-                app.moveButton(title, row=pos[parent], column=0, sticky='NEW')
-                app.button(title, submit=func)
-            elif kind == 'label':
-                app.moveLabel(title, row=pos[parent], column=0, sticky='NEW')
-                app.label(title, submit=func)
-        pos[parent] = pos[parent] + 1
+def move(lblName, col):
+    # move the label to the new frame
+    with app.frame(ttl[col]): app.moveLabel(lblName)
+    # change the label's function
+    if col == 1: app.label(lblName, submit=move2)
+    else: app.label(lblName, submit=trash)
 
-with gui("Grid", bg='grey', sticky='new', stretch='column') as app:
-    app.label("TO DO", row=0,column=0, font=20, bg='white', width=12)
-    app.label("IN PROGRESS", row=0,column=1, font=20, bg='white', width=12)
-    app.label("DONE", row=0,column=2, font=20, bg='white', width=12)
+with gui("Kanban Demo", "850x600", bg='grey', sticky='new', font=20) as app:
+    for pos in range(len(ttl)):
+        app.label(ttl[pos], pos=(0, pos), bg='white', width=12, stretch='column')
+        app.stretch = 'both'
+        with app.frame(ttl[pos], row=1, column=pos, sticky='new'): pass
 
-    app.config(sticky='new', stretch='both')
+    app.button("NEW LABEL", genNewLbl, colspan=3, sticky='s', stretch='column', font=16)
 
-    with app.frame("a", 1, 0, stretch=None, sticky='new'):
-        for i in range(0, 5):
-            app.label(str(i), bg=app.getRandomColour(), font=20, submit=labelA)
-            app.button(str(i), buttonA, bg=app.getRandomColour(), font=20)
-
-    with app.frame("b",1,1, sticky='new'): pass
-    with app.frame("c",1,2, sticky='new'): pass
-
-    app.buttons(["NEW"], press, colspan=3, sticky='s', stretch='column')
+    # generate 7 labels
+    for l in range(7): genNewLbl()
