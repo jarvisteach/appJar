@@ -10674,47 +10674,34 @@ class gui(object):
 
         a = b = None
         if shortcut is not None:
-            #            MODIFIERS=["Control", "Ctrl", "Option", "Opt", "Alt", "Shift", "Command", "Cmd", "Meta"]
+            # MODIFIERS=["Control", "Ctrl", "Option", "Opt", "Alt", "Shift", "Command", "Cmd", "Meta"]
 
-            # UGLY formatting of accelerator & shortcut
-            a = b = shortcut.lower().replace("+", "-")
+            if gui.GET_PLATFORM() != gui.MAC and 'Command' in shortcut:
+                gui.warn("Shortcuts containing <Command> only supported on Mac")
+                return
 
-            a = a.replace("control", "ctrl")
-            a = a.replace("command", "cmd")
-            a = a.replace("option", "opt")
-            a = a.replace("key-", "")
-
-            b = b.replace("ctrl", "Control")
-            b = b.replace("control", "Control")
-            b = b.replace("cmd", "Command")
-            b = b.replace("command", "Command")
-            b = b.replace("option", "Option")
-            b = b.replace("opt", "Option")
-            b = b.replace("alt", "Alt")
-            b = b.replace("shift", "Shift")
-            b = b.replace("meta", "Meta")
-            b = b.replace("key", "Key")
-
-            if gui.GET_PLATFORM() != gui.MAC:
-                a = a.replace("cmd", "ctrl")
-                b = b.replace("Command", "Control")
+            # shrink down the accelerators
+            acc = shortcut.replace("Control", "Ctrl")
+            acc = acc.replace("Command", "Cmd")
+            acc = acc.replace("Option", "Opt")
+            acc = acc.replace("Key-", "")
 
             # try to fix numerics
-            if b[-1] in "0123456789" and "Key" not in b:
-                b = b[:-1] + "Key-" + b[-1]
+            if shortcut[-1] in "0123456789" and "Key" not in shortcut:
+                shortcut = shortcut[:-1] + "Key-" + shortcut[-1]
 
-            b = "<" + b + ">"
-            a = a.title()
+            shortcut = "<" + shortcut + ">"
+            
+            gui.trace("Adding accelerator: %s", acc)
+            self.widgetManager.verify(self.Widgets.Accelerators, acc, array=True)
+            self.widgetManager.log(self.Widgets.Accelerators, acc)
 
-            gui.trace("Adding accelerator: %s", a)
-            self.widgetManager.verify(self.Widgets.Accelerators, a, array=True)
-            self.widgetManager.log(self.Widgets.Accelerators, a)
-            if u is not None and createBinding:
-                gui.trace("Binding: %s to %s", b, u)
+            if gui.GET_PLATFORM() != gui.MAC and u is not None and createBinding:
+                gui.trace("Binding: %s to %s", shortcut, u)
                 if kind == 'cb':
-                    self.topLevel.bind_all(b, lambda e: self._menuCheckButtonBind(title, item, u))
+                    self.topLevel.bind_all(shortcut, lambda e: self._menuCheckButtonBind(title, item, u))
                 else:
-                    self.topLevel.bind_all(b, u)
+                    self.topLevel.bind_all(shortcut, u)
 
         if item == "-" or kind == "separator":
             theMenu.add_separator()
@@ -10723,7 +10710,7 @@ class gui(object):
                 self.warn("Unable to make topLevel menus (%s) on Mac", item)
             else:
                 self.menuBar.add_command(
-                    label=item, command=u, accelerator=a, underline=underline)
+                    label=item, command=u, accelerator=acc, underline=underline)
         elif kind == "rb":
             varName = title + "rb" + item
             newRb = False
@@ -10733,7 +10720,7 @@ class gui(object):
                 newRb = True
                 var = StringVar(self.topLevel)
                 self.widgetManager.add(self.Widgets.Menu, varName, var, group=WidgetManager.VARS)
-            theMenu.add_radiobutton(label=rb_id, command=u, variable=var, value=rb_id, accelerator=a, underline=underline)
+            theMenu.add_radiobutton(label=rb_id, command=u, variable=var, value=rb_id, accelerator=acc, underline=underline)
             if newRb:
                 self.setMenuRadioButton(title, item, rb_id)
         elif kind == "cb":
@@ -10742,14 +10729,14 @@ class gui(object):
             var = BooleanVar(self.topLevel)
             var.set(False)
             self.widgetManager.add(self.Widgets.Menu, varName, var, group=WidgetManager.VARS)
-            theMenu.add_checkbutton(label=item, command=u, variable=var, onvalue=True, offvalue=False, accelerator=a, underline=underline)
+            theMenu.add_checkbutton(label=item, command=u, variable=var, onvalue=True, offvalue=False, accelerator=acc, underline=underline)
         elif kind == "sub":
             self.widgetManager.verify(self.Widgets.Menu, item)
             subMenu = Menu(theMenu, tearoff=False)
             self.widgetManager.add(self.Widgets.Menu, item, subMenu)
             theMenu.add_cascade(menu=subMenu, label=item)
         else:
-            theMenu.add_command(label=item, command=u, accelerator=a, underline=underline)
+            theMenu.add_command(label=item, command=u, accelerator=acc, underline=underline)
 
     # used to wrap check button bindings, so can also toggle
     def _menuCheckButtonBind(self, title, item, func):
