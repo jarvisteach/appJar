@@ -11,9 +11,12 @@ with gui() as app:
     app.font = 20
 
     cb = app.checkBox('a', selectcolor='blue')
+    app.setCheckBoxSelectColour('a', 'green')
     # the bg colour of the box
     
-    p = app.properties("Toppings", toppings, selectcolor='black', foreground='white', background='blue', activebackground='pink', activeforeground='blue', indicatoron=True)
+    p = app.properties("Toppings", toppings)#, boxbg='black', foreground='white', background='blue', activebackground='pink', activeforeground='blue', indicatoron=True)
     #p.config(selectcolor='black', foreground='white', background='blue', activebackground='pink', activeforeground='blue', indicatoron=True)
+    app.setPropertiesSelectColour('Toppings', 'red')
+    app.setPropertiesBoxBg('Toppings', 'red')
     
     app.setProperty("Toppings", "Bacon", True)

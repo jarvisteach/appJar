@@ -5880,6 +5880,13 @@ class gui(object):
             if hasattr(cb, 'cmd'):
                 cb.cmd()
 
+    def setCheckBoxBoxBg(self, title, newCol):
+        self.setCheckBoxSelectColour(title, newCol)
+
+    def setCheckBoxSelectColour(self, title, newCol):
+        cb = self.widgetManager.get(self.Widgets.CheckBox, title)
+        cb.config(selectcolor=newCol)
+
     def clearAllCheckBoxes(self, callFunction=False):
         for cb in self.widgetManager.group(self.Widgets.CheckBox):
             self.setCheckBox(cb, ticked=False, callFunction=callFunction)
@@ -6806,6 +6813,13 @@ class gui(object):
     def setPropertyText(self, title, prop, newText=None):
         props = self.widgetManager.get(self.Widgets.Properties, title)
         props.renameProperty(prop, newText)
+
+    def setPropertiesBoxBg(self, title, newCol):
+        self.setPropertiesSelectColour(title, newCol)
+
+    def setPropertiesSelectColour(self, title, newCol):
+        props = self.widgetManager.get(self.Widgets.Properties, title)
+        props.config(selectcolor=newCol)
 
     def clearProperties(self, title, callFunction=True):
         props = self.widgetManager.get(self.Widgets.Properties, title)
@@ -12588,6 +12602,9 @@ class Properties(LabelFrame, object):
         vals = ["bg", "fg", "font"]
 
         kw = gui.CLEAN_CONFIG_DICTIONARY(**kw)
+
+        try: kw['selectcolor'] = kw.pop('boxbg')
+        except: pass
 
         # loop through all kw properties received
         for k, v in kw.items():
