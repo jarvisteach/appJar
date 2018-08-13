@@ -12581,12 +12581,17 @@ class Properties(LabelFrame, object):
 
     def configure(self, cnf=None, **kw):
         # properties to propagate to CheckBoxes
-        vals = ["bg", "fg", "disabledforeground", "state", "font", "command"]
+        cbVals = ['activebackground', 'activeforeground',
+                  'highlightcolor', 'highlightbackground',
+                  'indicatoron', 'state', 'selectcolor',
+                  'disabledforeground', 'command']
+        vals = ["bg", "fg", "font"]
+
         kw = gui.CLEAN_CONFIG_DICTIONARY(**kw)
 
         # loop through all kw properties received
         for k, v in kw.items():
-            if k in vals:
+            if k in vals+cbVals:
                 # and set them on all CheckBoxes if desired
                 for prop_key in self.cbs:
                     self.cbs[prop_key][k] = v
@@ -12594,9 +12599,8 @@ class Properties(LabelFrame, object):
                         gui.SET_WIDGET_BG(self.cbs[prop_key], v, True)
 
         # remove any props the LabelFrame can't handle
-        kw.pop("state", None)
-        kw.pop("disabledforeground", None)
-        kw.pop("command", None)
+        for k in cbVals:
+            kw.pop(k, None)
 
         super(Properties, self).config(cnf, **kw)
 
