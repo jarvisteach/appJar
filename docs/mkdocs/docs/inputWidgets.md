@@ -860,6 +860,9 @@ app.go()
     This will set all values in all Properties in the app to False.  
     Set ```callFunction``` to be True, if you want to call any associated functions.  
 
+* `.setPropertiesBoxBg(title, newCol)`  
+    This will change the background colour of all tick boxes in the properties widget.  
+
 ####Get Properties
 
 * `.getProperties(title)`  

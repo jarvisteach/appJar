@@ -1353,6 +1353,9 @@ def test_properties():
     app.setPropertyText("p2", "a", "new text")
     app.setPropertyText("p2", "b")
 
+    app.setPropertiesBoxBg("p2", "red")
+    app.setPropertiesSelectColour("p2", "red")
+
     app.setProperties("p2", HASH_TWO)
     validateProp("p2", HASH_TWO)
     assert compareDictionaries(app.getProperties("p2"), HASH_TWO)
@@ -3549,7 +3552,7 @@ def updateApp4(btn=None):
     app4.link("Shout", updateApp4)
     app4.image("img", "1_flash.gif")
 #    app4.image("img2")
-    app4.properties("Toppings", {"a":False, "b": True})
+    app4.properties("Toppings", {"a":False, "b": True}, boxbg='green')
 
 doStopAgain = 0
 def test_gui4(btn=None):
