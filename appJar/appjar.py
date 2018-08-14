@@ -2216,6 +2216,7 @@ class gui(object):
         # for now discard the Event...
         myF = self.MAKE_FUNC(func, key)
         self._getTopLevel().bind(key, myF)
+        gui.trace("Bound %s to topLevel, for function: %s", key, func)
 
     def unbindKeys(self, keys):
         """ unbinds the specified keys from whatever functions they are bound to """
@@ -2960,7 +2961,7 @@ class gui(object):
                 elif option == 'activebackground':
                     item.config(activebackground=value)
                 elif option == 'inactiveforeground':
-                    if kind == self.Widgets.TabbedFrame:
+                    if kind in [self.Widgets.TabbedFrame, self.Widgets.Table]:
                         item.config(inactiveforeground=value)
                     else:
                         self.warn("Error configuring %s: can't set inactiveforeground", name )
@@ -10665,20 +10666,28 @@ class gui(object):
                     return
 
         if underline > -1 and self.platform == self.MAC:
-            self.warn("Underlining menu items not available on MAC")
+            gui.warn("Underlining menu items not available on MAC")
 
         if func is not None:
-            u = self.MAKE_FUNC(func, item)
-        else:
-            u = None
+            func = self.MAKE_FUNC(func, item)
 
-        a = b = None
+        acc = None
+
         if shortcut is not None:
+            if shortcut[0] == "<":
+                gui.warn("Please specify menu: %s-%s shortcut without chevrons", title, item)
+                return
+
+            shortcut = shortcut.title()
+
             # MODIFIERS=["Control", "Ctrl", "Option", "Opt", "Alt", "Shift", "Command", "Cmd", "Meta"]
 
             if gui.GET_PLATFORM() != gui.MAC and 'Command' in shortcut:
                 gui.warn("Shortcuts containing <Command> only supported on Mac")
                 return
+
+            if gui.GET_PLATFORM() == gui.MAC and 'Alt' in shortcut:
+                shortcut = shortcut.replace("Alt", "Option")
 
             # shrink down the accelerators
             acc = shortcut.replace("Control", "Ctrl")
@@ -10690,18 +10699,25 @@ class gui(object):
             if shortcut[-1] in "0123456789" and "Key" not in shortcut:
                 shortcut = shortcut[:-1] + "Key-" + shortcut[-1]
 
-            shortcut = "<" + shortcut + ">"
-            
+            # do we need two bindings?
+            if gui.GET_PLATFORM() != gui.MAC and shortcut[shortcut.rindex('-')+1:] in 'ABCDEFGHIJKLMNOPQRSTUVWXYZ':
+                shortcut = ["<"+shortcut+">", "<"+shortcut[:-1]+shortcut[-1:].lower()+">"]
+            elif gui.GET_PLATFORM() == gui.MAC and 'Control' in shortcut and 'Shift' in shortcut:
+                # auto created on Mac ?!?
+                shortcut = []
+                gui.trace("Skipping accelerator: %s", acc)
+            else:
+                shortcut = ["<"+shortcut+">"]
+
             gui.trace("Adding accelerator: %s", acc)
             self.widgetManager.verify(self.Widgets.Accelerators, acc, array=True)
             self.widgetManager.log(self.Widgets.Accelerators, acc)
 
-            if gui.GET_PLATFORM() != gui.MAC and u is not None and createBinding:
-                gui.trace("Binding: %s to %s", shortcut, u)
-                if kind == 'cb':
-                    self.topLevel.bind_all(shortcut, lambda e: self._menuCheckButtonBind(title, item, u))
-                else:
-                    self.topLevel.bind_all(shortcut, u)
+            if func is not None and createBinding:
+                if kind == 'cb': func = lambda e: self._menuCheckButtonBind(title, item, func)
+                for s in shortcut:
+                    gui.trace("Binding: %s to %s", s, func)
+                    self.topLevel.bind_all(s, func)
 
         if item == "-" or kind == "separator":
             theMenu.add_separator()
@@ -10710,7 +10726,7 @@ class gui(object):
                 self.warn("Unable to make topLevel menus (%s) on Mac", item)
             else:
                 self.menuBar.add_command(
-                    label=item, command=u, accelerator=acc, underline=underline)
+                    label=item, command=func, accelerator=acc, underline=underline)
         elif kind == "rb":
             varName = title + "rb" + item
             newRb = False
@@ -10720,7 +10736,7 @@ class gui(object):
                 newRb = True
                 var = StringVar(self.topLevel)
                 self.widgetManager.add(self.Widgets.Menu, varName, var, group=WidgetManager.VARS)
-            theMenu.add_radiobutton(label=rb_id, command=u, variable=var, value=rb_id, accelerator=acc, underline=underline)
+            theMenu.add_radiobutton(label=rb_id, command=func, variable=var, value=rb_id, accelerator=acc, underline=underline)
             if newRb:
                 self.setMenuRadioButton(title, item, rb_id)
         elif kind == "cb":
@@ -10729,14 +10745,14 @@ class gui(object):
             var = BooleanVar(self.topLevel)
             var.set(False)
             self.widgetManager.add(self.Widgets.Menu, varName, var, group=WidgetManager.VARS)
-            theMenu.add_checkbutton(label=item, command=u, variable=var, onvalue=True, offvalue=False, accelerator=acc, underline=underline)
+            theMenu.add_checkbutton(label=item, command=func, variable=var, onvalue=True, offvalue=False, accelerator=acc, underline=underline)
         elif kind == "sub":
             self.widgetManager.verify(self.Widgets.Menu, item)
             subMenu = Menu(theMenu, tearoff=False)
             self.widgetManager.add(self.Widgets.Menu, item, subMenu)
             theMenu.add_cascade(menu=subMenu, label=item)
         else:
-            theMenu.add_command(label=item, command=u, accelerator=acc, underline=underline)
+            theMenu.add_command(label=item, command=func, accelerator=acc, underline=underline)
 
     # used to wrap check button bindings, so can also toggle
     def _menuCheckButtonBind(self, title, item, func):
@@ -14052,18 +14068,18 @@ class SimpleTable(ScrollPane):
             self.canvas.config(bg=bg)
             self.interior.config(bg=bg)
 
-        if "activebg" in kw:
-            self.fonts["selectedBg"] = kw.pop("activebg", self.fonts['selectedBg'])
+        if "activebg" in kw or "activebackground" in kw:
+            self.fonts["selectedBg"] = kw.pop("activebg", kw.pop("activebackground", self.fonts['selectedBg']))
             updateCells = True
-        if "activefg" in kw:
-            self.fonts["selectedFg"] = kw.pop("activefg", self.fonts['selectedFg'])
+        if "activefg" in kw or "activeforeground" in kw:
+            self.fonts["selectedFg"] = kw.pop("activefg", kw.pop("activeforeground", self.fonts['selectedFg']))
             updateCells = True
 
-        if "inactivebg" in kw:
-            self.fonts["inactiveBg"] = kw.pop("inactivebg", self.fonts['inactiveBg'])
+        if "inactivebg" in kw or "inactivebackground" in kw:
+            self.fonts["inactiveBg"] = kw.pop("inactivebg", kw.pop("inactivebackground", self.fonts['inactiveBg']))
             updateCells = True
-        if "inactivefg" in kw:
-            self.fonts["inactiveFg"] = kw.pop("inactivefg", self.fonts['inactiveFg'])
+        if "inactivefg" in kw or "inactiveforeground" in kw:
+            self.fonts["inactiveFg"] = kw.pop("inactivefg", kw.pop("inactiveforeground", self.fonts['inactiveFg']))
             updateCells = True
 
         if "font" in kw:
