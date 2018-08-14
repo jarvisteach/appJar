@@ -72,19 +72,19 @@ app.go()
         * `actionButton` - set the button text for each row (can be a list of button names)   
         * `addButton` - set the button text for the Entry row  
         * `showMenu` - boolean to show a right-click menu  
-        * `edit` - function to call when right-click menu pressed
+        * `edit` - function to call when right-click menu pressed  
         * `disabledEntries` - pass a list of numbers, to disable entry boxes in those positions  
-        * `border` - the style of the cell border: `sunken`, `solid`, etc
+        * `border` - the style of the cell border: `sunken`, `solid`, etc  
         * `wrap` - The maximum number of pixels to show per line in a cell, defaults to 250 pixels  
         * `horizontal` - boolean to align action buttons horizontally (default) or vertically  
 
     ![Table](img/dev/1_gridMenu.png)   
 
-#### Connecting to Databases
+#### Connecting to Databases  
 
 * `.addDbTable(title, db, table)`  
     Will connect to the specified database, and show all rows in the specified table.  
-    appJar will query the table to detect the PrimaryKey, and use this as the key when selecting the row.
+    appJar will query the table to detect the PrimaryKey, and use this as the key when selecting the row.  
 
 * `.replaceDBTable(title, db, table)`  
     Will replace the currently shown data in the Table, with the data found in the specified database/table.  
@@ -155,7 +155,7 @@ To have the **Press** button on the entries row add a new row of data, try the f
     If the new data has fewer items, the remaining header cells will be emptied.  
 
 * `.deleteTableRow(title, rowNum)`  
-    Delete the specified row from the specified Table.
+    Delete the specified row from the specified Table.  
 
 * `.deleteAllTableRows(title)`  
     Delete all rows from the specified Table (except the header row).  
@@ -206,7 +206,7 @@ app.go()
 
 #### Set Trees
 * `.setTreeClickFunction(title, func)`  
-    Register a function to call when an item is clicked.
+    Register a function to call when an item is clicked.  
     Will receive the name of the tree, and an `id` attribute, if set in the XML.  
 
 * `.setTreeDoubleClickFunction(title, func)`  
