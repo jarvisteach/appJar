@@ -10694,6 +10694,7 @@ class gui(object):
             acc = acc.replace("Command", "Cmd")
             acc = acc.replace("Option", "Opt")
             acc = acc.replace("Key-", "")
+            acc = acc.replace("-", "+")
 
             # try to fix numerics
             if shortcut[-1] in "0123456789" and "Key" not in shortcut:
@@ -11016,7 +11017,7 @@ class gui(object):
         self.widgetManager.add(self.Widgets.Menu, "EDIT", editMenu)
 
         if gui.GET_PLATFORM() == gui.MAC:
-            shortcut = "Cmd+"
+            shortcut = "Command-"
         else:
             shortcut = "Control-"
 

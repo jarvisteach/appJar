@@ -1611,7 +1611,12 @@ def test_tables():
         actionButton=["aaa", "bbb"],
         horizontal=False,
         addRow=tester_function,
-        wrap=200)
+        wrap=200,
+        inactiveFg='red',
+        inactiveBg='red',
+        activeFg='red',
+        activeBg='red',
+        )
 
     with pytest.raises(Exception) :
         app.addTable("g1", [])
@@ -1619,6 +1624,11 @@ def test_tables():
     app.getTableEntries("t1")
     app.getTableSelectedCells("t1")
     app.addTableRow("t1", ["aaa", 22, "Male"])
+
+    app.setTableActiveFg('t1', 'green')
+    app.setTableActiveBg('t1', 'green')
+    app.setTableInactiveFg('t1', 'green')
+    app.setTableInactiveBg('t1', 'green')
 
     # call generic setter functions
     test_setters("Table", "g1")
