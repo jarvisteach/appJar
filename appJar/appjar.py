@@ -10765,6 +10765,8 @@ class gui(object):
             var.set(False)
             self.widgetManager.add(self.Widgets.Menu, varName, var, group=WidgetManager.VARS)
             theMenu.add_checkbutton(label=item, command=func, variable=var, onvalue=True, offvalue=False, accelerator=acc, underline=underline)
+            print('AJ var:', var.get())
+            print('AJ func:', self.getMenuCheckBox(title, item))
         elif kind == "sub":
             self.widgetManager.verify(self.Widgets.Menu, item)
             subMenu = Menu(theMenu, tearoff=False)

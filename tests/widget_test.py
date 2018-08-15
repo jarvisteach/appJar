@@ -1952,6 +1952,7 @@ def test_menus():
     app.createMenu("MEN2")
     app.addMenuItem("MEN2", "MM2", tester_function, shortcut="Control-k", underline=2)
     app.addMenuSeparator("MEN2")
+    print('add CB2')
     app.addMenuCheckBox("MEN2", "CB2", tester_function, shortcut="Control-Shift-c", underline=2)
     app.addMenuRadioButton("MEN2", "a", "BB2", tester_function, shortcut="Control-2", underline=2)
     app.addMenuRadioButton("MEN2", "a", "BB3", tester_function)
@@ -1963,7 +1964,9 @@ def test_menus():
     app.addMenuRadioButton("sub1", "b", "BB33", tester_function, underline=0)
     app.addMenu("PRESS", tester_function, "P", 4)
 
+    print('TEST get:', app.getMenuCheckBox("MEN2", "CB2"))
     assert app.getMenuCheckBox("MEN2", "CB2") is False
+    quit()
     assert app.getMenuCheckBox("sub1", "CB23") is False
 
     assert app.getMenuRadioButton("MEN2", "a") == "BB2"
