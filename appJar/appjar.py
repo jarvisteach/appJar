@@ -10975,7 +10975,8 @@ class gui(object):
     def _getMenu(self, menu, title, kind):
         title = menu + kind + title
         var = self.widgetManager.get(self.Widgets.Menu, title, group=WidgetManager.VARS)
-        return var.get()
+        if var.get(): return True
+        else: return False
 
     def getMenuCheckBox(self, menu, title):
         return self._getMenu(menu, title, "cb")
