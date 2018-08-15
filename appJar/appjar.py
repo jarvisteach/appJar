@@ -4239,6 +4239,7 @@ class gui(object):
             frame = ttk.Frame(self._getContainerProperty('container'))
             self._getContainerProperty('container').add(frame, text=title)
             self._addContainer(noteTitle, self.Widgets.Note, frame, 0, 1, sticky)
+            return frame
         elif fType == self.Widgets.PanedFrame:
             # if we previously put a frame for widgets
             # remove it
