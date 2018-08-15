@@ -10663,6 +10663,7 @@ class gui(object):
             except:
                 theMenu = self.createMenu(title)
                 if theMenu is None:
+                    gui.warn('Unable to create menuu: %s', title)
                     return
 
         if underline > -1 and self.platform == self.MAC:
@@ -10674,13 +10675,15 @@ class gui(object):
         acc = None
 
         if shortcut is not None:
+            # MODIFIERS=["Control", "Ctrl", "Option", "Opt", "Alt", "Shift", "Command", "Cmd", "Meta"]
+            shortcut = shortcut.title()
+
+            # platform checks & swaps
+            ###
+
             if shortcut[0] == "<":
                 gui.warn("Please specify menu: %s-%s shortcut without chevrons", title, item)
                 return
-
-            shortcut = shortcut.title()
-
-            # MODIFIERS=["Control", "Ctrl", "Option", "Opt", "Alt", "Shift", "Command", "Cmd", "Meta"]
 
             if gui.GET_PLATFORM() != gui.MAC and 'Command' in shortcut:
                 gui.warn("Shortcuts containing <Command> only supported on Mac")
@@ -10688,38 +10691,52 @@ class gui(object):
 
             if gui.GET_PLATFORM() == gui.MAC and 'Alt' in shortcut:
                 shortcut = shortcut.replace("Alt", "Option")
+            elif gui.GET_PLATFORM() != gui.MAC and 'Option' in shortcut:
+                shortcut = shortcut.replace("Option", "Alt")
 
-            # shrink down the accelerators
+            # shrink down the accelerator
+            ###
+
             acc = shortcut.replace("Control", "Ctrl")
             acc = acc.replace("Command", "Cmd")
             acc = acc.replace("Option", "Opt")
             acc = acc.replace("Key-", "")
             acc = acc.replace("-", "+")
 
+            gui.trace("Reserving accelerator: %s for menu item: %s-%s", acc, title, item)
+            self.widgetManager.verify(self.Widgets.Accelerators, acc, array=True)
+            self.widgetManager.log(self.Widgets.Accelerators, acc)
+
+            # now fix the shortcut
+            ###
+
             # try to fix numerics
             if shortcut[-1] in "0123456789" and "Key" not in shortcut:
                 shortcut = shortcut[:-1] + "Key-" + shortcut[-1]
 
             # do we need two bindings?
-            if gui.GET_PLATFORM() != gui.MAC and shortcut[shortcut.rindex('-')+1:] in 'ABCDEFGHIJKLMNOPQRSTUVWXYZ':
-                shortcut = ["<"+shortcut+">", "<"+shortcut[:-1]+shortcut[-1:].lower()+">"]
-            elif gui.GET_PLATFORM() == gui.MAC and 'Control' in shortcut and 'Shift' in shortcut:
-                # auto created on Mac ?!?
-                shortcut = []
+            ###
+
+            bits = shortcut.split('-')
+            shortcuts = ['<'+shortcut+'>']
+
+            # auto created on Mac, so ignore ?!?
+            if gui.GET_PLATFORM() == gui.MAC and 'Control' in shortcut and 'Shift' in shortcut:
+                shortcuts = []
                 gui.trace("Skipping accelerator: %s", acc)
-            else:
-                shortcut = ["<"+shortcut+">"]
+            # create both cases of the shortcut
+            elif bits[-1].upper() in 'ABCDEFGHIJKLMNOPQRSTUVWXYZ':
+                bits[-1] = bits[-1].swapcase()
+                shortcuts.append('<'+'-'.join(bits)+'>')
 
-            gui.trace("Adding accelerator: %s", acc)
-            self.widgetManager.verify(self.Widgets.Accelerators, acc, array=True)
-            self.widgetManager.log(self.Widgets.Accelerators, acc)
-
+            # do the actual bindings
             if func is not None and createBinding:
                 if kind == 'cb': func = lambda e: self._menuCheckButtonBind(title, item, func)
-                for s in shortcut:
+                for s in shortcuts:
                     gui.trace("Binding: %s to %s", s, func)
                     self.topLevel.bind_all(s, func)
 
+        # now, let's create the actual menu item
         if item == "-" or kind == "separator":
             theMenu.add_separator()
         elif kind == "topLevel" or title is None:
