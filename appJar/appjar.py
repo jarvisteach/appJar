@@ -8812,7 +8812,8 @@ class gui(object):
                     self.check("access_underline_check", name="Underline", tip="Underline all text", font=self._accessFont)
                     self.check("access_overstrike_check", name="Overstrike", pos=('p',1), tip="Strike out all text", font=self._accessFont)
                 with self.labelFrame("access_colour_labelframe", sticky="news", name="Colours") as lf:
-                    lf.config(padx=5, pady=5, font=self._accessFont)
+                    if not self.ttk:
+                        lf.config(padx=5, pady=5, font=self._accessFont)
                     self.label("access_fg_text", "Foreground:", sticky="ew", anchor="w", font=self._accessFont)
                     self.label("access_fg_colBox", "", pos=('p',1), sticky="ew", submit=_changeFg, relief="ridge", tip="Click here to set the foreground colour", font=self._accessFont, width=14)
                     self.label("access_bg_text", "Background:", sticky="ew", anchor="w", font=self._accessFont)
