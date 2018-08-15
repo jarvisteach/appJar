@@ -21,7 +21,9 @@ with gui() as app:
     app.addMenuItem('a', 'd', shortcut='Alt-shift-d', func=keyPress)
     app.addMenuItem('a', 'f', shortcut='Control-Shift-f', func=keyPress)
     app.addMenuItem('a', 'g', shortcut='Control-shift-g', func=keyPress)
+    app.addMenuItem('a', 'u', shortcut='Shift-u', func=keyPress)
     app.addMenuItem('a', 'r', shortcut='r', func=keyPress)
+    app.addMenuItem('a', 'U', shortcut='u', func=keyPress)
 
 #    print('binding ctrl-shift-S')
 #    app.topLevel.bind_all('<Control-Shift-S>', keyPress)

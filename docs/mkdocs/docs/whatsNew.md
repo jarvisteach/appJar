@@ -21,6 +21,7 @@
 * <div class="cb cb-imp">Improved</div>Better change log? - [#219](https://github.com/jarvisteach/appJar/issues/219)
 * <div class="cb cb-imp">Improved</div>appJar now uses tkinter style `config` functions - [#49](https://github.com/jarvisteach/appJar/issues/49)
 * <div class="cb cb-fix">Fixed</div>[Menu check boxes](/pythonBars/#menubar) now toggle using the keyboard shortcut, and also work properly on Mac - [#512](https://github.com/jarvisteach/appJar/issues/512)
+* <div class="cb cb-fix">Fixed</div>[Menu](/pythonBars/#menubar) shortcuts improved, to handle more cases - [#499](https://github.com/jarvisteach/appJar/issues/499)
 * <div class="cb cb-fix">Fixed</div>Issue where [blocking subwindows](/pythonSubWindows/#startstop-sub-windows) wouldn't work - [#491](https://github.com/jarvisteach/appJar/issues/491)
 * <div class="cb cb-fix">Fixed</div>Bug where Labelled widgets weren't [destroyed](/pythonWidgetOptions/#widget-manipulation) properly - [#489](https://github.com/jarvisteach/appJar/issues/489)
 * <div class="cb cb-fix">Fixed</div>Issue with deleting rows on [tables](/pythonDevWidgets/#table) - [#482](https://github.com/jarvisteach/appJar/issues/482)
