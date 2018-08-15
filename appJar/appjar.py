@@ -4211,8 +4211,9 @@ class gui(object):
             # add to top of stack
             self.containerStack[-1]['widgets'] = True
             tabTitle = self._getContainerProperty('title') + "__" + title
-            self._addContainer(tabTitle,
-                self.Widgets.Tab, self._getContainerProperty('container').addTab(title), 0, 1, sticky)
+            tab = self._getContainerProperty('container').addTab(title)
+            self._addContainer(tabTitle, self.Widgets.Tab, tab, 0, 1, sticky)
+            return tab
         elif fType == self.Widgets.Notebook:
             if not self.ttkFlag:
                 raise Exception("Cannot create a ttk Notebook, unless ttk is enabled.")
@@ -4400,7 +4401,7 @@ class gui(object):
         elif self._getContainerProperty('type') != self.Widgets.Notebook:
             raise Exception(
                 "Can't add a Note to the current container: ", self._getContainerProperty('type'))
-        self.startContainer(self.Widgets.Note, title)
+        return self.startContainer(self.Widgets.Note, title)
 
     def stopNote(self):
         if self._getContainerProperty('type') != self.Widgets.Note:
@@ -4826,9 +4827,10 @@ class gui(object):
         tf = self.widgetManager.get(self.Widgets.TabbedFrame, self._getContainerProperty("title"))
         tf.setBeforeTab(beforeTab)
         tf.setAfterTab(afterTab)
-        self.startContainer(self.Widgets.Tab, title)
+        tab = self.startContainer(self.Widgets.Tab, title)
         tf.setBeforeTab()
         tf.setAfterTab()
+        return tab
 
     def getTabbedFrameSelectedTab(self, title):
         nb = self.widgetManager.get(self.Widgets.TabbedFrame, title)
@@ -5323,7 +5325,7 @@ class gui(object):
 
     ###### PAGED WINDOWS #######
     def startPagedWindow(self, title, row=None, column=0, colspan=0, rowspan=0):
-        self.startContainer( self.Widgets.PagedWindow, title, row, column, colspan, rowspan, sticky="nsew")
+        return self.startContainer( self.Widgets.PagedWindow, title, row, column, colspan, rowspan, sticky="nsew")
 
     def setPagedWindowPage(self, title, page):
         pager = self.widgetManager.get(self.Widgets.PagedWindow, title)
@@ -5387,7 +5389,7 @@ class gui(object):
         pageNum = self._getContainerProperty('container').frameStack.getNumFrames() + 1
         pageTitle = self._getContainerProperty('title') + "__" + str(pageNum)
 
-        self.startContainer(self.Widgets.Page, pageTitle, row=None, column=None, colspan=None, rowspan=None, sticky=sticky)
+        return self.startContainer(self.Widgets.Page, pageTitle, row=None, column=None, colspan=None, rowspan=None, sticky=sticky)
 
     def stopPage(self):
         if self._getContainerProperty('type') == self.Widgets.Page:
@@ -5425,7 +5427,7 @@ class gui(object):
 
 
     def startScrollPane(self, title, row=None, column=0, colspan=0, rowspan=0, sticky="NSEW", disabled=""):
-        self.startContainer(self.Widgets.ScrollPane, title, row, column, colspan, rowspan, sticky, disabled)
+        return self.startContainer(self.Widgets.ScrollPane, title, row, column, colspan, rowspan, sticky, disabled)
 
     # functions to stop the various containers
     def stopContainer(self): self._removeContainer()
@@ -13094,7 +13096,7 @@ class PagedWindow(Frame, object):
             self.posLabel.config(bg=kw["bg"])
             self.titleLabel.config(bg=kw["bg"])
         if "fg" in kw:
-            self.poslabel.config(fg=kw["fg"])
+            self.posLabel.config(fg=kw["fg"])
             self.titleLabel.config(fg=kw["fg"])
             kw.pop("fg")
 
