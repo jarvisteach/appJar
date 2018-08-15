@@ -6,8 +6,11 @@ Instead, just [DOWNLOAD](https://github.com/jarvisteach/appJar/blob/appJar/relea
 ##Pip Installation  
 However, if you can install python packages - we support that too!  
 
-`sudo pip3 install appjar` - this will download & install **appJar** ready for python 3.  
-`sudo pip3 install appjar --upgrade` - this will upgrade **appJar** to the latest version.  
+`pip3 install appjar` - this will download & install **appJar** ready for python 3.  
+`pip3 install appjar --upgrade` - this will upgrade **appJar** to the latest version.  
+
+**NB.** If you're on linux/Mac you might need to use sudo: `sudo pip3 install appjar`  
+
 ```python
 # import the appJar library
 from appJar import gui
