@@ -10,6 +10,7 @@ with gui() as app:
     app.fg = 'white'
     app.font = 20
 
+    rb = app.radio('a', 'b')
     cb = app.checkBox('a', selectcolor='blue')
     app.setCheckBoxSelectColour('a', 'green')
     # the bg colour of the box
