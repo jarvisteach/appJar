@@ -1158,12 +1158,12 @@ class gui(object):
 
     def _startExternalDrag(self, event):
         """ starts external drags - not yet supported """
-        widgType = gui.GET_WIDGET_TYPE(event.widget)
+        widgType = gui.GET_WIDGET_CLASS(event.widget)
         self.warn("Unable to initiate drag events: %s", widgType)
 
     def _receiveExternalDrop(self, event):
         """ receives external drag events """
-        widgType = gui.GET_WIDGET_TYPE(event.widget)
+        widgType = gui.GET_WIDGET_CLASS(event.widget)
         event.widget.dropData = event.data
         if not hasattr(event.widget, 'dndFunction'):
             self.warn("Error - external drop target not correctly configured: %s", widgType)
@@ -2727,7 +2727,7 @@ class gui(object):
                     # winfo_children returns ScrolledText as a Frame
                     # therefore can't call some functions
                     # this gets the ScrolledText version
-                    if gui.GET_WIDGET_TYPE(child) == "Frame":
+                    if gui.GET_WIDGET_CLASS(child) == "Frame":
                         for val in self.widgetManager.group(self.Widgets.TextArea).values():
                             if str(val) == str(child):
                                 child = val
@@ -2870,17 +2870,6 @@ class gui(object):
 #####################################
 # FUNCTION to configure widgets
 #####################################
-    def _getItems(self, kind):
-        if kind in [self.Widgets.FileEntry, self.Widgets.DirectoryEntry]:
-            return self.widgetManager.group(self.Widgets.Entry)
-        elif kind == self.Widgets.Page: # no dict of pages - the container manages them...
-            return self.widgetManager.group(self.Widgets.PagedWindow)
-        elif kind == self.Widgets.Tab: # no dict of tabs - the container manages them...
-            return self.widgetManager.group(self.Widgets.TabbedFrame)
-        elif kind == self.Widgets.Note:
-            return self.widgetManager.group(self.Widgets.Notebook)
-        else:
-            return self.widgetManager.group(kind)
 
     def configureAllWidgets(self, kind, option, value):
         items = list(self.widgetManager.group(kind))
@@ -3003,7 +2992,7 @@ class gui(object):
                     else:
                         self.warn("Error configuring %s: can't set ttk style, not in ttk mode.", name)
                 elif option in ['align', 'anchor']:
-                    if kind == self.Widgets.Entry or gui.GET_WIDGET_TYPE(item) == 'SelectableLabel':
+                    if kind == self.Widgets.Entry or gui.GET_WIDGET_CLASS(item) == 'SelectableLabel':
                         if value == W: value = LEFT
                         elif value == E: value = RIGHT
                         item.config(justify=value)
@@ -3748,12 +3737,12 @@ class gui(object):
         return row, column, colspan, rowspan
 
     @staticmethod
-    def GET_WIDGET_TYPE(widget):
+    def GET_WIDGET_CLASS(widget):
         return widget.__class__.__name__
 
     @staticmethod
     def SET_WIDGET_FG(widget, fg, external=False):
-        widgType = gui.GET_WIDGET_TYPE(widget)
+        widgType = gui.GET_WIDGET_CLASS(widget)
         gui.trace("SET_WIDGET_FG: %s - %s", widgType, fg)
 
         # only configure these widgets if external
@@ -3842,7 +3831,7 @@ class gui(object):
         if bg is None: # ignore empty colours
             return
 
-        widgType = gui.GET_WIDGET_TYPE(widget)
+        widgType = gui.GET_WIDGET_CLASS(widget)
         isDarwin = gui.GET_PLATFORM() == gui.MAC
         isLinux = gui.GET_PLATFORM() == gui.LINUX
 
@@ -5650,7 +5639,7 @@ class gui(object):
     # function to destroy widget & all children
     # will also attempt to remove all trace from config dictionaries
     def cleanseWidgets(self, widget):
-        widgType = gui.GET_WIDGET_TYPE(widget)
+        widgType = gui.GET_WIDGET_CLASS(widget)
         gui.trace("Attempting to cleanse: %s", widgType)
 
         # make sure we've cleansed any children first
@@ -5686,7 +5675,7 @@ class gui(object):
                             or widget.__dict__.get('SKIP_CLEANSE', False):
             pass # not logged in WidgetManager
         else:
-            self.warn("Unable to destroy %s, during cleanse - NO APPJAR TYPE", gui.GET_WIDGET_TYPE(widget))
+            self.warn("Unable to destroy %s, during cleanse - NO APPJAR TYPE", gui.GET_WIDGET_CLASS(widget))
 
     # functions to hide & show the main window
     def hide(self, btn=None):
@@ -10145,7 +10134,7 @@ class gui(object):
 
     def getFocus(self):
         widg = self.topLevel.focus_get()
-        return self._getWidgetName(widg)
+        return self.widgetManager.getName(widg)
 
 ####################################
 ## Functions to get widget details
@@ -10162,35 +10151,6 @@ class gui(object):
                     return name
         return None
 
-    def _getWidgetName(self, widg):
-        name = gui.GET_WIDGET_TYPE(widg)
-        if name.lower() == "tk":
-            return self._getTopLevel().title()
-        elif name == "Listbox":
-            return self._lookupValue(self.widgetManager.group(self.Widgets.ListBox), widg)
-        elif name == "Button":
-            # merge together Buttons & Toolbar Buttons
-            z = self.widgetManager.group(self.Widgets.Button).copy()
-            z.update(self.widgetManager.group(self.Widgets.Toolbar))
-            return self._lookupValue(z, widg)
-        elif name == "Entry":
-            return self._lookupValue(self.widgetManager.group(self.Widgets.Entry), widg)
-        elif name == "Scale":
-            return self._lookupValue(self.widgetManager.group(self.Widgets.Scale), widg)
-        elif name == "Checkbutton":
-            return self._lookupValue(self.widgetManager.group(self.Widgets.CheckBox), widg)
-        elif name == "Radiobutton":
-            return self._lookupValue(self.widgetManager.group(self.Widgets.RadioButton), widg)
-        elif name == "Spinbox":
-            return self._lookupValue(self.widgetManager.group(self.Widgets.SpinBox), widg)
-        elif name == "OptionMenu":
-            return self._lookupValue(self.widgetManager.group(self.Widgets.OptionBox), widg)
-        elif name == "Text":
-            return self._lookupValue(self.widgetManager.group(self.Widgets.TextArea), widg)
-        elif name == "Link":
-            return self._lookupValue(self.widgetManager.group(self.Widgets.Link), widg)
-        else:
-            raise Exception("Unknown widget type: " + name)
 
 #####################################
 # FUNCTIONS for progress bars (meters)
@@ -12265,11 +12225,11 @@ class gui(object):
                 if spaces == 1:
                     gui.trace("%s", self.node.tagName)
                 for c in self.node.childNodes:
-                    if gui.GET_WIDGET_TYPE(c) == "Element":
+                    if gui.GET_WIDGET_CLASS(c) == "Element":
                         gui.trace("%s >> %s", " "*spaces, c.tagName)
                         node = AjTreeData(c)
                         node.getSelected(spaces + 2)
-                    elif gui.GET_WIDGET_TYPE(c) == "Text":
+                    elif gui.GET_WIDGET_CLASS(c) == "Text":
                         val = c.data.strip()
                         if len(val) > 0:
                             gui.trace("%s >>>> %s", " "*spaces, val)
@@ -14818,7 +14778,7 @@ class CopyAndPaste():
         self.inUse = True
         # store globals
         w = widget
-        wt = gui.GET_WIDGET_TYPE(widget)
+        wt = gui.GET_WIDGET_CLASS(widget)
 
         if wt != "Menu":
             self.widget = w
@@ -14877,7 +14837,7 @@ class CopyAndPaste():
     def paste(self):
         if self.widgetType in ["Entry", "AutoCompleteEntry"]:
             # horrible hack to clear default text
-            name = self.gui._getWidgetName(self.widget)
+            name = self.widgetManager.getName(self.widget)
             self.gui._updateEntryDefault(name, mode="in")
         self.widget.event_generate('<<Paste>>')
         self.widget.selection_clear()
@@ -15638,6 +15598,16 @@ class WidgetManager(object):
             widgGroup[widgetName] = widget
 
         widget.APPJAR_TYPE = widgetType
+
+    def getName(self, widget):
+        if widget is not None and hasattr(widget, 'APPJAR_TYPE'):
+            widgetType = widget.APPJAR_TYPE
+            widgGroup = self.group(widgetType, None)
+            if widgGroup is not None:
+                for name, obj in widgGroup.items():
+                    if obj == widget:
+                        return name
+        return None
 
     def log(self, widgetType, widget, group=None):
         """ Used for adding items to an array """
