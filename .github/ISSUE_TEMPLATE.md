@@ -19,7 +19,7 @@ Replace this with any error messages that are produced.
 
 ## Sample code, demonstrating the issue
 ---
-Replace this with a cut-down version of code, that demonstartes the issue.  
+Replace this with a cut-down version of code, that demonstrates the issue.  
 
 ## What steps are needed to reproduce the bug
 ---
