@@ -17,7 +17,7 @@ photo="R0lGODlhPQBEAPeoAJosM//AwO/AwHVYZ/z595kzAP/s7P+goOXMv8+fhw/v739/f+8PD98fH
 
 sys.path.append("../")
 from appJar import gui
-from appJar.appjar import Meter, Properties, PieChart, DraggableWidget, AjText, AjRectangle, AjPoint, AjScrolledText, SelectableLabel, ToggleFrame, PagedWindow, Page, SubWindow, ScrollPane, FrameStack
+from appJar.appjar import Meter, Properties, PieChart, DraggableWidget, AjText, AjRectangle, AjPoint, AjScrolledText, SelectableLabel, ToggleFrame, PagedWindow, Page, SubWindow, ScrollPane, FrameStack, WIDGET_NAMES
 
 PY_VER = str(sys.version_info[0]) + "." + str(sys.version_info[1])
 
@@ -2024,8 +2024,8 @@ def test_menus():
 def dismissEditMenu():
     for i in range(5):
         print("dismissit...")
-        app.widgetManager.get(app.Widgets.Menu, "EDIT").unpost()
-        app.widgetManager.get(app.Widgets.Menu, "EDIT").invoke(i)
+        app.widgetManager.get(WIDGET_NAMES.Menu, "EDIT").unpost()
+        app.widgetManager.get(WIDGET_NAMES.Menu, "EDIT").invoke(i)
         time.sleep(.2)
 
 def test_rightClick():
@@ -2556,7 +2556,7 @@ def test_containers():
     app.addLabel("pg2_np", TEXT_ONE)
     app.stopPage()
 
-    pw = app.getWidget(app.Widgets.PagedWindow, "pg1")
+    pw = app.getWidget(WIDGET_NAMES.PagedWindow, "pg1")
     assert isinstance(pw, PagedWindow)
     pw.showFirst()
     pw.showFirst()
@@ -2633,7 +2633,7 @@ def test_containers():
     with pytest.raises(Exception) :
         app.stopScrollPane()
 
-    sp = app.getWidget(app.Widgets.ScrollPane, "sp1")
+    sp = app.getWidget(WIDGET_NAMES.ScrollPane, "sp1")
     assert isinstance(sp, ScrollPane)
 
     for hHidden in [True, False]:
