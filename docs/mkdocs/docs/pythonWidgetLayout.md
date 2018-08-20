@@ -184,71 +184,77 @@ with gui("LABS", "400x400", sticky="news") as app:
 ## Widget Positioning
 ---
 
-Once you've laid out your widgets, the next most important thing is how they line up in their rows and columns.  
+Once you've laid out your widgets, the next most important thing is how they fill the space in their rows and columns.  
 
-**NB.** These only take affect from the point they are added, so include them before adding the widgets.  
+**NB.** These settings only take affect from the point at which they are set, so:  
 
-There are two things you can configure:    
+* If you want them to affect the whole GUI, set them at the start.  
+* If you want different settings for different groups of widgets, you'll need to set them before each group.  
+* If you want different settigs for every widget, you'll need to set them before every widget!  
+
+There are two settings you can configure:  
 
 * How columns and rows stretch to fill the GUI - **stretchiness**  
 * How widgets stretch to fill their cells - **stickiness**  
 
-Note, you can also change these settings for [individual widgets](pythonWidgetOptions/#advanced-looks)
-
-####Set Stretch & Sticky
+### Setting Stretchiness  
 
 * `.setStretch(sides)`  
-    This tells rows & columns how to stretch when the GUI is resized.  
+    This tells rows & columns how to stretch to fill the GUI, especially when the GUI is resized.  
     It allows them to adjust to fill the available space:
     * `none` - don't stretch  
-    * `row` - only rows should stretch down  
-    * `column` - only columns should stretch across  
-    * `both` - stretch rows & columns  
-* `.setSticky(sides)`  
-    This determines which sides of the grid-cell the widget will stick to.  
-    It should be a string, made up of any combination of `n`, `e`, `s` or `w`  
-    By default, most widgets use `"ew"`
+    * `row` - only rows will stretch (down the GUI)  
+    * `column` - only columns will stretch (across the GUI)  
+    * `both` - rows & columns will stretch across and and down  
 
-### Columns & Rows Stretchiness
+By default:
 
-By default, the columns stretch (equally) to fill the width of the GUI, but rows don't - they take up the minimum space required.    
+* Columns stretch to fill the width of the GUI  
+* Rows don't, they take up the minimum space required  
 
 ![Expand](img/conf/exp1.png)  
 
-It's possible to tell the rows to stretch too:
+It's possible to tell the rows to stretch too:  
 
-![Expand](img/conf/exp1.png)  
 ```python
 app.setStretch("both")
 ``` 
 
-But, as you can see - this doesn't make much difference...
+But, as you can see below - this doesn't make any difference (yet).  
+Even though the rows have stretched down the GUI to fill the space, the widgets inside them aren't *sticking* to all sides.  
 
-###Widget Stickiness
+![Expand](img/conf/exp1.png)  
 
-Even if the cells in the columns & rows are stretching, the widgets inside them might not.  
+### Setting Stickiness  
+
+* `.setSticky(sides)`  
+    This determines which sides of a grid-cell a widget will stick to.  
+    It should be a string, made up of any combination of `n`, `e`, `s` or `w`  
+    By default, most widgets use `'ew'` - the stick to the sides, but not the top/bottom.  
+
+Even if the cells in the columns & rows are *stretching* (see above), the widgets inside them might not.  
 
 Widgets have a **stickiness** which tells them which sides of their cells to stick to.  
-
-Again, widgets are configured to stick to the left & right, but not the top & bottom.  
+By default, widgets are configured to stick to the left & right sides (`ew`), but not the top & bottom (`ns`).  
 
 To change this, you need to set a new stickiness:  
-
-![Expand](img/conf/exp2.png)  
 ```python
 app.setStretch("both")
 app.setSticky("nesw")
 ```
+![Expand](img/conf/exp2.png)  
 
-If you remove all stickiness, you end up with this:
+If you remove all stickiness:  
 
-![Expand](img/conf/exp3.png)  
 ```python
 app.setStretch("both")
 app.setSticky("")
-```  
+```
+You end up with:
 
-It's even possible to give each widget its own *stickiness*:  
+![Expand](img/conf/exp3.png)  
+
+And, remember, it's possible to give each widget its own *stickiness*:  
 ![Expand](img/conf/exp4.png)  
 ```python
 from appJar import gui
@@ -258,24 +264,55 @@ app=gui()
 app.setBg("blue")
 app.setStretch("both")
 
-app.setSticky("nw")
+app.setSticky("nw") #top-right
 app.addLabel("l1", "One", 0, 0)
 app.setLabelBg("l1", "yellow")
 
-app.setSticky("ne")
+app.setSticky("ne") #top-left
 app.addLabel("l2", "Two", 0, 1)
 app.setLabelBg("l2", "green")
 
-app.setSticky("sw")
+app.setSticky("sw") #bottom-left
 app.addLabel("l3", "Three", 1, 0)
 app.setLabelBg("l3", "pink")
 
-app.setSticky("se")
+app.setSticky("se") # bottom-right
 app.addLabel("l4", "Four", 1, 1)
 app.setLabelBg("l4", "Orange")
 
 app.go()
 ```  
+
+**NB** There is a function to modify an individual [widget's *stickiness*](pythonWidgetOptions/#advanced-looks)  
+
+### Examples
+
+You may want two widgets - one filling most of the GUI space, and a second one at the bottom, taking up minimal space:
+![Expand](img/conf/exp5.png)  
+```python
+from appJar import gui 
+
+with gui('Demo', '200x200') as app:
+    app.setStretch('both')
+    app.setSticky('news')
+    app.addLabel('top', 'The big part')
+    app.setLabelBg('top', 'red')
+
+    app.setStretch('column')
+    app.setSticky('esw')
+    app.addLabel('bottom', 'The little part')
+```
+
+**NB.** This can be achieved in much less code, using the new 1.0 syntax:  
+```python
+from appJar import gui 
+
+# set stretch & sticky for the whole GUI
+with gui('Demo', '200x200', stretch='both', sticky='news') as app:
+    app.label('The big part', bg='red')
+    # change stretch & sticky from this widget on
+    app.label('The little part', stretch='column', sticky='esw')
+```
 
 ##Widget Padding
 It's possible to configure how much empty space is around a widget.  
