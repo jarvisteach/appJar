@@ -2018,6 +2018,10 @@ def test_menus():
     app.disableMenuItem("MEN2", "MM2")
     app.enableMenuItem("MEN2", "MM2")
 
+    app.enableMenuItem("MEN2", "will_fail")
+    app.disableMenuItem("MEN2", "will_fail")
+    app.renameMenuItem("MEN2", "will_fail", 'failed')
+
     print(" >> not implemented...")
     #print("\t >> all tests complete")
 
