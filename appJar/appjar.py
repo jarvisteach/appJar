@@ -10911,7 +10911,8 @@ class gui(object):
         if 16 != imageObj.width() or imageObj.width() != imageObj.height():
             self.warn("Invalid image resolution for menu item %s (%s) - should be 16x16", title, image)
             #imageObj = imageObj.subsample(2,2)
-        theMenu.entryconfigure(title, image=imageObj, compound=align)
+        try: theMenu.entryconfigure(title, image=imageObj, compound=align)
+        except TclError: gui.error("Unable to set image for menu item: %s, in menu: %s - item not found", title, menu)
 
     def setMenuIcon(self, menu, title, icon, align="left"):
         image = os.path.join(self.icon_path, icon.lower() + ".png")
@@ -10966,19 +10967,23 @@ class gui(object):
 
     def disableMenuItem(self, title, item):
         theMenu = self.widgetManager.get(WIDGET_NAMES.Menu, title)
-        theMenu.entryconfigure(item, state=DISABLED)
+        try: theMenu.entryconfigure(item, state=DISABLED)
+        except TclError: gui.error("Unable to disable menu item: %s, in menu: %s - item not found", item, title)
 
     def enableMenuItem(self, title, item):
         theMenu = self.widgetManager.get(WIDGET_NAMES.Menu, title)
-        theMenu.entryconfigure(item, state=NORMAL)
+        try: theMenu.entryconfigure(item, state=NORMAL)
+        except TclError: gui.error("Unable to enable menu item: %s, in menu: %s - item not found", item, title)
 
     def renameMenu(self, title, newName):
         theMenu = self.widgetManager.get(WIDGET_NAMES.Menu, title)
-        self.menuBar.entryconfigure(title, label=newName)
+        try: self.menuBar.entryconfigure(title, label=newName)
+        except TclError: gui.error("Unable to rename menu: %s - item not found", title)
 
     def renameMenuItem(self, title, item, newName):
         theMenu = self.widgetManager.get(WIDGET_NAMES.Menu, title)
-        theMenu.entryconfigure(item, label=newName)
+        try: theMenu.entryconfigure(item, label=newName)
+        except TclError: gui.error("Unable to rename menu item: %s, in menu: %s - item not found", item, title)
 
     #################
     # wrappers for getters
