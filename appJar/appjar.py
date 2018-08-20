@@ -10677,7 +10677,7 @@ class gui(object):
             except:
                 theMenu = self.createMenu(title)
                 if theMenu is None:
-                    gui.warn('Unable to create menuu: %s', title)
+                    gui.warn('Unable to create menu: %s', title)
                     return
 
         if underline > -1 and self.platform == self.MAC:
@@ -10701,7 +10701,7 @@ class gui(object):
 
             if gui.GET_PLATFORM() != gui.MAC and 'Command' in shortcut:
                 gui.warn("Shortcuts containing <Command> only supported on Mac")
-                return
+                shortcut = shortcut.replace("Command", "Control")
 
             if gui.GET_PLATFORM() == gui.MAC and 'Alt' in shortcut:
                 shortcut = shortcut.replace("Alt", "Option")
