@@ -5685,6 +5685,8 @@ class gui(object):
             gui.trace("Destroying SubWindow: %s", k)
             wi = self.widgetManager.get(WIDGET_NAMES.SubWindow, k)
             self.cleanseWidgets(wi)
+
+        # access has widgets stored in the standard widget store
         self.accessMade = False
 
 #####################################
