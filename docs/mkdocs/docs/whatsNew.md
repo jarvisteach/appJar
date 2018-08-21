@@ -16,6 +16,7 @@
 * <div class="cb cb-add">Added</div>Can now create [trees](/pythonDevWidgets/#tree) with xml objects and show attributes - [#457](https://github.com/jarvisteach/appJar/issues/457)
 * <div class="cb cb-add">Added</div>Option to set `wrap` parameter on [Tables](/pythonDevWidgets/#table) - [#458](https://github.com/jarvisteach/appJar/issues/458)
 * <div class="cb cb-add">Added</div>Intoduced new container properties [rowspan/colspan](/simpleProperties/#grid-properties) - [#55](https://github.com/jarvisteach/appJar/issues/55)
+* <div class="cb cb-imp">Improved</div>Improved docs on [widget positioning](/pythonWidgetLayout/#widget-positioning) - [#524](https://github.com/jarvisteach/appJar/issues/524)  
 * <div class="cb cb-imp">Improved</div>Improved docs on [stopping the GUI](/pythonEvents/#stopping-the-gui) - [#521](https://github.com/jarvisteach/appJar/issues/521)  
 * <div class="cb cb-imp">Improved</div>Improved docs on [pip installation](/Install/#pip-installation) - [#519](https://github.com/jarvisteach/appJar/issues/519)  
 * <div class="cb cb-imp">Improved</div>Removed imports from `__init__.py` file - [#505](https://github.com/jarvisteach/appJar/issues/505)
