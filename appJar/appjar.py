@@ -557,7 +557,6 @@ class gui(object):
         self.dnd = None # the dnd manager
         self.doFlash = False # set up flash variable
         self.hasTitleBar = True # used to hide/show title bar
-        self.winIcon = None # store the path to any icon
 
         # validate function callbacks - used by numeric texts
         # created first time a widget is used
@@ -623,6 +622,7 @@ class gui(object):
             title = "appJar" if gui.exe_file is None else gui.exe_file
 
         self.setTitle(title)
+        self.topLevel.winIcon = None # will store the path to any icon
 
         # configure the geometry of the window
         self.topLevel.escapeBindId = None  # used to exit fullscreen
@@ -2841,8 +2841,8 @@ class gui(object):
 
     # set an icon
     def setIcon(self, image):
-        self.winIcon = image
         container = self._getTopLevel()
+        container.winIcon = image
         if image.endswith('.ico'):
             container.wm_iconbitmap(image)
         else:
@@ -2850,7 +2850,8 @@ class gui(object):
             container.iconphoto(True, icon)
 
     def getIcon(self):
-        return self.winIcon
+        container = self._getTopLevel()
+        return container.winIcon
 
     # property for setTitle
     icon = property(getIcon, setIcon)
@@ -5615,14 +5616,18 @@ class gui(object):
         top = SubWindow(self, self.topLevel, name, title=title, stopFunc = self.confirmHideSubWindow,
                         modal=modal, blocking=blocking, transient=transient, grouped=grouped)
 
+        ico = self._getTopLevel().winIcon
+
         self.widgetManager.add(WIDGET_NAMES.SubWindow, name, top)
 
         # now, add to top of stack
         self._addContainer(name, WIDGET_NAMES.SubWindow, top, 0, 1, "")
 
         # add an icon if required
-        if self.winIcon is not None:
-            self.setIcon(self.winIcon)
+        if ico is not None:
+            self.setIcon(ico)
+        else:
+            top.winIcon = None
 
         return top
 
@@ -5819,6 +5824,9 @@ class gui(object):
     # not using this for two reasons:
     # - doesn't really work when font size changes
     # - breaks when things in containers
+
+# this can be made into a container property
+
 #    def _updateLabelBoxes(self, title, column):
 #        if len(title) >= self.labWidth.get(column, -1):
 #            self.labWidth[column] = len(title)
