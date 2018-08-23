@@ -173,6 +173,9 @@ for i in range(5):
     Will disable/enable all menus.  
     NB. currently doesn't disable entries in default Mac menus.  
 
+* `.deleteMenuItem(menu, name)`  
+    Will delete the named item from the specified menu.  
+
 ####Get Menus
 
 * `.getMenuCheckBox(menu, name)`  

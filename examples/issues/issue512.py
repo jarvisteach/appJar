@@ -8,4 +8,4 @@ def press(btn):
 
 with gui() as app:
     app.label('hello world')
-    app.addMenuCheckBox("CHECKS", "A", press, "Ctrl-d")
+    app.addMenuCheckBox("CHECKS", "A", press, "Control-d")

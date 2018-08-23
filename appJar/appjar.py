@@ -155,17 +155,17 @@ WIDGET_NAMES = Enum(
         "Map", "PieChart", "Properties", "Table", "Plot", "MicroBit",
         "Tree", "DatePicker", "Separator", "Turtle", "Canvas",
         "Menu", "Toolbar", "FlashLabel", "Widget", "RootPage",
-        "ContainerLog", "AnimationID", "ImageCache", "Accelerators"],
+        "ContainerLog", "AnimationID", "ImageCache", "Bindings"],
     containers=[
         "LabelFrame", "Frame", "TabbedFrame", "PanedFrame", "ToggleFrame",
         "FrameStack", "SubFrame", "FrameBox", "FrameLabel", "SubWindow", "Window",
         "ScrollPane", "PagedWindow", "Notebook", "Note", "Tab", "Page", "Pane"],
     excluded=["DatePicker", "SubWindow", "Window", "Toolbar",
         "Note", "Tab", "Page", "Pane", "RootPage", "FlashLabel",
-        "AnimationID", "ImageCache", "TickOptionBox", "Accelerators",
+        "AnimationID", "ImageCache", "TickOptionBox", "Bindings",
         "FileEntry", "DirectoryEntry",
         "FrameBox", "FrameLabel", "ContainerLog", "Menu"],
-    keepers=["Accelerators", "ImageCache", "Menu", "Toolbar"]
+    keepers=["Bindings", "ImageCache", "Menu", "Toolbar"]
 )
 
 
@@ -10699,66 +10699,15 @@ class gui(object):
         acc = None
 
         if shortcut is not None:
-            # MODIFIERS=["Control", "Ctrl", "Option", "Opt", "Alt", "Shift", "Command", "Cmd", "Meta"]
-            shortcut = shortcut.title()
+            if kind == 'cb':
+                f = lambda e: self._menuCheckButtonBind(title, item, func)
+                binding = EventBinding(shortcut, f, self._getTopLevel(), keyBinding=True)
+            else:
+                binding = EventBinding(shortcut, func, self._getTopLevel(), keyBinding=True)
 
-            # platform checks & swaps
-            ###
-
-            if shortcut[0] == "<":
-                gui.warn("Please specify menu: %s-%s shortcut without chevrons", title, item)
-                return
-
-            if gui.GET_PLATFORM() != gui.MAC and 'Command' in shortcut:
-                gui.warn("Shortcuts containing <Command> only supported on Mac")
-                shortcut = shortcut.replace("Command", "Control")
-
-            if gui.GET_PLATFORM() == gui.MAC and 'Alt' in shortcut:
-                shortcut = shortcut.replace("Alt", "Option")
-            elif gui.GET_PLATFORM() != gui.MAC and 'Option' in shortcut:
-                shortcut = shortcut.replace("Option", "Alt")
-
-            # shrink down the accelerator
-            ###
-
-            acc = shortcut.replace("Control", "Ctrl")
-            acc = acc.replace("Command", "Cmd")
-            acc = acc.replace("Option", "Opt")
-            acc = acc.replace("Key-", "")
-            acc = acc.replace("-", "+")
-
-            gui.trace("Reserving accelerator: %s for menu item: %s-%s", acc, title, item)
-            self.widgetManager.verify(WIDGET_NAMES.Accelerators, acc, array=True)
-            self.widgetManager.log(WIDGET_NAMES.Accelerators, acc)
-
-            # now fix the shortcut
-            ###
-
-            # try to fix numerics
-            if shortcut[-1] in "0123456789" and "Key" not in shortcut:
-                shortcut = shortcut[:-1] + "Key-" + shortcut[-1]
-
-            # do we need two bindings?
-            ###
-
-            bits = shortcut.split('-')
-            shortcuts = ['<'+shortcut+'>']
-
-            # auto created on Mac, so ignore ?!?
-            if gui.GET_PLATFORM() == gui.MAC and 'Control' in shortcut and 'Shift' in shortcut:
-                shortcuts = []
-                gui.trace("Skipping accelerator: %s", acc)
-            # create both cases of the shortcut
-            elif bits[-1].upper() in 'ABCDEFGHIJKLMNOPQRSTUVWXYZ':
-                bits[-1] = bits[-1].swapcase()
-                shortcuts.append('<'+'-'.join(bits)+'>')
-
-            # do the actual bindings
-            if func is not None and createBinding:
-                if kind == 'cb': func = lambda e: self._menuCheckButtonBind(title, item, func)
-                for s in shortcuts:
-                    gui.trace("Binding: %s to %s", s, func)
-                    self.topLevel.bind_all(s, func)
+            self.widgetManager.add(WIDGET_NAMES.Bindings, binding.displayName, binding)
+            if createBinding: binding.createBindings()
+            acc = binding.displayName
 
         # now, let's create the actual menu item
         if item == "-" or kind == "separator":
@@ -10792,7 +10741,7 @@ class gui(object):
             self.widgetManager.verify(WIDGET_NAMES.Menu, item)
             subMenu = Menu(theMenu, tearoff=False)
             self.widgetManager.add(WIDGET_NAMES.Menu, item, subMenu)
-            theMenu.add_cascade(menu=subMenu, label=item)
+            theMenu.add_cascade(label=item, menu=subMenu)
         else:
             theMenu.add_command(label=item, command=func, accelerator=acc, underline=underline)
 
@@ -10970,6 +10919,7 @@ class gui(object):
                     pass  # separator
         # also disable the toplevel menu that matches this one
         try:
+            gui.trace('Disabling menu: %s', title)
             self.menuBar.entryconfig(self.menuBar.index(title), state=state)
         except TclError:
             # ignore if we fail...
@@ -10977,23 +10927,45 @@ class gui(object):
 
     def disableMenuItem(self, title, item):
         theMenu = self.widgetManager.get(WIDGET_NAMES.Menu, title)
-        try: theMenu.entryconfigure(item, state=DISABLED)
-        except TclError: gui.error("Unable to disable menu item: %s, in menu: %s - item not found", item, title)
+        try:
+            theMenu.entryconfigure(item, state=DISABLED)
+            bindingName = theMenu.entrycget(item, 'accelerator')
+            self.widgetManager.get(WIDGET_NAMES.Bindings, bindingName).removeBindings()
+        except TclError:
+            gui.error("Unable to disable menu item: %s, in menu: %s - item not found", item, title)
 
     def enableMenuItem(self, title, item):
         theMenu = self.widgetManager.get(WIDGET_NAMES.Menu, title)
-        try: theMenu.entryconfigure(item, state=NORMAL)
-        except TclError: gui.error("Unable to enable menu item: %s, in menu: %s - item not found", item, title)
+        try:
+            theMenu.entryconfigure(item, state=NORMAL)
+            bindingName = theMenu.entrycget(item, 'accelerator')
+            self.widgetManager.get(WIDGET_NAMES.Bindings, bindingName).createBindings()
+        except TclError:
+            gui.error("Unable to enable menu item: %s, in menu: %s - item not found", item, title)
 
     def renameMenu(self, title, newName):
         theMenu = self.widgetManager.get(WIDGET_NAMES.Menu, title)
-        try: self.menuBar.entryconfigure(title, label=newName)
-        except TclError: gui.error("Unable to rename menu: %s - item not found", title)
+        try:
+            self.menuBar.entryconfigure(title, label=newName)
+        except TclError:
+            gui.error("Unable to rename menu: %s - item not found", title)
 
     def renameMenuItem(self, title, item, newName):
         theMenu = self.widgetManager.get(WIDGET_NAMES.Menu, title)
-        try: theMenu.entryconfigure(item, label=newName)
-        except TclError: gui.error("Unable to rename menu item: %s, in menu: %s - item not found", item, title)
+        try:
+            theMenu.entryconfigure(item, label=newName)
+        except TclError:
+            gui.error("Unable to rename menu item: %s, in menu: %s - item not found", item, title)
+
+    def deleteMenuItem(self, title, item):
+        theMenu = self.widgetManager.get(WIDGET_NAMES.Menu, title)
+        try:
+            bindingName = theMenu.entrycget(item, 'accelerator')
+            theMenu.delete(item)
+            self.widgetManager.get(WIDGET_NAMES.Bindings, bindingName).removeBindings()
+            self.widgetManager.remove(WIDGET_NAMES.Bindings, bindingName)
+        except TclError:
+            gui.error("Unable to delete menu item: %s, in menu: %s - item not found", item, title)
 
     #################
     # wrappers for getters
@@ -15775,6 +15747,81 @@ class WidgetManager(object):
         gui.trace("Failed to destory widget")
         return False
 
+#########################################
+# Class for storing a shortcut
+#########################################
+
+class EventBinding(object):
+    # MODIFIERS=["Control", "Ctrl", "Option", "Opt", "Alt", "Shift", "Command", "Cmd", "Meta"]
+    def __init__(self, keyMap, func, win, keyBinding=False):
+        gui.trace('Creating eventBinding %s for keys: %s', keyMap, keyBinding)
+        keyMap = self._cleanKeyMap(keyMap)
+
+        self.func = func
+        self.win = win
+        self.displayName = self._createDisplayName(keyMap)
+        self.shortcuts = self._createShortcuts(keyMap, keyBinding)
+
+    def _cleanKeyMap(self, keyMap):
+        keyMap = keyMap.title()
+
+        if keyMap[0] == "<":
+            gui.warn("Shortcuts should not include chevrons: %s", keyMap)
+            keyMap = keyMap[1:-1]
+
+        if gui.GET_PLATFORM() != gui.MAC and 'Command' in keyMap:
+            gui.warn("Shortcuts containing <Command> only supported on Mac")
+            keyMap = keyMap.replace("Command", "Control")
+
+        if gui.GET_PLATFORM() == gui.MAC and 'Alt' in keyMap:
+            keyMap = keyMap.replace("Alt", "Option")
+        elif gui.GET_PLATFORM() != gui.MAC and 'Option' in keyMap:
+            keyMap = keyMap.replace("Option", "Alt")
+
+        gui.trace('Cleaned up to: %s', keyMap)
+        return keyMap
+
+    def _createDisplayName(self, keyMap):
+        # create a shrunk-down display name (accelerator)
+        acc = keyMap.replace("Control", "Ctrl")
+        acc = acc.replace("Command", "Cmd")
+        acc = acc.replace("Option", "Opt")
+        acc = acc.replace("Key-", "")
+        acc = acc.replace("-", "+")
+        gui.trace('DisplayName made: %s', acc)
+        return acc
+
+    def _createShortcuts(self, shortcut, keyBinding=False):
+        # try to fix numerics
+        if keyBinding and shortcut[-1] in "0123456789" and "Key" not in shortcut:
+            shortcut = shortcut[:-1] + "Key-" + shortcut[-1]
+
+        # create two bindings if it ends in a single letter
+        bits = shortcut.split('-')
+        shortcuts = ['<'+shortcut+'>']
+
+        # create both cases of the shortcut
+        if bits[-1].upper() in 'ABCDEFGHIJKLMNOPQRSTUVWXYZ':
+            bits[-1] = bits[-1].swapcase()
+            shortcuts.append('<'+'-'.join(bits)+'>')
+
+        gui.trace('Shortcuts made: %s', shortcuts)
+        return shortcuts
+
+    def createBindings(self):
+        if self.func is not None:
+            for s in self.shortcuts:
+                # auto created on Mac, so ignore ?!?
+                if gui.GET_PLATFORM() == gui.MAC and 'Control' in s and 'Shift' in s:
+                    gui.trace("Mac - skipping binding: %s", s)
+                else:
+                    gui.trace("Binding: %s to %s", s, self.func)
+                    self.win.bind_all(s, self.func)
+
+    def removeBindings(self):
+        for s in self.shortcuts:
+            gui.trace('Removing binding: %s', s)
+            self.win.unbind_all(s)
 
 #####################################
 # MAIN - for testing
