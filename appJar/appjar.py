@@ -10781,7 +10781,7 @@ class gui(object):
         if self.copyAndPaste.inUse:
             if event is not None:
                 widget = event.widget
-            self.disableMenu("EDIT", 10)
+            self._changeMenuState(self.widgetManager.get(WIDGET_NAMES.Menu, "EDIT"), DISABLED, 'Disabling', 10)
             self.copyAndPaste.setUp(widget)
             if self.copyAndPaste.canCopy:
                 self.enableMenuItem("EDIT", "Copy")
@@ -10879,69 +10879,70 @@ class gui(object):
             self.setMenuImage(menu, title, image, align)
 
     def disableMenubar(self):
-        for theMenu in self.widgetManager.group(WIDGET_NAMES.Menu):
-            self.disableMenu(theMenu)
-
-        # loop through top level menus
-        # and diable any that got missed
-        numMenus = self.menuBar.index("end")
-        if numMenus is not None:
-            for item in range(numMenus+1):
-                self.menuBar.entryconfig(item, state=DISABLED)
+        gui.trace('Disabling toplevel menubar')
+        self._disableMenu(self.menuBar)
 
     def enableMenubar(self):
-        for theMenu in self.widgetManager.group(WIDGET_NAMES.Menu):
-            self.enableMenu(theMenu)
+        gui.trace('Enabling toplevel menubar')
+        self._enableMenu(self.menuBar)
 
-        # loop through toplevel menus
-        # and enable anythat got missed
-        numMenus = self.menuBar.index("end")
-        if numMenus is not None:
-            for item in range(numMenus+1):
-                self.menuBar.entryconfig(item, state=NORMAL)
-
-    def disableMenu( self, title, limit=None):
-        self._changeMenuState(title, DISABLED, limit)
-
-    def enableMenu( self, title, limit=None):
-        self._changeMenuState(title, NORMAL, limit)
-
-    def _changeMenuState(self, title, state, limit=None):
+    def disableMenu(self, title):
+        gui.trace('Disabling submenu: %s', title)
         theMenu = self.widgetManager.get(WIDGET_NAMES.Menu, title)
-        numMenus = theMenu.index("end")
-        if numMenus is not None:  # MAC_APP (and others?) returns None
-            for item in range(numMenus + 1):
-                if limit is not None and limit == item:
-                    break
-                try:
-                    theMenu.entryconfigure(item, state=state)
-                except:
-                    pass  # separator
-        # also disable the toplevel menu that matches this one
-        try:
-            gui.trace('Disabling menu: %s', title)
-            self.menuBar.entryconfig(self.menuBar.index(title), state=state)
-        except TclError:
-            # ignore if we fail...
-            pass
+        self._disableMenu(theMenu)
+
+    def enableMenu(self, title):
+        gui.trace('Enabling submenu: %s', title)
+        theMenu = self.widgetManager.get(WIDGET_NAMES.Menu, title)
+        self._enableMenu(theMenu)
 
     def disableMenuItem(self, title, item):
         theMenu = self.widgetManager.get(WIDGET_NAMES.Menu, title)
         try:
-            theMenu.entryconfigure(item, state=DISABLED)
-            bindingName = theMenu.entrycget(item, 'accelerator')
-            self.widgetManager.get(WIDGET_NAMES.Bindings, bindingName).removeBindings()
+            gui.trace("Disabling menu item: %s, in menu: %s", item, title)
+            self._changeMenuItemState(theMenu, item, DISABLED) 
         except TclError:
             gui.error("Unable to disable menu item: %s, in menu: %s - item not found", item, title)
 
     def enableMenuItem(self, title, item):
         theMenu = self.widgetManager.get(WIDGET_NAMES.Menu, title)
         try:
-            theMenu.entryconfigure(item, state=NORMAL)
-            bindingName = theMenu.entrycget(item, 'accelerator')
-            self.widgetManager.get(WIDGET_NAMES.Bindings, bindingName).createBindings()
+            gui.trace("Enabling menu item: %s, in menu: %s", item, title)
+            self._changeMenuItemState(theMenu, item, NORMAL) 
         except TclError:
             gui.error("Unable to enable menu item: %s, in menu: %s - item not found", item, title)
+
+    def _disableMenu(self, menu): self._changeMenuState(menu, DISABLED, 'Disabling')
+    def _enableMenu(self, menu): self._changeMenuState(menu, NORMAL, 'Enabling')
+
+    def _changeMenuState(self, menu, state, text, limit=None):
+        # changes the specified menu object's state to the new state, using the specified text for logging
+        numMenus = menu.index("end")
+        if numMenus is not None: # MAC_APP (and others?) returns None
+            for item in range(numMenus+1):
+                # we can cut-off early if requested internally
+                if limit is not None and limit == item:
+                    break
+                if menu.type(item) == 'cascade':
+                    label = menu.entrycget(item, 'label')
+                    if len(label) == 0: label = 'SPECIAL MENU'
+                    gui.trace('%s submenu: %s', text, label)
+                    subMenu = self.topLevel.nametowidget(menu.entrycget(item, 'menu'))
+                    self._changeMenuState(subMenu, state, text)
+                    menu.entryconfig(item, state=state)
+                elif menu.type(item) == 'separator':
+                    gui.trace('Skipping separator')
+                else:
+                    label = menu.entrycget(item, 'label')
+                    gui.trace('%s item: %s', text, label)
+                    # use the position - if the label is a number it breaks...
+                    self._changeMenuItemState(menu, item, state)
+
+    def _changeMenuItemState(self, menu, item, state):
+        menu.entryconfigure(item, state=state)
+        bindingName = menu.entrycget(item, 'accelerator')
+        if bindingName is not None and len(bindingName) > 0:
+            self.widgetManager.get(WIDGET_NAMES.Bindings, bindingName).changeBindings(state)
 
     def renameMenu(self, title, newName):
         theMenu = self.widgetManager.get(WIDGET_NAMES.Menu, title)
@@ -11047,11 +11048,11 @@ class gui(object):
             ('Copy', lambda e: self._copyAndPasteHelper("Copy"), "C", False),
             ('Paste', lambda e: self._copyAndPasteHelper("Paste"), "V", False),
             ('Select All', lambda e: self._copyAndPasteHelper("Select All"), "A", True if gui.GET_PLATFORM() == gui.MAC else False),
-            ('Clear Clipboard', lambda e: self._copyAndPasteHelper("Clear Clipboard"), "", False)
+            ('Clear Clipboard', lambda e: self._copyAndPasteHelper("Clear Clipboard"), None, False)
             ]
 
         for (txt, cmd, sc, bind) in eList:
-            acc = shortcut + sc
+            acc = None if sc is None else shortcut + sc
             self.addMenuItem("EDIT", txt, cmd, shortcut=acc, createBinding=bind)
 
         # add a clear option
@@ -11060,13 +11061,13 @@ class gui(object):
 
         self.addMenuSeparator("EDIT")
         self.addMenuItem("EDIT", 'Undo', lambda e: self._copyAndPasteHelper("Undo"), shortcut=shortcut + "Z", createBinding=False)
-        self.addMenuItem("EDIT", 'Redo', lambda e: self._copyAndPasteHelper( "Redo"), shortcut="Shift-" + shortcut + "Z", createBinding=True)
+        self.addMenuItem("EDIT", 'Redo', lambda e: self._copyAndPasteHelper( "Redo"), shortcut=shortcut+"Shift-Z", createBinding=True)
 
         self.addMenuSeparator("EDIT")
         self.addMenuItem("EDIT", "Bold", lambda e: self._copyAndPasteHelper("BOLD"), shortcut=shortcut+"B")
         self.addMenuItem("EDIT", "Italic", lambda e: self._copyAndPasteHelper("ITALIC"), shortcut=shortcut+"I")
         self.addMenuItem("EDIT", "Underline", lambda e: self._copyAndPasteHelper("UNDERLINE"), shortcut=shortcut+"U")
-        self.addMenuItem("EDIT", "Bold & Italic", lambda e: self._copyAndPasteHelper("BOLD_ITALIC"), shortcut="Shift-" + shortcut + "B")
+        self.addMenuItem("EDIT", "Bold & Italic", lambda e: self._copyAndPasteHelper("BOLD_ITALIC"), shortcut=shortcut+"Shift-B")
 
         self.disableMenu("EDIT")
 
@@ -14877,7 +14878,7 @@ class CopyAndPaste():
     def paste(self):
         if self.widgetType in ["Entry", "AutoCompleteEntry"]:
             # horrible hack to clear default text
-            name = self.widgetManager.getName(self.widget)
+            name = self.gui.widgetManager.getName(self.widget)
             self.gui._updateEntryDefault(name, mode="in")
         self.widget.event_generate('<<Paste>>')
         self.widget.selection_clear()
@@ -15822,6 +15823,10 @@ class EventBinding(object):
         for s in self.shortcuts:
             gui.trace('Removing binding: %s', s)
             self.win.unbind_all(s)
+
+    def changeBindings(self, state):
+        if state.lower() == 'disabled': self.removeBindings()
+        else: self.createBindings()
 
 #####################################
 # MAIN - for testing
