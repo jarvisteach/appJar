@@ -5,6 +5,9 @@ from appJar import gui
 
 def keyPress(key): print(key, 'pressed')
 
+def infoMenu(menu):
+    print(menu)
+
 def press(btn):
     if btn == 'ENABLE': app.enableMenuItem('a', 'w')
     elif btn == 'DISABLE': app.disableMenuItem('a', 'w')
@@ -58,16 +61,15 @@ with gui() as app:
 
     app.entry('text')
     app.addMenuEdit(inMenuBar=True)
-    app.createRightClickMenu('Details', showInBar=True) 
-    app.addMenuItem('Details', 'Info Menu', pressb)
-    app.disableMenuItem('Details', 'Info Menu')
-    app.addMenuItem('Details', '-')
-    app.addMenuItem('Details', 'Click Me', pressb)
-    app.label('press me', right='Details')
-#    app.setLabelRightClick('press me', 'Details')
 
     app.addMenuPreferences(pressb)
     app.addMenuWindow()
     app.addMenuHelp(pressb)
     app.addMenuItem("appJar", "Help", app.appJarHelp)
     app.addMenuItem("appJar", "About", app.appJarAbout)
+
+    app.createRightClickMenu("Information", False)
+    app.addMenuList("Information", ["Information", "-", "Option 1", "Option 2", "Option 3"], infoMenu)
+    app.disableMenuItem("Information", "Information") # disable the title
+    app.addLabel("Press me for info")
+    app.setLabelRightClick("Press me for info", "Information")

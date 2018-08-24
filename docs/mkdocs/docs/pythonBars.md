@@ -1,9 +1,9 @@
-#Toolbars, Menubars & Statusbars
+# Toolbars, Menubars & Statusbars
 ----
 Toolbars and Menubars are features common to most GUIs, you'll be used to seeing them along the top of apps, such as MS Word.  
 Statusbars are also useful features, they allow you to show information about what's going on in a GUI, usually along the bottom of the app.  
 
-##Toolbar
+## Toolbar
 ___
 Toolbars (sometimes known as ribbons) appear across the top of a GUI.  
 They offer a series of buttons to click, which can be used to change settings/functionality in a GUI.
@@ -21,7 +21,7 @@ tools = ["ABOUT", "REFRESH", "OPEN", "CLOSE", "SAVE",
 app.addToolbar(tools, tbFunc, findIcon=True)
 ```
 
-####Create Toolbars
+#### Create Toolbars
 
 * `.addToolbar(names, funcs, findIcon=False)`  
     Will add a list of buttons along the top, in a toolbar. Each button will call the corresponding function.  
@@ -31,7 +31,7 @@ app.addToolbar(tools, tbFunc, findIcon=True)
 * `.addToolbarButton(name, func, findIcon=False)`  
     Adds a single button to the toolbar - see above.  
 
-####Set Toolbars
+#### Set Toolbars
 
 * `.setToolbarPinned(pinned=True)`  
     Will configure the toolbar to be *pinnable*  
@@ -81,44 +81,51 @@ The toolbar will also gain an extra button (a pin) allowing the user to configur
 </div>
 ---
 
-##Menubar
+## Menubar
 ---
-Adds a standard Menubar along the top of the GUI.  
-On Windows/Linux a menubar will only be shown, once the first menu has been added.  
-On Mac, a menubar is always present.  
-Menubars are made up of a series of menus, each containing a list of names.  
-These names can be menu-items, radio buttons, check boxes, separators, or sub-menus.  
+Adds a Menubar along the top of the GUI.  
 
-####Create Menus
+* On Windows/Linux a menubar will only be shown, once the first menu has been added.  
+* On Mac, a menubar is always present.  
 
-* `.addMenuList(menu, names, functions)`  
-    Will create a new menu, with the specified title, containing the list of names.  
-    Pass a single function - all names will call that function, passing their name.  
-    Or a list of functions (the same length as the names), each menu will call the corresponding function.  
-    If a name is ```-```, then a separator will be added to the menu.  
+Menubars are made up of a series of menus, each containing a list of items:  
+
+*  Menu-items - a clickable button, that calls a function  
+* Radio-buttons - groups of options, only one of which can be selected  
+* Checkboxes - boxes that can be ticked or unticked  
+* Separators - lines to help group items together  
+* Submenus - another menu, with its own list of items  
+
+#### Create Menus  
 
 ![MenuList](img/menu_1.png)    
 ```python
 fileMenus = ["Open", "Save", "Save as...", "-", "Export", "Print", "-", "Close"]
-app.addMenuList("File", fileMenus, menuPress)
+app.addMenuList("File", fileMenus, menuPress) # create the File menu, with the list of items
 ```
+
+* `.addMenuList(menu, names, functions)`  
+    Will create a new menu, containing the list of names.  
+    Provide a single function - all names will call that function, passing their name.  
+    Or a list of functions (the same length as names), each menu will call the corresponding function.  
+    If a name is a `-`, then a separator will be added to the menu.  
 
 * `.createMenu(menu, tearable=False)`  
     Will create a new, empty menu, to add menu-items to.
 
 * `.addMenuItem(menu, name, func=None, shortcut=None, underline=-1)`  
-    Add a menu-item to the named menu, with the specified function.  
+    Add a menu-item to the menu, with the specified function.  
     If the named menu does not exist, it will be automatically created.  
-    If the name is ```-```, then a separator will be added to the menu.  
+    If the name is `-`, then a separator will be added to the menu.  
 
 * `.addMenuSeparator(menu)`  
-    Add a separator to the named menu.  
+    Add a separator to the menu.  
 
 * `.addMenuCheckBox(menu, name, function=None, shortcut=None, underline=-1)`  
-    Add a check box, to the named menu, with the specified name.  
+    Add a check box, to the menu, with the specified name.  
 
 * `.addMenuRadioButton(menu, name, value, function=None, shortcut=None, underline=-1)`  
-    Add a radio button, to the named menu, grouped by name, with the specified value.  
+    Add a radio button, to the menu, grouped by name, with the specified value.  
 
 ![MenuRB_CB](img/menu_2.png)
 ```python
@@ -147,9 +154,10 @@ for i in range(5):
 ```
 
 * `.addMenu(menu, function, shortcut=None, underline=-1)`  
-    Adds a single menu, with no list of menu-items,  that will call the specified function.  
+    This is a special case, and doesn't work on all platforms.
+    Adds a single menu, with no list of menu-items,  that calls the specified function.  
 
-####Set Menus
+#### Set Menus
 
 * `.setMenuCheckBox(menu, name)`  
     Inverts the specified check box, in the named menu.
@@ -164,19 +172,19 @@ for i in range(5):
     Will set the specified icon for the specified menu-item.  
 
 * `.disableMenuItem(menu, name)` & `.enableMenuItem(menu, name)`  
-    Will enable/disable the specified menu name.  
+    Will enable/disable the specified menu-item.  
 
 * `.disableMenu(menu)` & `.enableMenu(menu)`  
     Will disable/enable the specified menu.  
 
 * `.disableMenubar()` & `.enableMenubar()`  
     Will disable/enable all menus.  
-    NB. currently doesn't disable entries in default Mac menus.  
+    **NB.** currently doesn't disable entries in default Mac menus.  
 
 * `.deleteMenuItem(menu, name)`  
     Will delete the named item from the specified menu.  
 
-####Get Menus
+#### Get Menus
 
 * `.getMenuCheckBox(menu, name)`  
     Get the value of the specified check box, from the named menu.  
@@ -188,58 +196,74 @@ for i in range(5):
 
 ----
 
-####Extra Features:  
+#### Extra Features:  
 
-* `shortcut` These are keyboard shortcuts to call a menu-item.  
+These options aren't available when you add a list of menu-items, only when you call the specific add function.  
+
+* `underline` - if set to an Integer, the corresponding character will be underlined.  
+* `tearable` - if set to True, it's possible to undock the menu.  
+* `shortcut` - these are keyboard shortcuts you press, to call a menu-item.  
     They should always be a combination of *special keys* and a *regular key*, separated by dashes.  
     e.g. `"Control-s"` or `"Control-Shift-z"`  
-    **NB.** don't include angle brackets `<>` around the shortcut.  
+
     The following *special keys* are available: `Control`, `Option`, `Alt`, `Shift`, `Command`, `Meta`  
+
     There are some special cases:  
 
     * If you want to use numbers, you need to use the format: `Control-Key-3`  
     * If you want some of the special characters, you may need to use their name: `Control-slash`, `Control-Up`  
 
+    **NB.** don't include angle brackets `<>` around the shortcut.  
     **NB.** Lookout for clashes with regular [key bindings](/pythonEvents/#binding-keys)  
-<br>  
-
-* `underline` If set to an Integer, the corresponding character will be underlined.  
-
-* `tearable` If this is set to True, it's possible to undock the menu.  
 
 ---
 
-####Platform Specific/Custom Menus
-It's possible to interact with menus that are specific to particular platforms, or prebuilt for specific purposes.  
-Simply use the menu names given below when adding menu-items to a menu.  
+#### Platform Specific/Custom Menus
 
-* **Generic**  
-    * **Right-click Menu**  
+There are a few special menus available; pop-up menus, that appear when you right-click a widget and platform specific menus.
+To add items to these menus, use the menu names given below (eg. `app.addMenuItem('EDIT', 'Name', func)`)  
+
+* **Right-Click Menus**  
+    * **Edit Menu** (name: `EDIT`) - provides a *cut & paste* style menu linked to all **text**, **entry** & **option boxes**.  
+        Call `.addMenuEdit(inMenuBar=False)` to enable the *Edit* menu.  
+        If ```showInBar``` is set to ```True```, the Menu will also appear in the topLevel Menubar.  
+        This menu does its best to show the appropriate options, for all situations - but doesn't know when you can't *redo* an action.  
+
+    * **Generic Menu**  
         Call `.createRightClickMenu(menu, showInBar=False)` to create an empty **right-click menu**   
         If ```showInBar``` is set to ```True```, the Menu will also appear in the topLevel Menubar.  
-        The right-click menu can be populated the same way as a regular menu.  
+        The right-click menu can be populated the same way as regular menus.  
 
         To link the **right-click menu** to a widget, call ```.setXXXRightClick(widgetName, menu)```  
 
-    * **Edit Menu** - `EDIT` provides a right-click, *cut & paste* menu automatically linked to all **text**, **entry** & **option boxes**.  
-        Call `.addMenuEdit(inMenuBar=False)` to enable the *Edit* menu.  
-        Set the parameter to True, to also show it in the menu bar.  
-        This menu does its best to show the appropriate options, for all situations - but doesn't know when you can't *redo* an action.  
+![Right-click Menu](img/menu_5.png)  
+
+```python
+app.createRightClickMenu("Information", False)
+app.addMenuList("Information", ["Information", "-", "Option 1", "Option 2", "Option 3"], infoMenu)
+app.disableMenuItem("Information", "Information") # disable the title
+app.addLabel("Press me")
+app.setLabelRightClick("Press me", "Information")
+```
+
 
 * **Windows**  
-    * **System Menu** - `WIN_SYS` accessed by clicking the icon in the top left corner of the GUI.  
-
-* **Mac** - there are three *default* menus, each containing platform specific menus-item.   
+    * **System Menu** (name: `WIN_SYS`) - accessed by clicking the icon in the top left corner of the GUI.  
+<br>
+* **Mac** - there are three *default* menus, each containing platform specific menu-items.   
     There are also a couple of menu-items the user can/should provide.  
-    * **Application Menu** - `MAC_APP` after the Apple logo (), usually called *Python*.  
+
+    * **Application Menu** (name: `MAC_APP`) - after the Apple logo (), usually called *Python*.  
         This menu is always present, and cannot be renamed - no matter how much I wish it could!  
         Call `.addMenuPreferences(function)` to enable the *Preferences* menu-item, within the *Application Menu*.  
-    * **Window Menu** - `MAC_WIN` contains menu-items related to windows.   
+
+    * **Window Menu** (name: `MAC_WIN`) - contains menu-items related to windows.   
         To access this menu, you must first call `.addMenuWindow()`  
-    * **Help Menu** - `MAC_HELP` provides a *Search* menu-item   
+
+    * **Help Menu** (name: `MAC_HELP`) - provides a *Search* menu-item   
         To access this menu, you must first call `.addMenuHelp(function)`, passing the function to call for the default *Python Help* menu-item.  
 
-* **Linux** - by default, there is no menu, but it's easy enough to get access to the appJar menus:
+* **Linux** - by default, there is no menu, but it's easy enough to include the appJar menus:
 
 ![Linux Menu](img/menu_4.png)  
 
@@ -248,7 +272,7 @@ app.addMenuItem("appJar", "Help", app.appJarHelp)
 app.addMenuItem("appJar", "About", app.appJarAbout)
 ```
 
-##Statusbar
+## Statusbar
 ___
 Adds a statusbar along the bottom of the GUI.
 This can be used for easy debugging, as info for the user, or to show current settings.  
@@ -273,14 +297,14 @@ app.setStatusbarBg("red", 2)
 app.setStatusbarFg("white", 2)
 ```
 
-####Create Statusbars  
+#### Create Statusbars  
 
 * `.addStatusbar(header="", fields=1, side=None)`  
     This turns the statusbar on, and if a header is supplied, will prepend the header before every status.  
     If ```fields``` is populated, it's possible to have multiple status boxes, each addressable by a number.  
     ```side``` can be set as LEFT/RIGHT to make the fields appear from the left or right side, otherwise they will stretch equally.  
 
-####Set Statusbars  
+#### Set Statusbars  
 * `.setStatusbar(text, field=0)`  
     This updates the contents of the statusbar.  
     Again, if a header was set when adding the statusbar, it will be prepended to the message.  
