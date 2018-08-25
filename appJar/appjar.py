@@ -10829,10 +10829,10 @@ class gui(object):
 
     # add a single entry for a menu
     def addSubMenu(self, menu, subMenu):
-        self.addMenuItem(menu, subMenu, None, "sub")
+        self.addMenuItem(menu, subMenu, func=None, kind="sub")
 
     def addMenu(self, name, func, shortcut=None, underline=-1):
-        self.addMenuItem(None, name, func, "topLevel", shortcut, underline)
+        self.addMenuItem(None, name, func=func, kind="topLevel", shortcut=shortcut, underline=underline)
 
     def addMenuSeparator(self, menu):
         self.addMenuItem(menu, "-")
@@ -10842,6 +10842,50 @@ class gui(object):
 
     def addMenuRadioButton(self, menu, name, value, func=None, shortcut=None, underline=-1):
         self.addMenuItem(menu, name, func, "rb", shortcut, underline, value)
+
+    def menu(self, menu, name=None, func=None, **kwargs):
+        # kind: menu, sub, button, sep, check/tick, radio
+        kind = kwargs.pop('kind', 'button')
+        group = kwargs.pop('group', None)
+        shortcut = kwargs.pop('shortcut', None)
+        underline = kwargs.pop('underline', -1)
+
+        tear = kwargs.pop('tear', False)
+        state = kwargs.pop('state', None)
+        image = kwargs.pop('image', None)
+        icon = kwargs.pop('icon', None)
+        align = kwargs.pop('align', 'left')
+
+        if kind == 'menu':
+            self.createMenu(menu, tearable=tear, showInBar=True)
+        elif kind.startswith('sub'):
+            self.addSubMenu(menu, name)
+        elif kind.startswith('radio') or group is not None:
+            self.addMenuRadioButton(menu, group, value=name, func=func, shortcut=shortcut, underline=underline)
+        elif kind == 'button':
+            if name is None and func is not None:
+                self.addMenu(menu, func=func, shortcut=shortcut, underline=underline)
+            elif name is None:
+                self.createMenu(menu, tearable=tear, showInBar=True)
+            elif isinstance(name, (list, tuple)):
+                self.addMenuList(menu, name, func)
+            else:
+                self.addMenuItem(menu, name, func=func, kind=None, shortcut=shortcut, underline=underline)
+        elif kind.startswith('sep'):
+            self.addMenuSeparator(menu)
+        elif kind.startswith('check') or kind.startswith('tick'):
+            self.addMenuCheckBox(menu, name, func=func, shortcut=shortcut, underline=underline)
+
+        if state is not None:
+            if kind == 'menu' or kind.startswith('sub'):
+                if state == 'disabled': self.disableMenu(menu, name)
+                elif state == 'enabled': self.enableMenu(menu, name)
+            else:
+                if state == 'disabled': self.disableMenuItem(menu, name)
+                elif state == 'enabled': self.enableMenuItem(menu, name)
+
+        if image is not None: self.setMenuImage(menu, name, image, align=align)
+        if icon is not None: self.setMenuIcon(menu, name, icon, align=align)
 
     #################
     # wrappers for setters

@@ -458,6 +458,28 @@ Displays the toolbar.
 | disabled | boolean | False | Determines if the toolbar should start disabed or not. | 
 | hidden | boolean | False | Determines if the toolbar should start hidden or not. When hidden it is completley removed from the GUI. | 
 
+## Menu  
+---
+
+Displays a menubar  
+
+* `.menu(menu, name, func, **kwargs)`  
+    `menu` the text of the menu to add the item to  
+    `name` the text of the item to add, if a list is provided then multiple items will be created  
+    `func` the function to call when the menu item is selected. If `name` is a list, this can be a corresponding list.  
+
+| Parameter | Data type | Default | Description |
+| --------- | --------- | ------- | ------------|
+| kind | string | button | The type of item to add: `button`, `sub`, `menu`, `sep`, `check`, `radio` |
+| group | string | None | Only used for radio buttons, the group to add the button to.<br>It's not necessary to set `kind` if this is set. |
+| shortcut | string | None | A keyboard shortcut, to associate with the menu item. |
+| underline | int | -1 | Which letter in the item name to underline (not all platforms). |
+| tear | boolean| False | Only used for toplevel menus, configures them to be tearable (not all platforms). |
+| state | string | "enabled" | Whether the menu item should be `enabled` or `disabled` |
+| image | string | None | The path to an image to put alongside the menu item. |
+| icon | string | None | The name of an icon to put alongside the menu item. |
+| align | string | "left" | If an image/icon is added, how to align it alongside the text. |
+
 ## Tree  
 ---
 
