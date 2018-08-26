@@ -86,3 +86,7 @@ with gui() as app:
     app.disableMenuItem("Information", "Information") # disable the title
     app.addLabel("Press me for info")
     app.setLabelRightClick("Press me for info", "Information")
+    app.bindKey('Button-1', keyPress)
+    app.bindKey('Key-7', keyPress)
+    app.bindKey('FocusIn', keyPress)
+    app.enableEnter(press)

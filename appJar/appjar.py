@@ -2240,15 +2240,14 @@ class gui(object):
         """ called whenever the GUI updates - does nothing """
         new_width = self.topLevel.winfo_width()
         new_height = self.topLevel.winfo_height()
-#        gui.trace("Window resized: %sx%s", new_width, new_height)
 
     def enableEnter(self, func):
         """ Binds <Return> to the specified function - all widgets """
-        self.bindKey("<Return>", func)
+        self.bindKey("Return", func)
 
     def disableEnter(self):
         """ unbinds <Return> from all widgets """
-        self.unbindKey("<Return>")
+        self.unbindKey("Return")
 
     def _enterWrapper(self, func):
         if func is None:
@@ -2267,8 +2266,12 @@ class gui(object):
         """ bind the specified key, to the specified function, for all widgets """
         # for now discard the Event...
         myF = self.MAKE_FUNC(func, key)
-        self._getTopLevel().bind(key, myF)
-        gui.trace("Bound %s to topLevel, for function: %s", key, func)
+        binding = EventBinding(key, myF, self._getTopLevel(), menuBinding=False)
+        try:
+            self.widgetManager.add(WIDGET_NAMES.Bindings, binding.displayName, binding)
+            binding.createBindings()
+        except ItemLookupError:
+            raise ItemLookupError('Unable to bind key ' + binding.displayName + ' - binding already exists')
 
     def unbindKeys(self, keys):
         """ unbinds the specified keys from whatever functions they are bound to """
@@ -2277,7 +2280,8 @@ class gui(object):
 
     def unbindKey(self, key):
         """ unbinds the specified key from whatever functions it is bound to """
-        self._getTopLevel().unbind(key)
+        self.widgetManager.get(WIDGET_NAMES.Bindings, key).removeBindings()
+        self.widgetManager.remove(WIDGET_NAMES.Bindings, key)
 
     def _isMouseInWidget(self, w):
         """ helper - returns True if the mouse is in the specified widget """
@@ -10701,13 +10705,16 @@ class gui(object):
         if shortcut is not None:
             if kind == 'cb':
                 f = lambda e: self._menuCheckButtonBind(title, item, func)
-                binding = EventBinding(shortcut, f, self._getTopLevel(), keyBinding=True)
+                binding = EventBinding(shortcut, f, self._getTopLevel(), menuBinding=True)
             else:
-                binding = EventBinding(shortcut, func, self._getTopLevel(), keyBinding=True)
+                binding = EventBinding(shortcut, func, self._getTopLevel(), menuBinding=True)
 
-            self.widgetManager.add(WIDGET_NAMES.Bindings, binding.displayName, binding)
-            if createBinding: binding.createBindings()
-            acc = binding.displayName
+            try:
+                self.widgetManager.add(WIDGET_NAMES.Bindings, binding.displayName, binding)
+                if createBinding: binding.createBindings()
+                acc = binding.displayName
+            except ItemLookupError:
+                raise ItemLookupError('Unable to bind menu ' + item + ' to ' + binding.displayName + ' - binding already exists')
 
         # now, let's create the actual menu item
         if item == "-" or kind == "separator":
@@ -15798,14 +15805,15 @@ class WidgetManager(object):
 
 class EventBinding(object):
     # MODIFIERS=["Control", "Ctrl", "Option", "Opt", "Alt", "Shift", "Command", "Cmd", "Meta"]
-    def __init__(self, keyMap, func, win, keyBinding=False):
-        gui.trace('Creating eventBinding %s for keys: %s', keyMap, keyBinding)
+    def __init__(self, keyMap, func, win, menuBinding=False):
+        gui.trace('Binding %s', keyMap)
         keyMap = self._cleanKeyMap(keyMap)
 
         self.func = func
         self.win = win
+        self.menuBinding = menuBinding
         self.displayName = self._createDisplayName(keyMap)
-        self.shortcuts = self._createShortcuts(keyMap, keyBinding)
+        self.shortcuts = self._createShortcuts(keyMap)
 
     def _cleanKeyMap(self, keyMap):
         keyMap = keyMap.title()
@@ -15823,6 +15831,13 @@ class EventBinding(object):
         elif gui.GET_PLATFORM() != gui.MAC and 'Option' in keyMap:
             keyMap = keyMap.replace("Option", "Alt")
 
+        # fix any broken events from calling title... hacky!
+        keyMap = keyMap.replace("Buttonpress", "ButtonPress")
+        keyMap = keyMap.replace("Buttonrelease", "ButtonRelease")
+        keyMap = keyMap.replace("Focusin", "FocusIn")
+        keyMap = keyMap.replace("Focusout", "FocusOut")
+        keyMap = keyMap.replace("Backspace", "BackSpace")
+
         gui.trace('Cleaned up to: %s', keyMap)
         return keyMap
 
@@ -15836,9 +15851,9 @@ class EventBinding(object):
         gui.trace('DisplayName made: %s', acc)
         return acc
 
-    def _createShortcuts(self, shortcut, keyBinding=False):
+    def _createShortcuts(self, shortcut):
         # try to fix numerics
-        if keyBinding and shortcut[-1] in "0123456789" and "Key" not in shortcut:
+        if self.menuBinding and shortcut[-1] in "0123456789" and "Key" not in shortcut:
             shortcut = shortcut[:-1] + "Key-" + shortcut[-1]
 
         # create two bindings if it ends in a single letter
@@ -15857,7 +15872,7 @@ class EventBinding(object):
         if self.func is not None:
             for s in self.shortcuts:
                 # auto created on Mac, so ignore ?!?
-                if gui.GET_PLATFORM() == gui.MAC and 'Control' in s and 'Shift' in s:
+                if gui.GET_PLATFORM() == gui.MAC and self.menuBinding and 'Control' in s and 'Shift' in s:
                     gui.trace("Mac - skipping binding: %s", s)
                 else:
                     gui.trace("Binding: %s to %s", s, self.func)
