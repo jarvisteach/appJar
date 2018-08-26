@@ -66,7 +66,7 @@ EXTERNAL_DND = None
 INTERNAL_DND = None
 types = None  # used to register dnd functions
 winsound = None
-FigureCanvasTkAgg = Figure = None  # matplotlib
+PlotCanvas = PlotNav = PlotFig = None  # matplotlib
 parseString = TreeItem = TreeNode = None  # AjTree
 # GoogleMap
 base64 = urlencode = urlopen = urlretrieve = quote_plus = json = None
@@ -937,14 +937,15 @@ class gui(object):
 
     def _loadMatplotlib(self):
         """ loads matPlotLib """
-        global FigureCanvasTkAgg, Figure
+        global PlotCanvas, PlotNav, PlotFig
 
-        if FigureCanvasTkAgg is None:
+        if PlotCanvas is None:
             try:
-                from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
-                from matplotlib.figure import Figure
+                from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg as PlotCanvas
+                from matplotlib.backends.backend_tkagg import NavigationToolbar2TkAgg as PlotNav
+                from matplotlib.figure import Figure as PlotFig
             except:
-                FigureCanvasTkAgg = Figure = False
+                PlotCanvas = PlotNav = PlotFig = False
 
     def _loadExternalDnd(self):
         """ loads external dnd - from other applications """
@@ -6746,37 +6747,42 @@ class gui(object):
             pass
         return plot
 
-    def addPlot(self, title, t, s, row=None, column=0, colspan=0, rowspan=0, width=None, height=None):
+    def addPlot(self, title, t, s, row=None, column=0, colspan=0, rowspan=0, width=None, height=None, showNav=False):
         ''' adds a MatPlotLib, with t/s plotted '''
-        canvas, fig = self._addPlotFig(title, row, column, colspan, rowspan, width, height)
+        canvas, fig = self._addPlotFig(title, row, column, colspan, rowspan, width, height, showNav)
         axes = fig.add_subplot(111)
         axes.plot(t,s)
         canvas.axes = axes
         return axes
 
-    def addPlotFig(self, title, row=None, column=0, colspan=0, rowspan=0, width=None, height=None):
-        canvas, fig = self._addPlotFig(title, row, column, colspan, rowspan, width, height)
+    def addPlotFig(self, title, row=None, column=0, colspan=0, rowspan=0, width=None, height=None, showNav=False):
+        canvas, fig = self._addPlotFig(title, row, column, colspan, rowspan, width, height, showNav)
         return fig
 
-    def _addPlotFig(self, title, row=None, column=0, colspan=0, rowspan=0, width=None, height=None):
+    def _addPlotFig(self, title, row=None, column=0, colspan=0, rowspan=0, width=None, height=None, showNav=False):
         self.widgetManager.verify(WIDGET_NAMES.Plot, title)
         self._loadMatplotlib()
-        if FigureCanvasTkAgg is False:
+        if PlotCanvas is False:
             raise Exception("Unable to load MatPlotLib - plots not available")
         else:
-            fig = Figure(tight_layout=True)
+            fig = PlotFig(tight_layout=True)
 
             if width is not None and height is not None:
                 fig.set_size_inches(width,height,forward=True)
 
-            canvas = FigureCanvasTkAgg(fig, self.getContainer())
+            frame = frameBase(self.getContainer())
+
+            canvas = PlotCanvas(fig, frame)
             canvas._tkcanvas.config(background="#c0c0c0", borderwidth=0, highlightthickness=0)
             canvas.fig = fig
             canvas.show()
-    #        canvas.get_tk_widget().pack(side=TOP, fill=BOTH, expand=1)
+            if showNav:
+                navBar = PlotNav(canvas, frame)
+                navBar.pack(side=TOP, fill=X, expand=0)
             canvas._tkcanvas.pack(side=TOP, fill=BOTH, expand=1)
 
-            self._positionWidget(canvas.get_tk_widget(), row, column, colspan, rowspan)
+#            self._positionWidget(canvas.get_tk_widget(), row, column, colspan, rowspan)
+            self._positionWidget(frame, row, column, colspan, rowspan, sticky='news')
             self.widgetManager.add(WIDGET_NAMES.Plot, title, canvas)
             return canvas, fig
 

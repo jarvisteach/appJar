@@ -6,11 +6,9 @@ from appJar import gui
 from matplotlib.backends.backend_tkagg import NavigationToolbar2TkAgg as addToolbar
 import random
 
-def getXY():
-    x = arange(0.0, 3.0, 0.01)
-    y = sin(random.randint(1,10) * pi * x)
-    return x,y 
+from mpl_toolkits.mplot3d import Axes3D
 
 with gui() as app:
-    app.setLogLevel('ERROR')
-    app.addPlot("p1", *getXY(), showNav=True)
+    fig = app.addPlotFig("p1", showNav=True)
+    ax = fig.add_subplot(111, projection='3d')
+    ax.scatter([1,2],[1,2],[1,2])
