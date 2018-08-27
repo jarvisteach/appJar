@@ -942,7 +942,8 @@ class gui(object):
         if PlotCanvas is None:
             try:
                 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg as PlotCanvas
-                from matplotlib.backends.backend_tkagg import NavigationToolbar2TkAgg as PlotNav
+                try: from matplotlib.backends.backend_tkagg import NavigationToolbar2Tk as PlotNav
+                except: from matplotlib.backends.backend_tkagg import NavigationToolbar2TkAgg as PlotNav
                 from matplotlib.figure import Figure as PlotFig
             except:
                 PlotCanvas = PlotNav = PlotFig = False
@@ -2242,9 +2243,9 @@ class gui(object):
         new_width = self.topLevel.winfo_width()
         new_height = self.topLevel.winfo_height()
 
-    def enableEnter(self, func):
+    def enableEnter(self, func, replace=False):
         """ Binds <Return> to the specified function - all widgets """
-        self.bindKey("Return", func)
+        self.bindKey("Return", func, replace)
 
     def disableEnter(self):
         """ unbinds <Return> from all widgets """
@@ -2254,7 +2255,7 @@ class gui(object):
         if func is None:
             self.disableEnter()
         else:
-            self.enableEnter(func)
+            self.enableEnter(func, replace=True)
 
     enterKey = property(fset=_enterWrapper)
 
@@ -2263,8 +2264,11 @@ class gui(object):
         for key in keys:
             self.bindKey(key, func)
 
-    def bindKey(self, key, func):
+    def bindKey(self, key, func, replace=False):
         """ bind the specified key, to the specified function, for all widgets """
+        if replace:
+            try: self.unbindKey(key)
+            except: pass
         # for now discard the Event...
         myF = self.MAKE_FUNC(func, key)
         binding = EventBinding(key, myF, self._getTopLevel(), menuBinding=False)
@@ -2281,6 +2285,9 @@ class gui(object):
 
     def unbindKey(self, key):
         """ unbinds the specified key from whatever functions it is bound to """
+        if key[0] == "<":
+            gui.warn("Shortcuts should not include chevrons: %s", key)
+            key= key[1:-1]
         self.widgetManager.get(WIDGET_NAMES.Bindings, key).removeBindings()
         self.widgetManager.remove(WIDGET_NAMES.Bindings, key)
 
@@ -6725,26 +6732,27 @@ class gui(object):
 # FUNCTION for matplotlib
 #####################################
 
-    def plot(self, title, *args, **kwargs):
+    def plot(self, title, t=None, s=None, *args, **kwargs):
         """ simpleGUI - adds, sets & gets plots all in one go """
         widgKind = WIDGET_NAMES.Plot
-        t = kwargs.pop("t", None)
-        s = kwargs.pop("s", None)
+        nav = kwargs.pop("nav", kwargs.pop("showNav", False))
 
         try: self.widgetManager.verify(widgKind, title)
         except: # widget exists
-            plot = self.getPlot(title)
+            keepLabels = kwargs.pop("keepLabels", False)
+            self.updatePlot(title, t, s, keepLabels=keepLabels)
+            plot = self.widgetManager.get(WIDGET_NAMES.Plot, title).axes
         else: # new widget
             kwargs = self._parsePos(kwargs.pop("pos", []), kwargs)
-            plot = self.addPlotFig(title, *args, **kwargs)
+            if t is not None:
+                if s is not None:
+                    plot = self.addPlot(title, t, s, *args, showNav=nav, **kwargs)
+                else:
+                    gui.warn("Invalid parameters for plot: must provide t & s")
+                    return None
+            else:
+                plot = self.addPlotFig(title, *args, showNav=nav, **kwargs)
 
-        if t is not None:
-            self.updatePlot(title, t, s)
-
-        if len(kwargs) > 0:
-            # ignore for now
-            # will contain positional args
-            pass
         return plot
 
     def addPlot(self, title, t, s, row=None, column=0, colspan=0, rowspan=0, width=None, height=None, showNav=False):

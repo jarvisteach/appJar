@@ -13,7 +13,7 @@ def getXY():
 def generate(btn):
     # *getXY() will unpack the two return values
     # and pass them as separate parameters
-    app.updatePlot("p1", **getXY())
+    app.plot("p1", **getXY())
     showLabels()
 
 def showLabels():
@@ -23,6 +23,6 @@ def showLabels():
     app.refreshPlot("p1")
 
 with gui() as app:
-    axes = app.addPlot("p1", **getXY())
+    axes = app.plot("p1", showNav=True, **getXY()) 
     showLabels()
     app.button("Generate", generate)

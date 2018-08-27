@@ -1790,10 +1790,10 @@ def test_events():
     app.disableEnter()
 
     app.bindKey("b", tester_function)
-    app.unbindKey("b")
+    app.unbindKey("B")
 
     app.bindKeys(["c", "d", "<Up>", "<F1>"], tester_function)
-    app.unbindKeys(["c", "<Up>", "<F1>"])
+    app.unbindKeys(["C", "<Up>", "<F1>"])
 
     app.registerEvent(tester_function)
     app.setPollTime(2)
@@ -2926,7 +2926,7 @@ def test_plots():
     else:
         x = [1,2,3,4,5]
         y = [2,4,6,8,10]
-        axes = app.addPlot("p1", x, y)
+        axes = app.addPlot("p1", x, y, showNav=True)
         axes.legend(["key data"])
         axes.set_xlabel("X lab")
         axes.set_ylabel("Y lab")
@@ -2934,6 +2934,11 @@ def test_plots():
         app.refreshPlot("p1")
         app.updatePlot("p1", x, y)
         app.updatePlot("p1", x, y, keepLabels=True)
+
+        app.plot('p2', x, y, width=100, height=200, nav=True)
+        print(type(app.plot('p2')))
+        assert isinstance(app.addPlot("p2"), turtle.RawTurtle)
+
         print(" >> not implemented...")
         #print("\t >> all tests complete")
 

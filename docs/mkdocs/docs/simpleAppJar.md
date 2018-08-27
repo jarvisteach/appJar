@@ -500,3 +500,17 @@ Displays the tree widget.
 | fgH | string | None | The foreground colour of a selected node. | 
 | bgH | string | None | The background colour of a selected node. | 
 
+## Plot  
+---
+
+Displays matplotlib widgets.  
+
+* `.plot(title, **kwargs)`
+
+| Parameter | Data type | Default | Description |
+| --------- | --------- | ------- | ------------|
+| t | list | None | The x values if required. |
+| s | list | None | The y values if required. |
+| width | int | None | A width for the plot. |
+| height | int | None | A height for the plot. |
+| nav | boolean | false | Whether to show a navigation bar or not. |
