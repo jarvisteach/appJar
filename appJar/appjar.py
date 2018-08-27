@@ -6775,7 +6775,7 @@ class gui(object):
             canvas = PlotCanvas(fig, frame)
             canvas._tkcanvas.config(background="#c0c0c0", borderwidth=0, highlightthickness=0)
             canvas.fig = fig
-            canvas.show()
+            canvas.draw()
             if showNav:
                 navBar = PlotNav(canvas, frame)
                 navBar.pack(side=TOP, fill=X, expand=0)

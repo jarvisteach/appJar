@@ -23,6 +23,6 @@ def showLabels():
     app.refreshPlot("p1")
 
 with gui() as app:
-    axes = app.plot("p1", **getXY())
+    axes = app.addPlot("p1", **getXY())
     showLabels()
-    app.buttob("Generate", generate)
+    app.button("Generate", generate)
