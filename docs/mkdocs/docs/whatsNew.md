@@ -20,6 +20,7 @@
 * <div class="cb cb-imp">Improved</div>Improved docs on [widget positioning](/pythonWidgetLayout/#widget-positioning) - [#524](https://github.com/jarvisteach/appJar/issues/524)  
 * <div class="cb cb-imp">Improved</div>Improved docs on [stopping the GUI](/pythonEvents/#stopping-the-gui) - [#521](https://github.com/jarvisteach/appJar/issues/521)  
 * <div class="cb cb-imp">Improved</div>Improved docs on [pip installation](/Install/#pip-installation) - [#519](https://github.com/jarvisteach/appJar/issues/519)  
+* <div class="cb cb-imp">Improved</div>Resolved deprecated import on [MatPlotLib](/outputWidgets/#matplotlib) - [#518](https://github.com/jarvisteach/appJar/issues/518)  
 * <div class="cb cb-imp">Improved</div>Removed imports from `__init__.py` file - [#505](https://github.com/jarvisteach/appJar/issues/505)
 * <div class="cb cb-imp">Improved</div>[Scales](/inputWidgets/#scale) and other widgets can now have their state changed when in [ttk](/pythonTtk/) mode - [#465](https://github.com/jarvisteach/appJar/issues/465)
 * <div class="cb cb-imp">Improved</div>Better change log? - [#219](https://github.com/jarvisteach/appJar/issues/219)
