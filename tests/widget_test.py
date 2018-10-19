@@ -173,8 +173,11 @@ def test_entries():
     assert not app._validateNumericEntry("1", None, "a", "", "a", None, None, None)
     assert app._validateNumericEntry("2", None, "a", "", "a", None, None, None)
 
-    app.addFileEntry("fe1")
-    app.addDirectoryEntry("de1")
+    app.addFileEntry("ffe1")
+    app.addDirectoryEntry("dfe1")
+    app.addOpenEntry("ofe1")
+    app.addSaveEntry("sfe1")
+
     assert isinstance(app.addAutoEntry("ae1", ["a", "b", "c"]), Entry)
     app.setAutoEntryNumRows("ae1", 5)
     app.appendAutoEntry("ae1", "newOne")
@@ -1461,6 +1464,10 @@ def test_grips():
 def test_auto_labels():
     print("\tTesting auto_labels")
     app.addLabelEntry("lab_ent")
+    app.addLabelFileEntry("lab_ent_file")
+    app.addLabelOpenEntry("lab_ent_open")
+    app.addLabelSaveEntry("lab_ent_save")
+    app.addLabelDirectoryEntry("lab_ent_dir")
     app.addLabelNumericEntry("lab_num_ent")
     app.addLabelSecretEntry("lab_sec_ent")
     app.addLabelAutoEntry("lab_auto_ent", LIST_ONE)
@@ -3456,7 +3463,7 @@ def test_gui(btn=None):
     if doStop == 0:
         test_pop_ups()
         app.thread(run_events, "a", bbb="bbb")
-        app.setEntryFocus("fe1")
+        app.setEntryFocus("ffe1")
         app.threadCallback(cbA, cbB, "text")
         app.callback(cbA, cbB, "text2")
         app.thread(dismissEditMenu)
@@ -3662,8 +3669,11 @@ with gui("Simple Demo", transparency=50, padding=5, location="CENTER", bg="red")
 
     app4.entry("se1", row=0, column=1, default="standard", submit=changer, change=changer, limit=5, case="lower", rows=3)
     app4.entry("sv1", row=1, column=1, kind="validation", default="validation", submit=changer, change=changer, limit=5, case="upper", rows=3)
-    app4.entry("sf1", row=2, column=1, kind="file", default="file", submit=changer, change=changer, limit=5, case="upper", rows=3)
-    app4.entry("sd1", row=3, column=1, kind="directory", default="directory", submit=changer, change=changer, limit=5, case="upper", rows=3)
+    app4.entry("sf1", row=2, column=1, kind="file", default="file", text='press', submit=changer, change=changer, limit=5, case="upper", rows=3)
+    app4.entry("sd1", row=3, column=1, kind="directory", default="directory", text='press', submit=changer, change=changer, limit=5, case="upper", rows=3)
+    app4.entry("so1", row=3, column=1, kind="open", default="open", text='press', submit=changer, change=changer, limit=5, case="upper", rows=3)
+    app4.entry("ss1", row=3, column=1, kind="save", default="save", text='press', submit=changer, change=changer, limit=5, case="upper", rows=3)
+
     app4.entry("sn1", row=4, column=1, kind="numeric", default="numeric", submit=changer, change=changer, limit=5, case="upper", rows=3)
     app4.entry("sa1", ["a", "b", "bb", "bbb"], row=5, column=1, kind="auto", default="auto", submit=changer, change=changer, limit=5, case="upper", rows=3)
     app4.entry("ss1", row=6, column=1, secret=True, default="secret", submit=changer, change=changer, limit=5, case="upper", rows=3)

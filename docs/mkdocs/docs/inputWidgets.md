@@ -25,7 +25,7 @@ There are five special-case Entries:
 * **SecretEntry** - this will show stars, instead of the letters typed - useful for capturing passwords.
 * **AutoEntry** - this takes a list of words to provide auto-completion.  
 * **ValidationEntry** - can be set to valid/invalid/waiting - will colour the border green/red/black and show a ✔/✖/★  
-* **FileEntry/DirectoryEntry** - provides a button to select a file/directory and auto-populates the Entry  
+* **OpenEntry/SaveEntry/DirectoryEntry** - provides a button to select a file/directory and auto-populates the Entry  
 
 ![Entries](img/1_entries.png)
 
@@ -53,7 +53,8 @@ app.go()
 * `.addNumericEntry(title)`
 * `.addSecretEntry(title)`
 * `.addValidationEntry(title)`  
-* `.addFileEntry(title)`  
+* `.addSaventry(title)`  
+* `.addOpenEntry(title)`  
 * `.addDirectoryEntry(title)`  
 * `.addAutoEntry(title, words)`  
     This also takes a `words` parameter, which must be a list, and is used to populate he drop-down.  

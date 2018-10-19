@@ -9680,6 +9680,10 @@ class gui(object):
         ent.lab.config(bg=bg)
 
     def _entryMaker(self, title, row=None, column=0, colspan=0, rowspan=0, secret=False, label=False, kind="standard", words=None, **kwargs):
+        # used by file entries
+        text = kwargs.pop("text", None) 
+        default = kwargs.pop("default", None) 
+
         if not label:
             frame = self.getContainer()
         else:
@@ -9698,10 +9702,8 @@ class gui(object):
             self.setEntryTooltip(title, "Numeric data only.")
         elif kind == "auto":
             ent = self._buildEntry(title, frame, secret=False, words=words)
-        elif kind == "file":
-            ent = self._buildFileEntry(title, frame)
-        elif kind == "directory":
-            ent = self._buildFileEntry(title, frame, selectFile=False)
+        elif kind in ["file", "open", "save", "directory"]:
+            ent = self._buildFileEntry(title, frame, kind=kind, text=text, default=default)
         elif kind == "validation":
             ent = self._buildValidationEntry(title, frame, secret)
         else:
@@ -9742,6 +9744,22 @@ class gui(object):
         ''' adds an entry box with a button, that pops-up a file dialog, with a label that displays the title '''
         return self._entryMaker(title, row, column, colspan, rowspan, secret=False, label=label, kind="file")
 
+    def addOpenEntry(self, title, row=None, column=0, colspan=0, rowspan=0):
+        ''' adds an entry box with a button, that pops-up a open dialog '''
+        return self._entryMaker(title, row, column, colspan, rowspan, secret=False, label=False, kind="open")
+
+    def addLabelOpenEntry(self, title, row=None, column=0, colspan=0, rowspan=0, label=True):
+        ''' adds an entry box with a button, that pops-up a open dialog, with a label that displays the title '''
+        return self._entryMaker(title, row, column, colspan, rowspan, secret=False, label=label, kind="open")
+
+    def addSaveEntry(self, title, row=None, column=0, colspan=0, rowspan=0):
+        ''' adds an entry box with a button, that pops-up a save dialog '''
+        return self._entryMaker(title, row, column, colspan, rowspan, secret=False, label=False, kind="save")
+
+    def addLabelSaveEntry(self, title, row=None, column=0, colspan=0, rowspan=0, label=True):
+        ''' adds an entry box with a button, that pops-up a save dialog, with a label that displays the title '''
+        return self._entryMaker(title, row, column, colspan, rowspan, secret=False, label=label, kind="save")
+
     def addDirectoryEntry(self, title, row=None, column=0, colspan=0, rowspan=0):
         return self._entryMaker(title, row, column, colspan, rowspan, secret=False, label=False, kind="directory")
 
@@ -9770,12 +9788,17 @@ class gui(object):
         return self._entryMaker(title, row, column, colspan, rowspan, secret=secret, label=label, kind="numeric")
 
     def _getDirName(self, title):
-        self._getFileName(title, selectFile=False)
+        self._getFileName(title, kind='directory')
 
-    def _getFileName(self, title, selectFile=True):
-        if selectFile:
+    def _getSaveName(self, title):
+        self._getFileName(title, kind='save')
+
+    def _getFileName(self, title, kind='open'):
+        if kind in ['open', 'file']:
             fileName = self.openBox()
-        else:
+        elif kind == 'save':
+            fileName = self.saveBox()
+        elif kind == 'directory':
             fileName = self.directoryBox()
 
         if fileName is not None and fileName != "":
@@ -9785,11 +9808,15 @@ class gui(object):
 
     def _checkDirName(self, title):
         if len(self.getEntry(title)) == 0:
-            self._getFileName(title, selectFile=False)
+            self._getFileName(title, kind='directory')
+
+    def _checkSaveName(self, title):
+        if len(self.getEntry(title)) == 0:
+            self._getFileName(title, kind='save')
 
     def _checkFileName(self, title):
         if len(self.getEntry(title)) == 0:
-            self._getFileName(title)
+            self._getFileName(title, kind='open')
 
     def _buildEntry(self, title, frame, secret=False, words=[]):
         self.widgetManager.verify(WIDGET_NAMES.Entry, title)
@@ -9852,7 +9879,8 @@ class gui(object):
         self.widgetManager.add(WIDGET_NAMES.Entry, title, ent.var, group=WidgetManager.VARS)
         return ent
 
-    def _buildFileEntry(self, title, frame, selectFile=True):
+    def _buildFileEntry(self, title, frame, kind='save', text=None, default=None):
+
         vFrame = self._makeButtonBox()(frame)
         self.widgetManager.log(WIDGET_NAMES.FrameBox, vFrame)
 
@@ -9863,16 +9891,21 @@ class gui(object):
         vFrame.theWidget.inContainer = True
         vFrame.theWidget.pack(expand=True, fill=X, side=LEFT)
 
-        if selectFile:
+        if kind in ['open', "file"]:
             command = self.MAKE_FUNC(self._getFileName, title)
             vFrame.theWidget.click_command = self.MAKE_FUNC(self._checkFileName, title)
-            text = "File"
-            default = "-- enter a filename --"
+            if text is None: text = "File"
+            if default is None: default = "-- enter a filename --"
+        elif kind == 'save':
+            command = self.MAKE_FUNC(self._getSaveName, title)
+            vFrame.theWidget.click_command = self.MAKE_FUNC(self._checkSaveName, title)
+            if text is None: text = "File"
+            if default is None: default = "-- enter a filename --"
         else:
             command = self.MAKE_FUNC(self._getDirName, title)
             vFrame.theWidget.click_command = self.MAKE_FUNC(self._checkDirName, title)
-            text = "Directory"
-            default = "-- enter a directory --"
+            if text is None: text = "Directory"
+            if default is None: default = "-- enter a directory --"
 
         self.setEntryDefault(title, default)
         vFrame.theWidget.bind("<Button-1>", vFrame.theWidget.click_command, "+")

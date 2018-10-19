@@ -173,11 +173,12 @@ An interactive widget, for capturing user input in the GUI.
 
 | Parameter | Data type | Default | Description |
 | --------- | --------- | ------- | ------------|
-| kind | string | `standard` | One of: `standard`, `file`, `directory`, `numeric`, `auto` or `validation`. |
+| kind | string | `standard` | One of: `standard`, `open`, `save`, `directory`, `numeric`, `auto` or `validation`. |
 | secret | boolean | False | Configures the entry box to show stars instead of characters. |
 | default | string | None | Sets default text to display in an empty entry. |
 | rows | integer | 10 | If the kind is `auto` this will set the number of rows to show. |
 | labBg | string | None | Special parameter to change the BG of the validation label in a validaiton entry. |
+| text | string | None | Special parameter to change the text of the file entry button. |
 
 There are also some validation settings that can be applied:  
 
