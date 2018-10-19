@@ -27,6 +27,7 @@
 * <div class="cb cb-imp">Improved</div>Better change log? - [#219](https://github.com/jarvisteach/appJar/issues/219)
 * <div class="cb cb-imp">Improved</div>appJar now uses tkinter style `config` functions - [#49](https://github.com/jarvisteach/appJar/issues/49)
 * <div class="cb cb-fix">Fixed</div>All start [container](/pythonWidgetGrouping/) functions now return the container - [#523](https://github.com/jarvisteach/appJar/issues/523)
+* <div class="cb cb-fix">Fixed</div>Scrolling to the end of an [entry](/inputWidgets/#entry) in ttk - [#538](https://github.com/jarvisteach/appJar/issues/538)
 * <div class="cb cb-fix">Fixed</div>[Menu check boxes](/pythonBars/#menubar) now toggle using the keyboard shortcut, and also work properly on Mac - [#512](https://github.com/jarvisteach/appJar/issues/512)
 * <div class="cb cb-fix">Fixed</div>[Menu](/pythonBars/#menubar) shortcuts improved, to handle more cases - [#499](https://github.com/jarvisteach/appJar/issues/499)
 * <div class="cb cb-fix">Fixed</div>Issue where [blocking subwindows](/pythonSubWindows/#startstop-sub-windows) wouldn't work - [#491](https://github.com/jarvisteach/appJar/issues/491)

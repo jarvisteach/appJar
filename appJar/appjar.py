@@ -3078,8 +3078,12 @@ class gui(object):
                 elif option == "focus":
                     item.focus_set()
                     if kind == WIDGET_NAMES.Entry:
-                        item.icursor(END)
-                        item.xview(END)
+                        if not self.ttkFlag:
+                            item.icursor(END)
+                            item.xview(END)
+                        else:
+                            item.icursor(END)
+                            item.xview(len(item.get()))
 
                 # event bindings
                 elif option == 'over':
@@ -9839,8 +9843,12 @@ class gui(object):
                         return "break"
                     elif event.keysym == "Down":
                         # move end
-                        event.widget.icursor(END)
-                        event.widget.xview(END)
+                        if not self.ttkFlag:
+                            event.widget.icursor(END)
+                            event.widget.xview(END)
+                        else:
+                            event.widget.icursor(END)
+                            event.widget.xview(len(event.widget.get()))
                         return "break"
 
                 ent.bind("<Key>", suppress)
