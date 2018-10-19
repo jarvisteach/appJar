@@ -392,9 +392,10 @@ app.go()
     This will tick the specified RadioButton.  
     Set ```callFunction``` to be False, if you don't want to call any associated functions.  
 
-* `.setRadioTick(title, tick=True)`  
-    It is possible to use tick-boxes instead of the classic circular radio-button.  
-    Setting tick to True will convert all the radio-buttons for this title to tick boxes.  
+* `.setRadioSquare(title, square=True)`  
+    It is possible to use square buttons instead of the classic circular radio-button.  
+    Setting square to True will convert all the radio-buttons for this title to square boxes.  
+    Not supported in ttk or on Mac.  
 
 * `.clearAllRadioButtons(callFunction=False)`  
     This will reset all RadioButtons in the app to their first value.  

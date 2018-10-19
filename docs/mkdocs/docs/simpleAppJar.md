@@ -237,13 +237,14 @@ A checkbox style widget, that can be checked/unchecked.
 Radio buttons are used in groups, only one of them can be checked.  
 By default, the first radio button added to a group will be selected.
 
-* `.radio(title, value=None)`  
+* `.radio(title, name=None)`  
     The `title` is the radio button's group.  
-    The `value` is the text to display next to this radio button.  
+    The `name` is the text to display next to this radio button.  
     Radio buttons can receive a `change` parameter, it will be linked to all radio buttons of the same `title`.  
 
 | Parameter | Data type | Default | Description |
 | --------- | --------- | ------- | ------------|
+| kind | string | `standard` | Set this to `square` to change the style of the radio buttons.<br>Not supported in ttk or on Mac. |
 | selected | boolean | False | Should this radio be selected? |
 
 ## Option  

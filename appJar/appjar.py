@@ -7792,6 +7792,7 @@ class gui(object):
         selected = kwargs.pop("selected", False)
         callFunction = kwargs.pop("callFunction", True)
         change = kwargs.pop("change", None)
+        kind = kwargs.pop('kind', 'standard')
 
         # need slightly different approach, as use two params
         if name is None: return self.getRadioButton(title) # no name = get
@@ -7808,6 +7809,13 @@ class gui(object):
 
             if selected: self.setRadioButton(title, name)
             if change is not None: self.setRadioButtonChangeFunction(title, change)
+            if kind == "square":
+                if self.platform == self.MAC:
+                    gui.warn("Square radiobuttons not available on Mac, for radiobutton %s", title)
+                elif not self.ttkFlag:
+                    rb.config(indicatoron=0)
+                else:
+                    gui.warn("Square radiobuttons not available in ttk, for radiobutton %s", title)
 
             if len(kwargs) > 0:
                 self._configWidget(ident, widgKind, **kwargs)
@@ -7881,12 +7889,21 @@ class gui(object):
             self.setRadioButton(rb, self.widgetManager.get(WIDGET_NAMES.RadioButton, rb, group=WidgetManager.VARS).startVal, callFunction=callFunction)
 
     def setRadioTick(self, title, tick=True):
-        for k, v in self.widgetManager.group(WIDGET_NAMES.RadioButton).items():
-            if k.startswith(title+"-"):
-                if tick:
-                    v.config(indicatoron=1)
-                else:
-                    v.config(indicatoron=0)
+        self.warn("Deprecated function (%s) used for %s -> %s use %s instead", 'setRadioTick', 'radioButton', title, 'setRadioSquare')
+        self.setRadioSquare(title, square=tick)
+
+    def setRadioSquare(self, title, square=True):
+        if self.platform == self.MAC:
+            gui.warn("Square radiobuttons not available on Mac, for radiobutton %s", title)
+        elif not self.ttkFlag:
+            for k, v in self.widgetManager.group(WIDGET_NAMES.RadioButton).items():
+                if k.startswith(title+"-"):
+                    if square:
+                        v.config(indicatoron=1)
+                    else:
+                        v.config(indicatoron=0)
+        else:
+            gui.warn("Square radiobuttons not available in ttk mode, for radiobutton %s", title)
 
 #####################################
 # FUNCTION for list box

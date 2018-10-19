@@ -26,6 +26,7 @@
 * <div class="cb cb-imp">Improved</div>[Scales](/inputWidgets/#scale) and other widgets can now have their state changed when in [ttk](/pythonTtk/) mode - [#465](https://github.com/jarvisteach/appJar/issues/465)
 * <div class="cb cb-imp">Improved</div>Better change log? - [#219](https://github.com/jarvisteach/appJar/issues/219)
 * <div class="cb cb-imp">Improved</div>appJar now uses tkinter style `config` functions - [#49](https://github.com/jarvisteach/appJar/issues/49)
+* <div class="cb cb-fix">Fixed</div>Resolved issues with changing [radiobutton](/inputWidgets/#set-radiobuttons) type in ttk - [#534](https://github.com/jarvisteach/appJar/issues/534)
 * <div class="cb cb-fix">Fixed</div>Scrolling to the end of an [entry](/inputWidgets/#entry) in ttk - [#538](https://github.com/jarvisteach/appJar/issues/538)
 * <div class="cb cb-fix">Fixed</div>All start [container](/pythonWidgetGrouping/) functions now return the container - [#523](https://github.com/jarvisteach/appJar/issues/523)
 * <div class="cb cb-fix">Fixed</div>[Menu check boxes](/pythonBars/#menubar) now toggle using the keyboard shortcut, and also work properly on Mac - [#512](https://github.com/jarvisteach/appJar/issues/512)
