@@ -53,8 +53,8 @@ app.go()
 * `.addNumericEntry(title)`
 * `.addSecretEntry(title)`
 * `.addValidationEntry(title)`  
-* `.addSaventry(title)`  
 * `.addOpenEntry(title)`  
+* `.addSaveEntry(title)`  
 * `.addDirectoryEntry(title)`  
 * `.addAutoEntry(title, words)`  
     This also takes a `words` parameter, which must be a list, and is used to populate he drop-down.  
