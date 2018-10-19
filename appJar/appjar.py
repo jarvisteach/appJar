@@ -9673,6 +9673,9 @@ class gui(object):
         if labBg is not None and self.widgetManager.get(WIDGET_NAMES.Entry, title).isValidation:
             self.setValidationEntryLabelBg(title, labBg)
 
+        # used by file entries
+        kwargs.pop("text", None)
+
         if len(kwargs) > 0:
             self._configWidget(title, widgKind, **kwargs)
         return ent
