@@ -513,6 +513,10 @@ def test_radios():
     app.setRadioTick("rb")
     app.setRadioTick("rb", True)
     app.setRadioTick("rb", False)
+
+    app.setRadioSquare("rb")
+    app.setRadioSquare("rb", True)
+    app.setRadioSquare("rb", False)
     assert app.getRadioButton("rb") == TEXT_TWO
 
     app.setRadioButton("rb", TEXT_THREE)
@@ -3635,7 +3639,7 @@ with gui("Simple Demo", transparency=50, padding=5, location="CENTER", bg="red")
     app4.setLabelBg("title", "green")
 
     app4.radio("happy", "Very Happy", row=1, column=0)
-    app4.radio("happy", "Ambivalent", row=1, column=1, change=changer)
+    app4.radio("happy", "Ambivalent", row=1, column=1, change=changer, kind='square')
     app4.radio("happy", "Miserable", row=1, column=2, selected=True)
 
     app4.message("mess", "Simple Sadness", row=2, rowspan=3)
