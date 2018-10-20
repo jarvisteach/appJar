@@ -11058,6 +11058,7 @@ class gui(object):
                 # we can cut-off early if requested internally
                 if limit is not None and limit == item:
                     break
+                print(menu.type(item))
                 if menu.type(item) == 'cascade':
                     label = menu.entrycget(item, 'label')
                     if len(label) == 0: label = 'SPECIAL MENU'
@@ -11069,6 +11070,7 @@ class gui(object):
                     gui.trace('Skipping separator')
                 else:
                     label = menu.entrycget(item, 'label')
+                    print('LABEL----->', label)
                     gui.trace('%s item: %s', text, label)
                     # use the position - if the label is a number it breaks...
                     self._changeMenuItemState(menu, item, state)

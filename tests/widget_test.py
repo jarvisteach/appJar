@@ -2016,6 +2016,7 @@ def test_menus():
 
     app.addEntry("RCLICK2")
     app.addMenuEdit()
+    app.setLogLevel('TRACE')
 
     app.enableMenubar()
     app.disableMenubar()
