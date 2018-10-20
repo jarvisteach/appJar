@@ -2761,9 +2761,15 @@ class gui(object):
 
     def getBg(self):
         if self._getContainerProperty('type') == WIDGET_NAMES.RootPage:
-            return self.bgLabel.cget("bg")
+            if not self.ttkFlag:
+                return self.bgLabel.cget("bg")
+            else:
+                return self.bgLabel.cget("background")
         else:
-            return self._getContainerProperty('container').cget("bg")
+            if not self.ttkFlag:
+                return self._getContainerProperty('container').cget("bg")
+            else:
+                return None
 
     def getFg(self):
         return self._getContainerProperty("fg")
@@ -5306,7 +5312,8 @@ class gui(object):
         except ItemLookupError:
             lf = self.openLabelFrame(title)
         self.configure(**kwargs)
-        lf.config(fg=labelFg)
+        if not self.ttkFlag:
+            lf.config(fg=labelFg)
         try: yield lf
         finally: self.stopLabelFrame()
 
