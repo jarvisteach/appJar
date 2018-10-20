@@ -11066,8 +11066,8 @@ class gui(object):
                     subMenu = self.topLevel.nametowidget(menu.entrycget(item, 'menu'))
                     self._changeMenuState(subMenu, state, text)
                     menu.entryconfig(item, state=state)
-                elif menu.type(item) == 'separator':
-                    gui.trace('Skipping separator')
+                elif menu.type(item) in ['separator', 'tearoff']:
+                    gui.trace('Skipping separator/tearoff')
                 else:
                     label = menu.entrycget(item, 'label')
                     print('LABEL----->', label)
