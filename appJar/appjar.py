@@ -49,8 +49,9 @@ import calendar  # datepicker
 import datetime  # datepicker & image
 import logging  # python's logger
 import inspect  # for logging
-import argparse   # argument parser
 from contextlib import contextmanager  # generators
+try: import argparse   # argument parser
+except ImportError: argparse = None
 
 import __main__ as theMain
 from platform import system as platform
@@ -501,6 +502,7 @@ class gui(object):
         self.startWindow = startWindow
 
         # check any command line arguments
+        if argparse is None: handleArgs = False
         args = self._handleArgs() if handleArgs else None
 
         # warn if we're in an untested mode
