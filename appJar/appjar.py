@@ -3286,6 +3286,9 @@ class gui(object):
         elif kind == WIDGET_NAMES.SpinBox:
             widget.cmd = self.MAKE_FUNC(function, name)
             widget.cmd_id = widget.var.trace("w", widget.cmd)
+        elif kind == WIDGET_NAMES.PanedFrame:
+            widget.cmd = self.MAKE_FUNC(function, name)
+            widget.bind("<Configure>", widget.cmd)
         else:
             if kind not in [WIDGET_NAMES.CheckBox]:
                 self.warn("Unmanaged binding of %s to %s", eventType, name)
@@ -4317,6 +4320,7 @@ class gui(object):
                 showhandle=True,
                 sashrelief="groove",
                 bg=self._getContainerBg())
+
             pane.isContainer = True
             self._positionWidget(
                 pane, row, column, colspan, rowspan, sticky=sticky)
