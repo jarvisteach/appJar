@@ -77,6 +77,9 @@ app.go()
 * `.clearLabel(title)`  
     Clear the contents of the *label*.
 
+* `.clearAllLabels()`  
+    Clears the contents of all *labels*.
+
 #### Get Labels
 * `.getLabel(title)`  
     Get the contents of the *label*.

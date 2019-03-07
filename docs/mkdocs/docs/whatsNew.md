@@ -6,6 +6,7 @@
 * <div class="cb cb-new">New</div>Example of how to create a [stylesheet](/examples/stylesheets/) - [#481](https://github.com/jarvisteach/appJar/issues/481)
 * <div class="cb cb-new">New</div>Function to [move](/pythonWidgetOptions/#widget-manipulation) widgets - [#477](https://github.com/jarvisteach/appJar/issues/477)
 * <div class="cb cb-add">Added</div>[Paned Frames](/pythonWidgetGrouping/#paned-frame) support a change function - [#561](https://github.com/jarvisteach/appJar/issues/561)
+* <div class="cb cb-add">Added</div>All [labels](/outputWidgets/#set-labels) can be cleared with a single function call - [#570](https://github.com/jarvisteach/appJar/issues/570)
 * <div class="cb cb-add">Added</div>[File Entry](/inputWidgets/#entry) supports choosing a save file - [#539](https://github.com/jarvisteach/appJar/issues/539)
 * <div class="cb cb-add">Added</div>Option to display navigation bar in [MatPlotLib](/outputWidgets/#matplotlib) - [#529](https://github.com/jarvisteach/appJar/issues/529)
 * <div class="cb cb-add">Added</div>Additional properties on [Tables](/pythonDevWidgets/#table) - [#517](https://github.com/jarvisteach/appJar/issues/517)

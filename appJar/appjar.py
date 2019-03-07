@@ -9102,6 +9102,10 @@ class gui(object):
     def clearLabel(self, name):
         self.setLabel(name, "")
 
+    def clearAllLabels(self):
+        for lb in self.widgetManager.group(WIDGET_NAMES.Label):
+            self.clearLabel(lb)
+
 #####################################
 # FUNCTIONS to add Text Area
 #####################################
