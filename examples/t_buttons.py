@@ -1,4 +1,6 @@
-from rwbatools import gui
+import sys
+sys.path.append("../")
+from appJar import gui
 
 def press(btn):                 # the title of the button will be received as a parameter
     print(btn)

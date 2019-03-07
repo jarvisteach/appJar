@@ -7476,7 +7476,7 @@ class gui(object):
         imageFile = self.getImagePath(imageFile)
 
         # only set the image if it's different
-        if label.image.path == imageFile:
+        if label.image is not None and label.image.path == imageFile:
             self.warn("Not updating %s, %s hasn't changed." , name, imageFile)
             return
         elif imageFile is None:
@@ -7489,7 +7489,7 @@ class gui(object):
     def _populateImage(self, name, image, internal=False):
         label = self.widgetManager.get(WIDGET_NAMES.Image, name)
 
-        label.image.animating = False
+        if label.image is not None: label.image.animating = False
         label.config(image=image)
         label.config(anchor=CENTER, font=self._getContainerProperty('labelFont'))
         if not self.ttkFlag:
@@ -7583,7 +7583,7 @@ class gui(object):
 
         self.widgetManager.add(WIDGET_NAMES.Image, name, label)
         self._positionWidget(label, row, column, colspan, rowspan)
-        if img.isAnimated:
+        if img is not None and img.isAnimated:
             anim_id = self.topLevel.after(
                 img.anim_speed, self._animateImage, name, True)
             self.widgetManager.update(WIDGET_NAMES.AnimationID, name, anim_id)

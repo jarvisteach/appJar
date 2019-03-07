@@ -1,5 +1,7 @@
 # example of a simple text editor
-from rwbatools import gui
+import sys
+sys.path.append("../../../")
+from appJar import gui
 
 def open():
       file = win.openBox()

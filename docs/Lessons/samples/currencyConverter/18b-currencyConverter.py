@@ -1,5 +1,7 @@
 # import the library
-from rwbatools import gui
+import sys
+sys.path.append("../../../../")
+from appJar import gui
 
 # hash of currencies
 currencies={}
@@ -74,10 +76,10 @@ win.setBg("MidnightBlue")
 win.setFont("White")
 win.setLabelFont(16)
 
-win.setEntryFunc("Amount", press)
+win.setEntrySubmitFunction("Amount", press)
 win.setFocus("Amount")
-win.setOptionBoxCommand("source", updateImages)
-win.setOptionBoxCommand("target", updateImages)
+win.setOptionBoxChangeFunction("source", updateImages)
+win.setOptionBoxChangeFunction("target", updateImages)
 
 updateImages()
 

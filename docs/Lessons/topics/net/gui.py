@@ -1,5 +1,7 @@
 import socket
-from rwbatools import gui
+import sys
+sys.path.append("../../../../")
+from appJar import gui
 
 connected = False
 sock = None
@@ -56,7 +58,7 @@ win.setBg ( "yellow" )
 win.addListBox ( "messages" )
 win.addLabelEntry ( "Msg" )
 win.setEntryWidth ( "Msg", 15 )
-win.setEntryFunction ( "Msg", press )
+win.setEntrySubmitFunction ( "Msg", press )
 win.setFocus ( "Msg" )
 win.registerEvent(checkForMsg)
 win.go ( )
