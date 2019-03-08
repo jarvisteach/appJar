@@ -871,7 +871,7 @@ class gui(object):
 
         #toolbars
         self.ttkStyle.configure("Toolbar.TFrame")
-        self.ttkStyle.configure("Toolbar.TButton", padding=0, expand=0)
+        self.ttkStyle.configure("Toolbar.TButton", compound=CENTER, padding=0, expand=0)
 
 #        self.fgColour = self.topLevel.cget("foreground")
 #        self.buttonFgColour = self.topLevel.cget("foreground")
@@ -8414,9 +8414,11 @@ class gui(object):
         image = self._getImage(imgFile)
         # works on Mac & Windows :)
         if align == None:
-            but.config(image=image, compound=TOP, text="")
+            but.config(image=image, text="")
             if not self.ttk:
-                but.config(justify=LEFT)
+                but.config(justify=LEFT, compound=TOP)
+            else:
+                but.config(compound=CENTER)
         else:
             but.config(image=image, compound=align)
         # but.config(image=image, compound=None, text="") # works on Windows, not Mac
