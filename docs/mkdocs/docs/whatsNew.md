@@ -20,6 +20,7 @@
 * <div class="cb cb-add">Added</div>Can now create [trees](/pythonDevWidgets/#tree) with xml objects and show attributes - [#457](https://github.com/jarvisteach/appJar/issues/457)
 * <div class="cb cb-add">Added</div>Option to set `wrap` parameter on [Tables](/pythonDevWidgets/#table) - [#458](https://github.com/jarvisteach/appJar/issues/458)
 * <div class="cb cb-add">Added</div>Intoduced new container properties [rowspan/colspan](/simpleProperties/#grid-properties) - [#55](https://github.com/jarvisteach/appJar/issues/55)
+* <div class="cb cb-imp">Removed references to `rwbatools` in example code - [#569](https://github.com/jarvisteach/appJar/issues/569)  
 * <div class="cb cb-imp">Improved</div>`getAllInputs()` now has a parameter `includeEmptyInputs` to include any empty input fields - [#563](https://github.com/jarvisteach/appJar/issues/563)  
 * <div class="cb cb-imp">Improved</div>[Buttons](/inputWidgets/#button) now align images/icons correctly in [ttk](/pythonTtk/) - [#560](https://github.com/jarvisteach/appJar/issues/560)  
 * <div class="cb cb-imp">Improved</div>Improved docs on [widget positioning](/pythonWidgetLayout/#widget-positioning) - [#524](https://github.com/jarvisteach/appJar/issues/524)  
