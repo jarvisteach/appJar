@@ -4,7 +4,7 @@ sys.path.append("../../")
 from appJar import gui
 
 def showme():
-    entries = app.getAllEntries()
+    entries = app.getAllInputs(includeEmptyInputs=False)
     columns = ','.join(entries.keys())
     print(columns)
 

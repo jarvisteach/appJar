@@ -10693,6 +10693,10 @@ class gui(object):
         Note, empty pairs from each input is stripped, existing keys
         will not be overridden!
         """
+
+        # used to stop removal of empty inputs
+        includeEmptyInputs = kwargs.pop('includeEmptyInputs', False)
+
         # All available inputs.
         inputs = filter(None, [
                   self.getAllEntries(),
@@ -10717,7 +10721,7 @@ class gui(object):
                     pass
                 try:
                     # Skip if value is empty or if key already exists.
-                    if not val or result[key]:
+                    if (not includeEmptyInputs and not val) or result[key]:
                         continue
                 except KeyError:
                     pass
