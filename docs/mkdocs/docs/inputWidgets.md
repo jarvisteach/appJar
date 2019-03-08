@@ -15,6 +15,12 @@ For each of the above to work, we need to know which widget you are referring to
 
 If you want your input widget to have a label, there are some [auto-label functions](#auto-labelled-widgets)
 
+If you wnat to get the contents of all widgets in the GUI as a single dictionary, use:
+* `.getAllInputs(includeEmptyInputs=False)`  
+    This will return the contents of all input fields as a dictionary.  
+    Set `includeEmptyInputs` to True, if you want to include any empty input fields.  
+
+
 ##Entry
 ____
 Entries are used to capture typed input from the user. They take a single parameter - a title.
