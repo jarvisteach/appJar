@@ -9325,7 +9325,22 @@ class gui(object):
             return pos
 
     def getTextAreaTag(self, title, tag):
-        """ returns all details about the specified tag """
+        """ returns ranges and contents of the specified tag """
+        ta = self.widgetManager.get(WIDGET_NAMES.TextArea, title)
+        ranges = ta.tag_ranges(tag)
+        tagged = []
+        # if a tag appears multiple times, .tag_ranges() returns a flat list like
+        # range1_start, range1_end, range2_start, range2_end, etc.
+        for i in range(0, len(ranges), 2):
+            start = ranges[i]
+            stop = ranges[i + 1]
+            tagged.append({'tag': tag,
+                           'range': (start, stop),
+                           'text': ta.get(start, stop)})
+        return tagged
+
+    def getTextAreaTagConfig(self, title, tag):
+        """ returns all config details about the specified tag """
         ta = self.widgetManager.get(WIDGET_NAMES.TextArea, title)
         return ta.tag_config(tag)
 
