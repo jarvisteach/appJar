@@ -16004,28 +16004,6 @@ class EventBinding(object):
 #####################################
 # MAIN - for testing
 #####################################
-# if __name__ == "__main__":
-#     print("This is a library class and cannot be executed.")
-#     sys.exit()
-
-
-TEST_STRING = "Hey, we're testing out TextArea enhancements\nToday we're gonna play with tags\nLet's see how they work!"
-
-
-def tag_text(btn):
-    app.textAreaToggleTagSelected('main_text_area', 'selected')
-
-def check_tags(btn):
-    tag = app.getTextAreaTag('main_text_area', 'selected')
-    tags = app.getTextAreaTags('main_text_area')
-    print(tag)
-    print(tags)
-
-
-app = gui('test', sticky='news')
-
-app.text('main_text_area', value=TEST_STRING)
-app.button('tag_text', tag_text)
-app.button('check_tags', check_tags)
-
-app.go()
+if __name__ == "__main__":
+    print("This is a library class and cannot be executed.")
+    sys.exit()
