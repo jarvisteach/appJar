@@ -9325,21 +9325,6 @@ class gui(object):
             return pos
 
     def getTextAreaTag(self, title, tag):
-        """ returns ranges and contents of the specified tag """
-        ta = self.widgetManager.get(WIDGET_NAMES.TextArea, title)
-        ranges = ta.tag_ranges(tag)
-        tagged = []
-        # if a tag appears multiple times, .tag_ranges() returns a flat list like
-        # range1_start, range1_end, range2_start, range2_end, etc.
-        for i in range(0, len(ranges), 2):
-            start = ranges[i]
-            stop = ranges[i + 1]
-            tagged.append({'tag': tag,
-                           'range': (start, stop),
-                           'text': ta.get(start, stop)})
-        return tagged
-
-    def getTextAreaTagConfig(self, title, tag):
         """ returns all config details about the specified tag """
         ta = self.widgetManager.get(WIDGET_NAMES.TextArea, title)
         return ta.tag_config(tag)
@@ -9348,6 +9333,22 @@ class gui(object):
         """ returns a list of all tags in the text area """
         ta = self.widgetManager.get(WIDGET_NAMES.TextArea, title)
         return ta.tag_names()
+
+    def getTextAreaTagRanges(self, title, tag):
+        """ returns ranges and contents of the specified tag """
+        ta = self.widgetManager.get(WIDGET_NAMES.TextArea, title)
+        ranges = ta.tag_ranges(tag)
+        tagged = []
+        # if a tag appears multiple times, .tag_ranges() returns a flat list like
+        # range1_start, range1_end, range2_start, range2_end, etc.
+        if len(ranges) >= 2:
+            for i in range(0, len(ranges), 2):
+                start = ranges[i]
+                stop = ranges[i + 1]
+                tagged.append({'tag': tag,
+                               'range': (start, stop),
+                               'text': ta.get(start, stop)})
+        return tagged
 
     def setTextAreaFont(self, title, **kwargs):
         """ changes the font of a text area """
@@ -16003,6 +16004,28 @@ class EventBinding(object):
 #####################################
 # MAIN - for testing
 #####################################
-if __name__ == "__main__":
-    print("This is a library class and cannot be executed.")
-    sys.exit()
+# if __name__ == "__main__":
+#     print("This is a library class and cannot be executed.")
+#     sys.exit()
+
+
+TEST_STRING = "Hey, we're testing out TextArea enhancements\nToday we're gonna play with tags\nLet's see how they work!"
+
+
+def tag_text(btn):
+    app.textAreaToggleTagSelected('main_text_area', 'selected')
+
+def check_tags(btn):
+    tag = app.getTextAreaTag('main_text_area', 'selected')
+    tags = app.getTextAreaTags('main_text_area')
+    print(tag)
+    print(tags)
+
+
+app = gui('test', sticky='news')
+
+app.text('main_text_area', value=TEST_STRING)
+app.button('tag_text', tag_text)
+app.button('check_tags', check_tags)
+
+app.go()
