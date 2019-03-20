@@ -116,7 +116,7 @@ A number of pop-ups (aka dialogs) are available, to add a different user experie
 
 <br>
 
-* `.saveBox(title=None, fileName=none, dirName=None, fileExt=".txt", fileTypes=None, asFile=None, parent=None)`  
+* `.saveBox(title=None, fileName=None, dirName=None, fileExt=".txt", fileTypes=None, asFile=None, parent=None)`  
     Shows a save file dialog.  
     If this dialog is being launched from a [subWindow](/pythonWidgetGrouping/#sub-window) set `parent` to be the name of the subWindow.  
 
