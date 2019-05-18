@@ -2322,6 +2322,12 @@ class gui(object):
         if ignoreSettings is not None:
             container.ignoreSettings = ignoreSettings
 
+        try:
+            geom = geom.lower()
+        except:
+            # ignore - other data types allowed
+            pass
+
         if geom == "fullscreen":
             self.setFullscreen()
         elif geom is not None:

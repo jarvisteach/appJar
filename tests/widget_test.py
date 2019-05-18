@@ -1710,6 +1710,7 @@ def test_gui_options():
 
     app.setSize("100x100")
     app.setSize(200,200)
+    app.setSize("Fullscreen")
     app.setSize("fullscreen")
     app.exitFullscreen()
 
