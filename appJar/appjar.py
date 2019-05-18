@@ -2342,7 +2342,7 @@ class gui(object):
             # warn the user that their geom is not big enough
             dims = gui.GET_DIMS(container)
             if geom[0] < dims["b_width"] or geom[1] < dims["b_height"]:
-                self.warn("Specified dimensions (%s, %s) less than requested dimensions (%s, %s)",
+                self.trace("Specified dimensions (%s, %s) less than requested dimensions (%s, %s)",
                         geom[0], geom[1], dims["b_width"], dims["b_height"])
 
             # and set it as the minimum size

@@ -8,6 +8,7 @@ with gui() as app:
 
     app.startSubWindow('progress', modal=True)
     app.setSize('400x25')
+    print("size set to 400x25")
     app.setResizable(False)
     app.setOnTop(stay=True)
     app.setStretch('both')
