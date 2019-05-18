@@ -547,7 +547,7 @@ def test_checks():
     app.addCheckBox(TEXT_THREE)
     assert isinstance(app.addNamedCheckBox(TEXT_TWO, "NCB1"), Checkbutton)
     app.addNamedCheckBox(TEXT_TWO, "NCB2")
-    app.addNamedCheckBox(TEXT_TWO, "NCB3")
+    ncb3 = app.addNamedCheckBox(TEXT_TWO, "NCB3")
 
     assert app.getCheckBox(TEXT_ONE) is False
     assert app.getCheckBox(TEXT_TWO) is False
@@ -555,6 +555,10 @@ def test_checks():
     assert app.getCheckBox("NCB1") is False
     assert app.getCheckBox("NCB2") is False
     assert app.getCheckBox("NCB3") is False
+
+    assert ncb3.cget('text') == TEXT_TWO
+    app.setCheckBoxText("NCB3", "new name")
+    assert ncb3.cget('text') == "new name"
 
     cbs = app.getAllCheckBoxes()
     assert cbs[TEXT_ONE] is False
@@ -3662,7 +3666,7 @@ with gui("Simple Demo", transparency=50, padding=5, location="CENTER", bg="red")
 
     app4.check("Clap", row=2, column=1)
     app4.check("Cheer", True, row=3, column=1)
-    app4.check("Cry", row=4, column=1, change=changer)
+    app4.check("Cry", row=4, column=1, change=changer, text='something else')
 
     app4.tick("tClap", row=2, column=1)
     app4.tick("tCheer", True, row=3, column=1)

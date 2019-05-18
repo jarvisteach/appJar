@@ -5889,6 +5889,7 @@ class gui(object):
         """ adds, sets & gets checkBoxes all in one go """
         widgKind = WIDGET_NAMES.CheckBox
         callFunction = kwargs.pop("callFunction", True)
+        text = kwargs.pop("text", None)
 
         try: self.widgetManager.verify(widgKind, title)
         except: #widget exists
@@ -5898,6 +5899,7 @@ class gui(object):
             kwargs = self._parsePos(kwargs.pop("pos", []), kwargs)
             check = self._checkBoxMaker(title, *args, **kwargs)
             if value is not None: self.setCheckBox(title, value)
+        if text is not None: self.setCheckBoxText(title, text)
 
         if len(kwargs) > 0:
             self._configWidget(title, widgKind, **kwargs)
@@ -5931,6 +5933,11 @@ class gui(object):
         self.widgetManager.add(WIDGET_NAMES.CheckBox, title, var, group=WidgetManager.VARS)
         self._positionWidget(cb, row, column, colspan, rowspan, EW)
         return cb
+
+    def setCheckBoxText(self, title, text):
+        cb = self.widgetManager.get(WIDGET_NAMES.CheckBox, title)
+        cb.DEFAULT_TEXT = text
+        cb.config(text=text)
 
     def addNamedCheckBox(self, name, title, row=None, column=0, colspan=0, rowspan=0):
         ''' adds a new check box, at the specified position, with the name as the text '''

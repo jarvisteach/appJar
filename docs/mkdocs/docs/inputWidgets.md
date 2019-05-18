@@ -472,6 +472,9 @@ app.go()
     This will clear (untick) all CheckBoxes in the app.  
     Set ```callFunction``` to be True, if you want to call any associated functions.  
 
+* `.setCheckBoxText(title, text)`  
+    This changes the text shown alongside the specified CheckBox.  
+
 ####Get CheckBoxes
 
 * `.getCheckBox(title)`  
