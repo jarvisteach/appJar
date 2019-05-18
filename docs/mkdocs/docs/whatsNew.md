@@ -31,7 +31,7 @@
 * <div class="cb cb-imp">Improved</div>[Scales](/inputWidgets/#scale) and other widgets can now have their state changed when in [ttk](/pythonTtk/) mode - [#465](https://github.com/jarvisteach/appJar/issues/465)
 * <div class="cb cb-imp">Improved</div>Better change log? - [#219](https://github.com/jarvisteach/appJar/issues/219)
 * <div class="cb cb-imp">Improved</div>appJar now uses tkinter style `config` functions - [#49](https://github.com/jarvisteach/appJar/issues/49)
-* <div class="cb cb-fix">Fixed</div>Setting size is now case insensitive: [GUI Options](/pythonGuiOptions/#size-location) - [#581](https://github.com/jarvisteach/appJar/issues/581)
+* <div class="cb cb-fix">Fixed</div>Setting size is now case insensitive: [GUI Options](/pythonGuiOptions/#size-location) - [#580](https://github.com/jarvisteach/appJar/issues/580)
 * <div class="cb cb-fix">Fixed</div>Fixed typo in documentation page: [advancedLoops](/pythonLoopsAndSleeps/#advanced-loops) - [#564](https://github.com/jarvisteach/appJar/issues/564)
 * <div class="cb cb-fix">Fixed</div>python2.6 now runs, after removing dependency on argsparse - [#547](https://github.com/jarvisteach/appJar/issues/547)
 * <div class="cb cb-fix">Fixed</div>Resolved issues sometimes changing bg/fg in [ttk](/pythonTtk) - [#536](https://github.com/jarvisteach/appJar/issues/536)
