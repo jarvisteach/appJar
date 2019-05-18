@@ -24,6 +24,7 @@
 * <div class="cb cb-imp">Removed references to `rwbatools` in example code - [#569](https://github.com/jarvisteach/appJar/issues/569)  
 * <div class="cb cb-imp">Improved</div>`getAllInputs()` now has a parameter `includeEmptyInputs` to include any empty input fields - [#563](https://github.com/jarvisteach/appJar/issues/563)  
 * <div class="cb cb-imp">Improved</div>[Buttons](/inputWidgets/#button) now align images/icons correctly in [ttk](/pythonTtk/) - [#560](https://github.com/jarvisteach/appJar/issues/560)  
+* <div class="cb cb-imp">Improved</div>Changed [log level](/pythonLogging/) of [setSize](/pythonGuiOptions/#size-location) - [#543](https://github.com/jarvisteach/appJar/issues/543)  
 * <div class="cb cb-imp">Improved</div>Improved docs on [widget positioning](/pythonWidgetLayout/#widget-positioning) - [#524](https://github.com/jarvisteach/appJar/issues/524)  
 * <div class="cb cb-imp">Improved</div>Improved docs on [stopping the GUI](/pythonEvents/#stopping-the-gui) - [#521](https://github.com/jarvisteach/appJar/issues/521)  
 * <div class="cb cb-imp">Improved</div>Improved docs on [pip installation](/Install/#pip-installation) - [#519](https://github.com/jarvisteach/appJar/issues/519)  
