@@ -658,28 +658,52 @@ class gui(object):
         # now created in menu functions, as it generated a blank line...
         self.hasMenu = False
         self.hasStatus = False
-        self.hasTb = False
-        self.tbPinned = True
-        self.pinBut = None
         self.copyAndPaste = CopyAndPaste(self.topLevel, self)
-
-        # won't pack, if don't pack it here
 
         class Toolbar(frameBase, object):
             def __init__(self, master, **kwargs):
                 super(Toolbar, self).__init__(master, **kwargs)
+                self.BG_COLOR = None
+                self.pinned = True
+                self.pinBut = None
+                self.inUse = False
+                self.toolbarMin = None
+                self.location = None
+
+            def makeMinBar(self):
+                if self.toolbarMin is None:
+                    self.toolbarMin = Frame(self.master, bd=1, relief=RAISED)
+                    self.toolbarMin.config(bg="gray", height=3)
+                    self.bind("<Leave>", self._minToolbar)
+                    self.toolbarMin.bind("<Enter>", self._maxToolbar)
+
+            def hide(self):
+                if self.inUse:
+                    self.pack_forget()
+                    if self.toolbarMin is not None:
+                        self.toolbarMin.pack_forget()
+
+            def show(self):
+                if self.inUse:
+                    self.pack(before=self.location, side=TOP, fill=X)
+                    if self.toolbarMin is not None:
+                        self.toolbarMin.pack_forget()
+
+            def _minToolbar(self, e=None):
+                if not self.pinned:
+                    if self.toolbarMin is not None:
+                        self.toolbarMin.config(width=self.winfo_reqwidth())
+                        self.toolbarMin.pack(before=self.location, side=TOP, fill=X)
+                    self.pack_forget()
+
+            def _maxToolbar(self, e=None):
+                self.pack(before=self.location, side=TOP, fill=X)
+                if self.toolbarMin is not None:
+                    self.toolbarMin.pack_forget()
 
         class WidgetContainer(frameBase, object):
             def __init__(self, master, **kwargs):
                 super(WidgetContainer, self).__init__(master, **kwargs)
-
-        self.tb = Toolbar(self.appWindow)
-        if not self.ttkFlag:
-            self.tb.config(bd=1, relief=RAISED)
-        else:
-            self.tb.config(style="Toolbar.TFrame")
-#        self.tb.pack(side=TOP, fill=X)
-        self.tbMinMade = False
 
         # create the main container for this GUI
         container = WidgetContainer(self.appWindow)
@@ -689,6 +713,13 @@ class gui(object):
             container.config(padx=2, pady=2, background=self.topLevel.cget("bg"))
         container.pack(fill=BOTH, expand=True)
         self._addContainer("root", WIDGET_NAMES.RootPage, container, 0, 1)
+
+        self.tb = Toolbar(self.appWindow)
+        if not self.ttkFlag:
+            self.tb.config(bd=1, relief=RAISED)
+        else:
+            self.tb.config(style="Toolbar.TFrame")
+
 
         # set up the main container to be able to host an image
         self._configBg(container)
@@ -871,6 +902,7 @@ class gui(object):
 
         #toolbars
         self.ttkStyle.configure("Toolbar.TFrame")
+        self.ttkStyle.configure("Toolbar.TLabel")
         self.ttkStyle.configure("Toolbar.TButton", compound=CENTER, padding=0, expand=0)
 
 #        self.fgColour = self.topLevel.cget("foreground")
@@ -1914,10 +1946,10 @@ class gui(object):
         settings.set('GEOM', "state", str(self.topLevel.state()))
 
         # get toolbar setting
-        if self.hasTb:
+        if self.tb.inUse:
             gui.trace("Saving toolbar settings")
             settings.add_section("TOOLBAR")
-            settings.set("TOOLBAR", "pinned", str(self.tbPinned))
+            settings.set("TOOLBAR", "pinned", str(self.tb.pinned))
 
         # get container settings
         for k, v in self.widgetManager.group(WIDGET_NAMES.ToggleFrame).items():
@@ -2007,7 +2039,7 @@ class gui(object):
             if state in ["withdrawn", "zoomed"]:
                 self._getTopLevel().state(state)
 
-        if settings.has_option("TOOLBAR", "pinned") and self.hasTb:
+        if settings.has_option("TOOLBAR", "pinned") and self.tb.inUse:
             tb = settings.getboolean("TOOLBAR", "pinned")
             self.setToolbarPinned(tb)
             gui.trace("Set toolbar to: %s", tb)
@@ -10470,6 +10502,10 @@ class gui(object):
         hidden = kwargs.pop('hidden', None)
         status = kwargs.pop('status', None)
 
+        bg = kwargs.pop('bg', None)
+        if bg is not None:
+            self.setToolbarBg(bg)
+
         self.addToolbar(names, funcs, findIcon=icons is not False)
 
         # allow status and icon name to be passed in a list
@@ -10486,16 +10522,17 @@ class gui(object):
         if hidden is True: self.hideToolbar()
 
     def addToolbar(self, names, funcs, findIcon=False, **kwargs):
-        # hide the tbm bar
-        if self.tbMinMade:
-            self.tbm.pack_forget()
+        # hide the toolbarMin bar
+        if self.tb.toolbarMin is not None:
+            self.tb.toolbarMin.pack_forget()
         # make sure the toolbar is showing
         try:
             self.tb.pack_info()
         except:
-            self.tb.pack(before=self.containerStack[0]['container'], side=TOP, fill=X)
-        if not self.hasTb:
-            self.hasTb = True
+            self.tb.location = self.containerStack[0]['container']
+            self.tb.pack(before=self.tb.location, side=TOP, fill=X)
+        if not self.tb.inUse:
+            self.tb.inUse = True
 
         image = None
         singleFunc = self._checkFunc(names, funcs)
@@ -10522,6 +10559,8 @@ class gui(object):
             if not self.ttkFlag:
                 but = Button(self.tb)
                 but.config(relief=FLAT, font=self._buttonFont)
+                if gui.GET_PLATFORM() == gui.MAC and self.tb.BG_COLOR is not None:
+                    but.config(highlightbackground=self.tb.BG_COLOR)
             else:
                 but = ttk.Button(self.tb)
             self.widgetManager.add(WIDGET_NAMES.Toolbar, t, but)
@@ -10549,61 +10588,62 @@ class gui(object):
     def _setPinBut(self):
 
         # only call this once
-        if self.pinBut is not None:
+        if self.tb.pinBut is not None:
             return
 
         # try to get the icon, if none - then set but to None, and ignore from now on
         imgFile = os.path.join(self.icon_path, "pin.gif")
         try:
             imgObj = self._getImage(imgFile)
-            self.pinBut = Label(self.tb)
+            if not self.ttkFlag:
+                self.tb.pinBut = Label(self.tb)
+                if self.tb.BG_COLOR is not None:
+                    self.tb.pinBut.config(bg=self.tb.BG_COLOR)
+            else:
+                self.tb.pinBut = ttk.Label(self.tb)
+                self.tb.pinBut.config(style="Toolbar.TLabel")
         except:
             return
 
         # if image found, then set up the label
-        if self.pinBut is not None:
-            self.pinBut.config(image=imgObj)#, compound=TOP, text="", justify=LEFT)
-            self.pinBut.image = imgObj  # keep a reference!
-            self.pinBut.pack(side=RIGHT, anchor=NE, padx=0, pady=0)
+        if self.tb.pinBut is not None:
+            self.tb.pinBut.config(image=imgObj)#, compound=TOP, text="", justify=LEFT)
+            self.tb.pinBut.image = imgObj  # keep a reference!
+            self.tb.pinBut.pack(side=RIGHT, anchor=NE, padx=0, pady=0)
 
             if gui.GET_PLATFORM() == gui.MAC:
-                self.pinBut.config(cursor="pointinghand")
+                self.tb.pinBut.config(cursor="pointinghand")
             elif gui.GET_PLATFORM() in [gui.WINDOWS, gui.LINUX]:
-                self.pinBut.config(cursor="hand2")
+                self.tb.pinBut.config(cursor="hand2")
 
-            self.pinBut.eventId = self.pinBut.bind("<Button-1>", self._toggletb)
-            self._addTooltip(self.pinBut, "Click here to pin/unpin the toolbar.", True)
+            self.tb.pinBut.eventId = self.tb.pinBut.bind("<Button-1>", self._toggletb)
+            self._addTooltip(self.tb.pinBut, "Click here to pin/unpin the toolbar.", True)
 
     # called by pinBut, to toggle the pin status of the toolbar
     def _toggletb(self, event=None):
-        self.setToolbarPinned(not self.tbPinned)
+        self.setToolbarPinned(not self.tb.pinned)
 
     def setToolbarPinned(self, pinned=True):
-        self.tbPinned = pinned
+        self.tb.pinned = pinned
         self._setPinBut()
-        if not self.tbPinned:
-            if self.pinBut is not None:
+        if not self.tb.pinned:
+            if self.tb.pinBut is not None:
                 try:
-                    self.pinBut.image = self._getImage(os.path.join(self.icon_path, "unpin.gif"))
+                    self.tb.pinBut.image = self._getImage(os.path.join(self.icon_path, "unpin.gif"))
                 except:
                     pass
-            if not self.tbMinMade:
-                self.tbMinMade = True
-                self.tbm = Frame(self.appWindow, bd=1, relief=RAISED)
-                self.tbm.config(bg="gray", height=3)
-                self.tb.bind("<Leave>", self._minToolbar)
-                self.tbm.bind("<Enter>", self._maxToolbar)
-            self._minToolbar()
+            self.tb.makeMinBar()
+            self.tb._minToolbar()
         else:
-            if self.pinBut is not None:
+            if self.tb.pinBut is not None:
                 try:
-                    self.pinBut.image = self._getImage(os.path.join(self.icon_path, "pin.gif"))
+                    self.tb.pinBut.image = self._getImage(os.path.join(self.icon_path, "pin.gif"))
                 except:
                     pass
-            self._maxToolbar()
+            self.tb._maxToolbar()
 
-        if self.pinBut is not None:
-            self.pinBut.config(image=self.pinBut.image)
+        if self.tb.pinBut is not None:
+            self.tb.pinBut.config(image=self.tb.pinBut.image)
 
     def setToolbarIcon(self, name, icon):
         if (name not in self.widgetManager.group(WIDGET_NAMES.Toolbar)):
@@ -10612,6 +10652,20 @@ class gui(object):
         with PauseLogger():
             self.setToolbarImage(name, imgFile)
 #        self.widgetManager.get(WIDGET_NAMES.Toolbar, name).tt_var.set(icon)
+
+    def setToolbarBg(self, bg):
+        self.tb.BG_COLOR = bg
+        if not self.ttkFlag:
+            self.tb.config(bg=self.tb.BG_COLOR)
+            if gui.GET_PLATFORM() == gui.MAC:
+                for name, val in self.widgetManager.group(WIDGET_NAMES.Toolbar).items():
+                    val.config(highlightbackground=self.tb.BG_COLOR)
+            # config the pin button if exists
+            if self.tb.pinBut is not None:
+                self.tb.pinBut.config(bg=self.tb.BG_COLOR)
+        else:
+            self.ttkStyle.configure("Toolbar.TFrame", background=self.tb.BG_COLOR)
+            self.ttkStyle.configure("Toolbar.TLabel", background=self.tb.BG_COLOR)
 
     def setToolbarImage(self, name, imgFile):
         if (name not in self.widgetManager.group(WIDGET_NAMES.Toolbar)):
@@ -10628,9 +10682,9 @@ class gui(object):
         if hide:
             if len(self.widgetManager.group(WIDGET_NAMES.Toolbar)) == 0:
                 self.tb.pack_forget()
-                self.hasTb = False
-            if self.tbMinMade:
-                self.tbm.pack_forget()
+                self.tb.inUse = False
+            if self.tb.toolbarMin is not None:
+                self.tb.toolbarMin.pack_forget()
 
     def removeToolbar(self, hide=True):
         while len(self.widgetManager.group(WIDGET_NAMES.Toolbar)) > 0:
@@ -10657,47 +10711,29 @@ class gui(object):
             else:
                 self.widgetManager.get(WIDGET_NAMES.Toolbar, but).config(state=NORMAL)
 
-        if self.pinBut is not None:
+        if self.tb.pinBut is not None:
             if disabled:
                 # this fails if not bound
-                if self.pinBut.eventId:
-                    self.pinBut.unbind("<Button-1>", self.pinBut.eventId)
-                self.pinBut.eventId = None
-                self._disableTooltip(self.pinBut)
-                self.pinBut.config(cursor="")
+                if self.tb.pinBut.eventId:
+                    self.tb.pinBut.unbind("<Button-1>", self.tb.pinBut.eventId)
+                self.tb.pinBut.eventId = None
+                self._disableTooltip(self.tb.pinBut)
+                self.tb.pinBut.config(cursor="")
             else:
                 if gui.GET_PLATFORM() == gui.MAC:
-                    self.pinBut.config(cursor="pointinghand")
+                    self.tb.pinBut.config(cursor="pointinghand")
                 elif gui.GET_PLATFORM() in [gui.WINDOWS, gui.LINUX]:
-                    self.pinBut.config(cursor="hand2")
+                    self.tb.pinBut.config(cursor="hand2")
 
-                self.pinBut.eventId = self.pinBut.bind("<Button-1>", self._toggletb)
-                self._enableTooltip(self.pinBut)
-
-    def _minToolbar(self, e=None):
-        if not self.tbPinned:
-            if self.tbMinMade:
-                self.tbm.config(width=self.tb.winfo_reqwidth())
-                self.tbm.pack(before=self.containerStack[0]['container'], side=TOP, fill=X)
-            self.tb.pack_forget()
-
-    def _maxToolbar(self, e=None):
-        self.tb.pack(before=self.containerStack[0]['container'], side=TOP, fill=X)
-        if self.tbMinMade:
-            self.tbm.pack_forget()
+                self.tb.pinBut.eventId = self.tb.pinBut.bind("<Button-1>", self._toggletb)
+                self._enableTooltip(self.tb.pinBut)
 
     # functions to hide & show the toolbar
     def hideToolbar(self):
-        if self.hasTb:
-            self.tb.pack_forget()
-            if self.tbMinMade:
-                self.tbm.pack_forget()
+        self.tb.hide()
 
     def showToolbar(self):
-        if self.hasTb:
-            self.tb.pack(before=self.containerStack[0]['container'], side=TOP, fill=X)
-            if self.tbMinMade:
-                self.tbm.pack_forget()
+        self.tb.show()
 
     # Method to get all inputs.
     def getAllInputs(self, **kwargs):
