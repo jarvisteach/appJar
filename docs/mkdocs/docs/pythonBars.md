@@ -67,6 +67,10 @@ The toolbar will also gain an extra button (a pin) allowing the user to configur
     Will remove all buttons from the toolbar.  
     The empty toolbar will be hidden, unless `hide` is set to False.  
 
+* `.setToolbarBg(bg)`  
+    Will change the toolbar to be the specified colour.  
+    The empty toolbar will be hidden, unless `hide` is set to False.  
+
 ---
 <div style='text-align: center;'>
 *Advertisement&nbsp;<sup>[why?](/advertising)</sup>*

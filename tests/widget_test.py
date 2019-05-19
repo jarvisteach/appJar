@@ -2082,6 +2082,8 @@ def test_toolbars():
         [tester_function, tester_function, tester_function, tester_function],
         True)
 
+    app.setToolbarBg('red')
+
     app.addToolbarButton("d", tester_function)
     with pytest.raises(Exception) :
         app.addToolbarButton("d", tester_function)
@@ -3511,7 +3513,7 @@ del app
 
 print("<<<Starting app3>>>")
 with gui(debug=True) as app3:
-    app3.toolbar(["a", "b", "file", "open"], tester_function, icons=['a', 'b', 'file', 'open'], status=[1, 0, False, True])
+    app3.toolbar(["a", "b", "file", "open"], tester_function, icons=['a', 'b', 'file', 'open'], status=[1, 0, False, True], bg='pink')
     app3.addStatusbar(TEXT_ONE, 1, "LEFT")
     with app3.tabbedFrame("tf"):
         with app3.tab("t1"):
