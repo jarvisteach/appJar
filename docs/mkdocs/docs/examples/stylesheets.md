@@ -60,7 +60,7 @@ The IDs are slightly more complicated than regular CSS, but they just mean get t
 ## Getting Fancy
 ---
 
-If you want to take things a bit further, and have a *clever* name for your stylesheet, you can either:
+If you want to take things a bit further, and use a *clever* name for your stylesheet, you can either:
 
 * import it **as** a simpler name:
 ```python

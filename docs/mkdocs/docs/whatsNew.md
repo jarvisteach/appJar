@@ -12,7 +12,7 @@
 * <div class="cb cb-add">Added</div>[File Entry](/inputWidgets/#entry) supports choosing a save file - [#539](https://github.com/jarvisteach/appJar/issues/539)
 * <div class="cb cb-add">Added</div>Option to display navigation bar in [MatPlotLib](/outputWidgets/#matplotlib) - [#529](https://github.com/jarvisteach/appJar/issues/529)
 * <div class="cb cb-add">Added</div>Additional properties on [Tables](/pythonDevWidgets/#table) - [#517](https://github.com/jarvisteach/appJar/issues/517)
-* <div class="cb cb-add">Added</div>Can now configure the bg colour of check boxes in [propeties](/inputWidgets/#set-properties) widgets - [#514](https://github.com/jarvisteach/appJar/issues/514)
+* <div class="cb cb-add">Added</div>Can now configure the bg colour of check boxes in [properties](/inputWidgets/#set-properties) widgets - [#514](https://github.com/jarvisteach/appJar/issues/514)
 * <div class="cb cb-add">Added</div>Can now set the [sash position](/pythonWidgetGrouping/#set-paned-frames) on PanedFrames - [#504](https://github.com/jarvisteach/appJar/issues/504)
 * <div class="cb cb-add">Added</div>Multiple files allowed in [open file boxes](/pythonDialogs/#file-boxes) - [#479](https://github.com/jarvisteach/appJar/issues/479)
 * <div class="cb cb-add">Added</div>Option to add multiple action buttons and align horizontally/vertically in [Tables](/pythonDevWidgets/#table) - [#475](https://github.com/jarvisteach/appJar/issues/475)
@@ -21,8 +21,8 @@
 * <div class="cb cb-add">Added</div>New [property](/simpleProperties/#looks) to change the statusbar font - [#463](https://github.com/jarvisteach/appJar/issues/463)
 * <div class="cb cb-add">Added</div>Can now create [trees](/pythonDevWidgets/#tree) with xml objects and show attributes - [#457](https://github.com/jarvisteach/appJar/issues/457)
 * <div class="cb cb-add">Added</div>Option to set `wrap` parameter on [Tables](/pythonDevWidgets/#table) - [#458](https://github.com/jarvisteach/appJar/issues/458)
-* <div class="cb cb-add">Added</div>Intoduced new container properties [rowspan/colspan](/simpleProperties/#grid-properties) - [#55](https://github.com/jarvisteach/appJar/issues/55)
-* <div class="cb cb-imp">Removed references to `rwbatools` in example code - [#569](https://github.com/jarvisteach/appJar/issues/569)  
+* <div class="cb cb-add">Added</div>Introduced new container properties [rowspan/colspan](/simpleProperties/#grid-properties) - [#55](https://github.com/jarvisteach/appJar/issues/55)
+* <div class="cb cb-imp">Improved</div> removed references to `rwbatools` in example code - [#569](https://github.com/jarvisteach/appJar/issues/569)  
 * <div class="cb cb-imp">Improved</div>`getAllInputs()` now has a parameter `includeEmptyInputs` to include any empty input fields - [#563](https://github.com/jarvisteach/appJar/issues/563)  
 * <div class="cb cb-imp">Improved</div>[Buttons](/inputWidgets/#button) now align images/icons correctly in [ttk](/pythonTtk/) - [#560](https://github.com/jarvisteach/appJar/issues/560)  
 * <div class="cb cb-imp">Improved</div>Changed [log level](/pythonLogging/) of [setSize](/pythonGuiOptions/#size-location) - [#543](https://github.com/jarvisteach/appJar/issues/543)  
@@ -60,7 +60,7 @@
     * [#447](https://github.com/jarvisteach/appJar/issues/447) - [Canvases](/outputWidgets/#canvas) now support clickable maps  
     * [#446](https://github.com/jarvisteach/appJar/issues/446) - [Setting listboxes](/inputWidgets/#set-listboxes) now has better error checking  
     * [#445](https://github.com/jarvisteach/appJar/issues/445) - Ability to keep windows on [top](/pythonGuiOptions/#look-feel)  
-    * [#442](https://github.com/jarvisteach/appJar/issues/442) - [SpinBoxes](inputWidgets/#spinbox) now call changeFucntion when changed manually  
+    * [#442](https://github.com/jarvisteach/appJar/issues/442) - [SpinBoxes](inputWidgets/#spinbox) now call changeFunction when changed manually  
     * [#437](https://github.com/jarvisteach/appJar/issues/437) - Page discussing how to manage [multiple pages](/multiplePages)  
     * [#436](https://github.com/jarvisteach/appJar/issues/436) - [TextAreas](/inputWidgets/#textarea) can now be programmatically cleared and set while disabled  
     * [#435](https://github.com/jarvisteach/appJar/issues/435) - [Messages](/outputWidgets/#message) have better documentation and a function to set the aspect ratio  
@@ -100,7 +100,7 @@
     * [#373](https://github.com/jarvisteach/appJar/issues/373) - Added function to get the BG colour of a widget  
     * [#347](https://github.com/jarvisteach/appJar/issues/347), [#360](https://github.com/jarvisteach/appJar/issues/360), [374](https://github.com/jarvisteach/appJar/issues/374) & [#375](https://github.com/jarvisteach/appJar/issues/375) - Right Click Menu updates
     * [#369](https://github.com/jarvisteach/appJar/issues/369) - Hide scrollbars in [ScollPane](/pythonWidgetGrouping/#scroll-pane)
-    * [#367](https://github.com/jarvisteach/appJar/issues/367) - Update to [logging](/pythonLogging) - all appJar looging now done at a `TRACE` level, below `DEBUG`  
+    * [#367](https://github.com/jarvisteach/appJar/issues/367) - Update to [logging](/pythonLogging) - all appJar logging now done at a `TRACE` level, below `DEBUG`  
     * [#366](https://github.com/jarvisteach/appJar/issues/366) - Better error reporting on AutoEntries
     * [#340](https://github.com/jarvisteach/appJar/issues/340) - [appJar properties](/simpleProperties) now fully documented & tested  
     * [#335](https://github.com/jarvisteach/appJar/issues/335) - No longer necessary to receive a parameter in functions linked to appJar widgets  

@@ -48,7 +48,7 @@ app.ttkStyle.configure("TLabel", foreground="green", background="blue")
 Some widgets have their own extra styles you can change:  
 * `Toolbar.TFrame` - used for the toolbar  
 * `Toolbar.TLabel` - used for the pin button on the toolbar
-* `Toolbar.TButton` - used for the button on the toolbar  
+* `Toolbar.TButton` - used for the buttons on the toolbar  
 
 ### Root Style
 All widgets inherit their style from the root style, known simply as `.`  
