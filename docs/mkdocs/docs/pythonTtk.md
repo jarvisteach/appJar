@@ -27,7 +27,7 @@ A list of additional themes can be displayed by calling:
 * `.getTtkThemes()`  
     Returns a list of theme names.  
 
-Additional themes can be installed using [ttk extensions](github.com/RedFantom/ttkthemes).  
+Additional themes can be installed using [ttk extensions](https://github.com/RedFantom/ttkthemes).  
 
 These can be installed via pip: `pip install ttkthemes`  
 And then used the same as any other theme: `app.setTtkTheme("black")`.  
@@ -85,7 +85,7 @@ You'll need to pass a list, which contains tuples as a parameter.
 * The second item will be the *value*.
     In this case, the button will have a blue background when the cursor is over it.
 
-* You can learn more about ttk maps [here](http://infohost.nmt.edu/tcc/help/pubs/tkinter/web/ttk-map.html).
+* You can learn more about ttk maps [here](https://infohost.nmt.edu/tcc/help/pubs/tkinter/web/ttk-map.html).
 
 
 You then need to apply this style (which includes both `ttkStyle.configure` and `ttkStyle.map`) to the relevant widgets:
