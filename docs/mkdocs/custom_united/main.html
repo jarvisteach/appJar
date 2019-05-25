@@ -3,37 +3,37 @@
 {%- block extrahead %}
     <meta name="keywords" content="Python, GUI, widgets, tkinter, appJar, label, button">
     <meta name="title" content="Python library for building GUIs, using tkinter toolkit">
-    <div class="corner-ribbon">
-        <a href="https://github.com/jarvisteach/appJar/blob/appJar/releases/appJar.zip?raw=true">Version 0.94 out now!</a>
-    </div>
-{% endblock %}
-
-{%- block extra_head %}
-    <div class="corner-ribbon">
-        <a href="https://github.com/jarvisteach/appJar/blob/appJar/releases/appJar.zip?raw=true">Version 0.94 out now!</a>
-    </div>
-    {{ super() }}
 {%- endblock %}
 
+{%- block extrabody %}
+    <div class="corner-ribbon">
+        <a href="https://github.com/jarvisteach/appJar/blob/appJar/releases/appJar.zip?raw=true">Version 0.94 out now!</a>
+    </div>
+{%- endblock %}
+
+{%- block next_prev %}
+{%- endblock %}
+
+
 {%- block repo %}
-    <li>
+    <li class="nav-item">
         <a href="/pythonLessons" target="_blank">
             <i class="fa fa-mortar-board"></i> Learn
         </a>
     </li>
-    <li>
-        <a href="https://www.youtube.com/channel/UCe_fC78lGgA-EHyK9nZX    NVA" target="_blank">
+    <li class="nav-item">
+        <a href="https://www.youtube.com/channel/UCe_fC78lGgA-EHyK9nZXNVA" target="_blank">
             <i class="fa fa-youtube"></i> Watch
         </a>
     </li>
-    <li>
+    <li class="nav-item">
         <a href="{{ config.repo_url }}">
             <i class="fa fa-github"></i> {{ config.repo_name }}
         </a>
     </li>
     {%- if 'search' in config['plugins'] %}
-        <li>
-            <a href="#" data-toggle="modal" data-target="#mkdocs_search_modal">
+        <li class="nav-item">
+            <a href="#" class="nav-link" data-toggle="modal" data-target="#mkdocs_search_modal">
                 <i class="fa fa-search"></i> Search
             </a>
         </li>
