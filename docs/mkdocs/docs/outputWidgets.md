@@ -77,6 +77,9 @@ app.go()
 * `.clearLabel(title)`  
     Clear the contents of the *label*.
 
+* `.clearAllLabels()`  
+    Clears the contents of all *labels*.
+
 #### Get Labels
 * `.getLabel(title)`  
     Get the contents of the *label*.
@@ -533,10 +536,12 @@ app.go()
 * `.addPlot(title, x, y)`  
     Create a plot with the specified x and y values.  
     Returns the plot object, to allow further customisation.  
+    Set `showNav` to True, to include a navigation bar  
 
 * `.addPlotFig(title)`  
     Create an empty Figure, so that you can add your own plots.  
     Returns the figure object, to allow further customisation.  
+    Set `showNav` to True, to include a navigation bar  
 
 ```python
 from appJar import gui 

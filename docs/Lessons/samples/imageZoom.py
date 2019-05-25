@@ -1,5 +1,7 @@
 # import the library
-from rwbatools import gui
+import sys
+sys.path.append("../../../")
+from appJar import gui
 
 def press(btn):
       red = win.getEntry("Red")
@@ -23,7 +25,7 @@ win.addLabelEntry("Blue")
 win.addButton("Submit", press)
 win.addScale("scl")
 win.setScaleRange("scl", -5, 5)
-win.setScaleCommand("scl", zoom)
+win.setScaleChangeFunction("scl", zoom)
 win.addImage("img", "../resources/8ball.gif")
 
 win.go()

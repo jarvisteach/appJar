@@ -123,13 +123,15 @@ app.image("img1", "placeholder.gif", drop=True)
 
 ### Other Parameters    
 
-There are a couple of other parameter that can be set on widgets.  
+There are some other parameter that can be set on widgets.  
 
 | Parameter | Data type | Default | Description |
 | --------- | --------- | ------- | ------------|
 | label | boolean/string | False | Adds a Label before the widget (only some input widgets), either the label's title or the the text of this parameter. |
 | right | string | None | Specify a premade right-click menu to link to the widget. |
 | font | integer/dict | None |  Pass either a font size, or a dictionary of font properties to use for this widget's font. |
+| focus | boolean | False | Give keyboard focus to the widget. |  
+| tip | string | None |  Sets text to show in a mouse-over tooltip. |  
 
 ## Label  
 ----
@@ -139,7 +141,7 @@ A widget for displaying text in the GUI.
 * `.label(title, value=None)`  
 The `value` will be the text to show in the label.  
 Labels can receive a `submit` parameter, making them clickable.  
-Labels can receive `drop` data.  
+Labels can receive a `drop` parameter, allowing them to receive drop events.  
 
 | Parameter | Data type | Default | Description |
 | --------- | --------- | ------- | ------------|
@@ -152,7 +154,7 @@ Will automatically wrap the text, based on either the `aspect` or `width` settin
 
 * `.message(title, value=None)`  
     The `value` will be the text to show in the message.  
-    Messages can receive `drop` data.  
+    Messages can receive a `drop` parameter, allowing them to receive drop events.  
 
 | Parameter | Data type | Default | Description |
 | --------- | --------- | ------- | ------------|
@@ -166,17 +168,17 @@ An interactive widget, for capturing user input in the GUI.
 * `.entry(title, value=None)`  
     A `value` is not required, but if provided will populate the entry.  
     Entries can receive a `change` parameter, and can link a `submit` parameter to pressing <ENTER>.  
-    Entries can receive `drop` data.  
+    Entries can receive a `drop` parameter, allowing them to receive drop events.  
+    Entries can receive a `label` parameter - boolean to use the label's title or text to display.  
 
 | Parameter | Data type | Default | Description |
 | --------- | --------- | ------- | ------------|
-| label | boolean/string | False | Adds a Label before the widget, either the label's title or the the text of this parameter. |
-| kind | string | `standard` | One of: `standard`, `file`, `directory`, `numeric`, `auto` or `validation`. |
+| kind | string | `standard` | One of: `standard`, `open`, `save`, `directory`, `numeric`, `auto` or `validation`. |
 | secret | boolean | False | Configures the entry box to show stars instead of characters. |
 | default | string | None | Sets default text to display in an empty entry. |
-| focus | boolean | False | Should the entry box be given focus? |
 | rows | integer | 10 | If the kind is `auto` this will set the number of rows to show. |
 | labBg | string | None | Special parameter to change the BG of the validation label in a validaiton entry. |
+| text | string | None | Special parameter to change the text of the file entry button. |
 
 There are also some validation settings that can be applied:  
 
@@ -192,11 +194,14 @@ An interactive widget, for capturing multi-line user input in the GUI.
 * `.text(title, value=None)`  
     A `value` is not required, but if provided will populate the text.  
     Text boxes can receive a `change` parameter.  
-    Text boxes can receive `drop` data.  
+    Text boxes can receive a `drop` parameter, allowing them to receive drop events.  
 
 | Parameter | Data type | Default | Description |
 | --------- | --------- | ------- | ------------|
 | scroll | boolean | False | Will configure this as a scrollable text area. |
+| tags | list | [] | A list of tags, where each tag contains a name and dictionary of values. |
+| end | boolean | True | Whether to add the new text to the end (True) or beginning (False) |
+| replace | boolean | False | Will replace any existing text in the text area when updating. |
 
 ## Button  
 ---
@@ -232,13 +237,14 @@ A checkbox style widget, that can be checked/unchecked.
 Radio buttons are used in groups, only one of them can be checked.  
 By default, the first radio button added to a group will be selected.
 
-* `.radio(title, value=None)`  
+* `.radio(title, name=None)`  
     The `title` is the radio button's group.  
-    The `value` is the text to display next to this radio button.  
+    The `name` is the text to display next to this radio button.  
     Radio buttons can receive a `change` parameter, it will be linked to all radio buttons of the same `title`.  
 
 | Parameter | Data type | Default | Description |
 | --------- | --------- | ------- | ------------|
+| kind | string | `standard` | Set this to `square` to change the style of the radio buttons.<br>Not supported in ttk or on Mac. |
 | selected | boolean | False | Should this radio be selected? |
 
 ## Option  
@@ -248,16 +254,24 @@ Setting this widget won't change the values, but change which one is selected.
 
 * `.option(title, value=None)`  
     When adding, the `value` should contain a list of items to display in the drop-down.  
-    When setting, the `value` should contain the item to select.  
+    When setting, the `value` should contain the item to select, unless a differetn `mode` is set.  
     Options can receive a `change` parameter.  
+    Options can receive a `label` parameter - boolean to use the label's title or text to display.  
 
 | Parameter | Data type | Default | Description |
 | --------- | --------- | ------- | ------------|
 | kind | string | `standard` | Set this to `ticks` if you want tickable options. |
 | selected | string/integer | None | Start with the specified item/position selected. |
-| checked | boolean | True | When setting the widget, this determines what to do to the specified value. None will delete the value. |
-| label | boolean/string | False | Adds a Label before the widget, either the label's title or the the text of this parameter. |
 | disabled | string | - | Sets the character used to indicate disabled menu options. |
+| checked | boolean | True | When *setting* the widget, this determines what to do to the specified value. None will delete the value. |
+| mode | string | `select` | One of: `select`, `change`, `rename`. `clear` or `delete` - see below. |  
+
+Different modes can be used when *setting* the widget:  
+* `select` - the default, the specified `value` will be selected.  
+* `clear` - deselects all items in the option box.  
+* `change` - the contents of the list will be replaced with a new listi, with an optional `index`.  
+* `rename` - this will change the text of an item in the option box, to the `newName`.  
+* `delete` - this will delete the specified option from the option box.  
 
 ## Spin  
 ---
@@ -269,13 +283,13 @@ Setting this widget won't change the values, but change which one is selected.
     If `endValue` is also set, then both parameters should be integers, and appJar will generate a range of whole numbers between the two values.  
     When setting, the `value` will be selected.  
     Spin boxes can receive a `change` parameter.  
+    Spin boxes can receive a `label` parameter - boolean to use the label's title or text to display.  
 
 | Parameter | Data type | Default | Description |
 | --------- | --------- | ------- | ------------|
 | endValue | integer | None | If specified, value & endValue should be integers, and will be used to generate a range. |
-| pos | integer | 0 | The position of an item to select. |
+| selected | integer | 0 | The position of an item to select. |
 | item | string | None | The name of an item to select. |
-| label | boolean/string | False | Adds a Label before the widget, either the label's title or the the text of this parameter. |
 
 ## Listbox
 ---
@@ -287,7 +301,7 @@ Setting this widget won't change the values, but change which one is selected.
     When adding, the `value` should contain a list of items to display in the listbox.  
     When setting, the `value` should contain the item(s) to select.  
     Listboxes can receive a `change` parameter.  
-    Listboxes can receive `drop` data.  
+    Listboxes can receive a `drop` parameter, allowing them to receive drop events.  
 
 | Parameter | Data type | Default | Description |
 | --------- | --------- | ------- | ------------|
@@ -295,6 +309,17 @@ Setting this widget won't change the values, but change which one is selected.
 | multi | boolean | False | Set the listbox to be multi-selectable. |
 | group | boolean | False | Set the listbox to be part of a group. |
 | selected | int | None | The position to select when the listbox is added. |
+| mode | string | `select` | One of: `select`, `change`, `rename`. `clear` or `delete` - see below. |  
+
+Different modes can be used when *setting* the widget:  
+* `select` - default, select the specified item(s) or all  
+* `deselect` - deselect the specified item(s), or all  
+* `toggle` - toggle the specified item(s), or all  
+* `clear` - clear any selected items
+* `rename` - rename the specified item  
+* `replace` - replace all items  
+* `add` - add the specified item(s)
+* `delete` - delete the specified item, or all
 
 ## Slider  
 ---
@@ -303,6 +328,7 @@ A draggable widget, where the user can select a number from a range.
 * `.slider(title, value=None)`  
     The `value` is optional - it will set the starting position of the slider.  
     Sliders can receive a `change` parameter.  
+    Sliders can receive a `label` parameter - boolean to use the label's title or text to display.  
 
 | Parameter | Data type | Default | Description |
 | --------- | --------- | ------- | ------------|
@@ -310,7 +336,7 @@ A draggable widget, where the user can select a number from a range.
 | show | boolean | False | Show the slider's value above the slider. |
 | increment | integer | 10 | Configures how much the slider jumps, when the trough is clicked. |
 | interval | integer | None | Configures the slider to show values, along its length, in steps of the value specified. |
-| label | boolean/string | False | Adds a Label before the widget, either the label's title or the the text of this parameter. |
+| range | list/tuple | () | Sets a start value and end value for the slider. | 
 
 ## Meter  
 ---
@@ -330,19 +356,18 @@ Various styles of progress meter.
 ---
 Displays a draggable icon, which allows the GUI to be moved.  
 
-* `.grip(title, value=None)`  
-    A `value` is not required.  
+* `.grip()`  
 
 ## Separator  
 ---
 Displays a line, giving visual separation in the GUI.  
 
-* `.separator(title, value=None)`  
-    A `value` is not required.  
+* `.separator()`  
 
 | Parameter | Data type | Default | Description |
 | --------- | --------- | ------- | ------------|
 | direction | string | horizontal | Set the orientation of the separator: `horizontal` or `vertical`. |
+| colour | string | None | Set a colour for the separator. |
 
 ## Image  
 ---
@@ -352,7 +377,7 @@ Displays a picture.
 * `.image(title, value=None)`
     The `value` should be the image file, icon or data to show.  
     Images can receive a `submit` parameter, making them clickable.  
-    Images can receive `drop` data.  
+    Images can receive a `drop` parameter, allowing them to receive drop events.  
 
 | Parameter | Data type | Default | Description |
 | --------- | --------- | ------- | ------------|
@@ -395,10 +420,11 @@ Displays a canvas widget.
 
 Displays a popUp.  
 
-* `.popUp(title, message, kind="info", parent=None)`  
+* `.popUp(title, message=None, kind="info", parent=None)`  
     This will show any of the available popUps.  
     `title`  will be displayed in the title bar.
     `message` will be displayed as the text of the popUp.  
+    If no `message` is set, `message` will be set to `title` and `title` will be set to `kind`  
     `kind` defaults to `info`, but can be any of: `error`, `warning`, `yesno`, `question`, `ok`, `retry`, `string`, `integer`, `float`, `text` or `number`.  
     `parent` allows you to link this popUp to a named SubWindow, instead of the main window.  
 
@@ -423,12 +449,70 @@ Displays a popUp.
 Displays the toolbar.  
 
 * `.toolbar(names, funcs, **kwargs)`
-    `names` should be th elist of button names to display on the toolbar.  
+    `names` should be the list of button names to display on the toolbar.  
     `funcs` should contain either a single function, that all buttons will be linked to, or a list of functions for each button.
 
 | Parameter | Data type | Default | Description |
 | --------- | --------- | ------- | ------------|
-| icons | boolean | False | Determines if appJar should try to find icons for each menu item. |
+| icons | boolean/list | False | Determines if appJar should try to find icons for each menu item (`True`) or a list of icon names. |
+| status | list | [] | The enabled status of each button (`False` to disable). |  
 | pinned | boolean | None | If set, the toolbar will be pinnable. Setting to `True` wil start pinned, `False` not pinned. |
 | disabled | boolean | False | Determines if the toolbar should start disabed or not. | 
 | hidden | boolean | False | Determines if the toolbar should start hidden or not. When hidden it is completley removed from the GUI. | 
+
+## Menu  
+---
+
+Displays a menubar  
+
+* `.menu(menu, name, func, **kwargs)`  
+    `menu` the text of the menu to add the item to  
+    `name` the text of the item to add, if a list is provided then multiple items will be created  
+    `func` the function to call when the menu item is selected. If `name` is a list, this can be a corresponding list.  
+
+| Parameter | Data type | Default | Description |
+| --------- | --------- | ------- | ------------|
+| kind | string | button | The type of item to add: `button`, `sub`, `menu`, `sep`, `check`, `radio` |
+| group | string | None | Only used for radio buttons, the group to add the button to.<br>It's not necessary to set `kind` if this is set. |
+| shortcut | string | None | A keyboard shortcut, to associate with the menu item. |
+| underline | int | -1 | Which letter in the item name to underline (not all platforms). |
+| tear | boolean| False | Only used for toplevel menus, configures them to be tearable (not all platforms). |
+| state | string | "enabled" | Whether the menu item should be `enabled` or `disabled` |
+| image | string | None | The path to an image to put alongside the menu item. |
+| icon | string | None | The name of an icon to put alongside the menu item. |
+| align | string | "left" | If an image/icon is added, how to align it alongside the text. |
+
+## Tree  
+---
+
+Displays the tree widget.  
+
+* `.tree(title, value, **kwargs)`
+    The `value` should either by an XML string, or XML `Document` object  
+
+| Parameter | Data type | Default | Description |
+| --------- | --------- | ------- | ------------|
+| click | function | None | A function to call when a node is clicked. | 
+| dbl | function | None | A function to call when a node is double-clicked. | 
+| edit | function | None | A function to call when a node is edited. | 
+| editable | boolean | None | Determines if nodes are editable or not. | 
+| attributes | boolean | None | Determines if attributes should be shown in the tree. |
+| fg | string | None | The foreground colour of the widget. | 
+| bg | string | None | The background colour of the widget. | 
+| fgH | string | None | The foreground colour of a selected node. | 
+| bgH | string | None | The background colour of a selected node. | 
+
+## Plot  
+---
+
+Displays matplotlib widgets.  
+
+* `.plot(title, **kwargs)`
+
+| Parameter | Data type | Default | Description |
+| --------- | --------- | ------- | ------------|
+| t | list | None | The x values if required. |
+| s | list | None | The y values if required. |
+| width | int | None | A width for the plot. |
+| height | int | None | A height for the plot. |
+| nav | boolean | false | Whether to show a navigation bar or not. |

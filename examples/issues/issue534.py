@@ -3,6 +3,9 @@ sys.path.append("../../")
 
 from appJar import gui
 
+def rads():
+    app.setRadioTick('rb')
+
 with gui('demo', '200x200') as app:
     app.label('hello world')
     with app.labelFrame('framer', ipad=20):
@@ -18,3 +21,10 @@ with gui('demo', '200x200') as app:
 
 #    app.setLabelFrameInPadding('framer', [20, 20])
 #    app.setLabelFramePadding('framer', [20, 20])
+    app.radio(title='rb', name='a', kind='button')
+    app.radio(title='rb', name='b', kind='button')
+    app.radio(title='rb', name='c', kind='button')
+    app.setRadioTick('rb')
+    app.setRadioTick('rb', False)
+    app.setRadioSquare('rb', True)
+    app.button('press', rads)

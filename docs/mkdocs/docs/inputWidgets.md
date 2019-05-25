@@ -15,6 +15,12 @@ For each of the above to work, we need to know which widget you are referring to
 
 If you want your input widget to have a label, there are some [auto-label functions](#auto-labelled-widgets)
 
+If you wnat to get the contents of all widgets in the GUI as a single dictionary, use:
+* `.getAllInputs(includeEmptyInputs=False)`  
+    This will return the contents of all input fields as a dictionary.  
+    Set `includeEmptyInputs` to True, if you want to include any empty input fields.  
+
+
 ##Entry
 ____
 Entries are used to capture typed input from the user. They take a single parameter - a title.
@@ -25,7 +31,7 @@ There are five special-case Entries:
 * **SecretEntry** - this will show stars, instead of the letters typed - useful for capturing passwords.
 * **AutoEntry** - this takes a list of words to provide auto-completion.  
 * **ValidationEntry** - can be set to valid/invalid/waiting - will colour the border green/red/black and show a ✔/✖/★  
-* **FileEntry/DirectoryEntry** - provides a button to select a file/directory and auto-populates the Entry  
+* **OpenEntry/SaveEntry/DirectoryEntry** - provides a button to select a file/directory and auto-populates the Entry  
 
 ![Entries](img/1_entries.png)
 
@@ -53,7 +59,8 @@ app.go()
 * `.addNumericEntry(title)`
 * `.addSecretEntry(title)`
 * `.addValidationEntry(title)`  
-* `.addFileEntry(title)`  
+* `.addOpenEntry(title)`  
+* `.addSaveEntry(title)`  
 * `.addDirectoryEntry(title)`  
 * `.addAutoEntry(title, words)`  
     This also takes a `words` parameter, which must be a list, and is used to populate he drop-down.  
@@ -391,9 +398,10 @@ app.go()
     This will tick the specified RadioButton.  
     Set ```callFunction``` to be False, if you don't want to call any associated functions.  
 
-* `.setRadioTick(title, tick=True)`  
-    It is possible to use tick-boxes instead of the classic circular radio-button.  
-    Setting tick to True will convert all the radio-buttons for this title to tick boxes.  
+* `.setRadioSquare(title, square=True)`  
+    It is possible to use square buttons instead of the classic circular radio-button.  
+    Setting square to True will convert all the radio-buttons for this title to square boxes.  
+    Not supported in ttk or on Mac.  
 
 * `.clearAllRadioButtons(callFunction=False)`  
     This will reset all RadioButtons in the app to their first value.  
@@ -463,6 +471,9 @@ app.go()
 * `.clearAllCheckBoxes(callFunction=False)`  
     This will clear (untick) all CheckBoxes in the app.  
     Set ```callFunction``` to be True, if you want to call any associated functions.  
+
+* `.setCheckBoxText(title, text)`  
+    This changes the text shown alongside the specified CheckBox.  
 
 ####Get CheckBoxes
 
@@ -607,6 +618,14 @@ app.go()
     This will select the value at the specified position in the SpinBox.  
     Set ```callFunction``` to be False, if you don't want to call any associated functions.  
 
+* `.changeSpinBox(title, vals, reverse=True)`  
+    Replaces the contents of the specified SpinBox with the new `vals`.  
+    Set `reverse` to `False` if you don;t ant to reverse the values.  
+
+* `.clearSpinBox(callFunction=False)`  
+    This will set the specified SpinBox back to its initial value.  
+    Set ```callFunction``` to be True, if you want to call any associated functions.  
+
 * `.clearAllSpinBoxes(callFunction=False)`  
     This will set all SpinBoxes in the app to their first value.  
     Set ```callFunction``` to be True, if you want to call any associated functions.  
@@ -688,6 +707,14 @@ app.go()
     `.selectListItemAtPos(title, pos, callFunction=False)`  
     Selects the specified item in the specified ListBox.  
     Set ```callFunction``` to be False, if you don't want to call any associated functions.  
+
+* `.deselectListItemAtPos(title, pos, callFunction=False)`  
+    Seselects the item at the specified position.  
+    Set ```callFunction``` to be True, if you want to call any associated functions.  
+
+* `.deselectAllListItems(title, callFunction=False)`  
+    Deselects all items in the specified listbox.  
+    Set ```callFunction``` to be True, if you want to call any associated functions.  
 
 * `.setListBoxRows(title, rows)`  
     Sets how many rows to display in the specified ListBox.  
@@ -843,6 +870,9 @@ app.go()
 * `.clearAllProperties(callFunction=False)`  
     This will set all values in all Properties in the app to False.  
     Set ```callFunction``` to be True, if you want to call any associated functions.  
+
+* `.setPropertiesBoxBg(title, newCol)`  
+    This will change the background colour of all tick boxes in the properties widget.  
 
 ####Get Properties
 

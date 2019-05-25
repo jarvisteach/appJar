@@ -1,0 +1,12 @@
+img[src*='#center'] { 
+    display: block;
+    margin: auto;
+}
+
+img[src*='#left'] { 
+    text-align: left;
+}
+
+img[src*='#right'] { 
+    text-align: right;
+}

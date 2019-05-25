@@ -123,8 +123,7 @@ Link a function to the ```<Enter>``` key
 * `.disableEnter()`  
 Unlink a function from the ```<Enter>```  key
 
-You may also want to bind other keys to events.  
-See [here](http://effbot.org/tkinterbook/tkinter-events-and-bindings.htm) for a detailed list of the *Event Formats*.  
+You may also want to bind other keys to events:  
 
 ```python
 from appJar import gui
@@ -143,6 +142,9 @@ app.bindKey("<Down>", keyPress)
 app.bindKey("<F1>", keyPress)
 app.go()
 ```
+
+**NB.** You must use the full tkinter [event format](http://effbot.org/tkinterbook/tkinter-events-and-bindings.htm) for events with these bindings, including the angle brackets `<>`.  
+This is different to how [menu shortcuts](/pythonBars/#extra-features) are defined.  
 
 * `.bindKey(key, function)`  
 Link the specified key to the specified function.
@@ -166,17 +168,30 @@ If you want to call a function once the GUI starts, you can register it with the
 
 ## Stopping the GUI
 ---
-Usually the user just presses the **close icon** to stop the GUI.  
+Usually the user just presses the **close icon** to close and stop the GUI.  
 However, you might want to let them do it in other ways - maybe by pressing a button...  
 
-To stop the GUI, simply call `app.stop()`  
+* `app.stop()`  
+    Will cuase the GUI to close and stop.  
 
-If you want to add a feature to confirm the user really wants to exit, or to save some data, then you'll need a **stop function**.  
+```python
+app.addButton('QUIT', app.stop)
+```
+
+### Confirming the user wants to quit/running clean up scripts on exit
+---
+You may want to add in a confirmation that the user *really* wants to stop the GUI.  
+Or, you may want to do some tidying up when the user stops the GUI, such as save a file.
+
+If so, you can set a **stopFunction** to call, whenever the user tries to stop the GUI.  
 
 * `.setStopFunction(function)`  
     Set a function to call, before allowing the GUI to be stopped.  
-    This function should return True/False to confirm if the GUI should stop.  
+    **NB.** This function **must** return `True` or `False` to confirm if the GUI should stop.  
 
+So, if you're just doing some tidying up, `return True` at the end of the function.  
+If you want to stop the user closing the GUI, `return False`  
+And, if you want to check if the user really wanted to stop the GUI:  
 ```python
 def checkStop():
     return app.yesNoBox("Confirm Exit", "Are you sure you want to exit the application?")
@@ -184,10 +199,12 @@ def checkStop():
 app.setStopFunction(checkStop)
 ```
 
+### Stopping Quickly
+---
+
 If you have a **LOT** of widgets (maybe a Table with hundreds of rows), stopping the GUI can take a while...  
 In which case, you should enable `fastStop` on the GUI.  
-**NB.** this doesn't work from IDLE.  
 
-```python
-app.setFastStop(True)
-```
+* `app.setFastStop(True)`  
+    This will cause the GUI to exit more quickly, but lazily...  
+    **NB.** this doesn't work from IDLE.  

@@ -386,9 +386,10 @@ app.go()
 * `.startTabbedFrame(name)` & `.stopTabbedFrame()`  
     Used to start & stop a *TabbedFrame*, with the specified name.  
 
-* `.startTab(name)` & `.stopTab()`  
+* `.startTab(name, beforeTab=None, afterTab=None)` & `.stopTab()`  
     Used to start and stop each of the tabs in the *TabbedFrame*.  
     The title for the tab will be the specified *name*.  
+    If `beforeTab`/`afterTab` are populated, the tab will be positioned appropriately.  
 
 * `.openTabbedFrame(title)` & `.openTab(frameTitle, tabTitle)`  
     Used to reopen the named *TabbedFrame* or named *Tab*.  
@@ -404,8 +405,12 @@ app.go()
     Set this to True, to have the tabs fill the entire row.  
 ![TabbedFrame](img/layouts/2_tabbedFrame.png)  
 
-* `.setTabbedFrameSelectedTab(title, tab)`  
+* `.setTabbedFrameSelectedTab(title, tab, callFunction=True)`  
     Select the specified tab in the TabbedFrame.  
+    Set `callFunction` to be False, if you don't want to call any associated functions.
+
+* `.setTabbedFrameChangeCommand(title, func)`  
+    Set a function to call when the tab is changed.  
 
 * `.setTabbedFrameDisabledTab(title, tab, disabled=True)`  
     Disable the specified tab in the TabbedFrame.  
@@ -512,6 +517,14 @@ This can be changed by setting the pane to vertical, then they'll be placed unde
 
 * `.openPanedFrame(title)`  
     Used to reopen the named *PanedFrame*.  
+
+#### Set Paned Frames
+* `.setPaneSashPosition(pos, pane=None)`  
+    Used to set the starting position of the sash (divider) between two panes (as a percentage) - defaults to 50%.  
+    This property can only be set once the next pane has been added, otherwise the sash won't exist yet.  
+    So, it should only be called after `.stopPanedFrame()` has been called, or during an `.openPanedFrame()`.  
+    If called during an `.openPanedFrame()` the `pane` property doesn't need to be set.  
+    **NB.** The final pane doesn't have a sash after it.  
 
 #### Horizontal Pane Layout  
 ![Horizontal Panes](img/layouts/pane1.png)  

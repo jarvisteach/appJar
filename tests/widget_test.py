@@ -6,14 +6,18 @@ import pytest
 import os
 import turtle
 
-try: from tkinter import Frame, Event, Label, Entry, Button, Radiobutton, Checkbutton, OptionMenu, Spinbox, Listbox, Message, PhotoImage, Scale, Canvas
-except: from Tkinter import Frame, Event, Label, Entry, Button, Radiobutton, Checkbutton, OptionMenu, Spinbox, Listbox, Message, PhotoImage, Scale, Canvas
+try: from tkinter import Frame, Event, Label, Entry, Button, Radiobutton, Checkbutton, OptionMenu, Spinbox, Listbox, Message, PhotoImage, Scale, Canvas, LabelFrame, PanedWindow
+except: from Tkinter import Frame, Event, Label, Entry, Button, Radiobutton, Checkbutton, OptionMenu, Spinbox, Listbox, Message, PhotoImage, Scale, Canvas, LabelFrame, PanedWindow
+
+try: import ttk
+except: from tkinter import ttk
 
 photo="R0lGODlhPQBEAPeoAJosM//AwO/AwHVYZ/z595kzAP/s7P+goOXMv8+fhw/v739/f+8PD98fH/8mJl+fn/9ZWb8/PzWlwv///6wWGbImAP    gTEMImIN9gUFCEm/gDALULDN8PAD6atYdCTX9gUNKlj8wZAKUsAOzZz+UMAOsJAP/Z2ccMDA8PD/95eX5NWvsJCOVNQPtfX/8zM8+QePLl38MGBr8    JCP+zs9myn/8GBqwpAP/GxgwJCPny78lzYLgjAJ8vAP9fX/+MjMUcAN8zM/9wcM8ZGcATEL+QePdZWf/29uc/P9cmJu9MTDImIN+/r7+/vz8/P8VN    QGNugV8AAF9fX8swMNgTAFlDOICAgPNSUnNWSMQ5MBAQEJE3QPIGAM9AQMqGcG9vb6MhJsEdGM8vLx8fH98AANIWAMuQeL8fABkTEPPQ0OM5OSYdG    Fl5jo+Pj/+pqcsTE78wMFNGQLYmID4dGPvd3UBAQJmTkP+8vH9QUK+vr8ZWSHpzcJMmILdwcLOGcHRQUHxwcK9PT9DQ0O/v70w5MLypoG8wKOuwsP    /g4P/Q0IcwKEswKMl8aJ9fX2xjdOtGRs/Pz+Dg4GImIP8gIH0sKEAwKKmTiKZ8aB/f39Wsl+LFt8dgUE9PT5x5aHBwcP+AgP+WltdgYMyZfyywz78    AAAAAAAD///8AAP9mZv///wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA    AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA    AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA    AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACH5BAEAAKgALAAAAAA9AEQAAAj/AFEJHEiwoMGDCBMqXMiwocAbBww4nEhxoYkUpzJGrMixogkfGUNqlNi    xJEIDB0SqHGmyJSojM1bKZOmyop0gM3Oe2liTISKMOoPy7GnwY9CjIYcSRYm0aVKSLmE6nfq05QycVLPuhDrxBlCtYJUqNAq2bNWEBj6ZXRuyxZyD    RtqwnXvkhACDV+euTeJm1Ki7A73qNWtFiF+/gA95Gly2CJLDhwEHMOUAAuOpLYDEgBxZ4GRTlC1fDnpkM+fOqD6DDj1aZpITp0dtGCDhr+fVuCu3z    lg49ijaokTZTo27uG7Gjn2P+hI8+PDPERoUB318bWbfAJ5sUNFcuGRTYUqV/3ogfXp1rWlMc6awJjiAAd2fm4ogXjz56aypOoIde4OE5u/F9x199d    lXnnGiHZWEYbGpsAEA3QXYnHwEFliKAgswgJ8LPeiUXGwedCAKABACCN+EA1pYIIYaFlcDhytd51sGAJbo3onOpajiihlO92KHGaUXGwWjUBChjSP    iWJuOO/LYIm4v1tXfE6J4gCSJEZ7YgRYUNrkji9P55sF/ogxw5ZkSqIDaZBV6aSGYq/lGZplndkckZ98xoICbTcIJGQAZcNmdmUc210hs35nCyJ58    fgmIKX5RQGOZowxaZwYA+JaoKQwswGijBV4C6SiTUmpphMspJx9unX4KaimjDv9aaXOEBteBqmuuxgEHoLX6Kqx+yXqqBANsgCtit4FWQAEkrNbpq    7HSOmtwag5w57GrmlJBASEU18ADjUYb3ADTinIttsgSB1oJFfA63bduimuqKB1keqwUhoCSK374wbujvOSu4QG6UvxBRydcpKsav++Ca6G8A6Pr1x    2kVMyHwsVxUALDq/krnrhPSOzXG1lUTIoffqGR7Goi2MAxbv6O2kEG56I7CSlRsEFKFVyovDJoIRTg7sugNRDGqCJzJgcKE0ywc0ELm6KBCCJo8DI    PFeCWNGcyqNFE06ToAfV0HBRgxsvLThHn1oddQMrXj5DyAQgjEHSAJMWZwS3HPxT/QMbabI/iBCliMLEJKX2EEkomBAUCxRi42VDADxyTYDVogV+w    SChqmKxEKCDAYFDFj4OmwbY7bDGdBhtrnTQYOigeChUmc1K3QTnAUfEgGFgAWt88hKA6aCRIXhxnQ1yg3BCayK44EWdkUQcBByEQChFXfCB776aQs    G0BIlQgQgE8qO26X1h8cEUep8ngRBnOy74E9QgRgEAC8SvOfQkh7FDBDmS43PmGoIiKUUEGkMEC/PJHgxw0xH74yx/3XnaYRJgMB8obxQW6kL9QYE    J0FIFgByfIL7/IQAlvQwEpnAC7DtLNJCKUoO/w45c44GwCXiAFB/OXAATQryUxdN4LfFiwgjCNYg+kYMIEFkCKDs6PKAIJouyGWMS1FSKJOMRB/Bo    IxYJIUXFUxNwoIkEKPAgCBZSQHQ1A2EWDfDEUVLyADj5AChSIQW6gu10bE/JG2VnCZGfo4R4d0sdQoBAHhPjhIB94v/wRoRKQWGRHgrhGSQJxCS+0    pCZbEhAAOw=="
 
 
 sys.path.append("../")
-from appJar import gui, SelectableLabel, AjText, AjScrolledText, Meter, Properties, PieChart, DraggableWidget
+from appJar import gui
+from appJar.appjar import Meter, Properties, PieChart, DraggableWidget, AjText, AjRectangle, AjPoint, AjScrolledText, SelectableLabel, ToggleFrame, PagedWindow, Page, SubWindow, ScrollPane, FrameStack, WIDGET_NAMES
 
 PY_VER = str(sys.version_info[0]) + "." + str(sys.version_info[1])
 
@@ -46,15 +50,16 @@ CHANGE_FUNCTION_VAR=False
 def CHANGE_FUNCTION():
     global CHANGE_FUNCTION_VAR
     CHANGE_FUNCTION_VAR = True
+    print("CHANGE FUNCTION CALLED")
 
 def CHECK_CHANGE_FUNCTION(value=True):
     global CHANGE_FUNCTION_VAR
-    time.sleep(0.1)
+    time.sleep(0.01)
     assert CHANGE_FUNCTION_VAR is value
     CHANGE_FUNCTION_VAR = False
 
 
-def tester_function(btn=None):
+def tester_function(btn=None, val1=None, val2=None):
     print(btn)
     return True
 
@@ -88,6 +93,7 @@ def test_remover():
     app.stopPage()
     app.stopPagedWindow()
     app.stopLabelFrame()
+    app.addLabelEntry("removeMe4")
     app.removeAllWidgets()
 
 def test_labels():
@@ -167,8 +173,11 @@ def test_entries():
     assert not app._validateNumericEntry("1", None, "a", "", "a", None, None, None)
     assert app._validateNumericEntry("2", None, "a", "", "a", None, None, None)
 
-    app.addFileEntry("fe1")
-    app.addDirectoryEntry("de1")
+    app.addFileEntry("ffe1")
+    app.addDirectoryEntry("dfe1")
+    app.addOpenEntry("ofe1")
+    app.addSaveEntry("sfe1")
+
     assert isinstance(app.addAutoEntry("ae1", ["a", "b", "c"]), Entry)
     app.setAutoEntryNumRows("ae1", 5)
     app.appendAutoEntry("ae1", "newOne")
@@ -504,6 +513,10 @@ def test_radios():
     app.setRadioTick("rb")
     app.setRadioTick("rb", True)
     app.setRadioTick("rb", False)
+
+    app.setRadioSquare("rb")
+    app.setRadioSquare("rb", True)
+    app.setRadioSquare("rb", False)
     assert app.getRadioButton("rb") == TEXT_TWO
 
     app.setRadioButton("rb", TEXT_THREE)
@@ -534,7 +547,7 @@ def test_checks():
     app.addCheckBox(TEXT_THREE)
     assert isinstance(app.addNamedCheckBox(TEXT_TWO, "NCB1"), Checkbutton)
     app.addNamedCheckBox(TEXT_TWO, "NCB2")
-    app.addNamedCheckBox(TEXT_TWO, "NCB3")
+    ncb3 = app.addNamedCheckBox(TEXT_TWO, "NCB3")
 
     assert app.getCheckBox(TEXT_ONE) is False
     assert app.getCheckBox(TEXT_TWO) is False
@@ -542,6 +555,10 @@ def test_checks():
     assert app.getCheckBox("NCB1") is False
     assert app.getCheckBox("NCB2") is False
     assert app.getCheckBox("NCB3") is False
+
+    assert ncb3.cget('text') == TEXT_TWO
+    app.setCheckBoxText("NCB3", "new name")
+    assert ncb3.cget('text') == "new name"
 
     cbs = app.getAllCheckBoxes()
     assert cbs[TEXT_ONE] is False
@@ -580,9 +597,6 @@ def test_checks():
     assert cbs["NCB2"] is True
     assert cbs["NCB3"] is False
 
-    # call generic setter functions
-    test_setters("CheckBox", TEXT_ONE)
-
     app.clearAllCheckBoxes()
     assert app.getCheckBox(TEXT_ONE) is False
     assert app.getCheckBox(TEXT_TWO) is False
@@ -590,6 +604,22 @@ def test_checks():
     assert app.getCheckBox("NCB1") is False
     assert app.getCheckBox("NCB2") is False
     assert app.getCheckBox("NCB3") is False
+
+    # call generic setter functions
+    test_setters("CheckBox", TEXT_ONE)
+
+    app.setCheckBox(TEXT_TWO, ticked=True)
+    app.setCheckBoxChangeFunction(TEXT_TWO, CHANGE_FUNCTION)
+    app.setCheckBox(TEXT_TWO, ticked=False)
+    CHECK_CHANGE_FUNCTION(True)
+    app.setCheckBox(TEXT_TWO, ticked=True, callFunction=False)
+    CHECK_CHANGE_FUNCTION(False)
+
+    app.clearAllCheckBoxes(callFunction=True)
+    CHECK_CHANGE_FUNCTION(True)
+    app.setCheckBox(TEXT_TWO, ticked=True, callFunction=False)
+    app.clearAllCheckBoxes(callFunction=False)
+    CHECK_CHANGE_FUNCTION(False)
 
     print("\t >> all tests complete")
 
@@ -714,6 +744,18 @@ def test_options():
     test_setters("OptionBox", "l1")
     test_setters("OptionBox", "tl1")
 
+    app.setOptionBoxChangeFunction("l3", CHANGE_FUNCTION)
+    app.setOptionBox("l3", LIST_THREE[2])
+    CHECK_CHANGE_FUNCTION(True)
+    app.setOptionBox("l3", LIST_THREE[1], callFunction=False)
+    CHECK_CHANGE_FUNCTION(False)
+
+    app.clearAllOptionBoxes(callFunction=True)
+    CHECK_CHANGE_FUNCTION(True)
+    app.setOptionBox("l3", LIST_THREE[2], callFunction=False)
+    app.clearAllOptionBoxes(callFunction=False)
+    CHECK_CHANGE_FUNCTION(False)
+
     print("\t>> all tests complete")
 
 
@@ -766,14 +808,14 @@ def test_spins():
     assert sbs["s3"] == "200"
     assert sbs["s4"] == "150"
 
-    # call generic setter functions
-    test_setters("SpinBox", "s1")
-
     app.clearAllSpinBoxes()
     assert app.getSpinBox("s1") == "a"
     assert app.getSpinBox("s2") == "a"
     assert app.getSpinBox("s3") == "5"
     assert app.getSpinBox("s4") == "25"
+
+    # call generic setter functions
+    test_setters("SpinBox", "s1")
 
     print("\t>> all tests complete")
 
@@ -869,9 +911,6 @@ def test_lists():
     tmp_list.remove(tmp_list[1])
     assert app.getAllListItems("l2") == tmp_list
 
-    # call generic setter functions
-    test_setters("ListBox", "l1")
-
     app.addListBox("g1", LIST_ONE)
     app.setListBoxChangeFunction("g1", CHANGE_FUNCTION)
     app.addListBox("g2", LIST_TWO)
@@ -918,6 +957,9 @@ def test_lists():
     app.clearAllListBoxes()
     assert app.getListBox("g1") == []
     assert app.getListBox("g2") == []
+
+    # call generic setter functions
+    test_setters("ListBox", "l1")
 
     print("\t>> all tests complete")
 
@@ -1004,16 +1046,27 @@ def test_scales():
     sc._jump("trough1")
     sc._jump("trough2")
 
-
-    # call generic setter functions
-    test_setters("Scale", "s1")
-
     app.clearAllScales()
     print( app.getScale("s1"))
     assert app.getScale("s1") == 44
     assert app.getScale("s2") == 22
     assert app.getScale("s3") == 0
     assert app.getScale("s4") == 0
+
+    # call generic setter functions
+    test_setters("Scale", "s1")
+
+    app.setScaleChangeFunction("s2", CHANGE_FUNCTION)
+    app.setScale("s2", 22)
+    CHECK_CHANGE_FUNCTION(True)
+    app.setScale("s2", 88, callFunction=False)
+    CHECK_CHANGE_FUNCTION(False)
+
+    app.clearAllScales(callFunction=True)
+    CHECK_CHANGE_FUNCTION(True)
+    app.setScale("s2", 33, callFunction=False)
+    app.clearAllScales(callFunction=False)
+    CHECK_CHANGE_FUNCTION(False)
 
     print("\t >> all tests complete")
 
@@ -1197,9 +1250,6 @@ def test_text_areas():
     print(app.searchTextArea("t1", TEXT_ONE, "1.0"))
     assert app.searchTextArea("t1", TEXT_ONE, "1.0") == "1.0"
 
-    # call generic setter functions
-    test_setters("TextArea", "t1")
-
     app.clearAllTextAreas()
     assert app.getTextArea("t1") == EMPTY
     assert app.getTextArea("t2") == EMPTY
@@ -1225,6 +1275,9 @@ def test_text_areas():
     app.textAreaToggleFontSelected("t1", "BOLD_ITALIC")
     app.textAreaToggleFontSelected("t1", "BOLD_ITALIC")
     app.textAreaApplyFontSelected("t1", "BOLD_ITALIC")
+
+    # call generic setter functions
+    test_setters("TextArea", "t1")
 
     print("\t >> all tests complete")
 
@@ -1313,6 +1366,9 @@ def test_properties():
     validateProp("p1", HASH_ONE)
     app.setPropertyText("p2", "a", "new text")
     app.setPropertyText("p2", "b")
+
+    app.setPropertiesBoxBg("p2", "red")
+    app.setPropertiesSelectColour("p2", "red")
 
     app.setProperties("p2", HASH_TWO)
     validateProp("p2", HASH_TWO)
@@ -1416,6 +1472,10 @@ def test_grips():
 def test_auto_labels():
     print("\tTesting auto_labels")
     app.addLabelEntry("lab_ent")
+    app.addLabelFileEntry("lab_ent_file")
+    app.addLabelOpenEntry("lab_ent_open")
+    app.addLabelSaveEntry("lab_ent_save")
+    app.addLabelDirectoryEntry("lab_ent_dir")
     app.addLabelNumericEntry("lab_num_ent")
     app.addLabelSecretEntry("lab_sec_ent")
     app.addLabelAutoEntry("lab_auto_ent", LIST_ONE)
@@ -1449,6 +1509,8 @@ def test_date_pickers():
 
     app.setDatePickerFg("d1", "green")
 
+    print(app.getDatePicker("d1"))
+    print(datetime.date.today())
     assert app.getDatePicker("d1") == datetime.date.today()
     assert app.getDatePicker("d2") == datetime.date(1980, 5, 5)
     assert app.getDatePicker("d3") == datetime.date(1990, 10, 10)
@@ -1516,30 +1578,38 @@ def test_pies():
 
 def test_trees():
     print("\tTesting Trees")
-    app.addTree("t1",
-        """<people>
+    xml_str = """<people>
         <person><name>Fred</name><age>45</age><gender>Male</gender></person>
-        <person><name>Tina</name><age>37</age><gender>Female</gender></person>
+        <person a="aaa"><name>Tina</name><age>37</age><gender>Female</gender></person>
         <person><name>CLive</name><age>28</age><gender>Male</gender></person>
-        <person><name>Betty</name><age>51</age><gender>Female</gender></person>
-        </people>""")
+        <person><name>Betty</name><age>51</age><gender b='bbb'>Female</gender></person>
+        </people>"""
+
+    app.addTree("t1", xml_str)
 
     with pytest.raises(Exception) :
-        app.addTree("t1", "")
+        app.addTree("t1", xml_str)
 
     app.setTreeDoubleClickFunction("t1", tester_function)
     app.setTreeEditFunction("t1", tester_function)
     app.setTreeEditable("t1", True)
+    app.showTreeAttributes("t1")
     app.setTreeEditable("t1", False)
     app.setTreeBg("t1", "red")
     app.setTreeFg("t1", "yellow")
     app.setTreeHighlightBg("t1", "orange")
     app.setTreeHighlightFg("t1", "pink")
+    
     app.getTreeXML("t1")
     app.getTreeSelected("t1")
     app.getTreeSelectedXML("t1")
 
     app.setTreeColours("t1", "red", "yellow", "yellow", "red")
+
+    from xml.dom.minidom import parseString
+
+    app.tree("t2", parseString(xml_str), attributes=True, click=tester_function, dbl=tester_function, edit=tester_function, editable=True,
+                fg="green", bg="yellow", fgH="pink", bgH="blue")
 
     # call generic setter functions
 #    test_setters("Tree", "t1")
@@ -1556,7 +1626,15 @@ def test_tables():
         ["Clive", 28, "Male"],
         ["Betty", 51, "Female"]],
         action=tester_function,
-        addRow=tester_function)
+        actionButton=["aaa", "bbb"],
+        horizontal=False,
+        addRow=tester_function,
+        wrap=200,
+        inactiveFg='red',
+        inactiveBg='red',
+        activeFg='red',
+        activeBg='red',
+        )
 
     with pytest.raises(Exception) :
         app.addTable("g1", [])
@@ -1565,10 +1643,18 @@ def test_tables():
     app.getTableSelectedCells("t1")
     app.addTableRow("t1", ["aaa", 22, "Male"])
 
+    app.setTableActiveFg('t1', 'green')
+    app.setTableActiveBg('t1', 'green')
+    app.setTableInactiveFg('t1', 'green')
+    app.setTableInactiveBg('t1', 'green')
+
     # call generic setter functions
     test_setters("Table", "g1")
 
-    app.addDbTable('db1', 'test.db', 'projects')
+    app.addDbTable('db1', 'test.db',
+        table='projects',
+        actionButton=["aaa", "bbb"],
+        horizontal=True)
     app.addReplaceDbTable('db1', 'test.db', 'projects')
     app.addRefreshDbTable('db1')
 
@@ -1628,6 +1714,7 @@ def test_gui_options():
 
     app.setSize("100x100")
     app.setSize(200,200)
+    app.setSize("Fullscreen")
     app.setSize("fullscreen")
     app.exitFullscreen()
 
@@ -1665,10 +1752,20 @@ def test_gui_options():
     app.setButtonFont(20)
     app.increaseButtonFont()
     app.decreaseButtonFont()
+    app.setStatusFont(9)
 
     app.setBgImage("1_entries.gif")
     app.resizeBgImage()
     app.removeBgImage()
+
+    app.setRowspan(4)
+    assert app.getRowspan() == 4
+    app.setRowspan(0)
+    assert app.getRowspan() == 0
+    app.setColspan(4)
+    assert app.getColspan() == 4
+    app.setColspan(0)
+    assert app.getColspan() == 0
 
     print(" >> not implemented...")
     #print("\t >> all tests complete")
@@ -1709,10 +1806,10 @@ def test_events():
     app.disableEnter()
 
     app.bindKey("b", tester_function)
-    app.unbindKey("b")
+    app.unbindKey("B")
 
     app.bindKeys(["c", "d", "<Up>", "<F1>"], tester_function)
-    app.unbindKeys(["c", "<Up>", "<F1>"])
+    app.unbindKeys(["C", "<Up>", "<F1>"])
 
     app.registerEvent(tester_function)
     app.setPollTime(2)
@@ -1924,6 +2021,7 @@ def test_menus():
 
     app.addEntry("RCLICK2")
     app.addMenuEdit()
+    app.setLogLevel('TRACE')
 
     app.enableMenubar()
     app.disableMenubar()
@@ -1937,14 +2035,18 @@ def test_menus():
     app.disableMenuItem("MEN2", "MM2")
     app.enableMenuItem("MEN2", "MM2")
 
+    app.enableMenuItem("MEN2", "will_fail")
+    app.disableMenuItem("MEN2", "will_fail")
+    app.renameMenuItem("MEN2", "will_fail", 'failed')
+
     print(" >> not implemented...")
     #print("\t >> all tests complete")
 
 def dismissEditMenu():
     for i in range(5):
         print("dismissit...")
-        app.widgetManager.get(app.Widgets.Menu, "EDIT").unpost()
-        app.widgetManager.get(app.Widgets.Menu, "EDIT").invoke(i)
+        app.widgetManager.get(WIDGET_NAMES.Menu, "EDIT").unpost()
+        app.widgetManager.get(WIDGET_NAMES.Menu, "EDIT").invoke(i)
         time.sleep(.2)
 
 def test_rightClick():
@@ -1979,6 +2081,8 @@ def test_toolbars():
     app.addToolbar(["a", "b", "c", "ABOUT"], 
         [tester_function, tester_function, tester_function, tester_function],
         True)
+
+    app.setToolbarBg('red')
 
     app.addToolbarButton("d", tester_function)
     with pytest.raises(Exception) :
@@ -2067,20 +2171,25 @@ def test_langs():
 
 def test_tooltips():
     print("\tTesting tooltip")
-    app.setLabelTooltip("l1", "message")
-    app.setLabelTooltip("l1", "")
-    app.setLabelTooltip("l1", "updated message")
-    app.disableLabelTooltip("l1")
-    app.enableLabelTooltip("l1")
-    lab = app.getLabelWidget("l1")
+    app.addLabel("TestLabelTooltip")
+    app.addEntry("EntryTooltip")
+    app.addNumericEntry("NumericEntryTooltip")
+    app.addSecretEntry("SecretEntryTooltip")
+
+    app.setLabelTooltip("TestLabelTooltip", "message")
+    app.setLabelTooltip("TestLabelTooltip", "")
+    app.setLabelTooltip("TestLabelTooltip", "updated message")
+    app.disableLabelTooltip("TestLabelTooltip")
+    app.enableLabelTooltip("TestLabelTooltip")
+    lab = app.getLabelWidget("TestLabelTooltip")
     tip = lab.tooltip
     tip.enter()
     tip.leave()
     tip.motion()
 
-    app.setEntryTooltip("e1", "tooltip text")
-    app.setEntryTooltip("ne1", "tooltip text")
-    app.setEntryTooltip("se1", "tooltip text")
+    app.setEntryTooltip("EntryTooltip", "tooltip text")
+    app.setEntryTooltip("NumericEntryTooltip", "tooltip text")
+    app.setEntryTooltip("SecretEntryTooltip", "tooltip text")
 
     print(" >> not implemented...")
     #print("\t >> all tests complete")
@@ -2218,26 +2327,26 @@ def test_setters(widg_type, widg_id, widg_val=None):
     else:
         exec('app.get'+widg_type+'Widget("'+widg_id+'")')
 
-#    exec("app.show" + widg_type+ "(\""+widg_id +"\")")
-#    exec("app.hide" + widg_type+ "(\""+widg_id +"\")")
-#    exec("app.enable" + widg_type+ "(\""+widg_id +"\")")
-#    exec("app.disable" + widg_type+ "(\""+widg_id +"\")")
-#    exec("app.remove" + widg_type+ "(\""+widg_id +"\")")
+    exec("app.hide" + widg_type+ "(\""+widg_id +"\")")
+    exec("app.show" + widg_type+ "(\""+widg_id +"\")")
+    exec("app.disable" + widg_type+ "(\""+widg_id +"\")")
+    exec("app.enable" + widg_type+ "(\""+widg_id +"\")")
+    exec("app.remove" + widg_type+ "(\""+widg_id +"\")")
     print(" >> not implemented...")
     #print("\t >> all tests complete")
 
 
 def test_sets():
     print("\tTesting setters")
-    app.setLabelBg("l1", COL_ONE)
-    app.setLabelFg("l1", COL_TWO)
-    app.setLabelDisabledFg("l1", COL_THREE)
-    app.setLabelWidth("l1", 77)
-    app.setLabelHeight("l1", 33)
-    app.setLabelRelief("l1", "sunken")
-    app.setLabelState("l1", "disabled")
+    app.setLabelBg("xx1", COL_ONE)
+    app.setLabelFg("xx1", COL_TWO)
+    app.setLabelDisabledFg("xx1", COL_THREE)
+    app.setLabelWidth("xx1", 77)
+    app.setLabelHeight("xx1", 33)
+    app.setLabelRelief("xx1", "sunken")
+    app.setLabelState("xx1", "disabled")
 
-    lab = app.getLabelWidget("l1")
+    lab = app.getLabelWidget("xx1")
 
     assert lab.cget("bg") == COL_ONE
     assert lab.cget("fg") == COL_TWO
@@ -2253,6 +2362,7 @@ def test_containers():
 
     ## LABEL FRAMES
     lf = app.startLabelFrame("lf1")
+    assert isinstance(lf , LabelFrame)
     app.setLabelFrameAnchor("lf1", "east")
     app.addLabel("lf1_l1", TEXT_ONE)
     app.stopLabelFrame()
@@ -2260,7 +2370,8 @@ def test_containers():
     with pytest.raises(Exception) :
         app.stopLabelFrame()
 
-    app.openLabelFrame("lf1")
+    container = app.openLabelFrame("lf1")
+    assert isinstance(container , LabelFrame)
     app.addLabel("lf1_l2", TEXT_ONE)
     app.stopLabelFrame()
 
@@ -2275,6 +2386,7 @@ def test_containers():
     ## TOGGLE FRAMES
 
     tog = app.startToggleFrame("tf1")
+    assert isinstance(tog , ToggleFrame)
     app.addLabel("tf1_l1", TEXT_ONE)
     app.stopToggleFrame()
 
@@ -2291,7 +2403,8 @@ def test_containers():
     app.toggleToggleFrame("tf1")
     assert app.getToggleFrameState("tf1") is False
 
-    app.openToggleFrame("tf1")
+    container = app.openToggleFrame("tf1")
+    assert container is not None
     app.addLabel("tf1_l2", TEXT_ONE)
     app.stopToggleFrame()
 
@@ -2303,13 +2416,15 @@ def test_containers():
 
     ## TABBED FRAMES
 
-    app.startTabbedFrame("tbf1")
-    app.startTab("tab1")
+    tf = app.startTabbedFrame("tbf1")
+    assert tf is not None
+    tb = app.startTab("tab1", beforeTab='a', afterTab='a')
+    assert tb is not None
     app.addLabel("tbf1_l1", TEXT_ONE)
-    app.startTab("tab2")
+    app.startTab("tab2", beforeTab="tab1")
     app.addLabel("tbf2_l1", TEXT_ONE)
     app.stopTab()
-    app.startTab("tab3")
+    app.startTab("tab3", afterTab="tab1")
     # empty tab
     app.stopTab()
     app.stopTabbedFrame()
@@ -2328,11 +2443,24 @@ def test_containers():
 
     app.setTabBg("tbf1", "tab2", "red")
 
+
     assert app.getTabbedFrameSelectedTab("tbf1") == "tab1"
+
     app.setTabbedFrameSelectedTab("tbf1", "tab2")
     assert app.getTabbedFrameSelectedTab("tbf1") == "tab2"
 
-    app.openTabbedFrame("tbf1")
+    app.setTabbedFrameChangeFunction('tbf1', CHANGE_FUNCTION)
+
+    app.setTabbedFrameSelectedTab("tbf1", "tab1")
+    CHECK_CHANGE_FUNCTION(True)
+    assert app.getTabbedFrameSelectedTab("tbf1") == "tab1"
+
+    app.setTabbedFrameSelectedTab("tbf1", "tab2", callFunction=False)
+    CHECK_CHANGE_FUNCTION(False)
+    assert app.getTabbedFrameSelectedTab("tbf1") == "tab2"
+
+    container = app.openTabbedFrame("tbf1")
+    assert container is not None
     app.startTab("tab4")
     app.addLabel("tbf4_l1", TEXT_ONE)
     app.stopTabbedFrame()
@@ -2340,7 +2468,8 @@ def test_containers():
     app.setTabbedFrameInactiveFg("tbf1", "red")
     app.setTabbedFrameInactiveBg("tbf1", "red")
 
-    app.openTab("tbf1", "tab4")
+    container = app.openTab("tbf1", "tab4")
+    assert container is not None
     app.addLabel("tbf4_l2", TEXT_ONE)
     app.stopTab()
 
@@ -2363,24 +2492,34 @@ def test_containers():
 
     ## PANED FRAMES
 
-    app.startPanedFrame("p1")
+    pf = app.startPanedFrame("p1")
+    assert isinstance(pf, PanedWindow)
     app.addLabel("p1_l1", TEXT_ONE)
-    app.startPanedFrame("p2")
+    pf = app.startPanedFrame("p2")
+    assert isinstance(pf, PanedWindow)
     app.addLabel("p2_l1", TEXT_ONE)
     app.stopPanedFrame()
-    app.startPanedFrameVertical("p3")
+    app.setPaneSashPosition(0.3, 'p2')
+    pf = app.startPanedFrameVertical("p3")
+    assert isinstance(pf, PanedWindow)
     app.addLabel("p3_l1", TEXT_ONE)
     app.stopPanedFrame()
+    app.setPaneSashPosition(88, 'p3')
     app.stopAllPanedFrames()
 
-    app.openPanedFrame("p1")
+    container = app.openPanedFrame("p1")
+    app.setPaneSashPosition(40)
+    assert isinstance(container , PanedWindow)
     app.addLabel("p1_l11", TEXT_ONE)
     app.stopPanedFrame()
 
     ## PAGED WINDOWS
 
-    app.startPagedWindow("pg1")
-    app.startPage()
+    pw = app.startPagedWindow("pg1")
+    assert isinstance(pw, PagedWindow)
+    pg = app.startPage()
+    # should be a page...
+    assert isinstance(pg, Frame)
     app.addLabel("pg1_l1", TEXT_ONE)
     app.startPage()
     app.addLabel("pg2_l1", TEXT_ONE)
@@ -2428,17 +2567,20 @@ def test_containers():
     app.showPagedWindowTitle("pg1", False)
     app.showPagedWindowTitle("pg1", True)
 
-    app.openPagedWindow("pg1")
+    container = app.openPagedWindow("pg1")
+    assert isinstance(container, PagedWindow)
     app.startPage()
     app.addLabel("pg4_l1", TEXT_ONE)
     app.stopPage()
     app.stopPagedWindow()
 
-    app.openPage("pg1", 2)
+    container = app.openPage("pg1", 2)
+    assert isinstance(container, Frame)
     app.addLabel("pg2_np", TEXT_ONE)
     app.stopPage()
 
-    pw = app.getWidget(app.Widgets.PagedWindow, "pg1")
+    pw = app.getWidget(WIDGET_NAMES.PagedWindow, "pg1")
+    assert isinstance(pw, PagedWindow)
     pw.showFirst()
     pw.showFirst()
     pw.showPrev()
@@ -2451,14 +2593,16 @@ def test_containers():
     ## SUB WINDOWS
 
 # breaks under python2.7
-    app.startSubWindow("sb1", modal=False, transient=False, blocking=False, grouped=False)
+    sub = app.startSubWindow("sb1", modal=False, transient=False, blocking=False, grouped=False)
+    assert isinstance(sub, SubWindow)
     app.addLabel("sb1_l", TEXT_ONE)
     test_gui_options()
     app.stopSubWindow()
     with pytest.raises(Exception) :
         app.stopSubWindow()
 
-    app.openSubWindow("sb1")
+    container = app.openSubWindow("sb1")
+    assert isinstance(container, SubWindow)
     app.addLabel("sb1_l2", TEXT_ONE)
     app.stopSubWindow()
 
@@ -2489,27 +2633,31 @@ def test_containers():
 
     ## FRAMES
 
-    app.startFrame("fr1")
+    fr = app.startFrame("fr1")
+    assert isinstance(fr, Frame)
     app.addLabel("fr1_l", TEXT_ONE)
     app.stopFrame()
-    app.openFrame("fr1")
+    container = app.openFrame("fr1")
+    assert isinstance(container, Frame)
     app.addLabel("fr1_l2", TEXT_ONE)
     app.stopFrame()
 
     with pytest.raises(Exception) :
         app.stopFrame()
 
-    app.startScrollPane("sp1")
+    sp = app.startScrollPane("sp1")
+    assert isinstance(sp, ScrollPane)
     app.addLabel("sp_l", TEXT_ONE)
     app.stopScrollPane()
-    app.openScrollPane("sp1")
+    container = app.openScrollPane("sp1")
+    assert isinstance(container, ScrollPane)
     app.addLabel("sp_l2", TEXT_ONE)
     app.stopScrollPane()
     with pytest.raises(Exception) :
         app.stopScrollPane()
 
-    sp = app.getWidget(app.Widgets.ScrollPane, "sp1")
-
+    sp = app.getWidget(WIDGET_NAMES.ScrollPane, "sp1")
+    assert isinstance(sp, ScrollPane)
 
     for hHidden in [True, False]:
         for vHidden in [True, False]:
@@ -2520,8 +2668,9 @@ def test_containers():
 
 
     # JUGGLING FRAMES
-    with app.frame("a_frame", 1, 1):
+    with app.frame("a_frame", 1, 1) as fr:
         app.label("a_frame a")
+    assert isinstance(fr, Frame)
     with app.frame("b_frame", 1, 1):
         app.label("b_frame a")
     with app.frame("c_frame", 1, 1):
@@ -2532,8 +2681,10 @@ def test_containers():
     app.raiseFrame("c_frame")
 
     ## FRAME STACKS
-    app.startFrameStack("stack")
-    app.startFrame()
+    fStack = app.startFrameStack("stack")
+    assert isinstance(fStack, FrameStack)
+    fr = app.startFrame()
+    assert isinstance(fr, Frame)
     app.addLabel("stack-1", "stack-1")
     app.stopFrame()
     app.startFrame()
@@ -2584,16 +2735,47 @@ def test_containers():
     assert app.getCurrentFrame("stack") == 2
     assert app.getPreviousFrame("stack") == 1
 
+    fStack.setChangeFunction(CHANGE_FUNCTION)
     app.selectFrame("stack", 1)
+    CHECK_CHANGE_FUNCTION(True)
     assert app.getCurrentFrame("stack") == 1
     assert app.getPreviousFrame("stack") == 2
+
+    app.selectFrame("stack", 2, callFunction=False)
+    CHECK_CHANGE_FUNCTION(False)
+    assert app.getCurrentFrame("stack") == 2
+    assert app.getPreviousFrame("stack") == 1
+
+    app.prevFrame("stack")
+    CHECK_CHANGE_FUNCTION(True)
+    app.nextFrame("stack")
+    CHECK_CHANGE_FUNCTION(True)
+
+    app.prevFrame("stack", callFunction=False)
+    CHECK_CHANGE_FUNCTION(False)
+    app.nextFrame("stack", callFunction=False)
+    CHECK_CHANGE_FUNCTION(False)
+
+    app.firstFrame("stack", callFunction=True)
+    CHECK_CHANGE_FUNCTION(True)
+    app.lastFrame("stack", callFunction=True)
+    CHECK_CHANGE_FUNCTION(True)
+
+    app.firstFrame("stack", callFunction=False)
+    CHECK_CHANGE_FUNCTION(False)
+    app.lastFrame("stack", callFunction=False)
+    CHECK_CHANGE_FUNCTION(False)
+
+    app.selectFrame("stack", 2, callFunction=False)
+    app.selectFrame("stack", 1, callFunction=False)
 
     with pytest.raises(Exception) :
         app.selectFrame("stack", 3)
     assert app.getCurrentFrame("stack") == 1
     assert app.getPreviousFrame("stack") == 2
 
-    app.openFrameStack('stack')
+    container = app.openFrameStack('stack')
+    assert container is not None
     app.startFrame()
     app.addLabel("stack-4", "stack-4")
     app.stopFrame()
@@ -2763,7 +2945,7 @@ def test_plots():
     else:
         x = [1,2,3,4,5]
         y = [2,4,6,8,10]
-        axes = app.addPlot("p1", x, y)
+        axes = app.addPlot("p1", x, y, showNav=True)
         axes.legend(["key data"])
         axes.set_xlabel("X lab")
         axes.set_ylabel("Y lab")
@@ -2771,6 +2953,11 @@ def test_plots():
         app.refreshPlot("p1")
         app.updatePlot("p1", x, y)
         app.updatePlot("p1", x, y, keepLabels=True)
+
+        app.plot('p2', x, y, width=100, height=200, nav=True)
+        print(type(app.plot('p2')))
+        assert isinstance(app.addPlot("p2"), turtle.RawTurtle)
+
         print(" >> not implemented...")
         #print("\t >> all tests complete")
 
@@ -2824,7 +3011,6 @@ def test_canvas():
     assert isinstance(app.addCanvas("c1"), Canvas)
     c = app.getCanvas("c1")
     c.create_line(0, 0, 255, 244, width=5)
-    test_setters("Canvas", "c1")
 
     app.addCanvasCircle("c1", 10, 10, 10)
     app.addCanvasOval("c1", 10, 10, 10, 10)
@@ -2848,6 +3034,8 @@ def test_canvas():
     event.x = 100
     event.y = 100
     app._imageMap("c1", event)
+
+    test_setters("Canvas", "c1")
 
     print(" >> not implemented...")
     #print("\t >> all tests complete")
@@ -2950,6 +3138,7 @@ def test_gui_properties():
         font={'size':20, 'family':'helvetica'},
         buttonFont={'size':19, 'family':'helvetica'},
         labelFont={'size':18, 'family':'helvetica'},
+        statusFont={'size':15, 'family':'helvetica'},
         editMenu=True,
         stopFunction=propFunc,
         startFunction=propFunc,
@@ -2957,7 +3146,9 @@ def test_gui_properties():
         enterKey=propFunc,
         logLevel='trace',
         logFile='aaa.txt',
-        language='french'
+        language='french',
+        rowspan=1,
+        colspan=1,
     )
 
     assert app.title == 'aaa'
@@ -2983,11 +3174,14 @@ def test_gui_properties():
     assert app.stretch.lower() == 'column'
     assert app.expand.lower() == 'column'
     assert app.row == 5
+    assert app.rowspan == 1
+    assert app.colspan == 1
     assert app.fg == 'red'
     assert app.bg == 'green'
     assert app.font['size'] == 18
     assert app.buttonFont['size'] == 19
     assert app.labelFont['size'] == 18
+    assert app.statusFont['size'] == 15
     assert app.editMenu is True
 #    assert app.stopFunction == propFunc
 #    assert app.enterKey == propFunc
@@ -3071,6 +3265,16 @@ def test_gui_properties():
     app.row = 5
     assert app.row == 5
 
+    app.rowspan = 5
+    assert app.rowspan == 5
+    app.colspan = 4
+    assert app.colspan == 4
+
+    app.rowspan = 0
+    assert app.rowspan == 0
+    app.colspan = 0
+    assert app.colspan == 0
+
     app.fg = "blue"
     assert app.fg == "blue"
     app.bg = "red"
@@ -3090,6 +3294,9 @@ def test_gui_properties():
 
     app.buttonFont = 24
     assert app.buttonFont['size'] == 24
+
+    app.statusFont = 17
+    assert app.statusFont['size'] == 17
 
     app.buttonFont = {'size':23, 'family':myFont1}
     assert app.buttonFont['size'] == 23
@@ -3183,6 +3390,7 @@ print("NEXT...")
 
 print("<<<Starting Widget Test Suite>>>")
 test_remover()
+test_remover()
 test_gui_options()
 test_widget_arranging()
 test_grid_layout()
@@ -3240,7 +3448,7 @@ data = app.getAllInputs(extra='something', extra2=True, extra3=4)
 assert data['extra'] == 'something'
 assert data['ae1'] == TEXT_ONE
 assert data['rb'] == TEXT_ONE
-assert data['e1'] == TEXT_ONE
+assert data["ae1"] == TEXT_ONE
 
 app.showAccess()
 app.hideSubWindow('access_access_subwindow')
@@ -3267,7 +3475,7 @@ def test_gui(btn=None):
     if doStop == 0:
         test_pop_ups()
         app.thread(run_events, "a", bbb="bbb")
-        app.setEntryFocus("e1")
+        app.setEntryFocus("ffe1")
         app.threadCallback(cbA, cbB, "text")
         app.callback(cbA, cbB, "text2")
         app.thread(dismissEditMenu)
@@ -3305,6 +3513,7 @@ del app
 
 print("<<<Starting app3>>>")
 with gui(debug=True) as app3:
+    app3.toolbar(["a", "b", "file", "open"], tester_function, icons=['a', 'b', 'file', 'open'], status=[1, 0, False, True], bg='pink')
     app3.addStatusbar(TEXT_ONE, 1, "LEFT")
     with app3.tabbedFrame("tf"):
         with app3.tab("t1"):
@@ -3312,17 +3521,17 @@ with gui(debug=True) as app3:
                 app3.addLabel("l1", "label")
             with app3.toggleFrame("tf1"):
                 app3.addCheckBox("cb1")
-        with app3.tab("t2"):
-            with app3.panedFrame("pf1"):
-                with app3.panedFrameVertical("vpf1"):
+        with app3.tab("t2", afterTab='t1'):
+            with app3.panedFrame("pf1", sash=50):
+                with app3.panedFrame("vpf1", vertical=True):
                     app3.addLabel("l2", "label")
-        with app3.tab("t3"):
+        with app3.tab("t3", beforeTab='t2'):
             with app3.pagedWindow("pages"):
                 with app3.page():
                     app3.addLabel("l3", "label")
                 with app3.page():
                     app3.addLabel("l4", "label")
-        with app3.tab("t4"):
+        with app3.tab("t4", afterTab='a', beforeTab='a'):
             with app3.frame("f1"):
                 app3.addLabel("l5", "label")
             with app3.scrollPane("sf1"):
@@ -3393,12 +3602,14 @@ def updateApp4(btn=None):
     app4.scale("happiness", 50)
     app4.message("mess", "aaa")
     app4.text("mess2", "aaa")
+    app4.text("mess2", "aaa", replace=False)
+    app4.text("mess2", "aaa", replace=True)
     app4.meter("Cry", 50)
     app4.link("Cry", "http://www.google.com")
     app4.link("Shout", updateApp4)
     app4.image("img", "1_flash.gif")
 #    app4.image("img2")
-    app4.properties("Toppings", {"a":False, "b": True})
+    app4.properties("Toppings", {"a":False, "b": True}, boxbg='green')
 
 doStopAgain = 0
 def test_gui4(btn=None):
@@ -3436,7 +3647,7 @@ with gui("Simple Demo", transparency=50, padding=5, location="CENTER", bg="red")
     app4.setLabelBg("title", "green")
 
     app4.radio("happy", "Very Happy", row=1, column=0)
-    app4.radio("happy", "Ambivalent", row=1, column=1, change=changer)
+    app4.radio("happy", "Ambivalent", row=1, column=1, change=changer, kind='square')
     app4.radio("happy", "Miserable", row=1, column=2, selected=True)
 
     app4.message("mess", "Simple Sadness", row=2, rowspan=3)
@@ -3457,7 +3668,7 @@ with gui("Simple Demo", transparency=50, padding=5, location="CENTER", bg="red")
 
     app4.check("Clap", row=2, column=1)
     app4.check("Cheer", True, row=3, column=1)
-    app4.check("Cry", row=4, column=1, change=changer)
+    app4.check("Cry", row=4, column=1, change=changer, text='something else')
 
     app4.tick("tClap", row=2, column=1)
     app4.tick("tCheer", True, row=3, column=1)
@@ -3470,8 +3681,11 @@ with gui("Simple Demo", transparency=50, padding=5, location="CENTER", bg="red")
 
     app4.entry("se1", row=0, column=1, default="standard", submit=changer, change=changer, limit=5, case="lower", rows=3)
     app4.entry("sv1", row=1, column=1, kind="validation", default="validation", submit=changer, change=changer, limit=5, case="upper", rows=3)
-    app4.entry("sf1", row=2, column=1, kind="file", default="file", submit=changer, change=changer, limit=5, case="upper", rows=3)
-    app4.entry("sd1", row=3, column=1, kind="directory", default="directory", submit=changer, change=changer, limit=5, case="upper", rows=3)
+    app4.entry("sf1", row=2, column=1, kind="file", default="file", text='press', submit=changer, change=changer, limit=5, case="upper", rows=3)
+    app4.entry("sd1", row=3, column=1, kind="directory", default="directory", text='press', submit=changer, change=changer, limit=5, case="upper", rows=3)
+    app4.entry("so1", row=3, column=1, kind="open", default="open", text='press', submit=changer, change=changer, limit=5, case="upper", rows=3)
+    app4.entry("ss1", row=3, column=1, kind="save", default="save", text='press', submit=changer, change=changer, limit=5, case="upper", rows=3)
+
     app4.entry("sn1", row=4, column=1, kind="numeric", default="numeric", submit=changer, change=changer, limit=5, case="upper", rows=3)
     app4.entry("sa1", ["a", "b", "bb", "bbb"], row=5, column=1, kind="auto", default="auto", submit=changer, change=changer, limit=5, case="upper", rows=3)
     app4.entry("ss1", row=6, column=1, secret=True, default="secret", submit=changer, change=changer, limit=5, case="upper", rows=3)
@@ -3515,8 +3729,8 @@ with gui("Simple Demo", transparency=50, padding=5, location="CENTER", bg="red")
         app4.link("Cry", "http://www.google.com")
         app4.link("Shout", press)
         app4.separator(row=0, column=1, rowspan=2, direction="vertical")
-        app4.slider("happiness again", 45, row=0, rowspan=2, direction="horizontal", show=True, column=2, interval=5, change=press)
-        app4.scale("Hhappiness again", 45, row=0, rowspan=2, direction="vertical", column=2, interval=25, change=press)
+        app4.slider("happiness again", value=45, row=0, rowspan=2, direction="horizontal", show=True, column=2, interval=5, change=press)
+        app4.scale("Hhappiness again", value=45, row=0, rowspan=2, direction="vertical", column=2, interval=25, change=press)
 
     #    app4.grip(row=row, column=2)
     toppings={"Cheese":False, "Tomato":False, "Bacon":False, "Corn":False, "Mushroom":False}
@@ -3558,8 +3772,10 @@ try: app2.setTtkTheme("broken")
 except: pass
 app2.setTtkTheme("default")
 app2.ttkTheme = "default"
-app2.startNotebook("nb1")
-app2.startNote("nb1_n1")
+nb = app2.startNotebook("nb1")
+assert isinstance(nb, ttk.Notebook)
+nt = app2.startNote("nb1_n1")
+assert isinstance(nt, ttk.Frame)
 app2.addLabel("nb1_l1", TEXT_ONE)
 app2.startNote("nb1_n2")
 app2.addLabel("nb2_l1", TEXT_ONE)

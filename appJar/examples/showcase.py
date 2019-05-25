@@ -136,6 +136,7 @@ def showTime():
 ###########################
 
 with gui("ShowCase") as app:
+    app.setLogLevel("ERROR")
     app.showSplash("appJar Showcase")
 
     # add a simple toolbar

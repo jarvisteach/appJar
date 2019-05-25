@@ -1,6 +1,8 @@
 # import the library
 import random
-from rwbatools import gui
+import sys
+sys.path.append("../../../")
+from appJar import gui
 
 actions = ["+", "-", "*", "/" ]
 answers = []
@@ -9,7 +11,7 @@ difficulty = 1
 
 # function to deal with button press
 def press(name):
-    win.setStatus ( name )
+    win.setStatusbar ( name )
     if name == "EXIT": win.stop()
     #elif name == "SUBMIT": win.setStatus(win.textBox("Name", "Please enter your name:"))
     elif name == "SUBMIT":
@@ -47,7 +49,7 @@ def checkAnswers():
 def changeScale ( name ) :
       global difficulty
       difficulty = win.getScale("Difficulty")
-      win.setStatus(difficulty)
+      win.setStatusbar(difficulty)
       doLabels()
 
 def stopApp():
@@ -85,11 +87,11 @@ win.setStopFunction(stopApp)
 win.setLabelFont(20)
 win.setButtonFont(16)
 win.addMenuList("Help", ["a", "b", "c", "d", "-", "g", "e"], press)
-win.addStatus()
+win.addStatusbar()
 
 win.addScale("Difficulty", 1, 0,2)
 win.setScaleRange("Difficulty", 1,5,difficulty)
-win.setScaleCommand("Difficulty", changeScale)
+win.setScaleChangeFunction("Difficulty", changeScale)
 doLabels()
 win.addButtons(["SUBMIT", "RESET", "EXIT"], press, 12,0,2)
 

@@ -1,5 +1,7 @@
 # import the library
-from rwbatools import gui
+import sys
+sys.path.append("../../../")
+from appJar import gui
 
 # function to handle button presses
 def press(btn):

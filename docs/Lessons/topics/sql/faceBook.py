@@ -1,4 +1,7 @@
-from rwbatools import gui
+import sys
+sys.path.append("../../../../")
+from appJar import gui
+
 from rwbatools import sql
 con = sql('facebook.db')
 maxLen = con.getNumRows("friends")

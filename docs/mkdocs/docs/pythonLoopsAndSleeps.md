@@ -98,7 +98,7 @@ def acceleratingCountdown():
     if counter > 0:
         app.setLabel("counter", str(counter))
         counter -= 1
-        app.after(100*counter, myLoop)
+        app.after(100*counter, acceleratingCountdown)
 
 app.after(0, acceleratingCountdown)
 ```

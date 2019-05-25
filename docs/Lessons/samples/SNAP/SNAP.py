@@ -1,4 +1,6 @@
-from rwbatools import gui
+import sys
+sys.path.append("../../../../")
+from appJar import gui
 import random
 
 animals = ['anteater.gif', 'ardvark.gif', 'armadillo.gif', 'llama.gif', 'tapir.gif']

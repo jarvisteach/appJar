@@ -111,3 +111,34 @@ This will register the package with PyPI Test
 This will upload the stuff to PyPI Test  
 * `pip install --verbose --index-url https://testpypi.python.org/pypi appJar  `  
 This will attempt to install from the PyPI test server  
+
+## Egg Files
+Egg files allow appJar to be distributed and used as a single file.  
+
+The following `setup.py` file should be put into a folder, along with an `appjar` folder:
+
+```python
+from setuptools import setup, find_packages
+ 
+setup(
+    name = "appJar",
+    version = "0.93",
+    packages = find_packages()
+)
+```
+
+It should then be run with: `python3 setup.py bdist_egg`
+
+The egg file will be placed in the `dist` folder.
+
+This can then be used with the following code:
+```python
+import sys
+sys.path.append("appJar-0.93-py3.6.egg")
+```
+
+### Egg files with Mu
+Using egg files makes it easy to use appJar with Mu.  
+Put the egg file in your `mu_code` folder, click the configuration cog (bottom left), and under `Python3 Environment`, set a variable `PYTHONPATH=appJar-0.93-py3.6.egg`.  
+
+![mu](/img/mu.png)  

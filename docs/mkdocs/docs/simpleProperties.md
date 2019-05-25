@@ -67,6 +67,8 @@ app.label('transLab', app.transparency)
 | sticky | string | Pass a string describing which sides widegts should stick to (news). |
 | stretch | string | Pass a string describing if rows/columns should stretch, to fill the entire GUI. |
 | row | integer | Gets or sets the next row number to be used. |
+| rowspan | integer | Gets or sets the rowspan for the current container. |
+| colspan | integer | Gets or sets the colspan for the current container. |
 | | | | |
 
 ### Looks
@@ -79,6 +81,7 @@ app.label('transLab', app.transparency)
 | font | integer/dict | Pass either a font size, or a dictionary of font properties to use for all widgets. |
 | buttonFont | integer/dict | Pass either a font size, or dicitonary of font properties to use for all button style widgets. |
 | labelFont | integer/dict | Pass either a font size, or a dictionary of font properties to use for all label style widgets. |
+| statusFont | integer/dict | Pass either a font size, or a dictionary of font properties to use for the statusbar. |
 | ttkTheme | string | Only available in ttk mode - pass the name of the ttk theme you want to use. |
 | fonts | string (list) | (no SETTER) Returns a list of all available fonts. |
 | | | | |

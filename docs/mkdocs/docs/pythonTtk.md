@@ -44,6 +44,12 @@ To change the style for all widgets of a certain type, reconfigure these styles:
 app.ttkStyle.configure("TLabel", foreground="green", background="blue")
 ```
 
+### Extra Styles  
+Some widgets have their own extra styles you can change:  
+* `Toolbar.TFrame` - used for the toolbar  
+* `Toolbar.TLabel` - used for the pin button on the toolbar
+* `Toolbar.TButton` - used for the buttons on the toolbar  
+
 ### Root Style
 All widgets inherit their style from the root style, known simply as `.`  
 If you want to change the style of all widgets, you can modify the root style.  

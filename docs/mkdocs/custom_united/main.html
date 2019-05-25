@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{%- block extrahead %}
+    <meta name="keywords" content="Python, GUI, widgets, tkinter, appJar, label, button">
+    <meta name="title" content="Python library for building GUIs, using tkinter toolkit">
+    <div class="corner-ribbon">
+        <a href="https://github.com/jarvisteach/appJar/blob/appJar/releases/appJar.zip?raw=true">Version 0.94 out now!</a>
+    </div>
+{% endblock %}
+
+{%- block extra_head %}
+    <div class="corner-ribbon">
+        <a href="https://github.com/jarvisteach/appJar/blob/appJar/releases/appJar.zip?raw=true">Version 0.94 out now!</a>
+    </div>
+    {{ super() }}
+{%- endblock %}
+
+{%- block repo %}
+    <li>
+        <a href="/pythonLessons" target="_blank">
+            <i class="fa fa-mortar-board"></i> Learn
+        </a>
+    </li>
+    <li>
+        <a href="https://www.youtube.com/channel/UCe_fC78lGgA-EHyK9nZX    NVA" target="_blank">
+            <i class="fa fa-youtube"></i> Watch
+        </a>
+    </li>
+    <li>
+        <a href="{{ config.repo_url }}">
+            <i class="fa fa-github"></i> {{ config.repo_name }}
+        </a>
+    </li>
+    {%- if 'search' in config['plugins'] %}
+        <li>
+            <a href="#" data-toggle="modal" data-target="#mkdocs_search_modal">
+                <i class="fa fa-search"></i> Search
+            </a>
+        </li>
+    {%- endif %}
+{%- endblock %}
+
+{%- block search_button %}
+{%- endblock %}
+
+{%- block footer %}
+<!-- Google Ads -->
+    <hr>
+    <div style='text-align: center;'>
+    <em>Advertisement&nbsp;<sup><a href="/advertising">why?</a></sup></em>
+    <br>
+    <br>
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <!-- Footer -->
+        <ins class="adsbygoogle"
+            style="display:inline-block;width:728px;height:90px"
+            data-ad-client="ca-pub-6185596049817878"
+            data-ad-slot="2795191172"></ins>
+        <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
+
+    <hr>
+    {%- if config.copyright %}
+        <p>{{ config.copyright }}</p>
+    {%- endif %}
+{%- endblock %}

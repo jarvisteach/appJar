@@ -1,5 +1,7 @@
 # import the library
-from rwbatools import gui
+import sys
+sys.path.append("../../../")
+from appJar import gui
 win = gui("Translate")
 
 trans = {"lol":"laugh out loud"}
