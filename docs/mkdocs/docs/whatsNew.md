@@ -1,6 +1,10 @@
 #Change-Log
 ---
 
+## Version 0.95  
+
+* <div class="cb cb-add">Added</div> ability to set images/icons for [tabs](/pythonWidgetGrouping/#set-tabbedframe) - [#380](https://github.com/jarvisteach/appJar/issues/380)
+
 ## Version 0.94  
 
 * <div class="cb cb-new">New</div>Example of how to create a [stylesheet](/examples/stylesheets/) - [#481](https://github.com/jarvisteach/appJar/issues/481)

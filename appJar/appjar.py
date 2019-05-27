@@ -4566,6 +4566,10 @@ class gui(object):
                 self.bind("<Button-1>", lambda *args: func(text))
                 self.border = TabBorder(master, width=2)
 
+            def setImage(self, image):
+                self.config(anchor=CENTER, image=image)
+                self.image = image# keep a reference!
+
             def rename(self, newName):
                 # use the DEFAULT_TEXT if necessary
                 if newName is None: newName = self.DEFAULT_TEXT
@@ -4581,7 +4585,7 @@ class gui(object):
                 self.pack_forget()
                 if not self.hidden:
                     if fill: self.pack(side=LEFT, ipady=4, ipadx=4, expand=True, fill=BOTH, before=beforeTab, after=afterTab)
-                    else: self.pack(side=LEFT, ipady=4, ipadx=4, before=beforeTab, after=afterTab)
+                    else: self.pack(side=LEFT, ipady=4, ipadx=4, fill=Y, before=beforeTab, after=afterTab)
                     self.border.pack(side=LEFT, fill=Y, expand=0, before=beforeTab, after=afterTab)
 
         class TabbedFrame(frameBase, object):
@@ -4757,6 +4761,10 @@ class gui(object):
                 if title not in self.widgetStore.keys(): raise ItemLookupError("Invalid tab name: " + title)
                 else: return self.widgetStore[title][1]
 
+            def setTabImage(self, title, image):
+                if title not in self.widgetStore.keys(): raise ItemLookupError("Invalid tab name: " + title)
+                self.widgetStore[title][0].setImage(image)
+
             def expandTabs(self, fill=True):
                 self.fill = fill
 
@@ -4917,6 +4925,16 @@ class gui(object):
         self.configure(**kwargs)
         try: yield tab
         finally: self.stopTab()
+
+    def setTabIcon(self, title, tab, iconName):
+        nb = self.widgetManager.get(WIDGET_NAMES.TabbedFrame, title)
+        iconPath = os.path.join(self.icon_path, iconName.lower()+".png")
+        self.setTabImage(title, tab, iconPath)
+
+    def setTabImage(self, title, tab, imagePath):
+        nb = self.widgetManager.get(WIDGET_NAMES.TabbedFrame, title)
+        image = self._getImage(imagePath)
+        nb.setTabImage(tab, image)
 
     def startTab(self, title, beforeTab=None, afterTab=None):
 

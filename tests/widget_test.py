@@ -2443,6 +2443,9 @@ def test_containers():
 
     app.setTabBg("tbf1", "tab2", "red")
 
+    app.setTabIcon("tbf1", "tab2", "save")
+    app.setTabImage("tbf1", "tab2", "1_flash.gif")
+
 
     assert app.getTabbedFrameSelectedTab("tbf1") == "tab1"
 

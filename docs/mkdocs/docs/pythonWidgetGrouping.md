@@ -400,6 +400,12 @@ app.go()
     Change the text of the named tab in the specified *TabbedFrame*.  
     If no `newText` is provided, the tab will revert back to its original text.  
 
+* `.setTabIcon(title, tab, iconName)`  
+    Set an icon to display in the specified tab.  
+
+* `.setTabImage(title, tab, imagePath)`  
+    Set an image to display in the specified tab.  
+
 * `.setTabbedFrameTabExpand(title, expand=True)`  
     By default, the tabs take up the minimum amount of space necessary.  
     Set this to True, to have the tabs fill the entire row.  
