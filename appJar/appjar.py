@@ -4928,7 +4928,7 @@ class gui(object):
 
     def setTabIcon(self, title, tab, iconName):
         nb = self.widgetManager.get(WIDGET_NAMES.TabbedFrame, title)
-        iconPath = os.path.join(self.icon_path, iconName.lower()+".png")
+        iconPath = self.getIconPath(iconName)
         self.setTabImage(title, tab, iconPath)
 
     def setTabImage(self, title, tab, imagePath):
@@ -7374,6 +7374,10 @@ class gui(object):
         else:
             raise Exception("Invalid image location: " + location)
 
+    # gets the path to one of the stored icons
+    def getIconPath(self, iconName, extension='png'):
+        return os.path.join(self.icon_path, iconName.lower() + "." + extension)
+
     # get the full path of an image (including image folder)
     def getImagePath(self, imagePath):
         if imagePath is None:
@@ -7613,7 +7617,7 @@ class gui(object):
 
     def addIcon(self, name, iconName, row=None, column=0, colspan=0, rowspan=0, compound=None):
         ''' adds one of the built-in  icons at the specified position '''
-        icon = os.path.join(self.icon_path, iconName.lower()+".png")
+        icon = self.getIconPath(iconName)
         with PauseLogger():
             return self.addImage(name, icon, row, column, colspan, rowspan, compound=compound)
 
@@ -8456,7 +8460,7 @@ class gui(object):
 
     def addIconButton(self, title, func, iconName, row=None, column=0, colspan=0, rowspan=0, align=None):
         ''' adds a button displaying the specified icon '''
-        icon = os.path.join(self.icon_path, iconName.lower()+".png")
+        icon = self.getIconPath(iconName)
         with PauseLogger():
             return self.addImageButton(title, func, icon, row, column, colspan, rowspan, align)
 
@@ -10568,7 +10572,7 @@ class gui(object):
             if findIcon:
                 # turn off warnings about PNGs
                 with PauseLogger():
-                    imgFile = os.path.join(self.icon_path, t.lower() + ".png")
+                    imgFile = self.getIconPath(t)
                     try:
                         image = self._getImage(imgFile)
                     except Exception as e:
@@ -10610,7 +10614,7 @@ class gui(object):
             return
 
         # try to get the icon, if none - then set but to None, and ignore from now on
-        imgFile = os.path.join(self.icon_path, "pin.gif")
+        imgFile = self.getIconPath("pin", "gif")
         try:
             imgObj = self._getImage(imgFile)
             if not self.ttkFlag:
@@ -10647,7 +10651,8 @@ class gui(object):
         if not self.tb.pinned:
             if self.tb.pinBut is not None:
                 try:
-                    self.tb.pinBut.image = self._getImage(os.path.join(self.icon_path, "unpin.gif"))
+                    icon = self.getIconPath("unpin", "gif")
+                    self.tb.pinBut.image = self._getImage(icon)
                 except:
                     pass
             self.tb.makeMinBar()
@@ -10655,7 +10660,8 @@ class gui(object):
         else:
             if self.tb.pinBut is not None:
                 try:
-                    self.tb.pinBut.image = self._getImage(os.path.join(self.icon_path, "pin.gif"))
+                    icon = self.getIconPath("pin", "gif")
+                    self.tb.pinBut.image = self._getImage(icon)
                 except:
                     pass
             self.tb._maxToolbar()
@@ -10666,7 +10672,7 @@ class gui(object):
     def setToolbarIcon(self, name, icon):
         if (name not in self.widgetManager.group(WIDGET_NAMES.Toolbar)):
             raise Exception("Unknown toolbar name: " + name)
-        imgFile = os.path.join(self.icon_path, icon.lower() + ".png")
+        imgFile = self.getIconPath(icon)
         with PauseLogger():
             self.setToolbarImage(name, imgFile)
 #        self.widgetManager.get(WIDGET_NAMES.Toolbar, name).tt_var.set(icon)
@@ -11090,7 +11096,7 @@ class gui(object):
         except TclError: gui.error("Unable to set image for menu item: %s, in menu: %s - item not found", title, menu)
 
     def setMenuIcon(self, menu, title, icon, align="left"):
-        image = os.path.join(self.icon_path, icon.lower() + ".png")
+        image = self.getIconPath(icon)
         with PauseLogger():
             self.setMenuImage(menu, title, image, align)
 
