@@ -4911,17 +4911,25 @@ class gui(object):
     def tab(self, title, tabTitle=None, **kwargs):
         beforeTab = kwargs.pop("beforeTab", None)
         afterTab = kwargs.pop("afterTab", None)
+        icon = kwargs.pop("icon", None)
         if tabTitle is None:
+            tabTitle = title
+            title = None
             try:
-                tab = self.startTab(title, beforeTab, afterTab)
+                title = self._getContainerProperty('title')
+                tab = self.startTab(tabTitle, beforeTab, afterTab)
             except ItemLookupError:
                 if self._getContainerProperty('type') != WIDGET_NAMES.TabbedFrame:
                     raise Exception("Can't open a Tab in the current container: ", self._getContainerProperty('type'))
                 else:
-                    tabTitle = self._getContainerProperty('title')
-                    tab = self.openTab(tabTitle, title)
+                    title = self._getContainerProperty('title')
+                    tab = self.openTab(title, tabTitle)
         else:
             tab = self.openTab(title, tabTitle)
+
+        if icon is not None:
+            self.setTabIcon(title, tabTitle, icon)
+
         self.configure(**kwargs)
         try: yield tab
         finally: self.stopTab()
