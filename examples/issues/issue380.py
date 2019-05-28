@@ -27,7 +27,7 @@ with gui() as app:
             with app.tab(tabs[t], icon=icons[t]):
                 for i in range(5):
                     app.label(tabs[t]+str(i))
-        with app.tab('c', icon='wizard'):
+        with app.tab('c', image='lb3.gif'):
             pass
 
     with app.tab('tf', 'b', icon='wizard'):

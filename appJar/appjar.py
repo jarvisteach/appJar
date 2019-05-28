@@ -4911,7 +4911,10 @@ class gui(object):
     def tab(self, title, tabTitle=None, **kwargs):
         beforeTab = kwargs.pop("beforeTab", None)
         afterTab = kwargs.pop("afterTab", None)
+
         icon = kwargs.pop("icon", None)
+        image = kwargs.pop("image", None)
+
         if tabTitle is None:
             tabTitle = title
             title = None
@@ -4927,8 +4930,8 @@ class gui(object):
         else:
             tab = self.openTab(title, tabTitle)
 
-        if icon is not None:
-            self.setTabIcon(title, tabTitle, icon)
+        if icon is not None: self.setTabIcon(title, tabTitle, icon)
+        if image is not None: self.setTabImage(title, tabTitle, image)
 
         self.configure(**kwargs)
         try: yield tab
@@ -4937,7 +4940,8 @@ class gui(object):
     def setTabIcon(self, title, tab, iconName):
         nb = self.widgetManager.get(WIDGET_NAMES.TabbedFrame, title)
         iconPath = self.getIconPath(iconName)
-        self.setTabImage(title, tab, iconPath)
+        with PauseLogger():
+            self.setTabImage(title, tab, iconPath)
 
     def setTabImage(self, title, tab, imagePath):
         nb = self.widgetManager.get(WIDGET_NAMES.TabbedFrame, title)

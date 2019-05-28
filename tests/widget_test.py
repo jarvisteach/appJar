@@ -2429,6 +2429,9 @@ def test_containers():
     app.stopTab()
     app.stopTabbedFrame()
 
+    app.setTabImage('tbf1', 'tab1', "1_entries.gif")
+    app.setTabIcon('tbf1', 'tab2', "save")
+
     with pytest.raises(Exception) :
         app.startTab()
 
@@ -3519,12 +3522,12 @@ with gui(debug=True) as app3:
     app3.toolbar(["a", "b", "file", "open"], tester_function, icons=['a', 'b', 'file', 'open'], status=[1, 0, False, True], bg='pink')
     app3.addStatusbar(TEXT_ONE, 1, "LEFT")
     with app3.tabbedFrame("tf"):
-        with app3.tab("t1"):
+        with app3.tab("t1", icon='save'):
             with app3.labelFrame("lf1"):
                 app3.addLabel("l1", "label")
             with app3.toggleFrame("tf1"):
                 app3.addCheckBox("cb1")
-        with app3.tab("t2", afterTab='t1'):
+        with app3.tab("t2", afterTab='t1', image="1_entries.gif"):
             with app3.panedFrame("pf1", sash=50):
                 with app3.panedFrame("vpf1", vertical=True):
                     app3.addLabel("l2", "label")

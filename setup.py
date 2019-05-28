@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 __name__ =          "appJar"
-__version__ =       "0.94.0"
+__version__ =       "0.95.0"
 __author__ =        "Richard Jarvis"
 __desc__ =          "An easy-to-use, feature-rich GUI wrapper for tKinter. Designed specifically for use in the classroom, but powerful enough to be used anywhere."
 __author_email__ =  "info@appjar.info"
