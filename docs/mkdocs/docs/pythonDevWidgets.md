@@ -204,7 +204,13 @@ app.go()
     Load all the XML data into the tree.  
     Gets called automatically when the GUI starts, but will need to be called manually, if a tree is added to the GUI after it has been started.  
 
+* `.refreshTree(title)`  
+    Will destroy and recreate the tree, including any newly added XML data.  
+
 #### Set Trees
+* `.setTreeEditable(title, value=True)`  
+    Determines if text elements of the tree can be changed.  
+
 * `.setTreeClickFunction(title, func)`  
     Register a function to call when an item is clicked.  
     Will receive the name of the tree, and an `id` attribute, if set in the XML.  
@@ -221,22 +227,64 @@ app.go()
     Call this to enable indication of attributes on a tree.  
     Will draw a star & provide a tooltip.  
 
+* `.showTreeMenu(title, show=True)`  
+    Call this to enable a right-click menu.  
+    It will contain *delete* & *duplicate* options.  
+
+#### Set Trees Colours  
+
 * `.setTreeColours(title, fg, bg, fgH, bgH)`  
     Set the fg/bg/fg highlight/bg highlight colours of the tree  
+
 * `.setTreeBg(title, colour)`  
     Set the background colour of the tree  
+
 * `.setTreeFg(title, colour)`  
     Set the foreground colour of the tree  
+
 * `.setTreeHighlightBg(title, colour)`  
     Set the background colour of the highlighted node    
+
 * `.setTreeHighlightFg(title, colour)`  
     Set the foreground colour of the highlighted node  
+
+#### Modify Tree Values
+
+* `.duplicateTreeNode(title)`  
+    Call this to create a duplicate of the selected node, straight after it in the tree.  
+
+* `.replaceTreeNode(title, newNode)`  
+    Call this to replace the selected node with the *newNode*.  
+
+* `.deleteTreeNode(title)`  
+    Call this to delete the selected node from the tree.  
+
+* `.addTreeNode(title, newNode)`  
+    Call this to add the *newNode* to the end of the list of children under the currently selected node.  
+
+* `.addTreeNodeBefore(title, newNode)`  
+    Call this to add the *newNode* before the currently selected node.  
+
+* `.addTreeNodeAfter(title, newNode)`  
+    Call this to add the *newNode* after the currently selected node.  
+
+* `.makeXmlNode(owner, name, value=None, attributes={})`  
+    Call this to create a *newNode* to add to a tree.  
+    The *owner* should be a tree title, or xml object.  
+    The *name* is the text that will be shown in the tree.  
+    *value* is an optional *text* element to add to the node.  
+    *attributes* can be populated with name/value pairs to include as attributes in the node.  
 
 #### Get Trees  
 * `.getTreeXML(title)`  
     Return the tree as XML  
+
 * `.getTreeSelected(title)`  
     Return the selected node as a String
+
+* `.getTreeSelectedObj(title)`  
+    Return the selected node as a minidom object  
+
 * `.getTreeSelectedXML(title)`  
     Return the selected node (and any children) as XML
 

@@ -4,6 +4,7 @@
 ## Version 0.95  
 
 * <div class="cb cb-add">Added</div> ability to set images/icons for [tabs](/pythonWidgetGrouping/#set-tabbedframe) - [#380](https://github.com/jarvisteach/appJar/issues/380)
+* <div class="cb cb-add">Added</div> new features on [trees](/pythonDevWidgets/#tree) - [#457](https://github.com/jarvisteach/appJar/issues/457)
 
 ## Version 0.94  
 

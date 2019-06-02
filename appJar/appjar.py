@@ -69,6 +69,7 @@ types = None  # used to register dnd functions
 winsound = None
 PlotCanvas = PlotNav = PlotFig = None  # matplotlib
 parseString = TreeItem = TreeNode = None  # AjTree
+XmlElement = XmlText = XmlComment = None # minidom
 # GoogleMap
 base64 = urlencode = urlopen = urlretrieve = quote_plus = json = None
 ConfigParser = codecs = ParsingError = None  # used to parse language files
@@ -1081,7 +1082,7 @@ class gui(object):
 
     def _importAjtree(self):
         """ loads tree support - and creates tree classes """
-        global parseString, TreeItem, TreeNode
+        global parseString, TreeItem, TreeNode, XmlElement, XmlText, XmlComment
 
         if TreeNode is None:
             try:
@@ -1096,9 +1097,13 @@ class gui(object):
             if TreeNode is not False:
                 try:
                     from xml.dom.minidom import parseString
+                    from xml.dom.minidom import Element as XmlElement
+                    from xml.dom.minidom import Text as XmlText
+                    from xml.dom.minidom import Comment as XmlComment
                 except:
                     gui.warning("no parse string")
                     TreeItem = TreeNode = parseString = False
+                    XmlElement = XmlText = XmlComment = False
                     return
 
     def _importSqlite3(self):
@@ -1886,6 +1891,11 @@ class gui(object):
             self.topLevel.mainloop()
         except(KeyboardInterrupt, SystemExit) as e:
             gui.trace("appJar stopped through ^c or exit()")
+            self.stop()
+        except UnicodeDecodeError as u:
+            self.exception(u)
+            if self.platform == self.MAC:
+                self.error("NB. This may be caused by inertial scrolling on Max OSX - you may need to upgrade TCL")
             self.stop()
         except Exception as e:
             self.exception(e)
@@ -9553,11 +9563,11 @@ class gui(object):
         ''' adds a navigatable tree, displaying the specified xml text '''
         self.widgetManager.verify(WIDGET_NAMES.Tree, title)
         self._importAjtree()
-        if parseString is False:
-            self.warn("Unable to parse xml files. .addTree() not available")
-            return
 
         if isinstance(data, UNIVERSAL_STRING):
+            if parseString is False:
+                self.warn("Unable to parse xml files. .addTree() not available")
+                return
             data = parseString(data)
         else:
             pass # assume xml object
@@ -9586,11 +9596,9 @@ class gui(object):
         # update() & expand() called in go() function
         return treeNode
 
-    # not complete yet...
-    def clearTree(self, title):
+    def refreshTree(self, title):
         tree = self.widgetManager.get(WIDGET_NAMES.Tree, title)
-        tree.destroy()
-        tree.update()
+        tree.refresh()
 
     def showTreeAttributes(self, title, show=True):
         tree = self.widgetManager.get(WIDGET_NAMES.Tree, title)
@@ -9653,21 +9661,30 @@ class gui(object):
     # get whole tree as XML
     def getTreeXML(self, title):
         tree = self.widgetManager.get(WIDGET_NAMES.Tree, title)
-        return tree.item.node.toxml()
+        return tree.item.getNode().toxml()
 
     # get selected node as a string
     def getTreeSelected(self, title):
         tree = self.widgetManager.get(WIDGET_NAMES.Tree, title)
-        return tree.getSelectedText()
+        ajNode = tree.getSelectedNode()
+
+        if ajNode is None: return None
+        else: return ajNode.item.getNode().GetText()
+
+    # get selected node (and children) as a minidom XML object
+    def getTreeSelectedObj(self, title):
+        tree = self.widgetManager.get(WIDGET_NAMES.Tree, title)
+        ajNode = tree.getSelectedNode()
+
+        if ajNode is None: return None
+        else: return ajNode.item.getNode()
 
     # get selected node (and children) as XML
     def getTreeSelectedXML(self, title):
-        tree = self.widgetManager.get(WIDGET_NAMES.Tree, title)
-        item = tree.getSelected()
-        if item is not None:
-            return item.node.toxml()
-        else:
-            return None
+        obj = self.getTreeSelectedObj(title)
+
+        if obj is None: return None
+        else: return obj.toxml()
 
     def generateTree(self, title):
         """ displays data inside tree """
@@ -9677,6 +9694,61 @@ class gui(object):
         gui.trace("Tree updated: %s", title)
         tree.expand()
         gui.trace("Tree expanded: %s", title)
+
+    def duplicateTreeNode(self, title):
+        tree = self.widgetManager.get(WIDGET_NAMES.Tree, title)
+        tree.duplicateSelectedNode()
+
+    def replaceTreeNode(self, title, newNode):
+        tree = self.widgetManager.get(WIDGET_NAMES.Tree, title)
+        tree.replaceSelectedNode(newNode)
+
+    def deleteTreeNode(self, title):
+        tree = self.widgetManager.get(WIDGET_NAMES.Tree, title)
+        tree.deleteSelectedNode()
+
+    def addTreeNode(self, title, newNode):
+        tree = self.widgetManager.get(WIDGET_NAMES.Tree, title)
+        tree.addNodeToEnd(newNode)
+
+    def addTreeNodeBefore(self, title, newNode):
+        tree = self.widgetManager.get(WIDGET_NAMES.Tree, title)
+        tree.addNodeBeforeSelected(newNode)
+
+    def addTreeNodeAfter(self, title, newNode):
+        tree = self.widgetManager.get(WIDGET_NAMES.Tree, title)
+        tree.addNodeAfterSelected(newNode)
+
+    def makeXmlNode(self, owner, name, value=None, attributes={}, comment=None):
+        if XmlElement is False:
+            self.warn("Unable to create XML, minidom not available.")
+            return
+
+        try: owner = self.getTreeXmlObject(owner)
+        except: pass # assume owner was already an xmlObject
+
+        # create the node
+        element = XmlElement(name)
+        element.ownerDocument = owner
+
+        # add a comment??
+        if comment is not None:
+            c = XmlComment(comment)
+            c.ownerDocument = owner
+            element.appendChild(c)
+
+        # set any value
+        if value is not None:
+            t = XmlText()
+            t.data = value
+            t.ownerDocument = owner
+            element.appendChild(t)
+
+        # set any attributes
+        for k, v in attributes.items():
+            element.setAttribute(k, v)
+
+        return element
 
 #####################################
 # FUNCTIONS to add Message Box
@@ -12218,10 +12290,12 @@ class gui(object):
     # idlelib -> TreeWidget.py
     # https://svn.python.org/projects/python/trunk/Lib/idlelib/TreeWidget.py
     # modify minidom - https://wiki.python.org/moin/MiniDom
+    # https://github.com/python/cpython/blob/2.7/Lib/xml/dom/minidom.py
     #####################################
     def _makeAjTreeNode(self):
         class AjTreeNode(TreeNode, object):
 
+            # item contains the AjTreeData
             def __init__(self, canvas, parent, item):
                 super(AjTreeNode, self).__init__(canvas, parent, item)
 
@@ -12247,6 +12321,10 @@ class gui(object):
                     self.canvas.lastSelected = None
 
                 self.menuBound = False
+                self.menus = [
+                    {'lbl':'delete', 'cmd':self.deleteSelectedNode, 'inRoot':False},
+                    {'lbl':'duplicate', 'cmd':self.duplicateSelectedNode, 'inRoot':False}
+                ]
 
             # customised config setters
             def config(self, cnf=None, **kw):
@@ -12263,6 +12341,10 @@ class gui(object):
 
 #                # propagate anything left
 #                super(AjTreeNode, self).config(cnf, **kw)
+
+            def refresh(self):
+                self.destroy()
+                self.update()
 
             # NOT COMPLETE
             def addChild(self, child):
@@ -12285,12 +12367,14 @@ class gui(object):
                 if show:
                     if self.canvas.menu is None:
                         self.canvas.menu = Menu(self.canvas, tearoff=0)
-                        self.canvas.menu.add_command(label="delete", command=self._delete)
+                        for m in range(len(self.menus)):
+                            self.canvas.menu.add_command(label=self.menus[m]['lbl'], command=self.menus[m]['cmd'])
                         self.canvas.menu.bind("<FocusOut>", lambda e: self.canvas.menu.unpost())
                     self._bindMenu()
                 else:
                     # need to go through and unbind...
                     pass
+
 
             def setBgColour(self, colour):
                 self.canvas.config(background=colour)
@@ -12373,14 +12457,83 @@ class gui(object):
                 super(AjTreeNode, self).drawicon()
 
             def _showMenu(self, event=None):
+                self.select()
                 self.canvas.lastSelected = event.widget
+
+                # disable some options if root
+                element, parent, isRoot = self._getElPar()
+                for m in range(len(self.menus)):
+                    if not self.menus[m]['inRoot'] and isRoot:
+                        self.canvas.menu.entryconfig(self.menus[m]['lbl'], state="disabled")
+                    else:
+                        self.canvas.menu.entryconfig(self.menus[m]['lbl'], state="normal")
+
                 self.canvas.menu.focus_set()
                 self.canvas.menu.post(event.x_root - 10, event.y_root - 10)
                 return "break"
 
-            def _delete(self):
-                self.update()
-                self.canvas.lastSelected.destroy()
+            def _getElPar(self):
+                ajNode = self.getSelectedNode().item
+                if ajNode is None:
+                    raise Exception("No node selected")
+                element = ajNode.getNode()
+                parent = element.parentNode
+                return element, parent, parent.__class__.__name__ == "Document"
+
+            def deleteSelectedNode(self):
+                element, parent, isRoot = self._getElPar()
+
+                if isRoot:
+                    raise Exception("Unable to delete root node.")
+                    
+                parent.removeChild(element)
+                self.refresh()
+
+            def duplicateSelectedNode(self):
+                element, parent, isRoot = self._getElPar()
+
+                if isRoot:
+                    raise Exception("Unable to duplicate root node.")
+
+                duplicate = element.cloneNode(True)
+                    
+                parent.insertBefore(duplicate, element)
+                self.refresh()
+
+            def replaceSelectedNode(self, newNode):
+                element, parent, isRoot = self._getElPar()
+
+                if isRoot:
+                    raise Exception("Unable to replace root node.")
+
+                parent.replaceChild(newNode, element)
+                self.refresh()
+
+            def addNodeToEnd(self, newNode):
+                element, parent, isRoot = self._getElPar()
+                element.appendChild(newNode)
+                self.refresh()
+
+            def addNodeBeforeSelected(self, newNode):
+                element, parent, isRoot = self._getElPar()
+
+                if isRoot:
+                    raise Exception("Unable to add before  root node.")
+
+                parent.insertBefore(newNode, element)
+                self.refresh()
+
+            def addNodeAfterSelected(self, newNode):
+                element, parent, isRoot = self._getElPar()
+                nextElement = element.nextSibling
+
+                lastSelected = self.canvas.lastSelected
+
+                if isRoot:
+                    raise Exception("Unable to add after root node.")
+
+                parent.insertBefore(newNode, nextElement)
+                self.refresh()
 
             # override parent function, so that we can generate an event on finish editing
             def edit_finish(self, event=None):
@@ -12399,19 +12552,12 @@ class gui(object):
                 except:
                     pass
 
-            def getSelectedText(self):
-                item = self.getSelected()
-                if item is not None:
-                    return item.GetText(), item.getAttribute()
-                else:
-                    return None
-
-            def getSelected(self):
+            def getSelectedNode(self):
                 if self.selected:
-                    return self.item
+                    return self
                 else:
                     for c in self.children:
-                        val = c.getSelected()
+                        val = c.getSelectedNode()
                         if val is not None:
                             return val
                     return None
@@ -12425,6 +12571,7 @@ class gui(object):
 
             def __init__(self, document):
                 # handle root node
+                self.xmlObj = document
                 try: self.node = document.documentElement
                 except AttributeError: self.node = document
 
@@ -12433,6 +12580,9 @@ class gui(object):
                 self.treeTitle = None
                 self.canEdit = True
 
+            def getNode(self):
+                return self.node
+
         # REQUIRED FUNCTIONS
 
             # called whenever the tree expands
@@ -12440,6 +12590,8 @@ class gui(object):
                 node = self.node
                 if node.nodeType == node.ELEMENT_NODE:
                     return node.nodeName
+                if node.nodeType == node.COMMENT_NODE:
+                    return "<!-- " + node.nodeValue + "-->"
                 elif node.nodeType == node.TEXT_NODE:
                     return node.nodeValue
 
@@ -12451,7 +12603,11 @@ class gui(object):
                 return self.canEdit and not self.node.hasChildNodes()
 
             def SetText(self, text):
-                self.node.replaceWholeText(text)
+                node = self.node
+                if node.nodeType == node.COMMENT_NODE:
+                    node.nodeValue = text
+                else:
+                    node.replaceWholeText(text)
 
             def IsExpandable(self):
                 return self.node.hasChildNodes()
