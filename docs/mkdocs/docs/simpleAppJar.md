@@ -255,7 +255,7 @@ Setting this widget won't change the values, but change which one is selected.
 * `.option(title, value=None)`  
     When adding, the `value` should contain a list of items to display in the drop-down.  
     When setting, the `value` should contain the item to select, unless a differetn `mode` is set.  
-    Options can receive a `change` parameter.  
+    Options can receive a `replace` parameter.  
     Options can receive a `label` parameter - boolean to use the label's title or text to display.  
 
 | Parameter | Data type | Default | Description |
@@ -264,12 +264,12 @@ Setting this widget won't change the values, but change which one is selected.
 | selected | string/integer | None | Start with the specified item/position selected. |
 | disabled | string | - | Sets the character used to indicate disabled menu options. |
 | checked | boolean | True | When *setting* the widget, this determines what to do to the specified value. None will delete the value. |
-| mode | string | `select` | One of: `select`, `change`, `rename`. `clear` or `delete` - see below. |  
+| mode | string | `select` | One of: `select`, `replace`, `rename`. `clear` or `delete` - see below. |  
 
 Different modes can be used when *setting* the widget:  
 * `select` - the default, the specified `value` will be selected.  
 * `clear` - deselects all items in the option box.  
-* `change` - the contents of the list will be replaced with a new listi, with an optional `index`.  
+* `replace` - the contents of the list will be replaced with a new list, with an optional `index`.  
 * `rename` - this will change the text of an item in the option box, to the `newName`.  
 * `delete` - this will delete the specified option from the option box.  
 
