@@ -5,7 +5,6 @@ from appJar import gui
 
 def showsub(win):
     app.showSubWindow(win)
-    app.entry('subwindowentry', focus=True)
 
 with gui("ISSUE WITH AUTO-ENTRY", "350x150") as app:
     app.padding = (10,10)

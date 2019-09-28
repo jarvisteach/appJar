@@ -2933,10 +2933,11 @@ class gui(object):
             return self.topLevel
 
     def _getTopLevel(self):
-        if len(self.containerStack) > 1 and self._getContainerProperty('type') == WIDGET_NAMES.SubWindow:
-            return self._getContainerProperty('container')
-        else:
-            return self.topLevel
+        for container in self.containerStack[::-1]:
+            if container['type'] == WIDGET_NAMES.SubWindow:
+                return container['container']
+
+        return self.topLevel
 
     # make the window transparent (between 0 & 1)
     def setTransparency(self, percentage):
@@ -9862,6 +9863,7 @@ class gui(object):
 
         # used by file entries
         kwargs.pop("text", None)
+        kwargs.pop("dirName", None)
 
         if len(kwargs) > 0:
             self._configWidget(title, widgKind, **kwargs)
@@ -9876,6 +9878,7 @@ class gui(object):
     def _entryMaker(self, title, row=None, column=0, colspan=0, rowspan=0, secret=False, label=False, kind="standard", words=None, **kwargs):
         # used by file entries
         text = kwargs.pop("text", None) 
+        startDir = kwargs.pop("dirName", None) 
         default = kwargs.pop("default", None) 
 
         if not label:
@@ -9897,7 +9900,7 @@ class gui(object):
         elif kind == "auto":
             ent = self._buildEntry(title, frame, secret=False, words=words)
         elif kind in ["file", "open", "save", "directory"]:
-            ent = self._buildFileEntry(title, frame, kind=kind, text=text, default=default)
+            ent = self._buildFileEntry(title, frame, kind=kind, text=text, default=default, startDir=startDir)
         elif kind == "validation":
             ent = self._buildValidationEntry(title, frame, secret)
         else:
@@ -9988,12 +9991,19 @@ class gui(object):
         self._getFileName(title, kind='save')
 
     def _getFileName(self, title, kind='open'):
+        # get a starting directory for the dialog
+        dirName = self.widgetManager.get(WIDGET_NAMES.Entry, title).startDir
+        if not self.widgetManager.get(WIDGET_NAMES.Entry, title).showingDefault:
+            currentDir = self.widgetManager.get(WIDGET_NAMES.Entry, title, group=WidgetManager.VARS).get()
+            if currentDir is not None and currentDir != "":
+                dirName = currentDir
+
         if kind in ['open', 'file']:
-            fileName = self.openBox()
+            fileName = self.openBox(title=None, dirName=dirName)
         elif kind == 'save':
-            fileName = self.saveBox()
+            fileName = self.saveBox(title=None, dirName=dirName)
         elif kind == 'directory':
-            fileName = self.directoryBox()
+            fileName = self.directoryBox(title=None, dirName=dirName)
 
         if fileName is not None and fileName != "":
             self.setEntry(title, fileName)
@@ -10077,7 +10087,7 @@ class gui(object):
         self.widgetManager.add(WIDGET_NAMES.Entry, title, ent.var, group=WidgetManager.VARS)
         return ent
 
-    def _buildFileEntry(self, title, frame, kind='save', text=None, default=None):
+    def _buildFileEntry(self, title, frame, kind='save', text=None, default=None, startDir=None):
 
         vFrame = self._makeButtonBox()(frame)
         self.widgetManager.log(WIDGET_NAMES.FrameBox, vFrame)
@@ -10087,6 +10097,7 @@ class gui(object):
 
         vFrame.theWidget = self._buildEntry(title, vFrame)
         vFrame.theWidget.inContainer = True
+        vFrame.theWidget.startDir = startDir
         vFrame.theWidget.pack(expand=True, fill=X, side=LEFT)
 
         if kind in ['open', "file"]:
