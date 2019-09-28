@@ -28,7 +28,7 @@ However, not all features are available on all platforms.
 * **Inertial scrolling** can [crash](https://stackoverflow.com/questions/16995969/inertial-scrolling-in-mac-os-x-with-tkinter-and-python) appJar  
 
 ### Windows:  
-* n/a  
+* [Warning messages](https://github.com/jarvisteach/appJar/issues/593) when adding trees, due to missing colours in `DarkTheme`
 
 ## Third Party Limitations  
 
