@@ -5836,7 +5836,7 @@ class gui(object):
                 self.widgetManager.destroyContainer(WIDGET_NAMES.ContainerLog, widget)
 
 #        elif widgType in ('CanvasDnd', 'ValidationLabel', 'TabBorder', 'TabContainer', 'TabText', 'BgLabel') or hasattr(widget, 'SKIP_CLEANSE'):
-        elif widgType in ('CanvasDnd', 'ValidationLabel', 'Grip',
+        elif widgType in ('CanvasDnd', 'ValidationLabel', 'Grip', 'GridCell',
                             'TabBorder', 'TabContainer', 'TabText', 'BgLabel') \
                             or widget.__dict__.get('SKIP_CLEANSE', False):
             pass # not logged in WidgetManager

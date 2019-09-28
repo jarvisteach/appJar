@@ -3,7 +3,7 @@ sys.path.append("../../")
 
 from appJar import gui
 app = gui()
-app.setLogLevel('ERROR')
+app.setLogLevel('TRACE')
 
 
 app.startFrame(title="demo")
