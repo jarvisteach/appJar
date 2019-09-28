@@ -3088,6 +3088,7 @@ class gui(object):
                 elif option == 'state':
                     # make entries readonly - can still copy/paste
                     but = None
+                    but_val = value
                     if kind == WIDGET_NAMES.Entry:
                         if value == "disabled" and hasattr(item, 'but'):
                             but = item.but
@@ -3100,10 +3101,10 @@ class gui(object):
                     if self.ttkFlag:
                         gui.trace("%s configured with ttk state %s", name, value)
                         item.state([value])
-                        if but is not None: but.state([value])
+                        if but is not None: but.state([but_val])
                     else:
                         item.config(state=value)
-                        if but is not None: but.config(state=value)
+                        if but is not None: but.config(state=but_val)
 
                 elif option == 'relief':
                     item.config(relief=value)
