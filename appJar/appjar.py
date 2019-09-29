@@ -5288,7 +5288,8 @@ class gui(object):
     @contextmanager
     def panedFrame(self, title, row=None, column=0, colspan=0, rowspan=0, sticky="NSEW", **kwargs):
         vertical = kwargs.pop("vertical", False)
-        sash = kwargs.pop("sash", 50)
+        sash = kwargs.pop("sash", None)
+        changeFunction = kwargs.pop("change", None)
         reOpen = False
         try:
             pane = self.startPanedFrame(title, row, column, colspan, rowspan, sticky)
@@ -5303,13 +5304,17 @@ class gui(object):
                 self.stopContainer()
             else:
                 self.stopPanedFrame()
-                self.setPaneSashPosition(sash, pane)
+                if sash is not None:
+                    self.setPaneSashPosition(sash, pane)
+                if changeFunction is not None:
+                    self.setPanedFrameChangeFunction(title, changeFunction)
 
     @contextmanager
     def panedFrameVertical(self, title, row=None, column=0, colspan=0, rowspan=0, sticky="NSEW", **kwargs):
         gui.warn('Setting panedFrameVertical(%s) is deprecated, please use panedFrame(vertical=True)', title)
         reOpen = False
-        sash = kwargs.pop("sash", 50)
+        sash = kwargs.pop("sash", None)
+        changeFunction = kwargs.pop("change", None)
         try:
             pane = self.startPanedFrameVertical(title, row, column, colspan, rowspan, sticky)
         except ItemLookupError:
@@ -5322,7 +5327,10 @@ class gui(object):
                 self.stopContainer()
             else:
                 self.stopPanedFrame()
-                self.setPaneSashPosition(sash, pane)
+                if sash is not None:
+                    self.setPaneSashPosition(sash, pane)
+                if changeFunction is not None:
+                    self.setPanedFrameChangeFunction(title, changeFunction)
 
     def startPanedFrame(self, title, row=None, column=0, colspan=0, rowspan=0, sticky="NSEW"):
         p = self.startContainer(WIDGET_NAMES.PanedFrame, title, row, column, colspan, rowspan, sticky)
