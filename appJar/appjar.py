@@ -1174,7 +1174,7 @@ class gui(object):
         if INTERNAL_DND is not False:
             try:
                 widget.bind('<ButtonPress>', lambda e: self._startInternalDrag(e, title, name, widget))
-                widget.dnd_canvas = self._getCanvas().canvasPane
+                widget.dnd_canvas = self._getCanvas()
                 gui.trace("DND drag source created: %s on canvas %s", widget, widget.dnd_canvas)
             except:
                 raise Exception("Failed to register internal Drag'n Drop for: " + str(title))
@@ -1233,7 +1233,7 @@ class gui(object):
         widget.dnd_motion = types.MethodType(dnd_motion, widget)
         widget.keepWidget = types.MethodType(keepWidget, widget)
         # save the underlying canvas
-        widget.dnd_canvas = self._getCanvas().canvasPane
+        widget.dnd_canvas = self._getCanvas()
         widget.drop_function = function
 
         gui.trace("DND target created: %s on canvas %s", widget, widget.dnd_canvas)
@@ -2924,20 +2924,15 @@ class gui(object):
     # property for setTitle
     icon = property(getIcon, setIcon)
 
-    def _getCanvas(self, param=-1):
-        if len(self.containerStack) > 1 and self.containerStack[param]['type'] == WIDGET_NAMES.SubWindow:
-            return self.containerStack[param]['container']
-        elif len(self.containerStack) > 1:
-            return self._getCanvas(param-1)
-        else:
-            return self.topLevel
-
     def _getTopLevel(self):
         for container in self.containerStack[::-1]:
             if container['type'] == WIDGET_NAMES.SubWindow:
                 return container['container']
 
         return self.topLevel
+
+    def _getCanvas(self):
+        return self._getTopLevel().canvasPane
 
     # make the window transparent (between 0 & 1)
     def setTransparency(self, percentage):
