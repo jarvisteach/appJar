@@ -4396,13 +4396,7 @@ class gui(object):
             if not self.ttkFlag:
                 scrollPane.config(bg=self._getContainerBg())
             scrollPane.isContainer = True
-            self._positionWidget(
-                scrollPane,
-                row,
-                column,
-                colspan,
-                rowspan,
-                sticky=sticky)
+            self._positionWidget(scrollPane, row, column, colspan, rowspan, sticky=sticky)
             self.widgetManager.add(WIDGET_NAMES.ScrollPane, title, scrollPane)
 
             # now, add to top of stack
@@ -13892,6 +13886,10 @@ class ScrollPane(frameBase, object):
 
         self.canvas.bind("<Enter>", self._mouseEnter)
         self.canvas.bind("<Leave>", self._mouseLeave)
+
+        # scroll pane is a frame, containing 2x scrollbars & a canvas
+        # the canvas has a frame, anchored in the top left, called interior
+        # all widgets are added to the interior frame
 
         self.b_ids = []
         self.canvas.focus_set()
