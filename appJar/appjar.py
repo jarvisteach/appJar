@@ -10295,7 +10295,16 @@ class gui(object):
         # now call function
         with PauseCallFunction(callFunction, var, False):
             if not ent.isNumeric or self._validateNumericEntry("1", None, text, None, "1", None, None, None):
+
+                # disable any auto completion
+                if var.auto_id is not None:
+                    var.trace_vdelete('w', var.auto_id)
+                    
                 var.set(text)
+
+                # re-enable auto completion
+                if var.auto_id is not None:
+                    var.auto_id = var.trace('w', ent.textChanged)
 
     def setEntryMaxLength(self, name, length):
         var = self.widgetManager.get(WIDGET_NAMES.Entry, name, group=WidgetManager.VARS)
