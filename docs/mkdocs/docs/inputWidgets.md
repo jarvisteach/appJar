@@ -95,8 +95,8 @@ Each of these will add the specified type of Entry, using the title provided.
 * `.setValidationEntryLabelBg(title, bg)`  
     This allows you to change the colour of the validation label, in a validation entry.  
 
-* `.setAutoEntryNumRows(title, rows)`  
-    This will set the number of rows to display in an AutoEntry.  
+* `.setAutoEntryNumRows(title, rows)` & `.setAutoEntryListWidth(title, width)`  
+    This will set the number of rows to display in an AutoEntry or the width of the AutoEntry drop-down.  
     NB. this is limited to the depth of the GUI - if there is no space, then no rows will be displayed. 
     ![AutoEntry](img/1_autoEntry.png)  
 

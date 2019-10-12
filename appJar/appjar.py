@@ -9826,6 +9826,7 @@ class gui(object):
         limit = kwargs.pop("limit", None)
         case = kwargs.pop("case", None)
         rows = kwargs.pop("rows", None)
+        listWidth = kwargs.pop("listWidth", None)
         secret = kwargs.pop("secret", False)
         kind = kwargs.pop("kind", "standard").lower().strip()
         labBg = kwargs.pop("labBg", None)
@@ -9855,6 +9856,7 @@ class gui(object):
             if value is not None: self.setEntry(title, value)
         else:
             if rows is not None: self.setAutoEntryNumRows(title, rows)
+            if listWidth is not None: self.setAutoEntryListWidth(title, listWidth)
 
         if labBg is not None and self.widgetManager.get(WIDGET_NAMES.Entry, title).isValidation:
             self.setValidationEntryLabelBg(title, labBg)
@@ -10243,6 +10245,13 @@ class gui(object):
             entry.setNumRows(rows)
         except AttributeError:
             gui.error("You can only change the number of rows in an AutoEntry, %s is not an AutoEntry.", title)
+
+    def setAutoEntryListWidth(self, title, width):
+        entry = self.widgetManager.get(WIDGET_NAMES.Entry, title)
+        try:
+            entry.setListWidth(width)
+        except AttributeError:
+            gui.error("You can only change the listWidth in an AutoEntry, %s is not an AutoEntry.", title)
 
     def _validateNumericEntry(self, action, index, value_if_allowed, prior_value, text, validation_type, trigger_type, widget_name):
         if action == "1":
@@ -12155,6 +12164,7 @@ class gui(object):
                 # no list box - yet
                 self.listBoxShowing = False
                 self.rows = 10
+                self.listWidth = None
 
             # customised config setters
             def config(self, cnf=None, **kw):
@@ -12162,6 +12172,11 @@ class gui(object):
 
             def configure(self, cnf=None, **kw):
                 kw = gui.CLEAN_CONFIG_DICTIONARY(**kw)
+
+                if "rows" in kw:
+                    self.setNumRows(kw.pop("rows"))
+                if "listWidth" in kw:
+                    self.setListWidth(kw.pop("listWidth"))
 
                 if "font" in kw:
                     self.listFont = kw["font"]
@@ -12187,6 +12202,9 @@ class gui(object):
 
             def setNumRows(self, rows):
                 self.rows = rows
+
+            def setListWidth(self, width):
+                self.listWidth = width
 
             # function to see if words match
             def checkMatch(self, fieldValue, acListEntry):
@@ -12219,7 +12237,9 @@ class gui(object):
 
             # function to create & show an empty list box
             def makeListBox(self):
-                self.listbox = Listbox(self.topLevel, width=self["width"]-8, height=8)
+                if self.listWidth is None:
+                    self.listWidth = self["width"]
+                self.listbox = Listbox(self.topLevel, width=self.listWidth, height=8)
                 self.listbox.config(height=self.rows)
 #                self.listbox.config(bg=self.cget("bg"), selectbackground=self.cget("selectbackground"))
 #                self.listbox.config(fg=self.cget("fg"))

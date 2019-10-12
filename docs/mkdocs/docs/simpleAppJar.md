@@ -177,6 +177,7 @@ An interactive widget, for capturing user input in the GUI.
 | secret | boolean | False | Configures the entry box to show stars instead of characters. |
 | default | string | None | Sets default text to display in an empty entry. |
 | rows | integer | 10 | If the kind is `auto` this will set the number of rows to show. |
+| listWidth | integer | None | If the kind is `auto` this will set the width of the drop-down. |
 | labBg | string | None | Special parameter to change the BG of the validation label in a validaiton entry. |
 | text | string | None | Special parameter to change the text of the file entry button. |
 

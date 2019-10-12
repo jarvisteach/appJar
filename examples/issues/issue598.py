@@ -22,4 +22,4 @@ with gui('tabs', '500x500') as app:
         with app.tab('ddd'):
             app.label('ddd')
             app.button('press2', setter)
-            app.entry('options', value=['aaa', 'apple', 'auto'], kind='auto')
+            app.entry('options', value=['aaa', 'apple', 'auto'], kind='auto', listWidth=40)

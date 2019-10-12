@@ -180,6 +180,7 @@ def test_entries():
 
     assert isinstance(app.addAutoEntry("ae1", ["a", "b", "c"]), Entry)
     app.setAutoEntryNumRows("ae1", 5)
+    app.setAutoEntryListWidth("ae1", 20)
     app.appendAutoEntry("ae1", "newOne")
     app.appendAutoEntry("ae1", ["newTwo", "newThree"])
     app.removeAutoEntry("ae1", "newOne")
@@ -3683,7 +3684,7 @@ with gui("Simple Demo", transparency=50, padding=5, location="CENTER", bg="red")
     app4.entry("data", colspan=3, kind="directory")
     app4.entry("data2", value="lots of data", colspan=3, focus=True, case="upper", limit=15)
     app4.entry("data3", colspan=3, default="france", kind="validation", labBg='orange')
-    app4.entry("data4", value=["a", "aa", "aba", "abc", "abd"], colspan=3, kind="auto", rows=4)
+    app4.entry("data4", value=["a", "aa", "aba", "abc", "abd"], colspan=3, kind="auto", rows=4, listWidth=20)
 
     app4.entry("se1", row=0, column=1, default="standard", submit=changer, change=changer, limit=5, case="lower", rows=3)
     app4.entry("sv1", row=1, column=1, kind="validation", default="validation", submit=changer, change=changer, limit=5, case="upper", rows=3)
