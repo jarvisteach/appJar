@@ -268,11 +268,13 @@ Setting this widget won't change the values, but change which one is selected.
 | mode | string | `select` | One of: `select`, `change`, `rename`. `clear` or `delete` - see below. |  
 
 Different modes can be used when *setting* the widget:  
+
 * `select` - the default, the specified `value` will be selected.  
 * `clear` - deselects all items in the option box.  
 * `change` - the contents of the list will be replaced with a new listi, with an optional `index`.  
 * `rename` - this will change the text of an item in the option box, to the `newName`.  
 * `delete` - this will delete the specified option from the option box.  
+
 
 ## Spin  
 ---
@@ -291,6 +293,7 @@ Setting this widget won't change the values, but change which one is selected.
 | endValue | integer | None | If specified, value & endValue should be integers, and will be used to generate a range. |
 | selected | integer | 0 | The position of an item to select. |
 | item | string | None | The name of an item to select. |
+| reverse | boolean | True | Set this to False to reverse the order of items in the spinbox. |
 
 ## Listbox
 ---
@@ -313,6 +316,7 @@ Setting this widget won't change the values, but change which one is selected.
 | mode | string | `select` | One of: `select`, `change`, `rename`. `clear` or `delete` - see below. |  
 
 Different modes can be used when *setting* the widget:  
+
 * `select` - default, select the specified item(s) or all  
 * `deselect` - deselect the specified item(s), or all  
 * `toggle` - toggle the specified item(s), or all  
@@ -321,6 +325,7 @@ Different modes can be used when *setting* the widget:
 * `replace` - replace all items  
 * `add` - add the specified item(s)
 * `delete` - delete the specified item, or all
+
 
 ## Slider  
 ---

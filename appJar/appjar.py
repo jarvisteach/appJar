@@ -7072,17 +7072,19 @@ class gui(object):
         if selected is not None: self.setSpinBoxPos(title, selected)
         if item is not None: self.setSpinBox(title, item)
 
+        kwargs.pop('reverse', None)
         if len(kwargs) > 0:
             self._configWidget(title, widgKind, **kwargs)
 
         return spinBox
 
-    def _buildSpinBox(self, frame, title, vals):
+    def _buildSpinBox(self, frame, title, vals, reverse=True):
         self.widgetManager.verify(WIDGET_NAMES.SpinBox, title)
         if type(vals) not in [list, tuple]:
             raise Exception("Can't create SpinBox " + title + ". Invalid values: " + str(vals))
 
         spin = Spinbox(frame)
+        spin.reverse = reverse
         spin.var = StringVar(self.topLevel)
         spin.config(textvariable=spin.var)
         spin.inContainer = False
@@ -7101,7 +7103,7 @@ class gui(object):
         if vals is not None:
             spin.DEFAULT_TEXT='\n'.join(str(x) for x in vals)
 
-        self._populateSpinBox(spin, vals)
+        self._populateSpinBox(spin, vals, reverse)
 
         # prevent invalid entries
         if self.validateSpinBox is None:
@@ -7123,20 +7125,22 @@ class gui(object):
         vals = tuple(vals)
         spin.config(values=vals)
 
-    def _addSpinBox(self, title, values, row=None, column=0, colspan=0, rowspan=0):
-        spin = self._buildSpinBox(self.getContainer(), title, values)
+    def _addSpinBox(self, title, values, row=None, column=0, colspan=0, rowspan=0, reverse=True):
+        spin = self._buildSpinBox(self.getContainer(), title, values, reverse)
         self._positionWidget(spin, row, column, colspan, rowspan)
         self.setSpinBoxPos(title, 0)
         return spin
 
     def addSpinBox(self, title, values, row=None, column=0, colspan=0, rowspan=0, **kwargs):
         ''' adds a spinbox, with the specified values '''
-        return self._addSpinBox(title, values, row, column, colspan, rowspan)
+        reverse = kwargs.pop("reverse", True)
+        return self._addSpinBox(title, values, row, column, colspan, rowspan, reverse)
 
     def addLabelSpinBox(self, title, values, row=None, column=0, colspan=0, rowspan=0, **kwargs):
         ''' adds a spinbox, with the specified values, and a label displaying the title '''
+        reverse = kwargs.pop("reverse", True)
         frame = self._getLabelBox(title, **kwargs)
-        spin = self._buildSpinBox(frame, title, values)
+        spin = self._buildSpinBox(frame, title, values, reverse)
         self._packLabelBox(frame, spin)
         self._positionWidget(frame, row, column, colspan, rowspan)
         self.setSpinBoxPos(title, 0)
@@ -7144,15 +7148,17 @@ class gui(object):
 
     def addSpinBoxRange(self, title, fromVal, toVal, row=None, column=0, colspan=0, rowspan=0, **kwargs):
         ''' adds a spinbox, with a range of whole numbers '''
+        reverse = kwargs.pop("reverse", True)
         vals = list(range(fromVal, toVal + 1))
-        spin = self._addSpinBox(title, vals, row, column, colspan, rowspan)
+        spin = self._addSpinBox(title, vals, row, column, colspan, rowspan, reverse)
         spin.isRange = True
         return spin
 
     def addLabelSpinBoxRange(self, title, fromVal, toVal, row=None, column=0, colspan=0, rowspan=0, label=True, **kwargs):
         ''' adds a spinbox, with a range of whole numbers, and a label displaying the title '''
+        reverse = kwargs.pop("reverse", True)
         vals = list(range(fromVal, toVal + 1))
-        spin = self.addLabelSpinBox(title, vals, row, column, colspan, rowspan, label=label)
+        spin = self.addLabelSpinBox(title, vals, row, column, colspan, rowspan, label=label, reverse=reverse)
         spin.isRange = True
         return spin
 
@@ -7221,12 +7227,13 @@ class gui(object):
         if pos < 0 or pos >= len(vals):
             raise Exception( "Invalid position: " + str(pos) + ". No position in SpinBox: " +
                         title + "=" + str(vals))
-        pos = len(vals) - 1 - pos
+        if spin.reverse: pos = len(vals) - 1 - pos
         val = vals[pos]
         self._setSpinBoxVal(spin, val, callFunction)
 
     def changeSpinBox(self, title, vals, reverse=True):
         spin = self.widgetManager.get(WIDGET_NAMES.SpinBox, title)
+        spin.reverse = reverse
         if spin.isRange:
             self.warn("Can't convert %s RangeSpinBox to SpinBox", title)
         else:
