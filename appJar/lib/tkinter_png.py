@@ -113,7 +113,11 @@ class PngImageTk(object):
         transSet = self.image.transSet
 
         for row in pixeldata:
-            row = row.tolist() #convert from array to list
+            try:
+                row = row.tolist() #convert from array to list
+            except AttributeError as e:
+                # for some reason, these are sometimes bytearrays
+                pass
             chunked = chunks(row, values) #RGB/RGBA format = 3/4 values
 
             for item in chunked:
