@@ -16197,7 +16197,7 @@ class EventBinding(object):
         self.shortcuts = self._createShortcuts(keyMap)
 
     def _cleanKeyMap(self, keyMap):
-        keyMap = keyMap.title()
+        keyMap = keyMap.strip().title()
 
         if keyMap[0] == "<":
             gui.warn("Shortcuts should not include chevrons: %s", keyMap)
@@ -16233,18 +16233,25 @@ class EventBinding(object):
         return acc
 
     def _createShortcuts(self, shortcut):
+        shortcuts = []
         # try to fix numerics
-        if self.menuBinding and shortcut[-1] in "0123456789" and "Key" not in shortcut:
-            shortcut = shortcut[:-1] + "Key-" + shortcut[-1]
+        if shortcut[-1] in "0123456789":
+            if self.menuBinding and "Key" not in shortcut:
+                shortcut = shortcut[:-1] + "Key-" + shortcut[-1]
+            shortcuts.append('<'+shortcut+'>')
 
-        # create two bindings if it ends in a single letter
-        bits = shortcut.split('-')
-        shortcuts = ['<'+shortcut+'>']
+            # deal with keypad
+            if shortcut.startswith('Key'):
+                shortcuts.append('<KP_' + shortcut[-1] + '>')
+        else:
+            # create two bindings if it ends in a single letter
+            bits = shortcut.split('-')
+            shortcuts.append('<'+shortcut+'>')
 
-        # create both cases of the shortcut
-        if bits[-1].upper() in 'ABCDEFGHIJKLMNOPQRSTUVWXYZ':
-            bits[-1] = bits[-1].swapcase()
-            shortcuts.append('<'+'-'.join(bits)+'>')
+            # create both cases of the shortcut
+            if bits[-1].upper() in 'ABCDEFGHIJKLMNOPQRSTUVWXYZ':
+                bits[-1] = bits[-1].swapcase()
+                shortcuts.append('<'+'-'.join(bits)+'>')
 
         gui.trace('Shortcuts made: %s', shortcuts)
         return shortcuts

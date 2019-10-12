@@ -8,4 +8,7 @@ def pnt(a):
 
 with gui("xx") as app:
     app.bindKey("c", pnt)
+    app.bindKey("P", pnt)
+    app.bindKey(",", pnt)
     app.bindKey("Key-1", pnt)
+
