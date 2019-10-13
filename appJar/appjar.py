@@ -3056,12 +3056,20 @@ class gui(object):
             try:
                 if option == 'background':
                     gui.SET_WIDGET_BG(item, value, True)
+                    if kind == WIDGET_NAMES.Button:
+                        gui.trace('DisabledBg not supported on button %s, will store bgand try to apply later', name)
+                        item.originalBg = item.cget('background')
                 elif option == 'foreground':
                     gui.SET_WIDGET_FG(item, value, True)
                 elif option == 'disabledforeground':
                     item.config(disabledforeground=value)
                 elif option == 'disabledbackground':
-                    item.config(disabledbackground=value)
+                    if kind == WIDGET_NAMES.Button:
+                        gui.trace('DisabledBg not supported on button %s, will store and try to apply later', name)
+                        item.disabledBg = value
+                        item.originalBg = item.cget('background')
+                    else:
+                        item.config(disabledbackground=value)
                 elif option == 'activeforeground':
                     item.config(activeforeground=value)
                 elif option == 'activebackground':
@@ -3099,7 +3107,15 @@ class gui(object):
                         if but is not None: but.state([but_val])
                     else:
                         item.config(state=value)
-                        if but is not None: but.config(state=but_val)
+                        if kind == WIDGET_NAMES.Button:
+                            # buttons don't support a disabled bg, so we can do it ourselves
+                            # this will fail if no disabledbg has been configured - that's fine
+                            try:
+                                gui.SET_WIDGET_BG(item, item.disabledBg if value == "disabled" else item.originalBg, False)
+                                gui.trace('Changing state of button %s, using stored bg values', name)
+                            except: pass
+                        else:
+                            if but is not None: but.config(state=but_val)
 
                 elif option == 'relief':
                     item.config(relief=value)
