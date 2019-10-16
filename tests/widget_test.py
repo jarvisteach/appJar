@@ -1137,6 +1137,7 @@ def test_text_areas():
     app.textAreaCreateTag("t2", "red", background="red", foreground="white")
     assert "red" in app.getTextAreaTags("t2")
     app.getTextAreaTag("t2", "red")
+    app.getTextAreaTagRanges("t2", "red")
     app.textAreaCreateTag("t2", "green", background="green", foreground="white")
     app.textAreaTagPattern("t2", "red", "this")
 
