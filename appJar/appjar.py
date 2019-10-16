@@ -10537,6 +10537,7 @@ class gui(object):
         kind = kwargs.pop("kind","'meter")
         fill = kwargs.pop("fill", None)
         text = kwargs.pop("text", None)
+        gradient = kwargs.pop("gradient", None)
 
         try: self.widgetManager.verify(WIDGET_NAMES.Meter, title)
         except: # widget exists
@@ -10549,6 +10550,7 @@ class gui(object):
 
         if value is not None: self.setMeter(title, value, text=text)
         if fill is not None: self.setMeterFill(title, fill)
+        if gradient is not None: meter.configure(gradient=gradient)
 
         if len(kwargs) > 0:
             self._configWidget(title, widgKind, **kwargs)
@@ -10595,9 +10597,10 @@ class gui(object):
         return meters
 
     # a single colour for meters, a list of 2 colours for splits & duals
-    def setMeterFill(self, name, colour):
+    def setMeterFill(self, name, colour, gradient=None):
         item = self.widgetManager.get(WIDGET_NAMES.Meter, name)
         item.configure(fill=colour)
+        if gradient is not None :item.configure(gradient=gradient)
 
 #####################################
 # FUNCTIONS for seperators
@@ -12773,6 +12776,8 @@ class Meter(Frame, object):
             value=0.0, text=None, font=None,
             fg='#000000', *args, **kw):
 
+        self._gradient = True
+
         # call the super constructor
         super(Meter, self).__init__(master, bg=bg,
             width=width, height=height, relief='ridge', bd=3, *args, **kw)
@@ -12813,6 +12818,8 @@ class Meter(Frame, object):
 
         if "fill" in kw:
             self._colour = kw.pop("fill")
+        if "gradient" in kw:
+            self._gradient = kw.pop("gradient")
         if "fg" in kw:
             col = kw.pop("fg")
             self._canv.itemconfigure(self._text, fill=col)
@@ -12890,10 +12897,6 @@ class Meter(Frame, object):
         self._canv.delete(tags)
         self._canv.delete("midline")
 
-        # determine start & end colour
-        (r1, g1, b1) = self.tint(col, -30000)
-        (r2, g2, b2) = self.tint(col, 30000)
-
         # determine a direction & range
         if val < 0:
             direction = -1
@@ -12904,22 +12907,30 @@ class Meter(Frame, object):
 
         # if lines to draw
         if limit != 0:
-            # work out the ratios
-            r_ratio = float(r2 - r1) / limit
-            g_ratio = float(g2 - g1) / limit
-            b_ratio = float(b2 - b1) / limit
+            if self._gradient:
+                # determine start & end colour
+                (r1, g1, b1) = self.tint(col, -30000)
+                (r2, g2, b2) = self.tint(col, 30000)
+
+                # work out the ratios
+                r_ratio = float(r2 - r1) / limit
+                g_ratio = float(g2 - g1) / limit
+                b_ratio = float(b2 - b1) / limit
 
             # loop through the range of lines, in the right direction
             modder = 0
             for i in range(int(start), int(fin), direction):
-                nr = int(r1 + (r_ratio * modder))
-                ng = int(g1 + (g_ratio * modder))
-                nb = int(b1 + (b_ratio * modder))
+                if self._gradient:
+                    nr = int(r1 + (r_ratio * modder))
+                    ng = int(g1 + (g_ratio * modder))
+                    nb = int(b1 + (b_ratio * modder))
 
-                colour = "#%4.4x%4.4x%4.4x" % (nr, ng, nb)
-                self._canv.create_line(
-                    i, 0, i, height, tags=(tags,), fill=colour)
-                modder += 1
+                    colour = "#%4.4x%4.4x%4.4x" % (nr, ng, nb)
+                    modder += 1
+                else:
+                    colour = col
+
+                self._canv.create_line( i, 0, i, height, tags=(tags,), fill=colour)
             self._canv.lower(tags)
 
         # draw a midline

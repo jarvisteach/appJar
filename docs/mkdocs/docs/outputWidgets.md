@@ -183,9 +183,11 @@ app.go()
     For `Meter` & `SplitMeter`should be a value between 0 and 100.  
     For `DualMeter` should be a list of two values, each between 0 and 100.  
 
-* `.setMeterFill(name, colour)`  
+* `.setMeterFill(name, colour, grdient=True)`  
     Changes the fill colour of the specified meter.  
-    For `SplitMeter` & `DualMeter`should be a list of two colours.  
+    For `SplitMeter` & `DualMeter` the 'colour' parameter should be a list of two colours.  
+    An optional 'gradient' parameter can be set to False, to turn off the gradient effect.
+
 
 #### Get Meters
 

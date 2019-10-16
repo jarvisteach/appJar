@@ -357,6 +357,7 @@ Various styles of progress meter.
 | text | string | None | Set text to show on the meter. |
 | kind | string | `standard` | Choose the kind of meter: `standard`, `split` or `dual`. |
 | fill | boolean | None | Set the fill colour(s) for the slider (a list of two colours for `split` & `dual`). |
+| gradient | boolean | True | Enable/disable gradients on the fill colour. |
 
 ## Grip  
 ---

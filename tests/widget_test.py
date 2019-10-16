@@ -1307,6 +1307,9 @@ def test_meters():
     app.setMeterFill("spm", ["red", "green"])
     app.setMeterFill("dum", ["red", "pink"])
 
+    app.setMeterFill("spm", ["red", "green"], gradient=False)
+    app.setMeterFill("dum", ["red", "pink"], gradient=True)
+
     app.getMeter("spm")
     app.getMeter("dum")
 
@@ -3732,7 +3735,7 @@ with gui("Simple Demo", transparency=50, padding=5, location="CENTER", bg="red")
     app4.separator(colspan=3, direction="horizontal")
 
     row=app4.gr()
-    app4.meter("Cry", row=row, column=0, fill="orange")
+    app4.meter("Cry", row=row, column=0, fill="orange", gradient=False)
     with app4.labelFrame("Links", row=row, column=1):
         app4.link("Cry", "http://www.google.com")
         app4.link("Shout", press)
@@ -3744,7 +3747,7 @@ with gui("Simple Demo", transparency=50, padding=5, location="CENTER", bg="red")
     toppings={"Cheese":False, "Tomato":False, "Bacon":False, "Corn":False, "Mushroom":False}
 
     app4.properties("Toppings", toppings, row=row, column=2, change=changer)
-    app4.meter("CryingMor", fill="yellow")
+    app4.meter("CryingMor", fill="yellow", gradient=True)
     app4.meter("CryingMore", 50, colspan=3, kind="other")
     app4.meter("CryingMorer", 50, colspan=3, kind="split", fill=["green", "blue"])
     app4.meter("CryingMorerr", (50,70), colspan=3, kind="dual", fill=["green", "blue"])
