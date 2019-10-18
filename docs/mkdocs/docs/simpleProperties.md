@@ -36,6 +36,7 @@ app.label('transLab', app.transparency)
 | transparency | integer | Pass a percentage (between 0 & 100) to set the transparency, of the GUI (not on Linux). |
 | visible | boolean | Pass a boolean to hide or show the GUI. |
 | top | boolean | Pass a boolean to keep the GUI on top or not. |
+| lastFocus | string | (no SETTER) returns the name of the subWindow with focus, or None if the main window is in focus. |
 | | | | |
 
 ### Padding

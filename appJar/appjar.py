@@ -595,6 +595,7 @@ class gui(object):
         # create the main window - topLevel
         self.topLevel = Tk()
         self.topLevel.bind('<Configure>', self._windowEvent)
+        self.topLevel.bind('<FocusIn>', lambda e: self._windowFocus(e))
 
         def _setFocus(e):
             try: e.widget.focus_set()
@@ -2281,6 +2282,17 @@ class gui(object):
             # execute the event
             e()
         self.pollId = self.topLevel.after(self.pollTime, self._poll)
+
+    def _windowFocus(self, event):
+        widg = event.widget
+        topLevel = widg.winfo_toplevel()
+        name = self.widgetManager.getName(topLevel)
+        self._lastFocus = name
+
+    def getLastFocus(self):
+        return self._lastFocus
+
+    lastFocus = property(getLastFocus)
 
     def _windowEvent(self, event):
         """ called whenever the GUI updates - does nothing """
@@ -5737,6 +5749,7 @@ class gui(object):
 
         top = SubWindow(self, self.topLevel, name, title=title, stopFunc = self.confirmHideSubWindow,
                         modal=modal, blocking=blocking, transient=transient, grouped=grouped)
+        top.bind("<FocusIn>", lambda e: self._windowFocus(e))
 
         ico = self._getTopLevel().winIcon
 

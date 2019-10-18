@@ -1375,6 +1375,8 @@ def test_properties():
     app.setPropertiesBoxBg("p2", "red")
     app.setPropertiesSelectColour("p2", "red")
 
+    assert app.lastFocus == app.getLastFocus()
+
     app.setProperties("p2", HASH_TWO)
     validateProp("p2", HASH_TWO)
     assert compareDictionaries(app.getProperties("p2"), HASH_TWO)
