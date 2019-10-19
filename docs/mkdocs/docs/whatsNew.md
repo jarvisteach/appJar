@@ -17,6 +17,7 @@
 * <div class="cb cb-fix">Fixed</div> resolved issue with nested containers in [subWindows](/multiplePages) - [#594](https://github.com/jarvisteach/appJar/issues/594)
 * <div class="cb cb-fix">Fixed</div> [fileEntries](/inputWidgets/#entry) - can now disable them correctly [#590](https://github.com/jarvisteach/appJar/issues/590)
 * <div class="cb cb-fix">Fixed</div> removed warnings when destroying [tables](/pythonDevWidgets/#table) - [#584](https://github.com/jarvisteach/appJar/issues/584)
+* <div class="cb cb-fix">Fixed</div> missing headings in [Database Tables](/pythonDevWidgets/#connecting-to-databases) - [#553](https://github.com/jarvisteach/appJar/issues/553)
 
 ## Version 0.94  
 

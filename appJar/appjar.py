@@ -5130,7 +5130,6 @@ class gui(object):
 
             # select all data
             cursor.execute(dataQuery)
-
             grid = self.addTable(title, cursor, row, column, colspan, rowspan,
                         action, addRow, actionHeading, actionButton,
                         addButton, showMenu, border=border, horizontal=horiz
@@ -14659,13 +14658,17 @@ class SimpleTable(ScrollPane):
     def addRows(self, data, scroll=True):
         self._hideEntryBoxes()
         if self.numColumns == -1:
+            gui.trace("Adding rows - numRows not set, querying data")
+
             if sqlite3 is not None and sqlite3 is not False and isinstance(data, sqlite3.Cursor):
-                gui.trace('No header exists, using cursor description as header')
                 self.numColumns = len([description[0] for description in data.description])
-                self._addRow([description[0] for description in data.description])
             else:
-                gui.trace('No header exists, using first row of data as header')
                 self.numColumns = len(data[0])
+
+        if sqlite3 is not None and sqlite3 is not False and isinstance(data, sqlite3.Cursor):
+            gui.trace('No header exists, using cursor description as header')
+            self._addRow([description[0] for description in data.description])
+
 
         try: gui.trace("Adding %s rows in addRows()", len(data))
         except: gui.trace("Adding cursor in addRows()")
