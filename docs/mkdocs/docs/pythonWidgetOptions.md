@@ -168,6 +168,14 @@ The following allow widgets to be manipulated on screen:
 * `.remove XXX (name)`  
     Permanently remove the widget (deletes it).
 
+* `.removeWidgetAt(x, y)`  
+    Permanently remove the widget (deletes it) at the specified x,y in the current grid.  
+    If the widget was added inside a container, that container will need to be started before the widget can be found:  
+    ```python
+    with app.frame('f1'):
+        app.removeWidgetAt(2, 2)
+    ```
+
 * `.removeAllWidgets()`  
     Permanently remove all widgets.
 

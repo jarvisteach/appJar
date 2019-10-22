@@ -8,6 +8,7 @@
 * <div class="cb cb-add">Added</div> the ability to find out which window is in [focus](/simpleProperties/#gui-settings) - [#510](https://github.com/jarvisteach/appJar/issues/510)
 * <div class="cb cb-add">Added</div> new features on [trees](/pythonDevWidgets/#tree) - [#457](https://github.com/jarvisteach/appJar/issues/457)
 * <div class="cb cb-add">Added</div> ability to set images/icons for [tabs](/pythonWidgetGrouping/#set-tabbedframe) - [#380](https://github.com/jarvisteach/appJar/issues/380)
+* <div class="cb cb-add">Added</div> ability to [remove a widget](/pythonWidgetOptions/#widget-manipulation) based on its grid position in a container - [#372](https://github.com/jarvisteach/appJar/issues/372)
 * <div class="cb cb-imp">Improved</div> [key bindings](/pythonEvents/#binding-keys) with better keypad support - [#591](https://github.com/jarvisteach/appJar/issues/591)  
 * <div class="cb cb-imp">Improved</div> version of [pypng](https://github.com/drj11/pypng) and fix for bytearrays in tkinter_png - [#585](https://github.com/jarvisteach/appJar/issues/585) & [#595](https://github.com/jarvisteach/appJar/issues/595)  
 * <div class="cb cb-imp">Improved</div> [fileEntries](/inputWidgets/#entries) now pass a directory name to the pop-up dialog - [#583](https://github.com/jarvisteach/appJar/issues/583)  
@@ -16,7 +17,7 @@
 * <div class="cb cb-fix">Fixed</div> issue with [autoEntry](/inputWidgets/#entry) drop-down not hiding when set through function - [#598](https://github.com/jarvisteach/appJar/issues/598)
 * <div class="cb cb-fix">Fixed</div> resolved issue with nested containers in [subWindows](/multiplePages) - [#594](https://github.com/jarvisteach/appJar/issues/594)
 * <div class="cb cb-fix">Fixed</div> [fileEntries](/inputWidgets/#entry) - can now disable them correctly [#590](https://github.com/jarvisteach/appJar/issues/590)
-* <div class="cb cb-fix">Fixed</div> removed warnings when destroying [tables](/pythonDevWidgets/#table) - [#584](https://github.com/jarvisteach/appJar/issues/584)
+* <div class="cb cb-fix">Fixed</div> warnings when destroying [tables](/pythonDevWidgets/#table) - [#584](https://github.com/jarvisteach/appJar/issues/584)
 * <div class="cb cb-fix">Fixed</div> missing headings in [Database Tables](/pythonDevWidgets/#connecting-to-databases) - [#553](https://github.com/jarvisteach/appJar/issues/553)
 
 ## Version 0.94  

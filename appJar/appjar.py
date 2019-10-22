@@ -2287,6 +2287,7 @@ class gui(object):
         widg = event.widget
         topLevel = widg.winfo_toplevel()
         name = self.widgetManager.getName(topLevel)
+        if name is not None: name = name[0]
         self._lastFocus = name
 
     def getLastFocus(self):
@@ -3749,6 +3750,19 @@ class gui(object):
             container.rowconfigure(i, minsize=0, weight=0, pad=0)
 
         return widgs
+
+    def removeWidgetAt(self, x, y):
+        gui.trace("Remove widget at: %s, %s", x, y)
+        c = self.getContainer()
+        for widg in c.grid_slaves():
+            row, column = widg.grid_info()["row"], widg.grid_info()["column"]
+            if int(row) == x and int(column) == y:
+                details = (self.widgetManager.getName(widg))
+                gui.trace("Widget details: %s, %s", details[1], details[0])
+                self.removeWidgetType(details[1], details[0])
+                return
+        gui.warn("No widget to remove found at: %s, %s", x, y)
+
 
     def removeWidgetType(self, kind, name, collapse=False):
         if kind == WIDGET_NAMES.RadioButton:
@@ -10521,7 +10535,9 @@ class gui(object):
 
     def getFocus(self):
         widg = self.topLevel.focus_get()
-        return self.widgetManager.getName(widg)
+        details = self.widgetManager.getName(widg)
+        if details is not None: details = details[0]
+        return details
 
 ####################################
 ## Functions to get widget details
@@ -15377,6 +15393,7 @@ class CopyAndPaste():
         if self.widgetType in ["Entry", "AutoCompleteEntry"]:
             # horrible hack to clear default text
             name = self.gui.widgetManager.getName(self.widget)
+            if name is not None: name = name[0]
             self.gui._updateEntryDefault(name, mode="in")
         self.widget.event_generate('<<Paste>>')
         self.widget.selection_clear()
@@ -16145,7 +16162,7 @@ class WidgetManager(object):
             if widgGroup is not None:
                 for name, obj in widgGroup.items():
                     if obj == widget:
-                        return name
+                        return name, widgetType
         return None
 
     def log(self, widgetType, widget, group=None):
