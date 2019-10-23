@@ -12,6 +12,8 @@ from __future__ import unicode_literals
 try:
     # for Python2
     from Tkinter import *
+# this line can fix issues with TclObjects, #571
+#    Tkinter.wantobjects = False
     import tkMessageBox as MessageBox
     import tkSimpleDialog as SimpleDialog
     from tkColorChooser import askcolor
