@@ -9,6 +9,9 @@ These are usually caused by limitations in the underlying tkinter, and may be sp
  * **Image Backgrounds** - setting an image as a background doesn't work well - most widgets don't have their own transparency.  
  * **ttk** - appJar was never intended to work with ttk, but due to popular demand, we've tried to build it in, but there are still issues.  
 
+## Version Limitations:  
+ * **TclObjects** can cause appjar to crash, see issue [#571](https://github.com/jarvisteach/appJar/issues/571)  
+
 ## Platform Limitations:  
 
 appJar has been designed to work the same on the three major platforms: Windows, Mac & Linux.  
