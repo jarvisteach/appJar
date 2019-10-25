@@ -218,6 +218,20 @@ A clickable button for triggering events.
 | icon | string | None | The name of an icon to show in the button. |
 | label | string | None | Alternative text to display on the button. |
 
+## Buttons  
+---
+
+A clickable button for triggering events.  
+
+* `.buttons(title, value=None)`  
+    The `title` should be a 1D or 2D list of strings to show on the buttons.  
+    The `value` should be a function to call when the buttons are pressed.
+    It can be a single function, or a list of functions that matches the list of titles.  
+
+| Parameter | Data type | Default | Description |
+| --------- | --------- | ------- | ------------|
+| labels | list | None | An optional list of alternative text to show on the buttons. | 
+
 ## Link  
 ---
 A clickable **hyperlink** to trigger events or launch webpages.  

@@ -8569,18 +8569,24 @@ class gui(object):
     # use for all)
     def buttons(self, names, funcs, **kwargs):
         kwargs = self._parsePos(kwargs.pop("pos", []), kwargs)
+        titles = kwargs.pop('labels', kwargs.pop('titles', kwargs.pop('names', [])))
+        kwargs['titles'] = titles
         self._addButtons(names, funcs, **kwargs)
         kwargs.pop('fill', False)
+        kwargs.pop('titles', False)
         if not isinstance(names[0], list):
             names = [names]
         for row in names:
             for title in row:
                 self._configWidget(title, WIDGET_NAMES.Button, **kwargs)
 
-    def _addButtons(self, names, funcs, row=None, column=0, colspan=0, rowspan=0, fill=False, **kwargs):
-        self.addButtons(names, funcs, row, column, colspan, rowspan, fill)
+    def _addButtons(self, names, funcs, row=None, column=0, colspan=0, rowspan=0, fill=False, titles=[], **kwargs):
+        self.addButtons(names, funcs, row, column, colspan, rowspan, fill, titles)
 
-    def addButtons(self, names, funcs, row=None, column=0, colspan=0, rowspan=0, fill=False):
+    def addNamedButtons(self, names, titles, funcs, row=None, column=0, colspan=0, rowspan=0, fill=False):
+        self.addButtons(names, funcs, row, column, colspan, rowspan, fill, titles)
+        
+    def addButtons(self, names, funcs, row=None, column=0, colspan=0, rowspan=0, fill=False, titles=[]):
         ''' adds a 1D/2D list of buttons '''
         if not isinstance(names, list):
             raise Exception(
@@ -8588,6 +8594,7 @@ class gui(object):
                 names +
                 ". It must be a list of buttons.")
 
+        if titles == []: titles = names
         singleFunc = self._checkFunc(names, funcs)
 
         frame = self._makeWidgetBox()(self.getContainer())
@@ -8606,14 +8613,15 @@ class gui(object):
 
         for bRow in range(len(names)):
             for i in range(len(names[bRow])):
-                t = names[bRow][i]
+                n = names[bRow][i]
+                t = titles[bRow][i]
                 if funcs is None:
                     tempFunc = None
                 elif singleFunc is None:
                     tempFunc = funcs[bRow][i]
                 else:
                     tempFunc = singleFunc
-                but = self._buildButton(t, tempFunc, frame)
+                but = self._buildButton(t, tempFunc, frame, n)
 
                 but.grid(row=bRow, column=i, sticky=sticky)
                 Grid.columnconfigure(frame, i, weight=1)

@@ -436,6 +436,15 @@ def test_buttons():
             ["c2b1", "c2b2", "c2b3", "c2b4"]],
         None)
 
+    app.addNamedButtons(
+            [["a2b1", "a2b2", "a2b3", "a2b4"],
+            ["b2b1", "b2b2", "b2b3", "b2b4"],
+            ["c2b1", "c2b2", "c2b3", "c2b4"]],
+            [["xa2b1", "xa2b2", "xa2b3", "xa2b4"],
+            ["xb2b1", "xb2b2", "xb2b3", "xb2b4"],
+            ["xc2b1", "xc2b2", "xc2b3", "xc2b4"]],
+        None)
+
     def buts(btn):
         print(btn)
     app.addButtons(["bl1", "bl2"], buts)
@@ -3719,6 +3728,8 @@ with gui("Simple Demo", transparency=50, padding=5, location="CENTER", bg="red")
     app4.button("Cheer", "")
     app4.button("Cheery", press, image="1_entries.gif")
     app4.button("Cry", press, row=row, column=2)
+
+    app4.buttons(["Clap", "Cheer", "Cheery"], ['xx1', 'xx2', 'xx3'], press)
 
     app4.date("date", row=row, column=3, rowspan=4, change=changer)
 

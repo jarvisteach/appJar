@@ -7,6 +7,7 @@
 * <div class="cb cb-add">Added</div> optional gradient to [meters](/outputWidgets/#meter) - [#565](https://github.com/jarvisteach/appJar/issues/565)
 * <div class="cb cb-add">Added</div> the ability to find out which window is in [focus](/simpleProperties/#gui-settings) - [#510](https://github.com/jarvisteach/appJar/issues/510)
 * <div class="cb cb-add">Added</div> new features on [trees](/pythonDevWidgets/#tree) - [#457](https://github.com/jarvisteach/appJar/issues/457)
+* <div class="cb cb-add">Added</div> function to create [named buttons](/inputWidgets/#add-buttons) - [#450](https://github.com/jarvisteach/appJar/issues/450)
 * <div class="cb cb-add">Added</div> ability to set images/icons for [tabs](/pythonWidgetGrouping/#set-tabbedframe) - [#380](https://github.com/jarvisteach/appJar/issues/380)
 * <div class="cb cb-add">Added</div> ability to [remove a widget](/pythonWidgetOptions/#widget-manipulation) based on its grid position in a container - [#372](https://github.com/jarvisteach/appJar/issues/372)
 * <div class="cb cb-imp">Improved</div> [key bindings](/pythonEvents/#binding-keys) with better keypad support - [#591](https://github.com/jarvisteach/appJar/issues/591)  
