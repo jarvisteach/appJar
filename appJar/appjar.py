@@ -12229,6 +12229,10 @@ class gui(object):
                 self.allWords.sort()
                 self.topLevel = tl
 
+                self.tw = Toplevel(self.topLevel)
+                self.tw.withdraw()
+                self.tw.wm_overrideredirect(1)
+
                 # store variable - so we can see when it changes
                 self.var = self["textvariable"] = StringVar()
                 self.var.auto_id = self.var.trace('w', self.textChanged)
@@ -12319,20 +12323,28 @@ class gui(object):
             def makeListBox(self):
                 if self.listWidth is None:
                     self.listWidth = self["width"]
-                self.listbox = Listbox(self.topLevel, width=self.listWidth, height=8)
-                self.listbox.config(height=self.rows)
+
+                self.tw.withdraw()
+                self.tw.wm_overrideredirect(1)
+                self.listbox = Listbox(self.tw, width=self.listWidth, height=self.rows)
 #                self.listbox.config(bg=self.cget("bg"), selectbackground=self.cget("selectbackground"))
 #                self.listbox.config(fg=self.cget("fg"))
                 if hasattr(self, "listFont"):
                     self.listbox.config(font=self.listFont)
+
                 self.listbox.bind("<Button-1>", self.mouseClickBox)
                 self.listbox.bind("<Right>", self.selectWord)
                 self.listbox.bind("<Return>", self.selectWord)
 
-                x = self.winfo_rootx() - self.topLevel.winfo_rootx()
-                y = self.winfo_rooty() - self.topLevel.winfo_rooty() + self.winfo_height()
+                x = self.winfo_rootx()
+                y = self.winfo_rooty() + self.winfo_height()
 
-                self.listbox.place(x=x, y=y)
+                self.listbox.pack()
+
+                self.tw.update_idletasks()
+                self.tw.wm_geometry("+%d+%d" % (x, y))
+                self.tw.deiconify()
+
                 self.listBoxShowing = True
 
             # function to handle a mouse click in the list box
@@ -12343,6 +12355,8 @@ class gui(object):
             # function to close/delete list box
             def closeList(self, event=None):
                 if self.listBoxShowing:
+                    self.tw.withdraw()
+                    self.tw.wm_overrideredirect(1)
                     self.listbox.destroy()
                     self.listBoxShowing = False
 
