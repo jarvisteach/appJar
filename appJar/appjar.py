@@ -8604,6 +8604,7 @@ class gui(object):
         # make them into a 2D array, if not already
         if not isinstance(names[0], list):
             names = [names]
+            titles = [titles]
             # won't be used if single func
             if funcs is not None:
                 funcs = [funcs]
