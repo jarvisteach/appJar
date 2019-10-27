@@ -1,6 +1,23 @@
 #Pop-ups
 ---
-A number of pop-ups (aka dialogs) are available, to add a different user experience, notify the user of information, or get one off pieces of data.
+A number of pop-ups (aka dialogs) are available, to add a different user experience, notify the user of information, or get one off pieces of data.  
+
+Question Boxes, File Boxes & Colour Boxes all return a value, and should only be called when the answer is required, eg. when a button is pressed.  
+If the user cancels the dialog, None will be returned.  
+
+```python
+from appJar import gui
+
+def changeColour():
+    col = app.colourBox()
+    if col is not None:
+        app.bg = col
+
+with gui("Colour Changer", "500x500") as app:
+    app.labelFont = {'size':34, 'weight':'bold'}
+    app.label("Press the button...")
+    app.button("Change the Colour", changeColour)
+```
 
 ### Tooltips
 ---
