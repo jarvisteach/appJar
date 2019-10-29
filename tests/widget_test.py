@@ -3748,7 +3748,7 @@ with gui("Simple Demo", transparency=50, padding=5, location="CENTER", bg="red")
     app4.separator(colspan=3, direction="horizontal")
 
     row=app4.gr()
-    app4.meter("Cry", row=row, column=0, fill="orange", gradient=False)
+    app4.meter("Cry", row=row, column=0, fill="orange", gradient=False, orientation='vertical')
     with app4.labelFrame("Links", row=row, column=1):
         app4.link("Cry", "http://www.google.com")
         app4.link("Shout", press)
@@ -3763,7 +3763,9 @@ with gui("Simple Demo", transparency=50, padding=5, location="CENTER", bg="red")
     app4.meter("CryingMor", fill="yellow", gradient=True)
     app4.meter("CryingMore", 50, colspan=3, kind="other")
     app4.meter("CryingMorer", 50, colspan=3, kind="split", fill=["green", "blue"])
+    app4.meter("h_CryingMorer", 50, colspan=3, kind="split", fill=["green", "blue"], orientation='vertical')
     app4.meter("CryingMorerr", (50,70), colspan=3, kind="dual", fill=["green", "blue"])
+    app4.meter("h_CryingMorerr", (50,70), colspan=3, kind="dual", fill=["green", "blue"], orientation='vertical')
 
     app4.registerEvent(test_gui4)
     app4.setPollTime(1000)

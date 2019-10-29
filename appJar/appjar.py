@@ -6109,13 +6109,12 @@ class gui(object):
         """ simpleGUI - alternative for scale() """
         return self.scale(title, *args, **kwargs)
 
-    def scale(self, title, *args, **kwargs):
+    def scale(self, title, value=None, *args, **kwargs):
         """ simpleGUI - adds, sets & gets scales all in one go """
         widgKind = WIDGET_NAMES.Scale
 
         vert = kwargs.pop("direction", "horizontal").lower() == "vertical"
         increment = kwargs.pop("increment", None)
-        value = kwargs.pop("value", None)
         interval = kwargs.pop("interval", None)
         show = kwargs.pop("show", False)
         _range = kwargs.pop("range", None)
@@ -6134,10 +6133,11 @@ class gui(object):
         if increment is not None: self.setScaleIncrement(title, increment)
         if interval is not None: self.showScaleIntervals(title, interval)
         if show: self.showScaleValue(title)
-        if value is not None: self.setScale(title, value, callFunction)
 
         if len(kwargs) > 0:
             self._configWidget(title, widgKind, **kwargs)
+
+        if value is not None: self.setScale(title, value, callFunction)
 
         return scale
 
@@ -10591,6 +10591,8 @@ class gui(object):
         if fill is not None: self.setMeterFill(title, fill)
         if gradient is not None: meter.configure(gradient=gradient)
 
+        kwargs.pop("orientation", False)
+
         if len(kwargs) > 0:
             self._configWidget(title, widgKind, **kwargs)
 
@@ -10598,13 +10600,14 @@ class gui(object):
 
     def _addMeter(self, name, kind="METER", row=None, column=0, colspan=0, rowspan=0, **kwargs):
         self.widgetManager.verify(WIDGET_NAMES.Meter, name)
+        orientation = kwargs.pop("orientation", 'horizontal')
 
         if kind == "SPLIT":
-            meter = SplitMeter(self.getContainer(), font=self._getContainerProperty('labelFont'))
+            meter = SplitMeter(self.getContainer(), orientation=orientation, font=self._getContainerProperty('labelFont'))
         elif kind == "DUAL":
-            meter = DualMeter(self.getContainer(), font=self._getContainerProperty('labelFont'))
+            meter = DualMeter(self.getContainer(), orientation=orientation, font=self._getContainerProperty('labelFont'))
         else:
-            meter = Meter(self.getContainer(), font=self._getContainerProperty('labelFont'))
+            meter = Meter(self.getContainer(), orientation=orientation, font=self._getContainerProperty('labelFont'))
 
         self.widgetManager.add(WIDGET_NAMES.Meter, name, meter)
         self._positionWidget(meter, row, column, colspan, rowspan)
@@ -12827,11 +12830,15 @@ class Meter(Frame, object):
     def __init__(self, master, width=100, height=20,
             bg='#FFFFFF', fillColour='orchid1',
             value=0.0, text=None, font=None,
-            fg='#000000', *args, **kw):
+            fg='#000000', orientation='horizontal', *args, **kw):
 
         self._gradient = True
+        self._orientation = orientation
 
         # call the super constructor
+        if self._orientation == 'vertical':
+            width, height = height, width
+            width = width
         super(Meter, self).__init__(master, bg=bg,
             width=width, height=height, relief='ridge', bd=3, *args, **kw)
 
@@ -12919,7 +12926,9 @@ class Meter(Frame, object):
 
         # if no text is specified use the default percentage string:
         if text is None:
-            text = str(int(round(100 * value))) + ' %'
+            text = str(int(round(100 * value)))
+            if self._orientation != "vertical":
+                text += ' %'
 
         # set the new text
         self._canv.itemconfigure(self._text, text=text)
@@ -12929,7 +12938,10 @@ class Meter(Frame, object):
     def makeBar(self):
         width, height = self.getWH(self._canv)
         start = 0
-        fin = width * self._value
+        if self._orientation == 'vertical':
+            fin = height * self._value
+        else:
+            fin = width * self._value
 
         self.drawLines(width, height, start, fin, self._value, self._colour)
         self._canv.update_idletasks()
@@ -12958,6 +12970,7 @@ class Meter(Frame, object):
             direction = 1
             limit = int(fin - start)
 
+        gui.trace("Drawing meter lines to %s, from %s to %s, in direction %s", val, start, fin, direction)
         # if lines to draw
         if limit != 0:
             if self._gradient:
@@ -12983,12 +12996,17 @@ class Meter(Frame, object):
                 else:
                     colour = col
 
-                self._canv.create_line( i, 0, i, height, tags=(tags,), fill=colour)
+                if self._orientation == 'vertical':
+                    self._canv.create_line( 0, height-i, width, height-i, tags=(tags,), fill=colour)
+                else:
+                    self._canv.create_line( i, 0, i, height, tags=(tags,), fill=colour)
             self._canv.lower(tags)
 
         # draw a midline
-        self._canv.create_line(start, 0, start, height,
-            fill=self._midFill, tags=("midline",))
+        if self._orientation == 'vertical':
+            self._canv.create_line(0, height-start, width, height-start, fill=self._midFill, tags=("midline",))
+        else:
+            self._canv.create_line(start, 0, start, height, fill=self._midFill, tags=("midline",))
 
         self._canv.update_idletasks()
 
@@ -13066,10 +13084,15 @@ class SplitMeter(Meter):
     # override the makeBar function
     def makeBar(self):
         width, height = self.getWH(self._canv)
-        mid = width * self._value
+        if self._orientation == "vertical":
+            mid = height * self._value
+            end = height
+        else:
+            mid = width * self._value
+            end = width
 
         self.drawLines(width, height, 0, mid, self._value, self._leftFill, tags="left")
-        self.drawLines(width, height, mid, width, self._value, self._rightFill, tags="right")
+        self.drawLines(width, height, mid, end, self._value, self._rightFill, tags="right")
 
 
 #####################################
@@ -13121,7 +13144,11 @@ class DualMeter(SplitMeter):
         # get range to draw lines
         width, height = self.getWH(self._canv)
 
-        start = width / 2
+        if self._orientation == "vertical":
+            start = height / 2
+        else:
+            start = width / 2
+
         l_fin = start + (start * self._value[0])
         r_fin = start + (start * self._value[1])
 
