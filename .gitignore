@@ -76,3 +76,5 @@ target/
 .icloud
 
 codechef/
+*.keys
+*.keys[cod]
