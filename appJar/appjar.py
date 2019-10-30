@@ -6796,18 +6796,23 @@ class gui(object):
         if terrain is not None: self.setGoogleMapTerrain(title, terrain)
         if proxy is not None: self.setGoogleMapProxy(title, proxy)
 
+        kwargs.pop("ipstack", False)
+        kwargs.pop("ipinfo", False)
+        kwargs.pop("mapKey", False)
+
         if len(kwargs) > 0:
             self._configWidget(title, widgKind, **kwargs)
         return gMap
 
-    def addGoogleMap(self, title, row=None, column=0, colspan=0, rowspan=0):
+    def addGoogleMap(self, title, row=None, column=0, colspan=0, rowspan=0, mapKey=None, ipstack=None, ipinfo=None):
         ''' adds a GoogleMap widget at the specified position '''
         self._loadURL()
         self._loadTooltip()
         if urlencode is False:
             raise Exception("Unable to load GoogleMaps - urlencode library not available")
         self.widgetManager.verify(WIDGET_NAMES.Map, title)
-        gMap = GoogleMap(self.getContainer(), self, useTtk = self.ttkFlag, font=self._getContainerProperty('labelFont'))
+
+        gMap = GoogleMap(self.getContainer(), self, useTtk = self.ttkFlag, font=self._getContainerProperty('labelFont'), mapKey=mapKey, ipstack=ipstack, ipinfo=ipinfo)
         self._positionWidget(gMap, row, column, colspan, rowspan)
         self.widgetManager.add(WIDGET_NAMES.Map, title, gMap)
         return gMap
@@ -6849,6 +6854,14 @@ class gui(object):
             gMap.removeMarkers()
         else:
             gMap.addMarker(location, size, colour, label, replace)
+
+    def setGoogleMapLocationKey(self, title, ipstack=None, ipinfo=None):
+        gMap = self.widgetManager.get(WIDGET_NAMES.Map, title)
+        gMap.setCurrentLocation(ipstack, ipinfo)
+
+    def setGoogleMapKey(self, title, key):
+        gMap = self.widgetManager.get(WIDGET_NAMES.Map, title)
+        gMap.setMapKey(key)
 
     def removeGoogleMapMarker(self, title, label):
         gMap = self.widgetManager.get(WIDGET_NAMES.Map, title)
@@ -15561,10 +15574,9 @@ class AjRectangle(object):
 class GoogleMap(LabelFrame, object):
     """ Class to wrap a GoogleMap tile download into a widget"""
 
-    def __init__(self, parent, app, defaultLocation="Marlborough, UK", proxyString=None, useTtk=False, font=None):
+    def __init__(self, parent, app, defaultLocation="Marlborough, UK", proxyString=None, useTtk=False, font=None, mapKey=None, ipstack=None, ipinfo=None):
         super(GoogleMap, self).__init__(parent, text="GoogleMaps")
         self.alive = True
-        self.API_KEY = ""
         self.parent = parent
         self.imageQueue = Queue.Queue()
         self.defaultLocation = defaultLocation
@@ -15576,14 +15588,12 @@ class GoogleMap(LabelFrame, object):
 
         self.TERRAINS = ("Roadmap", "Satellite", "Hybrid", "Terrain")
         self.MAP_URL =  "http://maps.google.com/maps/api/staticmap?"
-        self.GEO_URL = "https://maps.googleapis.com/maps/api/geocode/json?"
-        self.LOCATION_URL = "http://freegeoip.net/json/"
-#        self.LOCATION_URL = "http://ipinfo.io/json"
-        self.setCurrentLocation()
+
+        self.setCurrentLocation(ipstack, ipinfo)
 
         # the parameters that we store
         # keeps getting updated, then sent to GoogleMaps
-        self.params = {}
+        self.params = {"key":mapKey}
         self._setMapParams()
 
         imgObj = None
@@ -15666,6 +15676,9 @@ class GoogleMap(LabelFrame, object):
 
     def setProxyString(self, proxyString):
         self.proxyString = proxyString
+
+    def setMapKey(self, mapKey):
+        self.params["key"]=mapKey
 
     def destroy(self):
         self.stopUpdates()
@@ -15842,15 +15855,6 @@ class GoogleMap(LabelFrame, object):
 
         gui.trace("GoogleMap search URL: %s", self.request)
 
-    def _buildGeoURL(self, location):
-        """ for future use - gets the location
-        """
-        p = {}
-        p["address"] = location
-        p["key"] = self.API_KEY
-        req = self.GEO_URL + urlencode(p)
-        return req
-
     def getMapData(self):
         """ will query GoogleMaps & download the image data as a blob """
         if self.params['center'] == "":
@@ -15886,22 +15890,36 @@ class GoogleMap(LabelFrame, object):
             gui.error("Unable to contact GoogleMaps")
             return None
 
-    def setCurrentLocation(self):
-        gui.trace("Location request URL: %s", self.LOCATION_URL)
+    def setCurrentLocation(self, ipstack=None, ipinfo=None):
+        if ipstack is not None:
+            self.LOCATION_URL = "http://api.ipstack.com/check?access_key="
+            locationKey = ipstack
+        elif ipinfo is not None:
+            self.LOCATION_URL = "https://ipinfo.io?token="
+            locationKey = ipinfo
+        else:
+            gui.info("No location server specified, using default: %s", self.defaultLocation)
+            self.currentLocation = self.defaultLocation
+            return
+
         try:
-            self.currentLocation = self._locationLookup()
+            self.currentLocation = self._locationLookup(locationKey)
         except Exception as e:
-            gui.error("Unable to contact location server, using default: %s", self.defaultLocation)
+            gui.info("Unable to contact location server, using default: %s", self.defaultLocation)
             self.currentLocation = self.defaultLocation
 
-    def _locationLookup(self):
-        u =  urlopen(self.LOCATION_URL)
+    def _locationLookup(self, locationKey):
+        full_location_url = self.LOCATION_URL + locationKey
+        gui.trace("Location request URL: %s", full_location_url)
+        u =  urlopen(full_location_url)
         data = u.read().decode("utf-8")
         u.close()
         gui.trace("Location data: %s", data)
         data = json.loads(data)
-#        location = data["loc"]
-        location = str(data["latitude"]) + "," + str(data["longitude"])
+        if 'ipstack' in self.LOCATION_URL:
+            location = str(data["latitude"]) + "," + str(data["longitude"])
+        else:
+            location = data["loc"]
         return location
 
 

@@ -408,6 +408,8 @@ app.go()
 A self-contained GoogleMaps widget.  
 It provides useful functionality for finding somewhere on Earth.  
 All requests for map data are performed in the background, so the UI shouldn't become unresponsive.  
+It is now necessary to provide a [Google Maps API key](https://cloud.google.com/maps-platform/) (free to register with a google account).  
+If you want appJar to determine your current location, you'll also need a free [ipstack api key](https://ipstack.com) or [ipinfo api key](https://ipinfo.io).  
 
 ![GoogleMaps](img/gmap_2.png)
 
@@ -415,16 +417,18 @@ All requests for map data are performed in the background, so the UI shouldn't b
 from appjar import gui
 
 app = gui()
-app.addGoogleMap("m1")
+app.addGoogleMap("m1", mapKey='xxx', ipstack='yyy')
 app.setGoogleMapSize("m1", "300x500")
 app.go()
 ```
 
 #### Add GoogleMaps  
 
-* `.addGoogleMap(title)`  
+* `.addGoogleMap(title, mapKey='xxx', ipstack='yyy', ipinfo='yyy')`  
     Creates a GoogleMap widget.  
     Displays a map image, and provides functionality to search, zoom, and change terrain, as well as a link to the original image.  
+    You must provide a free [Google Map API key](https://cloud.google.com/maps-platform/) as the `mapKey` parameter.  
+    You can provide an optional (free) [ipstack](https://ipstack.com) or [ipinfo](https://ipinfo.io) API key as the relevant parameter, to determine your current location.  
 
 #### Set GoogleMaps  
 
@@ -450,6 +454,12 @@ app.go()
     `size` can be set to any of (tiny, mid, small).  
     `label` can be set to a single letter or digit.  
     If `replace` is `True` this marker will replace the last one added.  
+
+* `.setGoogleMapKey(title, key)`  
+    Change the [Google Map API key](https://cloud.google.com/maps-platform/) to the new `key`.  
+
+* `.setGoogleMapLocationKey(title, ipstack=None, ipinfo=None)`  
+    Change the [ipstack](https://ipstack.com) or [ipinfo](https://ipinfo.io) API key to the new value.  
 
 * `.removeGoogleMapMarker(title, label)`  
     Will remove the specified marker, if found.  
