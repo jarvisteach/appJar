@@ -1,8 +1,10 @@
+#!/usr/bin/env python2 
 """
+works in py2, maybe not in py3 !
+
 https://stackoverflow.com/questions/16475852/python-tkinter-with-ttk-calendar/16476647#16476647
 http://code.activestate.com/recipes/580725-tkinter-datepicker-like-the-jquery-ui-datepicker/
-Simple calendar using ttk Treeview together with calendar and datetime
-classes.
+Simple calendar using ttk Treeview together with calendar and datetime classes.
 """
 import calendar
 
