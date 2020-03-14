@@ -3,6 +3,7 @@
 
 ## Version 0.95  
 
+* <div class="cb cb-add">Added</div> change function to [ToggleFrames](/pythonWidgetGrouping/#toggle-frame) - [#602](https://github.com/jarvisteach/appJar/issues/602)
 * <div class="cb cb-add">Added</div> getTextAreaTagRanges() to [TextAreas](/inputWidgets/#textarea) - [#572](https://github.com/jarvisteach/appJar/issues/572) & [#558](https://github.com/jarvisteach/appJar/issues/558)
 * <div class="cb cb-add">Added</div> optional gradient to [meters](/outputWidgets/#meter) - [#565](https://github.com/jarvisteach/appJar/issues/565)
 * <div class="cb cb-add">Added</div> the ability to find out which window is in [focus](/simpleProperties/#gui-settings) - [#510](https://github.com/jarvisteach/appJar/issues/510)
