@@ -1384,7 +1384,7 @@ def test_properties():
     app.setPropertiesBoxBg("p2", "red")
     app.setPropertiesSelectColour("p2", "red")
 
-    assert app.lastFocus == app.getLastFocus()
+#    assert app.lastFocus == app.getLastFocus()
 
     app.setProperties("p2", HASH_TWO)
     validateProp("p2", HASH_TWO)
@@ -3729,7 +3729,7 @@ with gui("Simple Demo", transparency=50, padding=5, location="CENTER", bg="red")
     app4.button("Cheery", press, image="1_entries.gif")
     app4.button("Cry", press, row=row, column=2)
 
-    app4.buttons(["Clap", "Cheer", "Cheery"], ['xx1', 'xx2', 'xx3'], press)
+    app4.buttons(["Clap", "Cheer", "Cheery"], press, labels=['xx1', 'xx2', 'xx3'])
 
     app4.date("date", row=row, column=3, rowspan=4, change=changer)
 

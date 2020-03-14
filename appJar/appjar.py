@@ -3356,7 +3356,7 @@ class gui(object):
 
             var.cmd_id = var.trace('w', cmd)
             var.cmd = cmd
-        elif kind in [WIDGET_NAMES.Properties, WIDGET_NAMES.FrameStack, WIDGET_NAMES.Table]:
+        elif kind in [WIDGET_NAMES.Properties, WIDGET_NAMES.FrameStack, WIDGET_NAMES.Table, WIDGET_NAMES.ToggleFrame]:
             cmd = self.MAKE_FUNC(function, name)
             widget.setChangeFunction(cmd)
         elif kind == WIDGET_NAMES.SpinBox:
@@ -3365,6 +3365,8 @@ class gui(object):
         elif kind == WIDGET_NAMES.PanedFrame:
             widget.cmd = self.MAKE_FUNC(function, name)
             widget.bind("<Configure>", widget.cmd)
+        elif kind == WIDGET_NAMES.PagedWindow:
+            self.setPagedWindowFunction(name, function)
         else:
             if kind not in [WIDGET_NAMES.CheckBox]:
                 self.warn("Unmanaged binding of %s to %s", eventType, name)
@@ -5472,6 +5474,10 @@ class gui(object):
             tog = self.startToggleFrame(title, row, column, colspan, rowspan)
         except ItemLookupError:
             tog = self.openToggleFrame(title)
+
+        command = kwargs.pop("change", None)
+        if command is not None: self.setToggleFrameChangeFunction(title, command)
+
         self.configure(**kwargs)
         try: yield tog
         finally: self.stopToggleFrame()
@@ -5509,6 +5515,10 @@ class gui(object):
             pw = self.startPagedWindow(title, row, column, colspan, rowspan)
         except ItemLookupError:
             pw = self.openPagedWindow(title)
+
+        command = kwargs.pop("change", None)
+        if command is not None: self.setPagedWindowFunction(title, command)
+
         self.configure(**kwargs)
         try: yield pw
         finally: self.stopPagedWindow()
@@ -8580,11 +8590,11 @@ class gui(object):
     # adds a set of buttons, in the row, spannning specified columns
     # pass in a list of names & a list of functions (or a single function to
     # use for all)
-    def buttons(self, names, funcs, **kwargs):
+    def buttons(self, names, value, **kwargs):
         kwargs = self._parsePos(kwargs.pop("pos", []), kwargs)
         titles = kwargs.pop('labels', kwargs.pop('titles', kwargs.pop('names', [])))
         kwargs['titles'] = titles
-        self._addButtons(names, funcs, **kwargs)
+        self._addButtons(names, value, **kwargs)
         kwargs.pop('fill', False)
         kwargs.pop('titles', False)
         if not isinstance(names[0], list):
@@ -13438,7 +13448,7 @@ class ToggleFrame(Frame, object):
         self.subFrame = Frame(self, relief="sunken", borderwidth=2)
         self.subFrame.SKIP_CLEANSE = True
 
-        self.configure(bg="DarkGray")
+        self.configure(bg="DarkGray", event=None)
 
         self.grid_columnconfigure(0, weight=1)
         self.titleFrame.grid(row=0, column=0, sticky=EW)
@@ -13473,7 +13483,13 @@ class ToggleFrame(Frame, object):
         if "text" in kw:
             self.titleLabel.config(text=kw.pop("text"))
 
+        if "event" in kw:
+            self.changeFunction = kw.pop("event")
+
         super(ToggleFrame, self).config(cnf, **kw)
+
+    def setChangeFunction(self, cmd):
+        self.changeFunction = cmd
 
 
     def cget(self, option):
@@ -13490,6 +13506,11 @@ class ToggleFrame(Frame, object):
             self.subFrame.grid_remove()
             self.toggleButton.configure(text='+')
         self.showing = not self.showing
+        self.changeEvent()
+
+    def changeEvent(self):
+        if not self.firstTime and self.changeFunction is not None:
+            self.changeFunction()
 
     def getContainer(self):
         return self.subFrame
@@ -13498,8 +13519,8 @@ class ToggleFrame(Frame, object):
         self.update_idletasks()
         self.titleFrame.config(width=self.winfo_reqwidth())
         if self.firstTime:
-            self.firstTime = False
             self.toggle()
+            self.firstTime = False
 
     def isShowing(self):
         return self.showing
@@ -13787,7 +13808,7 @@ class PagedWindow(Frame, object):
         try:
             self.frameStack.showFrame(page-1)
             self._updatePageNumber()
-        except:
+        except IndexError:
             raise Exception("Invalid page number: " + str(page) + ". Must be between 1 and " + str(self.frameStack.getNumFrames()))
 
     def showFirst(self, event=None):
