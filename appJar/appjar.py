@@ -3561,6 +3561,15 @@ class gui(object):
                 str(k) + ", name)")
             exec("gui.empty" + v + "=empty" + v)
 
+            exec( "def lower" + v +
+                "(self, name): self._lowerWidgetType(" +
+                str(k) + ", name)")
+            exec("gui.lower" + v + "=lower" + v)
+            exec( "def lift" + v +
+                "(self, name): self._liftWidgetType(" +
+                str(k) + ", name)")
+            exec("gui.lift" + v + "=lift" + v)
+
             # convenience functions for enable/disable
             # might not all be necessary, could make exclusion list
             exec( "def enable" + v +
@@ -3813,6 +3822,15 @@ class gui(object):
             gui.trace("Remove widget: %s", name)
             item.grid_forget()
             self.cleanseWidgets(item)
+
+    def _lowerWidgetType(self, kind, name):
+        item = self.widgetManager.get(kind, name)
+        item.lower()
+
+    def _liftWidgetType(self, kind, name):
+        item = self.widgetManager.get(kind, name)
+        item.lift()
+
 
 #####################################
 # FUNCTION for managing commands

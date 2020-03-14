@@ -159,6 +159,12 @@ The following allow widgets to be manipulated on screen:
     If called while inside a different container, the widget will be cloned into that container.  
     **NB.** Cloning widgtes is *very* rudimentary, it won't work for compound widgets.  
 
+* `.lift XXX (name)`
+    Lifts (raises) a widget to the top of a grid cell.  
+
+* `.lower XXX (name)`
+    Lowers a widget to the bottom of a grid cell.  
+
 * `.empty XXX(name)`  
     Will destroy all widgets in the named container.  
 
