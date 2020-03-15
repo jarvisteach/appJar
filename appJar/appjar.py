@@ -63,7 +63,6 @@ from platform import system as platform
 random = None
 ttk = ThemedStyle = None
 hashlib = None
-ToolTip = None
 nanojpeg = PngImageTk = array = None  # extra image support
 EXTERNAL_DND = None
 INTERNAL_DND = None
@@ -991,15 +990,6 @@ class gui(object):
                 import hashlib
             except:
                 hashlib = False
-
-    def _loadTooltip(self):
-        """ loads tooltips - used all over """
-        global ToolTip
-        if ToolTip is None:
-            try:
-                from appJar.lib.tooltip import ToolTip
-            except:
-                ToolTip = False
 
     def _loadMatplotlib(self):
         """ loads matPlotLib """
@@ -6870,7 +6860,6 @@ class gui(object):
     def addGoogleMap(self, title, row=None, column=0, colspan=0, rowspan=0, mapKey=None, ipstack=None, ipinfo=None):
         ''' adds a GoogleMap widget at the specified position '''
         self._loadURL()
-        self._loadTooltip()
         if urlencode is False:
             raise Exception("Unable to load GoogleMaps - urlencode library not available")
         self.widgetManager.verify(WIDGET_NAMES.Map, title)
@@ -9755,7 +9744,6 @@ class gui(object):
 
     def showTreeAttributes(self, title, show=True):
         tree = self.widgetManager.get(WIDGET_NAMES.Tree, title)
-        self._loadTooltip()
         tree.showAttributes(show)
 
     # not complete yet...
@@ -10772,7 +10760,6 @@ class gui(object):
 
     def addPieChart(self, name, fracs, row=None, column=0, colspan=0, rowspan=0):
         self.widgetManager.verify(WIDGET_NAMES.PieChart, name)
-        self._loadTooltip()
         pie = PieChart(self.getContainer(), fracs, self._getContainerBg())
         self.widgetManager.add(WIDGET_NAMES.PieChart, name, pie)
         self._positionWidget(pie, row, column, colspan, rowspan, sticky=None)
@@ -11758,11 +11745,7 @@ class gui(object):
 #####################################
 
     def _addTooltip(self, item, text, hideWarn=False):
-        self._loadTooltip()
-        if not ToolTip:
-            if not hideWarn:
-                self.warn("ToolTips unavailable - check tooltip.py is in the lib folder")
-        elif text == "":
+        if text == "":
             self._disableTooltip(item)
         else:
             # turn off warnings about tooltips
@@ -11774,7 +11757,7 @@ class gui(object):
                 else:
                     var = StringVar(self.topLevel)
                     var.set(text)
-                    tip = ToolTip(item, delay=500, follow_mouse=1, textvariable=var)
+                    tip = ToolTip(item, delay=500, textvariable=var)
                     item.tooltip = tip
                     item.tt_var = var
 
@@ -12651,8 +12634,8 @@ class gui(object):
                     for key, val in attr.items():
                         text += "  " + key + ":" + val + "\n"
                     text = text[:-1]
-                    ToolTip(self.label, text, delay=500, follow_mouse=1)
-                    ToolTip(self.canvas, text, specId=self.attrId, delay=500, follow_mouse=1)
+                    ToolTip(self.label, text, delay=500)
+                    ToolTip(self.canvas, text, specId=self.attrId, delay=500)
 
             def _bindMenu(self):
                 if self.canvas.menu is not None and not self.menuBound:
@@ -13446,7 +13429,7 @@ class PieChart(Canvas, object):
             if ToolTip is not False:
                 frac = int(float(val) / sum(self.fracs.values()) * 100)
                 tip = key + ": " + str(val) + " (" + str(frac) + "%)"
-                tt = ToolTip(self, tip, delay=500, follow_mouse=1, specId=sliceId)
+                tt = ToolTip(self, tip, delay=500, specId=sliceId)
 
             pos += val
             col += 1
@@ -15786,12 +15769,7 @@ class GoogleMap(LabelFrame, object):
 
     def _addTooltip(self, but, text):
         # generate a tooltip
-        if ToolTip is not False:
-            tt = ToolTip(
-                but,
-                text,
-                delay=1000,
-                follow_mouse=1)
+        tt = ToolTip(but, text, delay=1000)
 
     def _setMapParams(self):
         if "center" not in self.params or self.params["center"] is None or self.params["center"] == "":
@@ -16525,6 +16503,121 @@ class TextRedirector(object):
         else:
             self.widget.insert('1.0', val, (self.tag,))
             self.widget.see('1.0')
+
+'''Michael Lange <klappnase (at) freakmail (dot) de>
+from: http://tkinter.unpythonic.net/wiki/ToolTip?action=raw '''
+class ToolTip(object):
+
+    def __init__(self, master, text='Your text here', delay=1500, specId=None, **opts):
+        self.master = master
+        self._opts = {'anchor': 'center', 'bd': 1,
+            'bg': 'lightyellow', 'delay': delay,
+            'fg': 'black', 'font': None, 'justify': 'left',
+            'padx': 4, 'pady': 2, 'relief': 'solid',
+            'state': 'normal', 'text': text,
+            'textvariable': None, 'width': 0, 'wraplength': 150}
+        self.configure(**opts)
+        self._tipwindow = None
+        self._id = None
+        if specId is not None:
+            self.master.tag_unbind(specId, "<Enter>")
+            self.master.tag_unbind(specId, "<Leave>")
+            self.master.tag_unbind(specId, "<ButtonPress>")
+
+            self._id1 = self.master.tag_bind(specId, "<Enter>", self.enter, '+')
+            self._id2 = self.master.tag_bind(specId, "<Leave>", self.leave, '+')
+            self._id3 = self.master.tag_bind(specId, "<ButtonPress>", self.leave, '+')
+            self._id4 = self.master.tag_bind(specId, "<Motion>", self.motion, '+')
+        else:
+            self._id1 = self.master.bind("<Enter>", self.enter, '+')
+            self._id2 = self.master.bind("<Leave>", self.leave, '+')
+            self._id3 = self.master.bind("<ButtonPress>", self.leave, '+')
+            self._id4 = self.master.bind("<Motion>", self.motion, '+')
+
+    def configure(self, **opts):
+        for key in opts:
+            if key in self._opts:
+                self._opts[key] = opts[key]
+            else:
+                KeyError = 'KeyError: Unknown option: "%s"' % key
+                raise KeyError
+
+    def enter(self, event=None):
+        self._schedule()
+
+    def leave(self, event=None):
+        self._unschedule()
+        self._hide()
+
+    def motion(self, event=None):
+        if self._tipwindow:
+            x, y = self.coords()
+            self._tipwindow.wm_geometry("+%d+%d" % (x, y))
+
+    def _schedule(self):
+        self._unschedule()
+        if self._opts['state'] == 'disabled': return
+        self._id = self.master.after(self._opts['delay'], self._show)
+
+    def _unschedule(self):
+        id = self._id
+        self._id = None
+        if id: self.master.after_cancel(id)
+
+    def _show(self):
+        if self._opts['state'] == 'disabled':
+            self._unschedule()
+            return
+        if not self._tipwindow:
+            self._tipwindow = tw = Toplevel(self.master)
+            tw.withdraw()
+            tw.wm_overrideredirect(1)
+
+            if tw.tk.call("tk", "windowingsystem") == 'aqua':
+                tw.tk.call("::tk::unsupported::MacWindowStyle", "style", tw._w, "help", "none")
+
+            self.create_contents()
+            tw.update_idletasks()
+            tw.wm_geometry("+%d+%d" % (self.coords()))
+            tw.deiconify()
+            if gui.GET_PLATFORM() == gui.MAC:
+                import subprocess
+                tmpl = 'tell application "System Events" to set frontmost of every process whose unix id is {0} to true'
+                script = tmpl.format(os.getpid())
+                subprocess.check_call(['/usr/bin/osascript', '-e', script])
+                top = tw.attributes('-topmost')
+                tw.after( 0, lambda: tw.attributes("-topmost", top))
+            tw.lift()
+
+    def _hide(self):
+        tw = self._tipwindow
+        self._tipwindow = None
+        if tw:
+            tw.destroy()
+
+    def coords(self):
+        tw = self._tipwindow
+        twx, twy = tw.winfo_reqwidth(), tw.winfo_reqheight()
+        w, h = tw.winfo_screenwidth(), tw.winfo_screenheight()
+        # calculate the y coordinate:
+        y = tw.winfo_pointery() + 20
+        # make sure the tipwindow is never outside the screen:
+        if y + twy > h:
+            y = y - twy - 30
+        # we can use the same x coord in both cases:
+        x = tw.winfo_pointerx() - twx / 2
+        if x < 0:
+            x = 0
+        elif x + twx > w:
+            x = w - twx
+        return x, y
+
+    def create_contents(self):
+        opts = self._opts.copy()
+        for opt in ('delay', 'state'):
+            del opts[opt]
+        label = Label(self._tipwindow, **opts)
+        label.pack()
 
 #####################################
 # MAIN - for testing
