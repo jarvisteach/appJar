@@ -47,6 +47,9 @@ Any functions registered in this way, are called at set intervals.
 This will cause the GUI to keep repeating the named function in the background.  
 By default, the function will repeat every second.  
 
+* `.unregisterEvent(function)`  
+This will stop the named function from repeating in the background.  
+
 * `.setPollTime(time)`  
 If you want your functions to be called more or less frequently, change the frequency here.
 

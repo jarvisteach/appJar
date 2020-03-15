@@ -266,6 +266,10 @@ class gui(object):
                 "DEMISEMIQUAVER": 32, "HEMIDEMISEMIQUAVER": 16
     }
 
+    # backups for cancelling text redirection
+    stdout = None
+    stderr = None
+
 ###############################################
 # USEFUL STATIC METHODS
 ###############################################
@@ -917,11 +921,35 @@ class gui(object):
     ttkTheme = property(getTtkTheme, setTtkTheme)
 
 ###############################################################
+# Functions to change stdout/stderr
+###############################################################
+    def redirectOutput(self, title, end=True):
+        if self.stderr is None:
+            self.stdout = sys.stdout
+            self.stderr = sys.stderr
+
+        widget = self.widgetManager.get(WIDGET_NAMES.TextArea, title)
+        widget.tag_configure("stderr", foreground="#b22222")
+
+        sys.stdout = TextRedirector(widget, "stdout", end=end)
+        sys.stderr = TextRedirector(widget, "stderr", end=end)
+
+        gui.info("Output redirected to TextArea: " + title)
+
+    def cancelRedirectOutput(self):
+        if self.stderr is not None:
+            sys.stdout = self.stdout
+            sys.stderr = self.stderr
+            gui.info("Cancelled output redirection.")
+        else:
+            gui.error("Unable to cancel output redirection - not redirected.")
+
+###############################################################
 # library loaders - on demand loading of different classes
 ###############################################################
 
     def _loadRandom(self):
-        """ loasd random libraries """
+        """ loads random libraries """
         global random
         if random is None:
             import random
@@ -2177,6 +2205,13 @@ class gui(object):
     def registerEvent(self, func):
         """ Queue a function, to be executed every poll time """
         self.events.append(func)
+
+    def unregisterEvent(self, func):
+        """ Remove the specified function from the event list """
+        try:
+            self.events.remove(func)
+        except ValueError:
+            gui.error("Unable to unregister event - not registered.")
 
     def after(self, delay_ms, callback=None, *args):
         """ wrapper for topLevel after function
@@ -9311,6 +9346,7 @@ class gui(object):
         scroll = kwargs.pop("scroll", False)
         end = kwargs.pop("end", True)
         replace = kwargs.pop("replace", False)
+        redirect = kwargs.pop("redirect", None)
         callFunction = kwargs.pop("callFunction", True)
         disabled = kwargs.pop("disabled", False)
         tag = kwargs.pop("tag", None)
@@ -9332,6 +9368,7 @@ class gui(object):
         if replace: self.clearTextArea(title)
         if value is not None: self.setTextArea(title, value, end=end, callFunction=callFunction, tag=tag)
         if disabled: self.disableTextArea(title)
+        if redirect is not None: self.redirectOutput(title, end=redirect)
         if len(kwargs) > 0:
             self._configWidget(title, widgKind, **kwargs)
         return text
@@ -16466,6 +16503,28 @@ class EventBinding(object):
     def changeBindings(self, state):
         if state.lower() == 'disabled': self.removeBindings()
         else: self.createBindings()
+
+####################################
+# Class to redirect standard output
+# to alow prints to go to the GUI
+# from here: https://stackoverflow.com/questions/12351786/how-to-redirect-print-statements-to-tkinter-text-widget/31388442#31388442
+####################################
+class TextRedirector(object):
+    def __init__(self, widget, tag="stdout", end=True):
+        if widget.APPJAR_TYPE != WIDGET_NAMES.TextArea:
+            raise Exception("Invalid widget type for output redirection - must be a TextArea")
+            
+        self.widget = widget
+        self.tag = tag
+        self.end = end
+
+    def write(self, val):
+        if self.end:
+            self.widget.insert(END, val, (self.tag,))
+            self.widget.see(END)
+        else:
+            self.widget.insert('1.0', val, (self.tag,))
+            self.widget.see('1.0')
 
 #####################################
 # MAIN - for testing

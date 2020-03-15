@@ -47,6 +47,7 @@ nav:
     - Internationalisation: pythonInternationalisation.md
     - Saving Settings: pythonSettings.md
     - Logging: pythonLogging.md
+    - Output Redirection: pythonOutputRedirection.md
     - Command Line Arguments: pythonCommandLine.md
     - ttk (BETA): pythonTtk.md
     - Clipboard: clipboard.md

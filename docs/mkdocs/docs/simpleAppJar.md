@@ -203,6 +203,7 @@ An interactive widget, for capturing multi-line user input in the GUI.
 | tags | list | [] | A list of tags, where each tag contains a name and dictionary of values. |
 | end | boolean | True | Whether to add the new text to the end (True) or beginning (False) |
 | replace | boolean | False | Will replace any existing text in the text area when updating. |
+| redirect | boolean | None | Redirects calls to `print` to this TextArea. Set to `True`/`False` to append text to the end/beginning. |
 
 ## Button  
 ---
