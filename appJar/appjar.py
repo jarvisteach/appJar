@@ -5595,6 +5595,10 @@ class gui(object):
         pager = self.widgetManager.get(WIDGET_NAMES.PagedWindow, title)
         return pager.getPageNumber()
 
+    def getPagedWindowPreviousPageNumber(self, title):
+        pager = self.widgetManager.get(WIDGET_NAMES.PagedWindow, title)
+        return pager.getPreviousPageNumber()
+
     def showPagedWindowPageNumber(self, title, show=True):
         pager = self.widgetManager.get(WIDGET_NAMES.PagedWindow, title)
         pager.showPageNumber(show)
@@ -13584,15 +13588,21 @@ class FrameStack(Frame, object):
     def showFrame(self, num, callFunction=True):
         if num < 0 or num >= len(self._frames):
             raise IndexError("The selected frame does not exist")
+
+        # change to the new page
         tmp = self._prevFrame
         self._prevFrame = self._currFrame
         self._currFrame = num
 
+        # if there's a change function, call it
+        # it will see the new page details
+        # if it turns out, we shouldn't change, go back to the previous
         if callFunction and self._change is not None:
             if self._change() is False:
                 self._currFrame = self._prevFrame
                 self._prevFrame = tmp
                 return
+
         self._frames[self._currFrame].lift()
 
     def atStart(self):
@@ -13828,6 +13838,9 @@ class PagedWindow(Frame, object):
     def getPageNumber(self):
         return self.frameStack.getCurrentFrame() + 1
 
+    def getPreviousPageNumber(self):
+        return self.frameStack.getPreviousFrame() + 1
+
     # register a function to call when the page changes
     def registerPageChangeEvent(self, event):
         self.frameStack.setChangeFunction(event)
@@ -13838,13 +13851,13 @@ class PagedWindow(Frame, object):
         return f
 
     def stopPagedWindow(self):
-        self.showPage(1)
+        self.showPage(1, callFunction=False)
 
 
     # function to display the specified page
-    def showPage(self, page):
+    def showPage(self, page, callFunction=True):
         try:
-            self.frameStack.showFrame(page-1)
+            self.frameStack.showFrame(page-1, callFunction)
             self._updatePageNumber()
         except IndexError:
             raise Exception("Invalid page number: " + str(page) + ". Must be between 1 and " + str(self.frameStack.getNumFrames()))

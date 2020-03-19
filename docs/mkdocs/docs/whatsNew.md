@@ -13,6 +13,7 @@
 * <div class="cb cb-add">Added</div>function to create [named buttons](/inputWidgets/#add-buttons) - [#450](https://github.com/jarvisteach/appJar/issues/450)
 * <div class="cb cb-add">Added</div>ability to set images/icons for [tabs](/pythonWidgetGrouping/#set-tabbedframe) - [#380](https://github.com/jarvisteach/appJar/issues/380)
 * <div class="cb cb-add">Added</div>ability to [remove a widget](/pythonWidgetOptions/#widget-manipulation) based on its grid position in a container - [#372](https://github.com/jarvisteach/appJar/issues/372)
+* <div class="cb cb-imp">Improved</div>change function on [PagedWindows](/pythonWidgetGrouping/#paged-window), can now prevent pages from changing - [#611](https://github.com/jarvisteach/appJar/issues/611)
 * <div class="cb cb-imp">Improved</div>documentation on [dialogs](/pythonDialogs/) - [#599](https://github.com/jarvisteach/appJar/issues/599)  
 * <div class="cb cb-imp">Improved</div>[key bindings](/pythonEvents/#binding-keys) with better keypad support - [#591](https://github.com/jarvisteach/appJar/issues/591)  
 * <div class="cb cb-imp">Improved</div>version of [pypng](https://github.com/drj11/pypng) and fix for bytearrays in tkinter_png - [#585](https://github.com/jarvisteach/appJar/issues/585) & [#595](https://github.com/jarvisteach/appJar/issues/595)  

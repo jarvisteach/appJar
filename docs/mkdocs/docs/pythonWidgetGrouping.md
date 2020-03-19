@@ -715,12 +715,17 @@ app.go()
 
 * `.setPagedWindowFunction(title, function)`  
     Declare a function to call, each time the page is changed.  
+    Will be called **after** the page number has been changed.  
+    If this function returns `False`, then the page will be reverted back to the previous page - this can be useful if you want to use pop-ups, or check fields are filled in before continuing.  
 
 * `.showPagedWindowPageNumber(title, show=True)` & `.showPagedWindowTitle(title, show=True)`  
     Use these to declare if you want the page title, page numbers to be shown.  
 #### Get Paged Windows
 * `.getPagedWindowPageNumber(title)`  
     Used to get the page number currently being shown.  
+
+* `.getPagedWindowPreviousPageNumber(title)`  
+    Used to get the page number of the previously shown page.  
 
 ### Sub Window
 ---
