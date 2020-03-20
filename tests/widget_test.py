@@ -3302,6 +3302,8 @@ def test_gui_properties():
     app.bg = "red"
     assert app.bg == "red"
 
+    print("Testing fonts:", app.fonts)
+    
     myFont = str(app.fonts[11])
     myFont1 = str(app.fonts[12])
     myFont2 = str(app.fonts[13])
@@ -3606,7 +3608,7 @@ def press(btn):
     app4.meter("Cry", app4.scale("happiness"), text="fred")
     app4.meter("CryingMore", app4.slider("happiness again"))
     app4.meter("CryingMorer", app4.scale("happiness again"), text="alphabet")
-    app4.meter("CryingMorerr", (app4.slider("happiness again"),app4.scale("happiness again")))
+#    app4.meter("CryingMorerr", (app4.slider("happiness again"),app4.scale("happiness again")))
 
 def updateApp4(btn=None):
     app4.label("title", "aaa")
@@ -3762,7 +3764,7 @@ with gui("Simple Demo", transparency=50, padding=5, location="CENTER", bg="red")
     app4.properties("Toppings", toppings, row=row, column=2, change=changer)
     app4.meter("CryingMor", fill="yellow", gradient=True)
     app4.meter("CryingMore", 50, colspan=3, kind="other")
-    app4.meter("CryingMorer", 50, colspan=3, kind="split", fill=["green", "blue"])
+#    app4.meter("CryingMorer", 50, colspan=3, kind="split", fill=["green", "blue"])
     app4.meter("h_CryingMorer", 50, colspan=3, kind="split", fill=["green", "blue"], orientation='vertical')
     app4.meter("CryingMorerr", (50,70), colspan=3, kind="dual", fill=["green", "blue"])
     app4.meter("h_CryingMorerr", (50,70), colspan=3, kind="dual", fill=["green", "blue"], orientation='vertical')
