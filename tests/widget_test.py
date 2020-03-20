@@ -3304,9 +3304,9 @@ def test_gui_properties():
 
     print("Testing fonts:", app.fonts)
     
-    myFont = str(app.fonts[11])
-    myFont1 = str(app.fonts[12])
-    myFont2 = str(app.fonts[13])
+    myFont = str(app.fonts[2])
+    myFont1 = str(app.fonts[3])
+    myFont2 = str(app.fonts[4])
     print(myFont, myFont1, myFont2)
 
     app.font = 30
