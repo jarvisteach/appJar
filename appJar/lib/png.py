@@ -1335,9 +1335,15 @@ class Reader:
         self.atchunk = None
 
         if _guess is not None:
+
+            if (sys.version_info > (3, 0)):
+                UNIVERSAL_STRING = str
+            else:
+                UNIVERSAL_STRING = basestring
+
             if isarray(_guess):
                 bytes = _guess
-            elif isinstance(_guess, str):
+            elif isinstance(_guess, UNIVERSAL_STRING):
                 filename = _guess
             elif hasattr(_guess, 'read'):
                 file = _guess

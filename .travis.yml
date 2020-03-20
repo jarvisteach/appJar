@@ -58,6 +58,7 @@ matrix:
     allow_failures:
         - os: osx
         - python: 3.2
+        - python: 3.3
         - python: 3.6-dev
         - python: nightly
         - python: pypy
