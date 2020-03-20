@@ -61,11 +61,8 @@ matrix:
         - python: 3.6-dev
         - python: nightly
         - python: pypy
-services:
-    - if [[ "$TRAVIS_OS_NAME" != "osx" ]]; then sh -e /etc/init.d/xvfb start; fi
-    - sleep 3 # give xvfb some time to start
 before_install:
-    - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then tests/osx.sh; fi
+    #- if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then tests/osx.sh; fi
     # virtualenv>=14.0.0 has dropped Python 3.2 support (and pypy3 is based on py32)
     - if [[ "$TRAVIS_PYTHON_VERSION" == 3.2 ]]; then pip install "virtualenv<14.0.0" ; fi
     - pip install pytest pytest-cov
@@ -79,10 +76,11 @@ before_install:
     - if [[ "$TRAVIS_OS_NAME" != "osx" ]]; then sudo apt-get install python3-tk; fi
 
 before_script:
-    - "export DISPLAY=:99.0"
+    #- "export DISPLAY=:99.0"
     - VERS=`python -c 'import sys; print(".".join(map(str, sys.version_info[:2])))'`
 
 script:
+    - xvfb-run make test
     - cd tests
     - coverage run --source=appJar widget_test.py
 
