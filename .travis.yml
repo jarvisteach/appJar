@@ -61,6 +61,10 @@ matrix:
         - python: 3.6-dev
         - python: nightly
         - python: pypy
+
+services:
+    - xvfb
+
 before_install:
     #- if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then tests/osx.sh; fi
     # virtualenv>=14.0.0 has dropped Python 3.2 support (and pypy3 is based on py32)
@@ -80,7 +84,6 @@ before_script:
     - VERS=`python -c 'import sys; print(".".join(map(str, sys.version_info[:2])))'`
 
 script:
-    - xvfb-run make test
     - cd tests
     - coverage run --source=appJar widget_test.py
 
