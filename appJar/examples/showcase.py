@@ -214,14 +214,14 @@ with gui("ShowCase") as app:
 
         with app.tab("Properties"):
             with app.panedFrame("left"):
+                app.label("f","Font")
                 app.label("t", "Transparency")
                 app.label("t2", "Transparency")
-                app.label("f","Font")
 
                 with app.panedFrame("right"):
-                    app.slider("TransparencyScale", 100, change=scale, interval=25)
+                    app.slider("FontScale", value=12, show=True, change=scale, range=(6,40))
+                    app.slider("TransparencyScale", value=100, show=True, change=scale, interval=25)
                     app.spin("TransparencySpin", value=0, endValue=100, item='100', change=scale)
-                    app.slider("FontScale", 12, show=True, change=scale, range=(6,40))
 
         with app.tab("Meters"):
             app.meter("Meter1", fill="Yellow")
